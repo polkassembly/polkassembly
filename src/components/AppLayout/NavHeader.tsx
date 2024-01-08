@@ -333,7 +333,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
-						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
+						<RPCDropdown />
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<CustomButton

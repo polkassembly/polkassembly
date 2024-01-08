@@ -283,7 +283,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://acala.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Acala Foundation 0',
+				key: 'wss://acala-rpc-0.aca-api.network'
+			},
+			{
+				label: 'via Acala Foundation 1',
+				key: 'wss://acala-rpc-1.aca-api.network'
+			},
+			{
+				label: 'via Acala Foundation 3',
+				key: 'wss://acala-rpc-3.aca-api.network/ws'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://acala-rpc.dwellir.com'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-acala.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://acala-polkadot.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.ACUITY]: {
 		blockTime: 6000,
@@ -317,7 +342,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://altair.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Centrifuge',
+				key: 'wss://fullnode.altair.centrifuge.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://altair.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.AMPLITUDE]: {
 		blockTime: 12000,
@@ -334,7 +368,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
 		gTag: 'G-CJQ1ZL472N',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://amplitude-rpc.dwellir.com'
+			},
+			{
+				label: 'via PendulumChain',
+				key: 'wss://rpc-amplitude.pendulumchain.tech'
+			}
+		]
 	},
 	[network.ASTAR]: {
 		blockTime: 12000,
@@ -351,7 +394,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://astar.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Astar',
+				key: 'wss://rpc.astar.network'
+			},
+			{
+				label: 'via Automata 1RPC',
+				key: 'wss://1rpc.io/astr'
+			},
+			{
+				label: 'via Blast',
+				key: 'wss://astar.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://astar-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://astar.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://astar.public.curie.radiumblock.co/ws'
+			}
+		]
 	},
 	[network.AUTOMATA]: {
 		blockTime: 6000,
@@ -385,7 +453,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://basilisk.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Basilisk',
+				key: 'wss://rpc.basilisk.cloud'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://basilisk-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.PIONEER]: {
 		blockTime: 12000,
@@ -824,7 +901,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbeam.api.subscan.io',
 		gTag: 'G-FS09G34H85',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Automata 1RPC',
+				key: 'wss://1rpc.io/glmr'
+			},
+			{
+				label: 'via Blast',
+				key: 'wss://moonbeam.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://moonbeam-rpc.dwellir.com'
+			},
+			{
+				label: 'via Moonbeam Foundation',
+				key: 'wss://wss.api.moonbeam.network'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://moonbeam.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via UnitedBloc',
+				key: 'wss://moonbeam.unitedbloc.com'
+			}
+		]
 	},
 	[network.MOONRIVER]: {
 		blockTime: 12000,

@@ -65,10 +65,10 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 						Send this command to the chat with the bot:
 						<br />
 						<span
-							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
+							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
 							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
-							{'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px]' />
+							/polkassembly-add {'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px]' />
 						</span>
 						<div className='mt-4 flex justify-end'>
 							<CustomButton

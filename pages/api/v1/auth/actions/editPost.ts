@@ -317,7 +317,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 						summary: summary,
 						tags: tags || [],
 						title,
-						topic_id: topic_id || getTopicFromType(proposalType).id,
+						topic_id: topicId || getTopicFromType(proposalType).id,
 						user_id: post?.user_id || user.id,
 						username: post?.username || user.username
 					},

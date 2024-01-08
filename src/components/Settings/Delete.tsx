@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Input, Modal, Select, Divider } from 'antd';
+import { Form, Input, Modal, Select, Divider } from 'antd';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
 
@@ -130,26 +130,32 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								style={{ background: '#D2D8E0', flexGrow: 1 }}
 								className='my-4 dark:bg-separatorDark'
 							/>,
-							<CustomButton
-								text='Cancel'
-								key='cancel'
-								onClick={dismissModal}
-								variant='default'
-								className='px-8 py-5 font-semibold'
-							/>,
-							<CustomButton
-								htmlType='submit'
-								key='delete'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								disabled={!isFormValid}
-								text='Delete'
-								variant='primary'
-								style={{ opacity: !isFormValid ? 0.6 : 1 }}
-								className='mr-6 font-semibold'
-							/>
+							<div
+								key='delete-buttons'
+								className='flex items-center justify-end'
+							>
+								<CustomButton
+									text='Cancel'
+									key='cancel'
+									onClick={dismissModal}
+									variant='default'
+									className='px-8 py-5 font-semibold'
+								/>
+								,
+								<CustomButton
+									htmlType='submit'
+									key='delete'
+									onClick={() => {
+										form.submit();
+									}}
+									loading={loading}
+									disabled={!isFormValid}
+									text='Delete'
+									variant='primary'
+									style={{ opacity: !isFormValid ? 0.6 : 1 }}
+									className='mr-6 px-8 py-5 font-semibold'
+								/>
+							</div>
 						]}
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
@@ -240,13 +246,14 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 							)}
 						</article>
 					</Modal>
-					<Button
+					<CustomButton
 						onClick={openModal}
 						htmlType='submit'
-						className='text-md mt-5 flex items-center justify-center rounded-lg border-none bg-[#F53C3C] px-7 py-5 font-semibold leading-7 text-white outline-none'
-					>
-						Delete My Account
-					</Button>
+						className='text-md mt-5 rounded-lg border-none px-7 py-5 font-semibold leading-7'
+						customColor='[#F53C3C]'
+						customTextColor='white'
+						text='Delete My Account'
+					/>
 				</Form>
 			</Panel>
 		</Collapse>

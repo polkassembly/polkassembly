@@ -29,7 +29,6 @@ const AyeNayButton = ({ className, disabled, onClickAye, onClickNay, size, custo
 			<LikeFilled className='mr-1' />
 			Aye
 		</Button>
-
 		<Button
 			name='nay'
 			htmlType='submit'

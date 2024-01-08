@@ -43,7 +43,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 		username: ''
 	});
 
-	const { image, social_links, bio, username: userName, addresses } = profileDetails;
+	const { image, social_links, bio, username: userName } = profileDetails;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -75,14 +75,16 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 
 	return username?.length > 0 ? (
 		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
-			<div className='flex justify-center gap-[34px] '>
-				<ImageComponent
-					src={image}
-					alt='User Picture'
-					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
-					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
-				/>
-				<div className='text-bodyBlue dark:text-blue-dark-high'>
+			<div className='flex w-full gap-[34px] '>
+				<div className='w-3/10'>
+					<ImageComponent
+						src={image}
+						alt='User Picture'
+						className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
+						iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+					/>
+				</div>
+				<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
 					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username || userName}</span>
 					{address && address.length > 0 && (
 						<div className='mt-1 flex items-center gap-1'>
@@ -95,7 +97,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								className='flex cursor-pointer items-center text-xl'
 								onClick={(e) => {
 									isSearch && e.preventDefault();
-									copyLink(address || addresses[0]);
+									copyLink(address);
 									success();
 								}}
 							>
@@ -174,11 +176,12 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 					setOpenModal={setOpenEditModal}
 					data={profileDetails}
 					setProfileDetails={setProfileDetails}
+					fromDelegation
 				/>
 			)}
 		</div>
 	) : (
-		<div className='p-6'>
+		<div className='h-52 p-6'>
 			<Skeleton />
 		</div>
 	);

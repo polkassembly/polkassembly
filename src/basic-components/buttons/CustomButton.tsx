@@ -12,18 +12,18 @@ interface ICustomButton extends ButtonProps {
 	width?: number;
 	height?: number;
 	style?: any;
-	buttonSize?: string;
+	buttonsize?: string;
 	customColor?: string;
 	customBorderColor?: string;
 	customTextColor?: string;
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { buttonSize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor } = props;
+	const { buttonsize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor } = props;
 	let { height, width } = props;
-	if (buttonSize && buttonSize === 'xs') {
+	if (buttonsize && buttonsize === 'xs') {
 		width = 134;
 		height = 40;
-	} else if (buttonSize && buttonSize === 'sm') {
+	} else if (buttonsize && buttonsize === 'sm') {
 		width = 144;
 		height = 40;
 	}

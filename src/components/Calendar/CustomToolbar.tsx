@@ -153,7 +153,7 @@ function CustomToolbar(props: any) {
 						if (!disabled) props.setSidebarCreateEvent(true);
 					}}
 					className='ml-2 rounded-md border-pink_primary text-white'
-					buttonSize='xs'
+					buttonsize='xs'
 					text='Create Event'
 				/>
 			</div>
@@ -203,7 +203,7 @@ function CustomToolbar(props: any) {
 								text='Today'
 								className='border-white dark:bg-section-dark-overlay dark:text-white'
 								onClick={goToToday}
-								buttonSize='xs'
+								buttonsize='xs'
 								variant='default'
 							/>
 

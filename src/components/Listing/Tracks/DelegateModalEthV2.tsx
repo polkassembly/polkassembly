@@ -329,7 +329,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 					<CustomButton
 						key='back'
 						text='Cancel'
-						buttonSize='sm'
+						buttonsize='sm'
 						variant='default'
 						onClick={() => setShowModal(false)}
 					/>,
@@ -338,7 +338,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 						text='Confirm'
 						htmlType='submit'
 						disabled={loading}
-						buttonSize='sm'
+						buttonsize='sm'
 						variant='primary'
 						onClick={handleSubmit}
 					/>

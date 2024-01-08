@@ -204,7 +204,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								loading={loading}
 								htmlType='submit'
 								variant='primary'
-								buttonSize='sm'
+								buttonsize='sm'
 								className='ml-auto'
 								text='Next'
 							/>
@@ -307,7 +307,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 								<CustomButton
 									onClick={handleOptionalSkip}
 									variant='default'
-									buttonSize='sm'
+									buttonsize='sm'
 									text='Skip'
 								/>
 							)}
@@ -318,7 +318,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									htmlType='submit'
 									variant='primary'
 									className={`${!email || !firstPassword ? 'opacity-50' : ''}`}
-									buttonSize='sm'
+									buttonsize='sm'
 									text='Done'
 								/>
 							)}

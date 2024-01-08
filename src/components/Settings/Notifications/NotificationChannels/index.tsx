@@ -199,7 +199,7 @@ const Bots = [
 	{
 		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 		channel: CHANNEL.SLACK,
-		description: '',
+		description: 'a Slack Channel chat to get Slack notifications',
 		title: 'Slack'
 	},
 	{

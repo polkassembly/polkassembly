@@ -22,9 +22,7 @@ interface Props {
 const VerifiedInfo = ({ isCurrentUser }: Props) => {
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const [open, setOpen] = useState(false);
-
 	const { network } = useNetworkSelector();
-
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const handleIdentityButtonClick = () => {
@@ -39,6 +37,7 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 			}
 		}
 	};
+
 	return (
 		<div className={`p-4 px-2 ${poppins.className} ${poppins.variable}`}>
 			<div className='flex items-center gap-x-1'>

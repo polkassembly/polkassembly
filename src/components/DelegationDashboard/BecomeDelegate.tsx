@@ -1,0 +1,85 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import { Button } from 'antd';
+import React, { useState } from 'react';
+import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
+import ImageIcon from '~src/ui-components/ImageIcon';
+
+const BecomeDelegate = () => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const showModal = () => {
+		setIsModalOpen(true);
+	};
+
+	return (
+		<div className='rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+			<div className='flex items-center justify-between'>
+				<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
+				<Button
+					onClick={showModal}
+					className='border-[#E5007A] bg-[#ef66af] text-white'
+				>
+					Become a Delegate
+				</Button>
+			</div>
+			<div className='flex justify-between'>
+				<div className='flex space-x-3'>
+					<ImageIcon
+						src='/assets/delegation-tracks/become-delegate-1.svg'
+						alt='Become delegate icon'
+						className='-ml-3'
+					/>
+					<span className='mt-[22px] text-sm font-semibold'>STEP 1</span>
+					<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
+						<span className='font-semibold '>Select Track for Delegation</span>
+						<span className='text-blue-light-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
+					</div>
+				</div>
+				<div className='mr-2 mt-10'>
+					<ImageIcon
+						src='/assets/delegation-tracks/become-arrow.svg'
+						alt='Double side arrow icon'
+					/>
+				</div>
+				<div className='flex space-x-3'>
+					<ImageIcon
+						src='/assets/delegation-tracks/become-delegate-2.svg'
+						alt='Become delegate icon'
+						imgClassName='mt-[22px] mr-3'
+					/>
+					<span className='mt-[22px] text-sm font-semibold'>STEP 2</span>
+					<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
+						<span className='font-semibold'>Select Delegate</span>
+						<span className='text-blue-light-high'>Choose a delegate based on the stats to complete your delegation process.</span>
+					</div>
+				</div>
+			</div>
+			<div className='flex items-center space-x-1 rounded-md bg-[#F6F7F9] p-3'>
+				<ImageIcon
+					imgClassName='h-5 w-5'
+					src='/assets/delegation-tracks/info-icon.svg'
+					alt='Double side arrow icon'
+				/>
+				<span className='text-blue-light-medium'>
+					Want to learn more about delegation process before locking your tokens. Click
+					<a
+						href=''
+						className='text-[#407BFF] underline'
+					>
+						{' '}
+						here
+					</a>
+				</span>
+			</div>
+			<BecomeDelegateModal
+				isModalOpen={isModalOpen}
+				setIsModalOpen={setIsModalOpen}
+				className=''
+			/>
+		</div>
+	);
+};
+
+export default BecomeDelegate;

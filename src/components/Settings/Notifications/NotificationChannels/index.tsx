@@ -38,8 +38,9 @@ export enum CHANNEL {
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkSelector();
-	const { id, networkPreferences, email, email_verified } = useUserDetailsSelector();
+	const { id, networkPreferences, email, email_verified, username } = useUserDetailsSelector();
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const botsArr = Bots(username || '');
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
@@ -107,7 +108,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 								<div className={`${!networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
 									<MailFilled />
 								</div>
-								{Bots.map((bot, i) => (
+								{botsArr.map((bot, i) => (
 									<div
 										className={`${!networkPreferences?.channelPreferences?.[bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`}
 										key={i}
@@ -132,10 +133,10 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
+						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 						dashed
 					/>
-					{Bots.map((bot, i) => (
+					{botsArr.map((bot, i) => (
 						<div key={bot.title}>
 							<BotSetupCard
 								{...bot}
@@ -145,7 +146,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 								handleEnableDisabled={handleEnableDisabled}
 								handleReset={handleReset}
 							/>
-							{Bots.length - 1 > i && (
+							{botsArr.length - 1 > i && (
 								<Divider
 									className='my-[30px] border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 									dashed
@@ -183,29 +184,31 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	);
 }
 
-const Bots = [
-	{
-		Icon: <TelegramIcon />,
-		channel: CHANNEL.TELEGRAM,
-		description: 'a Telegram chat to get Telegram notifications',
-		title: 'Telegram'
-	},
-	{
-		Icon: <DiscordIcon />,
-		channel: CHANNEL.DISCORD,
-		description: 'a Discord Channel chat to get Discord notifications',
-		title: 'Discord'
-	},
-	{
-		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
-		channel: CHANNEL.SLACK,
-		description: 'a Slack Channel chat to get Slack notifications',
-		title: 'Slack'
-	},
-	{
-		Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
-		channel: CHANNEL.ELEMENT,
-		description: '',
-		title: 'Element'
-	}
-];
+const Bots = (username: string) => {
+	return [
+		{
+			Icon: <TelegramIcon />,
+			channel: CHANNEL.TELEGRAM,
+			description: 'a Telegram chat to get Telegram notifications',
+			title: 'Telegram'
+		},
+		{
+			Icon: <DiscordIcon />,
+			channel: CHANNEL.DISCORD,
+			description: 'a Discord Channel chat to get Discord notifications',
+			title: 'Discord'
+		},
+		{
+			Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			channel: CHANNEL.SLACK,
+			description: `${username === '_vaibhav_singhvi_' || username === 'hlw_vmk_' ? 'a Slack Channel chat to get Slack notifications' : ''}`,
+			title: 'Slack'
+		},
+		{
+			Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			channel: CHANNEL.ELEMENT,
+			description: '',
+			title: 'Element'
+		}
+	];
+};

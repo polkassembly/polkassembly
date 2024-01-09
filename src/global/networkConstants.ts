@@ -552,7 +552,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://stats.cere.network',
 		gTag: 'G-7E14M1ZSCB',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Cere Network',
+				key: 'wss://archive.mainnet.cere.network/ws'
+			}
+		]
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
 	[network.COLLECTIVES]: {
@@ -663,7 +668,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://crust.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Crust',
+				key: 'wss://crust-parachain.crustapps.net'
+			}
+		]
 	},
 	[network.CRUSTSHADOW]: {
 		blockTime: 12000,
@@ -754,7 +764,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Vara',
+				key: 'wss://rpc.vara.network'
+			}
+		]
 	},
 	[network.GENSHIRO]: {
 		blockTime: 6000,
@@ -771,7 +786,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://genshiro.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Genshiro',
+				key: 'wss://node.ksm.genshiro.io'
+			}
+		]
 	},
 	[network.GMORDIE]: {
 		blockTime: 9000,
@@ -788,7 +808,28 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via GMorDieDAO',
+				key: 'wss://kusama.gmordie.com'
+			},
+			{
+				label: 'via GM Intern',
+				key: 'wss://intern.gmordie.com'
+			},
+			{
+				label: 'via TerraBioDAO',
+				key: 'wss://ws-node-gm.terrabiodao.org'
+			},
+			{
+				label: 'via Leemo',
+				key: 'wss://leemo.gmordie.com'
+			},
+			{
+				label: 'via bLd Nodes',
+				key: 'wss://ws.gm.bldnodes.org'
+			}
+		]
 	},
 	[network.HASHED]: {
 		blockTime: 12000,
@@ -835,7 +876,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via OnFinality',
+				key: 'wss://parallel-heiko.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via Parallel',
+				key: 'wss://heiko-rpc.parallel.fi'
+			}
+		]
 	},
 	[network.HYDRADX]: {
 		blockTime: 12000,
@@ -946,7 +996,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Kylin Network',
+				key: 'wss://kusama.kylin-node.co.uk'
+			}
+		]
 	},
 	[network.KHALA]: {
 		blockTime: 12000,
@@ -1023,7 +1078,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Manta Networks',
+				key: 'wss://calamari.systems'
+			}
+		]
 	},
 	[network.MOONBASE]: {
 		blockTime: 12000,
@@ -1184,7 +1244,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.mainnet.oct.network/myriad',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Myriad',
+				key: 'wss://ws-rpc.myriad.social'
+			},
+			{
+				label: 'via Octopus',
+				key: 'wss://gateway.mainnet.octopus.network/myriad/a4cb0a6e30ff5233a3567eb4e8cb71e0'
+			}
+		]
 	},
 	[network.PARALLEL]: {
 		blockTime: 12000,

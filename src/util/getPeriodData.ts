@@ -12,6 +12,8 @@ export const getPeriodData = (network: string, date: Dayjs, trackData: any, fiel
 	if (period) {
 		if (period.includes('hrs')) {
 			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'hour');
+		} else if (period.includes('day')) {
+			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'day');
 		} else if (period.includes('days')) {
 			periodEndsAt = periodEndsAt.add(Number(period.split(' ')[0]), 'day');
 		} else if (period.includes('min')) {

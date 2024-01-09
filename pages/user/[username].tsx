@@ -29,6 +29,7 @@ import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import PAProfile from '~src/components/PAProfile';
 
 const VoteUnlock = dynamic(() => import('~src/components/VoteUnlock'), {
 	ssr: false
@@ -91,6 +92,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				addresses: [],
 				badges: [],
 				bio: '',
+				created_at: null,
 				image: '',
 				social_links: [],
 				title: '',
@@ -190,11 +192,11 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		};
 	});
 
-	const sortTabItemsByCount = (tabItems: any) => {
-		return tabItems.sort((a: any, b: any) => b?.label?.props?.count - a?.label?.props?.count);
-	};
+	// const sortTabItemsByCount = (tabItems: any) => {
+	// 	return tabItems.sort((a: any, b: any) => b?.label?.props?.count - a?.label?.props?.count);
+	// };
 
-	const sortedTabItems = sortTabItemsByCount(tabItems);
+	// const sortedTabItems = sortTabItemsByCount(tabItems);
 
 	return (
 		<>
@@ -202,7 +204,8 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				title='User Profile'
 				network={network}
 			/>
-			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
+			<PAProfile userProfile={userProfile.data} />
+			{/* <section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
 				<Details
 					userPosts={userPosts.data}
 					userProfile={userProfile}
@@ -268,7 +271,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 						</div>
 					)}
 				</article>
-			</section>
+			</section> */}
 		</>
 	);
 };

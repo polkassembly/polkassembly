@@ -29,7 +29,7 @@ import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 
-export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
+export const socialLinks = [ESocialType.EMAIL, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.RIOT, ESocialType.DISCORD];
 
 interface IDetailsProps {
 	userProfile: {

@@ -27,7 +27,7 @@ import IdentitySVG from '~assets/icons/identity.svg';
 import ProfileSVG from '~assets/icons/profile.svg';
 import EmailSVG from '~assets/icons/email.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
-import EditSVG from '~assets/icons/edit.svg';
+import EditSVG from '~assets/profile/profile-edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
 import PreparePeriodSVG from '~assets/icons/prepare.svg';
 import DecisionPeriodSVG from '~assets/icons/decision.svg';

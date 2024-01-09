@@ -96,7 +96,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			form.setFieldValue('targetAddress', defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, defaultTarget]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
@@ -385,8 +385,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<AddressInput
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
-									label={'Beneficiary Address'}
-									placeholder='Add beneficiary address'
+									label={'Delegate To'}
+									placeholder='Add Delegatee Address'
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);

@@ -16,9 +16,10 @@ interface ICustomButton extends ButtonProps {
 	customColor?: string;
 	customBorderColor?: string;
 	customTextColor?: string;
+	shape?: 'default' | 'circle' | 'round';
 }
 const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
-	const { buttonSize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor } = props;
+	const { buttonSize, style, text, className, variant, fontSize, customColor, customTextColor, customBorderColor, shape } = props;
 	let { height, width } = props;
 	if (buttonSize && buttonSize === 'xs') {
 		width = 134;
@@ -30,7 +31,9 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	return (
 		<ANTDButton
 			{...props}
-			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 rounded-md ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium  ${
+			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 border-[1px] ${shape === 'circle' ? 'rounded-full' : 'rounded-md'} ${
+				fontSize ? `text-${fontSize}` : 'text-sm'
+			} font-medium ${
 				!customColor
 					? `${
 							variant === 'primary'

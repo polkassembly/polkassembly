@@ -220,10 +220,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 
 					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
 						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
-							<VotesHistory
-								userAddresses={userProfile?.data?.addresses || []}
-								govType={selectedGov}
-							/>
+							<VotesHistory userAddresses={userProfile?.data?.addresses || []} />
 						</div>
 					) : (
 						<div className='fullHeight'>

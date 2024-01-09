@@ -258,7 +258,6 @@ const Address = (props: Props) => {
 		(!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr) ||
 		shortenUsername(username, usernameMaxLength);
 	const addressSuffix = extensionName || mainDisplay;
-
 	const handleClick = (event: any) => {
 		if (disableAddressClick) return;
 		event.stopPropagation();
@@ -395,7 +394,7 @@ const Address = (props: Props) => {
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressPrefix}</span>}
 											</div>
 										</Space>
 									</div>

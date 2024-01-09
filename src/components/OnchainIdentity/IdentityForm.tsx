@@ -52,7 +52,7 @@ interface ValueState {
 	okAll: boolean;
 }
 
-function checkValue(
+export function checkValue(
 	hasValue: boolean,
 	value: string | null | undefined,
 	minLength: number,

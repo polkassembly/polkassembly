@@ -1,0 +1,113 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import React from 'react';
+import { ProfileDetailsResponse } from '~src/auth/types';
+import ImageComponent from '../ImageComponent';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import classNames from 'classnames';
+import Address from '~src/ui-components/Address';
+import copyToClipboard from '~src/util/copyToClipboard';
+import { message } from 'antd';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
+import dayjs from 'dayjs';
+import Image from 'next/image';
+import EvalutionSummary from '../Post/PostSummary/EvalutionSummary';
+import SocialsHandle from '~src/ui-components/SocialsHandle';
+
+interface Props {
+	className?: string;
+	userProfile: ProfileDetailsResponse;
+	addressWithIdentity: string;
+	onchainIdentity?: DeriveAccountRegistration | null;
+}
+const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
+	const { image, created_at: profileSince, social_links: socials } = userProfile;
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const handleCopyAddress = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
+
+	return (
+		<div
+			className={classNames(
+				className,
+				'max-md-w-full flex h-[128px] border-[1px] max-md:h-[350px] max-md:flex-col max-md:items-center max-md:gap-2 max-md:rounded-[14px] max-md:border-solid max-md:border-[rgb(210,216,224)] max-md:bg-white max-md:py-4 max-md:dark:border-separatorDark max-md:dark:bg-section-dark-overlay'
+			)}
+		>
+			<ImageComponent
+				src={image}
+				alt='User Picture'
+				className='mt-[-1px] flex h-[131px] w-[130px] items-center justify-center border-[1px] border-solid border-[#D2D8E0] bg-white p-2 dark:border-separatorDark dark:bg-section-dark-overlay'
+				iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+			/>
+			<div className='ml-[-70px] flex w-full items-start justify-between rounded-e-[14px] border-[#D2D8E0] bg-white py-2 dark:border-separatorDark dark:bg-section-dark-overlay max-md:ml-0 max-md:flex-col max-md:items-center md:border-0 md:border-b-[1px] md:border-r-[1px] md:border-t-[1px] md:border-solid md:py-4'>
+				<div className=' flex w-full flex-col gap-2 max-md:items-center max-md:gap-4 max-md:border-none max-md:bg-transparent max-md:dark:bg-transparent md:h-[130px]'>
+					{addressWithIdentity && (
+						<div className='flex items-center justify-between max-md:flex-col md:ml-[100px] md:pr-6'>
+							<div className='flex items-center'>
+								<Address
+									address={addressWithIdentity}
+									disableIdenticon
+									isProfileView
+									className='flex gap-1'
+									usernameClassName='text-2xl'
+									isTruncateUsername={false}
+									disableTooltip
+								/>
+								<span
+									className='flex cursor-pointer items-center p-1'
+									onClick={(e) => {
+										e.preventDefault();
+										copyToClipboard(addressWithIdentity);
+										handleCopyAddress();
+									}}
+								>
+									{contextHolder}
+									<CopyIcon className='ml-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' />
+								</span>
+							</div>
+						</div>
+					)}
+					{addressWithIdentity && (
+						<div className='md:ml-[100px]'>
+							<EvalutionSummary
+								isProfileView
+								address={addressWithIdentity}
+							/>
+						</div>
+					)}
+					<div>
+						{profileSince && (
+							<div className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959] md:ml-[100px]'>
+								User Since:
+								<Image
+									src={'/assets/icons/Calendar.svg'}
+									alt='calender'
+									width={20}
+									height={20}
+									className='ml-2'
+								/>
+								<span className='ml-1 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileSince).format('MMM DD, YYYY')}</span>
+							</div>
+						)}
+					</div>
+				</div>
+				<SocialsHandle
+					className='mr-6 gap-4 max-md:mr-0 max-md:mt-4 max-md:gap-2'
+					onchainIdentity={onchainIdentity || null}
+					socials={socials || []}
+					address={addressWithIdentity}
+					iconSize={18}
+					boxSize={32}
+				/>
+			</div>
+		</div>
+	);
+};
+export default ProfileCard;

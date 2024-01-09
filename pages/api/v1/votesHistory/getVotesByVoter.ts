@@ -46,6 +46,10 @@ export interface IProfileVoteHistoryRespose {
 		statusHistory?: string[];
 	};
 }
+export interface IVotesData extends IProfileVoteHistoryRespose {
+	delegatorsCount?: number;
+	delegateCapital?: string;
+}
 
 const getIsSwapStatus = (statusHistory: string[]) => {
 	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');

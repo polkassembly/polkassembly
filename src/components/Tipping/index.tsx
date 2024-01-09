@@ -22,7 +22,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import TipIcon from '~assets/icons/tip-title.svg';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
@@ -37,6 +36,7 @@ import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -135,10 +135,10 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 	};
 
 	useEffect(() => {
-		if (!paUsername) return;
+		if (!paUsername && !open) return;
 		getUserProfile();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [paUsername, network]);
+	}, [paUsername, network, open]);
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
@@ -288,7 +288,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				open={open}
 				zIndex={1056}
 				onCancel={handleCancel}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='font-medium text-bodyBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm dark:border-[#3B444F]'>
@@ -356,7 +356,6 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							/>
 						</div>
 					</div>
-
 					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
 						<div className='mt-6 '>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
@@ -364,7 +363,11 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
 								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
-								value={filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
+								value={
+									filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0
+										? getEncodedAddress(beneficiaryAddress, network) || getEncodedAddress(receiverAddress, network)
+										: null
+								}
 								onChange={setBeneficiaryAddress}
 								options={
 									filterDuplicateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {

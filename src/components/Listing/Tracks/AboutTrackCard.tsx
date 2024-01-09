@@ -26,6 +26,7 @@ import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/Ai
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -407,7 +408,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
 					<div className='flex gap-x-1'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'

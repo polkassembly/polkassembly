@@ -62,20 +62,8 @@ const VerifiedInfo = ({ isCurrentUser }: Props) => {
 					</Link>
 				</div>
 			</div>
-			{/* <div className='mt-2'>
-				<div className='m-0 flex items-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-lightGreyTextColor'>
-					Verified Since:
-					<ImageIcon
-						src='/assets/icons/greyCalendar.svg'
-						alt='calenderIcon'
-						className='-mt-0.5 ml-1'
-					/>
-					<p className='m-0 ml-1 p-0'>27th Jun 2024</p>
-				</div>
-			</div> */}
 
-			{/* revert isCurrentUser before pushing */}
-			{onchainIdentitySupportedNetwork.includes(network) && !isCurrentUser && (
+			{onchainIdentitySupportedNetwork.includes(network) && isCurrentUser && (
 				<div className='mt-2 flex h-[34px] w-full items-center justify-center rounded-md bg-[#F7F8F9] px-[10px] py-4 dark:bg-lightGreyTextColor'>
 					<div className='m-0 flex items-center justify-center whitespace-nowrap p-0 text-xs font-normal text-lightBlue dark:text-blue-dark-high'>
 						To get a tick on your profile

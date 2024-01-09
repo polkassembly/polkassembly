@@ -277,7 +277,6 @@ const Details: FC<IDetailsProps> = (props) => {
 		});
 	}
 	const isCurrentUser = userDetails.username === username ? true : false;
-	console.log(userDetails.username, username, isCurrentUser);
 	return (
 		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] dark:bg-section-dark-overlay md:w-auto'>
 			<article className='rounded-l-[4px] bg-[#910365] px-4 py-[22px] md:w-[330px] md:flex-1 md:py-8'>

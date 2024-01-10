@@ -23,6 +23,8 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import ImageComponent from '~src/components/ImageComponent';
+import { usePostDataContext } from '~src/context';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -83,8 +85,10 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const { data, error, network, page } = props;
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
-	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
+	const postData = usePostDataContext();
+	console.log(postData);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -126,9 +130,20 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 			</div>
 
 			{/* Intro and Create Post Button */}
-			<div className='mt-3 flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
-					This is the place to discuss all things Polkadot. Anyone can start a new discussion.
+			<div className='mt-3 w-full rounded-xxl bg-white px-4 py-2 shadow-md dark:bg-section-dark-overlay md:px-8 md:py-4'>
+				<div className='w-full rounded-lg bg-[#F4FBF2] px-4 py-2'>
+					<p className='m-0 p-0 text-xs font-medium text-lightBlue'>
+						<ImageComponent
+							src={'/assets/icons/lightGreenTick.svg'}
+							alt='green tick'
+							className='tick-icon-container -mt-0.5'
+						/>
+						You have delegated vote to
+					</p>
+				</div>
+				<p className='m-0 mt-2 p-0 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+					This is the place to discuss on-chain proposals. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
+					them.
 				</p>
 			</div>
 			<OffChainPostsContainer

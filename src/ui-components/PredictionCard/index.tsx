@@ -4,7 +4,6 @@
 
 import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
-import { set } from 'lodash';
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
@@ -43,8 +42,8 @@ const Container = styled.div`
 		color: #243a57;
 	}
 	@media (min-width: 1280px) {
-		position: ${(props) => (props['aria-fixed'] ? 'fixed' : 'static')};
-		max-width: ${(props) => (props['aria-fixed'] ? '' : '100%')};
+		position: ${(props) => (props['aria-expanded'] ? 'fixed' : 'static')};
+		max-width: ${(props) => (props['aria-expanded'] ? '' : '100%')};
 		bottom: 80px;
 		right: auto;
 		z-index: 999;
@@ -135,7 +134,7 @@ const PredictionCard = () => {
 	}, [yesCount, predictCount]);
 
 	return (
-		<Container aria-fixed={isFixed}>
+		<Container aria-expanded={isFixed}>
 			<div className='flex items-center justify-between font-poppins'>
 				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
 					Prediction

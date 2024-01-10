@@ -931,7 +931,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const RenderLastVote =
 		address === loginAddress ? lastVote ? <LastVoteInfoLocalState {...lastVote} /> : onChainLastVote !== null ? <LastVoteInfoOnChain {...onChainLastVote} /> : null : null;
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
-
 	return (
 		<>
 			{

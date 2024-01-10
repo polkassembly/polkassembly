@@ -88,7 +88,7 @@ const PredictionCard = () => {
 			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
 				body: JSON.stringify({
 					query: `
-						query MarketDetails($marketId: Int = 345) {
+						query MarketDetails($marketId: Int = 350) {
 							markets(where: {marketId_eq: $marketId}) {
 								period {
 									end
@@ -148,7 +148,7 @@ const PredictionCard = () => {
 				</h1>
 				<a
 					className='font-mediums inline-block rounded-2xl border border-solid border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
-					href='https://app.zeitgeist.pm/markets/345'
+					href='https://app.zeitgeist.pm/markets/350'
 					target='_blank'
 					rel='noreferrer'
 					onClick={() =>

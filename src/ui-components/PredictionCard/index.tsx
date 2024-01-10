@@ -4,7 +4,8 @@
 
 import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { set } from 'lodash';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
 
@@ -42,7 +43,8 @@ const Container = styled.div`
 		color: #243a57;
 	}
 	@media (min-width: 1280px) {
-		position: fixed;
+		position: ${(props) => (props['aria-fixed'] ? 'fixed' : 'static')};
+		max-width: ${(props) => (props['aria-fixed'] ? '' : '100%')};
 		bottom: 80px;
 		right: auto;
 		z-index: 999;
@@ -56,6 +58,30 @@ const PredictionCard = () => {
 	const [predictCount, setPredictCount] = useState(0);
 	const [yesCount, setyesCount] = useState(0);
 	const [endDate, setEndDate] = useState('');
+
+	const [isFixed, setIsFixed] = useState(true);
+	const govSideBarRef = useRef<HTMLElement | null>(null);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			govSideBarRef.current = document.getElementById('gov-side-bar');
+			if (!govSideBarRef.current) {
+				return;
+			}
+
+			const sideBar = govSideBarRef.current.getBoundingClientRect();
+
+			const isBottom = window.scrollY + window.innerHeight >= sideBar.bottom;
+
+			setIsFixed(!isBottom);
+		};
+
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [isFixed]);
 
 	useEffect(() => {
 		async function getPredictionsData() {
@@ -109,7 +135,7 @@ const PredictionCard = () => {
 	}, [yesCount, predictCount]);
 
 	return (
-		<Container>
+		<Container aria-fixed={isFixed}>
 			<div className='flex items-center justify-between font-poppins'>
 				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
 					Prediction

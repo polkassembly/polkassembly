@@ -104,7 +104,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				type_eq: subsquidProposalType
 			};
 
-			if (proposalType === ProposalType.TIPS || proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			if ([ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType)) {
 				variables = {
 					hash_eq: String(postId),
 					type_eq: subsquidProposalType
@@ -204,7 +204,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			type_eq: subsquidProposalType
 		};
 
-		if (proposalType === ProposalType.TIPS || proposalType === ProposalType.ADVISORY_COMMITTEE) {
+		if ([ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType)) {
 			variables = {
 				hash_eq: String(postId),
 				type_eq: subsquidProposalType
@@ -271,18 +271,11 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const summary = (await fetchContentSummary(content, proposalType)) || '';
 	const { data: postUser } = await getUserWithAddress(proposer_address);
 
-	let newPostDoc: Omit<Post, 'last_comment_at'> = {
+	const newPostDoc: Omit<Post, 'last_comment_at'> = {
 		content,
 		created_at,
 		history,
-		id:
-			proposalType === ProposalType.ANNOUNCEMENT
-				? postId
-				: proposalType === ProposalType.TIPS
-				? postId
-				: proposalType === ProposalType.ADVISORY_COMMITTEE
-				? postId
-				: Number(postId),
+		id: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
 		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
@@ -294,9 +287,6 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		user_id: postUser?.userId || user.id,
 		username: postUser?.username || user.username
 	};
-	if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
-		newPostDoc = { ...newPostDoc, proposalHashBlock: postId };
-	}
 
 	if (!postDoc.exists || !postDoc?.data() || !postDoc?.data()?.last_comment_at) {
 		(newPostDoc as Post).last_comment_at = last_comment_at;

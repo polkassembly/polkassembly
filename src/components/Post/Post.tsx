@@ -9,7 +9,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
@@ -38,6 +38,7 @@ import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,

@@ -8,7 +8,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 // import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useApiContext } from '~src/context';
@@ -21,6 +21,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const proposalType = ProposalType.REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {

@@ -111,6 +111,72 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
   }
   proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
     proposer
+    curator
+    createdAt
+    updatedAt
+    status
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+    preimage {
+      method
+      proposer
+      proposedCall {
+        args
+        description
+        method
+        section
+      }
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    trackNumber
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+       type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+  }
+}
+`;
+export const GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST = `
+query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    totalCount
+  }
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+    proposer
     proposalHashBlock
     curator
     createdAt
@@ -204,6 +270,64 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
 `;
 
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
+  proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
+    proposer
+    curator
+    createdAt
+    updatedAt
+    preimage {
+      method
+      proposer
+      proposedCall {
+        args
+      }
+    }
+    index
+    end
+    hash
+    description
+    type
+    origin
+    statusHistory {
+      id
+    }
+    tally {
+      ayes
+      nays
+      support
+    }
+    trackNumber
+    group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+    proposalArguments {
+      method
+      description
+    }
+    parentBountyIndex
+    statusHistory {
+      block
+      status
+      timestamp
+    }
+    status
+  }
+}`;
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
     proposalHashBlock

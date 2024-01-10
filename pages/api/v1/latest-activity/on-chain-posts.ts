@@ -8,7 +8,12 @@ import { isProposalTypeValid, isTrackNoValid, isValidNetwork } from '~src/api-ut
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSALS_LISTING_FOR_POLYMESH } from '~src/queries';
+import {
+	GET_PROPOSALS_LISTING_BY_TYPE,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST,
+	GET_PROPOSALS_LISTING_FOR_POLYMESH
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -65,6 +70,9 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		}
 		if (network === 'polymesh') {
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+		}
+		if (network === 'zeitgeist') {
+			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
 		}
 
 		let subsquidRes: any = {};

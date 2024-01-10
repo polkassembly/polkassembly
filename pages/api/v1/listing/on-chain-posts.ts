@@ -14,8 +14,10 @@ import {
 	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSALS_LISTING_BY_TYPE,
 	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST,
 	GET_PROPOSALS_LISTING_FOR_POLYMESH,
-	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES
+	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST
 } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -256,6 +258,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
+			if (network === 'zeitgeist') {
+				query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST;
+			}
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,
@@ -495,6 +500,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+			}
+			if (network === 'zeitgeist') {
+				query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
 			}
 			let subsquidRes: any = {};
 			try {

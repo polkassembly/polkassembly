@@ -934,9 +934,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	return (
 		<>
 			{
-				<div className={className}>
+				<div
+					className={className}
+					id='gov-side-bar'
+				>
 					<Form>
-						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}
@@ -1267,6 +1269,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<BountyChildBounties bountyId={onchainId} />
 							</>
 						)}
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
 					</Form>
 				</div>
 			}

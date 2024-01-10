@@ -303,7 +303,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 					<CustomButton
 						className='delegation-buttons'
 						variant='default'
-						buttonSize='xs'
+						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 						}}
@@ -334,7 +334,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							text='Cancel'
 							className='rounded-[4px]'
 							variant='default'
-							buttonSize='xs'
+							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
@@ -345,7 +345,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							onClick={async () => {
 								await handleSubmit();
 							}}
-							buttonSize='xs'
+							buttonsize='xs'
 						/>
 					</div>
 				}
@@ -487,9 +487,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									{trackArr?.length ? (
 										<Popover
-											defaultOpen={true}
 											content={content}
-											placement='topLeft'
+											placement='top'
 											zIndex={1056}
 										>
 											<Checkbox

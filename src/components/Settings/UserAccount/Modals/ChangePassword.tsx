@@ -182,7 +182,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 								key='1'
 								variant='default'
 								onClick={onCancel}
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 							<CustomButton
@@ -192,7 +192,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 								text='Save'
 								key='2'
 								variant='default'
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 						</div>

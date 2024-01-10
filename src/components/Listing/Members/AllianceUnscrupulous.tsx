@@ -5,10 +5,10 @@
 // import { AccountId32 } from '@polkadot/types/interfaces';
 import React, { useContext, useEffect, useState } from 'react';
 import { ErrorState } from 'src/ui-components/UIStates';
-import { LoadingState } from 'src/ui-components/UIStates';
 
 import AllianceAnnouncementsListing from './AllianceAnnouncementListing';
 import { ApiContext } from '~src/context/ApiContext';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const AllianceUnscrupulous = ({ className }: { className?: string }) => {
 	const { api, apiReady } = useContext(ApiContext);

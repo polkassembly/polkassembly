@@ -141,7 +141,6 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (proposer_address.startsWith('0x')) {
 		return proposer_address;
 	}
-
 	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 
@@ -449,6 +448,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				orderBy: orderBy,
 				type_in: subsquidProposalType
 			};
+
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
@@ -460,6 +460,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 					if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+						if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+							postsVariables.status_in = proposalStatus;
+						}
 					}
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {

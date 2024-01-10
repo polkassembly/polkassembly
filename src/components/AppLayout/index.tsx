@@ -419,39 +419,50 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
-		items = items.concat([
-			getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
-
-			getSiderMenuItem(
-				'Treasury',
-				'treasury_group',
-				null,
-				isOpenGovSupported(network)
-					? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
-						? [...gov1Items.treasuryItems]
-						: network === AllNetworks.MOONBEAM
-						? [
-								...[
+		if ([AllNetworks.PICASSO].includes(network)) {
+			items = items.concat([
+				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
+				getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
+			]);
+		} else {
+			items = items.concat([
+				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+				getSiderMenuItem(
+					'Treasury',
+					'treasury_group',
+					null,
+					isOpenGovSupported(network)
+						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
+							? [...gov1Items.treasuryItems]
+							: network === AllNetworks.MOONBEAM
+							? [
+									...[
+										getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+										getSiderMenuItem(
+											'Child Bounties',
+											'/child_bounties',
+											<ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+										)
+									]
+							  ]
+							: [
+									...gov1Items.treasuryItems,
 									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 									getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
-								]
-						  ]
+							  ]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 								getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
 						  ]
-					: [
-							...gov1Items.treasuryItems,
-							getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-							getSiderMenuItem('Child Bounties', '/child_bounties', <ChildBountiesIcon className='ml-0.5 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />)
-					  ]
-			),
+				),
 
-			getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
+				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
 
-			getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
-		]);
+				getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
+			]);
+		}
 	}
 
 	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
@@ -711,7 +722,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			}
 		}
 	};
-	if (network === AllNetworks.MOONBEAM) {
+	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2Items = gov2Items.concat(
 			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
 		);

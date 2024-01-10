@@ -456,7 +456,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
 	return (
 		<PostDataContextProvider
 			initialPostData={{
@@ -477,6 +476,7 @@ const Post: FC<IPostProps> = (props) => {
 				postType: proposalType,
 				post_link: post?.post_link,
 				post_reactions: post?.post_reactions,
+				proposalHashBlock: post?.proposalHashBlok || null,
 				proposer: post?.proposer || '',
 				requested: post?.requested,
 				reward: post?.reward,

@@ -37,6 +37,7 @@ export interface IPostData {
 	currentTimeline?: ITimeline;
 	last_edited_at?: string | Date;
 	proposer: string;
+	proposalHashBlock?: string | null;
 	curator: string;
 	username: string;
 	topic?: {

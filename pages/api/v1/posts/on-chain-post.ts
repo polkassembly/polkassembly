@@ -123,6 +123,7 @@ export interface IPostResponse {
 	decision?: string;
 	last_edited_at?: string | Date;
 	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
@@ -887,6 +888,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
+			proposalHashBlock: postData?.proposalHashBlock || null,
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,

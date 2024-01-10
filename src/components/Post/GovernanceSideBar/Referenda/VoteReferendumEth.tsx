@@ -379,10 +379,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<CustomButton
 				variant='primary'
 				fontSize='lg'
-				className='mb-3 w-[100%] p-6'
+				className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 				onClick={() => setShowModal(true)}
 			>
-				{!lastVote ? 'Cast Vote Now' : 'Cast Vote Again'}
+				{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
 			</CustomButton>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'

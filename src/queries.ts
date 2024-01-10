@@ -111,6 +111,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
   }
   proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
     proposer
+    proposalHashBlock
     curator
     createdAt
     updatedAt
@@ -205,6 +206,7 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
+    proposalHashBlock
     curator
     createdAt
     updatedAt
@@ -469,11 +471,12 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
 }`;
 
 export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
-  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, proposalHashBlock_eq: $hash_eq}) {
     index
     proposer
     status
     marketMetadata
+    proposalHashBlock
     preimage {
       proposer
       method

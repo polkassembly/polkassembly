@@ -105,7 +105,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
 
 		const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
+			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description, proposalHashBlock } = subsquidPost;
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
 				group.proposals.forEach((obj: any) => {
@@ -147,6 +147,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						method: method || preimage?.method,
 						origin,
 						post_id: postId,
+						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 						spam_users_count:
 							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -169,6 +170,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				method: method || preimage?.method,
 				origin,
 				post_id: postId,
+				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 				status: status,
 				title: subsquareTitle,

@@ -68,6 +68,7 @@ export interface IPostListing {
 	requestedAmount?: string;
 	proposer?: string;
 	curator?: string;
+	proposalHashBlock?: string | null;
 	parent_bounty_index?: number;
 	method?: string;
 	status?: string;
@@ -264,7 +265,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidPosts: any[] = subsquidData?.proposals;
 
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
+					subsquidPost;
 				let requested = BigInt(0);
 				let args = preimage?.proposedCall?.args;
 				if (args) {
@@ -359,6 +361,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
+							proposalHashBlock: proposalHashBlock || null,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 							requestedAmount: requested ? requested.toString() : undefined,
 							spam_users_count:
@@ -400,6 +403,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
 					post_reactions,
+					proposalHashBlock: proposalHashBlock || null,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 					requestedAmount: requested ? requested.toString() : undefined,
 					status: status,
@@ -687,7 +691,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				posts = await Promise.all(postsPromise);
 			} else {
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
+						subsquidPost;
 
 					const isStatus = {
 						swap: false
@@ -801,6 +806,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								parent_bounty_index: parentBountyIndex || null,
 								post_id: postId,
 								post_reactions,
+								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: requested ? requested.toString() : undefined,
 								spam_users_count:
@@ -842,6 +848,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
 						post_reactions,
+						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: requested ? requested.toString() : undefined,
 						status: status,

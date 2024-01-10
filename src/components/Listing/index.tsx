@@ -24,7 +24,6 @@ const Listing: FC<IListingProps> = (props) => {
 
 	const { network } = useNetworkSelector();
 	const [posts, setPosts] = useState(props.posts || []);
-
 	useEffect(() => {
 		if (!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
 		(async () => {
@@ -80,7 +79,8 @@ const Listing: FC<IListingProps> = (props) => {
 					tags,
 					tally,
 					spam_users_count,
-					votesData
+					votesData,
+					proposalHashBlock
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -89,7 +89,7 @@ const Listing: FC<IListingProps> = (props) => {
 						className='my-0'
 					>
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || hash : id}`}>
+							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}`}>
 								<GovernanceCard
 									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}

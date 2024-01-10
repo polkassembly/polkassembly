@@ -30,6 +30,7 @@ export interface IPostsRowData {
 	tip_id?: number;
 	spam_users_count?: number;
 	description?: string;
+	proposalHashBlock?: string | null;
 }
 
 interface IPostsTableProps {
@@ -69,6 +70,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			hash: isTip ? hash?.substring(0, 4) : hash,
 			key: id,
 			post_id: id,
+			proposalHashBlock: post?.proposalHashBlock || null,
 			proposer: proposer,
 			spam_users_count: spam_users_count,
 			status: status || '-',
@@ -94,9 +96,12 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 						);
 						const link = getSinglePostLinkFromProposalType(firestoreProposalType as ProposalType);
 						if ((event as KeyboardEvent).ctrlKey || (event as KeyboardEvent).metaKey) {
-							window?.open(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`, '_blank');
+							window?.open(
+								`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData?.proposalHashBlock : rowData.post_id) : rowData.post_id}`,
+								'_blank'
+							);
 						} else {
-							router.push(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData.hash : rowData.post_id) : rowData.post_id}`);
+							router.push(`/${link}/${rowData.type === 'AdvisoryCommittee' ? (rowData.post_id === null ? rowData?.proposalHashBlock : rowData.post_id) : rowData.post_id}`);
 						}
 					}}
 				/>

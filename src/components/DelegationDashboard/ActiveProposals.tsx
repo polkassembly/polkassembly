@@ -6,11 +6,13 @@ import ActiveProposalsIcon from '~assets/icons/active-proposals.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
-import { Empty, Pagination, Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { ETrackDelegationStatus } from '~src/types';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface Props {
 	className?: string;
@@ -30,6 +32,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, totalCount }: Props) => {
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 	const [page, setPage] = useState<number>(1);
 
 	return (
@@ -69,7 +72,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 								showSizeChanger={false}
 								hideOnSinglePage={true}
 								current={page}
-								onChange={(page) => {
+								onChange={(page: any) => {
 									router.replace({
 										pathname: '',
 										query: {
@@ -79,6 +82,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 									});
 									setPage(page);
 								}}
+								theme={theme}
 								responsive={true}
 							/>
 						</div>

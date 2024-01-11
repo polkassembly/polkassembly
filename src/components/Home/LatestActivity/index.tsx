@@ -110,6 +110,8 @@ const getLabel = (key: 'all' | ProposalType): string => {
 		return 'Upgrade';
 	} else if (key === ProposalType.COMMUNITY_PIPS) {
 		return 'Community';
+	} else if (key === ProposalType.ADVISORY_COMMITTEE) {
+		return 'Advisory Council Motions';
 	}
 	return capitalize(key);
 };

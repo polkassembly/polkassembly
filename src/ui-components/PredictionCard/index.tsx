@@ -4,7 +4,7 @@
 
 import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import InfoIcon from '~assets/info.svg';
 
@@ -42,7 +42,8 @@ const Container = styled.div`
 		color: #243a57;
 	}
 	@media (min-width: 1280px) {
-		position: fixed;
+		position: ${(props) => (props['aria-expanded'] ? 'fixed' : 'static')};
+		max-width: ${(props) => (props['aria-expanded'] ? '' : '100%')};
 		bottom: 80px;
 		right: auto;
 		z-index: 999;
@@ -57,12 +58,36 @@ const PredictionCard = () => {
 	const [yesCount, setyesCount] = useState(0);
 	const [endDate, setEndDate] = useState('');
 
+	const [isFixed, setIsFixed] = useState(true);
+	const govSideBarRef = useRef<HTMLElement | null>(null);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			govSideBarRef.current = document.getElementById('gov-side-bar');
+			if (!govSideBarRef.current) {
+				return;
+			}
+
+			const sideBar = govSideBarRef.current.getBoundingClientRect();
+
+			const isBottom = window.scrollY + window.innerHeight >= sideBar.bottom;
+
+			setIsFixed(!isBottom);
+		};
+
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [isFixed]);
+
 	useEffect(() => {
 		async function getPredictionsData() {
 			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
 				body: JSON.stringify({
 					query: `
-						query MarketDetails($marketId: Int = 345) {
+						query MarketDetails($marketId: Int = 350) {
 							markets(where: {marketId_eq: $marketId}) {
 								period {
 									end
@@ -109,7 +134,7 @@ const PredictionCard = () => {
 	}, [yesCount, predictCount]);
 
 	return (
-		<Container>
+		<Container aria-expanded={isFixed}>
 			<div className='flex items-center justify-between font-poppins'>
 				<h1 className='flex items-center gap-1 text-xl font-semibold leading-6'>
 					Prediction
@@ -122,7 +147,7 @@ const PredictionCard = () => {
 				</h1>
 				<a
 					className='font-mediums inline-block rounded-2xl border border-solid border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
-					href='https://app.zeitgeist.pm/markets/345'
+					href='https://app.zeitgeist.pm/markets/350'
 					target='_blank'
 					rel='noreferrer'
 					onClick={() =>

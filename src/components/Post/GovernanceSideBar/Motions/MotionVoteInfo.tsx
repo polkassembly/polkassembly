@@ -8,6 +8,8 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 import Address from '../../../../ui-components/Address';
+import { usePostDataContext } from '~src/context';
+import { ProposalType } from '~src/global/proposalType';
 
 interface IMotionVoteInfoProps {
 	className?: string;
@@ -19,11 +21,14 @@ interface IMotionVoteInfoProps {
 
 const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 	const { councilVotes, className } = props;
+	const {
+		postData: { postType }
+	} = usePostDataContext();
 
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9 xl:overflow-y-visible`}>
 			<h3 className='dashboard-heading flex items-center dark:text-white'>
-				Council Votes{' '}
+				{postType === ProposalType.ADVISORY_COMMITTEE && 'Advisory'} Council Votes
 				<HelperTooltip
 					className='ml-2 font-normal'
 					text='This represents the onchain votes of council members'

@@ -227,7 +227,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									}}
 									disabled={loading}
 									className='font-medium'
-									buttonSize='xs'
+									buttonsize='xs'
 									text='Cancel'
 								/>
 								<CustomButton
@@ -252,7 +252,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 											}));
 										}
 									}}
-									buttonSize='xs'
+									buttonsize='xs'
 									text='Save'
 								/>
 							</div>

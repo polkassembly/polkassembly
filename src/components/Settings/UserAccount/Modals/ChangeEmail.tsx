@@ -126,7 +126,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 								key='1'
 								variant='default'
 								onClick={onCancel}
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 							<CustomButton
@@ -135,7 +135,7 @@ const ChangeEmail = ({ open, onConfirm, onCancel, email }: { open: boolean; onCo
 								text='Save'
 								key='2'
 								variant='default'
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 						</div>

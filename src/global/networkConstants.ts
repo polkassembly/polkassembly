@@ -52,6 +52,7 @@ import turingLogo from '~assets/parachain-logos/turing-logo.png';
 import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
+import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
 
 import * as types from '../types';
 
@@ -110,7 +111,8 @@ export const network = {
 	VARA: 'vara',
 	WESTEND: 'westend',
 	WESTENDCOLLECTIVES: 'westend-collectives',
-	XX: 'xx'
+	XX: 'xx',
+	ZEITGEIST: 'zeitgeist'
 };
 
 export const tokenSymbol = {
@@ -162,7 +164,8 @@ export const tokenSymbol = {
 	XRT: 'XRT',
 	UNIT: 'UNIT',
 	VARA: 'VARA',
-	XX: 'XX'
+	XX: 'XX',
+	ZTG: 'ZTG'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -1751,6 +1754,23 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.xx.network',
 		gTag: 'G-23WF4VNWK4',
+		rpcEndpoints: []
+	},
+	[network.ZEITGEIST]: {
+		blockTime: 12000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: ZeitgeistLogo,
+		rpcEndpoint: 'wss://zeitgeist.api.onfinality.io/public-ws',
+		ss58Format: 73,
+		subsquidUrl: 'https://squid.subsquid.io/zeitgeist-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.ZTG,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://zeitgeist.api.subscan.io',
+		gTag: null,
 		rpcEndpoints: []
 	}
 };

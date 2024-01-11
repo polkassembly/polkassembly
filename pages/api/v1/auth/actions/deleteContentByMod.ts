@@ -12,6 +12,7 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
+import { deleteKeys, redisDel } from '~src/auth/redis';
 
 interface Args {
 	userId: string;
@@ -57,6 +58,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		reason,
 		userId: String(user.id)
 	};
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		const latestActivityKey = `${network}_latestActivity_OpenGov`;
+
+		await redisDel(discussionDetail);
+		await deleteKeys(discussionListingKey);
+
+		if (!commentId && !replyId) {
+			await redisDel(latestActivityKey);
+		}
+	}
+
 	res.status(200).json({ message: 'Content deleted.' });
 
 	const triggerName = 'contentDeletedByMod';

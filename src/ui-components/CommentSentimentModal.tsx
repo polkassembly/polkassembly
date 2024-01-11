@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Modal, Slider } from 'antd';
+import { Button, Modal, Slider } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
@@ -10,7 +10,6 @@ import { ESentiment } from '~src/types';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;
@@ -73,16 +72,13 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 					className='flex items-center justify-center'
 					key={1}
 				>
-					<CustomButton
-						customColor='green-400'
-						icon={<CheckOutlined />}
-						customBorderColor='green-400'
+					<Button
 						onClick={handleClick}
-						customTextColor='white'
-						text='Done'
-						height={34}
-						className='font-medium'
-					/>
+						className='t-xs flex items-center border-green-400 bg-green-400 font-medium text-white'
+					>
+						Done
+						<CheckOutlined />
+					</Button>
 				</div>
 			]}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}

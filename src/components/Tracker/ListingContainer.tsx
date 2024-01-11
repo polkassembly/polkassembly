@@ -5,7 +5,8 @@
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect, useState } from 'react';
 import Listing from 'src/components/Listing';
-import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
+import { ErrorState } from 'src/ui-components/UIStates';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';

@@ -5,6 +5,7 @@
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
 import { PaginationProps, Spin, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
@@ -31,6 +32,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const [votesHistory, setVotesHistory] = useState<IVoteHistory[]>([]);
 	const [count, setCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(1);
+	const { resolvedTheme: theme } = useTheme();
 
 	const url = getBlockLink(network);
 
@@ -140,6 +142,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 										<LeftOutlined />
 									</div>
 								}
+								theme={theme}
 							/>
 						</div>
 					</div>

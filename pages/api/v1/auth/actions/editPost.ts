@@ -21,7 +21,8 @@ import {
 	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
 	GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE,
 	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
-	GET_PROPOSAL_BY_INDEX_AND_TYPE_V2
+	GET_PROPOSAL_BY_INDEX_AND_TYPE_V2,
+	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostHistory, IPostTag, Post } from '~src/types';
@@ -91,6 +92,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 					? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
+					: proposalType === ProposalType.ADVISORY_COMMITTEE
+					? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
 			if (network === 'polymesh') {
@@ -101,7 +104,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				type_eq: subsquidProposalType
 			};
 
-			if (proposalType === ProposalType.TIPS) {
+			if ([ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType)) {
 				variables = {
 					hash_eq: String(postId),
 					type_eq: subsquidProposalType
@@ -188,6 +191,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
+				: proposalType === ProposalType.ADVISORY_COMMITTEE
+				? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
 		if (network === 'polymesh') {
@@ -199,7 +204,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			type_eq: subsquidProposalType
 		};
 
-		if (proposalType === ProposalType.TIPS) {
+		if ([ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType)) {
 			variables = {
 				hash_eq: String(postId),
 				type_eq: subsquidProposalType
@@ -270,7 +275,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		content,
 		created_at,
 		history,
-		id: proposalType === ProposalType.ANNOUNCEMENT ? postId : proposalType === ProposalType.TIPS ? postId : Number(postId),
+		id: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
 		isDeleted: false,
 		last_edited_at: last_comment_at,
 		post_link: post_link || null,
@@ -309,7 +314,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					{
 						content,
 						created_at,
-						id: proposalType === ProposalType.TIPS ? obj.hash : Number(obj.index),
+						id: proposalType === ProposalType.TIPS ? obj.hash : proposalType === ProposalType.ADVISORY_COMMITTEE ? obj?.proposalHashBlock || obj.hash : Number(obj.index),
 						isDeleted: false,
 						last_edited_at: last_comment_at,
 						post_link: post_link,
@@ -317,7 +322,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 						summary: summary,
 						tags: tags || [],
 						title,
-						topic_id: topic_id || getTopicFromType(proposalType).id,
+						topic_id: topicId || getTopicFromType(proposalType).id,
 						user_id: post?.user_id || user.id,
 						username: post?.username || user.username
 					},

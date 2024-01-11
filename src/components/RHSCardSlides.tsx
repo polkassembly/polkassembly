@@ -150,7 +150,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 										{card.tag}
 									</div>
 								</div>
-								<div className='card-slide flex h-full w-full  items-center justify-center gap-2 bg-rhs-card-gradient p-3'>
+								<div
+									className='card-slide flex h-full w-full  items-center justify-center gap-2 bg-rhs-card-gradient p-3'
+									onClick={card.clickHandler}
+								>
 									<Image
 										src={card.icon}
 										alt={card.title}

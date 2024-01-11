@@ -17,6 +17,7 @@ import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -44,6 +45,7 @@ interface IMotionsProps {
 export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -99,6 +101,7 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}
 								responsive={true}
+								theme={theme}
 							/>
 						)}
 					</div>

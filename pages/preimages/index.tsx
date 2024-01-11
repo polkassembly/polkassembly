@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Pagination as AntdPagination, Input, Skeleton } from 'antd';
+import { Pagination as AntdPagination } from '~src/ui-components/Pagination';
+import { Input, Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -52,6 +53,9 @@ const Pagination = styled(AntdPagination)`
 		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 	.anticon-left {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+	}
+	.ant-pagination-item-ellipsis {
 		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 `;

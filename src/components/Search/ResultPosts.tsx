@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Pagination } from 'antd';
+import { Divider } from 'antd';
+import { Pagination } from '~src/ui-components/Pagination';
+
 import React from 'react';
 import styled from 'styled-components';
 import { noTitle } from '~src/global/noTitle';
@@ -33,9 +35,11 @@ interface Props {
 	postsPage: number;
 	totalPage: number;
 	searchInput?: string;
+	theme?: string;
 }
-const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
+const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	console.log(theme);
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -172,7 +176,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 					);
 				})}
 			</div>
-			<div className='flex items-center justify-center px-4 py-4'>
+			<div className={`${className} mb-1 flex items-center justify-center px-4 py-4`}>
 				<Pagination
 					defaultCurrent={1}
 					current={postsPage}
@@ -194,5 +198,20 @@ export default styled(ResultPosts)`
 		-webkit-box-orient: vertical;
 		width: 100%;
 		overflow: hidden !important;
+	}
+	.ant-pagination .ant-pagination-item a {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination-item-active a {
+		color: #e5007a !important;
+	}
+	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
+	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		opacity: 0.5;
 	}
 `;

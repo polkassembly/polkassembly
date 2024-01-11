@@ -100,7 +100,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			history,
 			content,
 			summary,
-			identityId
+			identityId,
+			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
@@ -164,7 +165,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
 						?.map((v) => (v === 'referendumV2' ? 'Referenda' : v.charAt(0).toUpperCase() + v.slice(1)))
-						.join(' ')} #${onchainId}`
+						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}#${onchainId || `${hash.slice(0, 5)}...${hash.slice(hash.length - 5, hash.length)}`}`
 				) : (
 					<>
 						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}

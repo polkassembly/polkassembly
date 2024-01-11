@@ -37,6 +37,7 @@ export default function KillReferendaForm() {
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
+	const [error, setError] = useState<string>('');
 	const [postData, setPostData] = useState<{ title: string; content: string; index: string }>({
 		content: '',
 		index: '',
@@ -143,10 +144,30 @@ export default function KillReferendaForm() {
 	};
 
 	const getReferendaData = async (index: string) => {
+		if (!index) {
+			setError('');
+			console.log('invalid index');
+			return;
+		}
 		setLoadingStatus({ isLoading: true, message: 'fetching proposal details' });
-		const { data }: any = await nextApiClientFetch('api/v1/getTitleAndContent', { index });
-		setPostData({ ...data, index });
-		setLoadingStatus({ isLoading: false, message: '' });
+		try {
+			const { data }: any = await nextApiClientFetch('api/v1/getTitleAndContent', { index });
+			if (data.message) {
+				setError(data.message);
+				setPostData({
+					content: '',
+					index,
+					title: ''
+				});
+				return;
+			}
+			setPostData({ ...data, index });
+			setError('');
+		} catch (e) {
+			setError(e.message);
+		} finally {
+			setLoadingStatus({ isLoading: false, message: '' });
+		}
 	};
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
@@ -266,7 +287,8 @@ export default function KillReferendaForm() {
 					{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
 				</div>
 			)}
-			{!loadingStatus.isLoading && postData && (postData?.title || postData?.content) && (
+			{error && postData.index && <span className='text-[#FF4D4F]'>{error}</span>}
+			{!error && !loadingStatus.isLoading && postData && (postData?.title || postData?.content) && (
 				<>
 					<Form
 						name='post-content-form'

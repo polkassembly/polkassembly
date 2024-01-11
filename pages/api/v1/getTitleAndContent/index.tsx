@@ -8,7 +8,10 @@ import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
-import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
+import { ProposalType, getProposalTypeTitle, getSubsquidProposalType } from '~src/global/proposalType';
+import { GET_PROPOSAL_BY_INDEX_AND_TYPE } from '~src/queries';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { gov2ReferendumStatus } from '~src/global/statuses';
 
 export interface ITitleAndContent {
 	title: string;
@@ -17,6 +20,40 @@ export interface ITitleAndContent {
 
 export const getTitleAndContent = async ({ network, index }: { network: string; index: number }) => {
 	try {
+		const query = GET_PROPOSAL_BY_INDEX_AND_TYPE;
+		const postVariables = {
+			index_eq: Number(index),
+			type_eq: getSubsquidProposalType(ProposalType.REFERENDUM_V2)
+		};
+		const subsquidRes = await fetchSubsquid({
+			network,
+			query: query,
+			variables: postVariables
+		});
+		const proposalData = subsquidRes.data.proposals?.[0];
+		if (!proposalData) {
+			return {
+				data: { content: '', title: '' } as ITitleAndContent,
+				error: 'proposal not found',
+				status: 200
+			};
+		}
+		const canVote =
+			Boolean(proposalData.status) &&
+			[
+				gov2ReferendumStatus.CONFIRM_ABORTED,
+				gov2ReferendumStatus.CONFIRM_STARTED,
+				gov2ReferendumStatus.DECISION_DEPOSIT_PLACED,
+				gov2ReferendumStatus.DECIDING,
+				gov2ReferendumStatus.SUBMITTED
+			].includes(proposalData.status);
+		if (!canVote) {
+			return {
+				data: { content: '', title: '' } as ITitleAndContent,
+				error: `current proposal status is ${proposalData.status}`,
+				status: 200
+			};
+		}
 		const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2).doc(String(index));
 		const data = await postDocRef.get();
 		if (data.exists) {

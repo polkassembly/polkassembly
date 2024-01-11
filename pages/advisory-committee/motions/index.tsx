@@ -4,20 +4,23 @@
 import { Pagination } from '~src/ui-components/Pagination';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { getOnChainPosts } from 'pages/api/v1/listing/on-chain-posts';
+import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { sortValues } from '~src/global/sortOptions';
-import { setNetwork } from '~src/redux/network';
+import FilterByTags from '~src/ui-components/FilterByTags';
+import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
-import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import { useTheme } from 'next-themes';
+import MotionsIcon from '~assets/icons/motions-icon.svg';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { setNetwork } from '~src/redux/network';
+import { useDispatch } from 'react-redux';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -25,9 +28,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { page = 1, sortBy = sortValues.NEWEST } = query;
-	const proposalType = ProposalType.ALLIANCE_MOTION;
+	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
+	const proposalType = ProposalType.ADVISORY_COMMITTEE;
 	const { data, error } = await getOnChainPosts({
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -38,14 +42,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 interface IMotionsProps {
-	data?: { posts: any[]; count: number };
+	data?: IPostsListingResponse;
 	error?: string;
 	network: string;
 }
-export const AllianceMotions: FC<IMotionsProps> = (props) => {
+const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
-	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -55,9 +58,7 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
-
 	if (!data) return null;
-
 	const { posts, count } = data;
 	const onPaginationChange = (page: number) => {
 		router.push({
@@ -71,25 +72,27 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	return (
 		<>
 			<SEOHead
-				title='Alliance Motion'
+				title='Motions'
+				desc="Stay informed on the latest council motions and hear the council's say in the governance voting process on Polkassembly's council motion page"
 				network={network}
 			/>
-			<h1 className='dashboard-heading mb-4 md:mb-6'>Alliance Motions</h1>
-			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
-					This is the place to discuss on-chain motions. On-chain posts are automatically generated as soon as they are created on the chain. Only the proposer is able to edit
-					them.
-				</p>
+			<div className='mt-3 flex sm:items-center'>
+				<MotionsIcon className='xs:mt-0.5 sm:-mt-3.5' />
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Advisory Council Motions ({count})</h1>
 			</div>
-			<div className='rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
+
+			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center justify-between'>
-					<h1 className='dashboard-heading'>{count} Motions</h1>
+					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
+						<FilteredTags />
+					</div>
+					<FilterByTags className='my-6 xs:mx-6 xs:my-2 sm:mr-14' />
 				</div>
 
 				<div>
 					<Listing
 						posts={posts}
-						proposalType={ProposalType.ALLIANCE_MOTION}
+						proposalType={ProposalType.ADVISORY_COMMITTEE}
 					/>
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
@@ -101,7 +104,6 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}
 								responsive={true}
-								theme={theme}
 							/>
 						)}
 					</div>
@@ -111,4 +113,4 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	);
 };
 
-export default AllianceMotions;
+export default Motions;

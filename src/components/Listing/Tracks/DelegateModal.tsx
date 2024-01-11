@@ -151,7 +151,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			addresses: [delegationDashboardAddress]
+		});
 		if (data) {
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
 			if (network) {

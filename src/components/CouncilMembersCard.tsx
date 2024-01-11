@@ -19,7 +19,10 @@ const CouncilMembersCard = function ({ className, data, prime }: Props) {
 		>
 			<div className='flex justify-between'>
 				<div className='content'>
-					<Address address={data} />
+					<Address
+						address={data}
+						isTruncateUsername={false}
+					/>
 				</div>
 				{data === prime && <StatusTag status={'Prime'} />}
 			</div>

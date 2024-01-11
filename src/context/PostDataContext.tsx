@@ -37,6 +37,7 @@ export interface IPostData {
 	currentTimeline?: ITimeline;
 	last_edited_at?: string | Date;
 	proposer: string;
+	proposalHashBlock?: string | null;
 	curator: string;
 	username: string;
 	topic?: {
@@ -48,9 +49,11 @@ export interface IPostData {
 	requested?: string | number | BN;
 	reward?: string | number | BN;
 	post_reactions?: IReactions;
+	marketMetadata: any | null;
 	comments: { [index: string]: Array<IComment> };
 	polls?: IPoll[];
 	optionPolls?: IOptionPoll[];
+	hash: string;
 	post_link?: {
 		id?: string | number;
 		type?: string;

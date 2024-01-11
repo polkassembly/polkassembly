@@ -73,6 +73,22 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Loader from '~src/ui-components/Loader';
+
+const CancelReferendaForm = dynamic(() => import('../Forms/CancelReferendaForm'), {
+	loading: () => <Loader />,
+	ssr: false
+});
+
+const KillReferendaForm = dynamic(() => import('../Forms/KillReferendaForm'), {
+	loading: () => <Loader />,
+	ssr: false
+});
+
+const CreateReferendaForm = dynamic(() => import('../Forms/CreateReferendaForm'), {
+	loading: () => <Loader />,
+	ssr: false
+});
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -264,7 +280,41 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const dispatch = useDispatch();
+	const getReferendaDropdown = (): any => {
+		const referendaItems: ItemType[] = [
+			// {
+			// 	key: 'create proposal',
+			// 	label: <span onClick={() => setReferendaModal(1)}>Create Proposal</span>
+			// },
+			{
+				key: 'cancel proposal',
+				label: <span onClick={() => setReferendaModal(2)}>Cancel Proposal</span>
+			},
+			{
+				key: 'kill proposal',
+				label: <span onClick={() => setReferendaModal(3)}>Kill Proposal</span>
+			}
+		];
+		const RefMenu = () => {
+			return (
+				<Dropdown
+					theme={theme}
+					menu={{ items: referendaItems }}
+					trigger={['hover']}
+					className='profile-dropdown cursor-pointer'
+					overlayClassName='z-[1056]'
+				>
+					<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
+						Select Referenda
+						<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
+					</div>
+				</Dropdown>
+			);
+		};
+		return { label: <RefMenu />, key: '', icon: '', disabled: true };
+	};
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -736,6 +786,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
+		if (loginAddress) gov2Items = [gov2Items.shift(), getReferendaDropdown(), ...gov2Items];
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
@@ -795,7 +846,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-					// footer={<BigToggleButton />}
 				>
 					<div
 						className='flex h-full flex-col justify-between'
@@ -810,6 +860,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
+
 						<BigToggleButton />
 					</div>
 				</Drawer>
@@ -857,6 +908,24 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)}
 
 			<Footer theme={theme} />
+			{referendaModal && (
+				<Modal
+					zIndex={100}
+					open={referendaModal !== 0}
+					footer={false}
+					closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
+					onCancel={() => setReferendaModal(0)}
+					className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
+					title={
+						<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+							{referendaModal === 1 ? 'Create a Referenda' : referendaModal === 2 ? 'Cancel a Referenda' : 'Kill a Referenda'}
+						</span>
+					}
+					wrapClassName='dark:bg-modalOverlayDark'
+				>
+					{referendaModal === 1 ? <CreateReferendaForm /> : referendaModal === 2 ? <CancelReferendaForm /> : <KillReferendaForm />}
+				</Modal>
+			)}
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

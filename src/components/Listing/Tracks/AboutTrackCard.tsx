@@ -28,6 +28,8 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
+import Address from '~src/ui-components/Address';
+import Link from 'next/link';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -146,6 +148,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { className, trackName } = props;
+	const [delegatedTo, setDelegatedTo] = useState('');
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, trackName));
@@ -161,17 +164,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			addresses: [loginAddress],
 			track: trackMetaData.trackId
 		});
-		console.log(data, error);
+		if (data && data[0]?.delegations[0]?.to) {
+			setDelegatedTo(data[0]?.delegations[0]?.to);
+		}
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) {
-			return;
-		}
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackMetaData.trackId]);
@@ -269,7 +271,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
@@ -286,12 +288,29 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</div>
 				</div>
 			</article>
-			<Alert
-				message={<span className='text-[13px] dark:text-blue-dark-high'>You have delegated vote to</span>}
-				className={'mt-4 rounded-[10px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'}
-				type='success'
-				showIcon
-			/>
+			{delegatedTo && (
+				<Alert
+					message={
+						<span className='flex items-center text-[13px] dark:text-blue-dark-high'>
+							You have delegated vote to
+							<Address
+								address={delegatedTo}
+								className='ml-2 text-sm'
+								iconSize={20}
+							/>
+							<Link
+								href='#'
+								className='ml-2 text-xs text-pink_primary'
+							>
+								View Details
+							</Link>
+						</span>
+					}
+					className={'mt-4 rounded-[10px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'}
+					type='success'
+					showIcon
+				/>
+			)}
 			<section className={`${className} mt-2 rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
 				<div className='text-container flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
 					<p className='m-0 p-0 text-sm'>

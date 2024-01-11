@@ -53,6 +53,9 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import Address from '~src/ui-components/Address';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -64,6 +67,7 @@ interface Props {
 	proposalType: ProposalType;
 	address: string;
 	theme?: string;
+	track_number?: number;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -115,7 +119,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, track_number }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -151,6 +155,23 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const [delegatedTo, setDelegatedTo] = useState('');
+
+	const getData = async (address: any) => {
+		console.log('-->', address, track_number);
+		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			addresses: [address],
+			track: track_number
+		});
+		if (data && data[0]?.delegations[0]?.to) {
+			setDelegatedTo(data[0]?.delegations[0]?.to);
+		}
+	};
+
+	useEffect(() => {
+		getData(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [track_number, address]);
 
 	useEffect(() => {
 		getWallet();
@@ -826,7 +847,23 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
-
+								{delegatedTo && (
+									<Alert
+										message={
+											<span className='flex items-center dark:text-blue-dark-high'>
+												This account has already delegated vote to
+												<Address
+													address={delegatedTo}
+													className='ml-2 text-sm'
+													iconSize={20}
+												/>
+											</span>
+										}
+										showIcon
+										type='warning'
+										className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									/>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented

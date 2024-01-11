@@ -86,7 +86,7 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
-					className='w-full'
+					className='mt-4 w-full'
 					height={40}
 					variant='primary'
 					text='Verified successfully'

@@ -614,7 +614,7 @@ const IdentityForm = ({
 					className='rounded-[4px]'
 					text='Cancel'
 					variant='default'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 				<CustomButton
 					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
@@ -625,7 +625,7 @@ const IdentityForm = ({
 					}`}
 					text='Set Identity'
 					variant='primary'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 			</div>
 			<SuccessState

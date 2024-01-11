@@ -899,6 +899,17 @@ export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $
   }
 }
 `;
+export const GET_STATUS_HISTORY_BY_PREIMAGES_HASH = `
+query GetStatusHistoryByPreImages($hash_in:[String!]) {
+  statusHistories(where: {preimage_isNull: false, preimage: {hash_in: $hash_in}}) {
+    extrinsicIndex
+    preimage {
+      hash
+    }
+    status
+  }
+}
+`;
 
 export const VOTING_HISTORY_BY_VOTER_ADDRESS = `
 query VotingHistoryByVoterAddress($offset: Int = 0, $limit: Int = 10, $voter_eq: String) {

@@ -7,7 +7,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { GET_PREIMAGES_TABLE_QUERY } from '~src/queries';
+import { GET_PREIMAGES_TABLE_QUERY, GET_STATUS_HISTORY_BY_PREIMAGES_HASH } from '~src/queries';
 import { IApiResponse, IPreimagesListingResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -44,9 +44,31 @@ export async function getPreimages(params: IGetPreimagesParams): Promise<IApiRes
 		});
 
 		const subsquidData = subsquidRes?.data;
+		const preImages = subsquidData?.preimages || [];
+		const hashIDs = new Set(
+			preImages?.map((preImage: any) => {
+				return preImage?.hash;
+			})
+		);
+
+		const subsquidStatusHistoryRes = await fetchSubsquid({
+			network,
+			query: GET_STATUS_HISTORY_BY_PREIMAGES_HASH,
+			variables: {
+				hash_in: Array.from(hashIDs)
+			}
+		});
+
+		for (let i = 0; i < preImages.length; i++) {
+			const statusHistory = subsquidStatusHistoryRes?.data?.statusHistories?.find((statusHistory: any) => statusHistory?.preimage?.hash === preImages[i]?.hash);
+			if (statusHistory) {
+				preImages[i].statusHistory = statusHistory;
+			}
+		}
+
 		const data: IPreimagesListingResponse = {
 			count: Number(subsquidData?.preimagesConnection?.totalCount),
-			preimages: subsquidData?.preimages || []
+			preimages: preImages || []
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),

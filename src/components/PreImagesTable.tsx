@@ -76,7 +76,7 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 		const onSuccess = () => {
 			queueNotification({
 				header: 'Success!',
-				message: 'Preimage deleted successfully.',
+				message: 'Preimage Cleared Successfully',
 				status: NotificationStatus.SUCCESS
 			});
 		};
@@ -167,8 +167,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			width: 300,
 			render: (hash, obj) => (
 				<div className='flex space-x-[6px]'>
-					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}................${hash.substring(hash.length - 6)}`}</span>
-					<Tooltip title='Copy Address'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}............${hash.substring(hash.length - 6)}`}</span>
+					<Tooltip title='Copy'>
 						<span
 							className='mt-[2px] cursor-pointer'
 							onClick={(e) => {
@@ -189,7 +189,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					<Tooltip title='Subscan'>
 						<span
 							className='cursor-pointer'
-							onClick={() => window.open(`https://www.subscan.io/account/${obj.proposer}`, '_blank')}
+							onClick={() => window.open(`https://${network}.subscan.io/extrinsic/${obj?.statusHistory?.extrinsicIndex}`, '_blank')}
 						>
 							<ImageIcon
 								src='/assets/icons/subscan-link.svg'
@@ -258,14 +258,16 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			render: (status, obj) => (
 				<div className='flex items-center justify-start space-x-4'>
 					<span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
-					<UnnoteButton
-						proposer={obj.proposer}
-						hash={obj.hash}
-						api={api}
-						apiReady={apiReady}
-						network={network}
-						substrateAddresses={substrateAddresses}
-					/>
+					{status == 'Noted' && (
+						<UnnoteButton
+							proposer={obj.proposer}
+							hash={obj.hash}
+							api={api}
+							apiReady={apiReady}
+							network={network}
+							substrateAddresses={substrateAddresses}
+						/>
+					)}
 				</div>
 			)
 		}

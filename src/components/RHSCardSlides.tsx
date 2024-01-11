@@ -42,6 +42,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [showRefundDeposit, setShowRefundDeposit] = useState<{ show: boolean; decisionDeposit: boolean; submissionDeposit: boolean }>({
+		decisionDeposit: false,
+		show: false,
+		submissionDeposit: false
+	});
 
 	const {
 		postData: { post_link, tags, postType, content, statusHistory, postIndex }
@@ -67,9 +72,13 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		setLoading(true);
 		const refundDecisionDepositTx = api?.tx.referenda.refundDecisionDeposit(postIndex);
 		const refundSubmissionDepositTx = api?.tx.referenda.refundSubmissionDeposit(postIndex);
+		let refundTx = refundDecisionDepositTx;
 
-		const refundTx = api.tx.utility.batchAll([refundDecisionDepositTx, refundSubmissionDepositTx]);
-
+		if (showRefundDeposit?.decisionDeposit && showRefundDeposit.submissionDeposit) {
+			refundTx = api.tx.utility.batchAll([refundDecisionDepositTx, refundSubmissionDepositTx]);
+		} else if (showRefundDeposit.submissionDeposit && !showRefundDeposit?.decisionDeposit) {
+			refundTx = refundSubmissionDepositTx;
+		}
 		const onSuccess = async () => {
 			queueNotification({
 				header: 'Success!',
@@ -98,6 +107,20 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			tx: refundTx
 		});
 	};
+	useEffect(() => {
+		if (!api || !apiReady || (Number(postIndex) !== 0 && !postIndex)) return;
+		(async () => {
+			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
+			if (isRefundExists) {
+				setShowRefundDeposit({
+					decisionDeposit: !!isRefundExists?.Ongoing?.decisionDeposit,
+					show: !!isRefundExists?.Ongoing?.decisionDeposit || !!isRefundExists?.Ongoing?.submissionDeposit,
+					submissionDeposit: !!isRefundExists?.Ongoing?.submissionDeposit
+				});
+			}
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, postIndex]);
 
 	useEffect(() => {
 		if (
@@ -110,7 +133,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					gov2ReferendumStatus.CONFIRMED,
 					gov2ReferendumStatus.EXECUTION_FAILED
 				].includes(status?.status)
-			)?.length
+			)?.length &&
+			showRefundDeposit?.show
 		) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];

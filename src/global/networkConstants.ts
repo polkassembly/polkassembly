@@ -1771,7 +1771,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://zeitgeist.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://zeitgeist-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://zeitgeist.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via ZeitgeistPM',
+				key: 'wss://main.rpc.zeitgeist.pm/ws'
+			}
+		]
 	}
 };
 

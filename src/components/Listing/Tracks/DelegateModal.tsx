@@ -151,7 +151,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			addresses: [delegationDashboardAddress]
+		});
 		if (data) {
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
 			if (network) {
@@ -303,7 +305,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 					<CustomButton
 						className='delegation-buttons'
 						variant='default'
-						buttonSize='xs'
+						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 						}}
@@ -334,7 +336,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							text='Cancel'
 							className='rounded-[4px]'
 							variant='default'
-							buttonSize='xs'
+							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
@@ -345,7 +347,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							onClick={async () => {
 								await handleSubmit();
 							}}
-							buttonSize='xs'
+							buttonsize='xs'
 						/>
 					</div>
 				}

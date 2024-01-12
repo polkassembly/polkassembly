@@ -17,6 +17,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -45,6 +46,7 @@ interface IAnnouncementProps {
 const Announcements = (props: IAnnouncementProps) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	const router = useRouter();
 
@@ -102,6 +104,7 @@ const Announcements = (props: IAnnouncementProps) => {
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}
 								responsive={true}
+								theme={theme}
 							/>
 						)}
 					</div>

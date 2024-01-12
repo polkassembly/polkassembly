@@ -403,6 +403,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<LeftOutlined />
 							</div>
 						}
+						theme={theme}
 					/>
 				</div>
 			</Spin>

@@ -11,10 +11,11 @@ import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 
 import Address from './Address';
 import StatusTag from './StatusTag';
-import { ErrorState, LoadingState, PostEmptyState } from './UIStates';
+import { ErrorState, PostEmptyState } from './UIStates';
 import { poppins } from 'pages/_app';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { useTheme } from 'next-themes';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const LatestActivityWrapper = ({ children }: { children: ReactNode }) => <div className='flex h-[500px] items-center justify-center overflow-y-auto'>{children}</div>;
 

@@ -17,6 +17,7 @@ import { votesSortValues } from '~src/global/sortOptions';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
 
 interface IVotersListProps {
 	className?: string;
@@ -44,6 +45,7 @@ const sortedCheck = {
 
 const DelegationVotersList: FC<IVotersListProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const {
 		postData: { postType }
 	} = usePostDataContext();
@@ -181,6 +183,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 										<LeftOutlined />
 									</div>
 								}
+								theme={theme}
 							/>
 						</div>
 					</div>

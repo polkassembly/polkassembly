@@ -6,35 +6,50 @@ import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import NavigateNextIcon from '~assets/icons/navigate-next.svg';
 import NavigatePrevIcon from '~assets/icons/navigate-prev.svg';
-import { usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import dynamic from 'next/dynamic';
 import { checkIsOnChainPost } from '~src/global/proposalType';
+import { gov2ReferendumStatus } from '~src/global/statuses';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
+import executeTx from '~src/util/executeTx';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
 });
 
-type card = { title: string; description: string; icon: string; tag: string; clickHandler?: (() => void) | ((prop: any) => void) };
+type card = { title: string; description: string; icon: string; tag: string; clickHandler?: (() => void) | ((prop?: any) => void) };
 
 enum cardTags {
 	ADD_DEADLINE = 'add',
 	LINK_DISCUSSION = 'link',
 	DECISION_DEPOSIT = 'pay',
 	ADD_DESCRIPTION = 'add',
-	ADD_TAGS = 'add'
+	ADD_TAGS = 'add',
+	REFUND_DEPOSIT = 'refund'
 }
 
 type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const { loginAddress } = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
 	const [linkingAndEditingOpen, setLinkingAndEditingOpen] = useState(false);
 	const [openLinkCta, setOpenLinkCta] = useState(false);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [showRefundDeposit, setShowRefundDeposit] = useState<{ show: boolean; decisionDeposit: boolean; submissionDeposit: boolean }>({
+		decisionDeposit: false,
+		show: false,
+		submissionDeposit: false
+	});
 
 	const {
-		postData: { post_link, tags, postType, content }
+		postData: { post_link, tags, postType, content, statusHistory, postIndex }
 	} = usePostDataContext();
 
 	const isOnchainPost = checkIsOnChainPost(postType);
@@ -52,8 +67,90 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			return newIndex;
 		});
 	};
+	const handleRefundDepositClick = async () => {
+		if (!api || !apiReady || !network) return;
+		setLoading(true);
+		const refundDecisionDepositTx = api?.tx.referenda.refundDecisionDeposit(postIndex);
+		const refundSubmissionDepositTx = api?.tx.referenda.refundSubmissionDeposit(postIndex);
+		let refundTx = refundDecisionDepositTx;
+
+		if (showRefundDeposit?.decisionDeposit && showRefundDeposit.submissionDeposit) {
+			refundTx = api.tx.utility.batchAll([refundDecisionDepositTx, refundSubmissionDepositTx]);
+		} else if (showRefundDeposit.submissionDeposit && !showRefundDeposit?.decisionDeposit) {
+			refundTx = refundSubmissionDepositTx;
+		}
+		const onSuccess = async () => {
+			queueNotification({
+				header: 'Success!',
+				message: 'Refund successully proccessed',
+				status: NotificationStatus.SUCCESS
+			});
+			setLoading(false);
+		};
+		const onFailed = () => {
+			queueNotification({
+				header: 'failed!',
+				message: 'Transaction failed!',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+		};
+
+		await executeTx({
+			address: loginAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			tx: refundTx
+		});
+	};
+	useEffect(() => {
+		if (!api || !apiReady || (Number(postIndex) !== 0 && !postIndex)) return;
+		(async () => {
+			if (
+				!statusHistory?.filter((status) =>
+					[
+						gov2ReferendumStatus.TIMEDOUT,
+						gov2ReferendumStatus.CANCELLED,
+						gov2ReferendumStatus.EXECUTED,
+						gov2ReferendumStatus.CONFIRMED,
+						gov2ReferendumStatus.EXECUTION_FAILED
+					].includes(status?.status)
+				)?.length
+			)
+				return;
+			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
+			if (isRefundExists) {
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Cancelled?.[1]);
+				setShowRefundDeposit({
+					decisionDeposit: isDecisionDeposit,
+					show: isDecisionDeposit || isSubmissionDeposit,
+					submissionDeposit: isSubmissionDeposit
+				});
+			}
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, postIndex, statusHistory]);
 
 	useEffect(() => {
+		if (showRefundDeposit?.show) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => handleRefundDepositClick(),
+					description: 'Click here to refund the deposit for this proposal',
+					icon: '/assets/icons/rhs-card-icons/Crystal.png',
+					tag: cardTags.REFUND_DEPOSIT,
+					title: 'Refund Deposit'
+				});
+
+				return newCards;
+			});
+		}
 		if (showDecisionDeposit) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
@@ -115,7 +212,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		return () => {
 			setRHSCards([]);
 		};
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content, showRefundDeposit]);
 
 	if (!RHSCards || RHSCards.length === 0) return null;
 
@@ -144,8 +242,13 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 							>
 								<div className='absolute right-0 top-0 h-[45px] w-[90px] cursor-pointer rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
 									<div
-										className='navigation-btn absolute bottom-2 left-2 right-0 top-0 z-10 flex items-center justify-center  rounded-full bg-pink_primary p-1 text-base font-medium capitalize text-white shadow-md'
-										onClick={card.clickHandler}
+										className={`navigation-btn absolute bottom-2 left-2 right-0 top-0 z-10 flex items-center justify-center rounded-full bg-pink_primary p-1 text-sm font-medium capitalize tracking-wide text-white shadow-md ${
+											loading && 'cursor-progress opacity-50'
+										}`}
+										onClick={() => {
+											if (loading) return;
+											card.clickHandler?.();
+										}}
 									>
 										{card.tag}
 									</div>
@@ -172,7 +275,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						{RHSCards.length > 1 && (
 							<span
 								className='mr-8 px-2'
-								onClick={prevSlide}
+								onClick={() => {
+									prevSlide();
+									setLoading(false);
+								}}
 							>
 								<NavigatePrevIcon className='fill-current text-black dark:text-white' />
 							</span>
@@ -186,7 +292,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						{RHSCards.length > 1 && (
 							<span
 								className='ml-8 px-2'
-								onClick={nextSlide}
+								onClick={() => {
+									nextSlide();
+									setLoading(false);
+								}}
 							>
 								<NavigateNextIcon className='fill-current text-black dark:text-white' />
 							</span>

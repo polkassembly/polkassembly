@@ -23,7 +23,6 @@ export interface ITrackDelegation {
 export const getDelegationDashboardData = async (addresses: string[], network: string, trackNum?: number) => {
 	if (!addresses.length || !network || !isOpenGovSupported(network)) return [];
 	const encodedAddresses = addresses.map((address) => getEncodedAddress(address, network));
-	console.log(encodedAddresses);
 
 	const subsquidFetches: { [index: number]: any } = [];
 

@@ -132,7 +132,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 
 			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				Join our Community to discuss, contribute and get regular updates from us!
-				{showGallery && (
+				{showGallery && showGov2Links && (
 					<span
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(false)}
@@ -140,7 +140,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 						Minimize Gallery
 					</span>
 				)}
-				{!showGallery && (
+				{!showGallery && showGov2Links && (
 					<span
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(true)}

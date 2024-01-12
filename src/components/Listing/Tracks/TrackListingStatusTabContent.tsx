@@ -8,8 +8,9 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import { poppins } from 'pages/_app';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
-import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,

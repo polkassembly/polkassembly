@@ -343,6 +343,7 @@ export interface Post {
 	post_link: PostLink | null;
 	username?: string;
 	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	subscribers?: number[];
@@ -411,10 +412,10 @@ export type PjsCalendarItem = PjsCalendarItemDuration & {
 };
 
 export enum ETrackDelegationStatus {
-	All = 'all',
-	Delegated = 'delegated',
-	Received_Delegation = 'received_delegation',
-	Undelegated = 'undelegated'
+	ALL = 'all',
+	DELEGATED = 'delegated',
+	RECEIVED_DELEGATION = 'received_delegation',
+	UNDELEGATED = 'undelegated'
 }
 
 export interface IDelegation {

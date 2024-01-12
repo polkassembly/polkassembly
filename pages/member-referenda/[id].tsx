@@ -7,7 +7,7 @@ import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post'
 import React, { FC } from 'react';
 import Post from 'src/components/Post/Post';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
+import { ErrorState } from 'src/ui-components/UIStates';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { noTitle } from '~src/global/noTitle';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -23,6 +23,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {

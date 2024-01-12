@@ -117,6 +117,22 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
+	const handleSocials = () => {
+		setIdentityArr([
+			{
+				isVerified: (!!identity?.twitter && isGood) || false,
+				key: ESocialType.TWITTER,
+				value: identity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
+			},
+			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
+			{
+				isVerified: (!!identity?.email && isGood) || false,
+				key: ESocialType.EMAIL,
+				value: identity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
+			},
+			{ isVerified: (!!identity?.riot && isGood) || false, key: ESocialType.RIOT, value: identity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || '' }
+		]);
+	};
 	const handleKiltSocialFields = (verified: boolean, key: ESocialType, value: string) => {
 		switch (key) {
 			case ESocialType.EMAIL:
@@ -141,7 +157,6 @@ const QuickView = ({
 
 						for (const social of res) {
 							if (social?.credential?.claim?.contents) {
-								console.log(social);
 								Object.entries(social?.credential?.claim?.contents).map(([key, value]) => {
 									socialsArr.push(handleKiltSocialFields(true, key as ESocialType, value as string) as ISocialsType);
 									if (key === 'Username' && social?.metadata?.label === 'KILT Discord Credential') {
@@ -182,7 +197,12 @@ const QuickView = ({
 		handleKiltSocials();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isKiltNameExists, api, apiReady, network]);
+	useEffect(() => {
+		if (isKiltNameExists || !api || !apiReady || network === 'kilt') return;
 
+		handleSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [identity]);
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
@@ -260,9 +280,7 @@ const QuickView = ({
 												key={index}
 											>
 												<SocialLink
-													className={`flex h-[24px] w-[24px] items-center justify-center rounded-full text-base hover:text-[#576D8B] ${
-														isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'
-													}`}
+													className={`flex h-6 w-6 items-center justify-center rounded-full text-base hover:text-[#576D8B] ${isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'}`}
 													link={link as string}
 													type={social}
 													iconClassName={`text-sm ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
@@ -281,7 +299,7 @@ const QuickView = ({
 										}}
 										href={identity?.web}
 										title={identity?.web}
-										className={`flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
+										className={`flex h-6 w-6 cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-black'}`}
 									>
 										<WebIcon />
 									</Link>
@@ -296,7 +314,7 @@ const QuickView = ({
 										}}
 										title={`https://polkaverse.com/accounts/${address}`}
 										href={`https://polkaverse.com/accounts/${address}`}
-										className='flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
+										className='flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl'
 									>
 										<PolkaverseIcon />
 									</Link>
@@ -345,7 +363,7 @@ const QuickView = ({
 					<div className='flex w-full items-center'>
 						<CustomButton
 							onClick={handleTipping}
-							variant='default'
+							variant='primary'
 							text='Tip'
 							height={32}
 							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}

@@ -20,13 +20,14 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import { checkIsAddressMultisig } from './utils/checkIsAddressMultisig';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 interface Props {
 	className?: string;
 	posts: any[];
 	trackDetails: any;
+	totalCount: number;
+	theme: string;
 }
 
 const Delegate = dynamic(() => import('./Delegate'), {
@@ -73,7 +74,7 @@ export const handleTrack = (track: string) => {
 	return trackName.trim();
 };
 
-const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
+const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, theme }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const {
@@ -91,14 +92,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-	const [isSelectedAddressMultisig, setIsSelectedAddressMultisig] = useState(false);
-
-	useEffect(() => {
-		setIsSelectedAddressMultisig(false);
-		if (address) {
-			checkIsAddressMultisig(address).then((isMulti) => setIsSelectedAddressMultisig(isMulti));
-		}
-	}, [address]);
 
 	useEffect(() => {
 		if (!window) return;
@@ -113,42 +106,12 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
-	useEffect(() => {
-		setOpenLoginModal(!id);
-	}, [id]);
-
-	useEffect(() => {
-		if (!address) {
-			setOpenModal(true);
-		}
-
-		if (status?.length === 0) {
-			setLoading(true);
-		} else {
-			setLoading(false);
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, status]);
-
-	useEffect(() => {
-		if (status.includes(ETrackDelegationStatus.Delegated)) {
-			setShowTable(true);
-		} else if (status.includes(ETrackDelegationStatus.Received_Delegation)) {
-			setShowTable(true);
-		} else if (status.includes(ETrackDelegationStatus.Undelegated)) {
-			setShowTable(false);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, address]);
-
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, network]);
-
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			addresses: [address],
+			track: trackDetails?.trackId
+		});
 
 		if (data) {
 			const rowData: ITrackRowData[] = data[0]?.delegations?.map((delegation: IDelegation, index: number) => {
@@ -164,24 +127,27 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 			});
 
 			setRowData(rowData);
-
+			if (data[0]?.status.includes(ETrackDelegationStatus.DELEGATED) || data[0]?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
+				setShowTable(true);
+			} else {
+				setShowTable(false);
+			}
 			setStatus(data[0]?.status);
 		} else {
 			console.log(error);
 		}
+		setLoading(false);
 	};
 
-	const handleReroute: any = (route: string) => {
-		if (route.length === 0) {
-			return;
+	useEffect(() => {
+		if (!address) {
+			setOpenModal(true);
 		}
-		route = route.toLowerCase();
-		if (route === 'dashboard') {
-			router.push('/delegation');
-		} else {
-			router.push(`/delegation/${route}`);
-		}
-	};
+		setOpenLoginModal(!id);
+		getData();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, id]);
 
 	return (
 		<div className={`${className}`}>
@@ -191,7 +157,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 			<div className='dashboard-heading mb-4 mt-5 flex items-center gap-2 dark:text-white max-lg:pt-[60px] md:mb-5'>
 				<span
 					className='cursor-pointer text-sm'
-					onClick={() => handleReroute('dashboard')}
+					onClick={() => router.push('/delegation')}
 				>
 					Dashboard
 				</span>
@@ -200,23 +166,23 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				</span>
 				<span
 					className='cursor-pointer text-sm text-pink_primary'
-					onClick={() => handleReroute(String(track))}
+					onClick={() => router.push(`/delegation/${String(track)}`)}
 				>
 					{handleTrack(String(track))}
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-					<div className='flex items-center gap-3 text-[24px] font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
+					<div className='flex items-center gap-3 text-2xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
 						{status &&
 							status.map((item: ETrackDelegationStatus, index: number) => (
 								<span
 									key={index}
-									className={`text-sm ${item === ETrackDelegationStatus.Received_Delegation && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
-										item === ETrackDelegationStatus.Delegated && 'bg-[#FFFBD8] dark:bg-[#69600B]'
-									} ${item === ETrackDelegationStatus.Undelegated && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-[12px] py-[6px] text-center`}
+									className={`text-sm ${item === ETrackDelegationStatus.RECEIVED_DELEGATION && 'bg-[#E7DCFF] dark:bg-[#6C2CF8]'} ${
+										item === ETrackDelegationStatus.DELEGATED && 'bg-[#FFFBD8] dark:bg-[#69600B]'
+									} ${item === ETrackDelegationStatus.UNDELEGATED && 'bg-[#FFDAD8] dark:bg-[#EF6158]'} rounded-[26px] px-3 py-2 text-center`}
 								>
 									{item?.split('_').join(' ').charAt(0).toUpperCase() + item?.split('_').join(' ').slice(1)}
 								</span>
@@ -231,36 +197,28 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 									key={index}
 								>
 									<span className='ml-[1px] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
-										{item === ETrackDelegationStatus.Received_Delegation ? 'Received Delegation(s)' : 'Delegated'}
+										{item === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Received Delegation(s)' : 'Delegated'}
 									</span>
-									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white pl-[3px] pr-[3px] dark:border-[#3B444F] dark:bg-section-dark-overlay'>
+									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white px-1 dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<Table
 											className='column'
 											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
-											dataSource={
-												item === ETrackDelegationStatus.Received_Delegation
-													? rowData
-															.filter((row) => row.delegatedTo === address)
-															?.map((item, index) => {
-																return { ...item, index: index + 1 };
-															})
-													: rowData
-															.filter((row) => row.delegatedTo !== address)
-															?.map((item, index) => {
-																return { ...item, index: index + 1 };
-															})
-											}
-											pagination={status.includes(ETrackDelegationStatus.Delegated) ? false : { pageSize: 5 }}
+											dataSource={rowData
+												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row.delegatedTo === address : row.delegatedTo !== address))
+												?.map((item, index) => {
+													return { ...item, index: index + 1 };
+												})}
+											pagination={status.includes(ETrackDelegationStatus.DELEGATED) ? false : { pageSize: 5 }}
 											loading={loading}
 										/>
 									</div>
 								</div>
 							))}
 					</div>
-					{status.includes(ETrackDelegationStatus.Undelegated) && (
-						<div className='flex flex-col items-center rounded-b-[14px] bg-white pb-[33px] pt-[24px] text-[169px] dark:bg-section-dark-overlay'>
+					{status.includes(ETrackDelegationStatus.UNDELEGATED) && (
+						<div className='flex flex-col items-center rounded-b-[14px] bg-white pb-8 pt-6 text-[169px] dark:bg-section-dark-overlay'>
 							<DelegateDelegationIcon />
-							<div className='mt-[18px] text-center text-bodyBlue dark:text-blue-dark-high'>
+							<div className='mt-5 text-center text-bodyBlue dark:text-blue-dark-high'>
 								<div className='mt-1 flex items-center justify-center text-sm font-normal tracking-[0.01em] max-md:flex-col'>
 									Voting power for this track has not been delegated yet
 									<CustomButton
@@ -268,7 +226,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 										onClick={() => setOpenDelegateModal(true)}
 										variant='default'
 									>
-										<DelegatedProfileIcon className='mr-[7px]' />
+										<DelegatedProfileIcon className='mr-2' />
 										<span className='mt-[1px]'>Delegate</span>
 									</CustomButton>
 								</div>
@@ -280,23 +238,25 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 				<Skeleton className='py-6' />
 			)}
 
-			{status.length > 0 ? (
+			{status ? (
 				<div>
 					<ActiveProposals
 						posts={posts}
 						trackDetails={trackDetails}
 						status={status}
-						delegatedTo={status.includes(ETrackDelegationStatus.Delegated) ? rowData.filter((row) => row.delegatedTo !== address)[0].delegatedTo : null}
+						totalCount={totalCount}
+						delegatedTo={status.includes(ETrackDelegationStatus.DELEGATED) ? rowData.filter((row) => row.delegatedTo !== address)[0].delegatedTo : null}
+						theme={theme}
 					/>
 				</div>
 			) : (
-				<Skeleton className='mt-6 h-[200px]' />
+				<Skeleton className='mt-6 h-20' />
 			)}
 
-			{status.length > 0 ? (
+			{status ? (
 				<div>
 					<Delegate
-						disabled={status.includes(ETrackDelegationStatus.Delegated)}
+						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
 						trackDetails={trackDetails}
 					/>
 				</div>
@@ -338,14 +298,21 @@ const DashboardTrackListing = ({ className, posts, trackDetails }: Props) => {
 					defaultTarget={rowData.filter((row) => row.delegatedTo !== address)[0]?.delegatedTo}
 					trackNum={trackDetails?.trackId}
 					conviction={rowData.filter((row) => row.delegatedTo !== address)[0]?.lockPeriod}
-					isMultisig={isSelectedAddressMultisig}
+					onConfirm={() => {
+						setStatus([ETrackDelegationStatus.UNDELEGATED]);
+						setShowTable(false);
+					}}
 				/>
 			)}
 			<DelegateModal
 				open={openDelegateModal}
 				setOpen={setOpenDelegateModal}
 				trackNum={trackDetails?.trackId}
-				isMultisig={isSelectedAddressMultisig}
+				onConfirm={(balance: string, delegatedTo: string, lockPeriod: number) => {
+					setStatus([ETrackDelegationStatus.DELEGATED]);
+					setRowData([{ action: 'Undelegate', balance, delegatedFrom: address, delegatedOn: new Date(), delegatedTo, index: 1, lockPeriod }]);
+					setShowTable(true);
+				}}
 			/>
 		</div>
 	);
@@ -385,5 +352,12 @@ export default styled(DashboardTrackListing)`
 		.column .ant-table-thead > tr > th:nth-child(2) {
 			text-align: center;
 		}
+	}
+	.ant-pagination .ant-pagination-item a {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 `;

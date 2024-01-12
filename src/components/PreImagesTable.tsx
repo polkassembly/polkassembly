@@ -4,15 +4,17 @@
 
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
-import { Button, Modal, Table as AntdTable } from 'antd';
+import { Modal, Table as AntdTable } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IPreimagesListing } from '~src/types';
 
@@ -160,14 +162,13 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					onCancel={() => setModalArgs(null)}
 					className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay '}
 					footer={[
-						<Button
-							className='dark:bg-transparent dark:text-white'
+						<CustomButton
+							variant='default'
+							text='Close'
 							key='back'
 							onClick={() => setModalArgs(null)}
-						>
-							{' '}
-							Close{' '}
-						</Button>
+							className='border-none dark:bg-transparent dark:text-white'
+						/>
 					]}
 				>
 					{modalArgs && (

@@ -112,10 +112,12 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		(async () => {
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Killed?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Killed?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
-					decisionDeposit: !!isRefundExists?.Ongoing?.decisionDeposit,
-					show: !!isRefundExists?.Ongoing?.decisionDeposit || !!isRefundExists?.Ongoing?.submissionDeposit,
-					submissionDeposit: !!isRefundExists?.Ongoing?.submissionDeposit
+					decisionDeposit: isDecisionDeposit,
+					show: isDecisionDeposit || isSubmissionDeposit,
+					submissionDeposit: isSubmissionDeposit
 				});
 			}
 		})();

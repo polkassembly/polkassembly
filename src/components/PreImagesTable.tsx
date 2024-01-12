@@ -24,6 +24,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import copyToClipboard from '~src/util/copyToClipboard';
+import Loader from '~src/ui-components/Loader';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -63,6 +64,7 @@ interface UnnoteButtonProps {
 }
 
 const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses }: UnnoteButtonProps) => {
+	const [loading, setLoading] = useState<boolean>(false);
 	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
 
 	if (!isProposer) return null;
@@ -71,7 +73,7 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 		if (!api || !apiReady) {
 			return;
 		}
-
+		setLoading(true);
 		const preimageTx = api.tx.preimage.unnotePreimage(hash);
 
 		const onSuccess = () => {
@@ -100,25 +102,30 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 			onSuccess,
 			tx: preimageTx
 		});
+		setLoading(false);
 	};
 	return (
-		<Tooltip
-			placement='top'
-			title={'Unnote'}
-			trigger={'hover'}
-		>
-			<button
-				onClick={handleSubmit}
-				className='rounded-[4px] border border-grey_border bg-white '
+		<div className='flex items-center space-x-2'>
+			<Tooltip
+				placement='top'
+				title={'Unnote'}
+				trigger={'hover'}
 			>
-				<ImageIcon
-					src='/assets/icons/close-icon.svg'
-					alt='close icon'
-					imgClassName='w-4 h-4'
-					imgWrapperClassName='flex cursor-pointer justify-center text-sm text-grey_border dark:text-white'
-				/>
-			</button>
-		</Tooltip>
+				<button
+					onClick={handleSubmit}
+					className='h-4 w-4 rounded-[4px] border border-grey_border bg-white '
+					disabled={loading}
+				>
+					<ImageIcon
+						src='/assets/icons/close-icon.svg'
+						alt='close icon'
+						imgClassName='w-full h-full'
+						imgWrapperClassName='flex cursor-pointer justify-center text-sm text-grey_border dark:text-white'
+					/>
+				</button>
+			</Tooltip>
+			<div>{loading && <Loader />}</div>
+		</div>
 	);
 };
 
@@ -140,6 +147,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		setModalArgs(preimages?.[0]?.proposedCall.args);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
+
+	useEffect(() => {}, [preimages]);
 
 	const success = () => {
 		messageApi.open({

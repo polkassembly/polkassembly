@@ -776,22 +776,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='mb-6'
 									/>
 								)}
-								{((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) ||
-									(isBalanceErr &&
-										!loadingStatus.isLoading &&
-										wallet &&
-										ayeVoteValue
-											.add(nayVoteValue)
-											.add(abstainVoteValue)
-											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance) && (
-											<Alert
-												type='info'
-												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
-												showIcon
-												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-											/>
-										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
 									<Alert
 										message={walletErr.message}
@@ -848,6 +832,24 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
+
+								{((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) ||
+									(isBalanceErr &&
+										!loadingStatus.isLoading &&
+										wallet &&
+										ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance) && (
+											<Alert
+												type='info'
+												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
+												showIcon
+												className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+											/>
+										))}
+
 								{delegatedTo && (
 									<Alert
 										message={

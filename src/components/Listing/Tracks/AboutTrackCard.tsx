@@ -255,6 +255,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		getData();
 	}, [api, apiReady, network, track_number]);
 
+	const path = window.location.pathname;
+
 	return (
 		<div className={`${className}`}>
 			<article className='flex justify-between xs:py-2 md:py-0'>
@@ -299,7 +301,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								iconSize={20}
 							/>
 							<Link
-								href='#'
+								href={`https://${network}.polkassembly.io/delegation${path}`}
+								target='_blank'
 								className='ml-2 text-xs text-pink_primary'
 							>
 								View Details

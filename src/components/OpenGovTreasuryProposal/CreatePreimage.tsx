@@ -47,6 +47,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -185,7 +186,11 @@ const CreatePreimage = ({
 		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+				if (network == AllNetworks.ROCOCO) {
+					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+				} else {
+					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+				}
 			}
 		});
 
@@ -406,7 +411,11 @@ const CreatePreimage = ({
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-				txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+				if (network == AllNetworks.ROCOCO) {
+					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+				} else {
+					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
+				}
 			}
 		});
 

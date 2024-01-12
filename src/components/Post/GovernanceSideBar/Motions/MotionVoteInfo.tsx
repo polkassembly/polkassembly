@@ -30,7 +30,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 			<h3 className='dashboard-heading flex items-center dark:text-white'>
 				{postType === ProposalType.ADVISORY_COMMITTEE && 'Advisory'} Council Votes
 				<HelperTooltip
-					className='ml-2 font-normal'
+					className='ml-2 w-[14px] font-normal'
 					text='This represents the onchain votes of council members'
 				/>
 			</h3>

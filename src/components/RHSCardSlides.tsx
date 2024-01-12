@@ -112,20 +112,14 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		(async () => {
 			if (
 				!statusHistory?.filter((status) =>
-					[
-						gov2ReferendumStatus.TIMEDOUT,
-						gov2ReferendumStatus.CANCELLED,
-						gov2ReferendumStatus.EXECUTED,
-						gov2ReferendumStatus.CONFIRMED,
-						gov2ReferendumStatus.EXECUTION_FAILED
-					].includes(status?.status)
+					[gov2ReferendumStatus.CANCELLED, gov2ReferendumStatus.EXECUTED, gov2ReferendumStatus.CONFIRMED, gov2ReferendumStatus.EXECUTION_FAILED].includes(status?.status)
 				)?.length
 			)
 				return;
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
-				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Cancelled?.[2]);
-				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Cancelled?.[1]);
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
 					decisionDeposit: isDecisionDeposit,
 					show: isDecisionDeposit || isSubmissionDeposit,

@@ -245,7 +245,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						title='Track Number'
 						className='cursor-pointer text-bodyBlue'
 					>
-						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em]'>(#{trackMetaData.trackId})</h4>
+						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] dark:text-blue-dark-high'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>

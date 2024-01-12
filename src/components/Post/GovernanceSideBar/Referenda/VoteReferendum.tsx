@@ -833,23 +833,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 								) : null}
 
-								{((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) ||
-									(isBalanceErr &&
-										!loadingStatus.isLoading &&
-										wallet &&
-										ayeVoteValue
-											.add(nayVoteValue)
-											.add(abstainVoteValue)
-											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance) && (
-											<Alert
-												type='info'
-												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
-												showIcon
-												className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-											/>
-										))}
-
 								{delegatedTo && (
 									<Alert
 										message={
@@ -899,6 +882,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -923,6 +917,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -948,6 +953,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 							</>

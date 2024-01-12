@@ -158,13 +158,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [delegatedTo, setDelegatedTo] = useState('');
 
 	const getData = async (address: any) => {
-		console.log('-->', address, track_number);
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			addresses: [address],
 			track: track_number
 		});
 		if (data && data[0]?.delegations[0]?.to) {
 			setDelegatedTo(data[0]?.delegations[0]?.to);
+		} else {
+			setDelegatedTo('');
 		}
 	};
 

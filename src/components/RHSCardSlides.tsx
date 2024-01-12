@@ -110,10 +110,22 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	useEffect(() => {
 		if (!api || !apiReady || (Number(postIndex) !== 0 && !postIndex)) return;
 		(async () => {
+			if (
+				!statusHistory?.filter((status) =>
+					[
+						gov2ReferendumStatus.TIMEDOUT,
+						gov2ReferendumStatus.CANCELLED,
+						gov2ReferendumStatus.EXECUTED,
+						gov2ReferendumStatus.CONFIRMED,
+						gov2ReferendumStatus.EXECUTION_FAILED
+					].includes(status?.status)
+				)?.length
+			)
+				return;
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
-				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Killed?.[2] || isRefundExists?.Cancelled?.[2]);
-				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Killed?.[1] || isRefundExists?.Cancelled?.[1]);
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
 					decisionDeposit: isDecisionDeposit,
 					show: isDecisionDeposit || isSubmissionDeposit,
@@ -122,22 +134,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, postIndex]);
+	}, [api, apiReady, postIndex, statusHistory]);
 
 	useEffect(() => {
-		if (
-			statusHistory?.filter((status) =>
-				[
-					gov2ReferendumStatus.TIMEDOUT,
-					gov2ReferendumStatus.KILLED,
-					gov2ReferendumStatus.CANCELLED,
-					gov2ReferendumStatus.EXECUTED,
-					gov2ReferendumStatus.CONFIRMED,
-					gov2ReferendumStatus.EXECUTION_FAILED
-				].includes(status?.status)
-			)?.length &&
-			showRefundDeposit?.show
-		) {
+		if (showRefundDeposit?.show) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -213,7 +213,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards([]);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content, statusHistory]);
+	}, [canEdit, post_link, showDecisionDeposit, tags, toggleEdit, isOnchainPost, content, showRefundDeposit]);
 
 	if (!RHSCards || RHSCards.length === 0) return null;
 

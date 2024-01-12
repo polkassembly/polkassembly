@@ -3,13 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 
 import Address from '../../../../ui-components/Address';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
+import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
 
 interface IMotionVoteInfoProps {
 	className?: string;
@@ -24,6 +26,16 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 	const {
 		postData: { postType }
 	} = usePostDataContext();
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const { resolvedTheme: theme } = useTheme();
+
+	const itemsPerPage = 10;
+	// const totalPages = Math.ceil(councilVotes.length / itemsPerPage);
+	const startIndex = (currentPage - 1) * itemsPerPage;
+	const endIndex = startIndex + itemsPerPage;
+	const onChange = (page: number) => {
+		setCurrentPage(page);
+	};
 
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9 xl:overflow-y-visible`}>
@@ -35,7 +47,7 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 				/>
 			</h3>
 			<div className='mt-6'>
-				{councilVotes.map((councilVote, index) => (
+				{councilVotes.slice(startIndex, endIndex).map((councilVote, index) => (
 					<div
 						className='mb-6 flex items-center justify-between'
 						key={`${councilVote.voter}_${index}`}
@@ -58,6 +70,20 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 						)}
 					</div>
 				))}
+			</div>
+			<div className='-mr-2 mt-6 flex justify-end'>
+				<Pagination
+					theme={theme}
+					size='small'
+					defaultCurrent={1}
+					current={currentPage}
+					onChange={onChange}
+					total={councilVotes.length || 0}
+					showSizeChanger={false}
+					pageSize={itemsPerPage}
+					responsive={true}
+					hideOnSinglePage={true}
+				/>
 			</div>
 		</GovSidebarCard>
 	);

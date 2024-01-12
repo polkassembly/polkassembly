@@ -1170,14 +1170,15 @@ export const chainProperties: types.ChainPropType = {
 		rpcEndpoints: []
 	},
 	[network.ROCOCO]: {
+		preImageBaseDeposit: '130000000000',
 		blockTime: 6000,
 		category: 'test',
 		chainId: 0,
 		logo: westendLogo,
 		rpcEndpoint: 'wss://rococo-rpc.polkadot.io',
-		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/rococo-collectives/graphql',
-		tokenDecimals: 10,
+		ss58Format: 42,
+		subsquidUrl: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
+		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.ROC,
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,

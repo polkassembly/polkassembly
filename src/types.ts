@@ -343,6 +343,7 @@ export interface Post {
 	post_link: PostLink | null;
 	username?: string;
 	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	subscribers?: number[];

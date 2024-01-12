@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Pagination } from 'antd';
+import { Divider } from 'antd';
+import { Pagination } from '~src/ui-components/Pagination';
+
 import React from 'react';
 import styled from 'styled-components';
 import { noTitle } from '~src/global/noTitle';

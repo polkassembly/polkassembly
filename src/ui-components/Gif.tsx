@@ -149,7 +149,6 @@ const Gif: FC<IGifProps> = (props) => {
 								pageSize={GIF_LISTING_LIMIT}
 								responsive={true}
 								hideOnSinglePage={true}
-								theme={theme}
 							/>
 						</article>
 					</>

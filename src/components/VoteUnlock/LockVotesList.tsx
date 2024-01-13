@@ -110,7 +110,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 							<div className='max-h-[150px] overflow-y-auto'>
 								{tokensData.slice(1).map((lock, index) => (
 									<div
-										className='flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue dark:border-[#3B444F] dark:border-[#3B444F]'
+										className='flex items-center justify-between border-0 border-t-[1px] border-dotted border-[#D2D8E0] py-3 text-sm tracking-[0.25%] text-lightBlue dark:border-separatorDark'
 										key={index}
 									>
 										<div className='flex items-center gap-2'>

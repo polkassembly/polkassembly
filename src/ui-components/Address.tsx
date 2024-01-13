@@ -27,6 +27,7 @@ import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import { VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
+import Image from 'next/image';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -68,6 +69,7 @@ interface Props {
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
 	isProfileView?: boolean;
+	addressWithVerifiedTick?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -102,7 +104,8 @@ const Address = (props: Props) => {
 		showKiltAddress = false,
 		destroyTooltipOnHide = false,
 		inPostHeading,
-		isProfileView = false
+		isProfileView = false,
+		addressWithVerifiedTick = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -124,6 +127,8 @@ const Address = (props: Props) => {
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [socials, setSocials] = useState<ISocial[]>([]);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
@@ -303,7 +308,7 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize && iconSize >= 20 ? iconSize : displayInline ? 20 : 32}
+								size={iconSize ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}
@@ -367,18 +372,32 @@ const Address = (props: Props) => {
 										</div>
 									)}
 									<div
-										className={`${!addressClassName ? 'text-xs' : addressClassName} ${
+										className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} ${
 											!disableAddressClick && 'cursor-pointer hover:underline'
-										} font-normal dark:text-blue-dark-medium`}
+										} flex font-normal `}
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										{addressWithVerifiedTick && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 									</div>
 								</div>
 							) : (
-								<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
+								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex gap-0.5 font-semibold`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+									{addressWithVerifiedTick && (
+										<div>
+											{(!!kiltName || !isGood) && (
+												<Image
+													src={'/assets/profile/identity-caution.svg'}
+													height={20}
+													width={20}
+													alt=''
+													className='ml-1'
+												/>
+											)}
+										</div>
+									)}
 								</div>
 							)}
 						</div>
@@ -408,7 +427,7 @@ const Address = (props: Props) => {
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
 							</div>
-							<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
+							<div>{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}</div>
 						</div>
 					)}
 

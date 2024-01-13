@@ -48,7 +48,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 			className={`${poppins.variable} ${poppins.className} padding shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			title={
-				<div className='-mx-6 mb-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='-mx-6 mb-6 flex items-center gap-4 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{expandViewVote?.proposal.title?.length ? `${expandViewVote?.proposal.title?.slice(0, 40)}${expandViewVote?.proposal.title?.length > 40 ? '...' : ''}` : noTitle}
 					<Image
 						src={'/assets/profile/profile-subscan.svg'}

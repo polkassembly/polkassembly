@@ -13,23 +13,27 @@ import classNames from 'classnames';
 import ProfileStatsCard from './ProfileStatsCard';
 import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
+import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
+	userPosts: IUserPostsListingResponse;
 }
 
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
-const PAProfile = ({ className, userProfile }: Props) => {
+const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { addresses } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
 		judgements: [],
 		nickname: ''
 	});
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
+	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -159,6 +163,10 @@ const PAProfile = ({ className, userProfile }: Props) => {
 			<ProfileTabs
 				userProfile={userProfile}
 				theme={theme}
+				addressWithIdentity={addressWithIdentity}
+				selectedAddresses={selectedAddresses}
+				setSelectedAddresses={setSelectedAddresses}
+				userPosts={userPosts}
 			/>
 		</div>
 	);

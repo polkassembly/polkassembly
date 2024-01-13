@@ -22,16 +22,17 @@ import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Popover from '~src/basic-components/Popover';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Image from 'next/image';
 import VoteHistoryExpandModal from './VoteHistoryExpandModal';
+import { ProfileDetailsResponse } from '~src/auth/types';
 
 interface Props {
 	className?: string;
-	userAddresses: string[];
+	userProfile: ProfileDetailsResponse;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -62,8 +63,10 @@ enum EHeading {
 	ACTIONS = 'Actions'
 }
 
-const VotesHistory = ({ className, userAddresses }: Props) => {
+const VotesHistory = ({ className, userProfile }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { id } = useUserDetailsSelector();
+	const { addresses } = userProfile;
 	const { network } = useNetworkSelector();
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS, EHeading.ACTIONS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
@@ -73,7 +76,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [delegatorsLoading, setDelegatorsLoading] = useState<boolean>(false);
 	const [sortByPostIndex, setSortByPostIndex] = useState<boolean>(false);
-	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(userAddresses as CheckboxValueType[]);
+	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [govTypeExpand, setgovTypeExpand] = useState(false);
 	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
@@ -88,7 +91,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 				onChange={(list) => setCheckedAddressList(list)}
 				value={checkedAddressList}
 			>
-				{userAddresses?.map((address, index) => (
+				{addresses?.map((address, index) => (
 					<div
 						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
@@ -144,13 +147,13 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 	};
 
 	useEffect(() => {
-		if (!userAddresses.length) {
+		if (!addresses.length) {
 			setVotesData([]);
 			return;
 		}
 		handleVoteHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page, userAddresses, sortByPostIndex, checkedAddressList, selectedGov]);
+	}, [page, addresses, sortByPostIndex, checkedAddressList, selectedGov]);
 
 	const handleDelegatesAndCapital = async (index: number, filteredVote: IVotesData) => {
 		if ((filteredVote?.delegatorsCount && filteredVote?.delegateCapital) || filteredVote?.isDelegatedVote) return;
@@ -198,7 +201,7 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 
 	return (
 		<div className='rounded-[18px] border-[1px] border-solid border-[#DCDFE3] bg-white pb-10 dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-medium max-md:px-4'>
-			<div className='flex items-center justify-between gap-4 p-6 max-md:flex-col max-md:px-0'>
+			<div className={`flex items-center justify-between gap-4 p-6 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<Image
 						src='/assets/profile/profile-votes.svg'
@@ -212,18 +215,15 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 					</div>
 				</div>
 				<div className='flex gap-4'>
-					{userAddresses.length > 1 && (
+					{addresses.length > 1 && (
 						<div className=''>
 							<Popover
 								zIndex={1056}
 								content={content}
 								placement='bottom'
-								open={addressDropdownExpand}
+								onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
 							>
-								<div
-									onClick={() => setAddressDropdownExpand(!addressDropdownExpand)}
-									className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
-								>
+								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									Select Addresses
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
@@ -238,12 +238,9 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 								zIndex={1056}
 								content={govTypeContent}
 								placement='bottom'
-								open={govTypeExpand}
+								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
 							>
-								<div
-									onClick={() => setgovTypeExpand(!govTypeExpand)}
-									className='flex h-10 w-[130px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'
-								>
+								<div className='flex h-10 w-[130px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									{selectedGov.split('_').join(' ')}
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer ${govTypeExpand && 'pink-color rotate-180'}`} />
@@ -314,12 +311,14 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 															<MinusCircleFilled className='mr-1' />
 														</span>
 													)}
-													<span>
-														{formatedBalance((vote?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-													</span>
-													<span>
-														{vote?.lockPeriod ? vote?.lockPeriod : 0.1}x{vote.isDelegatedVote && '/d'}
-													</span>
+													<div className='flex w-[40%] justify-between gap-6'>
+														<span className='flex-shrink-0'>
+															{formatedBalance((vote?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+														</span>
+														<span>
+															{vote?.lockPeriod ? vote?.lockPeriod : 0.1}x{vote.isDelegatedVote && '/d'}
+														</span>
+													</div>
 												</div>
 												<span className='flex w-[15%] justify-start max-md:hidden'>
 													<StatusTag
@@ -335,16 +334,29 @@ const VotesHistory = ({ className, userAddresses }: Props) => {
 															height={20}
 															width={20}
 															alt=''
-															className='max-md:hidden'
+															className='cursor-pointer max-md:hidden'
 														/>
 														<span onClick={() => handleExpand(index, vote)}>
 															<Image
 																src={'/assets/profile/view-votes.svg'}
-																height={20}
-																width={20}
+																height={24}
+																width={24}
 																alt=''
+																className='cursor-pointer'
 															/>
 														</span>
+														{/* TODO remove vote funtionality */}
+														{userProfile.user_id === id && (
+															<span>
+																<Image
+																	src={'/assets/profile/remove-vote.svg'}
+																	height={24}
+																	width={24}
+																	alt=''
+																	className='cursor-pointer max-md:hidden'
+																/>
+															</span>
+														)}
 													</div>
 												</span>
 											</div>

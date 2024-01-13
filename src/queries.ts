@@ -1101,6 +1101,28 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
     edges {
       node {
         status
+         group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+        statusHistory {
+          status
+          block
+          timestamp
+        }
         createdAt
         index
         type
@@ -1116,6 +1138,12 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         }
         hash
         trackNumber
+        tally {
+          ayes
+          bareAyes
+          nays
+          support
+        }
       }
     }
   }

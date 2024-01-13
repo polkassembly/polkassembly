@@ -69,7 +69,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									disabled={!id}
 								>
 									<Image
-										src='/assets/profile/profile-tip.svg'
+										src='/assets/profile/white-dollar.svg'
 										className='mr-1 rounded-full'
 										height={20}
 										width={20}
@@ -98,7 +98,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									<span className='max-md:hidden'>Delegate</span>
 								</CustomButton>
 							)}
-							<CustomButton
+							{/* <CustomButton
 								shape='circle'
 								variant='primary'
 								className={`rounded-full border-none px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
@@ -115,7 +115,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									alt='edit logo'
 								/>
 								<span className='max-md:hidden'>Follow</span>
-							</CustomButton>
+							</CustomButton> */}
 						</div>
 					)}
 				</div>

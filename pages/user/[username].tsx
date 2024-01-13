@@ -204,7 +204,10 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				title='User Profile'
 				network={network}
 			/>
-			<PAProfile userProfile={userProfile.data} />
+			<PAProfile
+				userProfile={userProfile.data}
+				userPosts={userPosts?.data}
+			/>
 			{/* <section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
 				<Details
 					userPosts={userPosts.data}

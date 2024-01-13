@@ -190,6 +190,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					href={onchainIdentity?.web}
 					title={onchainIdentity?.web}
 					className={`flex h-[${boxSize}px] w-[${boxSize}px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
+					style={{ height: `${boxSize}px`, width: `${boxSize}px` }}
 				>
 					<WebIcon />
 				</Link>

@@ -50,11 +50,11 @@ interface Props {
 	paUsername: string;
 }
 
-const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; value: number }[] = [
-	{ key: 'threeDollar', value: 3 },
-	{ key: 'fiveDollar', value: 5 },
-	{ key: 'tenDollar', value: 10 },
-	{ key: 'fifteenDollar', value: 15 }
+export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; src: string; value: number }[] = [
+	{ key: 'threeDollar', src: '/assets/icons/tip-1.svg', value: 3 },
+	{ key: 'fiveDollar', src: '/assets/icons/tip-2.svg', value: 5 },
+	{ key: 'tenDollar', src: '/assets/icons/tip-3.svg', value: 10 },
+	{ key: 'fifteenDollar', src: '/assets/icons/tip-4.svg', value: 15 }
 ];
 
 const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
@@ -420,30 +420,11 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 													form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
 												}}
 											>
-												{tip.value === 3 && (
-													<ImageIcon
-														src='/assets/icons/tip-1.svg'
-														alt='tip 1 icon'
-													/>
-												)}
-												{tip.value === 5 && (
-													<ImageIcon
-														src='/assets/icons/tip-2.svg'
-														alt='tip 2 icon'
-													/>
-												)}
-												{tip.value === 10 && (
-													<ImageIcon
-														src='/assets/icons/tip-3.svg'
-														alt='tip 3 icon'
-													/>
-												)}
-												{tip.value === 15 && (
-													<ImageIcon
-														src='/assets/icons/tip-4.svg'
-														alt='tip 4 icon'
-													/>
-												)}
+												<ImageIcon
+													src={tip?.src}
+													alt=''
+												/>
+
 												<span>${tip.value}</span>
 											</span>
 										);

@@ -13,6 +13,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import { deleteKeys, redisDel } from '~src/auth/redis';
+import { Role } from '~src/types';
 
 interface Args {
 	userId: string;
@@ -39,6 +40,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	// check if user is a moderator
+	if (!user?.roles?.includes(Role.MODERATOR)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	let ref = postsByTypeRef(network, postType).doc(String(postId));
 	if (commentId) {

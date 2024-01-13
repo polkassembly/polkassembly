@@ -1029,8 +1029,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
-															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+															<div className='overflow-y-hidden'>
 																<VoteReferendumEth
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1038,12 +1037,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	lastVote={lastVote}
 																/>
 																{RenderLastVote}
-															</GovSidebarCard>
+															</div>
 														)}
 													</>
 												) : (
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+													<div className='overflow-y-hidden'>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -1054,7 +1052,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														/>
 
 														{RenderLastVote}
-													</GovSidebarCard>
+													</div>
 												)}
 											</>
 										)}
@@ -1080,8 +1078,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
-															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+															<div className='overflow-y-hidden'>
 																<VoteReferendumEthV2
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1091,12 +1088,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																/>
 
 																{RenderLastVote}
-															</GovSidebarCard>
+															</div>
 														)}
 													</>
 												) : (
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+													<div className='overflow-y-hidden'>
 														{['polymesh'].includes(network) ? (
 															<PIPsVote
 																address={address}
@@ -1118,7 +1114,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															/>
 														)}
 														{RenderLastVote}
-													</GovSidebarCard>
+													</div>
 												)}
 											</>
 										)}

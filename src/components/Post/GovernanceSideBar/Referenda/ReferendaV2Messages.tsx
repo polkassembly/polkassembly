@@ -207,7 +207,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</p>
 						</div>
 					</div>
-					<div className='mt-[30px]'>
+					<div className='mt-[22px]'>
 						<ProgressBar
 							className='m-0 flex items-center rounded-lg p-0'
 							showInfo={false}

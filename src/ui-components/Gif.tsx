@@ -139,6 +139,7 @@ const Gif: FC<IGifProps> = (props) => {
 						</article>
 						<article className='flex items-center justify-end'>
 							<Pagination
+								theme={theme}
 								size='small'
 								defaultCurrent={1}
 								current={currentPage}

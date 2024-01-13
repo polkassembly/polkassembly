@@ -7,7 +7,7 @@ import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { GET_PREIMAGES_TABLE_QUERY } from '~src/queries';
+import { GET_PREIMAGES_TABLE_QUERY, GET_STATUS_HISTORY_BY_PREIMAGES_HASH } from '~src/queries';
 import { IApiResponse, IPreimagesListingResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -17,11 +17,12 @@ interface IGetPreimagesParams {
 	network: string;
 	listingLimit: number | string | string[];
 	page: number | string | string[];
+	hash_contains?: string | string[];
 }
 
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
 	try {
-		const { network, listingLimit, page } = params;
+		const { network, listingLimit, page, hash_contains } = params;
 
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
@@ -36,15 +37,38 @@ export async function getPreimages(params: IGetPreimagesParams): Promise<IApiRes
 			network,
 			query: GET_PREIMAGES_TABLE_QUERY,
 			variables: {
+				hash_contains: hash_contains,
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1)
 			}
 		});
 
 		const subsquidData = subsquidRes?.data;
+		const preImages = subsquidData?.preimages || [];
+		const hashIDs = new Set(
+			preImages?.map((preImage: any) => {
+				return preImage?.hash;
+			})
+		);
+
+		const subsquidStatusHistoryRes = await fetchSubsquid({
+			network,
+			query: GET_STATUS_HISTORY_BY_PREIMAGES_HASH,
+			variables: {
+				hash_in: Array.from(hashIDs)
+			}
+		});
+
+		for (let i = 0; i < preImages.length; i++) {
+			const statusHistory = subsquidStatusHistoryRes?.data?.statusHistories?.find((statusHistory: any) => statusHistory?.preimage?.hash === preImages[i]?.hash);
+			if (statusHistory) {
+				preImages[i].statusHistory = statusHistory;
+			}
+		}
+
 		const data: IPreimagesListingResponse = {
 			count: Number(subsquidData?.preimagesConnection?.totalCount),
-			preimages: subsquidData?.preimages || []
+			preimages: preImages || []
 		};
 		return {
 			data: JSON.parse(JSON.stringify(data)),
@@ -67,6 +91,7 @@ const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = a
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getPreimages({
+		hash_contains: '',
 		listingLimit,
 		network,
 		page

@@ -174,6 +174,7 @@ export interface JWTPayloadType {
 	is2FAEnabled?: boolean;
 	login_wallet?: Wallet;
 	login_address?: string;
+	exp?: number;
 }
 
 export interface IAuthResponse {

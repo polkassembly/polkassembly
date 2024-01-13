@@ -7,7 +7,8 @@ import React, { FC, useEffect, useState } from 'react';
 import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
-import { ErrorState, LoadingState } from 'src/ui-components/UIStates';
+import { ErrorState } from 'src/ui-components/UIStates';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';

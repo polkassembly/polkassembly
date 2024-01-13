@@ -121,7 +121,7 @@ const Curves: FC<ICurvesProps> = (props) => {
 							</p>
 						</p>
 					) : (
-						<p className='row mb-2 flex items-center gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<p className='row mb-2 flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span className='flex'>
 								<ChartIcon />
 							</span>

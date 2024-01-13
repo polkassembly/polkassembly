@@ -86,17 +86,29 @@ function App({ Component, pageProps }: AppProps) {
 
 	const SplashLoader = () => {
 		const { resolvedTheme: theme } = useTheme();
-		const backgroundColor = theme === 'dark' ? '#000000' : '#F5F5F5';
+		const backgroundColor = theme === 'dark' ? '#000000' : 'white';
 
 		return (
 			<div style={{ background: backgroundColor, minHeight: '100vh', minWidth: '100vw' }}>
-				<Image
-					style={{ left: 'calc(50vw - 16px)', position: 'absolute', top: 'calc(50vh - 16px)' }}
-					width={32}
-					height={32}
-					src='/favicon.ico'
-					alt={'Loading'}
-				/>
+				{theme === 'dark' ? (
+					<Image
+						style={{ left: 'calc(50vw - 50px)', position: 'absolute', top: 'calc(50vh - 40px)' }}
+						width={120}
+						className='bg-transparent'
+						height={45}
+						src='/assets/PALogoDark.svg'
+						alt={'Loading'}
+					/>
+				) : (
+					<Image
+						style={{ left: 'calc(50vw - 50px)', position: 'absolute', top: 'calc(50vh - 40px)' }}
+						width={120}
+						className='bg-transparent'
+						height={45}
+						src='/assets/pa-logo-black.svg'
+						alt={'Loading'}
+					/>
+				)}
 			</div>
 		);
 	};

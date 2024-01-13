@@ -31,6 +31,7 @@ interface IEditProfileModalProps {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	openModal?: boolean;
 	setOpenModal?: (pre: boolean) => void;
+	fromDelegation?: boolean;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -45,7 +46,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { data, id, setProfileDetails, openModal, setOpenModal } = props;
+	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -188,7 +189,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			});
 			setProfile(getDefaultProfile());
 			handleTokenChange(data?.token, { ...userDetailsContext, picture: image }, dispatch);
-			router.push(`/user/${username}`);
+			if (!fromDelegation) {
+				router.push(`/user/${username}`);
+			}
 		}
 
 		setLoading(false);
@@ -224,10 +227,9 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									}}
 									disabled={loading}
 									className='font-medium'
-									buttonSize='xs'
+									buttonsize='xs'
 									text='Cancel'
 								/>
-								,
 								<CustomButton
 									variant='primary'
 									key='update profile'
@@ -250,7 +252,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 											}));
 										}
 									}}
-									buttonSize='xs'
+									buttonsize='xs'
 									text='Save'
 								/>
 							</div>
@@ -297,7 +299,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			</Modal>
 			{!setOpenModal && (
 				<button
-					className='flex cursor-pointer items-center justify-center gap-x-1.5 rounded-[4px] border-0 border-solid border-white bg-transparent text-sm font-medium text-[#fff] outline-none dark:border-[#3B444F] md:h-[40px] md:w-[87px] md:border'
+					className='flex cursor-pointer items-center justify-center gap-x-1.5 rounded-[4px] border-0 border-solid border-white bg-transparent text-sm font-medium text-[#fff] outline-none md:h-[40px] md:w-[87px] md:border'
 					onClick={() => {
 						// GAEvent when user clicks on profile edit button
 						trackEvent('profile_edit_clicked', 'edit_profile', {

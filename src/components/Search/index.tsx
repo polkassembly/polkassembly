@@ -496,7 +496,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			onCancel={() => handleClearFilters(true)}
 			footer={false}
 			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			closeIcon={<CloseIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
@@ -562,7 +562,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							setPeoplePage({ ...peoplePage, page: 1 });
 						}}
 						value={filterBy}
-						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}
+						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} sm:flex-wrap`}
 					>
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
@@ -898,6 +898,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								postsPage={postsPage}
 								setPostsPage={setPostsPage}
 								searchInput={searchInput}
+								theme={theme}
 							/>
 						)}
 
@@ -908,6 +909,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								peopleData={peopleResults}
 								peoplePage={peoplePage}
 								setPeoplePage={setPeoplePage}
+								theme={theme}
 							/>
 						)}
 

@@ -1121,11 +1121,11 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
   }
 }`;
 
-export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $offset: Int = 0) {
-  preimagesConnection(orderBy: createdAtBlock_DESC) {
+export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $offset: Int = 0, $hash_contains:String) {
+  preimagesConnection(orderBy: createdAtBlock_DESC, where: {hash_contains: $hash_contains}) {
     totalCount
   }
-  preimages(limit: $limit, offset: $offset, orderBy: createdAtBlock_DESC) {
+  preimages(limit: $limit, offset: $offset, orderBy: createdAtBlock_DESC, where: {hash_contains: $hash_contains}) {
     hash
     id
     length
@@ -1144,6 +1144,17 @@ export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $
     updatedAtBlock
     createdAtBlock
     createdAt
+  }
+}
+`;
+export const GET_STATUS_HISTORY_BY_PREIMAGES_HASH = `
+query GetStatusHistoryByPreImages($hash_in:[String!]) {
+  statusHistories(where: {preimage_isNull: false, preimage: {hash_in: $hash_in}}) {
+    extrinsicIndex
+    preimage {
+      hash
+    }
+    status
   }
 }
 `;

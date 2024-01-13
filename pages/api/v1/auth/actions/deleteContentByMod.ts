@@ -44,6 +44,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	// check if user is a moderator
 	if (!user?.roles?.includes(Role.MODERATOR)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
+	//TODO: remove hard coded condition
+
+	if (user.id === 7054 && network !== 'composable') {
+		return res.status(403).json({ message: 'Unauthorised for networks other than Composable' });
+	}
+
 	let ref = postsByTypeRef(network, postType).doc(String(postId));
 	if (commentId) {
 		ref = ref.collection('comments').doc(String(commentId));

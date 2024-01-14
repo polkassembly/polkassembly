@@ -39,6 +39,11 @@ const handleInitialFilter = (data: IUserPostsListingResponse, govType: EGovType)
 	});
 	return filter;
 };
+const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingResponse) => {
+	return (
+		(posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts || (posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] || []
+	);
+};
 const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
@@ -47,11 +52,8 @@ const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
 	const [govTypeExpand, setgovTypeExpand] = useState(false);
 	const [subFilterExpand, setSubFilterExpand] = useState(false);
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
-	const [posts, setPosts] = useState<IUserPost[]>(
-		(userPosts?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1'] as any)[Object.keys(userPosts?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1'])?.[0]]?.posts ||
-			[]
-	);
 	const [selectedFilter, setSelectedFilter] = useState(handleInitialFilter(userPosts, selectedGov));
+	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
 
@@ -61,21 +63,13 @@ const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
 		setCheckedSelectedSubFilters(Object.keys(subFilter));
 	};
 
-	const getPosts = (filter: string, govType: EGovType) => {
-		setPosts(
-			(userPosts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts ||
-				(userPosts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] ||
-				[]
-		);
-	};
-
 	const handleGovSelection = (govType: EGovType) => {
 		if (govType === selectedGov) return;
 		setSelectedGov(govType);
 		const filter = handleInitialFilter(userPosts, govType);
 		setSelectedFilter(filter);
 		handleSelectSubFilter(filter, govType);
-		getPosts(filter, govType);
+		setPosts(getPosts(filter, govType, userPosts));
 	};
 
 	const handleFilterPostByPostType = (postTypes: string[]) => {
@@ -227,7 +221,7 @@ const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
 									if (!((value as any)?.total || (value as any)?.length)) return;
 									setSelectedFilter(key);
 									handleSelectSubFilter(key, selectedGov);
-									getPosts(key, selectedGov);
+									setPosts(getPosts(key, selectedGov, userPosts));
 								}}
 								className={`flex-shrink-0 ${
 									!((value as any)?.total || (value as any)?.length) ? 'cursor-not-allowed' : 'cursor-pointer'

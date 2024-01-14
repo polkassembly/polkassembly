@@ -11,7 +11,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import Image from 'next/image';
 import styled from 'styled-components';
-import ProfilePosts from './ProfilePosts';
+// import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 interface Props {
 	className?: string;
@@ -49,30 +49,30 @@ const ProfileTabs = ({ className, theme, userProfile, addressWithIdentity, selec
 					Overview
 				</div>
 			)
-		},
-		{
-			children: (
-				<ProfilePosts
-					userProfile={userProfile}
-					addressWithIdentity={addressWithIdentity}
-					theme={theme}
-					userPosts={userPosts}
-				/>
-			),
-			key: 'Posts',
-			label: (
-				<div className='flex items-center gap-2'>
-					<Image
-						src='/assets/profile/profile-clipboard.svg'
-						alt=''
-						width={18}
-						height={18}
-						className='active-icon'
-					/>
-					Posts
-				</div>
-			)
 		}
+		// {
+		// 	children: (
+		// 		<ProfilePosts
+		// 			userProfile={userProfile}
+		// 			addressWithIdentity={addressWithIdentity}
+		// 			theme={theme}
+		// 			userPosts={userPosts}
+		// 		/>
+		// 	),
+		// 	key: 'Posts',
+		// 	label: (
+		// 		<div className='flex items-center gap-2'>
+		// 			<Image
+		// 				src='/assets/profile/profile-clipboard.svg'
+		// 				alt=''
+		// 				width={18}
+		// 				height={18}
+		// 				className='active-icon'
+		// 			/>
+		// 			Posts
+		// 		</div>
+		// 	)
+		// }
 	];
 	if (!votesHistoryUnavailableNetworks.includes(network)) {
 		tabItems.splice(1, 0, {

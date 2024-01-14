@@ -331,7 +331,6 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 						.doc(String(id))
 						.get();
 					const data = doc?.data();
-					console.log(data);
 					if (doc && doc.exists && data) {
 						if (data.created_at) {
 							newData.created_at = data?.created_at?.toDate();

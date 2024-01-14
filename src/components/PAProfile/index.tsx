@@ -154,7 +154,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				addressWithIdentity={addressWithIdentity}
 			/>
 			<ProfileCard
-				className='max-md:mt-[200px]'
+				className='max-lg:mt-[150px]'
 				userProfile={userProfile}
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}

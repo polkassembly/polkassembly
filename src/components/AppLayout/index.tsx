@@ -11,9 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { isExpired } from 'react-jwt';
 import { useApiContext } from 'src/context';
-import { getLocalStorageToken } from 'src/services/auth.service';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -281,14 +279,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
-	useEffect(() => {
-		if (!global?.window) return;
-		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
-			dispatch(logout());
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.asPath]);
+	// useEffect(() => {
+	// if (!global?.window) return;
+	// const authToken = getLocalStorageToken();
+	// if (authToken && isExpired(authToken)) {
+	// dispatch(userDetailsActions.setLogout());
+	// }
+	// // eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [router.asPath]);
 
 	useEffect(() => {
 		if (!window || !(window as any).ethereum || !(window as any).ethereum.on) return;

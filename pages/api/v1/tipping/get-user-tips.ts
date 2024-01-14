@@ -31,19 +31,31 @@ const handler: NextApiHandler<ITip[] | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	const { addresses, tipStatus } = req.body;
-	if (!Array.isArray(addresses) || !addresses.length || !tipStatus) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	const { addresses, tipStatus, amount } = req.body;
+	if (!Array.isArray(addresses) || !addresses.length || !tipStatus || isNaN(amount)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
+	console.log(network, addresses, tipStatus, amount);
 	const field = tipStatus === ETipStatus.GIVEN ? 'tip_from' : 'tip_to';
-	const tippingsSnapshot = await firestore_db
-		.collection('tippings')
-		.where(
-			field,
-			'in',
-			addresses.map((address: string) => getSubstrateAddress(address))
-		)
-		.where('network', '==', network)
-		.get();
+	const tippingsSnapshot = amount
+		? await firestore_db
+				.collection('tippings')
+				.where(
+					field,
+					'in',
+					addresses.map((address: string) => getSubstrateAddress(address))
+				)
+				.where('amount', '==', amount)
+				.where('network', '==', network)
+				.get()
+		: await firestore_db
+				.collection('tippings')
+				.where(
+					field,
+					'in',
+					addresses.map((address: string) => getSubstrateAddress(address))
+				)
+				.where('network', '==', network)
+				.get();
 
 	const tippings = tippingsSnapshot?.docs?.map((tip) => {
 		const data: any = tip.data();
@@ -53,6 +65,7 @@ const handler: NextApiHandler<ITip[] | MessageType> = async (req, res) => {
 		};
 		return newData;
 	});
+	console.log(tippings);
 
 	return res.status(200).json(tippings as ITip[]);
 };

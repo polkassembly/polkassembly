@@ -95,7 +95,7 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 	}, [network]);
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !checkedAddressList.length) return;
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegates[]>('api/v1/delegations', {
@@ -117,6 +117,7 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 			setLoading(false);
 		} else {
 			console.log(error);
+			setLoading(false);
 		}
 	};
 	useEffect(() => {

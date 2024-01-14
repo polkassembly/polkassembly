@@ -12,7 +12,7 @@ import auctionIcon from '~assets/parachains/auction.png';
 import chainIcon from '~assets/parachains/chain-link.png';
 import crowdloansIcon from '~assets/parachains/crowdloan.png';
 import projectsIcon from '~assets/parachains/projects.png';
-import polkadotLogo from '~assets/polkadot-logo-small-inverted.png';
+import polkadotLogo from '~assets/parachain-logos/polkadot-logo.jpg';
 
 interface Props {
 	className?: string;
@@ -46,6 +46,7 @@ const ParachainInfoCard = ({ className, network, projects, theme }: Props) => {
 					<Image
 						src={network == 'polkadot' ? polkadotLogo : kusamaLogo}
 						alt='Chain Logo'
+						className='rounded-full'
 					/>
 					<span className='network-name'>{network}</span>
 				</div>

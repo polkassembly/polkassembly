@@ -357,7 +357,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 						</div>
 					</div>
 					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
-						<div className='mt-6 '>
+						<div className='mt-6'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
 							<Select
 								placeholder='Select recriver address'

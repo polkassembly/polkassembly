@@ -9,13 +9,15 @@ import { TIPS } from '../Tipping';
 import { Segmented } from 'antd';
 import Address from '~src/ui-components/Address';
 // import { formatedBalance } from '~src/util/formatedBalance';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import dayjs from 'dayjs';
 import { useApiContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITip } from 'pages/api/v1/tipping';
+import { inputToBn } from '~src/util/inputToBn';
+import BN from 'bn.js';
 
 interface Props {
 	className?: string;
@@ -28,18 +30,35 @@ export enum ETipType {
 	GIVEN = 'Given',
 	RECEIVED = 'Received'
 }
+const ZERO_BN = new BN(0);
 const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAddresses }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const [tipType, setTipType] = useState<ETipType>(ETipType.GIVEN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [loading, setLoading] = useState<boolean>(false);
+	const [tipAmount, setTipAmount] = useState<string | null>('');
+	const [tipBn, setTipBn] = useState<BN>(ZERO_BN);
+
+	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
+		fifteenDollar: '0',
+		fiveDollar: '0',
+		tenDollar: '0',
+		threeDollar: '0'
+	});
+
+	const handleTipChangeToDollar = (value: number) => {
+		const tip = value / Number(currentTokenPrice || 1);
+		return String(tip.toFixed(2));
+	};
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITip[]>('api/v1/tipping/get-user-tips', {
 			addresses: selectedAddresses || [],
+			amount: Number(tipAmount || 0) || 0,
 			tipStatus: tipType
 		});
 		if (data) {
@@ -49,15 +68,30 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 			console.log(error);
 		}
 	};
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: unit
 		});
-		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, apiReady, selectedAddresses]);
+
+	useEffect(() => {
+		setDollarToTokenBalance({
+			fifteenDollar: handleTipChangeToDollar(15),
+			fiveDollar: handleTipChangeToDollar(5),
+			tenDollar: handleTipChangeToDollar(10),
+			threeDollar: handleTipChangeToDollar(3)
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, currentTokenPrice]);
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedAddresses, tipAmount]);
 
 	return (
 		<div
@@ -88,16 +122,19 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 			</div>
 			<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium  max-md:gap-2'>
 				{TIPS.map((tip) => {
+					const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
+					console.log(tipBalance.toString(), tipBn.toString());
+
 					return (
 						<span
-							className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-4
+							className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-4 ${
+								tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+							}
               `}
 							key={tip.key}
 							onClick={() => {
-								// form.setFieldValue('balance', '');
-								// setTipAmount(tipBlance);
-								// setTipInput(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
-								// form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
+								setTipAmount(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
+								setTipBn(tipBalance);
 							}}
 						>
 							<Image
@@ -111,13 +148,13 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 					);
 				})}
 				<span
-					className={'flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-3'}
+					className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-3 ${
+						tipAmount === null ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+					}`}
 					key={'custom'}
 					onClick={() => {
-						// form.setFieldValue('balance', '');
-						// setTipAmount(tipBlance);
-						// setTipInput(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
-						// form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
+						setTipAmount(null);
+						setTipBn(ZERO_BN);
 					}}
 				>
 					<Image

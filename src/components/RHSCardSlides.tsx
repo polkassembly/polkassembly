@@ -68,7 +68,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		});
 	};
 	const handleRefundDepositClick = async () => {
-		if (!api || !apiReady || !network) return;
+		if (!api || !apiReady || !network || !loading) return;
 		setLoading(true);
 		const refundDecisionDepositTx = api?.tx.referenda.refundDecisionDeposit(postIndex);
 		const refundSubmissionDepositTx = api?.tx.referenda.refundSubmissionDeposit(postIndex);
@@ -86,6 +86,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading(false);
+			setRHSCards(RHSCards.slice(1));
 		};
 		const onFailed = () => {
 			queueNotification({
@@ -95,7 +96,6 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 			setLoading(false);
 		};
-
 		await executeTx({
 			address: loginAddress,
 			api,
@@ -112,20 +112,14 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		(async () => {
 			if (
 				!statusHistory?.filter((status) =>
-					[
-						gov2ReferendumStatus.TIMEDOUT,
-						gov2ReferendumStatus.CANCELLED,
-						gov2ReferendumStatus.EXECUTED,
-						gov2ReferendumStatus.CONFIRMED,
-						gov2ReferendumStatus.EXECUTION_FAILED
-					].includes(status?.status)
+					[gov2ReferendumStatus.CANCELLED, gov2ReferendumStatus.EXECUTED, gov2ReferendumStatus.CONFIRMED, gov2ReferendumStatus.EXECUTION_FAILED].includes(status?.status)
 				)?.length
 			)
 				return;
 			const isRefundExists: any = (await api?.query?.referenda?.referendumInfoFor(postIndex).then((e) => e.toHuman())) || null;
 			if (isRefundExists) {
-				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.TimedOut?.[2] || isRefundExists?.Cancelled?.[2]);
-				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.TimedOut?.[1] || isRefundExists?.Cancelled?.[1]);
+				const isDecisionDeposit = !!(isRefundExists?.Approved?.[2] || isRefundExists?.Cancelled?.[2]);
+				const isSubmissionDeposit = !!(isRefundExists?.Approved?.[1] || isRefundExists?.Cancelled?.[1]);
 				setShowRefundDeposit({
 					decisionDeposit: isDecisionDeposit,
 					show: isDecisionDeposit || isSubmissionDeposit,
@@ -243,10 +237,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 								<div className='absolute right-0 top-0 h-[45px] w-[90px] cursor-pointer rounded-bl-3xl bg-[#f5f6f8] before:absolute before:-bottom-6 before:right-0 before:aspect-square before:w-6 before:rounded-tr-2xl before:shadow-[6px_-6px_0_4px] before:shadow-[#f5f6f8] before:content-[""] after:absolute after:-left-6 after:top-0 after:aspect-square after:w-6 after:rounded-tr-2xl after:shadow-[6px_-6px_0_4px_black] after:shadow-[#f5f6f8] after:outline-none after:content-[""] dark:bg-section-dark-background before:dark:shadow-section-dark-background after:dark:shadow-section-dark-background'>
 									<div
 										className={`navigation-btn absolute bottom-2 left-2 right-0 top-0 z-10 flex items-center justify-center rounded-full bg-pink_primary p-1 text-sm font-medium capitalize tracking-wide text-white shadow-md ${
-											loading && 'cursor-progress opacity-50'
+											loading && card.tag === cardTags.REFUND_DEPOSIT && 'cursor-progress opacity-50'
 										}`}
 										onClick={() => {
-											if (loading) return;
 											card.clickHandler?.();
 										}}
 									>
@@ -254,7 +247,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 									</div>
 								</div>
 								<div
-									className='card-slide flex h-full w-full  items-center justify-center gap-2 bg-rhs-card-gradient p-3'
+									className={`card-slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${
+										!!loading && card.tag === cardTags.REFUND_DEPOSIT && 'cursor-progress'
+									}`}
 									onClick={card.clickHandler}
 								>
 									<Image

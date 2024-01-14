@@ -81,7 +81,6 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 								disableHeader
 								addressMaxLength={5}
 								iconSize={18}
-								disableTooltip
 								addressClassName='text-sm tracking-wide font-semibold dark:text-blue-dark-high'
 							/>
 						</Checkbox>

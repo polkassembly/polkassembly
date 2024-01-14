@@ -34,7 +34,6 @@ const handler: NextApiHandler<ITip[] | MessageType> = async (req, res) => {
 	const { addresses, tipStatus, amount } = req.body;
 	if (!Array.isArray(addresses) || !addresses.length || !tipStatus || isNaN(amount)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
-	console.log(network, addresses, tipStatus, amount);
 	const field = tipStatus === ETipStatus.GIVEN ? 'tip_from' : 'tip_to';
 	const tippingsSnapshot = amount
 		? await firestore_db
@@ -65,7 +64,6 @@ const handler: NextApiHandler<ITip[] | MessageType> = async (req, res) => {
 		};
 		return newData;
 	});
-	console.log(tippings);
 
 	return res.status(200).json(tippings as ITip[]);
 };

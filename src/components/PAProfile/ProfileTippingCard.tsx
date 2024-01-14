@@ -3,21 +3,21 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import classNames from 'classnames';
 import Image from 'next/image';
+import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { TIPS } from '../Tipping';
-import { Segmented } from 'antd';
+import { Divider, Empty, Segmented, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
-// import { formatedBalance } from '~src/util/formatedBalance';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import dayjs from 'dayjs';
 import { useApiContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITip } from 'pages/api/v1/tipping';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
+import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 
 interface Props {
 	className?: string;
@@ -31,15 +31,17 @@ export enum ETipType {
 	RECEIVED = 'Received'
 }
 const ZERO_BN = new BN(0);
-const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAddresses }: Props) => {
+const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const [tipType, setTipType] = useState<ETipType>(ETipType.GIVEN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [loading, setLoading] = useState<boolean>(false);
-	const [tipAmount, setTipAmount] = useState<string | null>('');
+	const [tipAmount, setTipAmount] = useState<string | null>(null);
 	const [tipBn, setTipBn] = useState<BN>(ZERO_BN);
+	const [tipsData, setTipsData] = useState<ITip[]>([]);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
@@ -54,7 +56,10 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !selectedAddresses.length) {
+			setTipsData([]);
+			return;
+		}
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITip[]>('api/v1/tipping/get-user-tips', {
 			addresses: selectedAddresses || [],
@@ -62,10 +67,11 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 			tipStatus: tipType
 		});
 		if (data) {
-			console.log(data);
+			setTipsData(data);
 			setLoading(false);
 		} else {
 			console.log(error);
+			setLoading(false);
 		}
 	};
 
@@ -75,8 +81,9 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 			decimals: chainProperties[network].tokenDecimals,
 			unit: unit
 		});
+		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady, selectedAddresses]);
+	}, [network, api, apiReady]);
 
 	useEffect(() => {
 		setDollarToTokenBalance({
@@ -91,101 +98,135 @@ const ProfileTippingCard = ({ className, theme, addressWithIdentity, selectedAdd
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAddresses, tipAmount]);
+	}, [selectedAddresses, tipAmount, tipType]);
 
 	return (
-		<div
-			className={classNames(
-				className,
-				theme,
-				'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col max-md:overflow-x-auto'
-			)}
-		>
-			<div className='flex justify-between'>
-				<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
-					<Image
-						src='/assets/profile/profile-tips.svg'
-						alt=''
-						width={24}
-						height={24}
-					/>
-					Tipping
-				</span>
-				<span className={theme}>
-					<Segmented
-						options={['Given', 'Received']}
-						className={'dark:bg-section-dark-background'}
-						onChange={(e) => setTipType(e as ETipType)}
-						value={tipType}
-					/>
-				</span>
-			</div>
-			<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium  max-md:gap-2'>
-				{TIPS.map((tip) => {
-					const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
-					console.log(tipBalance.toString(), tipBn.toString());
-
-					return (
-						<span
-							className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-4 ${
-								tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
-							}
-              `}
-							key={tip.key}
-							onClick={() => {
-								setTipAmount(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
-								setTipBn(tipBalance);
-							}}
-						>
-							<Image
-								src={tip?.src}
-								alt=''
-								width={20}
-								height={20}
-							/>
-							<span>${tip.value}</span>
-						</span>
-					);
-				})}
-				<span
-					className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-3 ${
-						tipAmount === null ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
-					}`}
-					key={'custom'}
-					onClick={() => {
-						setTipAmount(null);
-						setTipBn(ZERO_BN);
-					}}
-				>
-					<Image
-						src={'/assets/profile/dollar.svg'}
-						alt=''
-						width={20}
-						height={20}
-					/>
-					Custom
-				</span>
-			</div>
-			{/* Tipping info */}
+		<Spin spinning={loading}>
 			<div
-				className='flex w-full items-center justify-between font-normal'
-				key={addressWithIdentity}
-			>
-				{addressWithIdentity && (
-					<Address
-						address={addressWithIdentity}
-						displayInline
-						disableTooltip
-						isTruncateUsername={false}
-					/>
+				className={classNames(
+					className,
+					theme,
+					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col max-md:overflow-x-auto'
 				)}
-				<div className='flex '>hellofdfdfsdfd this is for you</div>
-				{/* <div>
-						{formatedBalance('100', unit, 2)} {unit}
-					</div> */}
-				<div>{dayjs(new Date()).format('DD MMM YY')}</div>
+			>
+				<div className='flex justify-between'>
+					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
+						<Image
+							src='/assets/profile/profile-tips.svg'
+							alt=''
+							width={24}
+							height={24}
+						/>
+						Tipping
+					</span>
+					<span className={theme}>
+						<Segmented
+							options={['Given', 'Received']}
+							className={'dark:bg-section-dark-background'}
+							onChange={(e) => setTipType(e as ETipType)}
+							value={tipType}
+						/>
+					</span>
+				</div>
+				<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium  max-md:gap-2'>
+					{TIPS.map((tip) => {
+						const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
+						return (
+							<span
+								className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-4 ${
+									tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+								}
+              `}
+								key={tip.key}
+								onClick={() => {
+									setTipAmount(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)));
+									setTipBn(tipBalance);
+								}}
+							>
+								<Image
+									src={tip?.src}
+									alt=''
+									width={20}
+									height={20}
+								/>
+								<span>${tip.value}</span>
+							</span>
+						);
+					})}
+					<span
+						className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-3 ${
+							tipAmount === null ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+						}`}
+						key={'custom'}
+						onClick={() => {
+							setTipAmount(null);
+							setTipBn(ZERO_BN);
+						}}
+					>
+						<Image
+							src={theme === 'dark' ? '/assets/profile/white-dollar.svg' : '/assets/profile/dollar.svg'}
+							alt=''
+							width={20}
+							height={20}
+						/>
+						Custom
+					</span>
+				</div>
+				{/* Tipping info */}
+				<div className='flex flex-col gap-2'>
+					{!!tipsData.length && !loading ? (
+						tipsData.map((tip, index) => (
+							<div
+								className={`flex w-full gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] pb-2 font-normal dark:border-separatorDark ${
+									tipsData.length - 1 === index && 'border-none'
+								} ${isMobile ? 'flex-col items-start justify-start' : 'items-center'}`}
+								key={index}
+							>
+								<div className={`w-[30%] ${isMobile && 'flex w-[100%] items-start justify-start gap-2'}`}>
+									<Address
+										address={tipType === ETipType.GIVEN ? tip?.tip_to : tip?.tip_from}
+										displayInline
+										disableTooltip
+										isTruncateUsername
+										usernameMaxLength={16}
+									/>
+									{isMobile && (
+										<div className='flex h-full flex-shrink-0 items-center gap-2'>
+											<Divider
+												type='vertical'
+												className=' bg-[#D2D8E0] dark:bg-separatorDark'
+											/>
+											<div className='flex gap-1'>
+												<ClockCircleOutlined />
+												{getRelativeCreatedAt(tip?.created_at)}
+											</div>
+										</div>
+									)}
+								</div>
+
+								<div className={`w-[30%] ${isMobile && 'w-full'}`}>{tip?.remark || '-'}</div>
+								{tipAmount === null && (
+									<div className={`w-[20%] ${isMobile && 'w-full'}`}>
+										{tip?.amount} {unit}
+									</div>
+								)}
+								{!isMobile && (
+									<div className='flex gap-1'>
+										<ClockCircleOutlined />
+										{getRelativeCreatedAt(tip?.created_at)}
+									</div>
+								)}
+							</div>
+						))
+					) : (
+						<Empty
+							className='mt-4 text-lightBlue dark:text-blue-dark-high'
+							description='No tip Found'
+						/>
+					)}
+				</div>
 			</div>
-		</div>
+		</Spin>
 	);
 };
 

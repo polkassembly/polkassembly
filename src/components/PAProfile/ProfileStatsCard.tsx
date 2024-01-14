@@ -12,23 +12,23 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
+	addressWithIdentity?: string;
 }
 interface IStats {
 	label: string;
 	value: number;
 	src: string;
 }
-const ProfileStatsCard = ({ className, userProfile }: Props) => {
+const ProfileStatsCard = ({ className, userProfile, addressWithIdentity }: Props) => {
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 	const { user_id: userId, addresses } = userProfile;
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 768) || false;
-
 	const fetchData = async () => {
 		let payload;
-		if (userId !== 0 && !userId) {
-			payload = { addresses: addresses };
+		if (userId !== 0 && !userId && addresses.length) {
+			payload = { addresses: addresses || [addressWithIdentity] };
 		} else {
-			payload = { userId: userId };
+			payload = { addresses: addresses || [addressWithIdentity], userId: userId };
 		}
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 		if (data) {

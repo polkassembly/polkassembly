@@ -159,7 +159,10 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}
 			/>
-			<ProfileStatsCard userProfile={userProfile} />
+			<ProfileStatsCard
+				userProfile={userProfile}
+				addressWithIdentity={addressWithIdentity}
+			/>
 			<ProfileTabs
 				userProfile={userProfile}
 				theme={theme}

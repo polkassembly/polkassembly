@@ -82,12 +82,12 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 						/>
 					</div>
 				)}
-				{/* {delegationSupportedNetworks.includes(network) && (
+				{delegationSupportedNetworks.includes(network) && (
 					<ProfileDelegationsCard
 						userProfile={userProfile}
 						addressWithIdentity={addressWithIdentity}
 					/>
-				)} */}
+				)}
 				{!TippingUnavailableNetworks.includes(network) && (
 					<ProfileTippingCard
 						userProfile={userProfile}

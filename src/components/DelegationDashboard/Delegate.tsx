@@ -160,7 +160,9 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 							{[
 								...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-								...delegatesData.filter((item) => !addressess.includes(getSubstrateAddress(item?.address))).sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+								...delegatesData
+									.filter((item) => ![...addressess, getSubstrateAddress('13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K')].includes(getSubstrateAddress(item?.address)))
+									.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 							].map((delegate, index) => (
 								<DelegateCard
 									trackNum={trackDetails?.trackId}

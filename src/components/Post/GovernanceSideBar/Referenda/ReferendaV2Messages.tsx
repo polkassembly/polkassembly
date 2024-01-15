@@ -207,7 +207,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</p>
 						</div>
 					</div>
-					<div className='mt-[30px]'>
+					<div className='mt-[22px]'>
 						<ProgressBar
 							className='m-0 flex items-center rounded-lg p-0'
 							showInfo={false}
@@ -323,7 +323,9 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 													<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
 												</Tooltip>
 											</div>
-											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{spend.period}</span>
+											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
+												{periodStartAt(spend.period, spend.periodPercent)}/{spend.period}
+											</span>
 										</>
 									</p>
 								</>

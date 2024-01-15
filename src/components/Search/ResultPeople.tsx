@@ -7,6 +7,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { ProfileDetails } from '~src/auth/types';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 interface IUser {
 	username: string;
@@ -28,6 +29,7 @@ interface Props {
 }
 
 const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	return peopleData.length > 0 ? (
 		<>
 			<div className={`${className} ${peopleData.length > 1 && 'h-[400px] overflow-y-scroll'} -mx-6 mt-3`}>
@@ -63,6 +65,7 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 						})
 					}
 					responsive={true}
+					theme={theme}
 				/>
 			</div>
 		</>

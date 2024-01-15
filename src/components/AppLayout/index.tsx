@@ -11,9 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { isExpired } from 'react-jwt';
 import { useApiContext } from 'src/context';
-import { getLocalStorageToken } from 'src/services/auth.service';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -331,14 +329,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
-	useEffect(() => {
-		if (!global?.window) return;
-		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
-			dispatch(logout());
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.asPath]);
+	// useEffect(() => {
+	// if (!global?.window) return;
+	// const authToken = getLocalStorageToken();
+	// if (authToken && isExpired(authToken)) {
+	// dispatch(userDetailsActions.setLogout());
+	// }
+	// // eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [router.asPath]);
 
 	useEffect(() => {
 		if (!window || !(window as any).ethereum || !(window as any).ethereum.on) return;
@@ -447,11 +445,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			  ]
 			: [],
 		PIPsItems:
-			chainProperties[network]?.subsquidUrl && network === 'polymesh'
+			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
 						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+				  ]
+				: [],
+		AdvisoryCommittee:
+			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
+				? [
+						getSiderMenuItem('Motions', '/advisory-committee/motions', <MotionsIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 				  ]
 				: []
 	};
@@ -510,10 +515,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	let collapsedItems: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
-	if (chainProperties[network]?.subsquidUrl && network !== 'polymesh') {
+	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {
 		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
 	}
-	if (network === 'polymesh') {
+	if (network === AllNetworks.POLYMESH) {
 		items = items.concat(
 			getSiderMenuItem(
 				<span className='ml-2 cursor-text text-xs font-medium uppercase text-lightBlue  hover:text-navBlue dark:text-icon-dark-inactive'>PIPs</span>,
@@ -523,6 +528,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			...gov1Items.PIPsItems
 		);
 		collapsedItems = collapsedItems.concat([...gov1Items.PIPsItems]);
+	}
+	if (network === AllNetworks.ZEITGEIST) {
+		items = [...items, getSiderMenuItem('Advisory Committee', 'advisory-committee', null, [...gov1Items.AdvisoryCommittee])];
+		collapsedItems = [
+			...collapsedItems,
+			getSiderMenuItem('Advisory Committee', 'advisory-committee', <CommunityPIPsIcon className='mt-1.5 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				...gov1Items.AdvisoryCommittee
+			])
+		];
 	}
 
 	if (network === AllNetworks.COLLECTIVES) {
@@ -855,7 +869,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							theme={theme}
 							mode='inline'
 							selectedKeys={[router.pathname]}
-							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group']}
+							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
 							items={sidebarItems}
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}

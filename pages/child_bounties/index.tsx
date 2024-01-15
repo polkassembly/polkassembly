@@ -91,13 +91,13 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='flex flex-col md:flex-row'>
-				<p className='mb-4 w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:p-8'>
+				<p className='w-full rounded-xxl bg-white p-4 text-sm font-medium text-bodyBlue shadow-md dark:bg-section-dark-overlay dark:text-blue-dark-high md:mb-4 md:p-8'>
 					This is the place to discuss on-chain child bounties. Child Bounty posts are automatically generated as soon as they are created on-chain. Only the proposer is able to
 					edit them.
 				</p>
 			</div>
 
-			<div className='mt-6 rounded-xxl bg-white px-0 py-5 shadow-md dark:bg-section-dark-overlay'>
+			<div className='mt-6 rounded-xxl bg-white px-0 py-3 shadow-md dark:bg-section-dark-overlay md:py-5'>
 				<div className='flex items-center justify-between'>
 					<div className='mx-1 mt-3.5 sm:mx-12 sm:mt-3'>
 						<FilteredTags statusItem={statusItem} />

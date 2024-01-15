@@ -116,7 +116,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				open={thresholdOpen}
 				footer={[]}
 				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>

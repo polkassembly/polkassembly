@@ -20,6 +20,7 @@ import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -49,6 +50,7 @@ interface ITechCommProposalsProps {
 const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -107,6 +109,7 @@ const TechnicalPIPs: FC<ITechCommProposalsProps> = (props) => {
 							hideOnSinglePage={true}
 							onChange={onPaginationChange}
 							responsive={true}
+							theme={theme}
 						/>
 					)}
 				</div>

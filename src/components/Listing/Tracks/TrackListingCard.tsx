@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 import { useRouter } from 'next/router';
 import { IReferendumV2PostsByStatus } from 'pages/root';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CountBadgePill from '~src/ui-components/CountBadgePill';
 
 import TrackListingAllTabContent from './TrackListingAllTabContent';
@@ -40,6 +40,20 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const trackStatus = router.query['trackStatus'];
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
+	const [initialCountForAll, setInitialCountForAll] = useState<number | undefined>(undefined);
+	const [initialCountForSubmitted, setInitialCountForSubmitted] = useState<number | undefined>(undefined);
+	const [initialCountForVoting, setInitialCountForVoting] = useState<number | undefined>(undefined);
+	const [initialCountForClosed, setInitialCountForClosed] = useState<number | undefined>(undefined);
+	useEffect(() => {
+		if (initialCountForAll === undefined && posts?.all?.data?.count !== undefined) {
+			setInitialCountForAll(posts?.all?.data?.count);
+			setInitialCountForSubmitted(posts?.submitted?.data?.count);
+			setInitialCountForVoting(posts?.voting?.data?.count);
+			setInitialCountForClosed(posts?.closed?.data?.count);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+	console.log(initialCountForAll, initialCountForSubmitted, initialCountForVoting, initialCountForClosed);
 
 	const items = [
 		{

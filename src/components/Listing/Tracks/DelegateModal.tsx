@@ -423,7 +423,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span
 										onClick={() => {
 											setBnBalance(availableBalance);
-											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit).replace(/,/g, '')));
 										}}
 									>
 										<Balance

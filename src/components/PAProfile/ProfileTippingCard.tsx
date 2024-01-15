@@ -9,7 +9,7 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import { TIPS } from '../Tipping';
 import { Divider, Empty, Segmented, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { useApiContext } from '~src/context';
@@ -18,11 +18,21 @@ import { ITip } from 'pages/api/v1/tipping';
 import { inputToBn } from '~src/util/inputToBn';
 import BN from 'bn.js';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import styled from 'styled-components';
+import { setReceiver } from '~src/redux/Tipping';
+import { useDispatch } from 'react-redux';
+import dynamic from 'next/dynamic';
+import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
+
+const Tipping = dynamic(() => import('~src/components/Tipping'), {
+	ssr: false
+});
 
 interface Props {
 	className?: string;
 	theme?: string;
-	addressWithIdentity?: string;
+	addressWithIdentity: string;
 	userProfile: ProfileDetailsResponse;
 	selectedAddresses: string[];
 }
@@ -31,10 +41,12 @@ export enum ETipType {
 	RECEIVED = 'Received'
 }
 const ZERO_BN = new BN(0);
-const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
+const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, addressWithIdentity }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: loginId, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const dispatch = useDispatch();
 	const [tipType, setTipType] = useState<ETipType>(ETipType.GIVEN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [loading, setLoading] = useState<boolean>(false);
@@ -42,6 +54,8 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
 	const [tipBn, setTipBn] = useState<BN>(ZERO_BN);
 	const [tipsData, setTipsData] = useState<ITip[]>([]);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [openTipModal, setOpenTipModal] = useState<boolean>(false);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
@@ -110,7 +124,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
 				)}
 			>
 				<div className='flex justify-between'>
-					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
+					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 						<Image
 							src='/assets/profile/profile-tips.svg'
 							alt=''
@@ -119,21 +133,43 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
 						/>
 						Tipping
 					</span>
-					<span className={theme}>
+
+					<div className={classNames(theme, 'flex items-center gap-2')}>
+						{userProfile?.user_id !== loginId && !!username?.length && (
+							<CustomButton
+								className='delegation-buttons border-none'
+								variant='default'
+								buttonsize='xs'
+								onClick={() => {
+									setOpenTipModal(true);
+									dispatch(setReceiver(addressWithIdentity || ''));
+								}}
+								// onClick={() => setOpenDelegateModal(true)}
+							>
+								<Image
+									src='/assets/profile/white-dollar.svg'
+									className='pink-color mr-1 rounded-full'
+									height={20}
+									width={20}
+									alt='edit logo'
+								/>
+								<span className='max-md:hidden'>Tip User</span>
+							</CustomButton>
+						)}
 						<Segmented
 							options={['Given', 'Received']}
 							className={'dark:bg-section-dark-background'}
 							onChange={(e) => setTipType(e as ETipType)}
 							value={tipType}
 						/>
-					</span>
+					</div>
 				</div>
 				<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium  max-md:gap-2'>
 					{TIPS.map((tip) => {
 						const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 						return (
 							<span
-								className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-4 ${
+								className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-5 ${
 									tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
 								}
               `}
@@ -226,8 +262,22 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses }: Props) => {
 					)}
 				</div>
 			</div>
+			{!TippingUnavailableNetworks.includes(network) && (
+				<Tipping
+					open={openTipModal}
+					setOpen={setOpenTipModal}
+					paUsername={userProfile.username}
+					setOpenAddressChangeModal={setOpenAddressChangeModal}
+					openAddressChangeModal={openAddressChangeModal}
+					username={userProfile.username || ''}
+				/>
+			)}
 		</Spin>
 	);
 };
 
-export default ProfileTippingCard;
+export default styled(ProfileTippingCard)`
+	.pink-color {
+		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
+`;

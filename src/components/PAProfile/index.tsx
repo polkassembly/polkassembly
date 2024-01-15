@@ -20,7 +20,11 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	userPosts: IUserPostsListingResponse;
 }
-
+export interface IStats {
+	label: string;
+	value: number;
+	src: string;
+}
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const PAProfile = ({ className, userProfile, userPosts }: Props) => {
@@ -44,6 +48,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		user_id: 0,
 		username: ''
 	});
+	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
 		if (!api) {
@@ -162,6 +167,9 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 			<ProfileStatsCard
 				userProfile={userProfile}
 				addressWithIdentity={addressWithIdentity}
+				theme={theme}
+				statsArr={statsArr}
+				setStatsArr={setStatsArr}
 			/>
 			<ProfileTabs
 				userProfile={userProfile}
@@ -170,6 +178,9 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				selectedAddresses={selectedAddresses}
 				setSelectedAddresses={setSelectedAddresses}
 				userPosts={userPosts}
+				setProfileDetails={setProfileDetails}
+				profileDetails={profileDetails}
+				statsArr={statsArr}
 			/>
 		</div>
 	);

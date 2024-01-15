@@ -5,22 +5,21 @@
 import { Divider } from 'antd';
 import classNames from 'classnames';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IStats } from '.';
 
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
 	addressWithIdentity?: string;
+	theme?: string;
+	statsArr: IStats[];
+	setStatsArr: (pre: IStats[]) => void;
 }
-interface IStats {
-	label: string;
-	value: number;
-	src: string;
-}
-const ProfileStatsCard = ({ className, userProfile, addressWithIdentity }: Props) => {
-	const [statsArr, setStatsArr] = useState<IStats[]>([]);
+
+const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, theme, statsArr, setStatsArr }: Props) => {
 	const { user_id: userId, addresses } = userProfile;
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 768) || false;
 	const fetchData = async () => {
@@ -33,9 +32,9 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity }: Props
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 		if (data) {
 			setStatsArr([
-				{ label: 'Proposal Created', src: '/assets/profile/profile-clipboard.svg', value: data?.proposals },
-				{ label: 'Discussion Created', src: '/assets/icons/Calendar.svg', value: data?.discussions },
-				{ label: 'Proposals Voted', src: '/assets/profile/profile-votes.svg', value: data?.votes }
+				{ label: 'Proposal Created', src: theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg', value: data?.proposals },
+				{ label: 'Discussion Created', src: theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg', value: data?.discussions },
+				{ label: 'Proposals Voted', src: theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg', value: data?.votes }
 			]);
 		} else {
 			console.log(error);

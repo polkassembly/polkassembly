@@ -26,6 +26,7 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import classNames from 'classnames';
 
 const { Panel } = Collapse;
 
@@ -39,10 +40,10 @@ interface IDelegates extends ITrackDelegation {
 	expand?: boolean;
 }
 
-const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => {
+const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { id: loginId } = useUserDetailsSelector();
+	const { id: loginId, username } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { addresses } = userProfile;
@@ -123,7 +124,7 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, addresses]);
+	}, [api, apiReady, addresses, checkedAddressList]);
 
 	const handleExpand = (index: number, type: ETrackDelegationStatus) => {
 		const newData = (type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations).map((item, idx) => {
@@ -136,9 +137,14 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 	};
 	return (
 		<Spin spinning={loading}>
-			<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+			<div
+				className={classNames(
+					className,
+					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				)}
+			>
 				<div className='flex items-center justify-between'>
-					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
+					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 						<Image
 							src='/assets/profile/profile-delegation.svg'
 							alt=''
@@ -148,7 +154,7 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 						Delegations
 					</span>
 					{/* TODO delegate button onClick */}
-					{userProfile?.user_id !== loginId && (
+					{userProfile?.user_id !== loginId && !!(username || '').length && (
 						<CustomButton
 							className='delegation-buttons border-none'
 							variant='default'
@@ -184,13 +190,13 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 					</div>
 				)}
 				{/*TODO delegation bio */}
-				<div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
+				{/* <div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
 					<span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
 					<span className='font-normal'>
 						Maecenas eget ligula vitae enim posuere volutpat. Pellentesque sed tellus pretium, pellentesque risus vitae, convallis dui. Pellentesque sed tellus pretium, Vestibulum
 						nec leo at dui euismod lacinia non quis risus. Vivamus lobortis felis lectus, et consequat lacus dapibus in.
 					</span>
-				</div>
+				</div> */}
 				<div className='flex flex-col gap-4'>
 					{collapseItems?.map((item, index) => (
 						<Collapse
@@ -199,7 +205,11 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 							className={'my-custom-collapse border-[#D2D8E0] bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 							expandIconPosition='end'
 							expandIcon={({ isActive }) => {
-								return <DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} ${isActive && 'pink-color rotate-180'}`} />;
+								return (
+									<div className='flex h-full items-end justify-end'>
+										<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} ${isActive && 'pink-color rotate-180'}`} />
+									</div>
+								);
 							}}
 							collapsible={!item?.data.length ? 'disabled' : 'header'}
 						>
@@ -331,11 +341,6 @@ const ProfileDelegationsCard = ({ userProfile, addressWithIdentity }: Props) => 
 	);
 };
 export default styled(ProfileDelegationsCard)`
-	.ant-collapse {
-		border-radius: 0px !important;
-		border: none !important;
-		background: transparent !important;
-	}
 	.pink-color {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}

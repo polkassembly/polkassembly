@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { Tabs } from '~src/ui-components/Tabs';
@@ -13,6 +13,7 @@ import Image from 'next/image';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
+import { IStats } from '.';
 interface Props {
 	className?: string;
 	theme?: string;
@@ -21,10 +22,45 @@ interface Props {
 	selectedAddresses: string[];
 	setSelectedAddresses: (pre: string[]) => void;
 	userPosts: IUserPostsListingResponse;
+	profileDetails: ProfileDetailsResponse;
+	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+	statsArr: IStats[];
 }
 
-const ProfileTabs = ({ className, theme, userProfile, addressWithIdentity, selectedAddresses, setSelectedAddresses, userPosts }: Props) => {
+const ProfileTabs = ({
+	className,
+	theme,
+	userProfile,
+	addressWithIdentity,
+	selectedAddresses,
+	setSelectedAddresses,
+	userPosts,
+	profileDetails,
+	setProfileDetails,
+	statsArr
+}: Props) => {
 	const { network } = useNetworkSelector();
+	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
+		posts: 0,
+		votes: 0
+	});
+
+	useEffect(() => {
+		let totalPosts = 0;
+		let totalVotes = 0;
+
+		statsArr.map((item) => {
+			if (item?.label === 'Proposals Voted') {
+				totalVotes = item?.value || 0;
+			} else {
+				totalPosts += item?.value;
+			}
+		});
+		setTotals({
+			posts: totalPosts,
+			votes: totalVotes
+		});
+	}, [statsArr]);
 	const tabItems = [
 		{
 			children: (
@@ -34,13 +70,15 @@ const ProfileTabs = ({ className, theme, userProfile, addressWithIdentity, selec
 					theme={theme}
 					selectedAddresses={selectedAddresses}
 					setSelectedAddresses={setSelectedAddresses}
+					profileDetails={profileDetails}
+					setProfileDetails={setProfileDetails}
 				/>
 			),
 			key: 'Overview',
 			label: (
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-3'>
 					<Image
-						src='/assets/profile/profile-overview.svg'
+						src={theme === 'dark' ? '/assets/profile/profile-overview-dark.svg' : '/assets/profile/profile-overview.svg'}
 						alt=''
 						width={18}
 						height={18}
@@ -61,15 +99,15 @@ const ProfileTabs = ({ className, theme, userProfile, addressWithIdentity, selec
 			),
 			key: 'Posts',
 			label: (
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-3'>
 					<Image
-						src='/assets/profile/profile-clipboard.svg'
+						src={theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg'}
 						alt=''
-						width={18}
-						height={18}
+						width={20}
+						height={20}
 						className='active-icon'
 					/>
-					Posts
+					Posts<span className='-ml-2'>({totals?.posts})</span>
 				</div>
 			)
 		}
@@ -84,15 +122,15 @@ const ProfileTabs = ({ className, theme, userProfile, addressWithIdentity, selec
 			),
 			key: 'Votes',
 			label: (
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-3'>
 					<Image
-						src='/assets/profile/profile-votes.svg'
+						src={theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg'}
 						alt=''
-						width={20}
-						height={20}
+						width={22}
+						height={22}
 						className='active-icon'
 					/>
-					Votes
+					Votes<span className='-ml-2'>({totals?.votes})</span>
 				</div>
 			)
 		});

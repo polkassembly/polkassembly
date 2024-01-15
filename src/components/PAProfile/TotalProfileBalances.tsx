@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import classNames from 'classnames';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '../VoteUnlock';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -11,9 +11,12 @@ import { CheckCircleFilled } from '@ant-design/icons';
 import LockIcon from '~assets/icons/vote-lock.svg';
 import { Divider } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
-import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import styled from 'styled-components';
-import CloseIcon from '~assets/icons/close-icon.svg';
+import userProfileBalances from '~src/util/userProfieBalances';
+import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import { formatBalance } from '@polkadot/util';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Props {
 	className?: string;
@@ -22,10 +25,44 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	selectedAddresses: string[];
 }
+const ZERO_BN = new BN(0);
 
 const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme }: Props) => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const { id } = useUserDetailsSelector();
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
+	const [totalLockedBalance, setTotalLockedBalance] = useState<BN>(ZERO_BN);
+
+	useEffect(() => {
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: unit
+		});
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		(async () => {
+			const promises = selectedAddresses.map(async (address) => {
+				const balances = await userProfileBalances({ address, api, apiReady, network });
+				return { locked: balances.lockedBalance, transferable: balances.transferableBalance };
+			});
+			const resolves = await Promise.allSettled(promises);
+			setTotalLockedBalance(ZERO_BN);
+			setTransferableBalance(ZERO_BN);
+			resolves.map((item) => {
+				if (item.status === 'fulfilled') {
+					setTotalLockedBalance(item?.value?.locked.add(totalLockedBalance));
+					setTransferableBalance(item?.value?.transferable.add(transferableBalance));
+				}
+			});
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, selectedAddresses]);
 	return (
 		<div
 			className={classNames(
@@ -34,7 +71,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
-			<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
+			<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 				<Image
 					src='/assets/profile/profile-balance.svg'
 					alt=''
@@ -44,7 +81,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				Balance
 			</span>
 			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && <VoteUnlock addresses={selectedAddresses} />}
-			<div className='my-0 flex items-center gap-2 rounded-xl bg-[#D2D8E0] px-4 py-3 text-xs dark:bg-section-dark-garyBackground dark:bg-separatorDark max-md:gap-0.5 max-md:px-2'>
+			{/* <div className='my-0 flex items-center gap-2 rounded-xl bg-[#D2D8E0] px-4 py-3 text-xs dark:bg-section-dark-garyBackground dark:bg-separatorDark max-md:gap-0.5 max-md:px-2'>
 				<Image
 					src={'/assets/profile/green-votes.svg'}
 					height={22}
@@ -91,7 +128,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 					</span>
 					<span className='text-base font-medium text-bodyBlue dark:text-blue-dark-high'>90 DOT</span>
 				</div>
-			</div>
+			</div> */}
 			<div className=' text-light flex flex-col gap-4 text-sm font-normal tracking-wide dark:text-blue-dark-medium'>
 				<span className='flex justify-between'>
 					<span className='flex gap-2'>
@@ -101,7 +138,9 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						/>
 						Transferrable
 					</span>
-					<span>90 DOT</span>
+					<span>
+						{formatedBalance(transferableBalance.toString(), unit, 2)} {unit}
+					</span>
 				</span>
 				<Divider
 					type='horizontal'
@@ -112,7 +151,9 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						<LockIcon />
 						Locked
 					</span>
-					<span>90 DOT</span>
+					<span>
+						{formatedBalance(totalLockedBalance.toString(), unit, 2)} {unit}
+					</span>
 				</span>
 			</div>
 		</div>

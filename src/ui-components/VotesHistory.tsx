@@ -22,8 +22,7 @@ import { poppins } from 'pages/_app';
 import { EGovType } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
+import { useNetworkSelector } from '~src/redux/selectors';
 import Popover from '~src/basic-components/Popover';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import Image from 'next/image';
@@ -33,6 +32,7 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
+	theme?: string;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -63,9 +63,8 @@ enum EHeading {
 	ACTIONS = 'Actions'
 }
 
-const VotesHistory = ({ className, userProfile }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
-	const { id } = useUserDetailsSelector();
+const VotesHistory = ({ className, userProfile, theme }: Props) => {
+	// const { id } = useUserDetailsSelector();
 	const { addresses } = userProfile;
 	const { network } = useNetworkSelector();
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS, EHeading.ACTIONS];
@@ -204,10 +203,10 @@ const VotesHistory = ({ className, userProfile }: Props) => {
 			<div className={`flex items-center justify-between gap-4 p-6 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<Image
-						src='/assets/profile/profile-votes.svg'
+						src={theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg'}
 						alt=''
-						width={24}
-						height={24}
+						width={28}
+						height={28}
 					/>
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Votes
@@ -329,13 +328,13 @@ const VotesHistory = ({ className, userProfile }: Props) => {
 												</span>
 												<span className='w-[10%]'>
 													<div className='flex w-[10%] justify-start gap-4'>
-														<Image
+														{/* <Image
 															src={'/assets/profile/profile-subscan.svg'}
 															height={20}
 															width={20}
 															alt=''
 															className='cursor-pointer max-md:hidden'
-														/>
+														/> */}
 														<span onClick={() => handleExpand(index, vote)}>
 															<Image
 																src={'/assets/profile/view-votes.svg'}
@@ -346,7 +345,7 @@ const VotesHistory = ({ className, userProfile }: Props) => {
 															/>
 														</span>
 														{/* TODO remove vote funtionality */}
-														{userProfile.user_id === id && (
+														{/* {userProfile.user_id === id && (
 															<span>
 																<Image
 																	src={'/assets/profile/remove-vote.svg'}
@@ -356,7 +355,7 @@ const VotesHistory = ({ className, userProfile }: Props) => {
 																	className='cursor-pointer max-md:hidden'
 																/>
 															</span>
-														)}
+														)} */}
 													</div>
 												</span>
 											</div>

@@ -36,7 +36,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			)}
 		>
 			<div className='flex justify-between'>
-				<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-medium'>
+				<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 					<Image
 						src='/assets/profile/linked-addresses.svg'
 						alt=''

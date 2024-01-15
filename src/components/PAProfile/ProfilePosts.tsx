@@ -44,7 +44,7 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 		(posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts || (posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] || []
 	);
 };
-const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
+const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
@@ -162,10 +162,10 @@ const ProfilePosts = ({ className, userPosts, userProfile }: Props) => {
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<Image
-						src='/assets/profile/profile-clipboard.svg'
+						src={theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg'}
 						alt=''
-						width={24}
-						height={24}
+						width={26}
+						height={26}
 					/>
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Posts

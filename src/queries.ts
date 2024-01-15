@@ -1996,6 +1996,8 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
       index
       proposer
       status
+      type
+      trackNumber
       statusHistory {
         id
         status

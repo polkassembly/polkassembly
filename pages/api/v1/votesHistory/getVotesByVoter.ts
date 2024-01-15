@@ -43,7 +43,9 @@ export interface IProfileVoteHistoryRespose {
 		status: string;
 		title?: string;
 		description?: string;
-		statusHistory?: string[];
+		statusHistory?: any[];
+		type: string;
+		trackNumber?: number;
 	};
 }
 export interface IVotesData extends IProfileVoteHistoryRespose {
@@ -98,7 +100,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const totalCount = profileVotes['data'].flattenedConvictionVotesConnection.totalCount || 0;
 
 	const voteData: IProfileVoteHistoryRespose[] = profileVotes['data'].flattenedConvictionVotes?.map((vote: any) => {
-		const { createdAt, index: id, proposer, statusHistory } = vote.proposal;
+		const { createdAt, index: id, proposer, statusHistory, type, trackNumber } = vote.proposal;
 
 		let status = vote?.proposal.status;
 
@@ -123,7 +125,10 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				id,
 				proposer,
 				status,
-				title: ''
+				statusHistory,
+				title: '',
+				trackNumber,
+				type
 			},
 			voter: vote?.voter
 		};

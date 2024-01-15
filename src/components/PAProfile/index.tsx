@@ -181,6 +181,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				setProfileDetails={setProfileDetails}
 				profileDetails={profileDetails}
 				statsArr={statsArr}
+				setStatsArr={setStatsArr}
 			/>
 		</div>
 	);

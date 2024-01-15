@@ -25,6 +25,7 @@ interface Props {
 	profileDetails: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	statsArr: IStats[];
+	setStatsArr: (pre: IStats[]) => void;
 }
 
 const ProfileTabs = ({
@@ -37,7 +38,8 @@ const ProfileTabs = ({
 	userPosts,
 	profileDetails,
 	setProfileDetails,
-	statsArr
+	statsArr,
+	setStatsArr
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
@@ -118,6 +120,8 @@ const ProfileTabs = ({
 				<VotesHistory
 					userProfile={userProfile}
 					theme={theme}
+					setStatsArr={setStatsArr}
+					statsArr={statsArr}
 				/>
 			),
 			key: 'Votes',

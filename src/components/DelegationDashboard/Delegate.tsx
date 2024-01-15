@@ -74,7 +74,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
-	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('')];
+	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')];
 
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>

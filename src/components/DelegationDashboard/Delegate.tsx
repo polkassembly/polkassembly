@@ -17,6 +17,7 @@ import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import DelegatedIcon from '~assets/icons/delegate.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -72,6 +73,8 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
+
+	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('')];
 
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
@@ -156,10 +159,8 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 					{!loading ? (
 						<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 							{[
-								...delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
-								...delegatesData
-									.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ')
-									.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+								...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
+								...delegatesData.filter((item) => !addressess.includes(getSubstrateAddress(item?.address))).sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 							].map((delegate, index) => (
 								<DelegateCard
 									trackNum={trackDetails?.trackId}

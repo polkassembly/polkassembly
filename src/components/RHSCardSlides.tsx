@@ -260,7 +260,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 										width={60}
 										height={60}
 									/>
-									<div className='content mr-16 text-white'>
+									<div className={`content ${showDecisionDeposit ? 'mr-[54px] mt-3' : 'mr-18'} text-white`}>
 										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
 										<p className=' mb-0 break-words text-xs leading-tight'>
 											{card.description}

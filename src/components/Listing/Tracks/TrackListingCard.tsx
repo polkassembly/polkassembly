@@ -60,7 +60,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			label: (
 				<CountBadgePill
 					label='All'
-					count={posts?.all?.data?.count || 0}
+					count={initialCountForAll || 0}
 				/>
 			),
 			key: 'All',
@@ -77,7 +77,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			label: (
 				<CountBadgePill
 					label='Submitted'
-					count={posts?.submitted?.data?.count || 0}
+					count={initialCountForSubmitted || 0}
 				/>
 			),
 			key: 'Submitted',
@@ -96,7 +96,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			label: (
 				<CountBadgePill
 					label='Voting'
-					count={posts?.voting?.data?.count || 0}
+					count={initialCountForVoting || 0}
 				/>
 			),
 			key: 'Voting',
@@ -115,7 +115,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			label: (
 				<CountBadgePill
 					label='Closed'
-					count={posts?.closed?.data?.count || 0}
+					count={initialCountForClosed || 0}
 				/>
 			),
 			key: 'Closed',

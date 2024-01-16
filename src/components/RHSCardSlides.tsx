@@ -15,6 +15,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
+import Link from 'next/link';
+import ImageComponent from './ImageComponent';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -150,7 +152,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => setOpenDecisionDeposit(true),
-					description: 'To be paid before completion of decision period; payable by anyone',
+					description: 'Place refundable deposit within 14 days to prevent proposal from timing out.',
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'
@@ -258,9 +260,24 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 										width={60}
 										height={60}
 									/>
-									<div className='content mr-14 text-white'>
+									<div className='content mr-16 text-white'>
 										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
-										<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+										<p className=' mb-0 break-words text-xs leading-tight'>
+											{card.description}
+											{showDecisionDeposit && (
+												<Link
+													href='https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum'
+													className='ml-1 cursor-pointer font-normal'
+												>
+													Details
+													<ImageComponent
+														src='/assets/icons/redirect.svg'
+														alt='redirection-icon'
+														className='scale-60 h-4 w-4 '
+													/>
+												</Link>
+											)}
+										</p>
 									</div>
 								</div>
 							</div>

@@ -269,6 +269,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 													href='https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum'
 													className='ml-1 cursor-pointer font-normal'
 													target='_blank'
+													onClick={(e) => {
+														e.stopPropagation();
+														e.preventDefault();
+														window.open('https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum', '_blank');
+													}}
 												>
 													Details
 													<ImageComponent

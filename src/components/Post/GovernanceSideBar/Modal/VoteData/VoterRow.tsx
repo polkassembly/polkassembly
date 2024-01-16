@@ -26,6 +26,17 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
+import { useDispatch } from 'react-redux';
+import {
+	setClearInitialState,
+	setIsReferendum2,
+	setSetDelegatedData,
+	setSetDelegationVoteModal,
+	setSetDelegatorLoading,
+	setTally,
+	setVoteData,
+	setVoteType
+} from '~src/redux/voteData';
 
 interface IVoterRow {
 	className?: string;
@@ -107,6 +118,7 @@ const VoterRow: FC<IVoterRow> = ({
 	const [delegatedData, setDelegatedData] = useState<any>(null);
 	const [voteDecision, setVoteDecision] = useState('');
 	const { resolvedTheme: theme } = useTheme();
+	const dispatch = useDispatch();
 	useEffect(() => {
 		if (!active) {
 			return;
@@ -148,11 +160,11 @@ const VoterRow: FC<IVoterRow> = ({
 						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 							<a
 								href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+								className={`w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}
 							>
 								<Address
 									isVoterAddress
-									usernameClassName='w-[250px]'
+									usernameClassName=' sm:w-[250px]'
 									isSubVisible={false}
 									displayInline
 									showFullAddress
@@ -161,11 +173,11 @@ const VoterRow: FC<IVoterRow> = ({
 							</a>
 						) : (
 							<div
-								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+								className={`w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}
 								onClick={(e) => e.stopPropagation()}
 							>
 								<Address
-									usernameClassName='overflow-ellipsis w-[250px] '
+									usernameClassName='overflow-ellipsis sm:w-[250px]'
 									isSubVisible={false}
 									displayInline
 									showFullAddress
@@ -175,7 +187,7 @@ const VoterRow: FC<IVoterRow> = ({
 						)}
 					</div>
 				) : (
-					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
+					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>
 						{voteDecision === 'Nay' && (
 							<div className='flex gap-x-2'>
 								<DislikeFilled className='text-[red]' />
@@ -202,12 +214,16 @@ const VoterRow: FC<IVoterRow> = ({
 						<div
 							className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? '-ml-7' : ''} w-[120px] overflow-ellipsis ${
 								voteData?.decision === 'abstain' ? 'w-[160px]' : ''
-							} text-bodyBlue dark:text-blue-dark-high`}
+							} hidden text-bodyBlue dark:text-blue-dark-high sm:flex`}
 						>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={`${isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''} w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
+							<div
+								className={`${
+									isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''
+								} hidden w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:flex`}
+							>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
@@ -219,7 +235,11 @@ const VoterRow: FC<IVoterRow> = ({
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? 'ml-[72px]' : ''} w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
+					<div
+						className={`${
+							isUsedInVotedModal && voteData?.decision === 'abstain' ? 'sm:ml-[72px]' : ''
+						} mr-4 w-full overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:mr-0 sm:w-[90px]`}
+					>
 						{parseBalance(
 							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,
@@ -231,16 +251,35 @@ const VoterRow: FC<IVoterRow> = ({
 			</div>
 		</div>
 	);
+
 	return voteData?.delegatedVotes?.length > 0 && voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${
 				active ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
-			} w-[550px] gap-[0px] rounded-none border-0 ${className}`}
+			} w-full gap-[0px]  rounded-none border-0 sm:w-[550px] ${className}`}
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseUpIcon /> : <CollapseDownIcon />;
+				return isActive ? (
+					<span
+						onClick={
+							(dispatch(setSetDelegatedData(delegatedData)),
+							dispatch(setSetDelegatorLoading(delegatorLoading)),
+							dispatch(setIsReferendum2(isReferendum2)),
+							dispatch(setSetDelegationVoteModal(setDelegationVoteModal)),
+							dispatch(setTally(tally)),
+							dispatch(setVoteData(voteData)),
+							dispatch(setVoteType(voteType)))
+						}
+					>
+						<CollapseUpIcon />
+					</span>
+				) : (
+					<span onClick={dispatch(setClearInitialState())}>
+						<CollapseDownIcon />
+					</span>
+				);
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
@@ -361,7 +400,7 @@ const VoterRow: FC<IVoterRow> = ({
 		</StyledCollapse>
 	) : (
 		<div
-			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high ${
+			className={`w-full border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:w-[550px] ${
 				isUsedInVotedModal ? '' : `${className}`
 			}`}
 		>

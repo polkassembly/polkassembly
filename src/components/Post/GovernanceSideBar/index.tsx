@@ -1157,21 +1157,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{(onchainId || onchainId === 0) && (
 									<>
 										{isSupportedNestedVoteNetwork(network) ? (
-											<VoteDataModal
-												onchainId={onchainId}
-												open={open}
-												setOpen={setOpen}
-												proposalType={proposalType}
-												tally={tally}
-												ayeNayAbstainCounts={ayeNayAbstainCounts}
-												thresholdData={{
-													curvesError,
-													curvesLoading,
-													data,
-													progress,
-													setData
-												}}
-											/>
+											<>
+												<VoteDataModal
+													onchainId={onchainId}
+													open={open}
+													setOpen={setOpen}
+													proposalType={proposalType}
+													tally={tally}
+													ayeNayAbstainCounts={ayeNayAbstainCounts}
+													thresholdData={{
+														curvesError,
+														curvesLoading,
+														data,
+														progress,
+														setData
+													}}
+												/>
+												{/* <VoteDataBottomDrawer /> */}
+											</>
 										) : (
 											<Modal
 												className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'

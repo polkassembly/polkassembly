@@ -13,10 +13,11 @@ import { checkIsOnChainPost } from '~src/global/proposalType';
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { NotificationStatus, PostOrigin } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import Link from 'next/link';
-import ImageComponent from './ImageComponent';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import blockToDays from '~src/util/blockToDays';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -49,6 +50,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		show: false,
 		submissionDeposit: false
 	});
+
+	const currentTrack = trackName.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
+	console.log(networkTrackInfo[network][(PostOrigin as any)[currentTrack]]?.decisionPeriod);
+	const days = blockToDays(networkTrackInfo[network][(PostOrigin as any)[currentTrack]]?.decisionPeriod, network);
 
 	const {
 		postData: { post_link, tags, postType, content, statusHistory, postIndex }
@@ -152,7 +157,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => setOpenDecisionDeposit(true),
-					description: 'Place refundable deposit within 14 days to prevent proposal from timing out.',
+					description: `Place refundable deposit within ${days} days to prevent proposal from timing out.`,
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'
@@ -249,9 +254,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 									</div>
 								</div>
 								<div
-									className={`card-slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${
+									className={`card-slide flex h-full w-full items-center justify-center bg-rhs-card-gradient ${
 										!!loading && card.tag === cardTags.REFUND_DEPOSIT && 'cursor-progress'
-									}`}
+									} ${showDecisionDeposit ? 'gap-1 p-1' : 'gap-2 p-3'}`}
 									onClick={card.clickHandler}
 								>
 									<Image
@@ -260,7 +265,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 										width={60}
 										height={60}
 									/>
-									<div className={`content ${showDecisionDeposit ? 'mr-[54px] mt-3' : 'mr-18'} text-white`}>
+									<div className={`content ${showDecisionDeposit ? 'mr-[44px] mt-3' : 'mr-18'} text-white`}>
 										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
 										<p className=' mb-0 break-words text-xs leading-tight'>
 											{card.description}
@@ -276,10 +281,12 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 													}}
 												>
 													Details
-													<ImageComponent
+													<Image
 														src='/assets/icons/redirect.svg'
 														alt='redirection-icon'
-														className='scale-60 h-4 w-4 '
+														width={14}
+														height={14}
+														className='-mt-0.5'
 													/>
 												</Link>
 											)}

@@ -26,6 +26,7 @@ interface Props {
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 	userPosts: IUserPostsListingResponse;
+	totalPosts: number;
 }
 export const getLabel = (str: string) => {
 	const newStr = str.split('_').join(' ');
@@ -48,7 +49,7 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 
 	return filteredPosts;
 };
-const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
+const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
@@ -124,7 +125,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 		</div>
 	);
 	const govTypeContent = (
-		<div className='flex w-[110px] flex-col gap-4'>
+		<div className='flex w-[110px] flex-col gap-2'>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => handleGovSelection(EGovType.GOV1)}
@@ -181,7 +182,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 					/>
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Posts
-						<span className='flex items-end text-sm font-normal'>({selectedGov === EGovType.OPEN_GOV ? userPosts.open_gov_total || 0 : userPosts?.gov1_total || 0})</span>
+						<span className='flex items-end text-sm font-normal'>({totalPosts})</span>
 					</div>
 				</div>
 				<div className='flex gap-4'>
@@ -212,8 +213,8 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 								placement='bottom'
 								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
 							>
-								<div className='flex h-10 w-[130px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									{selectedGov.split('_').join(' ')}
+								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
+									{selectedGov.split('_').join('')}({selectedGov === EGovType.GOV1 ? userPosts?.gov1_total : userPosts?.open_gov_total})
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer ${govTypeExpand && 'pink-color rotate-180'}`} />
 									</span>
@@ -297,7 +298,10 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 						);
 					})
 				) : (
-					<Empty className='mt-8' />
+					<Empty
+						className='mt-8'
+						description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+					/>
 				)}
 			</div>
 		</div>

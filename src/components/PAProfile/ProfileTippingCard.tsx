@@ -181,8 +181,8 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 								<Image
 									src={tip?.src}
 									alt=''
-									width={20}
-									height={20}
+									width={24}
+									height={24}
 								/>
 								<span>${tip.value}</span>
 							</span>
@@ -255,8 +255,8 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 						))
 					) : (
 						<Empty
-							className='mt-4 text-lightBlue dark:text-blue-dark-high'
-							description='No tip Found'
+							className='mt-4'
+							description={<div className='text-lightBlue dark:text-blue-dark-high'>No tip Found</div>}
 						/>
 					)}
 				</div>

@@ -43,6 +43,7 @@ interface Props {
 	theme?: string;
 	setStatsArr?: (pre: IStats[]) => void;
 	statsArr?: IStats[];
+	totalVotes: number;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -76,7 +77,7 @@ enum EHeading {
 const abi = require('src/moonbeamConvictionVoting.json');
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
-const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: Props) => {
+const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, totalVotes }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { addresses } = userProfile;
@@ -128,7 +129,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 	);
 
 	const govTypeContent = (
-		<div className='flex w-[110px] flex-col gap-4'>
+		<div className='flex w-[110px] flex-col gap-2'>
 			<span
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => setSelectedGov(EGovType.GOV1)}
@@ -294,7 +295,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 					/>
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Votes
-						<span className='flex items-end text-sm font-normal'>({totalCount})</span>
+						<span className='flex items-end text-sm font-normal'>({totalVotes})</span>
 					</div>
 				</div>
 				<div className='flex gap-4'>
@@ -323,8 +324,8 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 								placement='bottom'
 								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
 							>
-								<div className='flex h-10 w-[130px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									{selectedGov.split('_').join(' ')}
+								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
+									{selectedGov.split('_').join('')}({totalCount})
 									<span className='flex items-center'>
 										<DownArrowIcon className={`cursor-pointer ${govTypeExpand && 'pink-color rotate-180'}`} />
 									</span>
@@ -441,15 +442,20 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 															</span>
 															{userProfile.user_id === id && vote?.proposal.type === getSubsquidProposalType(ProposalType.OPEN_GOV) && (
 																<span
-																	className={classNames((!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))) && 'cursor-not-allowed opacity-50')}
-																	onClick={() => handleRemoveVote(vote?.proposal?.trackNumber, Number(vote?.proposal?.id))}
+																	className={classNames(
+																		!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id)) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+																	)}
+																	onClick={() => {
+																		if (!canRemoveVote) return;
+																		handleRemoveVote(vote?.proposal?.trackNumber, Number(vote?.proposal?.id));
+																	}}
 																>
 																	<Image
 																		src={theme === 'dark' ? '/assets/profile/remove-vote-dark.svg' : '/assets/profile/remove-vote.svg'}
 																		height={24}
 																		width={24}
 																		alt=''
-																		className='cursor-pointer max-md:hidden'
+																		className='max-md:hidden'
 																	/>
 																</span>
 															)}
@@ -502,7 +508,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 						</div>
 					</div>
 				) : (
-					<div className='mt-16'>{votesData && <Empty />}</div>
+					<div className='mt-16'>{votesData && <Empty description={<div className='text-lightBlue dark:text-blue-dark-high'>No vote found</div>} />}</div>
 				)}
 			</Spin>
 			<VoteHistoryExpandModal

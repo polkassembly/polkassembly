@@ -97,6 +97,7 @@ const ProfileTabs = ({
 					addressWithIdentity={addressWithIdentity}
 					theme={theme}
 					userPosts={userPosts}
+					totalPosts={totals?.posts}
 				/>
 			),
 			key: 'Posts',
@@ -122,6 +123,7 @@ const ProfileTabs = ({
 					theme={theme}
 					setStatsArr={setStatsArr}
 					statsArr={statsArr}
+					totalVotes={totals?.votes}
 				/>
 			),
 			key: 'Votes',

@@ -43,8 +43,8 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 			<ImageComponent
 				src={image}
 				alt='User Picture'
-				className='mt-[-1px] flex h-[131px] w-[130px] items-center justify-center border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
-				iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+				className='mt-[-1px] flex h-[130px] w-[130px] items-center justify-center border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
+				iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 			/>
 			<div className='ml-[-70px] flex w-full items-start justify-between rounded-e-[14px] border-[#D2D8E0] bg-white py-2 dark:border-separatorDark dark:bg-section-dark-overlay max-md:ml-0 max-md:flex-col max-md:items-center md:border-0 md:border-b-[1px] md:border-r-[1px] md:border-t-[1px] md:border-solid md:py-4'>
 				<div className=' flex w-full flex-col gap-2 max-md:items-center max-md:gap-4 max-md:border-none max-md:bg-transparent max-md:dark:bg-transparent md:h-[130px]'>

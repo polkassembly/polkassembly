@@ -144,7 +144,6 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 									setOpenTipModal(true);
 									dispatch(setReceiver(addressWithIdentity || ''));
 								}}
-								// onClick={() => setOpenDelegateModal(true)}
 							>
 								<Image
 									src='/assets/profile/white-dollar.svg'
@@ -213,7 +212,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 					{!!tipsData.length && !loading ? (
 						tipsData.map((tip, index) => (
 							<div
-								className={`flex w-full gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] pb-2 font-normal dark:border-separatorDark ${
+								className={`flex w-full gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] py-2 font-normal dark:border-separatorDark ${
 									tipsData.length - 1 === index && 'border-none'
 								} ${isMobile ? 'flex-col items-start justify-start' : 'items-center'}`}
 								key={index}

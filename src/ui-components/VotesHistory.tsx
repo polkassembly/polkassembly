@@ -119,6 +119,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr }: 
 							isTruncateUsername={false}
 							displayInline
 							disableAddressClick
+							disableTooltip
 						/>
 					</div>
 				))}

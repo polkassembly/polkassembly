@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Checkbox, Empty, Popover } from 'antd';
 import classNames from 'classnames';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import GovernanceCard from '../GovernanceCard';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -39,10 +40,13 @@ const handleInitialFilter = (data: IUserPostsListingResponse, govType: EGovType)
 	});
 	return filter;
 };
-const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingResponse) => {
-	return (
-		(posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts || (posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] || []
-	);
+const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingResponse, addresses: string[], network: string) => {
+	const newPosts =
+		(posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter]?.posts || (posts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter] || [];
+	const filteredPosts =
+		newPosts.filter((post: IUserPost) => addresses.map((address) => getEncodedAddress(address, network)).includes(getEncodedAddress(post?.proposer, network))) || [];
+
+	return filteredPosts;
 };
 const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 	const { network } = useNetworkSelector();
@@ -53,7 +57,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 	const [subFilterExpand, setSubFilterExpand] = useState(false);
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [selectedFilter, setSelectedFilter] = useState(handleInitialFilter(userPosts, selectedGov));
-	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts));
+	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
 
@@ -69,7 +73,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 		const filter = handleInitialFilter(userPosts, govType);
 		setSelectedFilter(filter);
 		handleSelectSubFilter(filter, govType);
-		setPosts(getPosts(filter, govType, userPosts));
+		setPosts(getPosts(filter, govType, userPosts, checkedAddressList as string[], network));
 	};
 
 	const handleFilterPostByPostType = (postTypes: string[]) => {
@@ -77,12 +81,19 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 		Object.entries(selectedSubFilters).map(([key, value]) => {
 			if (postTypes.includes(key) && !!Array.isArray(value)) {
 				if (value.length) {
-					totalPosts.push(...totalPosts, ...(value as any[]));
+					const filterByAddresses =
+						value.filter((item) => checkedAddressList.map((add) => getEncodedAddress(add, network)).includes(getEncodedAddress(item?.proposer, network))) || [];
+					totalPosts.push(...totalPosts, ...(filterByAddresses as any[]));
 				}
 			}
 		});
 		setPosts(totalPosts);
 	};
+
+	useEffect(() => {
+		setPosts(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [checkedAddressList]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -105,6 +116,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 							isTruncateUsername={false}
 							displayInline
 							disableAddressClick
+							disableTooltip
 						/>
 					</div>
 				))}
@@ -221,7 +233,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme }: Props) => {
 									if (!((value as any)?.total || (value as any)?.length)) return;
 									setSelectedFilter(key);
 									handleSelectSubFilter(key, selectedGov);
-									setPosts(getPosts(key, selectedGov, userPosts));
+									setPosts(getPosts(key, selectedGov, userPosts, checkedAddressList as string[], network));
 								}}
 								className={`flex-shrink-0 ${
 									!((value as any)?.total || (value as any)?.length) ? 'cursor-not-allowed' : 'cursor-pointer'

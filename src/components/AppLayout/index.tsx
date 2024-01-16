@@ -282,10 +282,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const dispatch = useDispatch();
 	const getReferendaDropdown = (): any => {
 		const referendaItems: ItemType[] = [
-			// {
-			// key: 'create proposal',
-			// label: <span onClick={() => setReferendaModal(1)}>Create Proposal</span>
-			// },
+			{
+				key: 'create proposal',
+				label: <span onClick={() => setReferendaModal(1)}>Create Proposal</span>
+			},
 			{
 				key: 'cancel proposal',
 				label: <span onClick={() => setReferendaModal(2)}>Cancel Proposal</span>

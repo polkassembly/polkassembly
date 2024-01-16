@@ -434,7 +434,7 @@ export interface IDelegate {
 	active_delegation_count: number;
 	voted_proposals_count: number;
 	isNovaWalletDelegate?: boolean;
-	dataSource: 'nova' | 'parity' | 'other';
+	dataSource: 'nova' | 'parity' | 'other' | 'polkassembly';
 }
 
 export enum EVoteDecisionType {

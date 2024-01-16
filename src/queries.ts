@@ -2238,8 +2238,11 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
   }
 }`;
 
-export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+export const TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES = `query MyQuery($addresses: [String!]) {
+ totalVotes:flattenedConvictionVotesConnection(orderBy: id_ASC, where: {voter_in: $addresses, removedAtBlock_isNull: true}) {
+    totalCount
+},
+  totalProposals: proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $addresses}) {
     totalCount
   }
 }

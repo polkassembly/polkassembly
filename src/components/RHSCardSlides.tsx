@@ -13,11 +13,9 @@ import { checkIsOnChainPost } from '~src/global/proposalType';
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, PostOrigin } from '~src/types';
+import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import Link from 'next/link';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
-import blockToDays from '~src/util/blockToDays';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -50,10 +48,6 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 		show: false,
 		submissionDeposit: false
 	});
-
-	const currentTrack = trackName.replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase();
-	console.log(networkTrackInfo[network][(PostOrigin as any)[currentTrack]]?.decisionPeriod);
-	const days = blockToDays(networkTrackInfo[network][(PostOrigin as any)[currentTrack]]?.decisionPeriod, network);
 
 	const {
 		postData: { post_link, tags, postType, content, statusHistory, postIndex }
@@ -157,7 +151,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => setOpenDecisionDeposit(true),
-					description: `Place refundable deposit within ${days} days to prevent proposal from timing out.`,
+					description: 'Place refundable deposit within 14 days to prevent proposal from timing out.',
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'

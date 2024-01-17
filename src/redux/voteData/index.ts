@@ -5,10 +5,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { IVoteDataStore } from './@types';
 
 const initialState: IVoteDataStore = {
+	// active: false,
 	delegatedData: {},
-	delegatorLoading: false,
+	delegatorLoading: true,
 	isReferendum2: false,
-	setDelegationVoteModal: false,
+	isVoteDataModalOpen: false,
+	setDelegationVoteModal: {},
 	tally: '',
 	voteData: {},
 	voteType: ''
@@ -18,23 +20,40 @@ export const voteDataStore = createSlice({
 	initialState,
 	name: 'voteData',
 	reducers: {
+		// setActive: (state, action: PayloadAction<boolean | undefined>) => {
+		// state.active = action.payload;
+		// },
 		setClearInitialState: (state) => {
 			state.voteType = null;
 			state.voteData = null;
 			state.tally = null;
-			state.setDelegationVoteModal = null;
-			state.isReferendum2 = null;
-			state.delegatorLoading = null;
+			state.setDelegationVoteModal = false;
+			state.isReferendum2 = false;
+			state.delegatorLoading = initialState.delegatorLoading;
 			state.delegatedData = null;
+			// state.active = initialState.active;
 		},
-		setDelegatedData: (state, action: PayloadAction) => {
+		setDelegatorLoadingFalse: (state) => {
+			state.delegatorLoading = false;
+		},
+		setDelegatorLoadingTrue: (state) => {
+			state.delegatorLoading = true;
+		},
+		setSetDelegatedData: (state, action: PayloadAction) => {
 			state.delegatedData = action.payload;
 		},
-		setDelegatorLoading: (state, action: PayloadAction) => {
-			state.delegatorLoading = action.payload;
+		// eslint-disable-next-line sort-keys
+		setIsReferendum2: (state, action: PayloadAction<boolean | undefined>) => {
+			const value = action.payload;
+			if (value) {
+				state.isReferendum2 = action.payload;
+			}
 		},
-		setIsReferendum2: (state, action: PayloadAction) => {
-			state.isReferendum2 = action.payload;
+		setIsVoteDataModalClose: (state) => {
+			state.isVoteDataModalOpen = false;
+		},
+		setIsVoteDataModalOpen: (state) => {
+			state.isVoteDataModalOpen = true;
 		},
 		setSetDelegationVoteModal: (state, action: PayloadAction) => {
 			state.setDelegationVoteModal = action.payload;
@@ -51,47 +70,17 @@ export const voteDataStore = createSlice({
 	}
 });
 
-const voteDataStoreActions = voteDataStore.actions;
-
-const setClearInitialState: any = () => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setClearInitialState());
-	};
-};
-const setSetDelegatedData: any = (delegateData: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setDelegatedData(delegateData));
-	};
-};
-const setSetDelegatorLoading: any = (delegatorLoading: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setDelegatorLoading(delegatorLoading));
-	};
-};
-const setIsReferendum2: any = (isReferendum2: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setIsReferendum2(isReferendum2));
-	};
-};
-const setSetDelegationVoteModal: any = (setDelegationVoteModal: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setSetDelegationVoteModal(setDelegationVoteModal));
-	};
-};
-const setTally: any = (tally: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setTally(tally));
-	};
-};
-const setVoteData: any = (voteData: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setVoteData(voteData));
-	};
-};
-const setVoteType: any = (voteType: any) => {
-	return (dispatch: any) => {
-		dispatch(voteDataStoreActions.setVoteType(voteType));
-	};
-};
-
-export { setClearInitialState, setSetDelegatedData, setSetDelegatorLoading, setIsReferendum2, setSetDelegationVoteModal, setTally, setVoteData, setVoteType };
+export const {
+	// setActive,
+	setIsVoteDataModalClose,
+	setIsVoteDataModalOpen,
+	setClearInitialState,
+	setSetDelegatedData,
+	setDelegatorLoadingTrue,
+	setDelegatorLoadingFalse,
+	setIsReferendum2,
+	setSetDelegationVoteModal,
+	setTally,
+	setVoteData,
+	setVoteType
+} = voteDataStore.actions;

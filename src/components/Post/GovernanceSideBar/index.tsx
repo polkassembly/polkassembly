@@ -76,7 +76,6 @@ import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
-
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;
@@ -1157,24 +1156,21 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{(onchainId || onchainId === 0) && (
 									<>
 										{isSupportedNestedVoteNetwork(network) ? (
-											<>
-												<VoteDataModal
-													onchainId={onchainId}
-													open={open}
-													setOpen={setOpen}
-													proposalType={proposalType}
-													tally={tally}
-													ayeNayAbstainCounts={ayeNayAbstainCounts}
-													thresholdData={{
-														curvesError,
-														curvesLoading,
-														data,
-														progress,
-														setData
-													}}
-												/>
-												{/* <VoteDataBottomDrawer /> */}
-											</>
+											<VoteDataModal
+												onchainId={onchainId}
+												open={open}
+												setOpen={setOpen}
+												proposalType={proposalType}
+												tally={tally}
+												ayeNayAbstainCounts={ayeNayAbstainCounts}
+												thresholdData={{
+													curvesError,
+													curvesLoading,
+													data,
+													progress,
+													setData
+												}}
+											/>
 										) : (
 											<Modal
 												className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'

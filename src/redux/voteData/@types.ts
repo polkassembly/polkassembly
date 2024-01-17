@@ -4,10 +4,12 @@
 
 export interface IVoteDataStore {
 	delegatedData: any;
-	delegatorLoading: any;
-	isReferendum2: any;
+	delegatorLoading: boolean;
+	isReferendum2: boolean | undefined;
+	// active: boolean | undefined;
 	setDelegationVoteModal: any;
 	tally: any;
 	voteData: any;
 	voteType: any;
+	isVoteDataModalOpen: boolean;
 }

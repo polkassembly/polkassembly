@@ -20,6 +20,8 @@ import DelegationListRow from './DelegationListRow';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import Address from '~src/ui-components/Address';
 import { VoteType } from '~src/global/proposalType';
+import { useDispatch } from 'react-redux';
+import { setClearInitialState, setIsVoteDataModalClose } from '~src/redux/voteData';
 
 const getPercentage = (userVotes: string, totalVotes: string) => {
 	if (!totalVotes) {
@@ -42,27 +44,30 @@ const getPercentage = (userVotes: string, totalVotes: string) => {
 const VoteDataExpand = () => {
 	const { network } = useNetworkSelector();
 	const { voteData, isReferendum2, delegatedData, tally, delegatorLoading, voteType, setDelegationVoteModal } = useVoteDataSelector();
-	console.log('type of voteData', voteData);
-	console.log('type of isReferendum2', isReferendum2);
-	console.log('type of tally', tally);
-	console.log('type of delegatedData', delegatedData);
-	console.log('type of delegatorLoading', delegatorLoading);
-	console.log('type of voteType', voteType);
-	console.log('type of setDelegationVoteModal', setDelegationVoteModal);
+	const dispatch = useDispatch();
+
 	return (
-		<div className=''>
-			<div className='flex items-center justify-between px-3 pt-3'>
+		<main className='dark:bg-section-dark-overlay'>
+			<div className='mx-auto mt-2 flex h-1 w-[56px] rounded-[100px] bg-[#D2D8E0]'></div>
+			<div className='flex items-center justify-between px-3 pt-3 dark:bg-section-dark-overlay'>
 				<div className='flex space-x-[6px]'>
 					<LikeFilled />
-					<span className='text-lg font-semibold text-blue-light-high'>
-						Voted <span>Aye</span>
+					<span className='text-lg font-semibold text-blue-light-high dark:text-white'>
+						Voted <span>{voteData?.decision === 'yes' ? 'Aye' : 'Nays'}</span>
 					</span>
 				</div>
-				<CloseIcon />
+				<span
+					onClick={() => {
+						dispatch(setIsVoteDataModalClose());
+						dispatch(setClearInitialState());
+					}}
+				>
+					<CloseIcon />
+				</span>
 			</div>
 			<Divider />
-			<div className='flex justify-between px-3'>
-				<div>
+			<div className='flex justify-between px-4 dark:bg-section-dark-overlay'>
+				<div className=''>
 					<span className='text-sm font-medium text-blue-light-medium'>Voter</span>
 					<div>
 						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
@@ -109,8 +114,8 @@ const VoteDataExpand = () => {
 					</span>
 				</div>
 			</div>
-			<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
-				<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+			<div className='flex flex-col gap-4 px-4 dark:bg-section-dark-overlay'>
+				<div className='flex items-center justify-between gap-[50px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<CalenderIcon />{' '}
 						{dayjs(voteData?.createdAt)
@@ -128,9 +133,9 @@ const VoteDataExpand = () => {
 					)}
 				</div>
 				<div>
-					<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
-					<div className='flex justify-between'>
-						<div className='flex w-[200px] flex-col gap-1'>
+					<p className='mb-2.5 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
+					<div className=''>
+						<div className='flex flex-col gap-1 border-x-0 border-t-0 border-dashed border-[#D2D8E0] px-1 pb-2 dark:border-[#3B444F] dark:border-separatorDark'>
 							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 							<div className='flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
@@ -155,10 +160,10 @@ const VoteDataExpand = () => {
 								</span>
 							</div>
 						</div>
-						<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
-						<div className='mr-3 flex w-[200px] flex-col gap-1'>
+						<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
+						<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
 							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
-							<div className='flex justify-between'>
+							<div className='mt-1.5 flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 									<VoterIcon /> Voting Power
 								</span>
@@ -186,7 +191,7 @@ const VoteDataExpand = () => {
 					className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 				/>
 				<div>
-					<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+					<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
 					<div className='mb-2 flex items-center text-xs font-semibold'>
 						<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
 						<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
@@ -216,7 +221,7 @@ const VoteDataExpand = () => {
 					)}
 				</div>
 			</div>
-		</div>
+		</main>
 	);
 };
 

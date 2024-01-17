@@ -29,7 +29,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network || !['polkadot', 'kusama'].includes(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
+	if (!network || !['polkadot', 'kusama', 'picasso', 'composable'].includes(network))
+		return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
 
 	const { commentId = '', postId, postType, replyId = '', reason = '' } = req.body;
 

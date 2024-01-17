@@ -46,8 +46,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	//TODO: remove hard coded condition
 
-	if (user.id === 7054 && network !== 'composable') {
-		return res.status(403).json({ message: 'Unauthorised for networks other than Composable' });
+	if (user.id === 7054 && !['composable', 'picasso'].includes(network)) {
+		return res.status(403).json({ message: 'Unauthorised for networks other than Composable and Picasso' });
 	}
 
 	let ref = postsByTypeRef(network, postType).doc(String(postId));

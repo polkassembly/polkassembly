@@ -30,7 +30,7 @@ import { trackEvent } from 'analytics';
 import VerifiedInfo from './VerifiedInfo';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 
-export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
+export const socialLinks = [ESocialType.EMAIL, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.RIOT, ESocialType.DISCORD];
 
 interface IDetailsProps {
 	userProfile: {

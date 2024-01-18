@@ -55,7 +55,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsSelector();
-	const [target, setTarget] = useState<string>('');
+	const [target, setTarget] = useState<string>(defaultTarget || '');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock, setLockValue] = useState<number>(0);
@@ -94,9 +94,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 		if (defaultTarget) {
 			form.setFieldValue('targetAddress', defaultTarget);
+			setTarget(defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, defaultTarget]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
@@ -387,8 +388,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<AddressInput
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
-									label={'Beneficiary Address'}
-									placeholder='Add beneficiary address'
+									label={'Delegate To'}
+									placeholder='Add Delegatee Address'
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);

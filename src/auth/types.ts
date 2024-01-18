@@ -75,6 +75,7 @@ export interface ProfileDetailsResponse extends ProfileDetails {
 	user_id: number;
 	username: string;
 	addresses: string[];
+	created_at?: Date | null;
 }
 
 export interface IAddressProxyForEntry {

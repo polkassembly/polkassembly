@@ -39,6 +39,14 @@ interface Props {
 	className?: string;
 	addresses: string[];
 }
+export const votesUnlockUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {
@@ -338,9 +346,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					onClick={() => setOpen(true)}
 					className={`text-sm ${
 						totalUnlockableBalance.eq(ZERO_BN)
-							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:border-blue-dark-high dark:bg-blue-light-high dark:text-blue-dark-high'
+							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: 'border-pink_primary bg-[#fdedf7] text-pink_primary dark:bg-pink-dark-primary'
-					} h-[32px] rounded-[8px]`}
+					} h-[32px] w-full rounded-[8px]`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
 						? 'Unlock Your Tokens'

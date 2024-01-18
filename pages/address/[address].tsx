@@ -2,32 +2,24 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Segmented, Select } from 'antd';
 import { GetServerSideProps } from 'next';
 import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/auth/data/userProfileWithUsername';
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 // import { ProfileDetailsResponse } from '~src/auth/types';
-import PostsTab from '~src/components/User/PostsTab';
-import Details from '~src/components/UserProfile/Details';
-import { EGovType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
-import CountBadgePill from '~src/ui-components/CountBadgePill';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 // import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import VotesHistory from '~src/ui-components/VotesHistory';
-import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import { Tabs } from '~src/ui-components/Tabs';
-import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import PAProfile from '~src/components/PAProfile';
+import { useTheme } from 'next-themes';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -106,11 +98,10 @@ const EmptyState = styled.div`
 `;
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
-	const { userPosts, network, userProfile, className, error } = props;
-	const dispatch = useDispatch();
-	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
-	const [profileHistory, setProfileHistory] = useState<EProfileHistory>(isOpenGovSupported(network) ? EProfileHistory.VOTES : EProfileHistory.POSTS);
+	const { userPosts, network, userProfile, error, className } = props;
 	const { resolvedTheme: theme } = useTheme();
+
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -121,7 +112,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		return (
 			<EmptyState>
 				<ErrorAlert
-					className='dark:text-white'
+					className={`dark:text-white ${className} ${theme}`}
 					errorMsg="Invalid User. This user does't have any account with Polkassembly"
 				/>
 				{/* <UserNotFound /> */}
@@ -134,109 +125,16 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			</EmptyState>
 		);
 	}
-	const handleSelectGov = (type: EGovType) => {
-		if (type === EGovType.GOV1) {
-			setProfileHistory(EProfileHistory.POSTS);
-		} else {
-			setProfileHistory(EProfileHistory.VOTES);
-		}
-		setSelectedGov(type);
-	};
-
-	if (userPosts?.error || userProfile?.error) {
-		return <ErrorAlert errorMsg={userPosts?.error || userProfile?.error || ''} />;
-	}
-	const tabItems = Object.entries(userPosts?.data?.[selectedGov]).map(([key, value]) => {
-		if (!value) return null;
-		let count = 0;
-		if (Array.isArray(value)) {
-			count = value.length;
-		} else {
-			Object.values(value).forEach((v) => {
-				if (v && Array.isArray(v)) {
-					count += v.length;
-				}
-			});
-		}
-		return {
-			children: <PostsTab posts={value} />,
-			key: key,
-			label: (
-				<CountBadgePill
-					label={key?.split('_').join(' ') || ''}
-					count={count}
-				/>
-			)
-		};
-	});
 	return (
 		<>
 			<SEOHead
 				title='User Profile'
 				network={network}
 			/>
-			<section className={`my-0 flex h-full min-h-[calc(100vh-150px)] rounded-[4px] pb-5 dark:bg-section-dark-overlay md:bg-white md:pb-0 md:shadow-md ${className}`}>
-				<Details
-					userPosts={userPosts.data}
-					userProfile={userProfile || null}
-				/>
-				<article className='hidden w-[calc(100%-330px)] flex-1 flex-col px-10 py-6 dark:bg-section-dark-overlay md:flex'>
-					<div className='flex items-start justify-between'>
-						<h2 className='text-[28px] font-semibold leading-[42px] text-sidebarBlue dark:text-white'>Activity</h2>
-						{isOpenGovSupported(network) && (
-							<Select
-								value={selectedGov}
-								className='dark:text-blue-dark-medium dark:[&>.ant-select-selector]:bg-section-dark-overlay'
-								style={{
-									width: 120
-								}}
-								onChange={(v) => {
-									handleSelectGov(v);
-								}}
-								options={[
-									{
-										label: <span className='dark:text-blue-dark-high'>Gov1</span>,
-										value: 'gov1'
-									},
-									{
-										label: <span className='dark:text-blue-dark-high'>OpenGov</span>,
-										value: 'open_gov'
-									}
-								]}
-								popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-overlay'
-							/>
-						)}
-					</div>
-					{!votesHistoryUnavailableNetworks.includes(network) && (
-						<div className='mb-6'>
-							<Segmented
-								className='mb-4 h-[36px] w-[130px] dark:bg-section-dark-background'
-								options={[EProfileHistory.VOTES, EProfileHistory.POSTS]}
-								onChange={(e) => setProfileHistory(e as EProfileHistory)}
-								value={profileHistory}
-							/>
-						</div>
-					)}
-
-					{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) ? (
-						<div className='overflow-scroll overflow-x-auto overflow-y-hidden pb-4'>
-							<VotesHistory
-								userAddresses={userProfile?.data?.addresses || []}
-								govType={selectedGov}
-							/>
-						</div>
-					) : (
-						<div className='fullHeight'>
-							<Tabs
-								className='ant-tabs-tab-bg-white font-medium text-sidebarBlue dark:bg-section-dark-overlay'
-								type='card'
-								items={tabItems as any}
-								theme={theme}
-							/>
-						</div>
-					)}
-				</article>
-			</section>
+			<PAProfile
+				userProfile={userProfile.data}
+				userPosts={userPosts?.data}
+			/>
 		</>
 	);
 };

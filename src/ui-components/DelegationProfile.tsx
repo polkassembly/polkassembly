@@ -163,7 +163,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								variant='default'
 								className='max-lg:w-auto'
 							>
-								<EditIcon className='text-[14px] tracking-wide text-pink_primary ' />
+								<EditIcon className='text-sm tracking-wide text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>
 							</CustomButton>
 						)}

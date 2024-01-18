@@ -39,6 +39,7 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 					<ImageIcon
 						src='/assets/icons/dashboard-profile.svg'
 						alt='dashboard profile icon'
+						imgClassName='h-full w-full'
 					/>
 				</span>
 			}

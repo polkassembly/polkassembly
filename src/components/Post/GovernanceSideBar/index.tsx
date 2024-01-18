@@ -168,7 +168,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 	const isRun = useRef(false);
 	const dispatch = useDispatch();
-
+	const [trackNumber, setTrackNumber] = useState('');
 	const canVote =
 		Boolean(post.status) &&
 		[
@@ -402,6 +402,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+					if (track) {
+						setTrackNumber((track as any[])[0]);
+					}
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
@@ -1049,6 +1052,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
+															track_number={trackNumber}
 														/>
 
 														{RenderLastVote}
@@ -1111,6 +1115,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
+																track_number={trackNumber}
 															/>
 														)}
 														{RenderLastVote}

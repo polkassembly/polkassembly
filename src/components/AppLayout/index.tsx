@@ -71,6 +71,7 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import ReferendaActionModal from '../Forms/ReferendaActionModal';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -262,7 +263,65 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const dispatch = useDispatch();
+	const getReferendaDropdown = (): any => {
+		const referendaItems: ItemType[] = [
+			{
+				key: 'create proposal',
+				label: (
+					<span
+						onClick={() => {
+							setReferendaModal(1), setOpenAddressLinkedModal(true), setSidedrawer(false);
+						}}
+					>
+						Create Proposal
+					</span>
+				)
+			},
+			{
+				key: 'cancel proposal',
+				label: (
+					<span
+						onClick={() => {
+							setReferendaModal(2), setOpenAddressLinkedModal(true), setSidedrawer(false);
+						}}
+					>
+						Cancel Proposal
+					</span>
+				)
+			},
+			{
+				key: 'kill proposal',
+				label: (
+					<span
+						onClick={() => {
+							setReferendaModal(3), setOpenAddressLinkedModal(true), setSidedrawer(false);
+						}}
+					>
+						Kill Proposal
+					</span>
+				)
+			}
+		];
+		const RefMenu = () => {
+			return (
+				<Dropdown
+					theme={theme}
+					menu={{ items: referendaItems }}
+					trigger={['hover']}
+					className='profile-dropdown cursor-pointer'
+					overlayClassName='z-[1056]'
+				>
+					<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
+						Select Referenda
+						<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
+					</div>
+				</Dropdown>
+			);
+		};
+		return { label: <RefMenu />, key: '', icon: '', disabled: true };
+	};
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -750,6 +809,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
+		if (loginAddress) gov2Items = [gov2Items.shift(), getReferendaDropdown(), ...gov2Items];
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
@@ -809,7 +869,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-					// footer={<BigToggleButton />}
 				>
 					<div
 						className='flex h-full flex-col justify-between'
@@ -824,6 +883,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
+
 						<BigToggleButton />
 					</div>
 				</Drawer>
@@ -871,6 +931,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)}
 
 			<Footer theme={theme} />
+			{referendaModal && (
+				<>
+					<ReferendaActionModal
+						referendaModal={referendaModal}
+						openAddressLinkedModal={openAddressLinkedModal}
+						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					/>
+				</>
+			)}
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

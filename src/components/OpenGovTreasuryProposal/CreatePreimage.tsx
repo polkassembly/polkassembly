@@ -82,7 +82,7 @@ interface Props {
 	isUpdatedAvailableBalance: boolean;
 }
 
-interface IAdvancedDetails {
+export interface IAdvancedDetails {
 	afterNoOfBlocks: BN | null;
 	atBlockNo: BN | null;
 }

@@ -7,13 +7,15 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import { Checkbox } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import Address from '~src/ui-components/Address';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import Proxy from '../Settings/Account/Proxy';
+import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
 
 interface Props {
 	className?: string;
@@ -28,6 +30,32 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const { id } = useUserDetailsSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
+	const [openLinkExpand, setOpenLinkExpand] = useState<boolean>(false);
+	const [openProxyLinkModal, setOpenProxyLinkModal] = useState<boolean>(false);
+	const [openLinkMultisig, setOpenLinkMultisig] = useState<boolean>(false);
+
+	const govTypeContent = (
+		<div className='flex w-[160px] flex-col gap-2'>
+			<span
+				className='cursor-pointer dark:text-blue-dark-high'
+				onClick={() => setOpenAddressLinkModal(true)}
+			>
+				Link Address
+			</span>
+			<span
+				className='cursor-pointer dark:text-blue-dark-high'
+				onClick={() => setOpenProxyLinkModal(true)}
+			>
+				Link Proxy Address
+			</span>
+			<span
+				className='cursor-pointer dark:text-blue-dark-high'
+				onClick={() => setOpenLinkMultisig(true)}
+			>
+				Link Multisig Address
+			</span>
+		</div>
+	);
 	return (
 		<div
 			className={classNames(
@@ -45,16 +73,25 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 					/>
 					Linked Addresses
 				</span>
+
 				{userProfile?.user_id === id && (
-					<CustomButton
-						className='delegation-buttons border-none'
-						variant='default'
-						buttonsize='xs'
-						onClick={() => setOpenAddressLinkModal(true)}
+					<Popover
+						destroyTooltipOnHide
+						zIndex={1056}
+						content={govTypeContent}
+						placement='bottom'
+						onOpenChange={() => setOpenLinkExpand(!openLinkExpand)}
 					>
-						<PlusOutlined />
-						<span>Link Addresses</span>
-					</CustomButton>
+						<div className='flex h-9 w-[160px] items-center justify-between rounded-md border-[1px] border-solid border-pink_primary p-2 text-sm font-medium capitalize text-pink_primary dark:text-pink_primary'>
+							<span>
+								<PlusOutlined className='mr-1' />
+								<span>Link Address</span>
+							</span>
+							<span className='flex items-center'>
+								<DownArrowIcon className={`cursor-pointer text-2xl ${openLinkExpand && 'pink-color rotate-180'}`} />
+							</span>
+						</div>
+					</Popover>
 				)}
 			</div>
 			<Checkbox.Group
@@ -92,6 +129,14 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				setOpen={setOpenAddressLinkModal}
 				closable
 				onConfirm={() => setOpenAddressLinkModal(false)}
+			/>
+			<Proxy
+				open={openProxyLinkModal}
+				dismissModal={() => setOpenProxyLinkModal(false)}
+			/>
+			<MultiSignatureAddress
+				open={openLinkMultisig}
+				dismissModal={() => setOpenLinkMultisig(false)}
 			/>
 		</div>
 	);

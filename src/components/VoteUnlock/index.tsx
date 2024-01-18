@@ -346,7 +346,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					onClick={() => setOpen(true)}
 					className={`text-sm ${
 						totalUnlockableBalance.eq(ZERO_BN)
-							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:text-infoAlertBgDark'
+							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: 'border-pink_primary bg-[#fdedf7] text-pink_primary dark:bg-pink-dark-primary'
 					} h-[32px] w-full rounded-[8px]`}
 				>

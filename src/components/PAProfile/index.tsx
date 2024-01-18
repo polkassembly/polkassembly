@@ -154,13 +154,12 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		<div className={classNames(className, 'flex flex-col gap-6')}>
 			<ProfileHeader
 				userProfile={userProfile}
-				className='mx-2'
 				profileDetails={profileDetails}
 				setProfileDetails={setProfileDetails}
 				addressWithIdentity={addressWithIdentity}
 			/>
 			<ProfileCard
-				className='mx-2 max-lg:mt-[190px]'
+				className='mx-2 max-lg:mt-[180px]'
 				userProfile={userProfile}
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}

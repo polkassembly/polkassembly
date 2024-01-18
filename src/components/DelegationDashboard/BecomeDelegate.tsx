@@ -84,10 +84,11 @@ const BecomeDelegate = () => {
 				<span className='text-blue-light-medium'>
 					Want to learn more about delegation process before locking your tokens. Click
 					<a
-						href=''
+						href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
 						className='text-[#407BFF] underline'
+						target='_blank'
+						rel='noreferrer'
 					>
-						{' '}
 						here
 					</a>
 				</span>

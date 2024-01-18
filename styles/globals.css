@@ -819,6 +819,10 @@ z-index: 1050 !important;
   }
 }
 
+.verification-tooltip .ant-tooltip-inner {
+  width: 311px !important;
+}
+  
 .tick-icon-container  {
   transform: scale(0.7);
 }

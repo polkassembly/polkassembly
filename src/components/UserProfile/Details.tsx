@@ -2,9 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton } from 'antd';
+import { Divider, Skeleton, Tooltip } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { CheckCircleFilled } from '@ant-design/icons';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext } from '~src/context';
 import Addresses from './Addresses';
@@ -28,6 +27,8 @@ import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[us
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
+import VerifiedInfo from './VerifiedInfo';
+import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 
 export const socialLinks = [ESocialType.EMAIL, ESocialType.RIOT, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.DISCORD];
 
@@ -275,6 +276,7 @@ const Details: FC<IDetailsProps> = (props) => {
 			label: 'Votes'
 		});
 	}
+	const isCurrentUser = userDetails.username === username ? true : false;
 	return (
 		<div className='flex h-full w-full flex-col gap-y-5 bg-[#F5F5F5] dark:bg-section-dark-overlay md:w-auto'>
 			<article className='rounded-l-[4px] bg-[#910365] px-4 py-[22px] md:w-[330px] md:flex-1 md:py-8'>
@@ -306,10 +308,14 @@ const Details: FC<IDetailsProps> = (props) => {
 							{newUsername}
 						</h2>
 						{isGood && onChainIdentity.judgements.length > 0 && (
-							<CheckCircleFilled
-								style={{ color: 'green' }}
-								className='mt-[7px] h-[20px] rounded-[50%] border-solid border-[#910365] bg-white dark:bg-section-dark-overlay'
-							/>
+							<Tooltip
+								arrow
+								color='#fff'
+								overlayClassName='verification-tooltip'
+								title={<VerifiedInfo isCurrentUser={isCurrentUser} />}
+							>
+								<VerifiedIcon className='-ml-1 mt-2.5 scale-90' />
+							</Tooltip>
 						)}
 					</div>
 					<div className='mt- flex items-center gap-x-5 text-xl text-navBlue md:gap-x-3'>

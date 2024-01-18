@@ -37,7 +37,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 		<div
 			className={classNames(
 				className,
-				'max-md-w-full flex h-[128px] border-[1px] max-md:h-[350px] max-md:flex-col max-md:items-center max-md:gap-2 max-md:rounded-[14px] max-md:border-solid max-md:border-[rgb(210,216,224)] max-md:bg-white max-md:py-6 max-md:dark:border-separatorDark max-md:dark:bg-section-dark-overlay'
+				'max-md-w-full flex h-[128px] border-[1px] max-md:h-[350px] max-md:flex-col max-md:items-center max-md:gap-2 max-md:rounded-[14px] max-md:border-solid max-md:border-[rgb(210,216,224)] max-md:bg-white max-md:py-4 max-md:dark:border-separatorDark max-md:dark:bg-section-dark-overlay'
 			)}
 		>
 			<div className='z-50 mt-[-1px] flex h-[130px] w-[130px] items-center justify-center rounded-full border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-separatorDark dark:bg-section-dark-overlay'>

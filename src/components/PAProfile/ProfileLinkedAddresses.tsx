@@ -12,10 +12,11 @@ import { Checkbox, Popover } from 'antd';
 import Address from '~src/ui-components/Address';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Proxy from '../Settings/Account/Proxy';
 import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -25,15 +26,31 @@ interface Props {
 	selectedAddresses: string[];
 	setSelectedAddresses: (pre: string[]) => void;
 }
-
+const filterDuplicateAddresses = (addresses: string[], network: string) => {
+	const obj: any = {};
+	for (const address of addresses) {
+		const encodedAdd = getEncodedAddress(address, network) || '';
+		if (obj[encodedAdd] === undefined) {
+			obj[encodedAdd] = 1;
+		} else {
+			obj[encodedAdd] += 1;
+		}
+	}
+	const dataArr: string[] = [];
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const data = Object.entries(obj).forEach(([key]) => {
+		dataArr.push(key);
+	});
+	return dataArr;
+};
 const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, setSelectedAddresses }: Props) => {
 	const { id } = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
 	const [openLinkExpand, setOpenLinkExpand] = useState<boolean>(false);
 	const [openProxyLinkModal, setOpenProxyLinkModal] = useState<boolean>(false);
 	const [openLinkMultisig, setOpenLinkMultisig] = useState<boolean>(false);
-
 	const govTypeContent = (
 		<div className='flex w-[160px] flex-col gap-2'>
 			<span
@@ -56,6 +73,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			</span>
 		</div>
 	);
+
 	return (
 		<div
 			className={classNames(
@@ -102,26 +120,30 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				}}
 				value={selectedAddresses as CheckboxValueType[]}
 			>
-				{addresses.map((address) => (
-					<div
-						key={address}
-						className='flex items-start justify-start rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:flex-col'
-					>
-						<Checkbox
-							value={address}
-							className='flex items-center'
+				{!!addresses?.length &&
+					filterDuplicateAddresses(
+						addresses.map((item) => getEncodedAddress(item, network) || item),
+						network
+					).map((address) => (
+						<div
+							key={address}
+							className='flex items-start justify-start rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:flex-col'
 						>
-							<Address
-								address={address}
-								addressWithVerifiedTick
-								disableHeader
-								addressMaxLength={5}
-								iconSize={18}
-								addressClassName='text-sm tracking-wide font-semibold dark:text-blue-dark-high'
-							/>
-						</Checkbox>
-					</div>
-				))}
+							<Checkbox
+								value={address}
+								className='flex items-center'
+							>
+								<Address
+									address={address}
+									addressWithVerifiedTick
+									disableHeader
+									addressMaxLength={5}
+									iconSize={18}
+									addressClassName='text-sm tracking-wide font-semibold dark:text-blue-dark-high'
+								/>
+							</Checkbox>
+						</div>
+					))}
 			</Checkbox.Group>
 			<AddressConnectModal
 				linkAddressNeeded

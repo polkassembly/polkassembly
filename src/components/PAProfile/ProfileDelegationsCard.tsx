@@ -252,6 +252,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															address={item?.status === ETrackDelegationStatus.DELEGATED ? delegation?.delegations?.[0]?.to : delegation?.delegations?.[0]?.from}
 															displayInline
 															disableTooltip
+															usernameMaxLength={30}
 														/>
 														<span>
 															{formatedBalance(delegation?.delegations?.[0]?.balance.toString(), unit, 2)} {unit}

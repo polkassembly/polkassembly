@@ -1,14 +1,22 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
+import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
-import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+// import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Loader from '~src/ui-components/Loader';
+
+const BecomeDelegateModal = dynamic(() => import('../../ui-components/BecomeDelegateModal'), {
+	loading: () => <Loader />,
+	ssr: false
+});
 
 const BecomeDelegate = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
+	const currentUser = useUserDetailsSelector();
 	const showModal = () => {
 		setIsModalOpen(true);
 	};
@@ -17,12 +25,23 @@ const BecomeDelegate = () => {
 		<div className='rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex items-center justify-between'>
 				<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
-				<Button
-					onClick={showModal}
-					className='border-[#E5007A] bg-[#ef66af] text-white'
-				>
-					Become a Delegate
-				</Button>
+				{!currentUser.id ? (
+					<Button
+						onClick={showModal}
+						disabled={!currentUser.id}
+						className='border-[#E5007A] bg-[#ef66af] text-white'
+					>
+						<Tooltip title='Please Login to continue'>Become a Delegate</Tooltip>
+					</Button>
+				) : (
+					<Button
+						onClick={showModal}
+						disabled={!currentUser.id}
+						className='border-[#E5007A] bg-[#ef66af] text-white'
+					>
+						Become a Delegate
+					</Button>
+				)}
 			</div>
 			<div className='flex justify-between'>
 				<div className='flex space-x-3'>

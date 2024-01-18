@@ -8,7 +8,13 @@ import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import ImageIcon from './ImageIcon';
 import AddressDropdown from './AddressDropdown';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { InjectedAccount } from '@polkadot/extension-inject/types';
+import { useEffect, useState } from 'react';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
+import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
+import { useApiContext } from '~src/context';
 
 interface Props {
 	isModalOpen: boolean;
@@ -17,8 +23,29 @@ interface Props {
 }
 
 const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) => {
+	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
-	const { addresses } = currentUser;
+	const { network } = useNetworkSelector();
+	const { loginWallet, loginAddress, delegationDashboardAddress } = currentUser;
+	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
+	const dispatch = useDispatch();
+
+	const getAllAccounts = async () => {
+		if (!api || !apiReady || !loginWallet) return;
+
+		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
+		setAccounts(addressData?.accounts || []);
+		setAddress(addressData?.account || '');
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+
+		getAllAccounts();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [delegationDashboardAddress, api, apiReady]);
+
 	return (
 		<Modal
 			title={
@@ -36,12 +63,25 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 			}}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
-			<AddressDropdown />
+			<div className='mt-6 px-5'>
+				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+				<AddressDropdown
+					accounts={accounts}
+					onAccountChange={(address) => {
+						setAddress(address);
+						dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
+					}}
+					defaultAddress={defaultAddress}
+				/>
+			</div>
 			<div className='mt-6 px-5'>
 				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 					Your Bio<span className='font-semibold text-[#FF3C5F]'>*</span>
 				</label>
-				<Input placeholder='Add message for delegate address' />
+				<Input
+					className='p-3'
+					placeholder='Add message for delegate address'
+				/>
 			</div>
 			<div className='mb-7 mt-6 rounded-[4px] px-5'>
 				<Alert

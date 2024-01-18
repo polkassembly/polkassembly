@@ -268,38 +268,38 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const getReferendaDropdown = (): any => {
 		const referendaItems: ItemType[] = [
 			{
-				key: 'create proposal',
+				key: 'create referendum',
 				label: (
 					<span
 						onClick={() => {
 							setReferendaModal(1), setOpenAddressLinkedModal(true), setSidedrawer(false);
 						}}
 					>
-						Create Proposal
+						Create Referendum
 					</span>
 				)
 			},
 			{
-				key: 'cancel proposal',
+				key: 'cancel referendum',
 				label: (
 					<span
 						onClick={() => {
 							setReferendaModal(2), setOpenAddressLinkedModal(true), setSidedrawer(false);
 						}}
 					>
-						Cancel Proposal
+						Cancel Referendum
 					</span>
 				)
 			},
 			{
-				key: 'kill proposal',
+				key: 'kill referendum',
 				label: (
 					<span
 						onClick={() => {
 							setReferendaModal(3), setOpenAddressLinkedModal(true), setSidedrawer(false);
 						}}
 					>
-						Kill Proposal
+						Kill Referendum
 					</span>
 				)
 			}

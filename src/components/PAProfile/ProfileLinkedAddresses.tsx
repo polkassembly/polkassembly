@@ -26,23 +26,7 @@ interface Props {
 	selectedAddresses: string[];
 	setSelectedAddresses: (pre: string[]) => void;
 }
-const filterDuplicateAddresses = (addresses: string[], network: string) => {
-	const obj: any = {};
-	for (const address of addresses) {
-		const encodedAdd = getEncodedAddress(address, network) || '';
-		if (obj[encodedAdd] === undefined) {
-			obj[encodedAdd] = 1;
-		} else {
-			obj[encodedAdd] += 1;
-		}
-	}
-	const dataArr: string[] = [];
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const data = Object.entries(obj).forEach(([key]) => {
-		dataArr.push(key);
-	});
-	return dataArr;
-};
+
 const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, setSelectedAddresses }: Props) => {
 	const { id } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -73,6 +57,23 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			</span>
 		</div>
 	);
+	const filterDuplicateAddresses = (addresses: string[], network: string) => {
+		const obj: any = {};
+		for (const address of addresses) {
+			const encodedAdd = getEncodedAddress(address, network) || '';
+			if (obj[encodedAdd] === undefined) {
+				obj[encodedAdd] = 1;
+			} else {
+				obj[encodedAdd] += 1;
+			}
+		}
+		const dataArr: string[] = [];
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const data = Object.entries(obj).forEach(([key]) => {
+			dataArr.push(key);
+		});
+		return dataArr;
+	};
 
 	return (
 		<div
@@ -118,13 +119,10 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 					console.log(list, 'lis');
 					setSelectedAddresses(list as any);
 				}}
-				value={selectedAddresses as CheckboxValueType[]}
+				value={selectedAddresses.map((address) => getEncodedAddress(address, network)) as CheckboxValueType[]}
 			>
 				{!!addresses?.length &&
-					filterDuplicateAddresses(
-						addresses.map((item) => getEncodedAddress(item, network) || item),
-						network
-					).map((address) => (
+					filterDuplicateAddresses(addresses, network).map((address) => (
 						<div
 							key={address}
 							className='flex items-start justify-start rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:flex-col'

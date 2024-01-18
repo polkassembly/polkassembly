@@ -5,6 +5,7 @@ import { IUserDetailsStore } from './@types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { deleteLocalStorageToken } from '~src/services/auth.service';
 
 const initialState: IUserDetailsStore = {
 	addresses: [],
@@ -27,12 +28,6 @@ const initialState: IUserDetailsStore = {
 	username: null,
 	walletConnectProvider: null,
 	web3signup: false
-};
-
-export const deleteLocalStorageToken = (): void => {
-	if (typeof window !== 'undefined') {
-		return localStorage.removeItem('Authorization');
-	}
 };
 
 export const userDetailsStore = createSlice({

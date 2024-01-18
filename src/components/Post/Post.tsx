@@ -308,7 +308,7 @@ const Post: FC<IPostProps> = (props) => {
 				<StickyBox
 					offsetTop={65}
 					offsetBottom={65}
-					className='mb-6'
+					className='md:mb-6'
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}

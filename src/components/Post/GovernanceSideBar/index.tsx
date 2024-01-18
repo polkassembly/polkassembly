@@ -168,7 +168,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 	const isRun = useRef(false);
 	const dispatch = useDispatch();
-
+	const [trackNumber, setTrackNumber] = useState('');
 	const canVote =
 		Boolean(post.status) &&
 		[
@@ -402,6 +402,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+					if (track) {
+						setTrackNumber((track as any[])[0]);
+					}
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
@@ -1029,8 +1032,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
-															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+															<div className='overflow-y-hidden'>
 																<VoteReferendumEth
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1038,12 +1040,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																	lastVote={lastVote}
 																/>
 																{RenderLastVote}
-															</GovSidebarCard>
+															</div>
 														)}
 													</>
 												) : (
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+													<div className='overflow-y-hidden'>
 														<VoteReferendum
 															address={address}
 															lastVote={lastVote}
@@ -1051,10 +1052,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
+															track_number={trackNumber}
 														/>
 
 														{RenderLastVote}
-													</GovSidebarCard>
+													</div>
 												)}
 											</>
 										)}
@@ -1080,8 +1082,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														{metaMaskError && !walletConnectProvider?.wc.connected && <GovSidebarCard>{metaMaskError}</GovSidebarCard>}
 
 														{(!metaMaskError || walletConnectProvider?.wc.connected) && (
-															<GovSidebarCard className='overflow-y-hidden'>
-																<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+															<div className='overflow-y-hidden'>
 																<VoteReferendumEthV2
 																	referendumId={onchainId as number}
 																	onAccountChange={onAccountChange}
@@ -1091,12 +1092,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																/>
 
 																{RenderLastVote}
-															</GovSidebarCard>
+															</div>
 														)}
 													</>
 												) : (
-													<GovSidebarCard className='overflow-y-hidden'>
-														<h6 className='mx-0.5 mb-6 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Cast your Vote!</h6>
+													<div className='overflow-y-hidden'>
 														{['polymesh'].includes(network) ? (
 															<PIPsVote
 																address={address}
@@ -1115,10 +1115,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
+																track_number={trackNumber}
 															/>
 														)}
 														{RenderLastVote}
-													</GovSidebarCard>
+													</div>
 												)}
 											</>
 										)}

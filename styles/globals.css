@@ -823,3 +823,11 @@ z-index: 1050 !important;
 .dark .ant-alert-message {
   color: white !important;
 }
+.verification-tooltip .ant-tooltip-inner {
+  width: 311px !important;
+}
+  
+.tick-icon-container  {
+  transform: scale(0.7);
+}
+

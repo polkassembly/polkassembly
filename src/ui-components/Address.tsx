@@ -269,6 +269,7 @@ const Address = (props: Props) => {
 		event.preventDefault();
 		window.open(handleRedirectLink(), '_blank');
 	};
+
 	return (
 		<>
 			<Tooltip

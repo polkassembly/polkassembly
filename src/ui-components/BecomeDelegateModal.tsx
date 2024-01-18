@@ -7,6 +7,8 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import ImageIcon from './ImageIcon';
+import AddressDropdown from './AddressDropdown';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	isModalOpen: boolean;
@@ -15,6 +17,8 @@ interface Props {
 }
 
 const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) => {
+	const currentUser = useUserDetailsSelector();
+	const { addresses } = currentUser;
 	return (
 		<Modal
 			title={
@@ -32,6 +36,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 			}}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
+			<AddressDropdown />
 			<div className='mt-6 px-5'>
 				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 					Your Bio<span className='font-semibold text-[#FF3C5F]'>*</span>

@@ -52,10 +52,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
-	const collapseItems = [
+	const [collapseItems, setCollapseItems] = useState([
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
-	];
+	]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -91,12 +91,13 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-
+		setCheckedAddressList(addresses);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, addresses]);
 
 	const getData = async () => {
 		if (!api || !apiReady || !checkedAddressList.length) return;
+		console.log('gere');
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegates[]>('api/v1/delegations', {
@@ -114,6 +115,30 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 				}
 			});
 			setReceiveDelegations(received);
+			console.log(
+				received,
+				delegated,
+				collapseItems.map((item) => {
+					if (item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
+						return { ...item, data: received };
+					}
+					return {
+						...item,
+						data: delegated
+					};
+				})
+			);
+			setCollapseItems(
+				collapseItems.map((item) => {
+					if (item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
+						return { ...item, data: received };
+					}
+					return {
+						...item,
+						data: delegated
+					};
+				})
+			);
 			setDelegatedDelegations(delegated);
 			setLoading(false);
 		} else {
@@ -124,7 +149,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, addresses, checkedAddressList]);
+	}, [api, apiReady, addresses, checkedAddressList, userProfile, network]);
 
 	const handleExpand = (index: number, type: ETrackDelegationStatus) => {
 		const newData = (type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations).map((item, idx) => {

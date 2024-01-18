@@ -62,7 +62,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 			});
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, selectedAddresses]);
+	}, [api, apiReady, selectedAddresses, userProfile]);
 	return (
 		<div
 			className={classNames(

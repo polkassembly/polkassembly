@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Empty, Popover } from 'antd';
 import classNames from 'classnames';
-import Image from 'next/image';
 import { IUserPost, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -18,7 +17,7 @@ import Link from 'next/link';
 import GovernanceCard from '../GovernanceCard';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -49,7 +48,7 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 
 	return filteredPosts;
 };
-const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: Props) => {
+const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
@@ -174,12 +173,8 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: 
 		>
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
-					<Image
-						src={theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg'}
-						alt=''
-						width={26}
-						height={26}
-					/>
+					<ClipboardIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
+
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Posts
 						<span className='flex items-end text-sm font-normal'>({totalPosts})</span>

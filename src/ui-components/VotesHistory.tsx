@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose, IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Spin, Checkbox, Pagination as AntdPagination } from 'antd';
+import { Empty, Spin, Checkbox, Pagination as AntdPagination, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,7 +25,6 @@ import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Popover from '~src/basic-components/Popover';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import Image from 'next/image';
 import VoteHistoryExpandModal from './VoteHistoryExpandModal';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
@@ -36,7 +35,7 @@ import Web3 from 'web3';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { IStats } from '~src/components/PAProfile';
-import { DownArrowIcon } from './CustomIcons';
+import { DownArrowIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, VotesIcon } from './CustomIcons';
 import { isSubscanSupport } from '~src/util/subscanCheck';
 
 interface Props {
@@ -294,12 +293,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 		>
 			<div className={`flex items-center justify-between gap-4 p-6 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
-					<Image
-						src={theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg'}
-						alt=''
-						width={28}
-						height={28}
-					/>
+					<VotesIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
 					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
 						Votes
 						<span className='flex items-end text-sm font-normal'>({totalVotes})</span>
@@ -435,43 +429,33 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 													<span className='w-[10%]'>
 														<div className='flex w-[10%] justify-start gap-4'>
 															{isSubscanSupport(network) && (
-																<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${vote?.extrinsicIndex}`, '_blank')}>
-																	<Image
-																		src={theme === 'dark' ? '/assets/profile/profile-subscan-dark.svg' : '/assets/profile/profile-subscan.svg'}
-																		height={20}
-																		width={20}
-																		alt=''
-																		className='cursor-pointer max-md:hidden'
-																	/>
-																</span>
+																<Tooltip title='View Subscan'>
+																	<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${vote?.extrinsicIndex}`, '_blank')}>
+																		<SubscanIcon className='cursor-pointer text-xl text-lightBlue dark:text-[#9E9E9E] max-md:hidden' />
+																	</span>
+																</Tooltip>
 															)}
-															<span onClick={() => handleExpand(index, vote)}>
-																<Image
-																	src={theme === 'dark' ? '/assets/profile/view-votes-dark.svg' : '/assets/profile/view-votes.svg'}
-																	height={24}
-																	width={24}
-																	alt=''
-																	className='cursor-pointer'
-																/>
-															</span>
-															{userProfile.user_id === id && vote?.proposal.type === getSubsquidProposalType(ProposalType.OPEN_GOV) && (
-																<span
-																	className={classNames(
-																		!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id)) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
-																	)}
-																	onClick={() => {
-																		if (!canRemoveVote) return;
-																		handleRemoveVote(vote?.proposal?.trackNumber, Number(vote?.proposal?.id));
-																	}}
-																>
-																	<Image
-																		src={theme === 'dark' ? '/assets/profile/remove-vote-dark.svg' : '/assets/profile/remove-vote.svg'}
-																		height={24}
-																		width={24}
-																		alt=''
-																		className='max-md:hidden'
-																	/>
+															<Tooltip title='View Vote'>
+																<span onClick={() => handleExpand(index, vote)}>
+																	<ViewVoteIcon className='cursor-pointer text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 																</span>
+															</Tooltip>
+															{userProfile.user_id === id && vote?.proposal.type === getSubsquidProposalType(ProposalType.OPEN_GOV) && (
+																<Tooltip title='Remove Vote'>
+																	<span
+																		className={classNames(
+																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))
+																				? 'cursor-not-allowed text-[#4A4A4A]'
+																				: 'cursor-pointer text-lightBlue dark:text-[#9E9E9E]'
+																		)}
+																		onClick={() => {
+																			if (!canRemoveVote) return;
+																			handleRemoveVote(vote?.proposal?.trackNumber, Number(vote?.proposal?.id));
+																		}}
+																	>
+																		<RemoveVoteIcon className={'text-2xl max-md:hidden'} />
+																	</span>
+																</Tooltip>
 															)}
 														</div>
 													</span>

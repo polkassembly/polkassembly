@@ -95,7 +95,6 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 			decimals: chainProperties[network].tokenDecimals,
 			unit: unit
 		});
-		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, apiReady]);
 
@@ -112,7 +111,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAddresses, tipAmount, tipType]);
+	}, [selectedAddresses, tipAmount, tipType, userProfile, network, api, apiReady]);
 
 	return (
 		<Spin spinning={loading}>

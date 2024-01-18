@@ -23,7 +23,6 @@ interface Props {
 export interface IStats {
 	label: string;
 	value: number;
-	src: string;
 }
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
@@ -93,7 +92,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				})
 				.catch((e) => console.error(e));
 		});
-
+		setSelectedAddresses(addresses);
 		return () => {
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};

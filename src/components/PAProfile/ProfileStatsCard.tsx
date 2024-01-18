@@ -4,11 +4,11 @@
 
 import { Divider } from 'antd';
 import classNames from 'classnames';
-import Image from 'next/image';
 import { useEffect } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IStats } from '.';
+import { ClipboardIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -19,9 +19,20 @@ interface Props {
 	setStatsArr: (pre: IStats[]) => void;
 }
 
-const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, theme, statsArr, setStatsArr }: Props) => {
+const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsArr, setStatsArr }: Props) => {
 	const { user_id: userId, addresses } = userProfile;
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 768) || false;
+
+	const getIcon = (state: string) => {
+		switch (state) {
+			case 'Proposal Created':
+				return <ClipboardIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+			case 'Discussion Created':
+				return <ClipboardIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+			case 'Proposals Voted':
+				return <VotesIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+		}
+	};
 	const fetchData = async () => {
 		let payload;
 		if (userId !== 0 && !userId && addresses.length) {
@@ -32,9 +43,15 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, theme, 
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 		if (data) {
 			setStatsArr([
-				{ label: 'Proposal Created', src: theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg', value: data?.proposals },
-				{ label: 'Discussion Created', src: theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg', value: data?.discussions },
-				{ label: 'Proposals Voted', src: theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg', value: data?.votes }
+				{
+					label: 'Proposal Created',
+					value: data?.proposals
+				},
+				{
+					label: 'Discussion Created',
+					value: data?.discussions
+				},
+				{ label: 'Proposals Voted', value: data?.votes }
 			]);
 		} else {
 			console.log(error);
@@ -43,7 +60,8 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, theme, 
 	useEffect(() => {
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [userProfile]);
+
 	if (!statsArr.length) return null;
 	return (
 		<div
@@ -61,14 +79,8 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, theme, 
 					key={item?.label}
 				>
 					<div className='flex gap-2 px-2 max-md:items-center max-md:px-0'>
-						<span className='flex h-full items-center justify-center rounded-[8px] border-[1px] border-solid border-[#D2D8E0] px-1 dark:border-separatorDark'>
-							<Image
-								src={item?.src}
-								alt={item?.label}
-								width={32}
-								height={32}
-								className='rounded-sm bg-[#F3F4F6] p-[1px] dark:bg-section-dark-overlay'
-							/>
+						<span className='flex h-full items-center justify-center rounded-[8px] border-[1px] border-solid border-[#D2D8E0] px-1 text-lightBlue dark:border-separatorDark dark:text-[#9E9E9E]'>
+							{getIcon(item?.label)}
 						</span>
 						<div className='flex flex-col justify-center'>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{item?.label}</span>

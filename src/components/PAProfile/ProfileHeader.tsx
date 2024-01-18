@@ -16,6 +16,7 @@ import { setReceiver } from '~src/redux/Tipping';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { DollarIcon } from '~src/ui-components/CustomIcons';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -60,7 +61,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 							{!TippingUnavailableNetworks.includes(network) && (
 								<CustomButton
 									shape='circle'
-									className={`rounded-full border-[1px] border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`rounded-full border-[1px]  border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenTipModal(true);
@@ -68,14 +69,11 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									}}
 									disabled={!id}
 								>
-									<Image
-										src='/assets/profile/white-dollar.svg'
-										className='mr-1 rounded-full'
-										height={20}
-										width={20}
-										alt='edit logo'
-									/>
-									<span className='max-md:hidden'>Tip User</span>
+									<div className='flex items-center gap-1.5'>
+										{' '}
+										<DollarIcon className='text-lg' />
+										<span className='max-md:hidden'>Tip User</span>
+									</div>
 								</CustomButton>
 							)}
 							{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (

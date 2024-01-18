@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import classNames from 'classnames';
 import Image from 'next/image';
-
 import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProfileDetailsResponse } from '~src/auth/types';

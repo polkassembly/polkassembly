@@ -9,11 +9,11 @@ import ProfileOverview from './ProfileOverview';
 import { votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { useNetworkSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
-import Image from 'next/image';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { IStats } from '.';
+import { ClipboardIcon, ProfileOverviewIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 interface Props {
 	className?: string;
 	theme?: string;
@@ -62,7 +62,7 @@ const ProfileTabs = ({
 			posts: totalPosts,
 			votes: totalVotes
 		});
-	}, [statsArr]);
+	}, [statsArr, userProfile]);
 	const tabItems = [
 		{
 			children: (
@@ -78,14 +78,8 @@ const ProfileTabs = ({
 			),
 			key: 'Overview',
 			label: (
-				<div className='flex items-center gap-3'>
-					<Image
-						src={theme === 'dark' ? '/assets/profile/profile-overview-dark.svg' : '/assets/profile/profile-overview.svg'}
-						alt=''
-						width={18}
-						height={18}
-						className='active-icon'
-					/>
+				<div className='flex items-center'>
+					<ProfileOverviewIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
 					Overview
 				</div>
 			)
@@ -102,15 +96,9 @@ const ProfileTabs = ({
 			),
 			key: 'Posts',
 			label: (
-				<div className='flex items-center gap-3'>
-					<Image
-						src={theme === 'dark' ? '/assets/profile/profile-clipboard-dark.svg' : '/assets/profile/profile-clipboard.svg'}
-						alt=''
-						width={20}
-						height={20}
-						className='active-icon'
-					/>
-					Posts<span className='-ml-2'>({totals?.posts})</span>
+				<div className='flex items-center'>
+					<ClipboardIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Posts<span className='ml-[2px]'>({totals?.posts})</span>
 				</div>
 			)
 		}
@@ -128,15 +116,9 @@ const ProfileTabs = ({
 			),
 			key: 'Votes',
 			label: (
-				<div className='flex items-center gap-3'>
-					<Image
-						src={theme === 'dark' ? '/assets/profile/profile-votes-dark.svg' : '/assets/profile/profile-votes.svg'}
-						alt=''
-						width={22}
-						height={22}
-						className='active-icon'
-					/>
-					Votes<span className='-ml-2'>({totals?.votes})</span>
+				<div className='flex items-center'>
+					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
+					Votes<span className='ml-[2px]'>({totals?.votes})</span>
 				</div>
 			)
 		});

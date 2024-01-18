@@ -206,6 +206,7 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					title={`https://polkaverse.com/accounts/${address}`}
 					href={`https://polkaverse.com/accounts/${address}`}
 					className={`flex h-[${boxSize}px] w-[${boxSize}px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-xl`}
+					style={{ height: `${boxSize}px`, width: `${boxSize}px` }}
 				>
 					<PolkaverseIcon />
 				</Link>
@@ -220,7 +221,8 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					}}
 					title={`https://w3n.id/${address}`}
 					href={`https://w3n.id/${address}`}
-					className='flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-[13px] text-[#96A4B6] hover:text-[#96A4B6]'
+					className={`flex  h-[${boxSize}px] w-[${boxSize}px] cursor-pointer items-center justify-center rounded-full bg-[#edeff3] text-[13px] text-[#96A4B6] hover:text-[#96A4B6]`}
+					style={{ height: `${boxSize}px`, width: `${boxSize}px` }}
 				>
 					<UserOutlined />
 				</Link>

@@ -124,7 +124,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 				)}
 			>
 				<div className='flex justify-between'>
-					<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
+					<span className='flex items-center gap-1 text-xl font-semibold dark:text-blue-dark-high'>
 						<Image
 							src='/assets/profile/profile-tips.svg'
 							alt=''
@@ -152,7 +152,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 									width={20}
 									alt='edit logo'
 								/>
-								<span className='max-md:hidden'>Tip User</span>
+								<span className=''>Tip User</span>
 							</CustomButton>
 						)}
 						<Segmented
@@ -168,7 +168,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 						const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 						return (
 							<span
-								className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-5 ${
+								className={`flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid max-md:px-5 md:px-8 ${
 									tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
 								}
               `}
@@ -181,8 +181,8 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 								<Image
 									src={tip?.src}
 									alt=''
-									width={24}
-									height={24}
+									width={26}
+									height={26}
 								/>
 								<span>${tip.value}</span>
 							</span>

@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import PAProfile from '~src/components/PAProfile';
-
+import { useTheme } from 'next-themes';
 interface IUserProfileProps {
 	userPosts: {
 		data: IUserPostsListingResponse;
@@ -106,8 +106,9 @@ export enum EProfileHistory {
 }
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
-	const { userPosts, network, userProfile } = props;
+	const { userPosts, network, userProfile, className } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -118,7 +119,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 		return (
 			<EmptyState>
 				<ErrorAlert
-					className='dark:text-white'
+					className={`dark:text-white ${className} ${theme}`}
 					errorMsg="Invalid User. This user does't have any account with Polkassembly"
 				/>
 				{/* <UserNotFound /> */}

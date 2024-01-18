@@ -15,9 +15,9 @@ import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import ExpandDarkIcon from '~assets/icons/expand-small-icon-dark.svg';
 import AyeIcon from '~assets/icons/aye-green-icon.svg';
 import NayIcon from '~assets/icons/profile-nay.svg';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import { poppins } from 'pages/_app';
 import { EGovType, NotificationStatus } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
@@ -36,6 +36,8 @@ import Web3 from 'web3';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { IStats } from '~src/components/PAProfile';
+import { DownArrowIcon } from './CustomIcons';
+import { isSubscanSupport } from '~src/util/subscanCheck';
 
 interface Props {
 	className?: string;
@@ -284,7 +286,12 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 	};
 
 	return (
-		<div className='rounded-[18px] border-[1px] border-solid border-[#DCDFE3] bg-white pb-10 dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-medium max-md:px-4'>
+		<div
+			className={classNames(
+				className,
+				'mt-6 rounded-[18px] border-[1px] border-solid border-[#DCDFE3] bg-white pb-10 dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-medium max-md:px-4'
+			)}
+		>
 			<div className={`flex items-center justify-between gap-4 p-6 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
 				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
 					<Image
@@ -310,7 +317,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									Select Addresses
 									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 									</span>
 								</div>
 							</Popover>
@@ -327,7 +334,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									{selectedGov.split('_').join('')}({totalCount})
 									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer ${govTypeExpand && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
 									</span>
 								</div>
 							</Popover>
@@ -351,9 +358,12 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 									key={index}
 								>
 									{heading}
-									{heading === EHeading.PROPOSAL && (
-										<ExpandIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
-									)}
+									{heading === EHeading.PROPOSAL &&
+										(theme === 'dark' ? (
+											<ExpandDarkIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
+										) : (
+											<ExpandIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
+										))}
 								</span>
 							))}
 						</div>
@@ -424,13 +434,17 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 													</span>
 													<span className='w-[10%]'>
 														<div className='flex w-[10%] justify-start gap-4'>
-															{/* <Image
-															src={'/assets/profile/profile-subscan.svg'}
-															height={20}
-															width={20}
-															alt=''
-															className='cursor-pointer max-md:hidden'
-														/> */}
+															{isSubscanSupport(network) && (
+																<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${vote?.extrinsicIndex}`, '_blank')}>
+																	<Image
+																		src={theme === 'dark' ? '/assets/profile/profile-subscan-dark.svg' : '/assets/profile/profile-subscan.svg'}
+																		height={20}
+																		width={20}
+																		alt=''
+																		className='cursor-pointer max-md:hidden'
+																	/>
+																</span>
+															)}
 															<span onClick={() => handleExpand(index, vote)}>
 																<Image
 																	src={theme === 'dark' ? '/assets/profile/view-votes-dark.svg' : '/assets/profile/view-votes.svg'}

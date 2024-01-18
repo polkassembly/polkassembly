@@ -820,3 +820,6 @@ z-index: 1050 !important;
   }
 }
 
+.dark .ant-alert-message {
+  color: white !important;
+}

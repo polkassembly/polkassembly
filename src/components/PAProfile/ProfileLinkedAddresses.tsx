@@ -53,7 +53,6 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 						onClick={() => setOpenAddressLinkModal(true)}
 					>
 						<PlusOutlined />
-
 						<span>Link Addresses</span>
 					</CustomButton>
 				)}

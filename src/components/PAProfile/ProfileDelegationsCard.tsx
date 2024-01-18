@@ -12,7 +12,6 @@ import { useApiContext } from '~src/context';
 import { ETrackDelegationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -27,6 +26,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
+import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 
 const { Panel } = Collapse;
 
@@ -183,7 +183,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							<div className='flex h-8 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 								Select Addresses
 								<span className='flex items-center'>
-									<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
+									<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 								</span>
 							</div>
 						</Popover>
@@ -207,7 +207,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							expandIcon={({ isActive }) => {
 								return (
 									<div className='flex h-full items-end justify-end'>
-										<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} ${isActive && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
 									</div>
 								);
 							}}
@@ -259,7 +259,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 													</div>
 												</span>
 												<span>
-													<DownArrowIcon className={`cursor-pointer ${delegation?.expand && 'pink-color rotate-180'}`} />
+													<DownArrowIcon className={`cursor-pointer text-2xl ${delegation?.expand && 'pink-color rotate-180'}`} />
 												</span>
 											</div>
 											{delegation?.expand && (

@@ -146,7 +146,7 @@ const ProfileTabs = ({
 			<Tabs
 				theme={theme}
 				type='card'
-				className='ant-tabs-tab-bg-white font-medium text-bodyBlue  dark:bg-transparent dark:text-blue-dark-high'
+				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'
 				items={tabItems}
 			/>
 		</div>

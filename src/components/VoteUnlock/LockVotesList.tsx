@@ -16,7 +16,7 @@ import { handlePrevData } from '.';
 
 import LockIcon from '~assets/icons/vote-lock.svg';
 import UnlockIcon from '~assets/icons/unlock.svg';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
+import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 interface Props {
 	totalUnlockableBalance: BN;
 	lockedBalance: BN;
@@ -103,7 +103,7 @@ const LockVotesList = ({ totalUnlockableBalance, lockedBalance, showBalances = t
 										<span className='flex justify-end text-xs font-normal text-pink_primary'>{expandUnlocks ? 'Hide All Unlocks' : 'View All Unlocks'}</span>
 									)}
 								</span>
-								{tokensData.length > 1 && <DownArrowIcon className={`cursor-pointer ${expandUnlocks && 'pink-color rotate-180'} -mt-4 ml-1`} />}
+								{tokensData.length > 1 && <DownArrowIcon className={`cursor-pointer text-2xl ${expandUnlocks && 'pink-color rotate-180'} -mt-4 ml-1`} />}
 							</span>
 						</div>
 						{expandUnlocks && (

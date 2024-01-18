@@ -2007,6 +2007,7 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
     delegatedTo
     isDelegated
     parentVote {
+      extrinsicIndex
       selfVotingPower
       type
       voter

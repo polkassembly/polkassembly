@@ -36,6 +36,7 @@ export interface IProfileVoteHistoryRespose {
 	delegatedVotingPower?: string;
 	delegatedTo?: string;
 	voter: string;
+	extrinsicIndex: string;
 	proposal: {
 		createdAt: Date;
 		id: number | string;
@@ -111,12 +112,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				status = 'Deciding';
 			}
 		}
-
 		return {
 			balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 			decision: vote?.decision || null,
 			delegatedTo: vote?.delegatedTo || '',
 			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
+			extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 			isDelegatedVote: vote?.isDelegated,
 			lockPeriod: Number(vote?.lockPeriod) || 0.1,
 			proposal: {

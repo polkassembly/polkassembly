@@ -6,7 +6,6 @@ import { Checkbox, Empty, Popover } from 'antd';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { IUserPost, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { poppins } from 'pages/_app';
@@ -19,6 +18,7 @@ import Link from 'next/link';
 import GovernanceCard from '../GovernanceCard';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 
 interface Props {
 	className?: string;
@@ -169,7 +169,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: 
 		<div
 			className={classNames(
 				className,
-				'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -198,7 +198,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: 
 								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									Select Addresses
 									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
 									</span>
 								</div>
 							</Popover>
@@ -216,7 +216,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: 
 								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									{selectedGov.split('_').join('')}({selectedGov === EGovType.GOV1 ? userPosts?.gov1_total : userPosts?.open_gov_total})
 									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer ${govTypeExpand && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
 									</span>
 								</div>
 							</Popover>
@@ -258,7 +258,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, theme, totalPosts }: 
 								<div className='flex h-8 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-xs font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 									All
 									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer ${subFilterExpand && 'pink-color rotate-180'}`} />
+										<DownArrowIcon className={`cursor-pointer text-2xl ${subFilterExpand && 'pink-color rotate-180'}`} />
 									</span>
 								</div>
 							</Popover>

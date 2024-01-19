@@ -12,6 +12,9 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
 import { IDelegate } from '~src/types';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
+import * as admin from 'firebase-admin';
+
+const firestore_db = admin.firestore();
 
 export const getDelegatesData = async (network: string, address?: string) => {
 	if (!network || !isOpenGovSupported(network)) return [];
@@ -52,6 +55,16 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		});
 	}
 
+	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').orderBy('created_at', 'desc').get();
+	const paDelegates = paDelegatesSnapshot.docs.map((delegate) => {
+		const data = delegate?.data();
+		const newDelegate = {
+			...data,
+			created_at: data?.created_at?.toDate ? data?.created_at.toDate() : data?.created_at
+		};
+		return newDelegate;
+	});
+
 	const subsquidResults = await Promise.allSettled(Object.values(subsquidFetches));
 
 	const result: IDelegate[] = [];
@@ -91,7 +104,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		result.push(newDelegate);
 	}
 
-	return result;
+	return [...result, ...paDelegates];
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate[] | { error: string }>) {

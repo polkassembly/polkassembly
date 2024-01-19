@@ -210,7 +210,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									<CustomButton
 										text='Got it!'
 										variant='primary'
-										buttonSize='xs'
+										buttonsize='xs'
 										onClick={() => setVoteCalculationModalOpen(false)}
 										className='gap-10 px-4 py-1'
 									/>
@@ -218,7 +218,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							</div>
 						]}
 						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+						closeIcon={<CloseIcon className='mt-2.5 text-lightBlue dark:text-icon-dark-inactive' />}
 						title={
 							<div
 								className={`${poppins.variable} ${poppins.className} text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high`}
@@ -292,7 +292,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 										<span className='whitespace-nowrap'>User casts their</span>
 										<span>vote</span>
 									</p>
-									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-sidebarBlue md:hidden'>
+									<p className='m-0 flex flex-col items-center p-0 text-xs font-normal leading-4 text-sidebarBlue dark:text-blue-dark-high md:hidden'>
 										<span className='whitespace-nowrap'>User</span>
 										<span>casts</span>
 										<span className='whitespace-nowrap'>their vote</span>

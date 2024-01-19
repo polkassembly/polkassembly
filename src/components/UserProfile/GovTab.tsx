@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import PostTab from '../User/PostTab';
 import { EGovType } from '~src/global/proposalType';
-import VotesHistory from '~src/ui-components/VotesHistory';
 import { EProfileHistory, votesHistoryUnavailableNetworks } from 'pages/user/[username]';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
@@ -26,7 +25,7 @@ interface IGovTabProps {
 }
 
 const GovTab: FC<IGovTabProps> = (props) => {
-	const { posts, className, userAddresses, historyType: profileHistory } = props;
+	const { posts, className, historyType: profileHistory } = props;
 	const { network } = useNetworkSelector();
 	const [govType, setGovType] = useState<EGovType>(!votesHistoryUnavailableNetworks.includes(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 
@@ -110,12 +109,6 @@ const GovTab: FC<IGovTabProps> = (props) => {
 						)}
 					</div>
 				</>
-			)}
-			{profileHistory === EProfileHistory.VOTES && !votesHistoryUnavailableNetworks.includes(network) && (
-				<VotesHistory
-					govType={govType}
-					userAddresses={userAddresses || []}
-				/>
 			)}
 		</div>
 	);

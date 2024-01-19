@@ -59,7 +59,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 						)}
 					</h3>
 					{description && !isBotSetup && (
-						<p className='m-0 text-[12px] font-normal font-normal leading-[18px]'>
+						<p className='m-0 text-[12px] font-normal leading-[18px]'>
 							<span
 								className='cursor-pointer text-[14px] font-medium leading-[21px] text-pink_primary'
 								onClick={() => onClick(channel)}

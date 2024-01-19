@@ -47,7 +47,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}
-					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary dark:border-section-dark-container dark:text-[#C1C1C1]'
 					onClick={() => handleTagClick(tag)}
 				>
 					{tag}
@@ -55,8 +55,8 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			))}
 			{tags.length > maxTags && (
 				<span
-					className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
-					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+					className='mr-1 cursor-pointer bg-[#D2D8E080] text-bodyBlue dark:bg-[#222222] dark:text-[#8B8B8B]'
+					style={{ borderRadius: '20px', padding: '4px 8px' }}
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();
@@ -100,7 +100,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			history,
 			content,
 			summary,
-			identityId
+			identityId,
+			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
@@ -164,7 +165,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
 						?.map((v) => (v === 'referendumV2' ? 'Referenda' : v.charAt(0).toUpperCase() + v.slice(1)))
-						.join(' ')} #${onchainId}`
+						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}#${onchainId || `${hash.slice(0, 5)}...${hash.slice(hash.length - 5, hash.length)}`}`
 				) : (
 					<>
 						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}

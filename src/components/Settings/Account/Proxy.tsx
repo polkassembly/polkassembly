@@ -21,6 +21,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
 import Alert from '~src/basic-components/Alert';
 
 interface Props {
@@ -195,7 +197,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+			className={classNames(poppins.className, poppins.variable, 'mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

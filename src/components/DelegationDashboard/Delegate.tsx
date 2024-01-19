@@ -58,7 +58,9 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		if (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
 		setLoading(true);
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>(`api/v1/delegations/delegates?address=${address}`);
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
+			addresses: [address]
+		});
 		if (data) {
 			setDelegatesData(data);
 		} else {

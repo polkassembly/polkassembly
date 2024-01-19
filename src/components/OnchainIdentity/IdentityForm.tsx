@@ -53,7 +53,7 @@ interface ValueState {
 	okAll: boolean;
 }
 
-function checkValue(
+export function checkValue(
 	hasValue: boolean,
 	value: string | null | undefined,
 	minLength: number,
@@ -614,7 +614,7 @@ const IdentityForm = ({
 					className='rounded-[4px]'
 					text='Cancel'
 					variant='default'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 				<CustomButton
 					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
@@ -625,7 +625,7 @@ const IdentityForm = ({
 					}`}
 					text='Set Identity'
 					variant='primary'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 			</div>
 			<SuccessState

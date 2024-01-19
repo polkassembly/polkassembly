@@ -314,12 +314,12 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		<>
 			<div className={className}>
 				<CustomButton
-					className='mb-3 w-[100%] p-7'
+					className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 					fontSize='lg'
 					variant='primary'
 					onClick={() => setShowModal(true)}
 				>
-					{lastVote === null || lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again'}
+					{lastVote === null || lastVote === undefined ? 'Cast Your Vote' : 'Cast Vote Again'}
 				</CustomButton>
 				<Modal
 					open={showModal}
@@ -509,7 +509,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 											<CustomButton
 												onClick={() => setShowModal(false)}
 												className='mr-[15px] font-semibold'
-												buttonSize='xs'
+												buttonsize='xs'
 												variant='default'
 												text='Cancel'
 											/>
@@ -518,7 +518,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 												htmlType='submit'
 												disabled={!wallet || !lockedBalance}
 												className='mr-[24px] font-semibold'
-												buttonSize='xs'
+												buttonsize='xs'
 												variant='primary'
 												text='Confirm'
 											/>

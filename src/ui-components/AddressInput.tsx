@@ -80,6 +80,9 @@ const AddressInput = ({
 	};
 
 	useEffect(() => {
+		setAddress(defaultAddress || '');
+	}, [defaultAddress]);
+	useEffect(() => {
 		const addr = (disabled ? defaultAddress : address) || '';
 		if (skipFormatCheck) {
 			if (addr) {

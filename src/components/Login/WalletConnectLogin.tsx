@@ -440,7 +440,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 										disabled={loading}
 										onClick={handleLogin}
 										variant='primary'
-										buttonSize='xs'
+										buttonsize='xs'
 										text='Login'
 									/>
 								</div>

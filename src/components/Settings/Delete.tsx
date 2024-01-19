@@ -130,26 +130,32 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								style={{ background: '#D2D8E0', flexGrow: 1 }}
 								className='my-4 dark:bg-separatorDark'
 							/>,
-							<CustomButton
-								text='Cancel'
-								key='cancel'
-								onClick={dismissModal}
-								variant='default'
-								className='px-8 py-5 font-semibold'
-							/>,
-							<CustomButton
-								htmlType='submit'
-								key='delete'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								disabled={!isFormValid}
-								text='Delete'
-								variant='primary'
-								style={{ opacity: !isFormValid ? 0.6 : 1 }}
-								className='mr-6 font-semibold'
-							/>
+							<div
+								key='delete-buttons'
+								className='flex items-center justify-end'
+							>
+								<CustomButton
+									text='Cancel'
+									key='cancel'
+									onClick={dismissModal}
+									variant='default'
+									className='px-8 py-5 font-semibold'
+								/>
+								,
+								<CustomButton
+									htmlType='submit'
+									key='delete'
+									onClick={() => {
+										form.submit();
+									}}
+									loading={loading}
+									disabled={!isFormValid}
+									text='Delete'
+									variant='primary'
+									style={{ opacity: !isFormValid ? 0.6 : 1 }}
+									className='mr-6 px-8 py-5 font-semibold'
+								/>
+							</div>
 						]}
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>

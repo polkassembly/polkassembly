@@ -143,6 +143,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 
 		const newQuery: { [key: string]: any } = { ...router.query, trackStatus: key.toLowerCase() };
 		delete newQuery.proposalStatus;
+		delete newQuery.filterBy;
 
 		router.push({
 			pathname: router.pathname,

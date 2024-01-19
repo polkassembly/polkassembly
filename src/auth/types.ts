@@ -75,6 +75,7 @@ export interface ProfileDetailsResponse extends ProfileDetails {
 	user_id: number;
 	username: string;
 	addresses: string[];
+	created_at?: Date | null;
 }
 
 export interface IAddressProxyForEntry {
@@ -174,6 +175,7 @@ export interface JWTPayloadType {
 	is2FAEnabled?: boolean;
 	login_wallet?: Wallet;
 	login_address?: string;
+	exp?: number;
 }
 
 export interface IAuthResponse {

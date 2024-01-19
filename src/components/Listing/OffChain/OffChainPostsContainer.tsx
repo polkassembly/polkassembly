@@ -34,12 +34,12 @@ const OffChainPostsContainer: FC<IOffChainContainerProps> = ({ posts, className,
 
 	return (
 		<div className={`${className} rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0`}>
-			<div className='flex items-center justify-between py-5 align-middle'>
-				<div className='mx-1 xs:mt-1 sm:mx-12 sm:mt-3'>
+			<div className='flex items-center justify-between py-3 align-middle md:py-5'>
+				<div className='mx-1 xs:mt-1 sm:mx-12'>
 					<FilteredTags />
 				</div>
 				<div className='flex'>
-					<FilterByTags className='mr-2 xs:mt-1 sm:mt-0.5' />
+					<FilterByTags className='mr-2' />
 					<SortByDropdownComponent
 						sortBy={sortBy}
 						setSortBy={setSortBy}

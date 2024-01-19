@@ -108,7 +108,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [loading, setLoading] = useState(true);
 	const ref = useRef<Editor | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [mdEditor, setMdEditor] = useState<boolean>(true);
+	const [mdEditor, setMdEditor] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {

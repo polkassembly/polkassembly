@@ -301,7 +301,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 							<CustomButton
 								variant='primary'
 								text='Sign-up'
-								buttonSize='sm'
+								buttonsize='sm'
 								disabled={loading}
 								onClick={handleSignup}
 							/>

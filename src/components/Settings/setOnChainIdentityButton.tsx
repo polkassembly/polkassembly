@@ -420,7 +420,7 @@ const SetOnChainIdentityButton = ({
 						onClick={() => setModalOpen(false)}
 						variant='primary'
 						text='Close'
-						buttonSize='xs'
+						buttonsize='xs'
 					/>,
 					<CustomButton
 						key='submit'

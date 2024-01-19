@@ -9,7 +9,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
@@ -38,6 +38,7 @@ import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -291,8 +292,6 @@ const Post: FC<IPostProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, trackName]);
 
-	// console.log(data);
-
 	if (!post) {
 		return (
 			<div className='mt-16'>
@@ -309,7 +308,7 @@ const Post: FC<IPostProps> = (props) => {
 				<StickyBox
 					offsetTop={65}
 					offsetBottom={65}
-					className='mb-6'
+					className='md:mb-6'
 				>
 					<GovernanceSideBar
 						toggleEdit={toggleEdit}
@@ -355,7 +354,6 @@ const Post: FC<IPostProps> = (props) => {
 			)}
 		</>
 	);
-
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
@@ -409,6 +407,7 @@ const Post: FC<IPostProps> = (props) => {
 								ended_at_block: post?.ended_at_block,
 								fee: post?.fee,
 								hash: post?.hash,
+								marketMetadata: post?.marketMetadata || null,
 								member_count: post?.member_count,
 								method: post?.method,
 								motion_method: post?.motion_method,
@@ -457,7 +456,6 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
-
 	return (
 		<PostDataContextProvider
 			initialPostData={{
@@ -469,13 +467,16 @@ const Post: FC<IPostProps> = (props) => {
 				curator: post?.curator || '',
 				currentTimeline: post.currentTimeline,
 				description: post?.description,
+				hash: post.hash,
 				history: post?.history || [],
 				identityId: post?.identity || null,
 				last_edited_at: post?.last_edited_at,
+				marketMetadata: post?.marketMetadata || null,
 				postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
 				postType: proposalType,
 				post_link: post?.post_link,
 				post_reactions: post?.post_reactions,
+				proposalHashBlock: post?.proposalHashBlok || null,
 				proposer: post?.proposer || '',
 				requested: post?.requested,
 				reward: post?.reward,

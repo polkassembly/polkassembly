@@ -27,7 +27,7 @@ import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { IPeriod } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -95,6 +95,7 @@ interface IGovernanceProps {
 	showSimilarPost?: boolean;
 	type?: string;
 	description?: string;
+	hash?: string;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -129,7 +130,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		identityId = null,
 		truncateUsername = false,
 		showSimilarPost,
-		description
+		description,
+		hash
 	} = props;
 
 	const router = useRouter();
@@ -141,6 +143,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
+	if (ProposalType.ADVISORY_COMMITTEE === proposalType && network === 'zeitgeist') {
+		titleString =
+			title ||
+			method ||
+			`${(getProposalTypeTitle(proposalType) || '')
+				?.split(' ')
+				?.map((v) => v.charAt(0).toUpperCase() + v.slice(1))
+				.join(' ')} Motion ${hash?.slice(0, 3)}...${hash?.slice(hash?.length - 3, hash?.length)}`;
+	}
 
 	const mainTitle = <span className={tipReason && 'tipTitle'}>{titleString}</span>;
 	const subTitle = title && tipReason && method && <h5>{title}</h5>;
@@ -279,7 +290,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
 							<span className={`flex-none text-center font-medium text-bodyBlue dark:text-white ${showSimilarPost ? 'mt-[2px] w-[76px]' : 'sm:w-[120px]'}`}>
-								#{isTip ? tip_index : onchainId}
+								{(tip_index || onchainId || hash) && `#${isTip ? tip_index : onchainId || `${hash?.slice(0, 3)}...${hash?.slice(hash?.length - 3, hash?.length)}`}`}
 							</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}

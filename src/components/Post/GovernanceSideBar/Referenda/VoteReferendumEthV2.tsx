@@ -486,10 +486,10 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			<CustomButton
 				variant='primary'
 				fontSize='lg'
-				className='mb-3 w-[100%] p-6'
+				className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 				onClick={openModal}
 			>
-				{lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again'}
+				{lastVote === undefined ? 'Cast Your Vote' : 'Cast Vote Again'}
 			</CustomButton>
 			<Modal
 				open={showModal}

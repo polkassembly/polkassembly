@@ -16,7 +16,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import PAProfile from '~src/components/PAProfile';
+import PAProfile from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 interface IUserProfileProps {
 	userPosts: {

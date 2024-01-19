@@ -34,7 +34,7 @@ import { useApiContext } from '~src/context';
 import Web3 from 'web3';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
-import { IStats } from '~src/components/PAProfile';
+import { IStats } from '~src/components/UserProfile';
 import { DownArrowIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, VotesIcon } from './CustomIcons';
 import { isSubscanSupport } from '~src/util/subscanCheck';
 

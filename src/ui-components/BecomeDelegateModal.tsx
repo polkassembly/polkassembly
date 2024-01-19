@@ -15,6 +15,19 @@ import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useApiContext } from '~src/context';
+import AuthForm from './AuthForm';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+// import address from 'pages/api/v1/auth/data/address';
+
+interface DetailsState {
+	userId: number | null;
+	username: string;
+	address: string;
+	bio: string;
+	isNovaWalletDelegate: boolean;
+}
 
 interface Props {
 	isModalOpen: boolean;
@@ -28,23 +41,66 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 	const { network } = useNetworkSelector();
 	const { loginWallet, loginAddress, delegationDashboardAddress } = currentUser;
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
+	const [defaultAddress, setAddress] = useState<string>(loginAddress);
+	const [loading, setLoading] = useState<boolean>(false);
+	const [details, setDetails] = useState<DetailsState>({
+		address: defaultAddress,
+		bio: '',
+		isNovaWalletDelegate: false,
+		userId: 0,
+		username: ''
+	});
+
 	const dispatch = useDispatch();
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !loginWallet) return;
 
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-		setAccounts(addressData?.accounts || []);
-		setAddress(addressData?.account || '');
+		if (addressData) {
+			setAccounts(addressData.accounts || []);
+			setAddress(addressData.account || '');
+		}
 	};
+
+	const fetchUserID = async (address: string) => {
+		const substrateAddress = getSubstrateAddress(address);
+		if (substrateAddress) {
+			try {
+				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
+				if (error || !data || !data.username || !data.user_id) {
+					return;
+				}
+				setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
+
+				// console.log('user IDDD', data);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	};
+
+	const handleSubmit = async () => {
+		console.log('detailsSSSS', details);
+		setLoading(true);
+		if (!details.bio) return;
+
+		// setLoading(true);
+		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', details);
+
+		if (data) setLoading(false);
+		else console.log(error);
+	};
+	useEffect(() => {
+		fetchUserID(defaultAddress);
+	}, [defaultAddress]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
 		getAllAccounts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady]);
+	}, [delegationDashboardAddress, api, apiReady, currentUser]);
 
 	return (
 		<Modal
@@ -63,55 +119,68 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 			}}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
-			<div className='mt-6 px-5'>
-				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-				<AddressDropdown
-					accounts={accounts}
-					onAccountChange={(address) => {
-						setAddress(address);
-						dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
-					}}
-					defaultAddress={defaultAddress}
-				/>
-			</div>
-			<div className='mt-6 px-5'>
-				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-					Your Bio<span className='font-semibold text-[#FF3C5F]'>*</span>
-				</label>
-				<Input
-					className='p-3'
-					placeholder='Add message for delegate address'
-				/>
-			</div>
-			<div className='mb-7 mt-6 rounded-[4px] px-5'>
-				<Alert
-					message={
-						<span className='text-sm '>
-							To add socials to your delegate profile{' '}
-							<span className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'>
-								<ImageIcon
-									src='/assets/delegation-tracks/shield-icon-pink.svg'
-									alt='shield icon'
-									imgClassName='-mt-[3px] mr-[1.5px]'
-								/>{' '}
-								Set identity
-							</span>{' '}
-							with Polkassembly
-						</span>
-					}
-					type='info'
-					showIcon
-					className='border-none'
-				/>
-			</div>
-			<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
-				<Button
-					className='w-full rounded-[4px] text-sm font-medium'
-					type='primary'
-				>
-					Confirm
-				</Button>
-			</div>
+			<AuthForm onSubmit={handleSubmit}>
+				<div className='mt-6 px-5'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
+					<AddressDropdown
+						accounts={accounts}
+						onAccountChange={(address) => {
+							setAddress(address);
+							setDetails((prevDetails) => ({ ...prevDetails, address }));
+
+							dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
+							// Trigger the fetchUserID function with the updated address
+							console.log('kk', address);
+
+							fetchUserID(address);
+						}}
+						defaultAddress={defaultAddress}
+					/>
+				</div>
+				<div className='mt-6 px-5'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+						Your Bio<span className='font-semibold text-[#FF3C5F]'>*</span>
+					</label>
+					<Input
+						name='bio'
+						className='bg-white p-3'
+						placeholder='Add message for delegate address'
+						value={details.bio}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDetails({ ...details, bio: e.target.value })}
+					/>
+				</div>
+				<div className='mb-7 mt-6 rounded-[4px] px-5'>
+					<Alert
+						message={
+							<span className='text-sm '>
+								To add socials to your delegate profile{' '}
+								<span className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'>
+									<ImageIcon
+										src='/assets/delegation-tracks/shield-icon-pink.svg'
+										alt='shield icon'
+										imgClassName='-mt-[3px] mr-[1.5px]'
+									/>{' '}
+									Set identity
+								</span>{' '}
+								with Polkassembly
+							</span>
+						}
+						type='info'
+						showIcon
+						className='border-none'
+					/>
+				</div>
+				<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+					<Button
+						className='w-full rounded-[4px] text-sm font-medium'
+						type='primary'
+						onClick={handleSubmit}
+						disabled={!details.bio || loading}
+					>
+						Confirm
+					</Button>
+				</div>
+			</AuthForm>
 		</Modal>
 	);
 };

@@ -40,7 +40,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
-	console.log('user details', userDetails);
 
 	useEffect(() => {
 		if (!window) return;

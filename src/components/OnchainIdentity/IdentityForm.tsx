@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { Alert, Divider, Form, FormInstance, Input, Spin } from 'antd';
-import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, TwitterIcon, WebIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import styled from 'styled-components';
@@ -103,10 +103,11 @@ const IdentityForm = ({
 	const { api, apiReady } = useContext(ApiContext);
 	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
 	const { displayName, legalName } = name;
-	const { email, twitter } = socials;
+	const { email, twitter, web } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [isLive, setIsLive] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
@@ -156,13 +157,14 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = form.getFieldValue('twitter').trim();
+		const webVal = form.getFieldValue('webval')?.trim();
 
 		const okDisplay = checkValue(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
 		const okEmail = checkValue(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
 		// const okRiot = checkValue((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
 		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
-		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
+		const okWeb = checkValue(webVal?.length > 0, webVal, 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
 		if (okEmail && emailVal.length > 0 && alreadyVerifiedfields?.email !== emailVal) {
@@ -172,7 +174,9 @@ const IdentityForm = ({
 		if (okTwitter && twitterVal.length > 0 && alreadyVerifiedfields?.twitter !== twitterVal) {
 			okSocials += 1;
 		}
-		// if(okWeb && webVal.length > 0){okSocials+=1;}
+		if (okWeb && webVal?.length > 0) {
+			okSocials += 1;
+		}
 
 		setInfo({
 			info: {
@@ -180,8 +184,8 @@ const IdentityForm = ({
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
 				// riot: { [(okRiot && (riotVal).length > 0) ? 'raw' : 'none']: (okRiot && (riotVal).length > 0) ? (riotVal) : null },
-				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null }
-				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
+				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
+				web: { [okWeb && webVal?.length > 0 ? 'raw' : 'none']: okWeb && webVal?.length > 0 ? webVal : null }
 			},
 			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && emailVal && twitterVal
 		});
@@ -272,6 +276,33 @@ const IdentityForm = ({
 			tx
 		});
 	};
+	async function checkURL(url: any) {
+		try {
+			const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+			return response.ok || response.status === 0;
+		} catch (error) {
+			console.error('Error checking URL: ', error);
+			return false;
+		}
+	}
+
+	const handleURLChange = async (e: any) => {
+		const url = e.target.value;
+		onChangeSocials({ ...socials, web: { ...web, value: e.target.value } });
+		handleInfo();
+		if (url) {
+			const isLive = await checkURL(url);
+			if (isLive) {
+				setIsLive(true);
+			} else {
+				setIsLive(false);
+			}
+		}
+	};
+
+	useEffect(() => {
+		form.validateFields(['web']);
+	}, [isLive, form]);
 
 	return (
 		<div className={className}>
@@ -408,23 +439,39 @@ const IdentityForm = ({
 						/>
 					</label>
 
-					{/* <div className='flex items-center mt-4'>
-					<span className='flex gap-2 w-[150px] items-center mb-6'>
-						<WebIcon className='bg-[#edeff3] rounded-full text-2xl p-2.5'/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
-					</span>
-					<Form.Item className='w-full' name='web' rules={[{
-						message: 'Invalid web',
-						validator(rule, value, callback) {
-							if (callback && value.length && !checkValue(web.length > 0, web, 8, ['.'], WHITESPACE, ['https://', 'http://']) ){
-								callback(rule?.message?.toString());
-							}else {
-								callback();
-							}
-						} }]}>
-						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
-					</Form.Item>
-				</div> */}
+					<div className='mt-4 flex items-center'>
+						<span className='mb-6 flex w-[150px] items-center gap-2'>
+							<WebIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
+						</span>
+						<Form.Item
+							className='w-full'
+							name='web'
+							rules={[
+								{
+									message: 'Please enter a valid URL',
+									validator(_, value) {
+										return new Promise((resolve, reject) => {
+											// eslint-disable-next-line no-useless-escape
+											if (/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(value)) {
+												resolve('Valid URL');
+											} else {
+												reject('Invalid URL');
+											}
+										});
+									}
+								}
+							]}
+						>
+							<Input
+								name='web'
+								value={web?.value}
+								placeholder='Enter your website address'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+								onChange={handleURLChange}
+							/>
+						</Form.Item>
+					</div>
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>

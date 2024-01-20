@@ -253,6 +253,7 @@ const VoterRow: FC<IVoterRow> = ({
 							true,
 							network
 						)}
+						{voteData?.delegatedVotes?.length > 0 ? ' /d' : ''}
 					</div>
 				)}
 			</div>

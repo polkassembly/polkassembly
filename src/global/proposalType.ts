@@ -274,9 +274,12 @@ export const checkIsOnChainPost = (proposalType: string) => {
 };
 
 export const gov1ProposalTypes = (network: string) => {
-	const proposalType = ['DemocracyProposal', 'TechCommitteeProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
+	const proposalType = ['DemocracyProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
 	if (network === 'zeitgeist') {
 		proposalType.splice(1, 0, 'AdvisoryCommittee');
+	}
+	if (network === 'polymesh') {
+		proposalType.splice(1, 0, 'TechCommitteeProposal');
 	}
 	return proposalType;
 };

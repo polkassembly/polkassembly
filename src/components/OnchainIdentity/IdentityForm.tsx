@@ -107,7 +107,9 @@ const IdentityForm = ({
 	const [open, setOpen] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [isLive, setIsLive] = useState<boolean>(false);
+	const [URL, setURL] = useState('');
+	const [isWebsiteLive, setIsWebsiteLive] = useState<boolean>(false);
+	const [isValidURL, setIsValidURL] = useState<boolean>(true);
 	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 
@@ -202,6 +204,11 @@ const IdentityForm = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		form.validateFields(['web']);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isWebsiteLive, URL, form]);
+
 	const handleAllowSetIdentity = () => {
 		const displayNameVal = form.getFieldValue('displayName')?.trim();
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
@@ -288,21 +295,25 @@ const IdentityForm = ({
 
 	const handleURLChange = async (e: any) => {
 		const url = e.target.value;
+		console.log(url.length);
+		if (url.length === 0) {
+			setIsValidURL(true);
+		}
+		setURL(url);
 		onChangeSocials({ ...socials, web: { ...web, value: e.target.value } });
 		handleInfo();
+		// eslint-disable-next-line no-useless-escape
+		const regex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(e.target.value);
 		if (url) {
 			const isLive = await checkURL(url);
-			if (isLive) {
-				setIsLive(true);
+			setIsWebsiteLive(isLive);
+			if (isLive && regex) {
+				setIsValidURL(true);
 			} else {
-				setIsLive(false);
+				setIsValidURL(false);
 			}
 		}
 	};
-
-	useEffect(() => {
-		form.validateFields(['web']);
-	}, [isLive, form]);
 
 	return (
 		<div className={className}>
@@ -447,21 +458,6 @@ const IdentityForm = ({
 						<Form.Item
 							className='w-full'
 							name='web'
-							rules={[
-								{
-									message: 'Please enter a valid URL',
-									validator(_, value) {
-										return new Promise((resolve, reject) => {
-											// eslint-disable-next-line no-useless-escape
-											if (/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(value)) {
-												resolve('Valid URL');
-											} else {
-												reject('Invalid URL');
-											}
-										});
-									}
-								}
-							]}
 						>
 							<Input
 								name='web'
@@ -472,8 +468,13 @@ const IdentityForm = ({
 							/>
 						</Form.Item>
 					</div>
+					{!isValidURL && (
+						<div className='-mt-5 flex items-center justify-end'>
+							<p className='m-0 p-0 text-xs text-red_primary'>Please enter a valid URL</p>
+						</div>
+					)}
 
-					<div className='mt-1 flex items-center  '>
+					<div className={`${!isValidURL ? 'mt-2' : 'mt-1'} flex items-center `}>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
@@ -663,7 +664,7 @@ const IdentityForm = ({
 					buttonsize='xs'
 				/>
 				<CustomButton
-					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
+					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity() || !isValidURL}
 					onClick={handleSetIdentity}
 					loading={loading}
 					className={`rounded-[4px] ${

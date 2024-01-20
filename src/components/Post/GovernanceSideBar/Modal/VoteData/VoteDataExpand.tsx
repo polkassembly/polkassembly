@@ -199,7 +199,7 @@ const VoteDataExpand = () => {
 						/>
 						<div>
 							<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
-							<div className='mb-2 flex items-center text-xs font-semibold'>
+							<div className='mb-2 flex items-start text-xs font-semibold'>
 								<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
 								<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
 								{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}

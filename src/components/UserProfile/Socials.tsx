@@ -4,8 +4,7 @@
 
 import React, { FC } from 'react';
 import { Alert, Input } from 'antd';
-import { ProfileDetails } from '~src/auth/types';
-import { socialLinks } from './Details';
+import { ESocialType, ProfileDetails } from '~src/auth/types';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
 import styled from 'styled-components';
 import { LinkOutlined } from '@ant-design/icons';
@@ -17,6 +16,8 @@ interface ISocialsProps {
 	errorCheck?: string | undefined;
 	theme?: string;
 }
+
+export const socialLinks = [ESocialType.EMAIL, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.RIOT, ESocialType.DISCORD];
 
 const getPlaceholder = (socialLink: string) => {
 	switch (socialLink) {

@@ -8,7 +8,6 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { getKiltDidName, getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import Link from 'next/link';
-import { socialLinks } from '~src/components/UserProfile/Details';
 import SocialLink from './SocialLinks';
 import { UserOutlined } from '@ant-design/icons';
 import { PolkaverseIcon } from './CustomIcons';
@@ -16,6 +15,7 @@ import WebIcon from '~assets/icons/web-icon.svg';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { isSubscanSupport } from '~src/util/subscanCheck';
+import { socialLinks } from '~src/components/UserProfile/Socials';
 
 interface ISocialsType {
 	isVerified: boolean;

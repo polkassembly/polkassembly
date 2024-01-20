@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import EditProfileModal from '../UserProfile/EditProfile';
+import EditProfileModal from './EditProfile';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Image from 'next/image';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';

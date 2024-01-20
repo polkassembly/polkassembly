@@ -5,7 +5,6 @@ import { Skeleton, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from './SocialLinks';
-import { socialLinks } from '~src/components/UserProfile/Details';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from './Address';
 import { EditIcon } from './CustomIcons';
@@ -17,6 +16,7 @@ import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import { socialLinks } from '~src/components/UserProfile/Socials';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,

@@ -259,7 +259,7 @@ const VoterRow: FC<IVoterRow> = ({
 		</div>
 	);
 
-	return voteData?.delegatedVotes?.length > 0 && voteData?.decision !== 'abstain' ? (
+	return voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${
 				active && !isSmallScreen ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'

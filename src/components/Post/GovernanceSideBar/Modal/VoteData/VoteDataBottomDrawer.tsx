@@ -2,14 +2,22 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import VoteDataExpand from './VoteDataExpand';
 import { useVoteDataSelector } from '~src/redux/selectors';
 
 const VoteDataBottomDrawer = () => {
-	const [height, setHeight] = useState('395px');
+	const [height, setHeight] = useState('390px');
 	const prevClientYRef = useRef<number | null>(null);
-	const { isVoteDataModalOpen } = useVoteDataSelector();
+	const { isVoteDataModalOpen, voteData } = useVoteDataSelector();
+
+	useEffect(() => {
+		if (voteData?.delegatedVotes?.length > 0) {
+			setHeight('390px');
+		} else {
+			setHeight('330px');
+		}
+	}, [voteData]);
 
 	const handleMouseUp = (e: any) => {
 		const { clientY } = e.changedTouches[0];
@@ -17,10 +25,19 @@ const VoteDataBottomDrawer = () => {
 		if (prevClientYRef.current !== null) {
 			const deltaY = prevClientYRef.current - clientY;
 
-			if (deltaY > 0) {
-				setHeight('100%');
+			if (voteData?.delegatedVotes?.length > 0) {
+				if (deltaY > 0) {
+					setHeight('100%');
+				} else {
+					setHeight('390px');
+				}
 			} else {
-				setHeight('395px');
+				// If delegatedVotes length is not greater than 0
+				if (deltaY > 0) {
+					setHeight('100%');
+				} else {
+					setHeight('330px');
+				}
 			}
 		}
 

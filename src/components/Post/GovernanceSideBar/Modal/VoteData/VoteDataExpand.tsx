@@ -49,7 +49,7 @@ const VoteDataExpand = () => {
 	return (
 		<main className='dark:bg-section-dark-overlay'>
 			<div className='mx-auto mt-2 flex h-1 w-[56px] rounded-[100px] bg-[#D2D8E0]'></div>
-			<div className='flex items-center justify-between px-3 pt-3 dark:bg-section-dark-overlay'>
+			<div className='flex items-center justify-between px-4 pt-3 dark:bg-section-dark-overlay '>
 				<div className='flex space-x-[6px]'>
 					<LikeFilled />
 					<span className='text-lg font-semibold text-blue-light-high dark:text-white'>
@@ -66,7 +66,7 @@ const VoteDataExpand = () => {
 				</span>
 			</div>
 			<Divider />
-			<div className='flex justify-between px-4 dark:bg-section-dark-overlay'>
+			<div className='flex justify-between px-4 pb-3 dark:bg-section-dark-overlay'>
 				<div className=''>
 					<span className='text-sm font-medium text-blue-light-medium'>Voter</span>
 					<div>
@@ -160,66 +160,75 @@ const VoteDataExpand = () => {
 								</span>
 							</div>
 						</div>
-						<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
-						<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
-							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
-							<div className='mt-1.5 flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<VoterIcon /> Voting Power
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
+
+						{voteData?.delegatedVotes?.length > 0 && (
+							<>
+								<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
+								<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
+									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+									<div className='mt-1.5 flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<VoterIcon /> Voting Power
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
+									</div>
+									<div className='flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<EmailIcon /> Delegators
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
+									</div>
+									<div className='flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<CapitalIcon /> Capital
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+											{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
+										</span>
+									</div>
+								</div>
+							</>
+						)}
+					</div>
+				</div>
+				{voteData?.delegatedVotes?.length > 0 && (
+					<>
+						<Divider
+							dashed
+							className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						/>
+						<div>
+							<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+							<div className='mb-2 flex items-center text-xs font-semibold'>
+								<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
+								<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
+								{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
+								<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
 							</div>
-							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<EmailIcon /> Delegators
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
+							<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
+								{voteData?.delegatedVotes?.map((data: any, i: number) => (
+									<DelegationListRow
+										key={i}
+										voteType={voteType}
+										voteData={data}
+									/>
+								))}
 							</div>
-							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<CapitalIcon /> Capital
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-									{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
-								</span>
-							</div>
+							{delegatorLoading ? (
+								<Skeleton.Button active />
+							) : (
+								delegatedData?.delegator > 10 && (
+									<p
+										className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
+										onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData?.voter })}
+									>
+										Show More
+									</p>
+								)
+							)}
 						</div>
-					</div>
-				</div>
-				<Divider
-					dashed
-					className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
-				/>
-				<div>
-					<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
-					<div className='mb-2 flex items-center text-xs font-semibold'>
-						<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-						<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-						{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
-						<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
-					</div>
-					<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
-						{voteData?.delegatedVotes?.map((data: any, i: number) => (
-							<DelegationListRow
-								key={i}
-								voteType={voteType}
-								voteData={data}
-							/>
-						))}
-					</div>
-					{delegatorLoading ? (
-						<Skeleton.Button active />
-					) : (
-						delegatedData?.delegator > 10 && (
-							<p
-								className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
-								onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData?.voter })}
-							>
-								Show More
-							</p>
-						)
-					)}
-				</div>
+					</>
+				)}
 			</div>
 		</main>
 	);

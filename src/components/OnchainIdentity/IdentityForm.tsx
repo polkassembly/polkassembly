@@ -24,6 +24,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -470,7 +471,8 @@ const IdentityForm = ({
 					</div>
 					{!isValidURL && (
 						<div className='-mt-5 flex items-center justify-end'>
-							<p className='m-0 p-0 text-xs text-red_primary'>Please enter a valid URL</p>
+							<InfoIcon />
+							<p className='m-0 ml-1 p-0 text-xs text-red_primary'>Please enter a valid URL</p>
 						</div>
 					)}
 

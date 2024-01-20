@@ -71,9 +71,10 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		const newDelegate = {
 			...data,
 			active_delegation_count:
-				delegationCounts.filter((delegation) => delegation?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION || ETrackDelegationStatus.DELEGATED))?.length || 0,
+				delegationCounts.filter((delegation) => delegation?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION || ETrackDelegationStatus.DELEGATED))?.length ||
+				data?.active_delegation_count,
 			created_at: data?.created_at?.toDate ? data?.created_at.toDate() : data?.created_at,
-			voted_proposals_count: votedProposalsCount?.data?.votes || 0
+			voted_proposals_count: votedProposalsCount?.data?.votes || data?.voted_proposals_count
 		};
 
 		await PADelegateDoc.update(newDelegate)

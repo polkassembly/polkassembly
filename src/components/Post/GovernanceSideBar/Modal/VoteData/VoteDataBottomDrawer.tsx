@@ -32,7 +32,6 @@ const VoteDataBottomDrawer = () => {
 					setHeight('390px');
 				}
 			} else {
-				// If delegatedVotes length is not greater than 0
 				if (deltaY > 0) {
 					setHeight('100%');
 				} else {

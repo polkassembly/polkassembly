@@ -316,14 +316,14 @@ const Address = (props: Props) => {
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
-								<div className='inline-address flex items-center'>
+								<div className='inline-address flex items-start'>
 									{!!kiltName ||
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												theme={theme}
 												identity={identity}
 												flags={flags}
-												className='text-navBlue'
+												className='mt-[2.5px] text-navBlue'
 											/>
 										))}
 

@@ -41,7 +41,6 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
-console.log(delegatesData);
 	useEffect(() => {
 		if (!address) return;
 		if ((getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network)) {
@@ -62,6 +61,8 @@ console.log(delegatesData);
 			addresses: [address]
 		});
 		if (data) {
+			console.log(data, 'data');
+
 			setDelegatesData(data);
 		} else {
 			console.log(error);

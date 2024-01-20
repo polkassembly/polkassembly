@@ -43,9 +43,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate | Mes
 			delegationCounts.filter((delegation) => delegation?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION || ETrackDelegationStatus.DELEGATED))?.length || 0,
 		address: encodedAddress || address,
 		bio: bio || '',
+		created_at: new Date(),
 		dataSource: 'polkassembly',
 		isNovaWalletDelegate: isNovaWalletDelegate || false,
 		name: username,
+		user_id: userId,
 		voted_proposals_count: votedProposalsCount?.data?.votes || 0
 	};
 

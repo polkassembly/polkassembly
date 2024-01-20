@@ -103,6 +103,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 				</div>
 			)}
+			{delegate?.dataSource === 'polkassembly' && (
+				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
+					<ParityTechIcon />
+					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+				</div>
+			)}
 
 			<div className='flex items-center justify-between px-5 pt-5'>
 				<div className='flex gap-2 max-lg:justify-start'>

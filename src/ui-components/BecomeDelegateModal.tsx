@@ -19,6 +19,7 @@ import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import Loader from './Loader';
 // import address from 'pages/api/v1/auth/data/address';
 
 interface DetailsState {
@@ -72,8 +73,6 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 					return;
 				}
 				setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
-
-				// console.log('user IDDD', data);
 			} catch (error) {
 				console.log(error);
 			}
@@ -88,9 +87,12 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 		// setLoading(true);
 		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', details);
 
-		if (data) setLoading(false);
-		else console.log(error);
+		if (data) {
+			setLoading(false);
+			setIsModalOpen(false);
+		} else console.log(error);
 	};
+
 	useEffect(() => {
 		fetchUserID(defaultAddress);
 	}, [defaultAddress]);
@@ -172,12 +174,12 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 				</div>
 				<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 					<Button
-						className='w-full rounded-[4px] text-sm font-medium'
+						className='flex w-full items-center justify-center space-x-2 rounded-[4px] text-sm font-medium'
 						type='primary'
 						onClick={handleSubmit}
 						disabled={!details.bio || loading}
 					>
-						Confirm
+						{loading && <Loader />} Confirm
 					</Button>
 				</div>
 			</AuthForm>

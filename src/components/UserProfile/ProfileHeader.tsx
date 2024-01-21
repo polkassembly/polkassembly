@@ -61,8 +61,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 						<div className='flex gap-3'>
 							{!TippingUnavailableNetworks.includes(network) && (
 								<CustomButton
+									variant='primary'
 									shape='circle'
-									className={`rounded-full border-[1px]  border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenTipModal(true);
@@ -71,7 +72,6 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									disabled={!id}
 								>
 									<div className='flex items-center gap-1.5'>
-										{' '}
 										<DollarIcon className='text-lg' />
 										<span className='max-md:hidden'>Tip User</span>
 									</div>
@@ -79,8 +79,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 							)}
 							{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
 								<CustomButton
+									variant='primary'
 									shape='circle'
-									className={`rounded-full border-[1px] border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenDelegateModal(true);

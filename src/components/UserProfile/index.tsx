@@ -147,9 +147,10 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		} else {
 			setAddressWithIdentity(userProfile?.addresses?.[0] || '');
 		}
+		if (!profileDetails?.cover_image) return;
 		(async () => {
 			const res = await fetch(profileDetails?.cover_image || '');
-			setIsValidCoverImage(res.ok);
+			setIsValidCoverImage(res.ok || false);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity, userProfile]);

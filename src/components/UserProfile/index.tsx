@@ -35,6 +35,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		judgements: [],
 		nickname: ''
 	});
+	const [isValidCoverImage, setIsValidCoverImage] = useState<boolean>(false);
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
@@ -146,6 +147,10 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		} else {
 			setAddressWithIdentity(userProfile?.addresses?.[0] || '');
 		}
+		(async () => {
+			const res = await fetch(profileDetails?.cover_image || '');
+			setIsValidCoverImage(res.ok);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onChainIdentity, userProfile]);
 
@@ -156,6 +161,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				profileDetails={profileDetails}
 				setProfileDetails={setProfileDetails}
 				addressWithIdentity={addressWithIdentity}
+				isValidCoverImage={isValidCoverImage}
 			/>
 			<ProfileCard
 				className='mx-2 max-lg:mt-[180px]'

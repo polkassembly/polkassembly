@@ -27,6 +27,7 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	profileDetails: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+	isValidCoverImage: boolean;
 }
 
 const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetails, addressWithIdentity }: Props) => {
@@ -141,6 +142,8 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 
 export default styled(ProfileHeader)`
 	.profile-header {
-		background-image: url(${(props) => props?.profileDetails?.cover_image || '/assets/profile/cover-image1.svg'}) !important;
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-image: url(${(props) => (props?.isValidCoverImage ? props?.profileDetails?.cover_image : '/assets/profile/cover-image1.svg')}) !important;
 	}
 `;

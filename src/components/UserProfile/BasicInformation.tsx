@@ -26,11 +26,12 @@ interface IBasicInformationProps {
 	className?: string;
 	errorCheck?: string | undefined;
 	theme?: string;
+	isValidCoverImage: boolean;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	const { network } = useNetworkSelector();
-	const { profile, loading, setProfile, setUsername, username, className, errorCheck } = props;
+	const { profile, loading, setProfile, setUsername, username, className, errorCheck, isValidCoverImage } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -78,7 +79,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 				<div className='h-[150px]'>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
-						src={profile?.cover_image || '/assets/profile/cover-image1.svg'}
+						src={isValidCoverImage ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
 						width={900}
 						className='h-full w-full rounded-xl object-cover'
 						height={150}

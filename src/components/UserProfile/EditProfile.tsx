@@ -60,6 +60,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
+	const [isValidCoverImage, setIsValidCoverImage] = useState<boolean>(false);
 
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
 		// eslint-disable-next-line no-useless-escape
@@ -113,7 +114,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	useEffect(() => {
 		if (!profile) return;
-
+		(async () => {
+			const res = await fetch(profile?.cover_image || '');
+			setIsValidCoverImage(res.ok);
+		})();
 		if (validateData(profile?.image, profile?.social_links)) return;
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -277,6 +281,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									username={username}
 									errorCheck={errorCheck.basicInformationError}
 									theme={theme}
+									isValidCoverImage={isValidCoverImage}
 								/>
 							),
 							key: 'basic_information',

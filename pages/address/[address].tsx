@@ -7,12 +7,9 @@ import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/aut
 import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-// import { ProfileDetailsResponse } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
-// import UserNotFound from '~assets/user-not-found.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post';
 import { useDispatch } from 'react-redux';

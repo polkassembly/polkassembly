@@ -141,6 +141,6 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 
 export default styled(ProfileHeader)`
 	.profile-header {
-		background-image: url('/assets/profile/profile-header.svg') !important;
+		background-image: url(${(props) => props?.profileDetails?.cover_image || '/assets/profile/cover-image1.svg'}) !important;
 	}
 `;

@@ -29,16 +29,27 @@ const HighlightMenu = () => {
 			}
 		};
 
-		document.addEventListener('selectionchange', handleSelection);
+		const clearSelection = () => {
+			if (selectedText) {
+				document.getSelection()?.removeAllRanges();
+				setTimeout(() => {
+					setSelectedText('');
+				}, 250);
+			}
+		};
+		document.addEventListener('pointerup', handleSelection);
+		document.addEventListener('pointerdown', clearSelection);
 
 		return () => {
-			document.removeEventListener('selectionchange', handleSelection);
+			document.removeEventListener('pointerup', handleSelection);
+			document.removeEventListener('pointerdown', clearSelection);
 		};
-	}, []);
+	}, [selectedText]);
 
-	const shareSelection = () => {
+	const shareSelection = (event: React.MouseEvent) => {
 		console.log('shareSelection', selectedText);
 		window.open(`https://twitter.com/intent/tweet?text=${selectedText}`, '_blank');
+		event.stopPropagation();
 		setSelectedText('');
 	};
 

@@ -40,7 +40,7 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [showFullBio, setShowFullBio] = useState<boolean>(false);
-	const { bio, badges } = userProfile;
+	const { bio, badges } = profileDetails;
 
 	return (
 		<div className={classNames(className, 'mt-6')}>
@@ -122,7 +122,7 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 									About
 								</span>
 								<span
-									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
+									className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}
 									onClick={() => setOpenEditModal(true)}
 								>
 									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}

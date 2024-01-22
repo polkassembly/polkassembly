@@ -48,6 +48,7 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 
 	return filteredPosts;
 };
+
 const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
@@ -260,44 +261,46 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						</div>
 					)}
 				</div>
-				{posts?.length ? (
-					posts.map((post, index) => {
-						return (
-							<div
-								key={post.id}
-								className='my-0'
-							>
-								{
-									<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
-										<GovernanceCard
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
-											postReactionCount={post.post_reactions}
-											address={post.proposer}
-											commentsCount={post.comments_count || 0}
-											onchainId={post.id}
-											status={post.status}
-											title={post.title}
-											created_at={post.created_at}
-											tags={post?.tags}
-											tally={post?.tally}
-											timeline={post?.timeline || []}
-											statusHistory={(post?.status_history as any) || []}
-											index={index}
-											proposalType={post?.type}
-											trackNumber={post?.track_number}
-											truncateUsername={false}
-										/>
-									</Link>
-								}
-							</div>
-						);
-					})
-				) : (
-					<Empty
-						className='mt-8'
-						description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
-					/>
-				)}
+				<div className='h-[530px] overflow-y-auto pr-2'>
+					{posts?.length ? (
+						posts.map((post, index) => {
+							return (
+								<div
+									key={post.id}
+									className='my-0'
+								>
+									{
+										<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
+											<GovernanceCard
+												className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+												postReactionCount={post.post_reactions}
+												address={post.proposer}
+												commentsCount={post.comments_count || 0}
+												onchainId={post.id}
+												status={post.status}
+												title={post.title}
+												created_at={post.created_at}
+												tags={post?.tags}
+												tally={post?.tally}
+												timeline={post?.timeline || []}
+												statusHistory={(post?.status_history as any) || []}
+												index={index}
+												proposalType={post?.type}
+												trackNumber={post?.track_number}
+												truncateUsername={false}
+											/>
+										</Link>
+									}
+								</div>
+							);
+						})
+					) : (
+						<Empty
+							className='mt-8'
+							description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

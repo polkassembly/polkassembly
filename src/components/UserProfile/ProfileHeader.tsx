@@ -145,6 +145,7 @@ export default styled(ProfileHeader)`
 	.profile-header {
 		background-repeat: no-repeat;
 		background-size: cover;
+		background-position: center;
 		background-image: url(${(props) => (props?.isValidCoverImage ? props?.profileDetails?.cover_image : '/assets/profile/cover-image1.svg')}) !important;
 	}
 `;

@@ -38,6 +38,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 	return {
 		badges: [],
 		bio: '',
+		cover_image: '',
 		imgUrl: '',
 		social_links: [],
 		title: ''
@@ -59,6 +60,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const [username, setUsername] = useState<string>(userDetailsContext.username || '');
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();
+	const [isValidCoverImage, setIsValidCoverImage] = useState<boolean>(false);
 
 	const validateData = (image: string | undefined, social_links: ISocial[] | undefined) => {
 		// eslint-disable-next-line no-useless-escape
@@ -112,7 +114,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	useEffect(() => {
 		if (!profile) return;
-
+		(async () => {
+			const res = await fetch(profile?.cover_image || '');
+			setIsValidCoverImage(res.ok);
+		})();
 		if (validateData(profile?.image, profile?.social_links)) return;
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,10 +125,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 
 	const populateData = useCallback(() => {
 		if (data) {
-			const { badges, bio, image, social_links, title } = data;
+			const { badges, bio, image, social_links, title, cover_image } = data;
 			setProfile({
 				badges,
 				bio,
+				cover_image,
 				image,
 				social_links,
 				title
@@ -143,7 +149,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 			return;
 		}
 
-		const { badges, bio, image, social_links, title } = profile;
+		const { badges, bio, image, social_links, title, cover_image } = profile;
 		if (validateData(profile?.image, profile?.social_links)) return;
 		if (!validateUserName(username)) return;
 
@@ -152,6 +158,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		const { data, error } = await nextApiClientFetch<IAddProfileResponse>('api/v1/auth/actions/addProfile', {
 			badges: JSON.stringify(badges || []),
 			bio: bio,
+			cover_image: cover_image || '',
 			custom_username: true,
 			image: image,
 			social_links: JSON.stringify(social_links || []),
@@ -181,6 +188,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 					...prev,
 					badges: badges || [],
 					bio: bio || '',
+					cover_image: cover_image,
 					image: image || '',
 					social_links: social_links || [],
 					title: title || ''
@@ -273,6 +281,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 									username={username}
 									errorCheck={errorCheck.basicInformationError}
 									theme={theme}
+									isValidCoverImage={isValidCoverImage}
 								/>
 							),
 							key: 'basic_information',

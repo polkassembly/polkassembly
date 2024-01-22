@@ -220,7 +220,6 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 									<Address
 										address={tipType === ETipType.GIVEN ? tip?.tip_to : tip?.tip_from}
 										displayInline
-										disableTooltip
 										isTruncateUsername
 										usernameMaxLength={16}
 									/>

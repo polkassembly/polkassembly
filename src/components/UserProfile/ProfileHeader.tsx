@@ -63,7 +63,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 								<CustomButton
 									variant='primary'
 									shape='circle'
-									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+										disableState && 'cursor-not-allowed opacity-50'
+									}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenTipModal(true);
@@ -81,7 +83,9 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 								<CustomButton
 									variant='primary'
 									shape='circle'
-									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+										disableState && 'cursor-not-allowed opacity-50'
+									}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenDelegateModal(true);

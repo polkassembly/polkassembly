@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
-import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, TwitterIcon, VerifiedIcon, WebIcon } from '~src/ui-components/CustomIcons';
 import { ESetIdentitySteps, ISocials } from '.';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -31,12 +31,12 @@ interface Props {
 }
 interface ISocialLayout {
 	title: string;
-	description: string;
-	value: string | null;
-	onVerify: () => void;
+	description?: string;
+	value?: string | null;
+	onVerify?: () => void;
 	verified?: boolean;
 	status?: VerificationStatus;
-	loading: boolean;
+	loading?: boolean;
 	fieldName?: ESocials;
 }
 interface IJudgementResponse {
@@ -89,7 +89,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 
 const SocialVerification = ({ className, socials, onCancel, startLoading, closeModal, changeStep, setSocials, address, identityHash, setOpenSuccessModal }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { email, twitter } = socials;
+	const { email, twitter, web } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
 	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
@@ -106,6 +106,20 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			await handleTwitterVerification();
 		}
 	};
+	if (web?.value) {
+		items.push({
+			children: (
+				<SocialsLayout
+					title='Web'
+					value={web?.value}
+					verified={web?.verified}
+					loading={false}
+				/>
+			),
+			dot: <WebIcon className={` ${web?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
+			key: 1
+		});
+	}
 	if (email?.value) {
 		items.push({
 			children: (

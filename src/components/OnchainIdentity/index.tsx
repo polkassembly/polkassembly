@@ -170,11 +170,17 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	const handleInitialStateSet = (identityForm: any) => {
 		if (identityForm?.userId !== userId) return;
 		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
-		setSocials({ ...socials, email: { ...identityForm?.email, verified: false } || '', twitter: { ...identityForm?.twitter, verified: false } });
+		setSocials({
+			...socials,
+			email: { ...identityForm?.email, verified: false } || '',
+			twitter: { ...identityForm?.twitter, verified: false },
+			web: { ...identityForm?.web, verified: true }
+		});
 		form.setFieldValue('displayName', identityForm?.displayName || '');
 		form.setFieldValue('legalName', identityForm?.legalName || '');
 		form.setFieldValue('email', identityForm?.email?.value || '');
 		form.setFieldValue('twitter', identityForm?.twitter?.value || '');
+		form.setFieldValue('web', identityForm?.web?.value || '');
 		const identityHash = identityForm?.identityHash;
 		setIdentityHash(identityHash);
 		if (identityForm?.setIdentity) {
@@ -262,6 +268,10 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					twitter: {
 						value: identity?.twitter || '',
 						verified: !unverified && !!identity?.twitter
+					},
+					web: {
+						value: identity?.web || '',
+						verified: !unverified && !!identity?.web
 					}
 				});
 

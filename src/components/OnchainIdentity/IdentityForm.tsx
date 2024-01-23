@@ -160,7 +160,7 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = form.getFieldValue('twitter').trim();
-		const webVal = form.getFieldValue('webval')?.trim();
+		const webVal = form.getFieldValue('web')?.trim();
 
 		const okDisplay = checkValue(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
@@ -180,7 +180,6 @@ const IdentityForm = ({
 		if (okWeb && webVal?.length > 0) {
 			okSocials += 1;
 		}
-
 		setInfo({
 			info: {
 				display: { [okDisplay ? 'raw' : 'none']: displayNameVal || null },
@@ -296,7 +295,6 @@ const IdentityForm = ({
 
 	const handleURLChange = async (e: any) => {
 		const url = e.target.value;
-		console.log(url.length);
 		if (url.length === 0) {
 			setIsValidURL(true);
 		}
@@ -310,6 +308,8 @@ const IdentityForm = ({
 			setIsWebsiteLive(isLive);
 			if (isLive && regex) {
 				setIsValidURL(true);
+				handleInfo();
+				handleLocalStorageSave({ web: { ...web, value: e.target.value?.trim(), verified: true } });
 			} else {
 				setIsValidURL(false);
 			}
@@ -451,32 +451,7 @@ const IdentityForm = ({
 						/>
 					</label>
 
-					<div className='mt-4 flex items-center'>
-						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<WebIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
-						</span>
-						<Form.Item
-							className='w-full'
-							name='web'
-						>
-							<Input
-								name='web'
-								value={web?.value}
-								placeholder='Enter your website address'
-								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
-								onChange={handleURLChange}
-							/>
-						</Form.Item>
-					</div>
-					{!isValidURL && (
-						<div className='-mt-5 flex items-center justify-end'>
-							<InfoIcon />
-							<p className='m-0 ml-1 p-0 text-xs text-red_primary'>Please enter a valid URL</p>
-						</div>
-					)}
-
-					<div className={`${!isValidURL ? 'mt-2' : 'mt-1'} flex items-center `}>
+					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
 							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
@@ -561,6 +536,32 @@ const IdentityForm = ({
 							/>
 						</Form.Item>
 					</div>
+
+					<div className='mt-1 flex items-center'>
+						<span className='mb-6 flex w-[150px] items-center gap-2'>
+							<WebIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
+						</span>
+						<Form.Item
+							className='w-full'
+							name='web'
+						>
+							<Input
+								name='web'
+								onBlur={() => getGasFee()}
+								value={web?.value}
+								placeholder='Enter your website address'
+								className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high'
+								onChange={handleURLChange}
+							/>
+						</Form.Item>
+					</div>
+					{!isValidURL && (
+						<div className='-mt-5 flex items-center justify-end'>
+							<InfoIcon />
+							<p className='m-0 ml-1 p-0 text-xs text-red_primary'>Please enter a valid URL</p>
+						</div>
+					)}
 
 					{/* <div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>

@@ -554,11 +554,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					key: 2,
 					label: (
 						<Button
-							className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
 							onClick={deleteReply}
 						>
 							<DeleteOutlined />
-							<span className='m-0 p-1'>Delete</span>
+							<span className='mr-1'>Delete</span>
 						</Button>
 					)
 			  }
@@ -584,7 +584,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 					key: 3,
 					label: (
 						<ReportButton
-							className='text-xs text-pink_primary dark:text-blue-dark-helper'
+							className='text-pink_primary dark:text-blue-dark-helper'
 							proposalType={postType}
 							postId={postIndex}
 							commentId={commentId}

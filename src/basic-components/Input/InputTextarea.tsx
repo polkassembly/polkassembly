@@ -3,40 +3,22 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Input as AntdInput } from 'antd';
+import { TextAreaProps } from 'antd/es/input/TextArea';
 import { useTheme } from 'next-themes';
-import { ChangeEvent } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
-type SemanticDOM = 'input' | 'button' | 'label' | 'textarea';
-
-interface Props {
-	name?: string;
-	showCount?: boolean;
-	rows?: number;
-	maxLength?: number;
+interface Props extends TextAreaProps {
 	className?: string;
-	classNames?: Partial<Record<SemanticDOM, string>>;
-	placeholder?: string;
-	id?: string;
-	value?: string | number;
-	onChange?: (event: ChangeEvent<HTMLTextAreaElement>) => void;
-	disabled?: boolean;
 }
 
-export default function InputTextarea({ name, showCount, rows, maxLength, className, classNames, placeholder, id, value, onChange, disabled }: Props) {
+const InputTextarea: FC<PropsWithChildren<Props>> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { className } = props;
 	return (
 		<AntdInput.TextArea
-			name={name}
-			showCount={showCount}
-			rows={rows}
-			maxLength={maxLength}
+			{...props}
 			className={`${className} shadow-none  ${theme === 'light' ? 'hover:border-grey_border hover:bg-[#f6f7f9]  focus:border-[#e5007a] focus:bg-white disabled:bg-[#f6f7f9]' : ''}`}
-			classNames={classNames}
-			placeholder={placeholder}
-			id={id}
-			value={value}
-			onChange={onChange}
-			disabled={disabled}
 		/>
 	);
-}
+};
+export default InputTextarea;

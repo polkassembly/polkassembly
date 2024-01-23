@@ -145,7 +145,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 					</label>
 					<Input
 						name='bio'
-						className='h-[40px] text-sm font-normal text-lightBlue dark:bg-[#1D1D1D] dark:text-blue-dark-medium'
+						className='h-[40px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-medium'
 						placeholder='Add message for delegate address'
 						value={details.bio}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDetails({ ...details, bio: e.target.value })}

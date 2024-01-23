@@ -26,6 +26,7 @@ interface IBasicInformationProps {
 	username: string;
 	className?: string;
 	errorCheck?: string | undefined;
+	isValidCoverImage?: boolean;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {

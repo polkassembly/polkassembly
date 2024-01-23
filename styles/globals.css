@@ -200,7 +200,7 @@ p > a:hover {
   border-radius: 10px;
 }
 
-.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
+.ant-tabs-tab-bg-white dark:bg-none .ant-tabs-tab:not(.ant-tabs-tab-active) {
   background-color: white;
   border-top-color: white;
   border-left-color: white;
@@ -600,6 +600,7 @@ z-index: 1050 !important;
 
 .dark .ant-tabs-nav-list {
   background-color: #0D0D0D !important;
+  border-radius: 12px 12px 0px 0px !important;
 }
 
 .dark .ant-tooltip-inner {
@@ -633,7 +634,7 @@ z-index: 1050 !important;
 
 .dark .ant-segmented-item-selected > .ant-segmented-item-label{
   background-color: #0D0D0D;
-  border-radius: 20px;
+  border-radius: 5px;
 }
 
 .dark .ant-select:not(.ant-select-customize-input) .ant-select-selector{
@@ -817,5 +818,16 @@ z-index: 1050 !important;
   .details-container{
     margin-top: 4px !important;
   }
+}
+
+.dark .ant-alert-message {
+  color: white !important;
+}
+.verification-tooltip .ant-tooltip-inner {
+  width: 311px !important;
+}
+  
+.tick-icon-container  {
+  transform: scale(0.7);
 }
 

@@ -39,6 +39,7 @@ interface Props {
 	theme?: string;
 	isBalanceUpdated?: boolean;
 	disabled?: boolean;
+	setIsBalanceSet?: any;
 }
 
 const BalanceInput = ({
@@ -60,7 +61,8 @@ const BalanceInput = ({
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme,
 	isBalanceUpdated,
-	disabled
+	disabled,
+	setIsBalanceSet
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
@@ -69,9 +71,11 @@ const BalanceInput = ({
 		if (isValid) {
 			setInputValue?.(value || '0');
 			onChange(balance);
+			setIsBalanceSet?.(true);
 		} else {
 			onChange(ZERO_BN);
 			setInputValue?.('0');
+			setIsBalanceSet?.(false);
 		}
 	};
 	useEffect(() => {

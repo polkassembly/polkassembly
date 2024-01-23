@@ -313,12 +313,12 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 		<>
 			<div className={className}>
 				<CustomButton
-					className='mb-3 w-[100%] p-7'
+					className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
 					fontSize='lg'
 					variant='primary'
 					onClick={() => setShowModal(true)}
 				>
-					{lastVote === null || lastVote === undefined ? 'Cast Vote Now' : 'Cast Vote Again'}
+					{lastVote === null || lastVote === undefined ? 'Cast Your Vote' : 'Cast Vote Again'}
 				</CustomButton>
 				<Modal
 					open={showModal}

@@ -1101,6 +1101,28 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
     edges {
       node {
         status
+         group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+        statusHistory {
+          status
+          block
+          timestamp
+        }
         createdAt
         index
         type
@@ -1116,16 +1138,22 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         }
         hash
         trackNumber
+        tally {
+          ayes
+          bareAyes
+          nays
+          support
+        }
       }
     }
   }
 }`;
 
-export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $offset: Int = 0) {
-  preimagesConnection(orderBy: createdAtBlock_DESC) {
+export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $offset: Int = 0, $hash_contains:String) {
+  preimagesConnection(orderBy: createdAtBlock_DESC, where: {hash_contains: $hash_contains}) {
     totalCount
   }
-  preimages(limit: $limit, offset: $offset, orderBy: createdAtBlock_DESC) {
+  preimages(limit: $limit, offset: $offset, orderBy: createdAtBlock_DESC, where: {hash_contains: $hash_contains}) {
     hash
     id
     length
@@ -1144,6 +1172,17 @@ export const GET_PREIMAGES_TABLE_QUERY = `query GetPreimages($limit: Int = 10, $
     updatedAtBlock
     createdAtBlock
     createdAt
+  }
+}
+`;
+export const GET_STATUS_HISTORY_BY_PREIMAGES_HASH = `
+query GetStatusHistoryByPreImages($hash_in:[String!]) {
+  statusHistories(where: {preimage_isNull: false, preimage: {hash_in: $hash_in}}) {
+    extrinsicIndex
+    preimage {
+      hash
+    }
+    status
   }
 }
 `;
@@ -1957,6 +1996,8 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
       index
       proposer
       status
+      type
+      trackNumber
       statusHistory {
         id
         status
@@ -1966,6 +2007,7 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
     delegatedTo
     isDelegated
     parentVote {
+      extrinsicIndex
       selfVotingPower
       type
       voter
@@ -2227,8 +2269,11 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
   }
 }`;
 
-export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+export const TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES = `query MyQuery($addresses: [String!]) {
+ totalVotes:flattenedConvictionVotesConnection(orderBy: id_ASC, where: {voter_in: $addresses, removedAtBlock_isNull: true}) {
+    totalCount
+},
+  totalProposals: proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $addresses}) {
     totalCount
   }
 }

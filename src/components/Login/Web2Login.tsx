@@ -286,7 +286,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 									id='password'
 								/>
 							</Form.Item>
-							<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
+							<div className='mt-[-20px] text-right text-pink_primary'>
 								<div
 									className='cursor-pointer'
 									onClick={() => {
@@ -325,7 +325,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 							<div
 								onClick={handleClick}
-								className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
+								className='text-md cursor-pointer text-pink_primary'
 							>
 								{' '}
 								Sign Up{' '}

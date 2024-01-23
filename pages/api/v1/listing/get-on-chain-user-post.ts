@@ -29,30 +29,50 @@ export interface IUserPost {
 	type: ProposalType;
 	username?: string;
 	track_number?: number;
+	tally?: {
+		ayes: string;
+		nays: string;
+	} | null;
+	status?: string;
+	status_history?: {
+		status: string;
+		block: any;
+	};
+	timeline?: any;
+	tags?: string[];
+	comments_count?: number;
 }
 
 export interface IUserPostsListingResponse {
 	gov1: {
 		discussions: {
 			posts: IUserPost[];
+			total: number;
 		};
 		democracy: {
 			referenda: IUserPost[];
 			proposals: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 		treasury: {
 			treasury_proposals: IUserPost[];
 			bounties: IUserPost[];
 			tips: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 		collective: {
 			council_motions: IUserPost[];
 			tech_comm_proposals: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 	};
 	open_gov: {
 		discussions: {
 			posts: IUserPost[];
+			total: number;
 		};
 		root: IUserPost[];
 		staking_admin: IUserPost[];
@@ -62,6 +82,8 @@ export interface IUserPostsListingResponse {
 			general_admin: IUserPost[];
 			referendum_canceller: IUserPost[];
 			referendum_killer: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 		treasury: {
 			treasurer: IUserPost[];
@@ -70,13 +92,19 @@ export interface IUserPostsListingResponse {
 			small_spender: IUserPost[];
 			medium_spender: IUserPost[];
 			big_spender: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 		fellowship: {
 			member_referenda: IUserPost[];
 			whitelisted_caller: IUserPost[];
 			fellowship_admin: IUserPost[];
+			total: number;
+			posts: IUserPost[];
 		};
 	};
+	gov1_total: number;
+	open_gov_total: number;
 }
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
@@ -84,36 +112,49 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 		gov1: {
 			collective: {
 				council_motions: [],
-				tech_comm_proposals: []
+				posts: [],
+				tech_comm_proposals: [],
+				total: 0
 			},
 			democracy: {
+				posts: [],
 				proposals: [],
-				referenda: []
+				referenda: [],
+				total: 0
 			},
 			discussions: {
-				posts: []
+				posts: [],
+				total: 0
 			},
 			treasury: {
 				bounties: [],
+				posts: [],
 				tips: [],
+				total: 0,
 				treasury_proposals: []
 			}
 		},
+		gov1_total: 0,
 		open_gov: {
 			auction_admin: [],
 			discussions: {
-				posts: []
+				posts: [],
+				total: 0
 			},
 			fellowship: {
 				fellowship_admin: [],
 				member_referenda: [],
+				posts: [],
+				total: 0,
 				whitelisted_caller: []
 			},
 			governance: {
 				general_admin: [],
 				lease_admin: [],
+				posts: [],
 				referendum_canceller: [],
-				referendum_killer: []
+				referendum_killer: [],
+				total: 0
 			},
 			root: [],
 			staking_admin: [],
@@ -121,14 +162,49 @@ export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 				big_spender: [],
 				big_tipper: [],
 				medium_spender: [],
+				posts: [],
 				small_spender: [],
 				small_tipper: [],
+				total: 0,
 				treasurer: []
 			}
-		}
+		},
+		open_gov_total: 0
 	};
 };
-
+export const getTimeline = (
+	proposals: any,
+	isStatus?: {
+		swap: boolean;
+	}
+) => {
+	return (
+		proposals?.map((obj: any) => {
+			const statuses = obj?.statusHistory as { status: string }[];
+			if (obj.type && ['ReferendumV2', 'FellowshipReferendum'].includes(obj.type)) {
+				const index = statuses.findIndex((v) => v.status === 'DecisionDepositPlaced');
+				if (index >= 0) {
+					const decidingIndex = statuses.findIndex((v) => v.status === 'Deciding');
+					if (decidingIndex >= 0) {
+						const obj = statuses[index];
+						statuses.splice(index, 1);
+						statuses.splice(decidingIndex, 0, obj);
+						if (isStatus) {
+							isStatus.swap = true;
+						}
+					}
+				}
+			}
+			return {
+				created_at: obj?.createdAt,
+				hash: obj?.hash,
+				index: obj?.index,
+				statuses,
+				type: obj?.type
+			};
+		}) || []
+	);
+};
 interface IGetPostsByAddressParams {
 	network: string;
 	addresses?: string | string[] | any[];
@@ -136,6 +212,19 @@ interface IGetPostsByAddressParams {
 
 type TGetUserPosts = (params: IGetPostsByAddressParams) => Promise<IApiResponse<IUserPostsListingResponse>>;
 
+const getIsSwapStatus = (statusHistory: string[]) => {
+	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
+	if (index >= 0) {
+		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
+		if (decidingIndex >= 0) {
+			const obj = statusHistory[index];
+			statusHistory.splice(index, 1);
+			statusHistory.splice(decidingIndex, 0, obj);
+			return true;
+		}
+	}
+	return false;
+};
 export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 	try {
 		const { network, addresses } = params;
@@ -153,7 +242,36 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 		if (edges && Array.isArray(edges)) {
 			const onChainPostsPromise = edges?.map(async (edge) => {
 				if (edge && edge.node) {
-					const { type, hash, index, createdAt, description, proposalArguments, proposer, preimage, trackNumber } = edge.node;
+					const { type, hash, index, createdAt, description, proposalArguments, proposer, preimage, trackNumber, statusHistory, tally, group, status: resultStatus } = edge.node;
+					let proposalTimeline;
+					let status = resultStatus;
+					const isSwap: boolean = getIsSwapStatus(statusHistory);
+
+					if (isSwap) {
+						if (resultStatus === 'DecisionDepositPlaced') {
+							status = 'Deciding';
+						}
+					}
+					const isStatus = {
+						swap: isSwap
+					};
+
+					if (!group?.proposals) {
+						proposalTimeline = getTimeline(
+							[
+								{
+									createdAt,
+									hash,
+									index,
+									statusHistory,
+									type
+								}
+							],
+							isStatus
+						);
+					} else {
+						proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
+					}
 					const proposalType = getFirestoreProposalType(type);
 					const id = type === 'Tip' ? hash : index;
 					const newData: IUserPost = {
@@ -165,6 +283,10 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 							'👎': 0
 						},
 						proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
+						status: status || '',
+						status_history: statusHistory || null,
+						tally: tally || null,
+						timeline: proposalTimeline,
 						title: preimage && preimage.method ? preimage.method : '',
 						track_number: trackNumber,
 						type: proposalType as ProposalType
@@ -183,6 +305,9 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 						if (data.title) {
 							newData.title = data.title;
 						}
+						if (data?.tags) {
+							newData.tags = data?.tags || [];
+						}
 						const postReactionsQuerySnapshot = await doc.ref.collection('post_reactions').get();
 						postReactionsQuerySnapshot.docs.forEach((doc) => {
 							const data = doc.data();
@@ -193,6 +318,10 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 								}
 							}
 						});
+						const commentsQuerySnapshot = await doc.ref.collection('comments').where('isDeleted', '==', false).count().get();
+						if (commentsQuerySnapshot.data()?.count) {
+							newData.comments_count = commentsQuerySnapshot.data()?.count;
+						}
 					}
 					return newData;
 				}
@@ -204,18 +333,39 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 					const type = value.type;
 					if (ProposalType.DEMOCRACY_PROPOSALS === type) {
 						userPosts.gov1.democracy.proposals.push(value);
+						userPosts.gov1_total += 1;
+						userPosts.gov1.democracy.total += 1;
+						userPosts.gov1.democracy.posts.push(value);
 					} else if (ProposalType.REFERENDUMS === type) {
 						userPosts.gov1.democracy.referenda.push(value);
+						userPosts.gov1_total += 1;
+						userPosts.gov1.democracy.total += 1;
+						userPosts.gov1.democracy.posts.push(value);
 					} else if (ProposalType.BOUNTIES === type) {
 						userPosts.gov1.treasury.bounties.push(value);
+						userPosts.gov1_total += 1;
+						userPosts.gov1.treasury.total += 1;
+						userPosts.gov1.treasury.posts.push(value);
 					} else if (ProposalType.TIPS === type) {
 						userPosts.gov1.treasury.tips.push(value);
+						userPosts.gov1.treasury.total += 1;
+						userPosts.gov1.treasury.posts.push(value);
+						userPosts.gov1_total += 1;
 					} else if (ProposalType.TREASURY_PROPOSALS === type) {
 						userPosts.gov1.treasury.treasury_proposals.push(value);
+						userPosts.gov1.treasury.total += 1;
+						userPosts.gov1_total += 1;
+						userPosts.gov1.treasury.posts.push(value);
 					} else if (ProposalType.COUNCIL_MOTIONS === type) {
 						userPosts.gov1.collective.council_motions.push(value);
+						userPosts.gov1_total += 1;
+						userPosts.gov1.collective.posts.push(value);
+						userPosts.gov1.collective.total += 1;
 					} else if (ProposalType.TECH_COMMITTEE_PROPOSALS === type) {
 						userPosts.gov1.collective.tech_comm_proposals.push(value);
+						userPosts.gov1.collective.total += 1;
+						userPosts.gov1.collective.posts.push(value);
+						userPosts.gov1_total += 1;
 					} else if (ProposalType.REFERENDUM_V2 === type) {
 						const track_number = value.track_number;
 						if (track_number !== undefined && track_number !== null) {
@@ -225,45 +375,69 @@ export const getOnChainUserPosts: TGetUserPosts = async (params) => {
 									break;
 								case 1:
 									userPosts.open_gov.fellowship.whitelisted_caller.push(value);
+									userPosts.open_gov.fellowship.total += 1;
+									userPosts.open_gov.fellowship.posts.push(value);
 									break;
 								case 10:
 									userPosts.open_gov.staking_admin.push(value);
 									break;
 								case 11:
 									userPosts.open_gov.treasury.treasurer.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 								case 12:
 									userPosts.open_gov.governance.lease_admin.push(value);
+									userPosts.open_gov.governance.total += 1;
+									userPosts.open_gov.governance.posts.push(value);
 									break;
 								case 13:
 									userPosts.open_gov.fellowship.fellowship_admin.push(value);
+									userPosts.open_gov.fellowship.total += 1;
+									userPosts.open_gov.fellowship.posts.push(value);
 									break;
 								case 14:
 									userPosts.open_gov.governance.general_admin.push(value);
+									userPosts.open_gov.governance.total += 1;
+									userPosts.open_gov.governance.posts.push(value);
 									break;
 								case 15:
 									userPosts.open_gov.auction_admin.push(value);
 									break;
 								case 20:
 									userPosts.open_gov.governance.referendum_canceller.push(value);
+									userPosts.open_gov.governance.total += 1;
+									userPosts.open_gov.governance.posts.push(value);
 									break;
 								case 21:
 									userPosts.open_gov.governance.referendum_killer.push(value);
+									userPosts.open_gov.governance.total += 1;
+									userPosts.open_gov.governance.posts.push(value);
 									break;
 								case 30:
 									userPosts.open_gov.treasury.small_tipper.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 								case 31:
 									userPosts.open_gov.treasury.big_tipper.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 								case 32:
 									userPosts.open_gov.treasury.small_spender.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 								case 33:
 									userPosts.open_gov.treasury.medium_spender.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 								case 34:
 									userPosts.open_gov.treasury.big_spender.push(value);
+									userPosts.open_gov.treasury.total += 1;
+									userPosts.open_gov.treasury.posts.push(value);
 									break;
 							}
 						}

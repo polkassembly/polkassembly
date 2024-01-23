@@ -136,8 +136,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					defaultActiveKey='2'
 					items={tabItems}
 					size='large'
-					className='ant-tabs-tab-bg-white mt-2 rounded-xl text-sm font-medium text-bodyBlue dark:text-blue-dark-high md:px-2'
-					// onChange={onChange}
+					className='mt-8 font-medium text-sidebarBlue dark:text-blue-dark-high'
 				/>
 			)}
 

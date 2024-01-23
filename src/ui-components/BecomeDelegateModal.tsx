@@ -107,7 +107,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 	return (
 		<Modal
 			title={
-				<div className='flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+				<div className='flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					Become A Delegate
 				</div>
 			}
@@ -145,7 +145,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 					</label>
 					<Input
 						name='bio'
-						className='bg-white p-3'
+						className='h-[40px] text-sm font-normal text-lightBlue dark:bg-[#1D1D1D] dark:text-blue-dark-medium'
 						placeholder='Add message for delegate address'
 						value={details.bio}
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDetails({ ...details, bio: e.target.value })}
@@ -154,7 +154,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 				<div className='mb-7 mt-6 rounded-[4px] px-5'>
 					<Alert
 						message={
-							<span className='text-sm '>
+							<span className='text-sm text-blue-light-medium '>
 								To add socials to your delegate profile{' '}
 								<span className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'>
 									<ImageIcon

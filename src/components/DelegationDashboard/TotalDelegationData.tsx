@@ -15,8 +15,8 @@ const TotalDelegationData = () => {
 					alt='polkadot delegation icon'
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium'>Total Supply</span>
-					<span className='text-xl font-semibold text-blue-light-high'>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Supply</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						14M<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
 					</span>
 				</div>
@@ -32,9 +32,9 @@ const TotalDelegationData = () => {
 					src='/assets/delegation-tracks/delegate-tokens.svg'
 					alt='delegate tokens icon'
 				/>
-				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium'>Delegated Tokens</span>
-					<span className='text-xl font-semibold text-blue-light-high'>
+				<div className='flex flex-col '>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Delegated Tokens</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						679.6K<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
 					</span>
 				</div>
@@ -51,9 +51,9 @@ const TotalDelegationData = () => {
 					alt='Total delegate tokens icon'
 				/>
 				<div className='flex flex-col '>
-					<span className='text-xs text-blue-light-medium'>Total Delegated Tokens</span>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Tokens</span>
 					<div className='flex space-x-2'>
-						<span className='text-xl font-semibold text-blue-light-high'>
+						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
 							123.6K<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
 						</span>
 						<span
@@ -77,8 +77,8 @@ const TotalDelegationData = () => {
 					alt='Total delegate icon'
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium'>Total Delegates</span>
-					<span className='text-xl font-semibold text-blue-light-high'>108</span>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegates</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>108</span>
 				</div>
 			</div>
 			<Divider
@@ -93,8 +93,8 @@ const TotalDelegationData = () => {
 					alt='Total delegatees icon'
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium'>Total Delegatees</span>
-					<span className='text-xl font-semibold text-blue-light-high'>21,203</span>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegatees</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>21,203</span>
 				</div>
 			</div>
 		</div>

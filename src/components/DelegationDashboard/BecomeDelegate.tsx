@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Tooltip } from 'antd';
+import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -53,7 +53,7 @@ const BecomeDelegate = () => {
 					<span className='mt-[22px] text-sm font-semibold'>STEP 1</span>
 					<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
 						<span className='font-semibold '>Select Track for Delegation</span>
-						<span className='text-blue-light-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
+						<span className='text-blue-light-high dark:text-blue-dark-high'>OpenGov allows for track level agile delegation. Choose a track to proceed.</span>
 					</div>
 				</div>
 				<div className='mr-2 mt-10'>
@@ -71,28 +71,29 @@ const BecomeDelegate = () => {
 					<span className='mt-[22px] text-sm font-semibold'>STEP 2</span>
 					<div className='mt-[22px] flex max-w-[380px] flex-col text-sm'>
 						<span className='font-semibold'>Select Delegate</span>
-						<span className='text-blue-light-high'>Choose a delegate based on the stats to complete your delegation process.</span>
+						<span className='text-blue-light-high dark:text-blue-dark-high'>Choose a delegate based on the stats to complete your delegation process.</span>
 					</div>
 				</div>
 			</div>
-			<div className='flex items-center space-x-1 rounded-md bg-[#F6F7F9] p-3'>
-				<ImageIcon
-					imgClassName='h-5 w-5'
-					src='/assets/delegation-tracks/info-icon.svg'
-					alt='Double side arrow icon'
-				/>
-				<span className='text-blue-light-medium'>
-					Want to learn more about delegation process before locking your tokens. Click
-					<a
-						href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
-						className='ml-[3px] text-[#407BFF] underline'
-						target='_blank'
-						rel='noreferrer'
-					>
-						here
-					</a>
-				</span>
-			</div>
+
+			<Alert
+				type='info'
+				showIcon
+				message={
+					<span className='text-blue-light-medium'>
+						Want to learn more about delegation process before locking your tokens. Click
+						<a
+							href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
+							className='ml-[3px] text-[#407BFF] underline'
+							target='_blank'
+							rel='noreferrer'
+						>
+							here
+						</a>
+					</span>
+				}
+				className='border-none'
+			/>
 			<BecomeDelegateModal
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}

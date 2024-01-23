@@ -51,7 +51,7 @@ const PostSummary: FC<IPostSummaryProps> = (props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(
 					className,
-					'ml-0 h-[calc(100vh-250px)] pb-0 pl-0 md:ml-auto md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay',
+					'ml-auto h-[calc(100vh-250px)] pb-0 pl-0 md:min-w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay',
 					poppins.className,
 					poppins.variable
 				)}

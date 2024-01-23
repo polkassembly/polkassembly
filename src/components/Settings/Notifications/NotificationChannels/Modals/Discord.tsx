@@ -70,12 +70,14 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 						>
 							<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
 						</span>
-						<CustomButton
-							loading={loading}
-							onClick={handleGenerateToken}
-							variant='primary'
-							text='Generate Token'
-						/>
+						<div className='mt-4 flex justify-end'>
+							<CustomButton
+								loading={loading}
+								onClick={handleGenerateToken}
+								variant='primary'
+								text='Generate Token'
+							/>
+						</div>
 						<br />
 						{token && (
 							<>

@@ -146,7 +146,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				<div
 					key={rowData.key}
 					className={`${
-						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
+						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] pt-[1.2px] dark:bg-[#161616]' : ''
 					} h-auto min-h-[140px] border-2  border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${poppins.className}`}
 					onClick={() => onClick(rowData)}
 				>

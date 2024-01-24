@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Table } from 'antd';
+import { Divider } from 'antd';
+import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { dayjs } from 'dayjs-init';
 import React, { FC, ReactNode } from 'react';

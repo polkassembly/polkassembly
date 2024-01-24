@@ -2,14 +2,23 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
-const HighlightMenu = () => {
+
+interface IHiglightMenuProps {
+	markdownRef: React.RefObject<HTMLDivElement>;
+}
+const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
+	const menuRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		const markdown = markdownRef.current;
+
+		if (!markdown) return;
+
 		const handleSelection = () => {
 			const selection = window.getSelection();
 			const text = selection?.toString().trim();
@@ -21,7 +30,7 @@ const HighlightMenu = () => {
 				if (rect) {
 					setMenuPosition({
 						left: rect.left + rect.width / 2 - 40,
-						top: rect.top - 48
+						top: rect.top - 180
 					});
 				}
 
@@ -37,17 +46,17 @@ const HighlightMenu = () => {
 				}, 250);
 			}
 		};
-		document.addEventListener('pointerup', handleSelection);
-		document.addEventListener('pointerdown', clearSelection);
+
+		markdown?.addEventListener('pointerup', handleSelection);
+		document?.addEventListener('pointerdown', clearSelection);
 
 		return () => {
-			document.removeEventListener('pointerup', handleSelection);
-			document.removeEventListener('pointerdown', clearSelection);
+			markdown?.removeEventListener('pointerup', handleSelection);
+			document?.removeEventListener('pointerdown', clearSelection);
 		};
-	}, [selectedText]);
+	}, [markdownRef, selectedText]);
 
 	const shareSelection = (event: React.MouseEvent) => {
-		console.log('shareSelection', selectedText);
 		window.open(`https://twitter.com/intent/tweet?text=${selectedText}`, '_blank');
 		event.stopPropagation();
 		setSelectedText('');
@@ -55,7 +64,8 @@ const HighlightMenu = () => {
 
 	return (
 		<div
-			className={`absolute z-[999] ${
+			ref={menuRef}
+			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
 			} flex flex-col gap-1 rounded-md bg-[#363636] p-2 text-xs after:absolute after:left-[70%] after:top-[40px] after:-z-10 after:h-4 after:w-4 after:-translate-x-1/2 after:rotate-45 after:transform after:border-8 after:border-solid after:border-[#363636] after:content-['']`}
 			style={{ left: menuPosition.left, top: menuPosition.top - 10 }}

@@ -79,7 +79,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 				<div className='h-[150px]'>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
-						src={isValidCoverImage ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
+						src={isValidCoverImage && !!profile?.cover_image?.length ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
 						width={900}
 						className='h-full w-full rounded-xl object-cover'
 						height={150}

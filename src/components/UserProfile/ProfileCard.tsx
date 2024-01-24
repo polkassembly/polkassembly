@@ -57,10 +57,10 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									address={addressWithIdentity}
 									disableIdenticon
 									isProfileView
+									destroyTooltipOnHide
 									className='flex gap-1'
 									usernameClassName='text-2xl'
 									isTruncateUsername={isMobile || false}
-									disableTooltip
 									passedUsername={userProfile?.username}
 								/>
 								<span

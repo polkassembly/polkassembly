@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import { Alert, Divider, Form, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { handleTokenChange } from 'src/services/auth.service';
-import { NotificationStatus, Wallet } from 'src/types';
+import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import FilteredError from 'src/ui-components/FilteredError';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -170,11 +170,6 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 		if (error || !data) {
 			setError(error || 'Something went wrong');
 			console.error(error);
-			queueNotification({
-				header: 'Failed!',
-				message: cleanError(error || ''),
-				status: NotificationStatus.ERROR
-			});
 		}
 
 		if (data?.token) {

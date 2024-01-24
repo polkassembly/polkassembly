@@ -261,7 +261,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						</div>
 					)}
 				</div>
-				<div className='h-[530px] overflow-y-auto pr-2'>
+				<div className='max-h-[530px] overflow-y-auto pr-2'>
 					{posts?.length ? (
 						posts.map((post, index) => {
 							return (

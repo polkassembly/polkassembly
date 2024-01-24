@@ -89,7 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ITrackDelegatio
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { addresses, track } = req.body;
-	if (!addresses?.length) return res.status(400).json({ error: 'Missing address in request query.' });
+	if (!addresses?.length || !Array.isArray(addresses)) return res.status(400).json({ error: 'Missing address in request query.' });
 
 	const trackNum = Number(track);
 	if (track && isNaN(trackNum)) return res.status(400).json({ error: 'Invalid track in request query.' });

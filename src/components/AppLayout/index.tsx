@@ -827,7 +827,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<BigToggleButton />
 					</div>
 				</Drawer>
-				{[AllNetworks.PICASSO].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+				{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={network} />

@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IProfileVoteHistoryRespose } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Spin, Checkbox, Pagination as AntdPagination } from 'antd';
+import { IProfileVoteHistoryRespose, IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
+import { Empty, Spin, Checkbox, Pagination as AntdPagination, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -15,30 +15,36 @@ import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';
 import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import ExpandDarkIcon from '~assets/icons/expand-small-icon-dark.svg';
 import AyeIcon from '~assets/icons/aye-green-icon.svg';
 import NayIcon from '~assets/icons/profile-nay.svg';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
-import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
-import CapitalIcon from '~assets/icons/capital-small-icom.svg';
-import EmailIcon from '~assets/icons/email_icon.svg';
 import { poppins } from 'pages/_app';
-import { EGovType } from '~src/types';
+import { EGovType, NotificationStatus } from '~src/types';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Popover from '~src/basic-components/Popover';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import VoteHistoryExpandModal from './VoteHistoryExpandModal';
+import { ProfileDetailsResponse } from '~src/auth/types';
+import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
+import { gov2ReferendumStatus } from '~src/global/statuses';
+import classNames from 'classnames';
+import { useApiContext } from '~src/context';
+import Web3 from 'web3';
+import queueNotification from './QueueNotification';
+import executeTx from '~src/util/executeTx';
+import { IStats } from '~src/components/UserProfile';
+import { DownArrowIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, VotesIcon } from './CustomIcons';
+import { isSubscanSupport } from '~src/util/subscanCheck';
 
 interface Props {
 	className?: string;
-	userAddresses: string[];
-	govType: EGovType;
-}
-interface IVotesData extends IProfileVoteHistoryRespose {
-	expand?: boolean;
-	delegatorsCount?: number;
-	delegateCapital?: string;
+	userProfile: ProfileDetailsResponse;
+	theme?: string;
+	setStatsArr?: (pre: IStats[]) => void;
+	statsArr?: IStats[];
+	totalVotes: number;
 }
 
 const Pagination = styled(AntdPagination)`
@@ -65,22 +71,34 @@ const getOrderBy = (sortByPostIndex: boolean) => {
 enum EHeading {
 	VOTE = 'Vote',
 	PROPOSAL = 'Proposal',
-	STATUS = 'Status'
+	STATUS = 'Status',
+	ACTIONS = 'Actions'
 }
 
-const VotesHistory = ({ className, userAddresses, govType }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
+const abi = require('src/moonbeamConvictionVoting.json');
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+
+const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, totalVotes }: Props) => {
+	const { id, loginAddress } = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
+	const { addresses } = userProfile;
 	const { network } = useNetworkSelector();
-	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS];
+	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS, EHeading.ACTIONS];
 	const [votesData, setVotesData] = useState<IVotesData[] | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [totalCount, setTotalCount] = useState<number>(0);
 	const [page, setPage] = useState<number>(1);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const [delegatorsLoading, setDelegatorsLoading] = useState<{ isLoading: boolean; index: number | null }>({ index: null, isLoading: false });
+	const [delegatorsLoading, setDelegatorsLoading] = useState<boolean>(false);
 	const [sortByPostIndex, setSortByPostIndex] = useState<boolean>(false);
-	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(userAddresses as CheckboxValueType[]);
+	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
+	const [govTypeExpand, setgovTypeExpand] = useState(false);
+	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
+	const [expandViewVote, setExpandViewVote] = useState<IVotesData | null>(null);
+	const [removeVoteLoading, setRemoveVoteLoading] = useState<{ ids: number[] | null; loading: boolean }>({ ids: null, loading: false });
+
+	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -89,7 +107,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 				onChange={(list) => setCheckedAddressList(list)}
 				value={checkedAddressList}
 			>
-				{userAddresses?.map((address, index) => (
+				{addresses?.map((address, index) => (
 					<div
 						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
@@ -103,6 +121,7 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 							isTruncateUsername={false}
 							displayInline
 							disableAddressClick
+							disableTooltip
 						/>
 					</div>
 				))}
@@ -110,13 +129,29 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 		</div>
 	);
 
+	const govTypeContent = (
+		<div className='flex w-[110px] flex-col gap-2'>
+			<span
+				className='cursor-pointer dark:text-blue-dark-high'
+				onClick={() => setSelectedGov(EGovType.GOV1)}
+			>
+				Gov1
+			</span>
+			<span
+				className='cursor-pointer dark:text-blue-dark-high'
+				onClick={() => setSelectedGov(EGovType.OPEN_GOV)}
+			>
+				OpenGov
+			</span>
+		</div>
+	);
 	const handleVoteHistoryData = async () => {
 		setVotesData(null);
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<{ data: IProfileVoteHistoryRespose[]; totalCount: number }>('api/v1/votesHistory/getVotesByVoter', {
 			orderBy: getOrderBy(sortByPostIndex),
 			page,
-			type: govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
+			type: selectedGov === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum',
 			voterAddresses: checkedAddressList || []
 		});
 		if (data) {
@@ -129,49 +164,43 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 	};
 
 	useEffect(() => {
-		if (!userAddresses.length) {
+		if (!addresses.length) {
 			setVotesData([]);
 			return;
 		}
 		handleVoteHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page, userAddresses, sortByPostIndex, checkedAddressList, govType]);
+	}, [page, addresses, sortByPostIndex, checkedAddressList, selectedGov]);
 
-	const handleExpand = (index: number) => {
-		const newData = votesData?.map((vote, idx) => {
-			if (index === idx) {
-				return { ...vote, expand: !vote?.expand };
-			}
-			return vote;
-		});
-		setVotesData(newData || votesData);
-		handleDelegatesAndCapital(index);
-	};
-
-	const handleDelegatesAndCapital = async (index: number) => {
-		const filteredVote = votesData?.filter((item, idx) => index === idx)?.[0];
+	const handleDelegatesAndCapital = async (index: number, filteredVote: IVotesData) => {
 		if ((filteredVote?.delegatorsCount && filteredVote?.delegateCapital) || filteredVote?.isDelegatedVote) return;
-		setDelegatorsLoading({ index, isLoading: true });
+		setDelegatorsLoading(true);
 
 		const { data, error } = await nextApiClientFetch<{ count: number; voteCapital: string }>(
 			`api/v1/votes/delegationVoteCountAndPower?postId=${filteredVote?.proposal?.id}&decision=${filteredVote?.decision || 'yes'}&type=${
-				govType === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum'
+				selectedGov === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum'
 			}&voter=${filteredVote?.voter}`
 		);
 		if (data) {
 			const newData = votesData?.map((vote, idx) => {
 				if (index === idx) {
-					return { ...vote, delegateCapital: data?.voteCapital, delegatorsCount: data?.count, expand: !vote?.expand };
+					return { ...vote, delegateCapital: data?.voteCapital, delegatorsCount: data?.count };
 				}
 				return vote;
 			});
 			setVotesData(newData || votesData);
+			setExpandViewVote({ ...filteredVote, delegateCapital: data?.voteCapital, delegatorsCount: data?.count });
 		} else {
 			console.log(error);
 		}
-		setDelegatorsLoading({ index: null, isLoading: true });
+		setDelegatorsLoading(false);
 	};
 
+	const handleExpand = (index: number, vote: IVotesData) => {
+		setOpenVoteDataModal(true);
+		setExpandViewVote(vote);
+		handleDelegatesAndCapital(index, vote);
+	};
 	const handleSortingClick = (heading: EHeading) => {
 		if (heading === EHeading.STATUS || heading === EHeading.VOTE) return;
 		setSortByPostIndex(!sortByPostIndex);
@@ -187,243 +216,280 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	const handleRemoveVote = async (trackNum: number | any, postIndex: number) => {
+		const onSuccess = () => {
+			queueNotification({
+				header: 'Success!',
+				message: 'Your Vote has been Cleared successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+			console.log(removeVoteLoading);
+			const filteredData: IVotesData[] = votesData?.filter((vote) => vote?.proposal?.id !== postIndex) || [];
+			setVotesData(filteredData);
+			const newData = statsArr?.map((item) => {
+				if (item?.label === 'Proposals Voted') {
+					return { ...item, value: item?.value - 1 };
+				}
+				return item;
+			});
+			if (newData) {
+				setStatsArr?.(newData);
+			}
+			setRemoveVoteLoading({ ids: removeVoteLoading?.ids, loading: false });
+		};
+		const onFailed = (message: string) => {
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+			setRemoveVoteLoading({ ids: removeVoteLoading?.ids, loading: false });
+		};
+
+		if (!api || !apiReady || isNaN(trackNum)) return;
+		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
+			setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: true });
+			const web3 = new Web3((window as any).ethereum);
+
+			const chainId = await web3.eth.net.getId();
+
+			if (chainId !== chainProperties[network].chainId) {
+				queueNotification({
+					header: 'Wrong Network!',
+					message: `Please change to ${network} network`,
+					status: NotificationStatus.ERROR
+				});
+				setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: false });
+				return;
+			}
+			const contract = new web3.eth.Contract(abi, contractAddress);
+			contract.methods
+				.removeVote(postIndex)
+				.send({
+					from: loginAddress,
+					to: contractAddress
+				})
+				.then((result: any) => {
+					console.log(result);
+					onSuccess();
+				})
+				.catch((error: any) => {
+					console.error('ERROR:', error);
+					onFailed('Failed!');
+				});
+		} else {
+			setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: true });
+			const tx = api.tx.convictionVoting.removeVote(trackNum, postIndex);
+			await executeTx({ address: loginAddress, api, apiReady, errorMessageFallback: 'Transactions failed!', network, onFailed, onSuccess, tx });
+		}
+	};
+
 	return (
-		<>
-			{userAddresses.length > 1 && (
-				<div className='pb-4'>
-					<Popover
-						zIndex={1056}
-						content={content}
-						placement='bottom'
-						open={addressDropdownExpand}
-					>
-						<div className=' flex w-[180px] items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>
-							Select Addresses
-							<span
-								onClick={() => setAddressDropdownExpand(!addressDropdownExpand)}
-								className='flex items-center'
-							>
-								<DownArrowIcon className={`cursor-pointer ${addressDropdownExpand && 'pink-color rotate-180'}`} />
-							</span>
-						</div>
-					</Popover>
-				</div>
+		<div
+			className={classNames(
+				className,
+				'mt-6 rounded-[18px] border-[1px] border-solid border-[#DCDFE3] bg-white pb-10 dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-medium max-md:px-4'
 			)}
+		>
+			<div className={`flex items-center justify-between gap-4 p-6 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
+				<div className='flex w-full items-center gap-2 text-xl font-medium max-md:justify-start'>
+					<VotesIcon className='text-[28px] text-lightBlue dark:text-[#9e9e9e]' />
+					<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>
+						Votes
+						<span className='flex items-end text-sm font-normal'>({totalVotes})</span>
+					</div>
+				</div>
+				<div className='flex gap-4'>
+					{addresses.length > 1 && (
+						<div className=''>
+							<Popover
+								zIndex={1056}
+								content={content}
+								placement='bottom'
+								onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
+							>
+								<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
+									Select Addresses
+									<span className='flex items-center'>
+										<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
+									</span>
+								</div>
+							</Popover>
+						</div>
+					)}
+					{isOpenGovSupported(network) && (
+						<div className=''>
+							<Popover
+								zIndex={1056}
+								content={govTypeContent}
+								placement='bottom'
+								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
+							>
+								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
+									{selectedGov.split('_').join('')}({totalCount})
+									<span className='flex items-center'>
+										<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
+									</span>
+								</div>
+							</Popover>
+						</div>
+					)}
+				</div>
+			</div>
 			<Spin
 				className={`${className} w-full`}
 				spinning={loading}
 			>
 				{votesData && votesData?.length > 0 && !loading ? (
-					<div className={`flex min-w-[100%] flex-shrink-0 flex-col overflow-x-auto overflow-y-hidden ${className}`}>
-						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#FBFBFC] px-3 dark:bg-[#161616] max-md:hidden'>
+					<div className={`flex max-w-[100%] flex-shrink-0 flex-col overflow-x-auto overflow-y-hidden ${className}`}>
+						<div className='flex h-14 items-center justify-between gap-2 border-0 border-y-[1px] border-solid border-[#DCDFE3] bg-[#FBFBFC] px-6 dark:border-separatorDark dark:bg-[#161616] max-md:hidden'>
 							{headings.map((heading, index) => (
 								<span
 									onClick={() => handleSortingClick(heading as EHeading)}
 									className={`flex items-center text-sm font-medium text-lightBlue dark:text-blue-dark-medium ${
-										heading === EHeading.PROPOSAL ? 'w-[45%] ' : heading === EHeading.VOTE ? 'w-[35%]' : 'w-[20%] justify-end'
-									} pr-10`}
+										heading === EHeading.PROPOSAL ? 'w-[40%] ' : heading === EHeading.VOTE ? 'w-[30%]' : heading === EHeading.ACTIONS ? 'w-[10%]' : 'w-[15%]'
+									}`}
 									key={index}
 								>
 									{heading}
-									{heading === EHeading.PROPOSAL && (
-										<ExpandIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
-									)}
+									{heading === EHeading.PROPOSAL &&
+										(theme === 'dark' ? (
+											<ExpandDarkIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
+										) : (
+											<ExpandIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
+										))}
 								</span>
 							))}
 						</div>
 						<div className='max-md:flex max-md:flex-col max-md:gap-4'>
 							{votesData &&
-								votesData?.map((data, index) => (
-									<div
-										className={`border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid ${
-											data?.expand && 'dark:bg-[#161616] max-md:bg-[#FBFBFC]'
-										}`}
-										key={index}
-									>
+								votesData?.map((vote, index) => {
+									const canRemoveVote = !vote?.proposal.statusHistory?.filter((status) =>
+										[
+											gov2ReferendumStatus.CANCELLED,
+											gov2ReferendumStatus.EXECUTED,
+											gov2ReferendumStatus.CONFIRMED,
+											gov2ReferendumStatus.EXECUTION_FAILED,
+											gov2ReferendumStatus.TIMEDOUT,
+											gov2ReferendumStatus.REJECTED
+										].includes(status?.status)
+									)?.length;
+									return (
 										<div
-											className={`border-0 ${
-												!data?.expand && !loading && 'border-b-[1px]'
-											} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:border-none `}
+											className={'border-[#DCDFE3] text-sm text-bodyBlue dark:text-blue-dark-high max-md:rounded-[14px] max-md:border-[1px] max-md:border-solid '}
+											key={index}
 										>
-											<div className='flex h-14 items-center justify-between gap-2 border-0 px-3 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
-												<Link
-													target='_blank'
-													href={`https:${network}.polkassembly.io/${govType === EGovType.OPEN_GOV ? 'referenda' : 'referendum'}/${data?.proposal?.id}`}
-													className='flex w-[45%] truncate font-medium text-bodyBlue hover:text-bodyBlue dark:text-blue-dark-high dark:text-blue-dark-high max-md:w-[95%]'
-												>
-													<span className='flex w-[60px] items-center gap-1 '>
-														{`#${data?.proposal?.id}`}
-														<span className='text-[9px] text-bodyBlue dark:text-blue-dark-high'>&#9679;</span>
-													</span>
-													<span className='w-[100%] truncate hover:underline '>{data?.proposal?.title || noTitle}</span>
-												</Link>
-												<div className='flex w-[35%] justify-between max-md:hidden'>
-													{data?.decision === 'yes' ? (
-														<span className='flex w-[50px] flex-shrink-0 items-center justify-start text-[#2ED47A]'>
-															<AyeIcon className='mr-1' />
-															Aye
+											<div
+												className={`border-0 ${
+													!loading && 'border-b-[1px]'
+												} border-solid border-[#DCDFE3] text-sm text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:border-none `}
+											>
+												<div className='flex h-14 items-center justify-between border-0 px-6 max-md:border-b-[1px] max-md:border-solid max-md:border-[#DCDFE3]'>
+													<Link
+														target='_blank'
+														href={`https:${network}.polkassembly.io/${selectedGov === EGovType.OPEN_GOV ? 'referenda' : 'referendum'}/${vote?.proposal?.id}`}
+														className='flex w-[40%] truncate font-medium text-bodyBlue hover:text-bodyBlue dark:text-blue-dark-high max-md:w-[95%]'
+													>
+														<span className='flex w-[60px] items-center gap-1 '>
+															{`#${vote?.proposal?.id}`}
+															<span className='text-[9px] text-bodyBlue dark:text-blue-dark-high'>&#9679;</span>
 														</span>
-													) : data?.decision === 'no' ? (
-														<span className='flex w-[50px] flex-shrink-0 items-center justify-start text-[#F53C3C]'>
-															<NayIcon className='mr-1' />
-															Nay
-														</span>
-													) : (
-														<span className='flex w-[50px] flex-shrink-0 items-center justify-start text-[#407BFF]'>
-															<MinusCircleFilled className='mr-1' /> Abstain
-														</span>
-													)}
-													<span className='flex w-[40.3%] flex-shrink-0 justify-end lg:w-[51%]'>
-														{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-													</span>
-													<span className='flex w-[20.3%] justify-end'>
-														{data?.lockPeriod ? data?.lockPeriod : 0.1}x{data.isDelegatedVote && '/d'}
-													</span>
-												</div>
-												<span className='flex w-[20%] justify-end max-md:hidden'>
-													<StatusTag
-														theme={theme}
-														status={data?.proposal?.status}
-														className='truncate max-lg:w-[80px]'
-													/>
-													<span onClick={() => handleExpand(index)}>
-														<DownArrowIcon className={`cursor-pointer ${data?.expand && 'pink-color rotate-180'}`} />
-													</span>
-												</span>
-												<div className='md:hidden'>
-													<span onClick={() => handleExpand(index)}>
-														<DownArrowIcon className={`cursor-pointer ${data?.expand && 'pink-color rotate-180'}`} />
-													</span>
-												</div>
-											</div>
-											<div className='flex justify-between px-3 py-4 md:hidden'>
-												<div className='flex w-[50%] items-center justify-between gap-2 max-sm:w-[70%]'>
-													{data?.decision === 'yes' ? (
-														<span className='flex items-center justify-end text-[#2ED47A]'>
-															<AyeIcon className='mr-1' />
-															Aye
-														</span>
-													) : (
-														<span className='flex items-center justify-end text-[#F53C3C]'>
-															<NayIcon className='mr-1' />
-															Nay
-														</span>
-													)}
-													<span className='flex justify-end'>
-														{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-													</span>
-													<span>
-														{data?.lockPeriod ? data?.lockPeriod : 0.1}x{data.isDelegatedVote && '/d'}
-													</span>
-												</div>
-												<StatusTag
-													theme={theme}
-													status={data?.proposal?.status}
-													className='truncate max-sm:w-[90px] max-xs:w-[70px]'
-												/>
-											</div>
-										</div>
-										{data?.expand && (
-											<Spin spinning={delegatorsLoading.isLoading && delegatorsLoading?.index === index}>
-												<div className='border-0 border-t-[1px] border-dashed border-[#DCDFE3] bg-[#FBFBFC] px-3 py-4 text-sm text-lightBlue dark:bg-[#161616] dark:text-blue-dark-medium max-md:bg-transparent'>
-													<div className='flex flex-col gap-4'>
-														<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
-															<label className='flex items-center gap-2 font-medium'>Vote Details:</label>
-															{!data?.isDelegatedVote && (
-																<Address
-																	address={data?.voter}
-																	iconSize={18}
-																	displayInline
-																	isTruncateUsername={false}
-																/>
-															)}
-														</div>
-														{data.isDelegatedVote && (
-															<div className=' flex items-center gap-2 max-md:flex-col max-md:items-start'>
-																<label className='flex items-center gap-2 font-medium'>
-																	Delegator:
-																	<Address
-																		address={data?.voter}
-																		iconSize={18}
-																		displayInline
-																		isTruncateUsername={false}
-																	/>
-																</label>
-																<label className='flex items-center gap-2 font-medium'>
-																	Vote Casted by:
-																	<Address
-																		address={data?.delegatedTo || ''}
-																		iconSize={18}
-																		displayInline
-																		isTruncateUsername={false}
-																	/>
-																</label>
-															</div>
+														<span className='w-[100%] truncate hover:underline '>{vote?.proposal?.title || noTitle}</span>
+													</Link>
+													<div className='flex w-[30%] gap-10 max-md:hidden'>
+														{vote?.decision === 'yes' ? (
+															<span className='text-[#2ED47A]'>
+																<AyeIcon className='mr-1' />
+															</span>
+														) : vote?.decision === 'no' ? (
+															<span className='text-[#F53C3C]'>
+																<NayIcon className='mr-1' />
+															</span>
+														) : (
+															<span className='text-[#407BFF]'>
+																<MinusCircleFilled className='mr-1' />
+															</span>
 														)}
-														<div className='flex justify-between max-md:flex-col max-md:gap-2'>
-															<div className='w-[50%] border-0 border-r-[1px] border-dashed border-[#DCDFE3] dark:border-separatorDark max-md:w-[100%] max-md:border-0 max-md:border-b-[1px] max-md:pb-2'>
-																<label className='font-semibold'>Self Votes</label>
-																<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Votes
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-																			{Number(formatedBalance((data?.balance.toString() || '0').toString(), unit, 2).replaceAll(',', '')) * Number(data?.lockPeriod || 0.1)} {unit}
-																		</span>
-																	</div>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<ConvictionIcon /> Conviction
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-																			{data?.lockPeriod || 0.1}x{data.isDelegatedVote && '/d'}
-																		</span>
-																	</div>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<CapitalIcon /> Capital
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-																			{formatedBalance((data?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-																		</span>
-																	</div>
-																</div>
-															</div>
-															<div className='w-[50%] justify-start max-md:w-[100%] md:pl-6'>
-																<label className='font-semibold'>Delegation Votes</label>
-																<div className='mt-2 flex flex-col gap-2 lg:pr-4'>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Votes
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-																			{formatedBalance((data?.delegatedVotingPower || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-																		</span>
-																	</div>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<EmailIcon /> Delegators
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>{data?.delegatorsCount || 0}</span>
-																	</div>
-																	<div className='flex justify-between'>
-																		<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<CapitalIcon /> Capital
-																		</span>
-																		<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-																			{formatedBalance((data?.delegateCapital || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
-																		</span>
-																	</div>
-																</div>
-															</div>
+														<div className='flex w-[40%] justify-between gap-6'>
+															<span className='flex-shrink-0'>
+																{formatedBalance((vote?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+															</span>
+															<span>
+																{vote?.lockPeriod ? vote?.lockPeriod : 0.1}x{vote.isDelegatedVote && '/d'}
+															</span>
 														</div>
 													</div>
+													<span className='flex w-[15%] justify-start max-md:hidden'>
+														<StatusTag
+															theme={theme}
+															status={vote?.proposal?.status}
+															className='truncate max-lg:w-[80px]'
+														/>
+													</span>
+													<span className='w-[10%]'>
+														<div className='flex w-[10%] justify-start gap-4'>
+															{isSubscanSupport(network) && (
+																<Tooltip title='View Subscan'>
+																	<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${vote?.extrinsicIndex}`, '_blank')}>
+																		<SubscanIcon className='cursor-pointer text-xl text-lightBlue dark:text-[#9E9E9E] max-md:hidden' />
+																	</span>
+																</Tooltip>
+															)}
+															<Tooltip title='View Vote'>
+																<span onClick={() => handleExpand(index, vote)}>
+																	<ViewVoteIcon className='cursor-pointer text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+																</span>
+															</Tooltip>
+															{userProfile.user_id === id && vote?.proposal.type === getSubsquidProposalType(ProposalType.OPEN_GOV) && (
+																<Tooltip title='Remove Vote'>
+																	<span
+																		className={classNames(
+																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))
+																				? 'cursor-not-allowed text-[#4A4A4A]'
+																				: 'cursor-pointer text-lightBlue dark:text-[#9E9E9E]'
+																		)}
+																		onClick={() => {
+																			if (!canRemoveVote) return;
+																			handleRemoveVote(vote?.proposal?.trackNumber, Number(vote?.proposal?.id));
+																		}}
+																	>
+																		<RemoveVoteIcon className={'text-2xl max-md:hidden'} />
+																	</span>
+																</Tooltip>
+															)}
+														</div>
+													</span>
 												</div>
-											</Spin>
-										)}
-									</div>
-								))}
+												<div className='flex justify-between px-6 py-4 md:hidden'>
+													<div className='flex w-[50%] items-center justify-between gap-2 max-sm:w-[70%]'>
+														{vote?.decision === 'yes' ? (
+															<span className='flex items-center justify-end text-[#2ED47A]'>
+																<AyeIcon className='mr-1' />
+																Aye
+															</span>
+														) : (
+															<span className='flex items-center justify-end text-[#F53C3C]'>
+																<NayIcon className='mr-1' />
+																Nay
+															</span>
+														)}
+														<span className='flex justify-end'>
+															{formatedBalance((vote?.balance.toString() || '0').toString(), chainProperties[network].tokenSymbol, 2)} {unit}
+														</span>
+														<span>
+															{vote?.lockPeriod ? vote?.lockPeriod : 0.1}x{vote.isDelegatedVote && '/d'}
+														</span>
+													</div>
+													<StatusTag
+														theme={theme}
+														status={vote?.proposal?.status}
+														className='truncate max-sm:w-[90px] max-xs:w-[70px]'
+													/>
+												</div>
+											</div>
+										</div>
+									);
+								})}
 						</div>
 						<div className='mt-4 flex w-full items-center justify-center'>
 							<Pagination
@@ -440,10 +506,17 @@ const VotesHistory = ({ className, userAddresses, govType }: Props) => {
 						</div>
 					</div>
 				) : (
-					<div className='mt-16'>{votesData && <Empty />}</div>
+					<div className='mt-16'>{votesData && <Empty description={<div className='text-lightBlue dark:text-blue-dark-high'>No vote found</div>} />}</div>
 				)}
 			</Spin>
-		</>
+			<VoteHistoryExpandModal
+				open={openVoteDataModal}
+				setOpen={setOpenVoteDataModal}
+				expandViewVote={expandViewVote}
+				setExpandViewVote={setExpandViewVote}
+				delegatorsLoading={delegatorsLoading}
+			/>
+		</div>
 	);
 };
 

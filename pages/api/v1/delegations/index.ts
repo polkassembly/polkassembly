@@ -10,6 +10,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK } from '~src/queries';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export interface ITrackDelegation {
 	track: number;
@@ -20,7 +21,8 @@ export interface ITrackDelegation {
 }
 
 export const getDelegationDashboardData = async (address: string, network: string, trackNum?: number) => {
-	if (!address || !network || !isOpenGovSupported(network)) return [];
+	if (!address.length || !network || !isOpenGovSupported(network)) return [];
+	const encodedAddress = getEncodedAddress(address, network);
 
 	const subsquidFetches: { [index: number]: any } = [];
 
@@ -30,7 +32,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 			network,
 			query: ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK,
 			variables: {
-				address: String(address),
+				address: encodedAddress,
 				track_eq: trackInfo.trackId
 			}
 		});
@@ -65,7 +67,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 		for (const votingDelegation of votingDelegationsArr) {
 			if (trackDelegation.status.length >= 2) break;
 
-			if (votingDelegation.from === address) {
+			if (encodedAddress === votingDelegation.from) {
 				if (!trackDelegation.status.includes(ETrackDelegationStatus.DELEGATED)) trackDelegation.status.push(ETrackDelegationStatus.DELEGATED);
 			} else {
 				if (!trackDelegation.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) trackDelegation.status.push(ETrackDelegationStatus.RECEIVED_DELEGATION);
@@ -73,7 +75,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 		}
 
 		if (trackDelegation.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
-			trackDelegation.recieved_delegation_count = votingDelegationsArr.filter((delegation) => delegation.from !== address).length;
+			trackDelegation.recieved_delegation_count = votingDelegationsArr.filter((delegation) => encodedAddress !== delegation.from).length;
 		}
 
 		result.push(trackDelegation);
@@ -86,13 +88,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ITrackDelegatio
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
-	const { address, track } = req.query;
-	if (!address) return res.status(400).json({ error: 'Missing address in request query.' });
+	const { address, track } = req.body;
+	if (!address?.length || typeof address !== 'string') return res.status(400).json({ error: 'Missing address in request query.' });
 
 	const trackNum = Number(track);
 	if (track && isNaN(trackNum)) return res.status(400).json({ error: 'Invalid track in request query.' });
 
-	const result = await getDelegationDashboardData(String(address), network, !isNaN(trackNum) ? trackNum : undefined);
+	const result = await getDelegationDashboardData(address as any, network, !isNaN(trackNum) ? trackNum : undefined);
 	return res.status(200).json(result as ITrackDelegation[]);
 }
 

@@ -8,7 +8,13 @@ import { isGovTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, gov1ProposalTypes, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY, GET_ALLIANCE_LATEST_ACTIVITY, GET_PROPOSALS_LISTING_FOR_POLYMESH } from '~src/queries';
+import {
+	GET_PROPOSALS_LISTING_BY_TYPE,
+	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
+	GET_ALLIANCE_LATEST_ACTIVITY,
+	GET_PROPOSALS_LISTING_FOR_POLYMESH,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
@@ -43,7 +49,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		let variables: any = {
 			limit: numListingLimit,
-			type_in: gov1ProposalTypes
+			type_in: gov1ProposalTypes(network)
 		};
 
 		if (strGovType === 'open_gov') {
@@ -132,7 +138,9 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					limit: numListingLimit
 				};
 			}
-
+			if (network === AllNetworks.ZEITGEIST) {
+				query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
+			}
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({
@@ -172,7 +180,23 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 			const parentBounties = new Set<number>();
 			const onChainPostsPromise = subsquidPosts?.map(async (subsquidPost) => {
-				const { createdAt, proposer, preimage, type, index, hash, method, origin, trackNumber, curator, description, proposalArguments, parentBountyIndex, group } = subsquidPost;
+				const {
+					createdAt,
+					proposer,
+					preimage,
+					type,
+					index,
+					hash,
+					method,
+					origin,
+					trackNumber,
+					curator,
+					description,
+					proposalArguments,
+					parentBountyIndex,
+					group,
+					proposalHashBlock
+				} = subsquidPost;
 				const postId = type === 'Tip' ? hash : index;
 				const postDocRef = postsByTypeRef(network, getFirestoreProposalType(type) as ProposalType).doc(String(postId));
 				const postDoc = await postDocRef.get();
@@ -217,6 +241,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					origin,
 					parent_bounty_index: parentBountyIndex,
 					post_id: postId,
+					proposalHashBlock: proposalHashBlock || null,
 					proposer: newProposer,
 					status: status,
 					title: '',
@@ -386,7 +411,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count: onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
-
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,

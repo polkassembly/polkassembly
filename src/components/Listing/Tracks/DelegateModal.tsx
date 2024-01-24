@@ -55,7 +55,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsSelector();
-	const [target, setTarget] = useState<string>('');
+	const [target, setTarget] = useState<string>(defaultTarget || '');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock, setLockValue] = useState<number>(0);
@@ -94,9 +94,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 		if (defaultTarget) {
 			form.setFieldValue('targetAddress', defaultTarget);
+			setTarget(defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, defaultTarget]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
@@ -151,7 +152,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: delegationDashboardAddress
+		});
 		if (data) {
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
 			if (network) {
@@ -303,7 +306,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 					<CustomButton
 						className='delegation-buttons'
 						variant='default'
-						buttonSize='xs'
+						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 						}}
@@ -334,7 +337,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							text='Cancel'
 							className='rounded-[4px]'
 							variant='default'
-							buttonSize='xs'
+							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
@@ -345,7 +348,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							onClick={async () => {
 								await handleSubmit();
 							}}
-							buttonSize='xs'
+							buttonsize='xs'
 						/>
 					</div>
 				}
@@ -385,8 +388,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<AddressInput
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
-									label={'Beneficiary Address'}
-									placeholder='Add beneficiary address'
+									label={'Delegate To'}
+									placeholder='Add Delegatee Address'
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);
@@ -421,7 +424,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span
 										onClick={() => {
 											setBnBalance(availableBalance);
-											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit).replace(/,/g, '')));
 										}}
 									>
 										<Balance
@@ -487,9 +490,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
 									{trackArr?.length ? (
 										<Popover
-											defaultOpen={true}
 											content={content}
-											placement='topLeft'
+											placement='top'
 											zIndex={1056}
 										>
 											<Checkbox

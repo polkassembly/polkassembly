@@ -23,6 +23,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -54,6 +55,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -121,6 +123,7 @@ const Motions: FC<IMotionsProps> = (props) => {
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}
+								theme={theme}
 								showSizeChanger={false}
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}

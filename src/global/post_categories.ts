@@ -17,7 +17,8 @@ export enum PostCategory {
 	ANNOUNCEMENT = 'alliance announcement',
 	TECHNICAL_PIPS = 'technical PIPs',
 	UPGRADE_PIPS = 'upgrade PIPs',
-	COMMUNITY_PIPS = 'community PIPs'
+	COMMUNITY_PIPS = 'community PIPs',
+	ADVISORY_COMMITTEE = 'advisory committee'
 }
 
 export enum PageLink {

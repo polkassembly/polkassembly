@@ -52,6 +52,8 @@ import turingLogo from '~assets/parachain-logos/turing-logo.png';
 import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
+import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
+import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 
 import * as types from '../types';
 
@@ -94,6 +96,7 @@ export const network = {
 	PENDULUM: 'pendulum',
 	PIONEER: 'pioneer',
 	POLKADEX: 'polkadex',
+	POLIMEC: 'polimec',
 	ROBONOMICS: 'robonomics',
 	SNOW: 'snow',
 	SHIBUYA: 'shibuya',
@@ -110,7 +113,8 @@ export const network = {
 	VARA: 'vara',
 	WESTEND: 'westend',
 	WESTENDCOLLECTIVES: 'westend-collectives',
-	XX: 'xx'
+	XX: 'xx',
+	ZEITGEIST: 'zeitgeist'
 };
 
 export const tokenSymbol = {
@@ -158,11 +162,13 @@ export const tokenSymbol = {
 	PICA: 'PICA',
 	ROC: 'ROC',
 	POLYX: 'POLYX',
+	PLMC: 'PLMC',
 	WND: 'WND',
 	XRT: 'XRT',
 	UNIT: 'UNIT',
 	VARA: 'VARA',
-	XX: 'XX'
+	XX: 'XX',
+	ZTG: 'ZTG'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -283,7 +289,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://acala.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Acala Foundation 0',
+				key: 'wss://acala-rpc-0.aca-api.network'
+			},
+			{
+				label: 'via Acala Foundation 1',
+				key: 'wss://acala-rpc-1.aca-api.network'
+			},
+			{
+				label: 'via Acala Foundation 3',
+				key: 'wss://acala-rpc-3.aca-api.network/ws'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://acala-rpc.dwellir.com'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-acala.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://acala-polkadot.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.ACUITY]: {
 		blockTime: 6000,
@@ -317,7 +348,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://altair.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Centrifuge',
+				key: 'wss://fullnode.altair.centrifuge.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://altair.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.AMPLITUDE]: {
 		blockTime: 12000,
@@ -334,7 +374,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
 		gTag: 'G-CJQ1ZL472N',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://amplitude-rpc.dwellir.com'
+			},
+			{
+				label: 'via PendulumChain',
+				key: 'wss://rpc-amplitude.pendulumchain.tech'
+			}
+		]
 	},
 	[network.ASTAR]: {
 		blockTime: 12000,
@@ -351,7 +400,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://astar.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Astar',
+				key: 'wss://rpc.astar.network'
+			},
+			{
+				label: 'via Automata 1RPC',
+				key: 'wss://1rpc.io/astr'
+			},
+			{
+				label: 'via Blast',
+				key: 'wss://astar.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://astar-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://astar.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://astar.public.curie.radiumblock.co/ws'
+			}
+		]
 	},
 	[network.AUTOMATA]: {
 		blockTime: 6000,
@@ -385,7 +459,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://basilisk.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Basilisk',
+				key: 'wss://rpc.basilisk.cloud'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://basilisk-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.PIONEER]: {
 		blockTime: 12000,
@@ -404,6 +487,23 @@ export const chainProperties: types.ChainPropType = {
 		gTag: null,
 		rpcEndpoints: []
 	},
+	[network.POLIMEC]: {
+		blockTime: 12000,
+		category: 'solo',
+		chainId: 0,
+		logo: polimecLogo,
+		rpcEndpoint: 'wss://rpc.polimec.org',
+		ss58Format: 41,
+		subsquidUrl: '',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.PLMC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://polimec.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: []
+	},
 	[network.CALAMARI]: {
 		blockTime: 12000,
 		category: 'kusama',
@@ -419,7 +519,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://calamari.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Manta Network',
+				key: 'wss://calamari.systems'
+			}
+		]
 	},
 	[network.CENTRIFUGE]: {
 		blockTime: 12000,
@@ -436,7 +541,24 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5000',
 		externalLinks: 'https://centrifuge.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Centrifuge',
+				key: 'wss://fullnode.centrifuge.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://centrifuge-rpc.dwellir.com'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-centrifuge.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://centrifuge-parachain.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.CERE]: {
 		blockTime: 6000,
@@ -453,7 +575,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://stats.cere.network',
 		gTag: 'G-7E14M1ZSCB',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Cere Network',
+				key: 'wss://archive.mainnet.cere.network/ws'
+			}
+		]
 	},
 	//TODO: Aleem=> Need to update collective network, currently using polkadot data
 	[network.COLLECTIVES]: {
@@ -484,7 +611,44 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://polkadot-collectives-rpc.dwellir.com'
+			},
+			{
+				label: 'via Dwellir Tunisia',
+				key: 'wss://polkadot-collectives-rpc-tn.dwellir.com'
+			},
+			{
+				label: 'via IBP-GeoDNS1',
+				key: 'wss://sys.ibp.network/collectives-polkadot'
+			},
+			{
+				label: 'via IBP-GeoDNS2',
+				key: 'wss://sys.dotters.network/collectives-polkadot'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-collectives-polkadot.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://collectives.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via Parity',
+				key: 'wss://polkadot-collectives-rpc.polkadot.io'
+			},
+			{
+				label: 'via IBP-GeoDNS2',
+				key: 'wss://collectives.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'via Stakeworld',
+				key: 'wss://dot-rpc.stakeworld.io/collectives'
+			}
+		]
 	},
 	[network.COMPOSABLE]: {
 		blockTime: 12000,
@@ -501,7 +665,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '1000',
 		externalLinks: 'https://composable.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Composable',
+				key: 'wss://rpc.composable.finance'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://composable-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.CRUST]: {
 		blockTime: 12000,
@@ -518,7 +691,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://crust.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Crust',
+				key: 'wss://crust-parachain.crustapps.net'
+			}
+		]
 	},
 	[network.CRUSTSHADOW]: {
 		blockTime: 12000,
@@ -535,7 +713,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Crust',
+				key: 'wss://rpc-shadow.crust.network/'
+			}
+		]
 	},
 	[network.EQUILIBRIUM]: {
 		blockTime: 12000,
@@ -552,7 +735,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://equilibrium.api.subscan.io',
 		gTag: 'G-PPZV91T0GH',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://equilibrium-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.FREQUENCY]: {
 		blockTime: 12000,
@@ -569,7 +757,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: 'G-26N0DJ37DD',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://frequency-rpc.dwellir.com'
+			},
+			{
+				label: 'via Frequency 0',
+				key: 'wss://0.rpc.frequency.xyz'
+			},
+			{
+				label: 'via Frequency 1',
+				key: 'wss://1.rpc.frequency.xyz'
+			}
+		]
 	},
 	[network.GEAR]: {
 		blockTime: 1000,
@@ -586,7 +787,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Vara',
+				key: 'wss://rpc.vara.network'
+			}
+		]
 	},
 	[network.GENSHIRO]: {
 		blockTime: 6000,
@@ -603,7 +809,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://genshiro.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Genshiro',
+				key: 'wss://node.ksm.genshiro.io'
+			}
+		]
 	},
 	[network.GMORDIE]: {
 		blockTime: 9000,
@@ -620,7 +831,28 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via GMorDieDAO',
+				key: 'wss://kusama.gmordie.com'
+			},
+			{
+				label: 'via GM Intern',
+				key: 'wss://intern.gmordie.com'
+			},
+			{
+				label: 'via TerraBioDAO',
+				key: 'wss://ws-node-gm.terrabiodao.org'
+			},
+			{
+				label: 'via Leemo',
+				key: 'wss://leemo.gmordie.com'
+			},
+			{
+				label: 'via bLd Nodes',
+				key: 'wss://ws.gm.bldnodes.org'
+			}
+		]
 	},
 	[network.HASHED]: {
 		blockTime: 12000,
@@ -637,7 +869,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '0.0000033333333',
 		externalLinks: '',
 		gTag: 'G-KQYQ8N8337',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Hashed Systems 1',
+				key: 'wss://c1.hashed.live'
+			},
+			{
+				label: 'via Hashed Systems 2',
+				key: 'wss://c2.hashed.network'
+			},
+			{
+				label: 'via Hashed Systems 3',
+				key: 'wss://c3.hashed.network'
+			}
+		]
 	},
 	[network.HEIKO]: {
 		blockTime: 13000,
@@ -654,7 +899,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via OnFinality',
+				key: 'wss://parallel-heiko.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via Parallel',
+				key: 'wss://heiko-rpc.parallel.fi'
+			}
+		]
 	},
 	[network.HYDRADX]: {
 		blockTime: 12000,
@@ -671,7 +925,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://hydradx.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://hydradx-rpc.dwellir.com'
+			},
+			{
+				label: 'via Galactic Council',
+				key: 'wss://rpc.hydradx.cloud'
+			}
+		]
 	},
 	[network.INTEGRITEE]: {
 		blockTime: 12000,
@@ -688,7 +951,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50000',
 		externalLinks: 'https://integritee.api.subscan.io',
 		gTag: 'G-D4LGZ5LEGK',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Integritee',
+				key: 'wss://kusama.api.integritee.network'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://integritee-kusama.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.KARURA]: {
 		blockTime: 12000,
@@ -705,7 +977,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '25',
 		externalLinks: 'https://karura.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Acala Foundation 0',
+				key: 'wss://karura-rpc-0.aca-api.network/ws'
+			},
+			{
+				label: 'via Acala Foundation 1',
+				key: 'wss://karura-rpc-1.aca-api.network/ws'
+			},
+			{
+				label: 'via Acala Foundation 2',
+				key: 'wss://karura-rpc-2.aca-api.network/ws'
+			},
+			{
+				label: 'via Acala Foundation 3',
+				key: 'wss://karura-rpc-3.aca-api.network/ws'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-karura.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://karura.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.KYLIN]: {
 		blockTime: 12000,
@@ -722,7 +1019,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Kylin Network',
+				key: 'wss://kusama.kylin-node.co.uk'
+			}
+		]
 	},
 	[network.KHALA]: {
 		blockTime: 12000,
@@ -739,7 +1041,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://khala.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://khala-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://khala.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via Phala',
+				key: 'wss://khala-api.phala.network/ws'
+			}
+		]
 	},
 	[network.KILT]: {
 		blockTime: 12000,
@@ -756,7 +1071,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://spiritnet.api.subscan.io',
 		gTag: 'G-J37GVF0HCS',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via BOTLabs',
+				key: 'wss://spiritnet.kilt.io/'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://kilt-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://spiritnet.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.MANTA]: {
 		blockTime: 12000,
@@ -773,7 +1101,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Manta Networks',
+				key: 'wss://calamari.systems'
+			}
+		]
 	},
 	[network.MOONBASE]: {
 		blockTime: 12000,
@@ -790,7 +1123,28 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbase.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Blast',
+				key: 'wss://moonbase-alpha.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://moonbase-rpc.dwellir.com'
+			},
+			{
+				label: 'via Moonbeam Foundation',
+				key: 'wss://wss.api.moonbase.moonbeam.network'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://moonbeam-alpha.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via UnitedBloc',
+				key: 'wss://moonbase.unitedbloc.com'
+			}
+		]
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -807,7 +1161,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Astar',
+				key: 'wss://rpc.shibuya.astar.network'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://shibuya-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.MOONBEAM]: {
 		blockTime: 12000,
@@ -824,7 +1187,32 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonbeam.api.subscan.io',
 		gTag: 'G-FS09G34H85',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Automata 1RPC',
+				key: 'wss://1rpc.io/glmr'
+			},
+			{
+				label: 'via Blast',
+				key: 'wss://moonbeam.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://moonbeam-rpc.dwellir.com'
+			},
+			{
+				label: 'via Moonbeam Foundation',
+				key: 'wss://wss.api.moonbeam.network'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://moonbeam.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via UnitedBloc',
+				key: 'wss://moonbeam.unitedbloc.com'
+			}
+		]
 	},
 	[network.MOONRIVER]: {
 		blockTime: 12000,
@@ -841,7 +1229,28 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://moonriver.api.subscan.io',
 		gTag: 'G-RMV9VEZFF2',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Blast',
+				key: 'wss://moonriver.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://moonriver-rpc.dwellir.com'
+			},
+			{
+				label: 'via Moonbeam Foundation',
+				key: 'wss://wss.api.moonriver.moonbeam.network'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://moonriver.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via UnitedBloc',
+				key: 'wss://moonriver.unitedbloc.com'
+			}
+		]
 	},
 	[network.MYRIAD]: {
 		blockTime: 6000,
@@ -858,7 +1267,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://explorer.mainnet.oct.network/myriad',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Myriad',
+				key: 'wss://ws-rpc.myriad.social'
+			},
+			{
+				label: 'via Octopus',
+				key: 'wss://gateway.mainnet.octopus.network/myriad/a4cb0a6e30ff5233a3567eb4e8cb71e0'
+			}
+		]
 	},
 	[network.PARALLEL]: {
 		blockTime: 12000,
@@ -875,7 +1293,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://parallel.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://parallel-rpc.dwellir.com'
+			},
+			{
+				label: 'via Parallel',
+				key: 'wss://rpc.parallel.fi'
+			}
+		]
 	},
 	[network.PENDULUM]: {
 		blockTime: 12000,
@@ -892,7 +1319,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polkaholic.io',
 		gTag: 'G-EGV0NKCPZG',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://pendulum-rpc.dwellir.com'
+			},
+			{
+				label: 'via PendulumChain',
+				key: 'wss://rpc-pendulum.prd.pendulumchain.tech'
+			}
+		]
 	},
 	[network.POLKADEX]: {
 		blockTime: 12000,
@@ -909,7 +1345,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '100',
 		externalLinks: 'https://polkadex.api.subscan.io',
 		gTag: 'G-EB50MSH198',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via OnFinality',
+				key: 'wss://polkadex.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://polkadex.public.curie.radiumblock.co/ws'
+			}
+		]
 	},
 	[network.POLYMESH]: {
 		blockTime: 6000,
@@ -926,7 +1371,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://polymesh.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Polymesh',
+				key: 'wss://mainnet-rpc.polymesh.network'
+			}
+		]
 	},
 	[network.POLYMESHTEST]: {
 		blockTime: 6000,
@@ -943,7 +1393,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Polymesh',
+				key: 'wss://testnet-rpc.polymesh.live'
+			}
+		]
 	},
 	[network.PICASSO]: {
 		blockTime: 12000,
@@ -960,7 +1415,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '10000',
 		externalLinks: 'https://picasso.api.subscan.io',
 		gTag: 'G-2MRWG10DTE',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Composable',
+				key: 'wss://rpc.composablenodes.tech'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://picasso-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.PICHIUROCOCO]: {
 		blockTime: 12000,
@@ -1011,7 +1475,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://robonomics.api.subscan.io',
 		gTag: 'G-P13GPB87GC',
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Airalab',
+				key: 'wss://kusama.rpc.robonomics.network/'
+			},
+			{
+				label: 'via Samsara',
+				key: 'wss://robonomics.0xsamsara.com'
+			}
+		]
 	},
 	[network.SHIBUYA]: {
 		blockTime: 12000,
@@ -1028,7 +1501,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shibuya.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Astar',
+				key: 'wss://rpc.shibuya.astar.network'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://shibuya-rpc.dwellir.com'
+			}
+		]
 	},
 	[network.SHIDEN]: {
 		blockTime: 12000,
@@ -1045,7 +1527,24 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://shiden.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Astar',
+				key: 'wss://rpc.shiden.astar.network'
+			},
+			{
+				label: 'via Blast',
+				key: 'wss://shiden.public.blastapi.io'
+			},
+			{
+				label: 'via Dwellir',
+				key: 'wss://shiden-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://shiden.api.onfinality.io/public-ws'
+			}
+		]
 	},
 	[network.SNOW]: {
 		blockTime: 12000,
@@ -1113,7 +1612,16 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '5',
 		externalLinks: 'https://turing.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://turing-rpc.dwellir.com'
+			},
+			{
+				label: 'via OAK',
+				key: 'wss://rpc.turing.oak.tech'
+			}
+		]
 	},
 	[network.VARA]: {
 		blockTime: 2000,
@@ -1130,7 +1638,12 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Gear',
+				key: 'wss://rpc.vara.network'
+			}
+		]
 	},
 	[network.WESTENDCOLLECTIVES]: {
 		blockTime: 6000,
@@ -1147,7 +1660,28 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: '',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://westend-collectives-rpc.dwellir.com'
+			},
+			{
+				label: 'via Dwellir Tunisia',
+				key: 'wss://westend-collectives-rpc-tn.dwellir.com'
+			},
+			{
+				label: 'via IBP-GeoDNS1',
+				key: 'wss://sys.ibp.network/collectives-westend'
+			},
+			{
+				label: 'via IBP-GeoDNS2',
+				key: 'wss://sys.dotters.network/collectives-westend'
+			},
+			{
+				label: 'via Parity',
+				key: 'wss://westend-collectives-rpc.polkadot.io'
+			}
+		]
 	},
 	[network.WESTEND]: {
 		blockTime: 6000,
@@ -1164,24 +1698,67 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://westend.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://westend-rpc.dwellir.com'
+			},
+			{
+				label: 'via Dwellir Tunisia',
+				key: 'wss://westend-rpc-tn.dwellir.com'
+			},
+			{
+				label: 'via IBP-GeoDNS1',
+				key: 'wss://rpc.ibp.network/westend'
+			},
+			{
+				label: 'via IBP-GeoDNS2',
+				key: 'wss://rpc.dotters.network/westend'
+			},
+			{
+				label: 'via LuckyFriday',
+				key: 'wss://rpc-westend.luckyfriday.io'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://westend.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via Parity',
+				key: 'wss://westend-rpc.polkadot.io'
+			},
+			{
+				label: 'via RadiumBlock',
+				key: 'wss://westend.public.curie.radiumblock.co/ws'
+			},
+			{
+				label: 'via Stakeworld',
+				key: 'wss://wnd-rpc.stakeworld.io'
+			}
+		]
 	},
 	[network.ROCOCO]: {
+		preImageBaseDeposit: '130000000000',
 		blockTime: 6000,
 		category: 'test',
 		chainId: 0,
 		logo: westendLogo,
 		rpcEndpoint: 'wss://rococo-rpc.polkadot.io',
-		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/rococo-collectives/graphql',
-		tokenDecimals: 10,
+		ss58Format: 42,
+		subsquidUrl: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
+		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.ROC,
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
 		externalLinks: 'https://rococo.api.subscan.io',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Parity',
+				key: 'wss://rococo-rpc.polkadot.io'
+			}
+		]
 	},
 	[network.XX]: {
 		blockTime: 6000,
@@ -1199,6 +1776,36 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: 'https://explorer.xx.network',
 		gTag: 'G-23WF4VNWK4',
 		rpcEndpoints: []
+	},
+	[network.ZEITGEIST]: {
+		blockTime: 12000,
+		category: 'polkadot',
+		chainId: 0,
+		logo: ZeitgeistLogo,
+		rpcEndpoint: 'wss://zeitgeist.api.onfinality.io/public-ws',
+		ss58Format: 73,
+		subsquidUrl: 'https://squid.subsquid.io/zeitgeist-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.ZTG,
+		treasuryProposalBondPercent: null,
+		treasuryProposalMinBond: null,
+		treasuryProposalMaxBond: null,
+		externalLinks: 'https://zeitgeist.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Dwellir',
+				key: 'wss://zeitgeist-rpc.dwellir.com'
+			},
+			{
+				label: 'via OnFinality',
+				key: 'wss://zeitgeist.api.onfinality.io/public-ws'
+			},
+			{
+				label: 'via ZeitgeistPM',
+				key: 'wss://main.rpc.zeitgeist.pm/ws'
+			}
+		]
 	}
 };
 

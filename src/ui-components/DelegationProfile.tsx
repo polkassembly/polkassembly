@@ -5,7 +5,6 @@ import { Skeleton, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import SocialLink from './SocialLinks';
-import { socialLinks } from '~src/components/UserProfile/Details';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Address from './Address';
 import { EditIcon } from './CustomIcons';
@@ -17,6 +16,7 @@ import dynamic from 'next/dynamic';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import { socialLinks } from '~src/components/UserProfile/Socials';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -75,14 +75,16 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 
 	return username?.length > 0 ? (
 		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
-			<div className='flex justify-center gap-[34px] '>
-				<ImageComponent
-					src={image}
-					alt='User Picture'
-					className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
-					iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
-				/>
-				<div className='text-bodyBlue dark:text-blue-dark-high'>
+			<div className='flex w-full gap-[34px] '>
+				<div className='w-3/10'>
+					<ImageComponent
+						src={image}
+						alt='User Picture'
+						className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
+						iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
+					/>
+				</div>
+				<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
 					<span className='mb-4 text-lg font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username || userName}</span>
 					{address && address.length > 0 && (
 						<div className='mt-1 flex items-center gap-1'>
@@ -161,7 +163,7 @@ const DelegationProfile = ({ username, address, isSearch, className }: Props) =>
 								variant='default'
 								className='max-lg:w-auto'
 							>
-								<EditIcon className='text-[14px] tracking-wide text-pink_primary ' />
+								<EditIcon className='text-sm tracking-wide text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>
 							</CustomButton>
 						)}

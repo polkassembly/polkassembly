@@ -4,18 +4,27 @@
 
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
-import { Modal, Table as AntdTable } from 'antd';
+import { ApiPromise } from '@polkadot/api';
+import { Modal, Table as AntdTable, Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
-import { LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';
 import styled from 'styled-components';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { IPreimagesListing } from '~src/types';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { IPreimagesListing, NotificationStatus } from '~src/types';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import queueNotification from '~src/ui-components/QueueNotification';
+import executeTx from '~src/util/executeTx';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import copyToClipboard from '~src/util/copyToClipboard';
+import Loader from '~src/ui-components/Loader';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -45,17 +54,111 @@ const Table = styled(AntdTable)`
 	}
 `;
 
+interface UnnoteButtonProps {
+	proposer: string;
+	hash: string;
+	api?: ApiPromise;
+	apiReady: boolean;
+	network: string;
+	substrateAddresses?: (string | null)[];
+	afterUnnotePreimage: () => void;
+}
+
+const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses, afterUnnotePreimage }: UnnoteButtonProps) => {
+	const [loading, setLoading] = useState<boolean>(false);
+	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
+
+	if (!isProposer) return null;
+
+	const handleSubmit = async () => {
+		if (!api || !apiReady) {
+			return;
+		}
+		setLoading(true);
+		const preimageTx = api.tx.preimage.unnotePreimage(hash);
+
+		const onSuccess = () => {
+			afterUnnotePreimage();
+			setLoading(false);
+			queueNotification({
+				header: 'Success!',
+				message: 'Preimage Cleared Successfully',
+				status: NotificationStatus.SUCCESS
+			});
+		};
+
+		const onFailed = (message: string) => {
+			setLoading(false);
+			queueNotification({
+				header: 'Failed!',
+				message,
+				status: NotificationStatus.ERROR
+			});
+		};
+		if (!preimageTx) return;
+
+		await executeTx({
+			address: proposer,
+			api,
+			apiReady,
+			errorMessageFallback: 'Transaction failed.',
+			network,
+			onFailed,
+			onSuccess,
+			tx: preimageTx
+		});
+	};
+	return (
+		<div className='flex items-center space-x-2'>
+			<Tooltip
+				placement='top'
+				title={'Unnote'}
+				trigger={'hover'}
+			>
+				<button
+					onClick={handleSubmit}
+					className='h-4 w-4 rounded-[4px] border border-grey_border bg-white '
+					disabled={loading}
+				>
+					<ImageIcon
+						src='/assets/icons/close-icon.svg'
+						alt='close icon'
+						imgClassName='w-full h-full'
+						imgWrapperClassName='flex cursor-pointer justify-center text-sm text-grey_border dark:text-white'
+					/>
+				</button>
+			</Tooltip>
+			<div>{loading && <Loader />}</div>
+		</div>
+	);
+};
+
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { preimages, theme } = props;
+	const { theme } = props;
+	const [preimages, setPreimages] = useState(props.preimages);
 	const [modalArgs, setModalArgs] = useState<any>(null);
+	const { api, apiReady } = useApiContext();
+	const { addresses } = useUserDetailsSelector();
+	const [messageApi, contextHolder] = message.useMessage();
+
+	const substrateAddresses = addresses?.map((address) => {
+		return getSubstrateAddress(address);
+	});
 
 	useEffect(() => {
 		if (!router?.query?.hash) return;
 		setModalArgs(preimages?.[0]?.proposedCall.args);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
+
+	const success = () => {
+		messageApi.open({
+			content: 'Hash copied to clipboard',
+			type: 'success'
+		});
+	};
 
 	const handleModalArgs = async (args: any) => {
 		Object.entries(args).map(([name, value]) => {
@@ -74,14 +177,49 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			title: 'Hash',
 			dataIndex: 'hash',
 			key: 'hash',
-			width: 350,
-			render: (hash) => <span className='font-medium text-sidebarBlue dark:text-white'>{hash}</span>
+			width: 300,
+			render: (hash, obj) => (
+				<div className='flex space-x-[6px]'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}............${hash.substring(hash.length - 6)}`}</span>
+					<Tooltip title='Copy'>
+						<span
+							className='mt-[2px] cursor-pointer'
+							onClick={(e) => {
+								e.preventDefault();
+								copyToClipboard(hash);
+								success();
+							}}
+						>
+							{contextHolder}
+							<ImageIcon
+								src='assets/icons/content_copy_small.svg'
+								alt='copy icon'
+								imgClassName='w-4 h-4'
+								imgWrapperClassName=' flex cursor-pointer justify-center text-sm text-grey_border'
+							/>
+						</span>
+					</Tooltip>
+					<Tooltip title='Subscan'>
+						<span
+							className='cursor-pointer'
+							onClick={() => window.open(`https://${network}.subscan.io/extrinsic/${obj?.statusHistory?.extrinsicIndex}`, '_blank')}
+						>
+							<ImageIcon
+								src='/assets/icons/subscan-link.svg'
+								alt='subscan link icon'
+								imgClassName='w-4 h-4'
+								imgWrapperClassName='mt-[2px] flex cursor-pointer justify-center text-sm text-grey_border'
+							/>
+						</span>
+					</Tooltip>
+				</div>
+			)
 		},
 		{
 			title: 'Author',
 			dataIndex: 'proposer',
 			key: 'author',
-			width: 200,
+			width: 250,
 			render: (proposer) => <NameLabel defaultAddress={proposer} />
 		},
 		{
@@ -130,7 +268,26 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			dataIndex: 'status',
 			key: 'status',
 			width: 135,
-			render: (status) => <span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
+			render: (status, obj) => (
+				<div className='flex items-center justify-start space-x-4'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{status}</span>
+					{status == 'Noted' && (
+						<UnnoteButton
+							proposer={obj.proposer}
+							hash={obj.hash}
+							api={api}
+							apiReady={apiReady}
+							network={network}
+							substrateAddresses={substrateAddresses}
+							afterUnnotePreimage={() => {
+								setPreimages((prev) => {
+									return prev.filter((preimage: any) => preimage.hash !== obj.hash && preimage.proposer !== obj.proposer);
+								});
+							}}
+						/>
+					)}
+				</div>
+			)
 		}
 	];
 

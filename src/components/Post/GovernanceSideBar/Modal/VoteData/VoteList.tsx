@@ -275,14 +275,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 							)}
 							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
-								<div className='mb-2 flex w-min items-center px-2 text-xs font-semibold'>
+								<div className='mb-2 flex w-full items-center px-2 text-xs font-semibold sm:w-min'>
 									{!isUsedInVotedModal ? (
-										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+										<div className={`w-[160px] text-sm font-medium text-lightBlue dark:text-white sm:w-[190px]  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Voter</div>
 									) : (
-										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Vote</div>
+										<div className={`min[640px]:w-[190px] w-[160px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Vote</div>
 									)}
 									<div
-										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`hidden w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white sm:flex ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -295,7 +295,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high'}
+											className={'hidden w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high sm:flex'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -332,7 +332,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 								</div>
 								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px] w-min'>
+									<div className='max-h-[360px] w-full sm:w-min'>
 										{votesRes &&
 											decision &&
 											!!votesRes[decision]?.votes?.length &&
@@ -355,7 +355,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								) : (
-									<div className='max-h-[360px] w-min'>
+									<div className='max-h-[360px] w-full sm:w-min'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes.map((voteData: any, index: number) => (
@@ -381,8 +381,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</VoteContainer>
 						</div>
 						{!isUsedInVotedModal && (
-							<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-								<p className='m-0 mb-2 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+							<div className='z-10 mb-2 flex flex-col items-center bg-white pt-4 dark:bg-section-dark-overlay sm:items-center '>
+								<p className='m-0 mb-2 text-center text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 								<Pagination
 									theme={theme}
 									size='small'

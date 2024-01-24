@@ -4,7 +4,7 @@
 
 import { Modal, message } from 'antd';
 import React, { useState } from 'react';
-import CopyIcon from '~assets/icons/content-copy.svg';
+import CopyIcon from '~assets/icons/content-copy-pink.svg';
 import { CHANNEL } from '..';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
@@ -38,7 +38,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3'>
+				<h3 className='mb-5 flex items-center gap-3 dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
@@ -49,7 +49,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link <br />
 						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
@@ -61,31 +61,32 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							</a>
 						</span>
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
-							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
+							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
 							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
-							<CopyIcon className='relative top-[6px]' /> {'<username>'} {'<verificationToken>'}
+							/polkassembly-add {'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px]' />
 						</span>
-						<CustomButton
-							loading={loading}
-							onClick={handleGenerateToken}
-							variant='primary'
-							text='Generate Token'
-						/>
-						,
-						<br />
+						<div className='mt-4 flex justify-end'>
+							<CustomButton
+								loading={loading}
+								onClick={handleGenerateToken}
+								variant='primary'
+								text='Generate Token'
+							/>
+						</div>
 						{token && (
 							<>
-								<span>Verification Token: </span>
+								<br />
+								<span className='dark:text-white'>Verification Token: </span>
 								<span
 									onClick={() => handleCopyClicked(token)}
 									className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 								>
-									<CopyIcon className='relative top-[6px]' /> {token}
+									{token} <CopyIcon className='relative top-[6px]' />
 								</span>
 							</>
 						)}

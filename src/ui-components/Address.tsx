@@ -27,6 +27,7 @@ import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import { VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
+import Image from 'next/image';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -68,6 +69,7 @@ interface Props {
 	destroyTooltipOnHide?: boolean;
 	inPostHeading?: boolean;
 	isProfileView?: boolean;
+	addressWithVerifiedTick?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -102,7 +104,8 @@ const Address = (props: Props) => {
 		showKiltAddress = false,
 		destroyTooltipOnHide = false,
 		inPostHeading,
-		isProfileView = false
+		isProfileView = false,
+		addressWithVerifiedTick = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -124,6 +127,8 @@ const Address = (props: Props) => {
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [socials, setSocials] = useState<ISocial[]>([]);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
+	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
@@ -258,13 +263,13 @@ const Address = (props: Props) => {
 		(!showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr) ||
 		shortenUsername(username, usernameMaxLength);
 	const addressSuffix = extensionName || mainDisplay;
-
 	const handleClick = (event: any) => {
 		if (disableAddressClick) return;
 		event.stopPropagation();
 		event.preventDefault();
 		window.open(handleRedirectLink(), '_blank');
 	};
+
 	return (
 		<>
 			<Tooltip
@@ -304,21 +309,21 @@ const Address = (props: Props) => {
 							<Identicon
 								className='image identicon'
 								value={encodedAddr}
-								size={iconSize && iconSize >= 20 ? iconSize : displayInline ? 20 : 32}
+								size={iconSize ? iconSize : displayInline ? 20 : 32}
 								theme={'polkadot'}
 							/>
 						))}
 					{!isProfileView ? (
 						<div className='flex items-center text-bodyBlue dark:text-blue-dark-high'>
 							{displayInline ? (
-								<div className='inline-address flex items-center'>
+								<div className='inline-address flex items-start'>
 									{!!kiltName ||
 										(!!identity && !!mainDisplay && (
 											<IdentityBadge
 												theme={theme}
 												identity={identity}
 												flags={flags}
-												className='text-navBlue'
+												className='mt-[2.5px] text-navBlue'
 											/>
 										))}
 
@@ -368,18 +373,47 @@ const Address = (props: Props) => {
 										</div>
 									)}
 									<div
-										className={`${!addressClassName ? 'text-xs' : addressClassName} ${
+										className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} ${
 											!disableAddressClick && 'cursor-pointer hover:underline'
-										} font-normal dark:text-blue-dark-medium`}
+										} flex font-normal `}
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
+										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
+										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+										{addressWithVerifiedTick && (
+											<div>
+												{!kiltName && !isGood && (
+													<Image
+														src={'/assets/profile/identity-caution.svg'}
+														height={20}
+														width={20}
+														alt=''
+														className='ml-1'
+													/>
+												)}
+											</div>
+										)}
 									</div>
 								</div>
 							) : (
-								<div className={`${addressClassName} flex gap-0.5 text-xs font-semibold dark:text-blue-dark-medium`}>
+								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex gap-0.5 font-semibold`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue dark:text-blue-dark-medium'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+									{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
+									{addressWithVerifiedTick && (
+										<div>
+											{!kiltName && !isGood && (
+												<Image
+													src={'/assets/profile/identity-caution.svg'}
+													height={20}
+													width={20}
+													alt=''
+													className='ml-1'
+												/>
+											)}
+										</div>
+									)}
 								</div>
 							)}
 						</div>
@@ -395,7 +429,7 @@ const Address = (props: Props) => {
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressSuffix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressSuffix}</span>}
+												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
 											</div>
 										</Space>
 									</div>
@@ -409,7 +443,7 @@ const Address = (props: Props) => {
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
 							</div>
-							<div>{!!kiltName || (!!identity && !!mainDisplay && <VerifiedIcon className='scale-125' />)}</div>
+							<div>{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}</div>
 						</div>
 					)}
 

@@ -5,10 +5,12 @@ import { IUserDetailsStore } from './@types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import WalletConnectProvider from '@walletconnect/web3-provider';
+import { deleteLocalStorageToken } from '~src/services/auth.service';
 
 const initialState: IUserDetailsStore = {
 	addresses: [],
 	allowed_roles: [],
+	coverImage: 'https://polkadot.polkassembly.io/assets/profile/cover-image1.svg',
 	defaultAddress: '',
 	delegationDashboardAddress: '',
 	email: null,
@@ -27,12 +29,6 @@ const initialState: IUserDetailsStore = {
 	username: null,
 	walletConnectProvider: null,
 	web3signup: false
-};
-
-export const deleteLocalStorageToken = (): void => {
-	if (typeof window !== 'undefined') {
-		return localStorage.removeItem('Authorization');
-	}
 };
 
 export const userDetailsStore = createSlice({
@@ -71,6 +67,7 @@ export const userDetailsStore = createSlice({
 			};
 			state.username = null;
 			state.web3signup = false;
+			state.coverImage = 'https://polkadot.polkassembly.io/assets/profile/cover-image1.svg';
 		},
 		setUserDetailsState: (state, action: PayloadAction<IUserDetailsStore>) => {
 			state.addresses = action.payload.addresses;
@@ -90,6 +87,7 @@ export const userDetailsStore = createSlice({
 			state.username = action.payload.username;
 			state.walletConnectProvider = action.payload.walletConnectProvider;
 			state.web3signup = action.payload.web3signup;
+			state.coverImage = action.payload.coverImage;
 		},
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;

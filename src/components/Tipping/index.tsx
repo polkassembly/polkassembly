@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Form, Input, Modal, Select, Spin } from 'antd';
+import { Alert, Form, Modal, Select, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -22,7 +22,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
-import CloseIcon from '~assets/icons/close.svg';
 import TipIcon from '~assets/icons/tip-title.svg';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
@@ -37,6 +36,8 @@ import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import Input from '~src/basic-components/Input';
 
 const ZERO_BN = new BN(0);
 
@@ -50,11 +51,11 @@ interface Props {
 	paUsername: string;
 }
 
-const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; value: number }[] = [
-	{ key: 'threeDollar', value: 3 },
-	{ key: 'fiveDollar', value: 5 },
-	{ key: 'tenDollar', value: 10 },
-	{ key: 'fifteenDollar', value: 15 }
+export const TIPS: { key: 'threeDollar' | 'fiveDollar' | 'tenDollar' | 'fifteenDollar'; src: string; value: number }[] = [
+	{ key: 'threeDollar', src: '/assets/icons/tip-1.svg', value: 3 },
+	{ key: 'fiveDollar', src: '/assets/icons/tip-2.svg', value: 5 },
+	{ key: 'tenDollar', src: '/assets/icons/tip-3.svg', value: 10 },
+	{ key: 'fifteenDollar', src: '/assets/icons/tip-4.svg', value: 15 }
 ];
 
 const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, setOpenAddressChangeModal, paUsername }: Props) => {
@@ -135,10 +136,10 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 	};
 
 	useEffect(() => {
-		if (!paUsername) return;
+		if (!paUsername && !open) return;
 		getUserProfile();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [paUsername, network]);
+	}, [paUsername, network, open]);
 
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
@@ -288,7 +289,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				open={open}
 				zIndex={1056}
 				onCancel={handleCancel}
-				closeIcon={<CloseIcon />}
+				closeIcon={<CloseIcon className='font-medium text-bodyBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm dark:border-[#3B444F]'>
@@ -297,7 +298,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							onClick={handleCancel}
 							className='font-semibold'
 							disabled={loadingStatus.isLoading}
-							buttonSize='xs'
+							buttonsize='xs'
 							text='Go Back'
 						/>
 						<CustomButton
@@ -307,7 +308,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							key='submit'
 							onClick={handleTip}
 							className={`font-semibold ${disable && 'opacity-50'}`}
-							buttonSize='xs'
+							buttonsize='xs'
 							text='Tip'
 						/>
 					</div>
@@ -356,15 +357,18 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 							/>
 						</div>
 					</div>
-
 					{filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 1 && (
-						<div className='mt-6 '>
+						<div className='mt-6'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Receiver Address</label>
 							<Select
 								placeholder='Select recriver address'
 								suffixIcon={<DownArrow />}
 								className={`flex h-full w-full items-center justify-center rounded-[4px] ${poppins.className} ${poppins.variable} dark:bg-section-dark-overlay ${className}`}
-								value={filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0 ? beneficiaryAddress || receiverAddress : null}
+								value={
+									filterDuplicateAddresses(userAddresses.concat(kiltAccounts)).length > 0
+										? getEncodedAddress(beneficiaryAddress, network) || getEncodedAddress(receiverAddress, network)
+										: null
+								}
 								onChange={setBeneficiaryAddress}
 								options={
 									filterDuplicateAddresses(userAddresses.concat(kiltAccounts))?.map((userAddress) => {
@@ -417,30 +421,11 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 													form.setFieldValue('balance', Number(dollarToTokenBalance[tip.key]).toFixed(2));
 												}}
 											>
-												{tip.value === 3 && (
-													<ImageIcon
-														src='/assets/icons/tip-1.svg'
-														alt='tip 1 icon'
-													/>
-												)}
-												{tip.value === 5 && (
-													<ImageIcon
-														src='/assets/icons/tip-2.svg'
-														alt='tip 2 icon'
-													/>
-												)}
-												{tip.value === 10 && (
-													<ImageIcon
-														src='/assets/icons/tip-3.svg'
-														alt='tip 3 icon'
-													/>
-												)}
-												{tip.value === 15 && (
-													<ImageIcon
-														src='/assets/icons/tip-4.svg'
-														alt='tip 4 icon'
-													/>
-												)}
+												<ImageIcon
+													src={tip?.src}
+													alt=''
+												/>
+
 												<span>${tip.value}</span>
 											</span>
 										);
@@ -469,6 +454,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 
 								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
 									<div className='mt-12'>
+										{/* Input component */}
 										<Input
 											name='remark'
 											value={remark}

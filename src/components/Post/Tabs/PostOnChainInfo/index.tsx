@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
+import Markdown from '~src/ui-components/Markdown';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -75,6 +76,7 @@ export interface IOnChainInfo {
 	submission_deposit_amount?: string | number;
 	submitted_amount?: string | number;
 	proposal_arguments?: any;
+	marketMetadata: any | null;
 	proposed_call?: any;
 	post_id?: string | number;
 	statusHistory?: {
@@ -148,7 +150,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		reward,
 		payee,
 		statusHistory,
-		version
+		version,
+		marketMetadata
 	} = onChainInfo;
 	const blockNumber = getBlockNumber(statusHistory);
 
@@ -163,7 +166,6 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		const date = dayjs.utc().subtract(duration).format('DD MMM YYYY');
 		return date;
 	};
-
 	const url = getBlockLink(network);
 
 	return (
@@ -486,6 +488,43 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							<p className='col-span-6 font-medium leading-6 text-bodyBlue'>{description}</p>
 						</div>
 					) : null}
+					{proposalType === ProposalType.ADVISORY_COMMITTEE && !!marketMetadata && (
+						<div className='mt-7'>
+							<h5 className='mb-3 text-base font-bold'>Market Metadata</h5>
+							{marketMetadata?.question ? (
+								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Question</h6>
+									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{marketMetadata?.question}</p>
+								</div>
+							) : null}
+							{marketMetadata?.description ? (
+								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
+									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>
+										<Markdown
+											className='post-content'
+											md={marketMetadata?.description}
+										/>
+									</p>
+								</div>
+							) : null}
+							{marketMetadata?.tags ? (
+								<div className='mt-5 grid grid-cols-6 gap-x-5 border-0 border-b border-solid border-[#e5e7eb] dark:border-[#5A5A5A] md:grid-cols-8'>
+									<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Tags</h6>
+									<p className='col-span-6 leading-6 text-blue-light-high dark:font-normal dark:text-blue-dark-high'>{marketMetadata?.tags.join('/')}</p>
+								</div>
+							) : null}
+							{marketMetadata?.args ? (
+								<div>
+									<ArgumentsTableJSONView
+										postArguments={marketMetadata.args}
+										showAccountArguments={true}
+										theme={theme}
+									/>
+								</div>
+							) : null}
+						</div>
+					)}
 					{proposal_arguments && (
 						<div className='mt-7'>
 							<h5 className='mb-3 text-base font-bold'>Call Arguments</h5>
@@ -506,6 +545,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 							) : null}
 						</div>
 					)}
+
 					{beneficiaries && beneficiaries.length > 0 && (
 						<>
 							<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>

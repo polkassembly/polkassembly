@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Divider, Form, Input, Skeleton } from 'antd';
+import { Alert, Divider, Form, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -24,6 +24,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useDispatch } from 'react-redux';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -277,14 +278,15 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								name='password'
 								validateTrigger='onSubmit'
 							>
-								<Input.Password
+								<Input
+									type='password'
 									disabled={loading}
 									placeholder='Type here'
 									className='rounded-md border-[1px] px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] dark:[&>input]:bg-transparent'
 									id='password'
 								/>
 							</Form.Item>
-							<div className='mt-[-20px] text-right text-pink_primary dark:text-blue-dark-helper'>
+							<div className='mt-[-20px] text-right text-pink_primary'>
 								<div
 									className='cursor-pointer'
 									onClick={() => {
@@ -302,7 +304,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 								loading={loading}
 								htmlType='submit'
 								text='Login'
-								buttonSize='xs'
+								buttonsize='xs'
 								variant='primary'
 							/>
 						</div>
@@ -323,7 +325,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							<label className='text-md text-bodyBlue dark:text-blue-dark-high'>Don&apos;t have an account?</label>
 							<div
 								onClick={handleClick}
-								className='text-md cursor-pointer text-pink_primary dark:text-blue-dark-helper'
+								className='text-md cursor-pointer text-pink_primary'
 							>
 								{' '}
 								Sign Up{' '}

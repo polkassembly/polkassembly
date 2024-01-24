@@ -108,7 +108,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 
 	const getData = async () => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${address}&track=${trackDetails?.trackId}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: address,
+			track: trackDetails?.trackId
+		});
 
 		if (data) {
 			const rowData: ITrackRowData[] = data[0]?.delegations?.map((delegation: IDelegation, index: number) => {

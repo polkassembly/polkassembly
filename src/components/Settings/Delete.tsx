@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Form, Input, Modal, Select, Divider } from 'antd';
+import { Form, Modal, Select, Divider } from 'antd';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
 
@@ -23,6 +23,9 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import InputTextarea from '~src/basic-components/Input/InputTextarea';
+import Input from '~src/basic-components/Input';
+
 const { Panel } = Collapse;
 
 const Delete: FC<{ className?: string }> = ({ className }) => {
@@ -130,26 +133,32 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								style={{ background: '#D2D8E0', flexGrow: 1 }}
 								className='my-4 dark:bg-separatorDark'
 							/>,
-							<CustomButton
-								text='Cancel'
-								key='cancel'
-								onClick={dismissModal}
-								variant='default'
-								className='px-8 py-5 font-semibold'
-							/>,
-							<CustomButton
-								htmlType='submit'
-								key='delete'
-								onClick={() => {
-									form.submit();
-								}}
-								loading={loading}
-								disabled={!isFormValid}
-								text='Delete'
-								variant='primary'
-								style={{ opacity: !isFormValid ? 0.6 : 1 }}
-								className='mr-6 font-semibold'
-							/>
+							<div
+								key='delete-buttons'
+								className='flex items-center justify-end'
+							>
+								<CustomButton
+									text='Cancel'
+									key='cancel'
+									onClick={dismissModal}
+									variant='default'
+									className='px-8 py-5 font-semibold'
+								/>
+								,
+								<CustomButton
+									htmlType='submit'
+									key='delete'
+									onClick={() => {
+										form.submit();
+									}}
+									loading={loading}
+									disabled={!isFormValid}
+									text='Delete'
+									variant='primary'
+									style={{ opacity: !isFormValid ? 0.6 : 1 }}
+									className='mr-6 px-8 py-5 font-semibold'
+								/>
+							</div>
 						]}
 						className={`${className} ${poppins.variable} ${poppins.className} w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
@@ -200,7 +209,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									name='other'
 									className='mt-4'
 								>
-									<Input.TextArea
+									<InputTextarea
 										placeholder='Other reason'
 										id='other'
 										className='dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -219,7 +228,8 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 								name='password'
 								className='m-0 mt-0.5'
 							>
-								<Input.Password
+								<Input
+									type='password'
 									placeholder='Enter Password'
 									className='h-[40px] rounded-md border-grey_border px-4 py-3 dark:border-white dark:bg-transparent dark:text-blue-dark-high dark:hover:border-[#91054f] dark:focus:border-[#91054F] [&>input]:bg-transparent dark:[&>input]:text-blue-dark-high'
 									id='password'

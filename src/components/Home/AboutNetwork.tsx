@@ -7,7 +7,7 @@ import { Space } from 'antd';
 import React, { useState } from 'react';
 import { CubeIcon, DiscordIcon, GithubIcon, RedditIcon, TelegramIcon } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
-
+import Tooltip from '~src/basic-components/Tooltip';
 import { NetworkSocials } from '~src/types';
 
 export const socialLinks = (blockchain_socials: NetworkSocials) => {
@@ -21,76 +21,116 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 			className='items-center'
 		>
 			{blockchain_socials.homepage ? (
-				<a
-					href={blockchain_socials.homepage}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Homepage'
+					color='#E5007A'
 				>
-					<HomeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.homepage}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<HomeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.twitter ? (
-				<a
-					href={blockchain_socials.twitter}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Twitter'
+					color='#E5007A'
 				>
-					<TwitterOutlined className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.twitter}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<TwitterOutlined className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.discord ? (
-				<a
-					href={blockchain_socials.discord}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Discord'
+					color='#E5007A'
 				>
-					<DiscordIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.discord}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<DiscordIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.github ? (
-				<a
-					href={blockchain_socials.github}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Github'
+					color='#E5007A'
 				>
-					<GithubIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.github}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<GithubIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.youtube ? (
-				<a
-					href={blockchain_socials.youtube}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Youtube'
+					color='#E5007A'
 				>
-					<YoutubeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.youtube}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<YoutubeFilled className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.reddit ? (
-				<a
-					href={blockchain_socials.reddit}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Reddit'
+					color='#E5007A'
 				>
-					<RedditIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.reddit}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<RedditIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.telegram ? (
-				<a
-					href={blockchain_socials.telegram}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Telegram'
+					color='#E5007A'
 				>
-					<TelegramIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.telegram}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<TelegramIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 			{blockchain_socials.block_explorer ? (
-				<a
-					href={blockchain_socials.block_explorer}
-					target='_blank'
-					rel='noreferrer'
+				<Tooltip
+					title='Block Explorer'
+					color='#E5007A'
 				>
-					<CubeIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
-				</a>
+					<a
+						href={blockchain_socials.block_explorer}
+						target='_blank'
+						rel='noreferrer'
+					>
+						<CubeIcon className='text-sm text-lightBlue dark:text-icon-dark-inactive md:mr-1 md:text-lg' />
+					</a>
+				</Tooltip>
 			) : null}
 		</Space>
 	);
@@ -132,7 +172,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 
 			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				Join our Community to discuss, contribute and get regular updates from us!
-				{showGallery && (
+				{showGallery && showGov2Links && (
 					<span
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(false)}
@@ -140,7 +180,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 						Minimize Gallery
 					</span>
 				)}
-				{!showGallery && (
+				{!showGallery && showGov2Links && (
 					<span
 						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(true)}
@@ -155,7 +195,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 			{showGallery && (
 				<div>
 					{showGov2Links && (
-						<div className='mt-10 flex justify-between overflow-x-auto pb-2 xl:w-[90%]'>
+						<div className='mt-5 flex flex-wrap justify-between gap-3 overflow-x-auto pb-2 md:mt-10 md:flex-nowrap xl:w-[90%]'>
 							{gov2Link({
 								bgImage: '/assets/gavin-keynote.png',
 								className: 'mr-12 lg:mr-9',

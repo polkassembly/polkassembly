@@ -23,7 +23,8 @@ export enum ProposalType {
 	ALLIANCE_MOTION = 'alliance_motion',
 	TECHNICAL_PIPS = 'technical_pips',
 	UPGRADE_PIPS = 'upgrade_pips',
-	COMMUNITY_PIPS = 'community_pips'
+	COMMUNITY_PIPS = 'community_pips',
+	ADVISORY_COMMITTEE = 'advisory_committee'
 }
 export enum OffChainProposalType {
 	DISCUSSIONS = 'discussions',
@@ -53,7 +54,8 @@ export type TSubsquidProposalType =
 	| 'FellowshipReferendum'
 	| 'TechnicalCommittee'
 	| 'Community'
-	| 'UpgradeCommittee';
+	| 'UpgradeCommittee'
+	| 'AdvisoryCommittee';
 
 export function getSubsquidProposalType(proposalType: Exclude<ProposalType, ProposalType.DISCUSSIONS | ProposalType.GRANTS>): TSubsquidProposalType {
 	switch (proposalType) {
@@ -87,6 +89,8 @@ export function getSubsquidProposalType(proposalType: Exclude<ProposalType, Prop
 			return 'Community';
 		case ProposalType.UPGRADE_PIPS:
 			return 'UpgradeCommittee';
+		case ProposalType.ADVISORY_COMMITTEE:
+			return 'AdvisoryCommittee';
 	}
 }
 
@@ -136,6 +140,8 @@ export function getFirestoreProposalType(proposalType: string): string {
 			return 'technical_pips';
 		case 'UpgradeCommitte':
 			return 'upgrade_pips';
+		case 'AdvisoryCommittee':
+			return 'advisory_committee';
 	}
 	return '';
 }
@@ -168,6 +174,8 @@ export function getProposalTypeTitle(proposalType: ProposalType) {
 			return 'upgrade committee';
 		case ProposalType.COMMUNITY_PIPS:
 			return 'community';
+		case ProposalType.ADVISORY_COMMITTEE:
+			return 'advisory committee';
 	}
 }
 export function getSinglePostLinkFromProposalType(proposalType: ProposalType | OffChainProposalType): string {
@@ -206,6 +214,8 @@ export function getSinglePostLinkFromProposalType(proposalType: ProposalType | O
 			return 'community';
 		case ProposalType.UPGRADE_PIPS:
 			return 'upgrade';
+		case ProposalType.ADVISORY_COMMITTEE:
+			return 'advisory-committee/motions';
 	}
 	return '';
 }
@@ -254,7 +264,8 @@ export const proposalTypes = [
 	'announcement',
 	'technical_pips',
 	'community_pips',
-	'upgrade_pips'
+	'upgrade_pips',
+	'advisory_committee'
 ];
 export const offChainProposalTypes = ['discussions', 'grants'];
 
@@ -262,7 +273,16 @@ export const checkIsOnChainPost = (proposalType: string) => {
 	return !offChainProposalTypes.includes(proposalType);
 };
 
-export const gov1ProposalTypes = ['DemocracyProposal', 'TechCommitteeProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
+export const gov1ProposalTypes = (network: string) => {
+	const proposalType = ['DemocracyProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
+	if (network === 'zeitgeist') {
+		proposalType.splice(1, 0, 'AdvisoryCommittee');
+	}
+	if (network === 'polymesh') {
+		proposalType.splice(1, 0, 'TechCommitteeProposal');
+	}
+	return proposalType;
+};
 
 export enum VoteType {
 	MOTION = 'Motion',
@@ -270,7 +290,8 @@ export enum VoteType {
 	ALLIANCE_MOTION = 'AllianceMotion',
 	REFERENDUM = 'Referendum',
 	REFERENDUM_V2 = 'ReferendumV2',
-	DEMOCRACY_PROPOSAL = 'DemocracyProposal'
+	DEMOCRACY_PROPOSAL = 'DemocracyProposal',
+	ADVISORY_MOTION = 'AdvisoryMotion'
 }
 
 export const voteTypes = ['Motion', 'Fellowship', 'Referendum', 'ReferendumV2'];

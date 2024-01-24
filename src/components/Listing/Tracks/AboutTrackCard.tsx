@@ -166,7 +166,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { loginAddress } = useUserDetailsSelector();
 	const getData = async () => {
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: [loginAddress],
+			address: loginAddress,
 			track: trackMetaData.trackId
 		});
 		if (data && data[0]?.delegations[0]?.to) {

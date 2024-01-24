@@ -59,7 +59,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			addresses: [address]
+			address: address
 		});
 		if (data) {
 			setDelegatesData(data);

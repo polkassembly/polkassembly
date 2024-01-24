@@ -147,7 +147,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		} else {
 			setAddressWithIdentity(userProfile?.addresses?.[0] || '');
 		}
-		if (!profileDetails?.cover_image) return;
+		if (!profileDetails?.cover_image?.length) return;
 		(async () => {
 			try {
 				const res = await fetch(profileDetails?.cover_image || '');

@@ -159,7 +159,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const getData = async (address: any) => {
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: [address],
+			address: address,
 			track: track_number
 		});
 		if (data && data[0]?.delegations[0]?.to) {

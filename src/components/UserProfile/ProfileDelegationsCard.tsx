@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Checkbox, Collapse, Popover, Spin } from 'antd';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { Collapse, Popover, Radio, Spin } from 'antd';
 import Image from 'next/image';
 import { poppins } from 'pages/_app';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
@@ -26,6 +25,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const { Panel } = Collapse;
 
@@ -81,27 +81,27 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	const { addresses } = userProfile;
 	const [receiveDelegations, setReceiveDelegations] = useState<IDelegates>();
 	const [delegatedDelegations, setDelegatedDelegations] = useState<IDelegates>();
-	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
+	const [checkedAddress, setCheckedAddress] = useState<string>(getSubstrateAddress(addressWithIdentity || '') || '');
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [collapseItems, setCollapseItems] = useState([
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
 	]);
-
 	const content = (
 		<div className='flex flex-col'>
-			<Checkbox.Group
+			<Radio.Group
 				className='flex max-h-[200px] flex-col overflow-y-auto'
-				onChange={(list) => setCheckedAddressList(list)}
-				value={checkedAddressList}
+				onChange={(e) => setCheckedAddress(e.target.value)}
+				value={checkedAddress.length ? checkedAddress : getSubstrateAddress(addressWithIdentity || '')}
+				defaultValue={getSubstrateAddress(addressWithIdentity || '')}
 			>
 				{addresses?.map((address) => (
 					<div
 						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={address}
 					>
-						<Checkbox
+						<Radio
 							className='text-pink_primary'
 							value={address}
 						/>
@@ -114,7 +114,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 						/>
 					</div>
 				))}
-			</Checkbox.Group>
+			</Radio.Group>
 		</div>
 	);
 	useEffect(() => {
@@ -123,16 +123,16 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		setCheckedAddressList(addresses);
+		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || addresses?.[0]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, addresses]);
+	}, [network, addressWithIdentity]);
 
 	const getData = async () => {
-		if (!api || !apiReady || !checkedAddressList.length) return;
+		if (!api || !apiReady || !checkedAddress.length) return;
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: checkedAddressList || []
+			address: checkedAddress || addressWithIdentity || ''
 		});
 		if (data) {
 			const received: ITrackDelegation[] = [];
@@ -171,7 +171,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, addresses, checkedAddressList, userProfile, network]);
+	}, [api, apiReady, addresses, checkedAddress, userProfile, network]);
 
 	const handleExpand = (address: string, type: ETrackDelegationStatus) => {
 		const newData = type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations;
@@ -377,9 +377,15 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<span className='flex items-start justify-start gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}
-																		</span>
+																		<div className='flex flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			<span>Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}</span>
+																			{value?.delegations?.length !== 1 && (
+																				<div className='flex w-full justify-end text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+																					{' '}
+																					VP: Voting Power, Ca: Capital, Co: Conviction
+																				</div>
+																			)}
+																		</div>
 																		<div className='flex flex-col gap-1 text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations.map((delegate) => (
 																				<div
@@ -399,7 +405,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																			))}
 																		</div>
 																	</div>
-																	<div className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'> VP: Voting Power, Ca: Capital, Co: Conviction</div>
 																</div>
 															</div>
 														</div>

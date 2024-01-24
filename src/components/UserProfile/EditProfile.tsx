@@ -113,7 +113,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (!profile) return;
+		if (!profile || !profile?.cover_image?.length) return;
 		(async () => {
 			try {
 				const res = await fetch(profile?.cover_image || '');

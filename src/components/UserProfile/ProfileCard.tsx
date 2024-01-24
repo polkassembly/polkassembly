@@ -33,7 +33,6 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 			type: 'success'
 		});
 	};
-
 	return (
 		<div
 			className={classNames(
@@ -60,8 +59,9 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									isProfileView
 									className='flex gap-1'
 									usernameClassName='text-2xl'
-									isTruncateUsername={isMobile}
+									isTruncateUsername={isMobile || false}
 									disableTooltip
+									passedUsername={userProfile?.username}
 								/>
 								<span
 									className='flex cursor-pointer items-center p-1'

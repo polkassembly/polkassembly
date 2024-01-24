@@ -4,10 +4,10 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Divider, Spin } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
-
 import { MessageType } from '~src/auth/types';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { usePostDataContext } from '~src/context';
@@ -38,8 +38,9 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id } = useUserDetailsSelector();
 	const [totalVotes, setTotalVotes] = useState(0);
-
+	const { resolvedTheme: theme } = useTheme();
 	const [optionMap, setOptionMap] = useState<any>({});
+	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 
 	useEffect(() => {
 		const optionMap: any = {};
@@ -141,7 +142,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 			<div className='mb-6 flex items-center'>
 				<h3 className='dashboard-heading mb-0'>
 					<span className='mr-1 text-navBlue'>Poll:</span>
-					{question}?
+					<span className='dark:text-blue-dark-high'>{question}? </span>
 				</h3>
 				<HelperTooltip
 					className='ml-2'
@@ -161,6 +162,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 					>
 						<div>{option}</div>
 						<ProgressBar
+							trailColor={trailColor}
 							type='line'
 							strokeWidth={11}
 							percent={totalVotes && Math.round(((optionMap[option] || 0) * 100) / totalVotes)}
@@ -173,7 +175,7 @@ const OptionPoll: FC<IOptionPollProps> = ({ className, optionPollId, question, o
 			</Spin>
 
 			<div className='mt-6 text-right font-medium text-sidebarBlue'>
-				<span>
+				<span className='dark:text-blue-dark-high'>
 					{totalVotes} {totalVotes > 1 ? 'votes' : 'vote'}
 				</span>
 

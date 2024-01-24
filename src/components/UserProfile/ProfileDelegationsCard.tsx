@@ -9,7 +9,7 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext } from '~src/context';
-import { ETrackDelegationStatus } from '~src/types';
+import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -19,14 +19,13 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import styled from 'styled-components';
 import { formatBalance } from '@polkadot/util';
 import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
-import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 
 const { Panel } = Collapse;
 
@@ -36,9 +35,42 @@ interface Props {
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 }
-interface IDelegates extends ITrackDelegation {
-	expand?: boolean;
+interface IDelegates {
+	[index: string]: {
+		delegations: IDelegation[];
+		expand: boolean;
+		total: number;
+		capital: number;
+		votingPower: number;
+	};
 }
+
+const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus) => {
+	const dataObj: any = {};
+	data.map((delegation) => {
+		delegation?.delegations.map((delegate) => {
+			const val = type === ETrackDelegationStatus.RECEIVED_DELEGATION ? delegate?.from : delegate?.to;
+			if (dataObj[val] === undefined) {
+				dataObj[val] = {
+					capital: Number(delegate?.balance),
+					delegations: [delegate],
+					expand: false,
+					total: 1,
+					votingPower: Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
+				};
+			} else {
+				dataObj[val] = {
+					...dataObj[val],
+					capital: dataObj[val].capital + Number(delegate?.balance),
+					delegations: [...dataObj[val].delegations, delegate],
+					total: dataObj[val]?.total + 1,
+					votingPower: dataObj[val].votingPower + Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
+				};
+			}
+		});
+	});
+	return dataObj;
+};
 
 const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -47,8 +79,8 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	const [loading, setLoading] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { addresses } = userProfile;
-	const [receiveDelegations, setReceiveDelegations] = useState<IDelegates[]>([]);
-	const [delegatedDelegations, setDelegatedDelegations] = useState<IDelegates[]>([]);
+	const [receiveDelegations, setReceiveDelegations] = useState<IDelegates>();
+	const [delegatedDelegations, setDelegatedDelegations] = useState<IDelegates>();
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
@@ -97,15 +129,14 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 
 	const getData = async () => {
 		if (!api || !apiReady || !checkedAddressList.length) return;
-		console.log('gere');
 
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IDelegates[]>('api/v1/delegations', {
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			addresses: checkedAddressList || []
 		});
 		if (data) {
-			const received: IDelegates[] = [];
-			const delegated: IDelegates[] = [];
+			const received: ITrackDelegation[] = [];
+			const delegated: ITrackDelegation[] = [];
 
 			data.map((item) => {
 				if (item.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
@@ -114,32 +145,23 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 					delegated.push(item);
 				}
 			});
-			setReceiveDelegations(received);
-			console.log(
-				received,
-				delegated,
-				collapseItems.map((item) => {
-					if (item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
-						return { ...item, data: received };
-					}
-					return {
-						...item,
-						data: delegated
-					};
-				})
-			);
+			const uniqueReceived = handleUniqueDelegations(received, ETrackDelegationStatus.RECEIVED_DELEGATION);
+			const uniqueDelegated = handleUniqueDelegations(delegated, ETrackDelegationStatus.DELEGATED);
+
+			setReceiveDelegations(uniqueReceived);
+
 			setCollapseItems(
 				collapseItems.map((item) => {
 					if (item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION) {
-						return { ...item, data: received };
+						return { ...item, data: uniqueReceived };
 					}
 					return {
 						...item,
-						data: delegated
+						data: uniqueDelegated
 					};
 				})
 			);
-			setDelegatedDelegations(delegated);
+			setDelegatedDelegations(uniqueDelegated);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -151,14 +173,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, addresses, checkedAddressList, userProfile, network]);
 
-	const handleExpand = (index: number, type: ETrackDelegationStatus) => {
-		const newData = (type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations).map((item, idx) => {
-			if (index === idx) {
-				return { ...item, expand: !item?.expand };
+	const handleExpand = (address: string, type: ETrackDelegationStatus) => {
+		const newData = type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations;
+
+		if (type === ETrackDelegationStatus.DELEGATED) {
+			setDelegatedDelegations({ ...(delegatedDelegations as any), [address]: { ...newData, expand: !newData?.expand } });
+		} else {
+			setReceiveDelegations({ ...(receiveDelegations as any), [address]: { ...newData, expand: !newData?.expand } });
+		}
+
+		const updatedData: any = collapseItems.map((item) => {
+			if (item.status === type) {
+				return { ...item, data: { ...item?.data, [address]: { ...(item?.data?.[address] || {}), expand: !(item?.data?.[address] || {})?.expand || false } } };
 			}
 			return item;
 		});
-		type === ETrackDelegationStatus.DELEGATED ? setDelegatedDelegations(newData) : setReceiveDelegations(newData);
+		setCollapseItems(updatedData);
 	};
 	return (
 		<Spin spinning={loading}>
@@ -178,10 +208,9 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 						/>
 						Delegations
 					</span>
-					{/* TODO delegate button onClick */}
 					{userProfile?.user_id !== loginId && !!(username || '').length && (
 						<CustomButton
-							className='delegation-buttons border-none'
+							className='delegation-buttons border-none shadow-none'
 							variant='default'
 							buttonsize='xs'
 							onClick={() => setOpenDelegateModal(true)}
@@ -216,12 +245,12 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 				)}
 				{/*TODO delegation bio */}
 				{/* <div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
-					<span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
-					<span className='font-normal'>
-						Maecenas eget ligula vitae enim posuere volutpat. Pellentesque sed tellus pretium, pellentesque risus vitae, convallis dui. Pellentesque sed tellus pretium, Vestibulum
-						nec leo at dui euismod lacinia non quis risus. Vivamus lobortis felis lectus, et consequat lacus dapibus in.
-					</span>
-				</div> */}
+          <span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
+          <span className='font-normal'>
+            Maecenas eget ligula vitae enim posuere volutpat. Pellentesque sed tellus pretium, pellentesque risus vitae, convallis dui. Pellentesque sed tellus pretium, Vestibulum
+            nec leo at dui euismod lacinia non quis risus. Vivamus lobortis felis lectus, et consequat lacus dapibus in.
+          </span>
+        </div> */}
 				<div className='flex flex-col gap-4'>
 					{collapseItems?.map((item, index) => (
 						<Collapse
@@ -236,7 +265,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 									</div>
 								);
 							}}
-							collapsible={!item?.data.length ? 'disabled' : 'header'}
+							collapsible={!Object.keys(item?.data || {})?.length ? 'disabled' : 'header'}
 						>
 							<Panel
 								header={
@@ -249,107 +278,135 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 										/>
 										<div className='mt-0.5 flex flex-col justify-center gap-0 text-xs font-semibold tracking-wide'>
 											<span className='text-lightBlue dark:text-blue-dark-medium'>{item?.label}</span>
-											<span className='text-base text-bodyBlue dark:text-blue-dark-high'>{item?.data?.length}</span>
+											<span className='text-base text-bodyBlue dark:text-blue-dark-high'>{Object.keys(item?.data || {}).length || 0}</span>
 										</div>
 									</div>
 								}
 								key={index}
 							>
-								<div className='-mx-3 -my-3 flex flex-col text-bodyBlue'>
-									{item?.data?.map((delegation, index) => (
-										<div key={index}>
-											<div
-												className={`flex justify-between border-0 border-y-[1px] border-solid border-[#D2D8E0] px-3 py-4 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${
-													(delegation?.expand || index === item?.data?.length - 1) && 'border-b-0 border-t-[1px]'
-												}`}
-												onClick={() => {
-													if (!item?.data.length) return;
-													handleExpand(index, item?.status);
-												}}
-											>
-												<span>#{index + 1}</span>
-												<span className='w-[50%]'>
+								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
+									<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+										<span className='flex items-center justify-center gap-1'>
+											index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+										</span>
+										<span className='flex w-[40%] items-center justify-center gap-1'>
+											{item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Delegated By' : 'Delegate To'}{' '}
+											<ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+										</span>
+										<span className='flex items-center justify-center gap-1'>
+											Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+										</span>
+										<span className='w-[10%]' />
+									</div>
+									{!!item?.data &&
+										Object.entries(item?.data)?.map(([address, value], idx) => {
+											return (
+												<div
+													key={address}
+													onClick={() => handleExpand(address, item?.status)}
+												>
 													<div
-														className='flex justify-between'
-														key={delegation?.delegations?.[0]?.track}
+														className={`flex justify-between border-0 border-y-[1px] border-solid border-[#D2D8E0] px-3 py-4 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${
+															(value?.expand || idx === value?.delegations.length - 1) && 'border-b-0 border-t-[1px]'
+														}`}
+														onClick={() => {
+															if (!value?.delegations.length) return;
+															handleExpand(address, item?.status);
+														}}
 													>
-														<Address
-															address={item?.status === ETrackDelegationStatus.DELEGATED ? delegation?.delegations?.[0]?.to : delegation?.delegations?.[0]?.from}
-															displayInline
-															disableTooltip
-															usernameMaxLength={30}
-														/>
+														<span>#{idx + 1}</span>
+														<span className='w-[50%]'>
+															<div
+																className='flex justify-between'
+																key={address}
+															>
+																<Address
+																	address={address}
+																	displayInline
+																	disableTooltip
+																	usernameMaxLength={30}
+																/>
+																<span>
+																	{formatedBalance(String(value.votingPower), unit, 2)} {unit}
+																</span>
+															</div>
+														</span>
 														<span>
-															{formatedBalance(delegation?.delegations?.[0]?.balance.toString(), unit, 2)} {unit}
+															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
 													</div>
-												</span>
-												<span>
-													<DownArrowIcon className={`cursor-pointer text-2xl ${delegation?.expand && 'pink-color rotate-180'}`} />
-												</span>
-											</div>
-											{delegation?.expand && (
-												<div className='border-0 border-t-[1px] border-dashed border-[#D2D8E0] px-3 pb-3 dark:border-separatorDark'>
-													<div className='justify-start'>
-														<div className='mt-2 flex flex-col gap-2'>
-															<div className='flex justify-between'>
-																<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																	<Image
-																		src='/assets/profile/delegate.svg'
-																		width={16}
-																		height={16}
-																		alt=''
-																	/>
-																	{item?.status === ETrackDelegationStatus.DELEGATED ? 'Delegated By' : 'Delegate To'}
-																</span>
-																<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-																	<Address
-																		address={item?.status === ETrackDelegationStatus.DELEGATED ? delegation?.delegations?.[0]?.from : delegation?.delegations?.[0]?.to}
-																		disableTooltip
-																		iconSize={16}
-																		disableHeader
-																		addressClassName='dark:text-blue-dark-high text-xs font-semibold'
-																		addressWithVerifiedTick
-																		addressMaxLength={6}
-																	/>
-																</span>
-															</div>
-															<div className='flex justify-between'>
-																<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																	<VoterIcon /> Votes
-																</span>
-																<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-																	{formatedBalance((delegation?.delegations?.[0]?.balance?.toString() || '0')?.toString(), unit, 2)} {unit}
-																</span>
-															</div>
-															<div className='flex justify-between'>
-																<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																	<ConvictionIcon /> Conviction
-																</span>
-																<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{delegation?.delegations?.[0]?.lockPeriod || '0.1'}x</span>
-															</div>
-															<div className='flex justify-between'>
-																<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-																	<CapitalIcon /> Capital
-																</span>
-																<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-																	{formatedBalance((delegation?.delegations?.[0]?.balance || '0')?.toString(), unit, 2)} {unit}
-																</span>
-															</div>
-															<div className='flex justify-between'>
-																<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>Track</span>
-																<span className='text-sm font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>
-																	{getTrackNameFromId(network, delegation?.delegations?.[0]?.track)
-																		.split('_')
-																		.join(' ')}
-																</span>
+													{value?.expand && (
+														<div className='border-0 border-t-[1px] border-dashed border-[#D2D8E0] px-3 pb-3 dark:border-separatorDark'>
+															<div className='justify-start'>
+																<div className='mt-2 flex flex-col gap-2'>
+																	<div className='flex justify-between'>
+																		<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-icon-dark-inactive'>
+																			<Image
+																				src='/assets/profile/delegate.svg'
+																				width={16}
+																				height={16}
+																				alt=''
+																			/>
+																			{item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Delegated By' : 'Delegate To'}
+																		</span>
+																		<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+																			<Address
+																				address={address}
+																				disableTooltip
+																				iconSize={16}
+																				addressClassName='dark:text-blue-dark-high text-xs font-semibold'
+																				addressWithVerifiedTick
+																				addressMaxLength={6}
+																			/>
+																		</span>
+																	</div>
+																	<div className='flex justify-between'>
+																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			<VoterIcon /> Votes
+																		</span>
+																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
+																			{value?.delegations?.length === 1 ? `${formatedBalance(String(value?.votingPower), unit, 2)} ${unit}` : 'Multiple'}
+																		</span>
+																	</div>
+																	<div className='flex justify-between'>
+																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			<CapitalIcon /> Capital
+																		</span>
+																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
+																			{value?.delegations?.length === 1 ? `${formatedBalance(String(value?.capital), unit, 2)} ${unit}` : 'Multiple'}
+																		</span>
+																	</div>
+																	<div className='flex justify-between'>
+																		<span className='flex items-start justify-start gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}
+																		</span>
+																		<div className='flex flex-col gap-1 text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high'>
+																			{value?.delegations.map((delegate) => (
+																				<div
+																					key={delegate?.track}
+																					className='flex items-center justify-end'
+																				>
+																					{getTrackNameFromId(network, delegate?.track)
+																						.split('_')
+																						.join(' ')}{' '}
+																					{value?.delegations.length !== 1 &&
+																						`(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
+																							String(delegate?.balance),
+																							unit,
+																							2
+																						)} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`}
+																				</div>
+																			))}
+																		</div>
+																	</div>
+																	<div className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'> VP: Voting Power, Ca: Capital, Co: Conviction</div>
+																</div>
 															</div>
 														</div>
-													</div>
+													)}
 												</div>
-											)}
-										</div>
-									))}
+											);
+										})}
 								</div>
 							</Panel>
 						</Collapse>

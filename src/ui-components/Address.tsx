@@ -379,16 +379,31 @@ const Address = (props: Props) => {
 										onClick={(e) => handleClick(e)}
 									>
 										{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
-										{addressWithVerifiedTick && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
+										{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
+										{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+										{addressWithVerifiedTick && (
+											<div>
+												{!kiltName && !isGood && (
+													<Image
+														src={'/assets/profile/identity-caution.svg'}
+														height={20}
+														width={20}
+														alt=''
+														className='ml-1'
+													/>
+												)}
+											</div>
+										)}
 									</div>
 								</div>
 							) : (
 								<div className={`${!addressClassName ? 'text-xs dark:text-blue-dark-medium' : addressClassName} flex gap-0.5 font-semibold`}>
 									{kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr}
 									{showKiltAddress && !!kiltName && <div className='font-normal text-lightBlue'>({shortenAddress(encodedAddr, addressMaxLength)})</div>}
+									{addressWithVerifiedTick && (!!kiltName || (!!identity && !!isGood)) && <div>{<VerifiedIcon className='ml-2 scale-125' />}</div>}
 									{addressWithVerifiedTick && (
 										<div>
-											{(!!kiltName || !isGood) && (
+											{!kiltName && !isGood && (
 												<Image
 													src={'/assets/profile/identity-caution.svg'}
 													height={20}
@@ -414,7 +429,7 @@ const Address = (props: Props) => {
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[85px] truncate'}`}>{addressPrefix}</span>}
+												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
 											</div>
 										</Space>
 									</div>

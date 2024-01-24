@@ -74,6 +74,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 			setTipsData([]);
 			return;
 		}
+		setTipsData([]);
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITip[]>('api/v1/tipping/get-user-tips', {
 			addresses: selectedAddresses || [],
@@ -136,7 +137,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 					<div className={classNames(theme, 'flex items-center gap-2')}>
 						{userProfile?.user_id !== loginId && !!username?.length && (
 							<CustomButton
-								className='delegation-buttons border-none'
+								className='delegation-buttons border-none shadow-none'
 								variant='default'
 								buttonsize='xs'
 								onClick={() => {

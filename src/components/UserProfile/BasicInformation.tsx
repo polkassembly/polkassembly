@@ -83,7 +83,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						width={900}
 						className='h-full w-full rounded-xl object-cover'
 						height={150}
-						alt=''
+						alt='loading ...'
 					/>
 				</div>
 				<div className='mt-3 flex h-14 justify-between'>
@@ -105,7 +105,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 					<div
@@ -126,7 +126,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 					<div
@@ -147,7 +147,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 				</div>

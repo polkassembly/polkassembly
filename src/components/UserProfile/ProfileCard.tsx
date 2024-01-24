@@ -24,6 +24,7 @@ interface Props {
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { image, created_at: profileSince, social_links: socials, username } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	const handleCopyAddress = () => {
 		messageApi.open({
@@ -59,7 +60,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									isProfileView
 									className='flex gap-1'
 									usernameClassName='text-2xl'
-									isTruncateUsername={false}
+									isTruncateUsername={isMobile}
 									disableTooltip
 								/>
 								<span

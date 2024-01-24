@@ -122,7 +122,7 @@ import Comments from '~assets/icons/chat-icon.svg';
 import RiotSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
-import WebSVG from '~assets/icons/web-icon.svg';
+import WebSVG from '~assets/profile/web-icon.svg';
 import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
 import PgpSVG from '~assets/icons/pgp-icon.svg';
 import RedirectSVG from '~assets/icons/redirect-icon.svg';
@@ -145,6 +145,7 @@ import VotesSVG from '~assets/profile/profile-votes.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
+import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1087,6 +1088,12 @@ export const SubscanIcon = (props: Partial<CustomIconComponentProps>) => (
 export const ProfileOverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ProfileOverviewSVG}
+		{...props}
+	/>
+);
+export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ExpandSVG}
 		{...props}
 	/>
 );

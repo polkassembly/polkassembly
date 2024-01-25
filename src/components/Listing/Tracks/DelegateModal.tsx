@@ -125,7 +125,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
 		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
-		if (!checkedTrack && !checkedTracksList) return;
+		if (!checkedTrack?.length && !checkedTracksList.length) return;
 
 		setLoading(true);
 		const checkedArr =
@@ -219,12 +219,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((!checkedTrack && !checkedList) || !getEncodedAddress(target, network)) return;
+		if ((!checkedTrack?.length && !checkedList?.length) || !getEncodedAddress(target, network)) return;
 		setLoading(true);
 
 		const checkedArr =
 			checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList] : [...checkedList];
 		setCheckedTrackArr(checkedArr);
+		if (checkedArr?.length === 0) return;
 
 		const txArr = checkedArr?.map((trackName) =>
 			api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString())

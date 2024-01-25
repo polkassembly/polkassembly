@@ -6,7 +6,7 @@ import { CheckCircleFilled, DownOutlined, LoadingOutlined, UpOutlined, WarningFi
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
-import { Divider, Form, Input, Modal, Spin } from 'antd';
+import { Divider, Form, Modal, Spin, Tooltip } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 //TODO: import { useAddPolkassemblyProposalMutation } from 'src/generated/graphql';
@@ -31,7 +31,7 @@ import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import Tooltip from '~src/basic-components/Tooltip';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -405,7 +405,7 @@ const TreasuryProposalFormButton = ({
 												value={submitWithAccount}
 												className={`${
 													submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
-												} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+												}  dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 												onChange={(e) => setSubmitWithAccount(e.target.value)}
 												placeholder='Account Address'
 											/>

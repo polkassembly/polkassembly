@@ -186,7 +186,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							disabled={loading}
 							onClick={() => setOpen(false)}
 						/>
-						,
 						<CustomButton
 							htmlType='submit'
 							key='submit'

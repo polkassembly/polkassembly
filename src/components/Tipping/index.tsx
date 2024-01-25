@@ -212,7 +212,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		}
 	};
 	const handleSetTip = async (txHash: any) => {
-		const { error } = await nextApiClientFetch<MessageType>('/api/v1/Tipping', {
+		const { error } = await nextApiClientFetch<MessageType>('/api/v1/tipping', {
 			amount: Number(tipInput) || 0,
 			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,

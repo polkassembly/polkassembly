@@ -154,11 +154,12 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 
 		(async () => {
 			try {
-				const res = await fetch(profileDetails?.cover_image || '');
-				setIsValidCoverImage(res.ok || false);
+				const obj = new Image();
+				obj.src = profileDetails?.cover_image || '';
+				obj.onload = () => setIsValidCoverImage(true);
+				obj.onerror = () => setIsValidCoverImage(false);
 			} catch (err) {
 				console.log(err);
-				setIsValidCoverImage(false);
 			}
 		})();
 	}, [profileDetails]);

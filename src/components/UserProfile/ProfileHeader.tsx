@@ -27,6 +27,7 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	profileDetails: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+	isValidCoverImage: boolean;
 }
 
 const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetails, addressWithIdentity }: Props) => {
@@ -60,8 +61,11 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 						<div className='flex gap-3'>
 							{!TippingUnavailableNetworks.includes(network) && (
 								<CustomButton
+									variant='primary'
 									shape='circle'
-									className={`rounded-full border-[1px]  border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+										disableState && 'cursor-not-allowed opacity-50'
+									}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenTipModal(true);
@@ -70,7 +74,6 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 									disabled={!id}
 								>
 									<div className='flex items-center gap-1.5'>
-										{' '}
 										<DollarIcon className='text-lg' />
 										<span className='max-md:hidden'>Tip User</span>
 									</div>
@@ -78,8 +81,11 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 							)}
 							{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
 								<CustomButton
+									variant='primary'
 									shape='circle'
-									className={`rounded-full border-[1px] border-white px-4 py-2.5 text-white max-md:p-3 ${disableState && 'opacity-50'}`}
+									className={`dark:bg-pink-primary rounded-full border-[1px] border-pink_primary bg-pink_primary px-4 py-2.5 text-white max-md:p-3 ${
+										disableState && 'cursor-not-allowed opacity-50'
+									}`}
 									onClick={() => {
 										if (disableState) return;
 										setOpenDelegateModal(true);
@@ -141,6 +147,10 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 
 export default styled(ProfileHeader)`
 	.profile-header {
-		background-image: url('/assets/profile/profile-header.svg') !important;
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center;
+		background-image: url(${(props) =>
+			props?.isValidCoverImage && !!props?.profileDetails?.cover_image?.length ? props?.profileDetails?.cover_image : '/assets/profile/cover-image1.svg'}) !important;
 	}
 `;

@@ -39,7 +39,8 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 	const { username } = useUserDetailsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-	const { bio, badges } = userProfile;
+	const [showFullBio, setShowFullBio] = useState<boolean>(false);
+	const { bio, badges } = profileDetails;
 
 	return (
 		<div className={classNames(className, 'mt-6')}>
@@ -61,7 +62,7 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
 									onClick={() => setOpenEditModal(true)}
 								>
-									{bio?.length ? bio : username === userProfile.username ? 'Click here to add bio' : ''}
+									{bio?.length ? 'hjghvghvhhv ghfv tgfcvrtdxccccccccccccccccccccccccccccccccccccccccccc' : username === userProfile.username ? 'Click here to add bio' : ''}
 								</span>
 								{!!badges?.length && (
 									<span>
@@ -121,11 +122,19 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 									About
 								</span>
 								<span
-									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
+									className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}
 									onClick={() => setOpenEditModal(true)}
 								>
-									{bio?.length ? bio : username === userProfile.username ? 'Click here to add bio' : ''}
+									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
 								</span>
+								{(bio?.length || 0) > 300 && (
+									<span
+										className='-mt-4 cursor-pointer text-xs text-pink_primary'
+										onClick={() => setShowFullBio(!showFullBio)}
+									>
+										{showFullBio ? 'Show less' : 'See More'}
+									</span>
+								)}
 								{!!badges?.length && (
 									<span>
 										{badges.map((badge) => (

@@ -22,8 +22,14 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 	useEffect(() => {
 		if (!regex.test(src)) return;
 		(async () => {
-			const res = await fetch(src);
-			setIsValid(res.ok);
+			try {
+				const obj = new Image();
+				obj.src = src || '';
+				obj.onload = () => setIsValid(true);
+				obj.onerror = () => setIsValid(false);
+			} catch (err) {
+				console.log(err);
+			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

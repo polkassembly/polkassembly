@@ -70,6 +70,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const dispatch = useDispatch();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [totalUnlockableBalance, setTotalUnlockableBalance] = useState<BN>(ZERO_BN);
+	const [unlockedBalance, setUnlockedBalance] = useState<BN>(ZERO_BN);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>(addresses[0]);
@@ -182,6 +183,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			}
 		});
 		setTotalUnlockableBalance(balance);
+		setUnlockedBalance(balance);
 	};
 
 	const handleLockUnlockData = async (data: IUnlockTokenskData[] | null, currentBlockNumber: BN) => {
@@ -340,7 +342,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	}, [address, api, apiReady, isReferesh]);
 	return (
 		<>
-			<div className={`boder-solid flex items-start justify-start ${className}`}>
+			<div className={`flex items-start justify-start ${className}`}>
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
@@ -431,7 +433,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={openSuccessState}
 				setOpen={setOpenSuccessState}
 				lockedBalance={lockedBalance}
-				totalUnlockableBalance={totalUnlockableBalance}
+				unlockedBalance={unlockedBalance}
 			/>
 		</>
 	);

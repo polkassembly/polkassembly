@@ -633,7 +633,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-segmented-item-selected > .ant-segmented-item-label{
-  background-color: #434343;
+  background-color: #0D0D0D;
   border-radius: 5px;
 }
 

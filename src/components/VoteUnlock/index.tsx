@@ -344,7 +344,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	}, [address, api, apiReady, isReferesh]);
 	return (
 		<>
-			<div className={`flex items-start justify-start border-solid ${className}`}>
+			<div className={`flex items-start justify-start ${className}`}>
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
@@ -435,7 +435,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={openSuccessState}
 				setOpen={setOpenSuccessState}
 				lockedBalance={lockedBalance}
-				totalUnlockableBalance={totalUnlockableBalance}
 				unlockedBalance={unlockedBalance}
 			/>
 		</>

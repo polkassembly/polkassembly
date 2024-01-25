@@ -21,11 +21,12 @@ interface Props {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
 	totalUnlockableBalance: BN;
+	unlockedBalance: BN;
 	lockedBalance: BN;
 }
 
 const ZERO_BN = new BN(0);
-const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, totalUnlockableBalance }: Props) => {
+const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, totalUnlockableBalance, unlockedBalance }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const { data } = useUserUnlockTokensDataSelector();
@@ -40,7 +41,7 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
+	console.log(formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2));
 	return (
 		<Modal
 			open={open}
@@ -61,12 +62,12 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 				</div>
 				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>Tokens unlocked successfully</div>
 				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary dark:text-blue-dark-helper'>
-					{formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2)} {unit}
+					{formatedBalance((unlockedBalance.toString() || '0').toString(), unit, 2)} {unit}
 				</div>
-				{!totalUnlockableBalance.eq(ZERO_BN) || totalLockData.length !== 0 || totalOngoingData.length !== 0 ? (
+				{!unlockedBalance.eq(ZERO_BN) || totalLockData.length !== 0 || totalOngoingData.length !== 0 ? (
 					<LockVotesList
 						lockedBalance={lockedBalance}
-						totalUnlockableBalance={totalUnlockableBalance}
+						totalUnlockableBalance={unlockedBalance}
 						showBalances={false}
 						votesCollapsed
 					/>

@@ -70,6 +70,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const dispatch = useDispatch();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [totalUnlockableBalance, setTotalUnlockableBalance] = useState<BN>(ZERO_BN);
+	const [unlockedBalance, setUnlockedBalance] = useState<BN>(ZERO_BN);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>(addresses[0]);
@@ -179,9 +180,11 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		totalUnlockableData.map((unlock) => {
 			if (unlock.total.gte(balance)) {
 				balance = unlock.total;
+				console.log('here', unlock.total, balance);
 			}
 		});
 		setTotalUnlockableBalance(balance);
+		setUnlockedBalance(balance);
 	};
 
 	const handleLockUnlockData = async (data: IUnlockTokenskData[] | null, currentBlockNumber: BN) => {
@@ -218,6 +221,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
+		console.log('hello', ZERO_BN);
 		setTotalUnlockableBalance(ZERO_BN);
 		setLoadingStatus({ isLoading: true, message: '' });
 		dispatch(
@@ -340,7 +344,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	}, [address, api, apiReady, isReferesh]);
 	return (
 		<>
-			<div className={`boder-solid flex items-start justify-start ${className}`}>
+			<div className={`flex items-start justify-start border-solid ${className}`}>
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
@@ -432,6 +436,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				setOpen={setOpenSuccessState}
 				lockedBalance={lockedBalance}
 				totalUnlockableBalance={totalUnlockableBalance}
+				unlockedBalance={unlockedBalance}
 			/>
 		</>
 	);

@@ -96,6 +96,8 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
 	]);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+
 	useEffect(() => {
 		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -300,7 +302,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							>
 								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
 									{!!Object.keys(item?.data || {}).length && (
-										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
 											<span className='flex items-center justify-center gap-1'>
 												index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
@@ -311,7 +313,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 											<span className='flex items-center justify-center gap-1'>
 												Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
-											<span className='w-[10%]' />
+											<span className='w-[10%] max-lg:w-[5%]' />
 										</div>
 									)}
 									{!!Object.keys(item?.data || {}).length &&
@@ -331,23 +333,23 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															handleExpand(address, item?.status);
 														}}
 													>
-														<span>#{idx + 1}</span>
-														<span className='w-[50%]'>
+														<span className='max-lg:w-[5%]'>#{idx + 1}</span>
+														<div className='w-[50%] px-4 max-lg:w-[60%]'>
 															<div
-																className='flex justify-between'
+																className='flex justify-between '
 																key={address}
 															>
 																<Address
 																	address={address}
 																	displayInline
 																	disableTooltip
-																	usernameMaxLength={30}
+																	usernameMaxLength={isMobile ? 5 : 30}
 																/>
-																<span>
+																<span className='text-sm'>
 																	{formatedBalance(String(value.votingPower), unit, 2)} {unit}
 																</span>
 															</div>
-														</span>
+														</div>
 														<span>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>

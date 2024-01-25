@@ -9,13 +9,14 @@ import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { Button, Skeleton, Tabs, TabsProps } from 'antd';
+import { Button, Skeleton, TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface Props {
 	className?: string;
@@ -23,10 +24,6 @@ interface Props {
 
 export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
-const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
-	loading: () => <Skeleton.Avatar active />,
-	ssr: false
-});
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
@@ -36,7 +33,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -56,9 +52,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
 		}
-		if (!userDetails.delegationDashboardAddress) {
-			isMobile ? setOpenModal(false) : setOpenModal(true);
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress, isMobile]);
 
@@ -67,7 +60,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			children: (
 				<>
 					{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
-
 					<BecomeDelegate />
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -133,6 +125,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{!isLoggedOut && (
 				<Tabs
+					theme={theme}
 					defaultActiveKey='2'
 					items={tabItems}
 					size='large'
@@ -140,17 +133,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				/>
 			)}
 
-			{!openLoginModal && !openSignupModal && !userDetails.loginWallet && (
-				<AddressConnectModal
-					localStorageWalletKeyName='delegationWallet'
-					localStorageAddressKeyName='delegationDashboardAddress'
-					open={openModal}
-					setOpen={setOpenModal}
-					walletAlertTitle='Delegation dashboard'
-				/>
-			)}
 			<LoginPopup
-				closable={false}
+				closable={true}
 				setSignupOpen={setOpenSignupModal}
 				modalOpen={openLoginModal}
 				setModalOpen={setOpenLoginModal}

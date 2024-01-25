@@ -180,7 +180,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		totalUnlockableData.map((unlock) => {
 			if (unlock.total.gte(balance)) {
 				balance = unlock.total;
-				console.log('here', unlock.total, balance);
 			}
 		});
 		setTotalUnlockableBalance(balance);
@@ -221,7 +220,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
-		console.log('hello', ZERO_BN);
 		setTotalUnlockableBalance(ZERO_BN);
 		setLoadingStatus({ isLoading: true, message: '' });
 		dispatch(

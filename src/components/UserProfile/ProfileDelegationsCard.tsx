@@ -414,13 +414,13 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																		</div>
 																		<div
 																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
-																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap gap-0.5 break-words' : 'flex flex-col gap-1'
+																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
 																			}`}
 																		>
 																			{value?.delegations.map((delegate, trackIndex) => (
-																				<div
+																				<span
 																					key={delegate?.track}
-																					className='flex items-center justify-end'
+																					className='flex items-center'
 																				>
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
@@ -435,7 +435,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																						? ', '
 																						: ''}
 																					{}
-																				</div>
+																				</span>
 																			))}
 																		</div>
 																	</div>

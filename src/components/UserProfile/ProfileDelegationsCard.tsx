@@ -407,11 +407,15 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<div className='flex flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<span>Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}</span>
+																		<div className='flex w-[300px] flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}
 																		</div>
-																		<div className={'flex flex-col gap-1 text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high'}>
-																			{value?.delegations.map((delegate) => (
+																		<div
+																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
+																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap gap-0.5 break-words' : 'flex flex-col gap-1'
+																			}`}
+																		>
+																			{value?.delegations.map((delegate, trackIndex) => (
 																				<div
 																					key={delegate?.track}
 																					className='flex items-center justify-end'
@@ -419,13 +423,16 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
 																						.join(' ')}{' '}
-																					{value?.delegations.length !== 1 &&
-																						!getIsSingleDelegation(value?.delegations) &&
-																						`(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
-																							String(delegate?.balance),
-																							unit,
-																							2
-																						)} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`}
+																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
+																						? `(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
+																								String(delegate?.balance),
+																								unit,
+																								2
+																						  )} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`
+																						: trackIndex !== value.delegations.length - 1
+																						? ', '
+																						: ''}
+																					{}
 																				</div>
 																			))}
 																		</div>

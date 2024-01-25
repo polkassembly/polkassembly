@@ -333,24 +333,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															handleExpand(address, item?.status);
 														}}
 													>
-														<span className='max-lg:w-[5%]'>#{idx + 1}</span>
-														<div className='w-[50%] px-4 max-lg:w-[60%]'>
-															<div
-																className='flex justify-between '
-																key={address}
-															>
-																<Address
-																	address={address}
-																	displayInline
-																	disableTooltip
-																	usernameMaxLength={isMobile ? 5 : 30}
-																/>
-																<span className='text-sm'>
-																	{formatedBalance(String(value.votingPower), unit, 2)} {unit}
-																</span>
-															</div>
+														<span className='w-[15%] max-lg:w-[5%]'>#{idx + 1}</span>
+														<div
+															className='flex w-[40%] items-center justify-center max-lg:w-[60%]'
+															key={address}
+														>
+															<Address
+																address={address}
+																displayInline
+																disableTooltip
+																usernameMaxLength={isMobile ? 5 : 30}
+															/>
 														</div>
-														<span>
+														<div className='flex w-[50%] items-center justify-center text-sm'>
+															{formatedBalance(String(value.votingPower), unit, 2)} {unit}
+														</div>
+														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
 													</div>
@@ -382,7 +380,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Votes
+																			<VoterIcon /> Voting Power
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)

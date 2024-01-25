@@ -206,6 +206,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									className='absolute right-4 top-[65px] z-10 cursor-pointer md:right-[30px]'
 									onClick={() => {
 										setQuotedText('');
+										onChange('');
 									}}
 								>
 									<CloseIcon />
@@ -224,7 +225,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 								}}
 								textareaName={name}
-								value={converter.makeHtml(value || quotedText ? quoteBox : '')}
+								value={converter.makeHtml(value || quoteBox || '')}
 								ref={ref}
 								disabled={isDisabled}
 								onEditorChange={(content) => {

@@ -53,6 +53,7 @@ import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
 import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
+import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 
 import * as types from '../types';
 
@@ -95,6 +96,7 @@ export const network = {
 	PENDULUM: 'pendulum',
 	PIONEER: 'pioneer',
 	POLKADEX: 'polkadex',
+	POLIMEC: 'polimec',
 	ROBONOMICS: 'robonomics',
 	SNOW: 'snow',
 	SHIBUYA: 'shibuya',
@@ -160,6 +162,7 @@ export const tokenSymbol = {
 	PICA: 'PICA',
 	ROC: 'ROC',
 	POLYX: 'POLYX',
+	PLMC: 'PLMC',
 	WND: 'WND',
 	XRT: 'XRT',
 	UNIT: 'UNIT',
@@ -481,6 +484,23 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://pioneer.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: []
+	},
+	[network.POLIMEC]: {
+		blockTime: 12000,
+		category: 'solo',
+		chainId: 0,
+		logo: polimecLogo,
+		rpcEndpoint: 'wss://rpc.polimec.org',
+		ss58Format: 41,
+		subsquidUrl: '',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.PLMC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://polimec.api.subscan.io',
 		gTag: null,
 		rpcEndpoints: []
 	},

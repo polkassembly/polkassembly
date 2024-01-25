@@ -22,8 +22,13 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 	useEffect(() => {
 		if (!regex.test(src)) return;
 		(async () => {
-			const res = await fetch(src);
-			setIsValid(res.ok);
+			try {
+				const res = await fetch(src);
+				setIsValid(res.ok);
+			} catch (err) {
+				setIsValid(false);
+				console.log(err);
+			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -39,6 +44,7 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 					<ImageIcon
 						src='/assets/icons/dashboard-profile.svg'
 						alt='dashboard profile icon'
+						imgClassName='h-full w-full'
 					/>
 				</span>
 			}

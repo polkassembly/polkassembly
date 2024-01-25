@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Alert, Divider, Form, FormInstance, Input, Spin } from 'antd';
+import { Alert, Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon, WebIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +25,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
+import Input from '~src/basic-components/Input';
 
 const ZERO_BN = new BN(0);
 
@@ -53,7 +54,7 @@ interface ValueState {
 	okAll: boolean;
 }
 
-function checkValue(
+export function checkValue(
 	hasValue: boolean,
 	value: string | null | undefined,
 	minLength: number,

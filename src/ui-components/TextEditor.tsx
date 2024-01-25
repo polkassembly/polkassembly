@@ -144,9 +144,9 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	}, [quotedText]);
 
 	const quoteBox = quotedText
-		? `<input disabled style="width: 96%; background: ${theme === 'dark' ? '' : '#f3f3f3'}; border-left: 2px solid #E5007A; padding: 10px; position: relative; color: ${
-				theme === 'dark' ? 'white' : 'black'
-		  }; border-radius: 5px;" value="
+		? `<input disabled style="width: 96%; border: none; outline: none; background: ${
+				theme === 'dark' ? '#141416' : '#F5F6F8'
+		  }; border-left: 2px solid #E5007A; padding: 10px; position: relative; color: ${theme === 'dark' ? 'white' : 'black'}; border-radius: 5px;" value="
 	${quotedText}">
 	</input><br><br>`
 		: '';

@@ -16,7 +16,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import styled from 'styled-components';
 import VoterRow from './VoterRow';
-import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import ExpandIcon from '~assets/icons/expand-small-icon2.svg';
 // import ChartIcon from '~assets/chart-icon.svg';
 // import ThresholdGraph from './ThresholdGraph';
 import DelegationVotersList from './DelegateVoteList';

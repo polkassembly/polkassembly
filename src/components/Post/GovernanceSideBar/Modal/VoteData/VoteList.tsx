@@ -308,7 +308,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 
-									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-high'>
+									<div className='flex w-[120px] items-center justify-between space-x-1 text-lightBlue dark:text-blue-dark-high'>
 										<span
 											className='flex cursor-pointer'
 											onClick={() => {
@@ -319,9 +319,9 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											}}
 										>
 											Voting Power
-											{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}
 										</span>
-										<span>
+										<span>{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}</span>
+										<span className='mr-3'>
 											<Tooltip
 												color='#E5007A'
 												title='Vote Power for delegated votes is the self vote power + delegated vote power.'

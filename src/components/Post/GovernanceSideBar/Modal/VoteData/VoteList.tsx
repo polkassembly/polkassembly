@@ -319,8 +319,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											}}
 										>
 											Voting Power
+											{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}
 										</span>
-										<span>{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}</span>
 										<span className='mr-3'>
 											<Tooltip
 												color='#E5007A'

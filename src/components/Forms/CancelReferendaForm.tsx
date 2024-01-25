@@ -217,7 +217,7 @@ export default function CancelReferendaForm() {
 	}, [useUserDetailsSelector]);
 
 	return (
-		<div>
+		<div className='w-full'>
 			{availableBalance.lte(submissionDeposite) && (
 				<Alert
 					className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

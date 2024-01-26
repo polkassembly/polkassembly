@@ -223,11 +223,11 @@ const ReferendaActionModal = ({ referendaModal, className, openAddressLinkedModa
 					)}
 
 					{steps?.step === 1 && (
-						<div className='mt-4 flex items-center justify-center'>
+						<>
 							{referendaModal === 1 && <CreateReferendaForm />}
 							{referendaModal === 2 && <CancelReferendaForm />}
 							{referendaModal === 3 && <KillReferendaForm />}
-						</div>
+						</>
 					)}
 				</div>
 			</Modal>

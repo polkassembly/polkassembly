@@ -38,6 +38,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
+import { setConnectAddress } from '~src/redux/initialConnectAddress';
 
 interface Props {
 	className?: string;
@@ -275,6 +276,7 @@ const AddressConnectModal = ({
 		if (!address || !wallet || !accounts) return;
 		if (linkAddressNeeded && isUnlinkedAddress) {
 			handleAddressLink(address, wallet as Wallet);
+			dispatch(setConnectAddress(address));
 		} else {
 			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));

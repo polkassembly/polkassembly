@@ -429,7 +429,7 @@ export default function CreateReferendaForm() {
 	}, [useUserDetailsSelector]);
 
 	return (
-		<section className='w-[500px]'>
+		<section className='w-full'>
 			{availableBalance.lte(submissionDeposite) && (
 				<Alert
 					className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

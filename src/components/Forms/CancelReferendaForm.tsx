@@ -256,7 +256,6 @@ export default function CancelReferendaForm() {
 				form={form}
 				name={formName}
 				onFinish={handleSubmit}
-				style={{ maxWidth: 600 }}
 			>
 				<div className='mt-3 flex flex-col gap-1'>
 					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>

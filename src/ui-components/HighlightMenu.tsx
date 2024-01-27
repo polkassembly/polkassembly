@@ -7,16 +7,18 @@ import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
 import { useQuoteCommentContext } from '~src/context';
 
-const HighlightMenu = () => {
+interface IHiglightMenuProps {
+	markdownRef: React.RefObject<HTMLDivElement>;
+}
+
+const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
 	const menuRef = useRef<HTMLDivElement>(null);
-	const markdownRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
-		markdownRef.current = document.getElementById('markdown');
 		const markdown = markdownRef.current;
 
 		if (!markdown) return;
@@ -30,9 +32,10 @@ const HighlightMenu = () => {
 				const rect = range?.getBoundingClientRect();
 
 				if (rect) {
+					const markdownRect = markdown.getBoundingClientRect();
 					setMenuPosition({
-						left: rect.left + rect.width / 2 - 40,
-						top: rect.top - 180
+						left: rect.left - markdownRect.left + rect.width / 2 - 30,
+						top: rect.top - markdownRect.top + 165
 					});
 				}
 

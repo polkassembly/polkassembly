@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
 import { useQuoteCommentContext } from '~src/context';
+import { usePostDataContext } from '~src/context';
 
 interface IHiglightMenuProps {
 	markdownRef: React.RefObject<HTMLDivElement>;
@@ -13,6 +14,7 @@ interface IHiglightMenuProps {
 
 const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
+	const { postData } = usePostDataContext();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
@@ -62,7 +64,10 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	}, [markdownRef, selectedText]);
 
 	const shareSelection = (event: React.MouseEvent) => {
-		window.open(`https://twitter.com/intent/tweet?text=${selectedText}`, '_blank');
+		const twitterText = `${selectedText} -- ${postData.proposer} ${window.location.href}`;
+		const twitterLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
+
+		window.open(twitterLink, '_blank');
 		event.stopPropagation();
 		setSelectedText('');
 	};

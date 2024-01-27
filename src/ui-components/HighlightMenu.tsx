@@ -76,18 +76,18 @@ const HighlightMenu = () => {
 			ref={menuRef}
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
-			} flex flex-col gap-1 rounded-md bg-[#363636] p-2 text-xs text-white after:absolute after:left-[70%] after:top-[40px] after:-z-10 after:h-4 after:w-4 after:-translate-x-1/2 after:rotate-45 after:transform after:border-8 after:border-solid after:border-[#363636] after:content-['']`}
+			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-[#363636] p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-[#363636] after:border-l-transparent after:border-r-transparent after:content-['']`}
 			style={{ left: menuPosition.left, top: menuPosition.top - 10 }}
 		>
 			<div
-				className='flex h-4 cursor-pointer items-center gap-1'
+				className='flex h-4 cursor-pointer items-center justify-between gap-1'
 				onClick={handleQuote}
 			>
 				<QuoteIcon className='w-3' />
 				Quote
 			</div>
 			<div
-				className='flex h-4 cursor-pointer items-center gap-1'
+				className='flex h-4 cursor-pointer items-center justify-between gap-1'
 				onClick={shareSelection}
 			>
 				<TwitterIcon className='w-3 fill-white' />

@@ -9,7 +9,6 @@ import styled from 'styled-components';
 import remarkGfm from 'remark-gfm';
 import { useTheme } from 'next-themes';
 import HighlightMenu from './HighlightMenu';
-import { useRef } from 'react';
 
 interface Props {
 	className?: string;
@@ -195,11 +194,13 @@ const StyledMarkdown = styled(ReactMarkdown)`
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
-	const markdownRef = useRef<HTMLDivElement>(null);
 
 	return (
-		<div ref={markdownRef}>
-			<HighlightMenu markdownRef={markdownRef} />
+		<div
+			id='markdown'
+			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
+		>
+			<HighlightMenu />
 			<StyledMarkdown
 				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}

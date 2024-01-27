@@ -7,17 +7,16 @@ import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
 import { useQuoteCommentContext } from '~src/context';
 
-interface IHiglightMenuProps {
-	markdownRef: React.RefObject<HTMLDivElement>;
-}
-const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
+const HighlightMenu = () => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
 	const menuRef = useRef<HTMLDivElement>(null);
+	const markdownRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
+		markdownRef.current = document.getElementById('markdown');
 		const markdown = markdownRef.current;
 
 		if (!markdown) return;

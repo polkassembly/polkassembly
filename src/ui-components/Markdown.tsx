@@ -190,7 +190,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		&:hover {
-			color: var(--pink_primary) !important;
+			color: pink_primary !important;
 		}
 	}
 `;

@@ -71,6 +71,7 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import SetNotificationNudge from '~src/ui-components/setNotificationNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -767,12 +768,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-				<SetIdentityNudge
-					handleSetIdentityClick={handleIdentityButtonClick}
-					isIdentitySet={isIdentitySet}
-				/>
-			)}
+			<div className='nudge-container'>
+				<SetNotificationNudge className='' />
+				{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+					<SetIdentityNudge
+						handleSetIdentityClick={handleIdentityButtonClick}
+						isIdentitySet={isIdentitySet}
+					/>
+				)}
+			</div>
 			<Layout hasSider>
 				<Sider
 					trigger={null}

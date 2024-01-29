@@ -9,6 +9,7 @@ import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import Loader from '~src/ui-components/Loader';
+import { useTheme } from 'next-themes';
 
 const TrendingDelegates = () => {
 	const { api, apiReady } = useApiContext();
@@ -16,6 +17,7 @@ const TrendingDelegates = () => {
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -129,6 +131,7 @@ const TrendingDelegates = () => {
 					</div>
 					<div className='mt-6 flex justify-end'>
 						<Pagination
+							theme={theme}
 							size='large'
 							defaultCurrent={1}
 							current={currentPage}

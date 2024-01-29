@@ -122,7 +122,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				</>
 			)}
 
-			{!isLoggedOut && (
+			{!isLoggedOut && userDetails.loginAddress && (
 				<Tabs
 					defaultActiveKey='2'
 					items={tabItems}

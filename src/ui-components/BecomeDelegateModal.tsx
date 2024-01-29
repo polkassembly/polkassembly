@@ -174,13 +174,13 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 				<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 					<Button
 						className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium text-white ${
-							details.bio || loading ? '' : 'text-white opacity-60'
+							details.bio || loading ? '' : 'opacity-60'
 						}`}
 						type='primary'
 						onClick={handleSubmit}
 						disabled={!details.bio || loading}
 					>
-						{loading && <Loader />} Confirm
+						{loading && <Loader />} <span className='text-white'>Confirm</span>
 					</Button>
 				</div>
 			</AuthForm>

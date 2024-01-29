@@ -25,23 +25,14 @@ const BecomeDelegate = () => {
 		<div className='rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex items-center justify-between'>
 				<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
-				{!currentUser.id ? (
-					<Button
-						onClick={showModal}
-						disabled={!currentUser.id}
-						className='border-[#E5007A] bg-[#ef66af] text-white'
-					>
-						<Tooltip title='Please Login to continue'>Become a Delegate</Tooltip>
-					</Button>
-				) : (
-					<Button
-						onClick={showModal}
-						disabled={!currentUser.id}
-						className='border-[#E5007A] bg-[#ef66af] text-white'
-					>
-						Become a Delegate
-					</Button>
-				)}
+
+				<Button
+					onClick={showModal}
+					disabled={!currentUser.id}
+					className={`border-[#E5007A] ${!currentUser.id ? 'opacity-60' : ''} bg-pink_primary text-white`}
+				>
+					{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
+				</Button>
 			</div>
 			<div className='flex justify-between'>
 				<div className='flex space-x-3'>

@@ -38,7 +38,6 @@ const ZERO = new BN(0);
 
 const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpen, voteThreshold, ayeNayCounts, setAyeNayCounts }) => {
 	const { network } = useNetworkSelector();
-
 	const { api, apiReady } = useContext(ApiContext);
 	const [totalIssuance, setTotalIssuance] = useState<BN | null>(null);
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
@@ -71,7 +70,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	};
 
 	useEffect(() => {
-		if (!['cere', 'equilibrium'].includes(network)) return;
+		if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) return;
 
 		(async () => {
 			setIsFetchingCereVoteInfo(true);

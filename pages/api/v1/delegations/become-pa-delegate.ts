@@ -7,14 +7,12 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
-import { ETrackDelegationStatus, IDelegate } from '~src/types';
+import { IDelegate } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import * as admin from 'firebase-admin';
-import { ITrackDelegation, getDelegationDashboardData } from '.';
-import { getUserPostCount } from '../posts/user-total-post-counts';
 
 const firestore_db = admin.firestore();
 
@@ -33,22 +31,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate | Mes
 	if (!address || !username.length || !bio.length || isNaN(userId)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 	if (!(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
-	const delegationCounts: ITrackDelegation[] = await getDelegationDashboardData([address], network);
-	const votedProposalsCount = await getUserPostCount({ addresses: [address], network, userId });
-
 	const encodedAddress = getEncodedAddress(address, network);
 	const PADelegateDoc = firestore_db.collection('networks').doc(network).collection('pa_delegates').doc(String(userId));
-	const newDelegate: IDelegate = {
-		active_delegation_count:
-			delegationCounts.filter((delegation) => delegation?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION || ETrackDelegationStatus.DELEGATED))?.length || 0,
+	const newDelegate: any = {
 		address: encodedAddress || address,
 		bio: bio || '',
 		created_at: new Date(),
 		dataSource: 'polkassembly',
 		isNovaWalletDelegate: isNovaWalletDelegate || false,
 		name: username,
-		user_id: userId,
-		voted_proposals_count: votedProposalsCount?.data?.votes || 0
+		user_id: userId
 	};
 
 	await PADelegateDoc.set(newDelegate, { merge: true })

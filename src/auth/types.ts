@@ -69,6 +69,7 @@ export interface ProfileDetails {
 	title?: string;
 	image?: string;
 	social_links?: ISocial[];
+	cover_image?: string;
 }
 
 export interface ProfileDetailsResponse extends ProfileDetails {

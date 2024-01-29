@@ -22,8 +22,9 @@ interface Props {
 	onchainIdentity?: DeriveAccountRegistration | null;
 }
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
-	const { image, created_at: profileSince, social_links: socials } = userProfile;
+	const { image, created_at: profileSince, social_links: socials, username } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	const handleCopyAddress = () => {
 		messageApi.open({
@@ -32,7 +33,6 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 			type: 'success'
 		});
 	};
-
 	return (
 		<div
 			className={classNames(
@@ -50,17 +50,18 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 			</div>
 			<div className='ml-[-73px] flex w-full items-start justify-between rounded-e-[14px] border-[#D2D8E0] bg-white py-2 dark:border-separatorDark dark:bg-section-dark-overlay max-md:ml-0 max-md:flex-col max-md:items-center md:border-0 md:border-b-[1px] md:border-r-[1px] md:border-t-[1px] md:border-solid md:py-4'>
 				<div className='flex w-full flex-col gap-2 max-md:items-center max-md:gap-4 max-md:border-none max-md:bg-transparent max-md:dark:bg-transparent md:h-[130px]'>
-					{addressWithIdentity && (
+					{addressWithIdentity ? (
 						<div className='flex items-center justify-between max-md:flex-col md:ml-[90px] md:pr-6'>
 							<div className='flex items-center'>
 								<Address
 									address={addressWithIdentity}
 									disableIdenticon
 									isProfileView
+									destroyTooltipOnHide
 									className='flex gap-1'
 									usernameClassName='text-2xl'
-									isTruncateUsername={false}
-									disableTooltip
+									isTruncateUsername={isMobile || false}
+									passedUsername={userProfile?.username}
 								/>
 								<span
 									className='flex cursor-pointer items-center p-1'
@@ -75,6 +76,8 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								</span>
 							</div>
 						</div>
+					) : (
+						<div className='flex items-center justify-between text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-md:flex-col md:ml-[90px] md:pr-6'>{username}</div>
 					)}
 					{addressWithIdentity && (
 						<div className='md:ml-[90px]'>

@@ -18,6 +18,7 @@ import GovernanceCard from '../GovernanceCard';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
+import SelectGovType from './SelectGovType';
 
 interface Props {
 	className?: string;
@@ -48,18 +49,22 @@ const getPosts = (filter: string, govType: EGovType, posts: IUserPostsListingRes
 
 	return filteredPosts;
 };
+
 const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
-	const [govTypeExpand, setgovTypeExpand] = useState(false);
 	const [subFilterExpand, setSubFilterExpand] = useState(false);
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [selectedFilter, setSelectedFilter] = useState(handleInitialFilter(userPosts, selectedGov));
 	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
+
+	useEffect(() => {
+		setCheckedAddressList(addresses);
+	}, [addresses]);
 
 	const handleSelectSubFilter = (filter: string, govType: EGovType = selectedGov) => {
 		const subFilter = (userPosts as any)?.[govType === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[filter];
@@ -123,22 +128,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 			</Checkbox.Group>
 		</div>
 	);
-	const govTypeContent = (
-		<div className='flex w-[110px] flex-col gap-2'>
-			<span
-				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => handleGovSelection(EGovType.GOV1)}
-			>
-				Gov1
-			</span>
-			<span
-				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => handleGovSelection(EGovType.OPEN_GOV)}
-			>
-				OpenGov
-			</span>
-		</div>
-	);
+
 	const subFilterContent = Object.keys(selectedSubFilters)?.length ? (
 		<Checkbox.Group
 			className='flex max-h-[200px] flex-col items-start justify-center overflow-y-auto'
@@ -200,22 +190,12 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						</div>
 					)}
 					{isOpenGovSupported(network) && (
-						<div className=''>
-							<Popover
-								destroyTooltipOnHide
-								zIndex={1056}
-								content={govTypeContent}
-								placement='bottom'
-								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
-							>
-								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									{selectedGov.split('_').join('')}({selectedGov === EGovType.GOV1 ? userPosts?.gov1_total : userPosts?.open_gov_total})
-									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
-									</span>
-								</div>
-							</Popover>
-						</div>
+						<SelectGovType
+							selectedGov={selectedGov}
+							setSelectedGov={setSelectedGov}
+							totalCount={totalPosts}
+							onConfirm={handleGovSelection}
+						/>
 					)}
 				</div>
 			</div>
@@ -260,44 +240,46 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						</div>
 					)}
 				</div>
-				{posts?.length ? (
-					posts.map((post, index) => {
-						return (
-							<div
-								key={post.id}
-								className='my-0'
-							>
-								{
-									<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
-										<GovernanceCard
-											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
-											postReactionCount={post.post_reactions}
-											address={post.proposer}
-											commentsCount={post.comments_count || 0}
-											onchainId={post.id}
-											status={post.status}
-											title={post.title}
-											created_at={post.created_at}
-											tags={post?.tags}
-											tally={post?.tally}
-											timeline={post?.timeline || []}
-											statusHistory={(post?.status_history as any) || []}
-											index={index}
-											proposalType={post?.type}
-											trackNumber={post?.track_number}
-											truncateUsername={false}
-										/>
-									</Link>
-								}
-							</div>
-						);
-					})
-				) : (
-					<Empty
-						className='mt-8'
-						description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
-					/>
-				)}
+				<div className='max-h-[530px] overflow-y-auto pr-2'>
+					{posts?.length ? (
+						posts.map((post, index) => {
+							return (
+								<div
+									key={post.id}
+									className='my-0'
+								>
+									{
+										<Link href={`/${getSinglePostLinkFromProposalType(post?.type)}/${post.id}`}>
+											<GovernanceCard
+												className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
+												postReactionCount={post.post_reactions}
+												address={post.proposer}
+												commentsCount={post.comments_count || 0}
+												onchainId={post.id}
+												status={post.status}
+												title={post.title}
+												created_at={post.created_at}
+												tags={post?.tags}
+												tally={post?.tally}
+												timeline={post?.timeline || []}
+												statusHistory={(post?.status_history as any) || []}
+												index={index}
+												proposalType={post?.type}
+												trackNumber={post?.track_number}
+												truncateUsername={false}
+											/>
+										</Link>
+									}
+								</div>
+							);
+						})
+					) : (
+						<Empty
+							className='mt-8'
+							description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+						/>
+					)}
+				</div>
 			</div>
 		</div>
 	);

@@ -10,8 +10,7 @@ import { getKiltDidName, getKiltDidSocialEndpoints } from '~src/util/kiltDid';
 import Link from 'next/link';
 import SocialLink from './SocialLinks';
 import { UserOutlined } from '@ant-design/icons';
-import { PolkaverseIcon } from './CustomIcons';
-import WebIcon from '~assets/icons/web-icon.svg';
+import { PolkaverseIcon, WebIcon } from './CustomIcons';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { isSubscanSupport } from '~src/util/subscanCheck';
@@ -189,10 +188,15 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					}}
 					href={onchainIdentity?.web}
 					title={onchainIdentity?.web}
-					className={`flex h-[${boxSize}px] w-[${boxSize}px] cursor-pointer items-center justify-center rounded-full ${isGood ? 'bg-[#51D36E] text-white' : 'text-[#96A4B6]'}`}
+					className={`flex h-[${boxSize}px] w-[${boxSize}px] cursor-pointer items-center justify-center rounded-full text-xl ${
+						isGood ? 'bg-[#51D36E] text-white hover:text-white' : 'bg-[#edeff3] text-[#96A4B6] hover:text-[#96A4B6]'
+					}`}
 					style={{ height: `${boxSize}px`, width: `${boxSize}px` }}
 				>
-					<WebIcon />
+					<WebIcon
+						style={{ height: `${iconSize}px`, width: `${iconSize}px` }}
+						className='flex items-center justify-center'
+					/>
 				</Link>
 			)}
 			{address && (

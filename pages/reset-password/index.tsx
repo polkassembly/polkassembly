@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { WarningOutlined } from '@ant-design/icons';
-import { Form, Input, Row } from 'antd';
+import { Form, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -10,10 +10,10 @@ import { useDispatch } from 'react-redux';
 import AuthForm from 'src/ui-components/AuthForm';
 import messages from 'src/util/messages';
 import * as validation from 'src/util/validation';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { NotificationStatus } from '~src/types';
@@ -119,7 +119,8 @@ const ResetPassword = ({ network, token, userId }: Props): JSX.Element => {
 												}
 											]}
 										>
-											<Input.Password
+											<Input
+												type='password'
 												onChange={(e) => setNewPassword(e.target.value)}
 												placeholder='eg. password123'
 												className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

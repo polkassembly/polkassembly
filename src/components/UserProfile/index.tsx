@@ -10,10 +10,10 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProfileCard from './ProfileCard';
 import classNames from 'classnames';
-import ProfileStatsCard from './ProfileStatsCard';
 import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
+import ProfileStatsCard from './ProfileStatsCard';
 
 interface Props {
 	className?: string;
@@ -35,6 +35,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		judgements: [],
 		nickname: ''
 	});
+	const [isValidCoverImage, setIsValidCoverImage] = useState<boolean>(false);
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
@@ -57,7 +58,6 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		if (!apiReady) {
 			return;
 		}
-
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
@@ -78,7 +78,6 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 								setAddressWithIdentity(getEncodedAddress(address, network) || '');
 							} else if (!(onChainIdentity as any)?.[key]) {
 								(onChainIdentity as any)[key] = value;
-								setAddressWithIdentity(getEncodedAddress(address, network) || '');
 							}
 						}
 					});
@@ -146,8 +145,24 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		} else {
 			setAddressWithIdentity(userProfile?.addresses?.[0] || '');
 		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onChainIdentity, userProfile]);
+	}, [onChainIdentity]);
+
+	useEffect(() => {
+		if (!profileDetails?.cover_image?.length) return;
+
+		(async () => {
+			try {
+				const obj = new Image();
+				obj.src = profileDetails?.cover_image || '';
+				obj.onload = () => setIsValidCoverImage(true);
+				obj.onerror = () => setIsValidCoverImage(false);
+			} catch (err) {
+				console.log(err);
+			}
+		})();
+	}, [profileDetails]);
 
 	return (
 		<div className={classNames(className, 'flex flex-col gap-6')}>
@@ -156,6 +171,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				profileDetails={profileDetails}
 				setProfileDetails={setProfileDetails}
 				addressWithIdentity={addressWithIdentity}
+				isValidCoverImage={isValidCoverImage}
 			/>
 			<ProfileCard
 				className='mx-2 max-lg:mt-[180px]'

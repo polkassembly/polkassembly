@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose, IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Spin, Checkbox, Pagination as AntdPagination, Tooltip } from 'antd';
+import { Empty, Spin, Checkbox, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -14,8 +14,6 @@ import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { noTitle } from '~src/global/noTitle';
 import Link from 'next/link';
 import Address from './Address';
-import ExpandIcon from '~assets/icons/expand-small-icon.svg';
-import ExpandDarkIcon from '~assets/icons/expand-small-icon-dark.svg';
 import AyeIcon from '~assets/icons/aye-green-icon.svg';
 import NayIcon from '~assets/icons/profile-nay.svg';
 import { poppins } from 'pages/_app';
@@ -35,8 +33,10 @@ import Web3 from 'web3';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { IStats } from '~src/components/UserProfile';
-import { DownArrowIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, VotesIcon } from './CustomIcons';
+import { DownArrowIcon, ExpandIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, VotesIcon } from './CustomIcons';
 import { isSubscanSupport } from '~src/util/subscanCheck';
+import SelectGovType from '~src/components/UserProfile/SelectGovType';
+import { Pagination } from './Pagination';
 
 interface Props {
 	className?: string;
@@ -46,21 +46,6 @@ interface Props {
 	statsArr?: IStats[];
 	totalVotes: number;
 }
-
-const Pagination = styled(AntdPagination)`
-	a {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
-	}
-	.ant-pagination-item-active {
-		background-color: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
-	}
-	.anticon-right {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
-	}
-	.anticon-left {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
-	}
-`;
 
 const getOrderBy = (sortByPostIndex: boolean) => {
 	const orderBy = [];
@@ -93,12 +78,15 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 	const [sortByPostIndex, setSortByPostIndex] = useState<boolean>(false);
 	const [checkedAddressList, setCheckedAddressList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
-	const [govTypeExpand, setgovTypeExpand] = useState(false);
 	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
 	const [expandViewVote, setExpandViewVote] = useState<IVotesData | null>(null);
 	const [removeVoteLoading, setRemoveVoteLoading] = useState<{ ids: number[] | null; loading: boolean }>({ ids: null, loading: false });
 
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+
+	useEffect(() => {
+		setCheckedAddressList(addresses);
+	}, [addresses]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -129,25 +117,10 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 		</div>
 	);
 
-	const govTypeContent = (
-		<div className='flex w-[110px] flex-col gap-2'>
-			<span
-				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => setSelectedGov(EGovType.GOV1)}
-			>
-				Gov1
-			</span>
-			<span
-				className='cursor-pointer dark:text-blue-dark-high'
-				onClick={() => setSelectedGov(EGovType.OPEN_GOV)}
-			>
-				OpenGov
-			</span>
-		</div>
-	);
 	const handleVoteHistoryData = async () => {
 		setVotesData(null);
 		setLoading(true);
+		setTotalCount(0);
 		const { data, error } = await nextApiClientFetch<{ data: IProfileVoteHistoryRespose[]; totalCount: number }>('api/v1/votesHistory/getVotesByVoter', {
 			orderBy: getOrderBy(sortByPostIndex),
 			page,
@@ -170,7 +143,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 		}
 		handleVoteHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page, addresses, sortByPostIndex, checkedAddressList, selectedGov]);
+	}, [page, sortByPostIndex, checkedAddressList, selectedGov, userProfile]);
 
 	const handleDelegatesAndCapital = async (index: number, filteredVote: IVotesData) => {
 		if ((filteredVote?.delegatorsCount && filteredVote?.delegateCapital) || filteredVote?.isDelegatedVote) return;
@@ -223,7 +196,6 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 				message: 'Your Vote has been Cleared successfully.',
 				status: NotificationStatus.SUCCESS
 			});
-			console.log(removeVoteLoading);
 			const filteredData: IVotesData[] = votesData?.filter((vote) => vote?.proposal?.id !== postIndex) || [];
 			setVotesData(filteredData);
 			const newData = statsArr?.map((item) => {
@@ -318,21 +290,11 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 						</div>
 					)}
 					{isOpenGovSupported(network) && (
-						<div className=''>
-							<Popover
-								zIndex={1056}
-								content={govTypeContent}
-								placement='bottom'
-								onOpenChange={() => setgovTypeExpand(!govTypeExpand)}
-							>
-								<div className='flex h-10 items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-									{selectedGov.split('_').join('')}({totalCount})
-									<span className='flex items-center'>
-										<DownArrowIcon className={`cursor-pointer text-2xl ${govTypeExpand && 'pink-color rotate-180'}`} />
-									</span>
-								</div>
-							</Popover>
-						</div>
+						<SelectGovType
+							selectedGov={selectedGov}
+							setSelectedGov={setSelectedGov}
+							totalCount={totalCount}
+						/>
 					)}
 				</div>
 			</div>
@@ -352,12 +314,13 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 									key={index}
 								>
 									{heading}
-									{heading === EHeading.PROPOSAL &&
-										(theme === 'dark' ? (
-											<ExpandDarkIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
-										) : (
-											<ExpandIcon className={heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'} />
-										))}
+									{heading === EHeading.PROPOSAL && (
+										<ExpandIcon
+											className={`text-xl text-bodyBlue dark:text-[#909090] ${
+												heading === EHeading.PROPOSAL && !!sortByPostIndex ? 'ml-1 rotate-180 cursor-pointer' : 'ml-1 cursor-pointer'
+											}`}
+										/>
+									)}
 								</span>
 							))}
 						</div>
@@ -445,7 +408,7 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 																	<span
 																		className={classNames(
 																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))
-																				? 'cursor-not-allowed text-[#4A4A4A]'
+																				? 'cursor-not-allowed text-[#D2D8E0] dark:text-[#4A4A4A]'
 																				: 'cursor-pointer text-lightBlue dark:text-[#9E9E9E]'
 																		)}
 																		onClick={() => {

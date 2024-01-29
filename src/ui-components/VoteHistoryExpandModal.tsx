@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { CloseIcon } from './CustomIcons';
+import { CloseIcon, SubscanIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import Address from './Address';
 import CalenderIcon from '~assets/icons/calender-icon.svg';
@@ -18,7 +18,6 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatBalance } from '@polkadot/util';
-import Image from 'next/image';
 
 interface Props {
 	className?: string;
@@ -51,13 +50,9 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 			title={
 				<div className='-mx-6 mb-6 flex items-center gap-4 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-xl font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{expandViewVote?.proposal.title?.length ? `${expandViewVote?.proposal.title?.slice(0, 40)}${expandViewVote?.proposal.title?.length > 40 ? '...' : ''}` : noTitle}
-					<Image
-						src={'/assets/profile/profile-subscan.svg'}
-						height={24}
-						width={24}
-						alt=''
-						className='max-md:hidden'
-					/>
+					<span onClick={() => window.open(`https://polkadot.subscan.io/extrinsic/${expandViewVote?.extrinsicIndex}`, '_blank')}>
+						<SubscanIcon className='cursor-pointer text-xl text-lightBlue dark:text-[#9E9E9E] max-md:hidden' />
+					</span>
 				</div>
 			}
 			open={open}
@@ -118,7 +113,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 										<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<VoterIcon /> Votes
+													<VoterIcon /> Voting Power
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{Number(formatedBalance((expandViewVote?.balance?.toString() || '0').toString(), unit, 2).replaceAll(',', '')) *

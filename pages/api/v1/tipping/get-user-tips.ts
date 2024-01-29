@@ -9,18 +9,8 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { ITip } from '.';
 
-export interface ITip {
-	created_at: Date;
-	remark: string;
-	network: string;
-	tip_from: string;
-	tip_to: string;
-	user_id: number;
-	amount: number;
-	token: string;
-	extrinsic_hash: any;
-}
 export enum ETipStatus {
 	GIVEN = 'Given',
 	RECEIVED = 'Received'

@@ -3,16 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import LockVotesList from './LockVotesList';
-import { Empty, Modal } from 'antd';
+import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
 // import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
-import { handlePrevData } from '.';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
@@ -20,17 +18,13 @@ interface Props {
 	className?: string;
 	open: boolean;
 	setOpen: (pre: boolean) => void;
-	totalUnlockableBalance: BN;
+	unlockedBalance: BN;
 	lockedBalance: BN;
 }
 
-const ZERO_BN = new BN(0);
-const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, totalUnlockableBalance }: Props) => {
+const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
-	const { data } = useUserUnlockTokensDataSelector();
-	const totalLockData = handlePrevData(data?.totalLockData);
-	const totalOngoingData = handlePrevData(data?.totalOngoingData);
 
 	useEffect(() => {
 		if (!network) return;
@@ -40,7 +34,6 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
 	return (
 		<Modal
 			open={open}
@@ -61,18 +54,8 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, lockedBalance, total
 				</div>
 				<div className='my-4 flex items-center justify-center text-xl font-semibold tracking-[0.15%] dark:text-white'>Tokens unlocked successfully</div>
 				<div className='mb-6 flex items-center justify-center text-2xl font-semibold tracking-[0.15%] text-pink_primary dark:text-blue-dark-helper'>
-					{formatedBalance((totalUnlockableBalance.toString() || '0').toString(), unit, 2)} {unit}
+					{formatedBalance((unlockedBalance.toString() || '0').toString(), unit, 2)} {unit}
 				</div>
-				{!totalUnlockableBalance.eq(ZERO_BN) || totalLockData.length !== 0 || totalOngoingData.length !== 0 ? (
-					<LockVotesList
-						lockedBalance={lockedBalance}
-						totalUnlockableBalance={totalUnlockableBalance}
-						showBalances={false}
-						votesCollapsed
-					/>
-				) : (
-					<Empty className='mt-4' />
-				)}
 			</div>
 		</Modal>
 	);

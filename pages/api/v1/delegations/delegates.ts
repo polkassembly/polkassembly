@@ -10,11 +10,9 @@ import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
-import { ETrackDelegationStatus, IDelegate } from '~src/types';
+import { IDelegate } from '~src/types';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 import * as admin from 'firebase-admin';
-import { getUserPostCount } from '../posts/user-total-post-counts';
-import { ITrackDelegation, getDelegationDashboardData } from '.';
 
 const firestore_db = admin.firestore();
 
@@ -29,10 +27,27 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const parityDelegatesKusama = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 	const novaDelegates = network === 'kusama' ? novaDelegatesKusama : novaDelegatesPolkadot;
 	const parityDelegates = network === 'kusama' ? parityDelegatesKusama : parityDelegatesPolkadot;
-	const combinedDelegates = [...novaDelegates, ...parityDelegates];
 	if (address && !(encodedAddr || Web3.utils.isAddress(String(address)))) return [];
 
 	const subsquidFetches: { [index: string]: any } = {};
+
+	const paDelegatesResults: any[] = [];
+
+	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').get();
+	if (!paDelegatesSnapshot.empty) {
+		const paDelegatesPromise = paDelegatesSnapshot.docs.map(async (delegate) => {
+			const data = delegate?.data();
+			return data;
+		});
+
+		const paDelegates = await Promise.allSettled(Object.values(paDelegatesPromise));
+		paDelegates.map((delegate) => {
+			if (delegate?.status === 'fulfilled') {
+				paDelegatesResults.push(delegate?.value as IDelegate);
+			}
+		});
+	}
+	const combinedDelegates = [...paDelegatesResults, ...novaDelegates, ...parityDelegates];
 
 	const currentDate = new Date();
 	if (encodedAddr) {
@@ -56,45 +71,6 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			});
 		});
 	}
-
-	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').get();
-	const paDelegatesPromise = paDelegatesSnapshot.docs.map(async (delegate) => {
-		const data = delegate?.data();
-		const votedProposalsCount = await getUserPostCount({ addresses: [data?.address], network, userId: data?.user_id });
-		const delegationCounts: ITrackDelegation[] = await getDelegationDashboardData([data?.address], network);
-		const PADelegateDoc = firestore_db
-			.collection('networks')
-			.doc(network)
-			.collection('pa_delegates')
-			.doc(String(data?.user_id));
-
-		const newDelegate = {
-			...data,
-			active_delegation_count:
-				delegationCounts.filter((delegation) => delegation?.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION || ETrackDelegationStatus.DELEGATED))?.length ||
-				data?.active_delegation_count,
-			created_at: data?.created_at?.toDate ? data?.created_at.toDate() : data?.created_at,
-			voted_proposals_count: votedProposalsCount?.data?.votes || data?.voted_proposals_count
-		};
-
-		await PADelegateDoc.update(newDelegate)
-			.then(() => {
-				console.log('delegate updated');
-			})
-			.catch((error) => {
-				console.log('delegate not updated', error);
-			});
-
-		return newDelegate;
-	});
-
-	const paDelegates = await Promise.allSettled(Object.values(paDelegatesPromise));
-	const paDelegatesResults: IDelegate[] = [];
-	paDelegates.map((delegate) => {
-		if (delegate?.status === 'fulfilled') {
-			paDelegatesResults.push(delegate?.value as IDelegate);
-		}
-	});
 
 	const subsquidResults = await Promise.allSettled(Object.values(subsquidFetches));
 
@@ -121,6 +97,8 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			bio = combinedDelegates[index].longDescription;
 		} else if (dataSource === 'parity') {
 			bio = combinedDelegates[index].manifesto;
+		} else {
+			bio = combinedDelegates[index]?.bio || '';
 		}
 
 		const newDelegate: IDelegate = {
@@ -134,14 +112,14 @@ export const getDelegatesData = async (network: string, address?: string) => {
 
 		result.push(newDelegate);
 	}
-	return [...paDelegatesResults, ...result];
+	return result;
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate[] | { error: string }>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
-	const { address } = req.query;
+	const { address } = req.body;
 	if (address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
 
 	const result = await getDelegatesData(network, address ? String(address) : undefined);

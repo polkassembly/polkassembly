@@ -3,11 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC } from 'react';
-import { Alert, Input } from 'antd';
+import { Alert } from 'antd';
 import { ESocialType, ProfileDetails } from '~src/auth/types';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
 import styled from 'styled-components';
 import { LinkOutlined } from '@ant-design/icons';
+import Input from '~src/basic-components/Input';
 
 interface ISocialsProps {
 	loading: boolean;

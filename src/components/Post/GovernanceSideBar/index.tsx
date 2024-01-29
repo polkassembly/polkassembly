@@ -76,7 +76,6 @@ import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
 // import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
-
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;

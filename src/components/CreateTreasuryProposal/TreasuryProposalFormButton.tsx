@@ -32,6 +32,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import OpenGovTreasuryProposal from '../OpenGovTreasuryProposal';
+import { treasuryProposalCreationAllowedNetwork } from '../AiBot/AiBot';
 
 interface Props {
 	className?: string;
@@ -318,6 +320,20 @@ const TreasuryProposalFormButton = ({
 		}
 	};
 
+	const createProposalBtn = (
+		<CustomButton
+			className='delegation-buttons'
+			variant='primary'
+			width={175}
+			height={40}
+		>
+			<OpenGovTreasuryProposal
+				theme={theme}
+				isUsedInTreasuryTrack={true}
+			/>
+		</CustomButton>
+	);
+
 	const triggerBtn = (
 		<button
 			disabled={!id}
@@ -349,7 +365,7 @@ const TreasuryProposalFormButton = ({
 		</Spin>
 	) : (
 		<>
-			{!id ? triggerBtnLoginDisabled : triggerBtn}
+			{!id ? triggerBtnLoginDisabled : treasuryProposalCreationAllowedNetwork.includes(network) ? createProposalBtn : triggerBtn}
 
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark p-5 before:h-0 md:p-10'

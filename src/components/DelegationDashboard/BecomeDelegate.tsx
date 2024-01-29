@@ -80,7 +80,7 @@ const BecomeDelegate = () => {
 				type='info'
 				showIcon
 				message={
-					<span className='text-blue-light-medium'>
+					<span className='text-blue-light-medium dark:text-blue-dark-high'>
 						Want to learn more about delegation process before locking your tokens. Click
 						<a
 							href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'
@@ -92,7 +92,7 @@ const BecomeDelegate = () => {
 						</a>
 					</span>
 				}
-				className='border-none'
+				className='border-none dark:bg-infoAlertBgDark'
 			/>
 			<BecomeDelegateModal
 				isModalOpen={isModalOpen}

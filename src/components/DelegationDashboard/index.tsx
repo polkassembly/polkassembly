@@ -9,14 +9,13 @@ import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { Button, Skeleton, TabsProps } from 'antd';
+import { Button, Skeleton, Tabs, TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
-import { Tabs } from '~src/ui-components/Tabs';
 
 interface Props {
 	className?: string;
@@ -125,11 +124,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{!isLoggedOut && (
 				<Tabs
-					theme={theme}
 					defaultActiveKey='2'
 					items={tabItems}
 					size='large'
-					className='mt-8 font-medium text-sidebarBlue dark:text-blue-dark-high'
+					// type='card'
+					className='mt-6 font-medium text-sidebarBlue dark:text-blue-dark-high'
 				/>
 			)}
 
@@ -160,5 +159,64 @@ export default styled(DelegationDashboardHome)`
 	}
 	.delegate-button {
 		background: linear-gradient(0deg, #e5007a, #e5007a), linear-gradient(0deg, rgba(229, 0, 122, 0.6), rgba(229, 0, 122, 0.6));
+	}
+	/* .ant-tabs-tab:not(.ant-tabs-tab-active) {
+		background-color: ${(props) => (props.theme == 'dark' ? '' : 'white')} !important;
+		border-top: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-left: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-right: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#e1e6eb')} !important;
+	} */
+	.ant-tabs-tab {
+		border-bottom-color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		margin-left: 2px !important;
+		padding-left: 8px !important;
+		padding-right: 8px !important;
+		background-color: ${(props) => (props.theme == 'dark' ? '#000' : '')} !important;
+	}
+	.ant-tabs-nav::before {
+		border-bottom: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+
+	.ant-tabs-nav-list::after {
+		content: '';
+		width: 100%;
+		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e1e6eb')} !important;
+	}
+
+	.ant-tabs-tab-active {
+		/* background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important; */
+		/* border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important; */
+		/* border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important; */
+		/* color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important; */
+	}
+	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+	}
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active,
+	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+	}
+
+	/* .ant-tabs-tab-bg-white .ant-tabs-nav:before {
+		border-bottom: 1px solid #e1e6eb;
+	} */
+	/* .ant-tabs-nav-operations > button {
+		color: ${(props) => (props.theme == 'dark' ? '#fff' : '#e5007a')} !important;
+	} */
+
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+		/* For tabs border */
+		border-color: none;
+	}
+
+	.ant-tabs-top > .ant-tabs-nav::before {
+		/* For the line to the right and close to the tabs */
+		border-color: none;
+	}
+
+	.ant-tabs > .ant-tabs-nav {
+		/* So that there is no gap between the content and tabs */
+		/* margin-bottom: 0; */
 	}
 `;

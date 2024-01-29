@@ -153,7 +153,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 				<div className='mb-7 mt-6 rounded-[4px] px-5'>
 					<Alert
 						message={
-							<span className='text-sm text-blue-light-medium '>
+							<span className='text-sm text-blue-light-medium dark:text-blue-dark-high'>
 								To add socials to your delegate profile{' '}
 								<span className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'>
 									<ImageIcon
@@ -168,7 +168,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 						}
 						type='info'
 						showIcon
-						className='border-none'
+						className='border-none dark:bg-infoAlertBgDark'
 					/>
 				</div>
 				<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>

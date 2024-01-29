@@ -27,11 +27,11 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 	const getIcon = (state: string) => {
 		switch (state) {
 			case 'Proposal Created':
-				return <ClipboardIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+				return <ClipboardIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
 			case 'Discussion Created':
-				return <ClipboardIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+				return <ClipboardIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
 			case 'Proposals Voted':
-				return <VotesIcon className='text-3xl text-bodyBlue dark:text-[#9E9E9E]' />;
+				return <VotesIcon className='text-2xl text-lightBlue dark:text-[#9E9E9E]' />;
 		}
 	};
 	const fetchData = async () => {
@@ -83,11 +83,11 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 						key={item?.label}
 					>
 						<div className='flex gap-2 px-2 max-md:items-center max-md:px-0'>
-							<span className='flex h-full items-center justify-center rounded-[8px] border-[1px] border-solid border-[#D2D8E0] px-1 text-lightBlue dark:border-separatorDark dark:text-[#9E9E9E]'>
+							<span className='flex h-full items-center justify-center rounded-xl border-[1px] border-solid border-[#D2D8E0] bg-[#F3F4F6] px-2.5 text-lightBlue dark:border-separatorDark dark:bg-transparent dark:text-[#9E9E9E]'>
 								{getIcon(item?.label)}
 							</span>
 							<div className='flex flex-col justify-center'>
-								<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>{item?.label}</span>
+								<span className='text-[13px] text-lightBlue dark:text-blue-dark-medium'>{item?.label}</span>
 								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high max-md:text-lg'>{item?.value}</span>
 							</div>
 						</div>

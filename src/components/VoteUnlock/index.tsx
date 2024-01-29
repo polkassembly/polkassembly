@@ -406,9 +406,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 								icon={<WhiteUnlockIcon className='mr-1' />}
 								className={`{ totalUnlockableBalance.eq(ZERO_BN) &&
 									'opacity-50' } mt-4
-								w-[100%]`}
+								flex w-[100%] items-center tracking-wide`}
 								height={40}
-								fontSize='xs'
+								fontSize='sm'
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}
 								text='Unlock Tokens'

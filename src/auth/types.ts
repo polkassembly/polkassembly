@@ -69,12 +69,14 @@ export interface ProfileDetails {
 	title?: string;
 	image?: string;
 	social_links?: ISocial[];
+	cover_image?: string;
 }
 
 export interface ProfileDetailsResponse extends ProfileDetails {
 	user_id: number;
 	username: string;
 	addresses: string[];
+	created_at?: Date | null;
 }
 
 export interface IAddressProxyForEntry {

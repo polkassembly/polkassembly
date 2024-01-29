@@ -61,9 +61,10 @@ interface UnnoteButtonProps {
 	apiReady: boolean;
 	network: string;
 	substrateAddresses?: (string | null)[];
+	afterUnnotePreimage: () => void;
 }
 
-const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses }: UnnoteButtonProps) => {
+const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddresses, afterUnnotePreimage }: UnnoteButtonProps) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const isProposer = substrateAddresses?.includes(getSubstrateAddress(proposer) || proposer);
 
@@ -77,13 +78,17 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 		const preimageTx = api.tx.preimage.unnotePreimage(hash);
 
 		const onSuccess = () => {
+			afterUnnotePreimage();
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Preimage Cleared Successfully',
 				status: NotificationStatus.SUCCESS
 			});
 		};
+
 		const onFailed = (message: string) => {
+			setLoading(false);
 			queueNotification({
 				header: 'Failed!',
 				message,
@@ -102,7 +107,6 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 			onSuccess,
 			tx: preimageTx
 		});
-		setLoading(false);
 	};
 	return (
 		<div className='flex items-center space-x-2'>
@@ -132,7 +136,8 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { preimages, theme } = props;
+	const { theme } = props;
+	const [preimages, setPreimages] = useState(props.preimages);
 	const [modalArgs, setModalArgs] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
 	const { addresses } = useUserDetailsSelector();
@@ -147,8 +152,6 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 		setModalArgs(preimages?.[0]?.proposedCall.args);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
-
-	useEffect(() => {}, [preimages]);
 
 	const success = () => {
 		messageApi.open({
@@ -276,6 +279,11 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							apiReady={apiReady}
 							network={network}
 							substrateAddresses={substrateAddresses}
+							afterUnnotePreimage={() => {
+								setPreimages((prev) => {
+									return prev.filter((preimage: any) => preimage.hash !== obj.hash && preimage.proposer !== obj.proposer);
+								});
+							}}
 						/>
 					)}
 				</div>

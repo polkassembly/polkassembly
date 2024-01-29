@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Form, Input, Modal, QRCode as QRCodeAntD, Spin, message } from 'antd';
+import { Divider, Form, Modal, QRCode as QRCodeAntD, Spin, message } from 'antd';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import FilteredError from 'src/ui-components/FilteredError';
@@ -17,6 +17,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 const Title = (
 	<>

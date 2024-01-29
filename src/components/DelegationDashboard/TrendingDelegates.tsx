@@ -69,7 +69,7 @@ const TrendingDelegates = () => {
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
 
 	return (
-		<div className='mt-[30px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex items-center justify-between'>
 				<div className='flex items-center space-x-3'>
 					<ImageIcon

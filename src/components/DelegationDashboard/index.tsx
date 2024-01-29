@@ -23,10 +23,6 @@ interface Props {
 
 export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
-const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
-	loading: () => <Skeleton.Avatar active />,
-	ssr: false
-});
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
@@ -36,7 +32,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
@@ -56,9 +51,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
 		}
-		if (!userDetails.delegationDashboardAddress) {
-			isMobile ? setOpenModal(false) : setOpenModal(true);
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress, isMobile]);
 
@@ -67,7 +59,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			children: (
 				<>
 					{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
-
 					<BecomeDelegate />
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -136,21 +127,13 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					defaultActiveKey='2'
 					items={tabItems}
 					size='large'
-					className='mt-8 font-medium text-sidebarBlue dark:text-blue-dark-high'
+					// type='card'
+					className='mt-6 font-medium text-sidebarBlue dark:text-blue-dark-high'
 				/>
 			)}
 
-			{!openLoginModal && !openSignupModal && !userDetails.loginWallet && (
-				<AddressConnectModal
-					localStorageWalletKeyName='delegationWallet'
-					localStorageAddressKeyName='delegationDashboardAddress'
-					open={openModal}
-					setOpen={setOpenModal}
-					walletAlertTitle='Delegation dashboard'
-				/>
-			)}
 			<LoginPopup
-				closable={false}
+				closable={true}
 				setSignupOpen={setOpenSignupModal}
 				modalOpen={openLoginModal}
 				setModalOpen={setOpenLoginModal}
@@ -176,5 +159,64 @@ export default styled(DelegationDashboardHome)`
 	}
 	.delegate-button {
 		background: linear-gradient(0deg, #e5007a, #e5007a), linear-gradient(0deg, rgba(229, 0, 122, 0.6), rgba(229, 0, 122, 0.6));
+	}
+	/* .ant-tabs-tab:not(.ant-tabs-tab-active) {
+		background-color: ${(props) => (props.theme == 'dark' ? '' : 'white')} !important;
+		border-top: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-left: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-right: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
+		border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#e1e6eb')} !important;
+	} */
+	.ant-tabs-tab {
+		border-bottom-color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		margin-left: 2px !important;
+		padding-left: 8px !important;
+		padding-right: 8px !important;
+		background-color: ${(props) => (props.theme == 'dark' ? '#000' : '')} !important;
+	}
+	.ant-tabs-nav::before {
+		border-bottom: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+	}
+
+	.ant-tabs-nav-list::after {
+		content: '';
+		width: 100%;
+		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e1e6eb')} !important;
+	}
+
+	.ant-tabs-tab-active {
+		/* background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important; */
+		/* border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important; */
+		/* border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important; */
+		/* color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important; */
+	}
+	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+	}
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active,
+	.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab-active {
+		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+	}
+
+	/* .ant-tabs-tab-bg-white .ant-tabs-nav:before {
+		border-bottom: 1px solid #e1e6eb;
+	} */
+	/* .ant-tabs-nav-operations > button {
+		color: ${(props) => (props.theme == 'dark' ? '#fff' : '#e5007a')} !important;
+	} */
+
+	.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+		/* For tabs border */
+		border-color: none;
+	}
+
+	.ant-tabs-top > .ant-tabs-nav::before {
+		/* For the line to the right and close to the tabs */
+		border-color: none;
+	}
+
+	.ant-tabs > .ant-tabs-nav {
+		/* So that there is no gap between the content and tabs */
+		/* margin-bottom: 0; */
 	}
 `;

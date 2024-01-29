@@ -19,7 +19,7 @@ const firestore_db = admin.firestore();
 export const getDelegatesData = async (network: string, address?: string) => {
 	if (!network || !isOpenGovSupported(network)) return [];
 
-	const encodedAddr = getEncodedAddress(String(address), network);
+	const encodedAddr = address ? getEncodedAddress(String(address), network) : '';
 
 	const novaDelegatesKusama = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json').then((res) => res.json());
 	const novaDelegatesPolkadot = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json').then((res) => res.json());
@@ -47,7 +47,61 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			}
 		});
 	}
-	const combinedDelegates = [...paDelegatesResults, ...novaDelegates, ...parityDelegates];
+	const combinedDelegates = [
+		...paDelegatesResults,
+		...novaDelegates.map((item: any) => {
+			return { ...item, dataSource: 'nova' };
+		}),
+		...parityDelegates.map((item: any) => {
+			return { ...item, dataSource: 'parity' };
+		})
+	];
+
+	const combinedDelegatesUniqueData: any = {};
+
+	combinedDelegates.map((item) => {
+		const addr = getEncodedAddress(item?.address, network) || item?.address;
+		if (combinedDelegatesUniqueData[addr] === undefined) {
+			if (item?.dataSource === 'nova') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					nova: { ...(combinedDelegatesUniqueData[addr]?.nova || {}), ...item }
+				};
+			}
+			if (item?.dataSource === 'parity') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					parity: { ...(combinedDelegatesUniqueData[addr]?.parity || {}), ...item }
+				};
+			}
+			if (item?.dataSource === 'polkassembly') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					polkassembly: { ...(combinedDelegatesUniqueData[addr]?.polkassembly || {}), ...item }
+				};
+			}
+		}
+		if (combinedDelegatesUniqueData[addr] !== undefined) {
+			if (item?.dataSource === 'nova') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					nova: { ...(combinedDelegatesUniqueData[addr]?.nova || {}), ...item }
+				};
+			}
+			if (item?.dataSource === 'parity') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					parity: { ...(combinedDelegatesUniqueData[addr]?.parity || {}), ...item }
+				};
+			}
+			if (item?.dataSource === 'polkassembly') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					polkassembly: { ...(combinedDelegatesUniqueData[addr]?.polkassembly || {}), ...item }
+				};
+			}
+		}
+	});
 
 	const currentDate = new Date();
 	if (encodedAddr) {
@@ -60,12 +114,12 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			}
 		});
 	} else {
-		combinedDelegates.map((combinedDelegate: { address: string | number }) => {
-			subsquidFetches[combinedDelegate.address] = fetchSubsquid({
+		Object.keys(combinedDelegatesUniqueData).map((addr) => {
+			subsquidFetches[addr] = fetchSubsquid({
 				network,
 				query: RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS,
 				variables: {
-					address: String(combinedDelegate.address),
+					address: String(addr),
 					createdAt_gte: new Date(currentDate.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days ago
 				}
 			});
@@ -83,22 +137,34 @@ export const getDelegatesData = async (network: string, address?: string) => {
 
 		const address = Object.keys(subsquidFetches)[index];
 		if (!address) continue;
-
-		const dataSource: 'nova' | 'parity' | 'other' = 'longDescription' in combinedDelegates[index] ? 'nova' : 'manifesto' in combinedDelegates[index] ? 'parity' : 'other';
 		let bio = '';
+		const dataSource = [];
 
-		if (!dataSource) {
+		if (!combinedDelegatesUniqueData[address]) {
 			const { data, error } = await getProfileWithAddress({ address });
 
 			if (data && !error) {
 				bio = data.profile?.bio || '';
 			}
-		} else if (dataSource === 'nova') {
-			bio = combinedDelegates[index].longDescription;
-		} else if (dataSource === 'parity') {
-			bio = combinedDelegates[index].manifesto;
-		} else {
-			bio = combinedDelegates[index]?.bio || '';
+		}
+		if (combinedDelegatesUniqueData[address]?.nova) {
+			if (combinedDelegatesUniqueData[address]?.nova?.longDescription) {
+				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
+			}
+
+			dataSource.push('nova');
+		}
+		if (combinedDelegatesUniqueData[address]?.parity) {
+			if (combinedDelegates[index]?.parity?.manifesto) {
+				bio = combinedDelegates[index]?.parity?.manifesto;
+			}
+			dataSource.push('parity');
+		}
+		if (combinedDelegatesUniqueData[address]?.polkassembly) {
+			if (combinedDelegates[index]?.polkassembly?.bio) {
+				bio = combinedDelegates[index]?.polkassembly?.bio;
+			}
+			dataSource.push('polkassembly');
 		}
 
 		const newDelegate: IDelegate = {

@@ -83,10 +83,10 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	return (
 		<div
 			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
-				delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
+				delegate?.dataSource.includes('nova') ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
-			{delegate?.dataSource === 'nova' && (
+			{delegate?.dataSource.includes('nova') && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
 					{/* <NovaWalletIcon /> */}
 					<ImageIcon
@@ -97,13 +97,13 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</div>
 			)}
 
-			{delegate?.dataSource === 'parity' && (
+			{delegate?.dataSource.includes('parity') && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
 					<ParityTechIcon />
 					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 				</div>
 			)}
-			{delegate?.dataSource === 'polkassembly' && (
+			{delegate?.dataSource.includes('polkassembly') && (
 				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
 					<ParityTechIcon />
 					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>

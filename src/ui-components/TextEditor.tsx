@@ -203,7 +203,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						<div className={`${loading && 'invisible'} relative`}>
 							{quoteBox && (
 								<span
-									className='absolute right-4 top-[65px] z-10 cursor-pointer bg-[#F5F6F8] dark:bg-[#141416] md:right-[30px]'
+									className='absolute right-4 top-[65px] z-10 cursor-pointer bg-section-light-background dark:bg-[#141416] md:right-[30px]'
 									onClick={() => {
 										setQuotedText('');
 										onChange('');

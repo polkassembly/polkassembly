@@ -6,7 +6,6 @@ import { Alert, Button, Input, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
-import ImageIcon from './ImageIcon';
 import AddressDropdown from './AddressDropdown';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
@@ -20,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Loader from './Loader';
+import BecomeDelegateIdentiyButton from './BecomeDelegateIdentiyButton';
 // import address from 'pages/api/v1/auth/data/address';
 
 interface DetailsState {
@@ -153,18 +153,11 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 				<div className='mb-7 mt-6 rounded-[4px] px-5'>
 					<Alert
 						message={
-							<span className='text-sm text-blue-light-medium dark:text-blue-dark-high'>
-								To add socials to your delegate profile{' '}
-								<span className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'>
-									<ImageIcon
-										src='/assets/delegation-tracks/shield-icon-pink.svg'
-										alt='shield icon'
-										imgClassName='-mt-[3px] mr-[1.5px]'
-									/>{' '}
-									Set identity
-								</span>{' '}
-								with Polkassembly
-							</span>
+							<BecomeDelegateIdentiyButton
+								closeModal={() => {
+									setIsModalOpen && setIsModalOpen(false);
+								}}
+							/>
 						}
 						type='info'
 						showIcon

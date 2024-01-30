@@ -4,18 +4,17 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import DashboardTrackListing from './TracksListing';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { Button, Skeleton, Tabs, TabsProps } from 'antd';
-import DelegationProfile from '~src/ui-components/DelegationProfile';
+import { Button, Skeleton } from 'antd';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
+import DelegationTabs from './DelegationTabs';
 
 interface Props {
 	className?: string;
@@ -54,45 +53,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress, isMobile]);
 
-	const tabItems: TabsProps['items'] = [
-		{
-			children: (
-				<>
-					{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
-					<BecomeDelegate />
-					<TotalDelegationData />
-					<TrendingDelegates />
-				</>
-			),
-			key: '1',
-			label: 'Dashboard'
-		},
-		{
-			children: (
-				<>
-					<BecomeDelegate />
-					<DelegationProfile
-						address={userDetails?.delegationDashboardAddress}
-						username={userDetails?.username || ''}
-						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
-					/>
-					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
-						{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
-							<DashboardTrackListing
-								theme={theme}
-								address={String(userDetails.delegationDashboardAddress)}
-							/>
-						) : (
-							<Skeleton />
-						)}
-					</div>
-				</>
-			),
-			key: '2',
-			label: 'My Delegation'
-		}
-	];
-
 	return (
 		<div className={`${className} delegation-dashboard`}>
 			{isLoggedOut ? (
@@ -123,12 +83,10 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			)}
 
 			{!isLoggedOut && userDetails.loginAddress && (
-				<Tabs
-					defaultActiveKey='2'
-					items={tabItems}
-					size='large'
-					// type='card'
-					className='mt-6 font-medium text-sidebarBlue dark:text-blue-dark-high'
+				<DelegationTabs
+					theme={theme}
+					userDetails={userDetails}
+					isLoggedOut={isLoggedOut}
 				/>
 			)}
 

@@ -5,10 +5,10 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Modal } from 'antd';
+import { Divider, Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-// import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -80,36 +80,78 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
+
+	console.log('HEADER', delegate.dataSource);
+
 	return (
 		<div
 			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
 				delegate?.dataSource.includes('nova') ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
-			{delegate?.dataSource.includes('nova') && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
-					{/* <NovaWalletIcon /> */}
-					<ImageIcon
-						src='/assets/delegation-tracks/nova-wallet.svg'
-						alt='nova wallet icon'
-					/>
-					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
-				</div>
-			)}
+			{delegate?.dataSource.length > 1 ? (
+				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid border-[#485F7D] bg-[#EDEFF3] px-5 dark:bg-[#141C2D]'>
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div>
+							<div className='flex items-center space-x-1'>
+								<PolkadotIcon />
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly</span>
+							</div>
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
+							/>
+						</div>
+					)}
 
-			{delegate?.dataSource.includes('parity') && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
-					<ParityTechIcon />
-					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
+					{delegate?.dataSource.includes('parity') && (
+						<>
+							<div className='flex items-center space-x-[6px]'>
+								<ParityTechIcon />
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot</span>
+							</div>
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
+							/>
+						</>
+					)}
+					{delegate?.dataSource.includes('nova') && (
+						<div className='flex items-center space-x-1 '>
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet</span>
+						</div>
+					)}
 				</div>
+			) : (
+				<>
+					{delegate?.dataSource.includes('nova') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
+							{/* <NovaWalletIcon /> */}
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('parity') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#33071E]'>
+							<ParityTechIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
+							<PolkadotIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+						</div>
+					)}
+				</>
 			)}
-			{delegate?.dataSource.includes('polkassembly') && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
-					<ParityTechIcon />
-					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
-				</div>
-			)}
-
 			<div className='flex items-center justify-between px-5 pt-5'>
 				<div className='flex gap-2 max-lg:justify-start'>
 					<Address

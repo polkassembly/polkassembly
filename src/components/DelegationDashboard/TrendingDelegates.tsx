@@ -69,6 +69,7 @@ const TrendingDelegates = () => {
 			setCurrentPage(totalPages);
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
+	console.log('length', delegatesData?.length);
 
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>

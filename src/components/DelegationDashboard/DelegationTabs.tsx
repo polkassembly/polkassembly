@@ -17,15 +17,20 @@ interface Props {
 	theme?: string;
 	isLoggedOut: boolean;
 	userDetails: any;
+	isModalOpen: boolean;
+	setIsModalOpen: (pre: boolean) => void;
 }
 
-const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) => {
+const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpen, setIsModalOpen }: Props) => {
 	const tabItems: TabsProps['items'] = [
 		{
 			children: (
 				<>
 					{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
-					<BecomeDelegate />
+					<BecomeDelegate
+						isModalOpen={isModalOpen}
+						setIsModalOpen={setIsModalOpen}
+					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
 				</>
@@ -36,11 +41,15 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 		{
 			children: (
 				<>
-					<BecomeDelegate />
+					<BecomeDelegate
+						isModalOpen={isModalOpen}
+						setIsModalOpen={setIsModalOpen}
+					/>
 					<DelegationProfile
 						address={userDetails?.delegationDashboardAddress}
 						username={userDetails?.username || ''}
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
+						setIsModalOpen={setIsModalOpen}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
 						{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (

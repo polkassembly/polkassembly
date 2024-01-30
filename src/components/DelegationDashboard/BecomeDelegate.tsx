@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import React from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 // import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -14,8 +14,13 @@ const BecomeDelegateModal = dynamic(() => import('../../ui-components/BecomeDele
 	ssr: false
 });
 
-const BecomeDelegate = () => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
+interface Props {
+	isModalOpen: boolean;
+	setIsModalOpen: (pre: boolean) => void;
+	className?: string;
+}
+
+const BecomeDelegate = ({ isModalOpen, setIsModalOpen }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const showModal = () => {
 		setIsModalOpen(true);

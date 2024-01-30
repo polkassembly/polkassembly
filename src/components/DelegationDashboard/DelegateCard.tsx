@@ -81,8 +81,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setAddress(address);
 	};
 
-	console.log('HEADER', delegate.dataSource);
-
 	return (
 		<div
 			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${

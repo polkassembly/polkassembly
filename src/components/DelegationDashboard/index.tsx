@@ -34,6 +34,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (!window) return;
@@ -76,7 +77,10 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{isLoggedOut && (
 				<>
-					<BecomeDelegate />
+					<BecomeDelegate
+						isModalOpen={isModalOpen}
+						setIsModalOpen={setIsModalOpen}
+					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
 				</>
@@ -87,6 +91,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					theme={theme}
 					userDetails={userDetails}
 					isLoggedOut={isLoggedOut}
+					isModalOpen={isModalOpen}
+					setIsModalOpen={setIsModalOpen}
 				/>
 			)}
 

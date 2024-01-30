@@ -69,9 +69,8 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
+import SetNudge from '~src/ui-components/SetNudge';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import SetNotificationNudge from '~src/ui-components/setNotificationNudge';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -263,8 +262,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	// const [notificationVisible, setNotificationVisible] = useState(true);
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
@@ -768,15 +767,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			<div className='nudge-container'>
-				<SetNotificationNudge className='' />
-				{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-					<SetIdentityNudge
-						handleSetIdentityClick={handleIdentityButtonClick}
-						isIdentitySet={isIdentitySet}
-					/>
-				)}
-			</div>
+
+			{/* <SetNotificationNudge /> */}
+
+			{userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+				<SetNudge
+					handleSetIdentityClick={handleIdentityButtonClick}
+					isIdentitySet={isIdentitySet}
+				/>
+			)}
 			<Layout hasSider>
 				<Sider
 					trigger={null}

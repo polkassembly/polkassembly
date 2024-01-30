@@ -1,11 +1,61 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import React, { useEffect, useState } from 'react';
+import { formatBalance } from '@polkadot/util';
 import { Divider } from 'antd';
-import React from 'react';
+import BN from 'bn.js';
+import { useApiContext } from '~src/context';
+import { chainProperties } from '~src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
+import { MessageType } from '~src/auth/types';
 
+const ZERO_BN = new BN(0);
 const TotalDelegationData = () => {
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [totalSupply, setTotalSupply] = useState<BN>(ZERO_BN);
+	const [totalStats, setTotalStats] = useState<IDelegationStats>({
+		totalDelegatedBalance: '0',
+		totalDelegatedVotes: 0,
+		totalDelegates: 0,
+		totalDelegators: 0
+	});
+
+	const getData = async () => {
+		const { data, error } = await nextApiClientFetch<IDelegationStats | MessageType>('/api/v1/delegations/get-delegation-stats');
+		if (data) {
+			setTotalStats(data as IDelegationStats);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit
+		});
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		(async () => {
+			const totalIssuance = await api?.query?.balances?.totalIssuance();
+			const inactiveIssuance = await api?.query?.balances?.inactiveIssuance();
+			setTotalSupply(totalIssuance.sub(inactiveIssuance));
+		})();
+		getData();
+	}, [api, apiReady]);
+
 	return (
 		<div className='mt-[32px] flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			{/* Total Supply */}
@@ -16,9 +66,7 @@ const TotalDelegationData = () => {
 				/>
 				<div className='flex flex-col'>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Supply</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
-						14M<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
-					</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalSupply.toString(), 2, true, network)}</span>
 				</div>
 			</div>
 			<Divider
@@ -34,9 +82,7 @@ const TotalDelegationData = () => {
 				/>
 				<div className='flex flex-col '>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Delegated Tokens</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
-						679.6K<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
-					</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalStats.totalDelegatedBalance, 2, true, network)}</span>
 				</div>
 			</div>
 			<Divider
@@ -51,17 +97,9 @@ const TotalDelegationData = () => {
 					alt='Total delegate tokens icon'
 				/>
 				<div className='flex flex-col '>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Tokens</span>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Votes</span>
 					<div className='flex space-x-2'>
-						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>
-							123.6K<span className='ml-[3px] text-sm font-medium text-blue-light-medium'>DOT</span>
-						</span>
-						<span
-							style={{ border: '1px solid #485F7D99' }}
-							className='my-[3px] flex items-center rounded-md bg-[#f6f7f8] px-[6px] text-xs font-medium text-blue-light-medium'
-						>
-							7d
-						</span>
+						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
 					</div>
 				</div>
 			</div>
@@ -78,7 +116,7 @@ const TotalDelegationData = () => {
 				/>
 				<div className='flex flex-col'>
 					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegates</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>108</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegates}</span>
 				</div>
 			</div>
 			<Divider
@@ -93,8 +131,8 @@ const TotalDelegationData = () => {
 					alt='Total delegatees icon'
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegatees</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>21,203</span>
+					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegators</span>
+					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegators}</span>
 				</div>
 			</div>
 		</div>

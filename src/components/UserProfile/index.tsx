@@ -10,10 +10,10 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProfileCard from './ProfileCard';
 import classNames from 'classnames';
-import ProfileStatsCard from './ProfileStatsCard';
 import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
+import ProfileStatsCard from './ProfileStatsCard';
 
 interface Props {
 	className?: string;
@@ -58,7 +58,6 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		if (!apiReady) {
 			return;
 		}
-
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
@@ -79,7 +78,6 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 								setAddressWithIdentity(getEncodedAddress(address, network) || '');
 							} else if (!(onChainIdentity as any)?.[key]) {
 								(onChainIdentity as any)[key] = value;
-								setAddressWithIdentity(getEncodedAddress(address, network) || '');
 							}
 						}
 					});
@@ -147,13 +145,24 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 		} else {
 			setAddressWithIdentity(userProfile?.addresses?.[0] || '');
 		}
-		if (!profileDetails?.cover_image) return;
-		(async () => {
-			const res = await fetch(profileDetails?.cover_image || '');
-			setIsValidCoverImage(res.ok || false);
-		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onChainIdentity, userProfile]);
+	}, [onChainIdentity]);
+
+	useEffect(() => {
+		if (!profileDetails?.cover_image?.length) return;
+
+		(async () => {
+			try {
+				const obj = new Image();
+				obj.src = profileDetails?.cover_image || '';
+				obj.onload = () => setIsValidCoverImage(true);
+				obj.onerror = () => setIsValidCoverImage(false);
+			} catch (err) {
+				console.log(err);
+			}
+		})();
+	}, [profileDetails]);
 
 	return (
 		<div className={classNames(className, 'flex flex-col gap-6')}>

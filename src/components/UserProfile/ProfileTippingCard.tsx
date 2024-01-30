@@ -7,7 +7,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { TIPS } from '../Tipping';
-import { Divider, Empty, Segmented, Spin } from 'antd';
+import { Divider, Empty, Segmented, Spin, Tooltip, message } from 'antd';
 import Address from '~src/ui-components/Address';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
@@ -24,6 +24,8 @@ import { setReceiver } from '~src/redux/Tipping';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
+import copyToClipboard from '~src/util/copyToClipboard';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -56,6 +58,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [openTipModal, setOpenTipModal] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const [dollarToTokenBalance, setDollarToTokenBalance] = useState<{ threeDollar: string; fiveDollar: string; tenDollar: string; fifteenDollar: string }>({
 		fifteenDollar: '0',
@@ -64,6 +67,13 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 		threeDollar: '0'
 	});
 
+	const handleCopyAddress = () => {
+		messageApi.open({
+			content: 'Address copied to clipboard',
+			duration: 10,
+			type: 'success'
+		});
+	};
 	const handleTipChangeToDollar = (value: number) => {
 		const tip = value / Number(currentTokenPrice || 1);
 		return String(tip.toFixed(2));
@@ -74,6 +84,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 			setTipsData([]);
 			return;
 		}
+		setTipsData([]);
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITip[]>('api/v1/tipping/get-user-tips', {
 			addresses: selectedAddresses || [],
@@ -119,7 +130,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 				className={classNames(
 					className,
 					theme,
-					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col max-md:overflow-x-auto'
+					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-lg:overflow-x-auto max-md:flex-col'
 				)}
 			>
 				<div className='flex justify-between'>
@@ -136,7 +147,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 					<div className={classNames(theme, 'flex items-center gap-2')}>
 						{userProfile?.user_id !== loginId && !!username?.length && (
 							<CustomButton
-								className='delegation-buttons border-none'
+								className='delegation-buttons border-none shadow-none'
 								variant='default'
 								buttonsize='xs'
 								onClick={() => {
@@ -162,7 +173,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 						/>
 					</div>
 				</div>
-				<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium  max-md:gap-2'>
+				<div className='flex items-center justify-between text-sm font-medium text-bodyBlue dark:text-blue-dark-medium max-md:gap-2'>
 					{TIPS.map((tip) => {
 						const [tipBalance] = inputToBn(String(Number(dollarToTokenBalance[tip.key]).toFixed(2)), network, false);
 						return (
@@ -237,7 +248,28 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 									)}
 								</div>
 
-								<div className={`w-[30%] ${isMobile && 'w-full'}`}>{tip?.remark || '-'}</div>
+								<Tooltip
+									title={
+										<div
+											className='flex items-center gap-1'
+											onClick={() => {
+												if (!tip?.remark.length) return;
+												copyToClipboard(tip?.remark);
+												handleCopyAddress();
+											}}
+										>
+											{contextHolder}
+											Copy
+											<CopyIcon className='cursor-pointer text-xl text-lightBlue dark:text-icon-dark-inactive' />
+										</div>
+									}
+								>
+									<div className={`w-[30%] ${isMobile && 'w-full'} ${tip?.remark.length && 'cursor-copy'}`}>
+										{contextHolder}
+										{tip?.remark || '-'}
+									</div>
+								</Tooltip>
+
 								{tipAmount === null && (
 									<div className={`w-[20%] ${isMobile && 'w-full'}`}>
 										{tip?.amount} {unit}

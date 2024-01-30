@@ -40,6 +40,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
+import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -458,149 +459,152 @@ const Post: FC<IPostProps> = (props) => {
 		...getOnChainTabs()
 	];
 	return (
-		<PostDataContextProvider
-			initialPostData={{
-				beneficiaries: post?.beneficiaries || [],
-				cid: post?.cid || '',
-				comments: post?.comments || [],
-				content: post?.content,
-				created_at: post?.created_at || '',
-				curator: post?.curator || '',
-				currentTimeline: post.currentTimeline,
-				description: post?.description,
-				hash: post.hash,
-				history: post?.history || [],
-				identityId: post?.identity || null,
-				last_edited_at: post?.last_edited_at,
-				marketMetadata: post?.marketMetadata || null,
-				postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
-				postType: proposalType,
-				post_link: post?.post_link,
-				post_reactions: post?.post_reactions,
-				proposalHashBlock: post?.proposalHashBlok || null,
-				proposer: post?.proposer || '',
-				requested: post?.requested,
-				reward: post?.reward,
-				spam_users_count: post?.spam_users_count,
-				status: post?.status,
-				statusHistory: post?.statusHistory,
-				subscribers: post?.subscribers || [],
-				summary: post?.summary,
-				tags: post?.tags || [],
-				timeline: post?.timeline,
-				title: post?.title || '',
-				topic: post?.topic || '',
-				track_name: trackName,
-				track_number: post?.track_number,
-				username: post?.username
-			}}
-		>
-			<CommentsDataContextProvider
-				initialCommentsData={{
-					comments: {},
+		<>
+			<PostDataContextProvider
+				initialPostData={{
+					beneficiaries: post?.beneficiaries || [],
+					cid: post?.cid || '',
+					comments: post?.comments || [],
+					content: post?.content,
+					created_at: post?.created_at || '',
+					curator: post?.curator || '',
 					currentTimeline: post.currentTimeline,
-					overallSentiments: post?.overallSentiments,
-					timelines: []
+					description: post?.description,
+					hash: post.hash,
+					history: post?.history || [],
+					identityId: post?.identity || null,
+					last_edited_at: post?.last_edited_at,
+					marketMetadata: post?.marketMetadata || null,
+					postIndex: proposalType === ProposalType.TIPS ? post.hash : post.post_id,
+					postType: proposalType,
+					post_link: post?.post_link,
+					post_reactions: post?.post_reactions,
+					proposalHashBlock: post?.proposalHashBlok || null,
+					proposer: post?.proposer || '',
+					requested: post?.requested,
+					reward: post?.reward,
+					spam_users_count: post?.spam_users_count,
+					status: post?.status,
+					statusHistory: post?.statusHistory,
+					subscribers: post?.subscribers || [],
+					summary: post?.summary,
+					tags: post?.tags || [],
+					timeline: post?.timeline,
+					title: post?.title || '',
+					topic: post?.topic || '',
+					track_name: trackName,
+					track_number: post?.track_number,
+					username: post?.username
 				}}
 			>
-				<QuoteCommentContextProvider>
-					<SpamAlert />
-					{!isEditing &&
-						Boolean(post.timeline?.length) &&
-						proposalType !== ProposalType.CHILD_BOUNTIES &&
-						(post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true) && (
-							<LinkCard
-								timeline={post?.timeline}
-								proposalType={proposalType}
-							/>
-						)}
-					{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
-						<Link href={`/bounty/${post.parent_bounty_index}`}>
-							<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
-								This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
-							</div>
-						</Link>
-					)}
-					{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
-						<div className='dashboard-heading mb-6 flex w-full items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
-							<span>The child bounty payout is ready to be claimed</span>
-							<ClaimPayoutModal
-								parentBountyId={post?.parentBountyId}
-								childBountyId={onchainId}
-							/>
-						</div>
-					)}
-
-					<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
-						<div className='xl:col-span-8'>
-							{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
-								<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
-									This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
-								</div>
+				<CommentsDataContextProvider
+					initialCommentsData={{
+						comments: {},
+						currentTimeline: post.currentTimeline,
+						overallSentiments: post?.overallSentiments,
+						timelines: []
+					}}
+				>
+					<QuoteCommentContextProvider>
+						<SpamAlert />
+						{!isEditing &&
+							Boolean(post.timeline?.length) &&
+							proposalType !== ProposalType.CHILD_BOUNTIES &&
+							(post?.timeline.length === 1 ? getFirestoreProposalType(post?.timeline[0]?.type) !== proposalType : true) && (
+								<LinkCard
+									timeline={post?.timeline}
+									proposalType={proposalType}
+								/>
 							)}
-
-							{/* Post Content */}
-							<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
-								{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
-
-								{!isEditing && (
-									<>
-										<PostHeading className='mb-5' />
-										<Tabs
-											theme={theme}
-											type='card'
-											className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
-											items={tabItems}
-										/>
-									</>
-								)}
+						{proposalType === ProposalType.CHILD_BOUNTIES && (post.parent_bounty_index || post.parent_bounty_index === 0) && (
+							<Link href={`/bounty/${post.parent_bounty_index}`}>
+								<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:font-normal dark:text-white md:p-6'>
+									This is a child bounty of <span className='text-pink_primary dark:text-blue-dark-helper'>Bounty #{post.parent_bounty_index}</span>
+								</div>
+							</Link>
+						)}
+						{post && proposalType === ProposalType.CHILD_BOUNTIES && postStatus === 'PendingPayout' && (
+							<div className='dashboard-heading mb-6 flex w-full items-center gap-x-2 rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
+								<span>The child bounty payout is ready to be claimed</span>
+								<ClaimPayoutModal
+									parentBountyId={post?.parentBountyId}
+									childBountyId={onchainId}
+								/>
 							</div>
-							<div className='flex items-center'>
-								<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
-								<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
-								<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
-							</div>
-							{isSimilarLoading ? (
-								<>
-									<div>
-										<LoadingState />
+						)}
+
+						<div className={`${className} grid grid-cols-1 gap-9 xl:grid-cols-12`}>
+							<div className='xl:col-span-8'>
+								{proposalType === ProposalType.GRANTS && dayjs(post.created_at).isAfter(dayjs().subtract(6, 'days')) && (
+									<div className='dashboard-heading mb-6 w-full rounded-md bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white md:p-6'>
+										This grant will be closed in <span className='text-pink_primary'>{formatDuration(duration)}</span>
 									</div>
-								</>
-							) : (
-								<div>
-									{data.length > 0 ? (
-										<div>
-											{/* main content */}
-											<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
-												<TrackListingAllTabContent
-													posts={data}
-													// error={error}
-													count={data?.length || 0}
-													showSimilarPost={true}
-												/>
-											</div>
-										</div>
-									) : (
-										<div className={`${className} mt-5`}>
-											<PostEmptyState text='No Active Proposals' />
-										</div>
+								)}
+
+								{/* Post Content */}
+								<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
+									{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
+
+									{!isEditing && (
+										<>
+											<PostHeading className='mb-5' />
+											<Tabs
+												theme={theme}
+												type='card'
+												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
+												items={tabItems}
+											/>
+										</>
 									)}
 								</div>
-							)}
+								<div className='flex items-center'>
+									<hr className='seperation-border mr-2 flex-grow dark:border-separatorDark' />
+									<p className='m-0 -mt-[2px] p-0 text-center text-lightBlue dark:text-white'>Discover similar proposals</p>
+									<hr className='seperation-border ml-2 flex-grow dark:border-separatorDark' />
+								</div>
+								{isSimilarLoading ? (
+									<>
+										<div>
+											<LoadingState />
+										</div>
+									</>
+								) : (
+									<div>
+										{data.length > 0 ? (
+											<div>
+												{/* main content */}
+												<div className='mt-5 w-full rounded-xxl bg-transparent drop-shadow-md'>
+													<TrackListingAllTabContent
+														posts={data}
+														// error={error}
+														count={data?.length || 0}
+														showSimilarPost={true}
+													/>
+												</div>
+											</div>
+										) : (
+											<div className={`${className} mt-5`}>
+												<PostEmptyState text='No Active Proposals' />
+											</div>
+										)}
+									</div>
+								)}
+							</div>
+
+							{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
 						</div>
+						<ScrollToTopButton />
+						<ScrollToCommentsButton />
 
-						{!isEditing ? <Sidebar className='hidden xl:block' /> : null}
-					</div>
-					<ScrollToTopButton />
-					<ScrollToCommentsButton />
-
-					<SidebarRight
-						open={sidebarOpen}
-						closeSidebar={() => setSidebarOpen(false)}
-					></SidebarRight>
-				</QuoteCommentContextProvider>
-			</CommentsDataContextProvider>
-		</PostDataContextProvider>
+						<SidebarRight
+							open={sidebarOpen}
+							closeSidebar={() => setSidebarOpen(false)}
+						></SidebarRight>
+					</QuoteCommentContextProvider>
+				</CommentsDataContextProvider>
+			</PostDataContextProvider>
+			<VoteDataBottomDrawer />
+		</>
 	);
 };
 

@@ -26,7 +26,7 @@ interface IBasicInformationProps {
 	className?: string;
 	errorCheck?: string | undefined;
 	theme?: string;
-	isValidCoverImage: boolean;
+	isValidCoverImage?: boolean;
 }
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
@@ -79,11 +79,11 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 				<div className='h-[150px]'>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
-						src={isValidCoverImage ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
+						src={isValidCoverImage && !!profile?.cover_image?.length ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
 						width={900}
 						className='h-full w-full rounded-xl object-cover'
 						height={150}
-						alt=''
+						alt='loading ...'
 					/>
 				</div>
 				<div className='mt-3 flex h-14 justify-between'>
@@ -105,7 +105,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 					<div
@@ -126,7 +126,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 					<div
@@ -147,7 +147,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 							width={100}
 							className='h-full w-full rounded-xl object-cover'
 							height={150}
-							alt=''
+							alt='loading ...'
 						/>
 					</div>
 				</div>

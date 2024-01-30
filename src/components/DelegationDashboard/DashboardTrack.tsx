@@ -109,7 +109,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	const getData = async () => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: [address],
+			address: address,
 			track: trackDetails?.trackId
 		});
 

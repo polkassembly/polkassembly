@@ -34,6 +34,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const [openLinkExpand, setOpenLinkExpand] = useState<boolean>(false);
 	const [openProxyLinkModal, setOpenProxyLinkModal] = useState<boolean>(false);
 	const [openLinkMultisig, setOpenLinkMultisig] = useState<boolean>(false);
+
 	const govTypeContent = (
 		<div className='flex w-[160px] flex-col gap-2'>
 			<span

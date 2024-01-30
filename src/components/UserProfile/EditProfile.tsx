@@ -113,10 +113,16 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (!profile) return;
+		if (!profile || !profile?.cover_image?.length) return;
 		(async () => {
-			const res = await fetch(profile?.cover_image || '');
-			setIsValidCoverImage(res.ok);
+			try {
+				const obj = new Image();
+				obj.src = profile?.cover_image || '';
+				obj.onload = () => setIsValidCoverImage(true);
+				obj.onerror = () => setIsValidCoverImage(false);
+			} catch (err) {
+				console.log(err);
+			}
 		})();
 		if (validateData(profile?.image, profile?.social_links)) return;
 

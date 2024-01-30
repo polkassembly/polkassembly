@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 const StyledTabs = styled(AntdTabs)`
 	.ant-tabs-tab:not(.ant-tabs-tab-active) {
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
+		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'transparent')} !important;
 		border-top: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
 		border-left: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;
 		border-right: ${(props) => (props.theme == 'dark' ? 'none' : 'white')} !important;

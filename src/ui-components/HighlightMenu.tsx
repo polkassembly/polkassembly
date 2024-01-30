@@ -84,7 +84,7 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 			ref={menuRef}
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
-			} bg-highlightBg after:border-highlightBg flex h-16 w-20 flex-col justify-between gap-1 rounded-md p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-l-transparent after:border-r-transparent after:content-['']`}
+			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
 			style={{ left: menuPosition.left, top: menuPosition.top - 10 }}
 		>
 			<div

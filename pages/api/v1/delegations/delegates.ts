@@ -11,7 +11,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import Web3 from 'web3';
 import { IDelegate } from '~src/types';
-import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 import * as admin from 'firebase-admin';
 
 const firestore_db = admin.firestore();
@@ -139,30 +138,21 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		if (!address) continue;
 		let bio = '';
 		const dataSource = [];
-
-		if (!combinedDelegatesUniqueData[address]) {
-			const { data, error } = await getProfileWithAddress({ address });
-
-			if (data && !error) {
-				bio = data.profile?.bio || '';
-			}
-		}
 		if (combinedDelegatesUniqueData[address]?.nova) {
-			if (combinedDelegatesUniqueData[address]?.nova?.longDescription) {
+			if (combinedDelegatesUniqueData[address]?.nova?.longDescription?.length) {
 				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
 			}
-
 			dataSource.push('nova');
 		}
 		if (combinedDelegatesUniqueData[address]?.parity) {
-			if (combinedDelegates[index]?.parity?.manifesto) {
-				bio = combinedDelegates[index]?.parity?.manifesto;
+			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {
+				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto;
 			}
 			dataSource.push('parity');
 		}
 		if (combinedDelegatesUniqueData[address]?.polkassembly) {
-			if (combinedDelegates[index]?.polkassembly?.bio) {
-				bio = combinedDelegates[index]?.polkassembly?.bio;
+			if (combinedDelegatesUniqueData[address]?.polkassembly?.bio?.length) {
+				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio;
 			}
 			dataSource.push('polkassembly');
 		}
@@ -175,7 +165,6 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			name: combinedDelegates[index].name,
 			voted_proposals_count: votesCount
 		};
-
 		result.push(newDelegate);
 	}
 	return result;

@@ -128,11 +128,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 						onAccountChange={(address) => {
 							setAddress(address);
 							setDetails((prevDetails) => ({ ...prevDetails, address }));
-
 							dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
-							// Trigger the fetchUserID function with the updated address
-							console.log('kk', address);
-
 							fetchUserID(address);
 						}}
 						defaultAddress={defaultAddress}

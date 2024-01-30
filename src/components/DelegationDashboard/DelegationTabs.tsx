@@ -46,8 +46,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 						setIsModalOpen={setIsModalOpen}
 					/>
 					<DelegationProfile
-						address={userDetails?.delegationDashboardAddress}
-						username={userDetails?.username || ''}
+						user_name={userDetails?.username || ''}
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						setIsModalOpen={setIsModalOpen}
 					/>

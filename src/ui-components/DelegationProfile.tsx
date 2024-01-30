@@ -15,6 +15,8 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from './SocialsHandle';
+import { useApiContext } from '~src/context';
+import { IDelegate } from '~src/types';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -22,15 +24,16 @@ const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 });
 
 interface Props {
-	username: string;
-	address: string;
 	isSearch?: boolean;
 	className?: string;
 	setIsModalOpen: (pre: boolean) => void;
+	user_name: string;
 }
 
-const DelegationProfile = ({ username, address, isSearch, className, setIsModalOpen }: Props) => {
+const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { delegationDashboardAddress: address, username } = userProfile;
+	const { api, apiReady } = useApiContext();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -43,6 +46,7 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 	});
 
 	const { image, social_links, bio } = profileDetails;
+	const [userBio, setUserBio] = useState<string | undefined>(bio);
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
@@ -56,8 +60,22 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 		}
 	};
 
+	const handleData = async () => {
+		if (!api || !apiReady) return;
+		// setLoading(true);
+
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
+		if (data && data[0]?.bio) {
+			setUserBio(data[0].bio);
+		} else {
+			console.log(error);
+		}
+		// setLoading(false);
+	};
+
 	useEffect(() => {
 		getData();
+		handleData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username, address]);
 
@@ -72,7 +90,7 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 		copyToClipboard(address);
 	};
 
-	return username?.length > 0 ? (
+	return username && username?.length > 0 ? (
 		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 			<div className='flex w-full gap-[34px] '>
 				<div className='w-3/10'>
@@ -86,16 +104,18 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 				<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
 					{address && address.length > 0 && (
 						<div className='flex items-center gap-1'>
-							<Address
-								address={userProfile?.delegationDashboardAddress}
-								disableIdenticon
-								isProfileView
-								destroyTooltipOnHide
-								className='flex gap-1'
-								usernameClassName='text-2xl'
-								passedUsername={profileDetails?.username}
-								usernameMaxLength={20}
-							/>
+							{address && (
+								<Address
+									address={address}
+									disableIdenticon
+									isProfileView
+									destroyTooltipOnHide
+									className='flex gap-1'
+									usernameClassName='text-2xl'
+									passedUsername={username}
+									usernameMaxLength={20}
+								/>
+							)}
 							<span
 								className='flex cursor-pointer items-center text-xl'
 								onClick={(e) => {
@@ -110,21 +130,19 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 						</div>
 					)}
 
-					{!bio ? (
+					{!userBio ? (
 						<h2
 							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setIsModalOpen(true)}
 						>
-							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
+							{username === user_name ? 'Click here to add bio' : 'No Bio'}
 						</h2>
 					) : (
 						<h2
-							onClick={() => setOpenEditModal(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
-								username === userProfile.username && 'cursor-pointer'
-							}`}
+							onClick={() => setIsModalOpen(true)}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${username === user_name && 'cursor-pointer'}`}
 						>
-							{bio}
+							{userBio ? userBio : bio}
 						</h2>
 					)}
 
@@ -158,7 +176,7 @@ const DelegationProfile = ({ username, address, isSearch, className, setIsModalO
 								variant='default'
 								className='max-lg:w-auto'
 							>
-								<EditIcon className='text-sm tracking-wide text-pink_primary ' />
+								<EditIcon className='mt-1 text-base text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>
 							</CustomButton>
 						)}

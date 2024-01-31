@@ -7,8 +7,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
-import Loader from '~src/ui-components/Loader';
 import { useTheme } from 'next-themes';
+import { Spin } from 'antd';
 
 const TrendingDelegates = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -104,13 +104,9 @@ const TrendingDelegates = () => {
 					{showMore ? 'Show Less' : 'Show More'}
 				</span>
 			</div>
-			{loading ? (
-				<Loader
-					size='large'
-					className='mt-4'
-				/>
-			) : (
-				<>
+
+			<Spin spinning={loading}>
+				<div>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
 							...delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
@@ -140,8 +136,8 @@ const TrendingDelegates = () => {
 							hideOnSinglePage={true}
 						/>
 					</div>
-				</>
-			)}
+				</div>
+			</Spin>
 		</div>
 	);
 };

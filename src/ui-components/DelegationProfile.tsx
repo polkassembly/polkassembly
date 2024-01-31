@@ -2,8 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Skeleton, message } from 'antd';
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
+import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { ApiContext } from '~src/context/ApiContext';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
@@ -14,7 +16,10 @@ import Tooltip from '~src/basic-components/Tooltip';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from './SocialsHandle';
 import { IDelegate } from '~src/types';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { ApiPromise } from '@polkadot/api';
+import { network as AllNetworks } from '~src/global/networkConstants';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -34,6 +39,12 @@ interface Props {
 const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUserBio, profileDetails, address }: Props) => {
 	const { image, social_links, username } = profileDetails;
 	const userProfile = useUserDetailsSelector();
+	const { network } = useNetworkSelector();
+	const apiContext = useContext(ApiContext);
+	const [api, setApi] = useState<ApiPromise>();
+	const [apiReady, setApiReady] = useState(false);
+	const encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
+	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 
 	// const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
@@ -49,6 +60,41 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 		}
 		// setLoading(false);
 	};
+	useEffect(() => {
+		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
+			setApi(apiContext.relayApi);
+			setApiReady(apiContext.relayApiReady);
+		} else {
+			if (!apiContext.api || !apiContext.apiReady) return;
+			setApi(apiContext.api);
+			setApiReady(apiContext.apiReady);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
+
+	const handleIdentityInfo = () => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+
+		api.derive.accounts
+			.info(encodedAddr, (info: DeriveAccountInfo) => {
+				setIdentity(info.identity);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+
+		return () => unsubscribe && unsubscribe();
+	};
+	useEffect(() => {
+		if (!api || !apiReady || !address || !encodedAddr) return;
+		handleIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, address, encodedAddr, network]);
 
 	useEffect(() => {
 		handleData();
@@ -108,7 +154,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 
 					{!userBio ? (
 						<h2
-							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
+							className={`mt-2.5 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setIsModalOpen(true)}
 						>
 							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
@@ -116,7 +162,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 					) : (
 						<h2
 							onClick={() => setIsModalOpen(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
+							className={`mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
 								username === userProfile.username && 'cursor-pointer'
 							}`}
 						>
@@ -124,12 +170,14 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 						</h2>
 					)}
 
-					<div className={'mt-[10px] flex flex-wrap items-center gap-x-5 text-xl text-bodyBlue dark:text-blue-dark-high md:gap-x-3 '}>
-						{social_links && (
+					<div className={'mt-5 flex flex-wrap items-center  '}>
+						{identity && social_links && (
 							<SocialsHandle
 								socials={social_links}
 								address={address}
-								onchainIdentity={null}
+								onchainIdentity={identity}
+								boxSize={40}
+								iconSize={20}
 							/>
 						)}
 					</div>

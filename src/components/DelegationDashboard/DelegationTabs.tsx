@@ -85,6 +85,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 						setUserBio={setUserBio}
 						profileDetails={profileDetails}
 						address={userProfile.delegationDashboardAddress}
+						setIsModalOpen={setIsModalOpen}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
 						{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (

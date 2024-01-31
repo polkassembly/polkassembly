@@ -39,10 +39,11 @@ interface Props {
 	setUserBio: (userBio: string) => void;
 	profileDetails: ProfileDetailsResponse;
 	address: string;
+	setIsModalOpen: (userBio: boolean) => void;
 }
 
-const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address }: Props) => {
-	const { image, social_links, username } = profileDetails;
+const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address, setIsModalOpen }: Props) => {
+	const { image, social_links, username, bio } = profileDetails;
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -185,7 +186,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 
 			{!isSearch && (
 				<div className='flex items-start justify-start gap-2.5 text-pink_primary'>
-					{userBio && (
+					{!bio && (
 						<Tooltip
 							title='Coming Soon'
 							key={1}
@@ -195,7 +196,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 						</Tooltip>
 					)}
 					<span>
-						{userBio ? (
+						{bio || userBio ? (
 							<CustomButton
 								onClick={() => setIsEditModalOpen(true)}
 								height={40}
@@ -208,8 +209,8 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 							</CustomButton>
 						) : (
 							<Button
-								onClick={() => setIsEditModalOpen(true)}
-								className={'mt-1 border-[#E5007A] bg-white font-medium text-pink_primary dark:text-black'}
+								onClick={() => setIsModalOpen(true)}
+								className={'mt-1 border-[#E5007A] bg-white font-medium text-pink_primary dark:bg-black'}
 							>
 								Become a Delegate
 							</Button>

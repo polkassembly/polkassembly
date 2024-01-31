@@ -16,6 +16,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { isValidNetwork } from '~src/api-utils';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -115,7 +116,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		} else {
 			const currentUrl = window.location.href;
 			const subDomain = getSubdomain(currentUrl);
-			if (subDomain && subDomain !== '' && ![subDomain].includes(network)) {
+			if (subDomain && subDomain !== '' && ![subDomain].includes(network) && subDomain.length < 16 && !isValidNetwork(subDomain)) {
 				console.log('here');
 				router.push(option.link);
 			} else {

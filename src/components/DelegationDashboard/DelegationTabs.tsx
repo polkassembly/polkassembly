@@ -101,7 +101,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 				</>
 			),
 			key: '2',
-			label: <span className='px-1.5'>Label</span>
+			label: <span className='px-1.5'>My Delegation</span>
 		}
 	];
 

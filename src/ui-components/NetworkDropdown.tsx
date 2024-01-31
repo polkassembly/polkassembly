@@ -118,9 +118,9 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			if (subDomain && subDomain !== '' && [subDomain].includes(network)) {
 				router.push(option.link);
 			} else {
+				router.push(`/?network=${option.key?.toLowerCase()}`);
 				setSelectedNetworks?.([option.key]);
 				dispatch(setNetwork(option.key.toLowerCase()));
-				router.push(`/?network=${option.key?.toLowerCase()}`);
 			}
 		}
 	};

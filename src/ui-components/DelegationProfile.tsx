@@ -20,23 +20,28 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import Loader from './Loader';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
 
+const BecomeDelegateEditModal = dynamic(() => import('src/ui-components/BecomeDelegateEditModal'), {
+	loading: () => <Loader />,
+	ssr: false
+});
+
 interface Props {
 	isSearch?: boolean;
 	className?: string;
-	setIsModalOpen: (pre: boolean) => void;
 	userBio: string;
 	setUserBio: (userBio: string) => void;
 	profileDetails: ProfileDetailsResponse;
 	address: string;
 }
 
-const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUserBio, profileDetails, address }: Props) => {
+const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address }: Props) => {
 	const { image, social_links, username } = profileDetails;
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -48,6 +53,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 
 	// const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
 	const handleData = async () => {
 		// setLoading(true);
@@ -154,7 +160,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 
 					{userBio && (
 						<h2
-							onClick={() => setIsModalOpen(true)}
+							onClick={() => setIsEditModalOpen(true)}
 							className={`mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
 								username === userProfile.username && 'cursor-pointer'
 							}`}
@@ -191,7 +197,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 					<span>
 						{userBio ? (
 							<CustomButton
-								onClick={() => setIsModalOpen(true)}
+								onClick={() => setIsEditModalOpen(true)}
 								height={40}
 								width={87}
 								variant='default'
@@ -202,7 +208,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 							</CustomButton>
 						) : (
 							<Button
-								onClick={() => setIsModalOpen(true)}
+								onClick={() => setIsEditModalOpen(true)}
 								className={'mt-1 border-[#E5007A] bg-white font-medium text-pink_primary dark:text-black'}
 							>
 								Become a Delegate
@@ -211,15 +217,14 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 					</span>
 				</div>
 			)}
-			{/* {openEditModal && username === userProfile.username && (
-				<EditProfileModal
-					openModal={openEditModal}
-					setOpenModal={setOpenEditModal}
-					data={profileDetails}
-					setProfileDetails={setProfileDetails}
-					fromDelegation
-				/>
-			)} */}
+			<BecomeDelegateEditModal
+				isEditModalOpen={isEditModalOpen}
+				setIsEditModalOpen={setIsEditModalOpen}
+				className=''
+				userBio={userBio}
+				setUserBio={setUserBio}
+				IsUsedForEdit={true}
+			/>
 		</div>
 	) : (
 		<div className='h-52 p-6'>

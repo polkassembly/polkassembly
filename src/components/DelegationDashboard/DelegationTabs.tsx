@@ -20,11 +20,9 @@ interface Props {
 	theme?: string;
 	isLoggedOut: boolean;
 	userDetails: any;
-	isModalOpen: boolean;
-	setIsModalOpen: (pre: boolean) => void;
 }
 
-const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpen, setIsModalOpen }: Props) => {
+const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { username, delegationDashboardAddress } = userProfile;
 	const [userBio, setUserBio] = useState<string>('');
@@ -38,6 +36,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 		user_id: 0,
 		username: ''
 	});
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -82,7 +81,6 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 					/>
 					<DelegationProfile
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
-						setIsModalOpen={setIsModalOpen}
 						userBio={userBio}
 						setUserBio={setUserBio}
 						profileDetails={profileDetails}

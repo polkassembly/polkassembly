@@ -69,7 +69,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 				</>
 			),
 			key: '1',
-			label: 'Dashboard'
+			label: <span className='px-1.5 '>Dashboard</span>
 		},
 		{
 			children: (
@@ -101,7 +101,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 				</>
 			),
 			key: '2',
-			label: 'My Delegation'
+			label: <span className='px-1.5'>Label</span>
 		}
 	];
 

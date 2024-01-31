@@ -43,7 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate | Mes
 		user_id: userId
 	};
 
-	await PADelegateDoc.set(newDelegate, { merge: true })
+	await PADelegateDoc.update(newDelegate, { merge: true })
 		.then(() => {
 			return res.status(200).json({ message: messages.SUCCESS });
 		})

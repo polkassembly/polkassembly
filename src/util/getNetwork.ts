@@ -30,6 +30,10 @@ export default function getNetwork(): Network {
 			console.error(error);
 		}
 	}
+	const params = new URLSearchParams(global.window.location.search);
+	if (params.has('network')) {
+		network = params.get('network') as Network;
+	}
 
 	const possibleNetworks = Object.values(networkConstants);
 

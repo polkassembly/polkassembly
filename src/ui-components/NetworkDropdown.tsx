@@ -14,6 +14,8 @@ import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -85,8 +87,21 @@ interface INetworkDropdown {
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
 	const { network } = useNetworkSelector();
+	const dispatch = useDispatch();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
+
+	function getSubdomain(url: string) {
+		const urlObj = new URL(url);
+		const hostname = urlObj.hostname;
+		const parts = hostname.split('.');
+		if (parts.length > 2) {
+			parts.pop();
+			parts.pop();
+			return parts.join('.');
+		}
+		return '';
+	}
 	const handleLink = (option: DropdownMenuItemType) => {
 		setOpenFilter(false);
 		if (isSearch && setSelectedNetworks && selectedNetworks) {
@@ -98,7 +113,15 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				setSelectedNetworks([...selectedNetworks, option.key]);
 			}
 		} else {
-			router.push(option.link);
+			const currentUrl = window.location.href;
+			const subDomain = getSubdomain(currentUrl);
+			if (subDomain && subDomain !== '') {
+				router.push(option.link);
+			} else {
+				setSelectedNetworks?.([option.key]);
+				dispatch(setNetwork(option.key.toLowerCase()));
+				router.push(`/?network=${option.key?.toLowerCase()}`);
+			}
 		}
 	};
 

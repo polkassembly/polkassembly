@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
-import React from 'react';
+import React, { useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 // import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -24,6 +24,7 @@ interface Props {
 
 const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const showModal = () => {
 		setIsModalOpen(true);
 	};
@@ -98,6 +99,8 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Pr
 				className=''
 				userBio={userBio}
 				setUserBio={setUserBio}
+				openAddressLinkedModal={openAddressLinkedModal}
+				setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 			/>
 		</div>
 	);

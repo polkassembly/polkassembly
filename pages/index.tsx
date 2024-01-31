@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import { FC, useEffect, useState } from 'react';
 import SEOHead from 'src/global/SEOHead';
 
-import { getNetworkFromReqHeaders, isValidNetwork } from '~src/api-utils';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
 import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `${![subDomain].includes(network) && !isValidNetwork(subDomain) ? '/opengov' : `/opengov?${query.network as string}`}`
+				destination: `${![subDomain].includes(network) ? '/opengov' : `/opengov?${query.network as string}`}`
 			}
 		};
 	}

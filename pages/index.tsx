@@ -66,9 +66,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	const subDomain: any = req?.headers?.host?.split('.')[0];
-	if ([subDomain].includes(network)) {
+	if (![subDomain].includes(network)) {
 		network = (query.network as string) || network || defaultNetwork;
+		console.log('hi');
 	}
+
 	if (networkRedirect) return networkRedirect;
 
 	if (isOpenGovSupported(network) && !req.headers.referer) {

@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	let network = getNetworkFromReqHeaders(req.headers);
 
 	const subDomain: any = req?.headers?.host?.split('.')[0];
-	if ([subDomain].includes(network)) {
+	if (![subDomain].includes(network)) {
 		network = (query.network as string) || network || defaultNetwork;
 	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);

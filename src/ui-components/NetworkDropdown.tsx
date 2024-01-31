@@ -119,6 +119,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				console.log('here');
 				router.push(option.link);
 			} else {
+				console.log('there');
 				router.push(`/?network=${option.key?.toLowerCase()}`);
 				setSelectedNetworks?.([option.key]);
 				dispatch(setNetwork(option.key.toLowerCase()));

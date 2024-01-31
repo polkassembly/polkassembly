@@ -1101,6 +1101,28 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
     edges {
       node {
         status
+         group {
+      proposals(limit: 10, orderBy: createdAt_ASC) {
+        type
+        statusHistory(limit: 10, orderBy: timestamp_ASC) {
+          status
+          timestamp
+          block
+        }
+        index
+        createdAt
+        proposer
+        preimage {
+          proposer
+        }
+        hash
+      }
+    }
+        statusHistory {
+          status
+          block
+          timestamp
+        }
         createdAt
         index
         type
@@ -1116,6 +1138,12 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         }
         hash
         trackNumber
+        tally {
+          ayes
+          bareAyes
+          nays
+          support
+        }
       }
     }
   }
@@ -1303,8 +1331,8 @@ query VotingHistoryByVoterAddressMoonbeam($offset: Int = 0, $limit: Int = 10, $v
 }
 `;
 
-export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: [String!]) {
-  votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_in: $address, OR: {to_in: $address}}}) {
+export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDelegationsToOrFromAddressForTrack($track_eq: Int = 0, $address: String) {
+  votingDelegations(orderBy: createdAt_DESC, where: {track_eq: $track_eq, endedAtBlock_isNull: true, AND: {from_eq: $address, OR: {to_eq: $address}}}) {
     track
     to
     from
@@ -1968,6 +1996,8 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
       index
       proposer
       status
+      type
+      trackNumber
       statusHistory {
         id
         status
@@ -1977,6 +2007,7 @@ query VotesHistoryByVoter($type_eq: VoteType = ReferendumV2, $voter_in: [String!
     delegatedTo
     isDelegated
     parentVote {
+      extrinsicIndex
       selfVotingPower
       type
       voter
@@ -2238,8 +2269,11 @@ export const GET_AYE_NAY_TOTAL_COUNT = `query getAyeNayTotalCount($type_eq: Prop
   }
 }`;
 
-export const TOTAL_PROPOSALS_COUNT_BY_ADDRESSES = `query ProposalsCountByProposerAddresses($proposer_in: [String!]) {
-  proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $proposer_in}) {
+export const TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES = `query MyQuery($addresses: [String!]) {
+ totalVotes:flattenedConvictionVotesConnection(orderBy: id_ASC, where: {voter_in: $addresses, removedAtBlock_isNull: true}) {
+    totalCount
+},
+  totalProposals: proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $addresses}) {
     totalCount
   }
 }

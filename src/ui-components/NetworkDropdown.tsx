@@ -116,7 +116,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 		} else {
 			const currentUrl = window.location.href;
 			const subDomain = getSubdomain(currentUrl);
-			if (subDomain && subDomain !== '' && !isValidNetwork(subDomain)) {
+			if (subDomain && subDomain !== '' && ![subDomain].includes(network) && !isValidNetwork(subDomain)) {
 				router.push(option.link);
 			} else {
 				router.push(`/?network=${option.key?.toLowerCase()}`);

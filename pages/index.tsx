@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `${!isValidNetwork(subDomain) ? '/opengov' : `/opengov?${query.network as string}`}`
+				destination: `${![subDomain].includes(network) && !isValidNetwork(subDomain) ? '/opengov' : `/opengov?${query.network as string}`}`
 			}
 		};
 	}

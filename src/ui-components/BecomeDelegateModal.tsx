@@ -6,19 +6,14 @@ import { Alert, Button, Input, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
-import AddressDropdown from './AddressDropdown';
-import { useApiContext } from '~src/context';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { useDispatch } from 'react-redux';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { setUserDetailsState } from '~src/redux/userDetails';
+import Address from './Address';
 
 interface DetailsState {
 	userId: number | null;
@@ -37,15 +32,11 @@ interface Props {
 }
 
 const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBio }: Props) => {
-	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
-	const { network } = useNetworkSelector();
-	const { loginWallet, loginAddress, delegationDashboardAddress } = currentUser;
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [defaultAddress, setAddress] = useState<string>(loginAddress);
+	const { loginAddress, delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [details, setDetails] = useState<DetailsState>({
-		address: defaultAddress,
+		address: loginAddress,
 		bio: '',
 		isNovaWalletDelegate: false,
 		userId: 0,
@@ -69,18 +60,6 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 		}
 	};
 
-	const dispatch = useDispatch();
-
-	const getAllAccounts = async () => {
-		if (!api || !apiReady || !loginWallet) return;
-
-		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-		if (addressData) {
-			setAccounts(addressData.accounts || []);
-			setAddress(addressData.account || '');
-		}
-	};
-
 	const handleSubmit = async () => {
 		setLoading(true);
 		const trimmedBio = details.bio.trim();
@@ -100,15 +79,8 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 	};
 
 	useEffect(() => {
-		fetchUserID(defaultAddress);
-	}, [defaultAddress]);
-
-	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		getAllAccounts();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, currentUser]);
+		fetchUserID(loginAddress);
+	}, [loginAddress]);
 
 	return (
 		<Modal
@@ -131,16 +103,12 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 				<AuthForm onSubmit={handleSubmit}>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-						<AddressDropdown
-							accounts={accounts}
-							onAccountChange={(address) => {
-								setAddress(address);
-								setDetails((prevDetails) => ({ ...prevDetails, address }));
-								dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
-								fetchUserID(address);
-							}}
-							defaultAddress={defaultAddress}
-						/>
+						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px]'>
+							<Address
+								address={delegationDashboardAddress}
+								displayInline
+							/>
+						</div>
 					</div>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>

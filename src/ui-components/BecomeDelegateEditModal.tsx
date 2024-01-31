@@ -6,18 +6,13 @@ import { Button, Input, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
-import AddressDropdown from './AddressDropdown';
-import { useApiContext } from '~src/context';
-import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { useDispatch } from 'react-redux';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { setUserDetailsState } from '~src/redux/userDetails';
+import Address from './Address';
 
 interface DetailsState {
 	userId: number | null;
@@ -36,15 +31,11 @@ interface Props {
 }
 
 const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, className, setUserBio }: Props) => {
-	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
-	const { network } = useNetworkSelector();
-	const { loginWallet, loginAddress, delegationDashboardAddress } = currentUser;
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const [defaultAddress, setAddress] = useState<string>(loginAddress);
+	const { loginAddress, delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [details, setDetails] = useState<DetailsState>({
-		address: defaultAddress,
+		address: loginAddress,
 		bio: '',
 		isNovaWalletDelegate: false,
 		userId: 0,
@@ -68,18 +59,6 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 		}
 	};
 
-	const dispatch = useDispatch();
-
-	const getAllAccounts = async () => {
-		if (!api || !apiReady || !loginWallet) return;
-
-		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-		if (addressData) {
-			setAccounts(addressData.accounts || []);
-			setAddress(addressData.account || '');
-		}
-	};
-
 	const handleSubmit = async () => {
 		setLoading(true);
 		const trimmedBio = details.bio.trim();
@@ -99,15 +78,8 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 	};
 
 	useEffect(() => {
-		fetchUserID(defaultAddress);
-	}, [defaultAddress]);
-
-	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		getAllAccounts();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress, api, apiReady, currentUser]);
+		fetchUserID(loginAddress);
+	}, [loginAddress]);
 
 	return (
 		<Modal
@@ -130,16 +102,12 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 				<AuthForm onSubmit={handleSubmit}>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-						<AddressDropdown
-							accounts={accounts}
-							onAccountChange={(address) => {
-								setAddress(address);
-								setDetails((prevDetails) => ({ ...prevDetails, address }));
-								dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
-								fetchUserID(address);
-							}}
-							defaultAddress={defaultAddress}
-						/>
+						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px]'>
+							<Address
+								address={delegationDashboardAddress}
+								displayInline
+							/>
+						</div>
 					</div>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
@@ -155,7 +123,7 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 					</div>
 					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
-							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:bg-pink_primary ${
+							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white dark:bg-pink_primary ${
 								details.bio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'

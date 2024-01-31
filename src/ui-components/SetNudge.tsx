@@ -39,10 +39,16 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick }: Props) => {
 	}
 
 	function handleSetNotificationClicked() {
-		const newUrl = window.location.origin + '/settings?tab=notifications';
-		window.open(newUrl, '_blank');
-		localStorage.setItem('notificationNudgeStatus', 'viewed');
 		setNotificationVisible(false);
+		const currentLocation = window.location;
+
+		// Construct the new URL by combining the protocol, host, and the new path
+		const newPath = '/settings?tab=notifications';
+		const newUrl = `${currentLocation.protocol}//${currentLocation.host}${newPath}`;
+
+		// Redirect the browser to the new URL
+		window.location.href = newUrl;
+		localStorage.setItem('notificationNudgeStatus', 'viewed');
 	}
 
 	if (isOpen === null || !isOpen) return null;

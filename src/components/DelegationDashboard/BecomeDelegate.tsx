@@ -37,7 +37,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Pr
 				<Button
 					onClick={showModal}
 					disabled={!currentUser.id}
-					className={`border-[#E5007A] ${!currentUser.id ? 'opacity-60' : ''} bg-pink_primary text-white`}
+					className={'border-[#E5007A] bg-pink_primary font-medium text-white dark:text-black'}
 				>
 					{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 				</Button>
@@ -79,7 +79,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Pr
 				type='info'
 				showIcon
 				message={
-					<span className='text-blue-light-medium dark:text-blue-dark-high'>
+					<span className='text-blue-light-medium dark:text-[#9E9E9E]'>
 						Want to learn more about delegation process before locking your tokens. Click
 						<a
 							href='https://docs.polkassembly.io/opengov/learn-about-referenda/voting-on-a-referendum/delegating-voting-power'

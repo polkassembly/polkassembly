@@ -69,7 +69,7 @@ const TotalDelegationData = () => {
 						alt='polkadot delegation icon'
 					/>
 					<div className='flex flex-col'>
-						<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Supply</span>
+						<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Supply</span>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalSupply.toString(), 2, true, network)}</span>
 					</div>
 				</div>
@@ -85,7 +85,7 @@ const TotalDelegationData = () => {
 						alt='delegate tokens icon'
 					/>
 					<div className='flex flex-col '>
-						<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Delegated Tokens</span>
+						<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Delegated Tokens</span>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalStats.totalDelegatedBalance, 2, true, network)}</span>
 					</div>
 				</div>
@@ -101,7 +101,7 @@ const TotalDelegationData = () => {
 						alt='Total delegate tokens icon'
 					/>
 					<div className='flex flex-col '>
-						<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Votes</span>
+						<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegated Votes</span>
 						<div className='flex space-x-2'>
 							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
 						</div>
@@ -119,7 +119,7 @@ const TotalDelegationData = () => {
 						alt='Total delegate icon'
 					/>
 					<div className='flex flex-col'>
-						<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegates</span>
+						<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegates</span>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegates}</span>
 					</div>
 				</div>
@@ -135,7 +135,7 @@ const TotalDelegationData = () => {
 						alt='Total delegatees icon'
 					/>
 					<div className='flex flex-col'>
-						<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegators</span>
+						<span className='text-xs text-blue-light-medium dark:text-[#9E9E9EB2]'>Total Delegators</span>
 						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegators}</span>
 					</div>
 				</div>

@@ -88,7 +88,13 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			} ${className}`}
 		>
 			{delegate?.dataSource.length > 1 ? (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid border-[#485F7D] bg-[#EDEFF3] px-5 dark:bg-[#141C2D]'>
+				<div
+					className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid px-5 ${
+						delegate?.dataSource.length > 1
+							? 'border-[#485F7D] bg-[#EDEFF3] dark:border-[#9E9E9E] dark:bg-[#3D3F41]'
+							: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
+					} `}
+				>
 					{delegate?.dataSource.includes('polkassembly') && (
 						<div>
 							<div className='flex items-center space-x-1'>
@@ -137,7 +143,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						</div>
 					)}
 					{delegate?.dataSource.includes('parity') && (
-						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#33071E]'>
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
 							<ParityTechIcon />
 							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 						</div>

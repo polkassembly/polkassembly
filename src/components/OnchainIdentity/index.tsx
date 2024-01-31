@@ -66,9 +66,8 @@ interface Props {
 	setOpen: (pre: boolean) => void;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
-	isUsedInDelegationModal?: boolean;
 }
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal, isUsedInDelegationModal }: Props) => {
+const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
@@ -352,7 +351,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					localStorageWalletKeyName='identityWallet'
 					localStorageAddressKeyName='identityAddress'
 					onConfirm={(address: string) => handleConfirm(address)}
-					isUsedInDelegationModal={isUsedInDelegationModal}
 				/>
 			)}
 			<Modal

@@ -73,8 +73,7 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
-	isBalanceUpdated,
-	isUsedInDelegationModal
+	isBalanceUpdated
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -274,29 +273,20 @@ const AddressConnectModal = ({
 
 	const handleSubmit = () => {
 		if (!address || !wallet || !accounts) return;
-		if (isUsedInDelegationModal) {
+		if (linkAddressNeeded && isUnlinkedAddress) {
+			handleAddressLink(address, wallet as Wallet);
+		} else {
+			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
 			localStorageAddressKeyName && localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
 			localStorage.setItem('delegationDashboardAddress', address);
 			localStorage.setItem('multisigDelegationAssociatedAddress', address);
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
+			setShowMultisig(false);
+			setMultisig('');
+			onConfirm && onConfirm(address);
 			setOpen(false);
-		} else {
-			if (linkAddressNeeded && isUnlinkedAddress) {
-				handleAddressLink(address, wallet as Wallet);
-			} else {
-				setLoading(true);
-				localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
-				localStorageAddressKeyName && localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
-				localStorage.setItem('delegationDashboardAddress', address);
-				localStorage.setItem('multisigDelegationAssociatedAddress', address);
-				dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
-				setShowMultisig(false);
-				setMultisig('');
-				onConfirm && onConfirm(address);
-				setOpen(false);
-				setLoading(false);
-			}
+			setLoading(false);
 		}
 	};
 

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Skeleton, message } from 'antd';
+import { Button, Skeleton, message } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -152,14 +152,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 						</div>
 					)}
 
-					{!userBio ? (
-						<h2
-							className={`mt-2.5 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
-							onClick={() => setIsModalOpen(true)}
-						>
-							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
-						</h2>
-					) : (
+					{userBio && (
 						<h2
 							onClick={() => setIsModalOpen(true)}
 							className={`mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
@@ -185,16 +178,18 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 			</div>
 
 			{!isSearch && (
-				<div className='flex gap-2.5 text-pink_primary'>
-					<Tooltip
-						title='Coming Soon'
-						key={1}
-						color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'
-					>
-						<MessengerIcon />
-					</Tooltip>
+				<div className='flex items-start justify-start gap-2.5 text-pink_primary'>
+					{userBio && (
+						<Tooltip
+							title='Coming Soon'
+							key={1}
+							color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'
+						>
+							<MessengerIcon />
+						</Tooltip>
+					)}
 					<span>
-						{username === userProfile.username && (
+						{userBio ? (
 							<CustomButton
 								onClick={() => setIsModalOpen(true)}
 								height={40}
@@ -205,6 +200,13 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUs
 								<EditIcon className='mt-1 text-base text-pink_primary ' />
 								<span className='max-md:hidden'>Edit</span>
 							</CustomButton>
+						) : (
+							<Button
+								onClick={() => setIsModalOpen(true)}
+								className={'mt-1 border-[#E5007A] bg-white font-medium text-pink_primary dark:text-black'}
+							>
+								Become a Delegate
+							</Button>
 						)}
 					</span>
 				</div>

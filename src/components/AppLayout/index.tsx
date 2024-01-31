@@ -770,10 +770,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 			{/* <SetNotificationNudge /> */}
 
-			{userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+			{userId && (
 				<SetNudge
 					handleSetIdentityClick={handleIdentityButtonClick}
 					isIdentitySet={isIdentitySet}
+					isIdentityUnverified={isIdentityUnverified}
 				/>
 			)}
 			<Layout hasSider>

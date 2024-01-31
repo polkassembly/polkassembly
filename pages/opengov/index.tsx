@@ -15,7 +15,7 @@ import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
-import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { getNetworkFromReqHeaders, isValidNetwork } from '~src/api-utils';
 import { useApiContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
@@ -52,8 +52,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	let network = getNetworkFromReqHeaders(req.headers);
 
-	const subDomain = req?.headers?.host?.split('.')[0];
-	if (![subDomain].includes(network)) {
+	const subDomain: any = req?.headers?.host?.split('.')[0];
+	if (!isValidNetwork(subDomain)) {
 		network = (query.network as string) || network || defaultNetwork;
 	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);

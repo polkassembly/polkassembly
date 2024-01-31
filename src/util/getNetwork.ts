@@ -21,7 +21,7 @@ export default function getNetwork(): Network {
 	const qs = queryString.parse(global.window.location.search);
 	const params = new URLSearchParams(global.window.location.search);
 	if (params.has('network')) {
-		network = params.get('network') as Network;
+		network = (params.get('network') as Network) || defaultNetwork;
 	}
 
 	if (qs.network) {

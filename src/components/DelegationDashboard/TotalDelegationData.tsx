@@ -13,6 +13,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
+import Loader from '~src/ui-components/Loader';
 
 const ZERO_BN = new BN(0);
 const TotalDelegationData = () => {
@@ -26,11 +27,14 @@ const TotalDelegationData = () => {
 		totalDelegates: 0,
 		totalDelegators: 0
 	});
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const getData = async () => {
+		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegationStats | MessageType>('/api/v1/delegations/get-delegation-stats');
 		if (data) {
 			setTotalStats(data as IDelegationStats);
+			setLoading(false);
 		} else if (error) {
 			console.log(error);
 		}
@@ -57,85 +61,91 @@ const TotalDelegationData = () => {
 	}, [api, apiReady]);
 
 	return (
-		<div className='mt-[32px] flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
-			{/* Total Supply */}
-			<div className='flex space-x-3 border-2 border-[#D2D8E0]'>
-				<ImageIcon
-					src='/assets/delegation-tracks/polkadot-delegation.svg'
-					alt='polkadot delegation icon'
-				/>
-				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Supply</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalSupply.toString(), 2, true, network)}</span>
-				</div>
-			</div>
-			<Divider
-				type='vertical'
-				className='h-[44px]'
-			/>
+		<>
+			{loading ? (
+				<Loader className='mt-8' />
+			) : (
+				<div className='mt-[32px] flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+					{/* Total Supply */}
+					<div className='flex space-x-3 border-2 border-[#D2D8E0]'>
+						<ImageIcon
+							src='/assets/delegation-tracks/polkadot-delegation.svg'
+							alt='polkadot delegation icon'
+						/>
+						<div className='flex flex-col'>
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Supply</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalSupply.toString(), 2, true, network)}</span>
+						</div>
+					</div>
+					<Divider
+						type='vertical'
+						className='h-[44px]'
+					/>
 
-			{/* Delegated tokens */}
-			<div className='flex space-x-3'>
-				<ImageIcon
-					src='/assets/delegation-tracks/delegate-tokens.svg'
-					alt='delegate tokens icon'
-				/>
-				<div className='flex flex-col '>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Delegated Tokens</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalStats.totalDelegatedBalance, 2, true, network)}</span>
-				</div>
-			</div>
-			<Divider
-				type='vertical'
-				className='h-[44px]'
-			/>
+					{/* Delegated tokens */}
+					<div className='flex space-x-3'>
+						<ImageIcon
+							src='/assets/delegation-tracks/delegate-tokens.svg'
+							alt='delegate tokens icon'
+						/>
+						<div className='flex flex-col '>
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Delegated Tokens</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{parseBalance(totalStats.totalDelegatedBalance, 2, true, network)}</span>
+						</div>
+					</div>
+					<Divider
+						type='vertical'
+						className='h-[44px]'
+					/>
 
-			{/* Total Delegated Votes */}
-			<div className='flex space-x-3'>
-				<ImageIcon
-					src='/assets/delegation-tracks/total-delegated-tokens.svg'
-					alt='Total delegate tokens icon'
-				/>
-				<div className='flex flex-col '>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Votes</span>
-					<div className='flex space-x-2'>
-						<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
+					{/* Total Delegated Votes */}
+					<div className='flex space-x-3'>
+						<ImageIcon
+							src='/assets/delegation-tracks/total-delegated-tokens.svg'
+							alt='Total delegate tokens icon'
+						/>
+						<div className='flex flex-col '>
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegated Votes</span>
+							<div className='flex space-x-2'>
+								<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegatedVotes}</span>
+							</div>
+						</div>
+					</div>
+					<Divider
+						type='vertical'
+						className='h-[44px]'
+					/>
+
+					{/* Total Delegates */}
+					<div className='flex space-x-3'>
+						<ImageIcon
+							src='/assets/delegation-tracks/total-delegates.svg'
+							alt='Total delegate icon'
+						/>
+						<div className='flex flex-col'>
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegates</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegates}</span>
+						</div>
+					</div>
+					<Divider
+						type='vertical'
+						className='h-[44px]'
+					/>
+
+					{/* Total Delegatees */}
+					<div className='flex space-x-3'>
+						<ImageIcon
+							src='/assets/delegation-tracks/total-delegatees.svg'
+							alt='Total delegatees icon'
+						/>
+						<div className='flex flex-col'>
+							<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegators</span>
+							<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegators}</span>
+						</div>
 					</div>
 				</div>
-			</div>
-			<Divider
-				type='vertical'
-				className='h-[44px]'
-			/>
-
-			{/* Total Delegates */}
-			<div className='flex space-x-3'>
-				<ImageIcon
-					src='/assets/delegation-tracks/total-delegates.svg'
-					alt='Total delegate icon'
-				/>
-				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegates</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegates}</span>
-				</div>
-			</div>
-			<Divider
-				type='vertical'
-				className='h-[44px]'
-			/>
-
-			{/* Total Delegatees */}
-			<div className='flex space-x-3'>
-				<ImageIcon
-					src='/assets/delegation-tracks/total-delegatees.svg'
-					alt='Total delegatees icon'
-				/>
-				<div className='flex flex-col'>
-					<span className='text-xs text-blue-light-medium dark:text-blue-dark-high'>Total Delegators</span>
-					<span className='text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalStats.totalDelegators}</span>
-				</div>
-			</div>
-		</div>
+			)}
+		</>
 	);
 };
 

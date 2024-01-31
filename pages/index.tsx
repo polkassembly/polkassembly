@@ -43,6 +43,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { defaultNetwork } from '~src/global/defaultNetwork';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -60,17 +61,21 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	const subDomain = req?.headers?.host?.split('.')[0];
+	if (![subDomain].includes(network)) {
+		network = (query.network as string) || network || defaultNetwork;
+	}
 	if (networkRedirect) return networkRedirect;
 
 	if (isOpenGovSupported(network) && !req.headers.referer) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
+				destination: `${![subDomain].includes(network) ? '/opengov' : `/opengov?${query.network as string}`}`
 			}
 		};
 	}

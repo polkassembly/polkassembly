@@ -33,6 +33,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { defaultNetwork } from '~src/global/defaultNetwork';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -46,14 +47,17 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
 
+	const subDomain = req?.headers?.host?.split('.')[0];
+	if (![subDomain].includes(network)) {
+		network = (query.network as string) || network || defaultNetwork;
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
 		if (redisData) {

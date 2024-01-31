@@ -96,6 +96,8 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
 	]);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+
 	useEffect(() => {
 		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || '');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -274,7 +276,9 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							expandIcon={({ isActive }) => {
 								return (
 									<div className='flex h-full items-end justify-end'>
-										<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
+										{!!Object.keys(item?.data || {})?.length && (
+											<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
+										)}{' '}
 									</div>
 								);
 							}}
@@ -300,7 +304,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							>
 								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
 									{!!Object.keys(item?.data || {}).length && (
-										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
 											<span className='flex items-center justify-center gap-1'>
 												index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
@@ -311,7 +315,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 											<span className='flex items-center justify-center gap-1'>
 												Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
-											<span className='w-[10%]' />
+											<span className='w-[10%] max-lg:w-[5%]' />
 										</div>
 									)}
 									{!!Object.keys(item?.data || {}).length &&
@@ -331,24 +335,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															handleExpand(address, item?.status);
 														}}
 													>
-														<span>#{idx + 1}</span>
-														<span className='w-[50%]'>
-															<div
-																className='flex justify-between'
-																key={address}
-															>
-																<Address
-																	address={address}
-																	displayInline
-																	disableTooltip
-																	usernameMaxLength={30}
-																/>
-																<span>
-																	{formatedBalance(String(value.votingPower), unit, 2)} {unit}
-																</span>
-															</div>
-														</span>
-														<span>
+														<span className='w-[15%] max-lg:w-[5%]'>#{idx + 1}</span>
+														<div
+															className='flex w-[40%] items-center justify-center max-lg:w-[60%]'
+															key={address}
+														>
+															<Address
+																address={address}
+																displayInline
+																disableTooltip
+																usernameMaxLength={isMobile ? 5 : 30}
+															/>
+														</div>
+														<div className='flex w-[50%] items-center justify-center text-sm'>
+															{formatedBalance(String(value.votingPower), unit, 2)} {unit}
+														</div>
+														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
 													</div>
@@ -380,7 +382,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Votes
+																			<VoterIcon /> Voting Power
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
@@ -407,26 +409,33 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<div className='flex flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<span>Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}</span>
+																		<div className='flex w-[300px] flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}
 																		</div>
-																		<div className={'flex flex-col gap-1 text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high'}>
-																			{value?.delegations.map((delegate) => (
-																				<div
+																		<div
+																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
+																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
+																			}`}
+																		>
+																			{value?.delegations.map((delegate, trackIndex) => (
+																				<span
 																					key={delegate?.track}
-																					className='flex items-center justify-end'
+																					className='flex items-center'
 																				>
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
 																						.join(' ')}{' '}
-																					{value?.delegations.length !== 1 &&
-																						!getIsSingleDelegation(value?.delegations) &&
-																						`(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
-																							String(delegate?.balance),
-																							unit,
-																							2
-																						)} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`}
-																				</div>
+																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
+																						? `(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
+																								String(delegate?.balance),
+																								unit,
+																								2
+																						  )} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`
+																						: trackIndex !== value.delegations.length - 1
+																						? ', '
+																						: ''}
+																					{}
+																				</span>
 																			))}
 																		</div>
 																	</div>

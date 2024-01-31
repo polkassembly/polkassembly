@@ -21,7 +21,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 			{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 				<a
 					href={`https://${network}.moonscan.io/tx/${voteData.txnHash}`}
-					className=' overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'
+					className='w-[200px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'
 				>
 					<Address
 						isVoterAddress={true}
@@ -33,7 +33,7 @@ const DelegationListRow: FC<IDelegationListRow> = ({ voteType, voteData }) => {
 					/>
 				</a>
 			) : (
-				<div className=' overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
+				<div className='w-[200px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high'>
 					<Address
 						usernameClassName='w-[100px]'
 						isSubVisible={false}

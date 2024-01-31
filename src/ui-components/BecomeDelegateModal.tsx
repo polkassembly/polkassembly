@@ -34,9 +34,11 @@ interface Props {
 	isModalOpen: boolean;
 	setIsModalOpen: (pre: boolean) => void;
 	className?: string;
+	userBio: string;
+	setUserBio: (userBio: string) => void;
 }
 
-const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) => {
+const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBio }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -88,6 +90,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className }: Props) 
 
 		if (data) {
 			setLoading(false);
+			setUserBio(details.bio);
 			setIsModalOpen(false);
 		} else console.log(error);
 	};

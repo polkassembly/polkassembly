@@ -2,21 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Skeleton, message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import MessengerIcon from '~assets/icons/messenger.svg';
-import EditProfileModal from '~src/components/UserProfile/EditProfile';
 import dynamic from 'next/dynamic';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from './SocialsHandle';
-import { useApiContext } from '~src/context';
 import { IDelegate } from '~src/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
@@ -27,41 +25,20 @@ interface Props {
 	isSearch?: boolean;
 	className?: string;
 	setIsModalOpen: (pre: boolean) => void;
-	user_name: string;
+	userBio: string;
+	setUserBio: (userBio: string) => void;
+	profileDetails: ProfileDetailsResponse;
+	address: string;
 }
 
-const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: Props) => {
+const DelegationProfile = ({ isSearch, className, setIsModalOpen, userBio, setUserBio, profileDetails, address }: Props) => {
+	const { image, social_links, username } = profileDetails;
 	const userProfile = useUserDetailsSelector();
-	const { delegationDashboardAddress: address, username } = userProfile;
-	const { api, apiReady } = useApiContext();
-	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
-		addresses: [],
-		badges: [],
-		bio: '',
-		image: '',
-		social_links: [],
-		title: '',
-		user_id: 0,
-		username: ''
-	});
 
-	const { image, social_links, bio } = profileDetails;
-	const [userBio, setUserBio] = useState<string | undefined>(bio);
-	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+	// const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [messageApi, contextHolder] = message.useMessage();
 
-	const getData = async () => {
-		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
-
-		if (data) {
-			setProfileDetails({ ...profileDetails, ...data });
-		} else {
-			console.log(error);
-		}
-	};
-
 	const handleData = async () => {
-		if (!api || !apiReady) return;
 		// setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
@@ -74,10 +51,9 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: P
 	};
 
 	useEffect(() => {
-		getData();
 		handleData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username, address]);
+	}, [address]);
 
 	const success = () => {
 		messageApi.open({
@@ -135,14 +111,16 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: P
 							className={`mt-2 text-sm font-normal text-[#576D8BCC] dark:text-white ${username === userProfile.username && 'cursor-pointer'}`}
 							onClick={() => setIsModalOpen(true)}
 						>
-							{username === user_name ? 'Click here to add bio' : 'No Bio'}
+							{username === userProfile.username ? 'Click here to add bio' : 'No Bio'}
 						</h2>
 					) : (
 						<h2
 							onClick={() => setIsModalOpen(true)}
-							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${username === user_name && 'cursor-pointer'}`}
+							className={`mt-2 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
+								username === userProfile.username && 'cursor-pointer'
+							}`}
 						>
-							{userBio ? userBio : bio}
+							{userBio}
 						</h2>
 					)}
 
@@ -170,7 +148,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: P
 					<span>
 						{username === userProfile.username && (
 							<CustomButton
-								onClick={() => setOpenEditModal(true)}
+								onClick={() => setIsModalOpen(true)}
 								height={40}
 								width={87}
 								variant='default'
@@ -183,7 +161,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: P
 					</span>
 				</div>
 			)}
-			{openEditModal && username === userProfile.username && (
+			{/* {openEditModal && username === userProfile.username && (
 				<EditProfileModal
 					openModal={openEditModal}
 					setOpenModal={setOpenEditModal}
@@ -191,7 +169,7 @@ const DelegationProfile = ({ isSearch, className, setIsModalOpen, user_name }: P
 					setProfileDetails={setProfileDetails}
 					fromDelegation
 				/>
-			)}
+			)} */}
 		</div>
 	) : (
 		<div className='h-52 p-6'>

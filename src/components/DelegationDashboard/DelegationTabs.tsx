@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Tabs } from '~src/ui-components/Tabs';
 import BecomeDelegate from './BecomeDelegate';
@@ -11,6 +11,9 @@ import TrendingDelegates from './TrendingDelegates';
 import { Skeleton, TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ProfileDetailsResponse } from '~src/auth/types';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface Props {
 	className?: string;
@@ -22,6 +25,34 @@ interface Props {
 }
 
 const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpen, setIsModalOpen }: Props) => {
+	const userProfile = useUserDetailsSelector();
+	const { username, delegationDashboardAddress } = userProfile;
+	const [userBio, setUserBio] = useState<string>('');
+	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		addresses: [],
+		badges: [],
+		bio: '',
+		image: '',
+		social_links: [],
+		title: '',
+		user_id: 0,
+		username: ''
+	});
+
+	const getData = async () => {
+		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+		if (data) {
+			setProfileDetails({ ...profileDetails, ...data });
+		} else {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [username, delegationDashboardAddress]);
+
 	const tabItems: TabsProps['items'] = [
 		{
 			children: (
@@ -30,6 +61,8 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 					<BecomeDelegate
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
+						userBio={userBio}
+						setUserBio={setUserBio}
 					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -44,11 +77,16 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails, isModalOpe
 					<BecomeDelegate
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
+						userBio={userBio}
+						setUserBio={setUserBio}
 					/>
 					<DelegationProfile
-						user_name={userDetails?.username || ''}
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						setIsModalOpen={setIsModalOpen}
+						userBio={userBio}
+						setUserBio={setUserBio}
+						profileDetails={profileDetails}
+						address={userProfile.delegationDashboardAddress}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
 						{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (

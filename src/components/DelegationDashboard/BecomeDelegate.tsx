@@ -18,9 +18,11 @@ interface Props {
 	isModalOpen: boolean;
 	setIsModalOpen: (pre: boolean) => void;
 	className?: string;
+	userBio?: string;
+	setUserBio?: (userBio: string) => void;
 }
 
-const BecomeDelegate = ({ isModalOpen, setIsModalOpen }: Props) => {
+const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const showModal = () => {
 		setIsModalOpen(true);
@@ -94,6 +96,8 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen }: Props) => {
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				className=''
+				userBio={userBio}
+				setUserBio={setUserBio}
 			/>
 		</div>
 	);

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useApiContext } from '~src/context';
 import { IDelegate } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
@@ -12,7 +11,6 @@ import Loader from '~src/ui-components/Loader';
 import { useTheme } from 'next-themes';
 
 const TrendingDelegates = () => {
-	const { api, apiReady } = useApiContext();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -20,7 +18,6 @@ const TrendingDelegates = () => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates');
 		if (data) {
@@ -34,7 +31,7 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, []);
 
 	const itemsPerPage = showMore ? 10 : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);

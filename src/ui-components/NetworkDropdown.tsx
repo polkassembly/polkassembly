@@ -118,7 +118,15 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			if (subDomain && subDomain !== '' && [subDomain].includes(network)) {
 				router.push(option.link);
 			} else {
-				router.push(`/?network=${option.key?.toLowerCase()}`);
+				if (option.key === 'westendcollectives') {
+					router.push('/?network=westend-collectives');
+				} else if (option.key === 'polymeshtest') {
+					router.push('/?network=polymesh-test');
+				} else if (option.key === 'pichiurococo') {
+					router.push('/?network=pichiu-rococo');
+				} else {
+					router.push(`/?network=${option.key?.toLowerCase()}`);
+				}
 				setSelectedNetworks?.([option.key]);
 				dispatch(setNetwork(option.key.toLowerCase()));
 			}

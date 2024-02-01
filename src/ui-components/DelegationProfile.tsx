@@ -169,18 +169,16 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 							{userBio}
 						</h2>
 					)}
-
-					<div className={'mt-5 flex flex-wrap items-center  '}>
-						{identity && social_links && (
-							<SocialsHandle
-								socials={social_links}
-								address={address}
-								onchainIdentity={identity}
-								boxSize={40}
-								iconSize={20}
-							/>
-						)}
-					</div>
+					{identity && social_links && (
+						<SocialsHandle
+							className='mt-4 gap-4 max-md:mr-0 max-md:mt-4 max-md:gap-2'
+							socials={social_links}
+							address={address}
+							onchainIdentity={identity}
+							boxSize={40}
+							iconSize={20}
+						/>
+					)}
 				</div>
 			</div>
 

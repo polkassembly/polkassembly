@@ -43,7 +43,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address, setIsModalOpen }: Props) => {
-	const { image, social_links, username, bio } = profileDetails;
+	const { image, social_links, username } = profileDetails;
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -105,7 +105,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 		handleData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
-	useEffect(() => {}, [userProfile.delegationDashboardAddress]);
+	useEffect(() => {}, [username]);
 
 	const success = () => {
 		messageApi.open({
@@ -132,7 +132,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 				<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
 					{address && address.length > 0 && (
 						<div className='flex items-center gap-1'>
-							{address && (
+							{address && userProfile?.username && (
 								<Address
 									address={address}
 									disableIdenticon
@@ -140,7 +140,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 									destroyTooltipOnHide
 									className='flex gap-1'
 									usernameClassName='text-2xl'
-									passedUsername={username}
+									passedUsername={userProfile?.username}
 									usernameMaxLength={20}
 								/>
 							)}
@@ -184,7 +184,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 			{!isSearch && (
 				<div className='flex items-start justify-start gap-2.5 text-pink_primary'>
 					<span>
-						{(bio && bio?.length > 0) || userBio ? (
+						{userBio ? (
 							<div className='flex space-x-2'>
 								<Tooltip
 									title='Coming Soon'

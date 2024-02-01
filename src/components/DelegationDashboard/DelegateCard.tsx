@@ -16,7 +16,6 @@ import { useApiContext } from '~src/context';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import SocialLink from '~src/ui-components/SocialLinks';
-import { socialLinks } from '../UserProfile/Details';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -26,6 +25,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { socialLinks } from '../UserProfile/Socials';
 
 interface Props {
 	delegate: IDelegate;

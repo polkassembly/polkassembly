@@ -92,7 +92,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 					? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-					: proposalType === ProposalType.ADVISORY_COMMITTEE
+					: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
 					? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
@@ -191,7 +191,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-				: proposalType === ProposalType.ADVISORY_COMMITTEE
+				: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
 				? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 

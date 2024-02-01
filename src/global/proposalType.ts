@@ -273,17 +273,16 @@ export const checkIsOnChainPost = (proposalType: string) => {
 	return !offChainProposalTypes.includes(proposalType);
 };
 
-export const gov1ProposalTypes = [
-	'DemocracyProposal',
-	'TechCommitteeProposal',
-	'TreasuryProposal',
-	'Referendum',
-	'CouncilMotion',
-	'Bounty',
-	'Tip',
-	'ChildBounty',
-	'AdvisoryCommittee'
-];
+export const gov1ProposalTypes = (network: string) => {
+	const proposalType = ['DemocracyProposal', 'TreasuryProposal', 'Referendum', 'CouncilMotion', 'Bounty', 'Tip', 'ChildBounty'];
+	if (network === 'zeitgeist') {
+		proposalType.splice(1, 0, 'AdvisoryCommittee');
+	}
+	if (network === 'polymesh') {
+		proposalType.splice(1, 0, 'TechCommitteeProposal');
+	}
+	return proposalType;
+};
 
 export enum VoteType {
 	MOTION = 'Motion',

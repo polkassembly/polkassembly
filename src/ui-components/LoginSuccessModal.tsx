@@ -3,7 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import AuthForm from 'src/ui-components/AuthForm';
-import { Alert, Divider, Form, Input } from 'antd';
+// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
+// import { Alert, Button, Divider, Form } from 'antd';
+// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
+import { Alert, Divider, Form } from 'antd';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import { MailIcon, WhiteMailIcon } from '~src/ui-components/CustomIcons';
@@ -20,6 +23,8 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
+import Input from '~src/basic-components/Input';
+
 interface Props {
 	// setLoading: (pre: boolean) => void;
 	setLoginOpen?: (pre: boolean) => void;
@@ -271,7 +276,8 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 										}
 									]}
 								>
-									<Input.Password
+									<Input
+										type='password'
 										onChange={(e) => {
 											setFirstPassword(e.target.value);
 										}}

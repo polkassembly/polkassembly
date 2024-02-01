@@ -9,6 +9,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { Spin } from 'antd';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 const TrendingDelegates = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -66,6 +67,7 @@ const TrendingDelegates = () => {
 			setCurrentPage(totalPages);
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
+	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('1EpEiYpWRAWmte4oPLtR5B1TZFxcBShBdjK4X9wWnq2KfLK')];
 
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
@@ -109,10 +111,8 @@ const TrendingDelegates = () => {
 				<div>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
-							...delegatesData.filter((item) => item?.address === 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
-							...delegatesData
-								.filter((item) => item?.address !== 'F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ')
-								.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+							...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
+							...delegatesData.filter((item) => !addressess.includes(getSubstrateAddress(item?.address))).sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 						]
 							.slice(startIndex, endIndex)
 							.map((delegate, index) => (

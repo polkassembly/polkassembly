@@ -44,8 +44,6 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 	});
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-	console.log('USER', currentUser);
-	
 
 	const fetchUserID = async (address: string) => {
 		const substrateAddress = getSubstrateAddress(address);

@@ -8,6 +8,7 @@ import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
 import BellNotificationIcon from '~assets/icons/BellNotificationIcon.svg';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { useRouter } from 'next/router';
 
 interface Props {
 	isIdentitySet: boolean;
@@ -18,6 +19,7 @@ interface Props {
 const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
 	const [notificationVisible, setNotificationVisible] = useState(true);
 
@@ -43,15 +45,8 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 	}
 
 	function handleSetNotificationClicked() {
+		router.push('/settings?tab=notifications');
 		setNotificationVisible(false);
-		const currentLocation = window.location;
-
-		// Construct the new URL by combining the protocol, host, and the new path
-		const newPath = '/settings?tab=notifications';
-		const newUrl = `${currentLocation.protocol}//${currentLocation.host}${newPath}`;
-
-		// Redirect the browser to the new URL
-		window.location.href = newUrl;
 		localStorage.setItem('notificationNudgeStatus', 'viewed');
 	}
 

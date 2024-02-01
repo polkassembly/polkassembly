@@ -33,10 +33,10 @@ interface Props {
 
 const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBio }: Props) => {
 	const currentUser = useUserDetailsSelector();
-	const { loginAddress, delegationDashboardAddress } = currentUser;
+	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [details, setDetails] = useState<DetailsState>({
-		address: loginAddress,
+		address: delegationDashboardAddress,
 		bio: '',
 		isNovaWalletDelegate: false,
 		userId: 0,
@@ -79,8 +79,8 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 	};
 
 	useEffect(() => {
-		fetchUserID(loginAddress);
-	}, [loginAddress]);
+		fetchUserID(delegationDashboardAddress);
+	}, [delegationDashboardAddress]);
 
 	return (
 		<Modal

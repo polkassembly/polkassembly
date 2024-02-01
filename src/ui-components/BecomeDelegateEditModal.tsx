@@ -32,10 +32,10 @@ interface Props {
 
 const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, className, setUserBio }: Props) => {
 	const currentUser = useUserDetailsSelector();
-	const { loginAddress, delegationDashboardAddress } = currentUser;
+	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [details, setDetails] = useState<DetailsState>({
-		address: loginAddress,
+		address: delegationDashboardAddress,
 		bio: '',
 		isNovaWalletDelegate: false,
 		userId: 0,
@@ -78,8 +78,8 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 	};
 
 	useEffect(() => {
-		fetchUserID(loginAddress);
-	}, [loginAddress]);
+		fetchUserID(delegationDashboardAddress);
+	}, [delegationDashboardAddress]);
 
 	return (
 		<Modal

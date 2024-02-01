@@ -5,7 +5,7 @@
 import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
-import { chainProperties, network } from 'src/global/networkConstants';
+import { chainProperties, network as AllNetworks } from 'src/global/networkConstants';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useRouter } from 'next/router';
@@ -30,8 +30,8 @@ const testChains: DropdownMenuItemType[] = [];
 
 let link = '';
 
-for (const key of Object.keys(network)) {
-	const keyVal = network[key as keyof typeof network];
+for (const key of Object.keys(AllNetworks)) {
+	const keyVal = AllNetworks[key as keyof typeof AllNetworks];
 	if (key === 'TANGANIKA') continue;
 
 	link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key)
@@ -118,17 +118,9 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 			if (subDomain && subDomain !== '' && [subDomain].includes(network)) {
 				router.push(option.link);
 			} else {
-				if (option.key === 'westendcollectives') {
-					router.push('/?network=westend-collectives');
-				} else if (option.key === 'polymeshtest') {
-					router.push('/?network=polymesh-test');
-				} else if (option.key === 'pichiurococo') {
-					router.push('/?network=pichiu-rococo');
-				} else {
-					router.push(`/?network=${option.key?.toLowerCase()}`);
-				}
+				router.push(`/?network=${AllNetworks[option.key as keyof typeof AllNetworks]}`);
 				setSelectedNetworks?.([option.key]);
-				dispatch(setNetwork(option.key.toLowerCase()));
+				dispatch(setNetwork(AllNetworks[option.key as keyof typeof AllNetworks]));
 			}
 		}
 	};

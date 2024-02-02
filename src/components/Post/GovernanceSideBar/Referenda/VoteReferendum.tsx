@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Checkbox, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -56,6 +56,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -150,12 +151,28 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const [delegatedTo, setDelegatedTo] = useState('');
+	const getProxies = async () => {
+		console.log(loginAddress, address);
+		const proxies: any = (await api?.query?.proxy?.proxies(loginAddress))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			console.log(proxyAddr);
+		}
+	};
+
+	useEffect(() => {
+		getProxies();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getData = async (address: any) => {
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
@@ -822,6 +839,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											showProxyDropdown={showProxyDropdown}
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
@@ -848,6 +866,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										showIcon
 										type='warning'
 										className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									/>
+								)}
+								<div className='mt-2'>
+									<Checkbox
+										value=''
+										className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+										onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+									>
+										<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+									</Checkbox>
+								</div>
+								{showProxyDropdown && (
+									<ProxyAccountSelectionForm
+										proxyAddresses={proxyAddresses}
+										className='rounded-[4px] px-3 py-1'
+										theme={theme}
+										address={address}
+										withBalance
+										onBalanceChange={handleOnBalanceChange}
 									/>
 								)}
 								{/* aye nye split abstain buttons */}

@@ -43,7 +43,7 @@ interface Props {
 }
 
 const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address, setIsModalOpen }: Props) => {
-	const { image, social_links, username } = profileDetails;
+	const { image, social_links, username, bio } = profileDetails;
 	const userProfile = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -53,6 +53,8 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+	// console.log('bio', bio);
+	// console.log('userBio', userBio);
 
 	const handleData = async () => {
 		// setLoading(true);
@@ -160,7 +162,6 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 
 					{userBio && (
 						<h2
-							onClick={() => setIsEditModalOpen(true)}
 							className={`mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
 								username === userProfile.username && 'cursor-pointer'
 							}`}
@@ -170,12 +171,12 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 					)}
 					{identity && social_links && (
 						<SocialsHandle
-							className='mt-4 gap-2.5 max-md:mr-0 max-md:mt-4 max-md:gap-2'
+							className='mt-4 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'
 							socials={social_links}
 							address={address}
 							onchainIdentity={identity}
-							boxSize={30}
-							iconSize={18}
+							boxSize={40}
+							iconSize={24}
 						/>
 					)}
 				</div>

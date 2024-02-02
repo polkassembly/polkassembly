@@ -25,7 +25,6 @@ interface Props {
 const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { username, delegationDashboardAddress } = userProfile;
-	const [userBio, setUserBio] = useState<string>('');
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
 		addresses: [],
 		badges: [],
@@ -36,12 +35,14 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 		user_id: 0,
 		username: ''
 	});
+	const [userBio, setUserBio] = useState<string>('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 		if (data) {
 			setProfileDetails({ ...profileDetails, ...data });
+			// console.log('PROFILE Details', profileDetails);
 		} else {
 			console.log(error);
 		}

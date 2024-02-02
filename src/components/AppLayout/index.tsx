@@ -69,7 +69,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import SetNudge from '~src/ui-components/SetNudge';
+import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
@@ -768,10 +768,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				isVerified={isGood && !isIdentityUnverified}
 			/>
 
-			{/* <SetNotificationNudge /> */}
-
 			{userId && (
-				<SetNudge
+				<TopNudges
 					handleSetIdentityClick={handleIdentityButtonClick}
 					isIdentitySet={isIdentitySet}
 					isIdentityUnverified={isIdentityUnverified}

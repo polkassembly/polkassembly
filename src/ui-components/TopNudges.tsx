@@ -4,11 +4,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApiContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import ShieldUserIcon from '~assets/icons/shield-user-icon.svg';
-import BellNotificationIcon from '~assets/icons/BellNotificationIcon.svg';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
+import ImageIcon from './ImageIcon';
 
 interface Props {
 	isIdentitySet: boolean;
@@ -16,7 +15,7 @@ interface Props {
 	handleSetIdentityClick: () => void;
 }
 
-const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified }: Props) => {
+const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const router = useRouter();
@@ -26,7 +25,7 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
-		const nudgeStatus = localStorage.getItem('identityNudgeStatus');
+		const nudgeStatus = sessionStorage.getItem('identityNudgeStatus');
 
 		if (nudgeStatus !== 'viewed') {
 			setIsOpen(true);
@@ -36,18 +35,18 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 	}, [api, apiReady]);
 
 	function handleNudgeClose() {
-		localStorage.setItem('identityNudgeStatus', 'viewed');
+		sessionStorage.setItem('identityNudgeStatus', 'viewed');
 		setIsOpen(false);
 	}
 	function handleNotificationNudgeClose() {
-		localStorage.setItem('notificationNudgeStatus', 'viewed');
+		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
 		setNotificationVisible(false);
 	}
 
 	function handleSetNotificationClicked() {
 		router.push('/settings?tab=notifications');
 		setNotificationVisible(false);
-		localStorage.setItem('notificationNudgeStatus', 'viewed');
+		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
 	}
 
 	if (isOpen === null || !isOpen) return null;
@@ -64,7 +63,10 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 						>
 							Get Alerts for the governance events you are interested in!
 							<span className='inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#000000]/30 px-2 py-1 hover:opacity-80'>
-								<BellNotificationIcon />
+								<ImageIcon
+									src='/assets/icons/BellNotificationIcon.svg'
+									alt='notificationIcon'
+								/>
 								Set Notifications
 							</span>
 						</div>
@@ -88,7 +90,11 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 								>
 									{isIdentitySet ? 'Identity has not been verified yet' : 'Identity has not been set yet'}
 									<span className='inline-flex cursor-pointer items-center gap-2 rounded-md bg-[#000000]/30 px-2 py-1 hover:opacity-80'>
-										<ShieldUserIcon /> {isIdentitySet ? 'Verify on-chain identity' : 'Set on-chain identity'}
+										<ImageIcon
+											src='/assets/icons/shield-user-icon.svg'
+											alt='sheildIcon'
+										/>
+										{isIdentitySet ? 'Verify on-chain identity' : 'Set on-chain identity'}
 									</span>
 								</div>
 								<span
@@ -106,4 +112,4 @@ const SetNudge = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified 
 	);
 };
 
-export default SetNudge;
+export default TopNudges;

@@ -1,9 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
+
 import { Divider, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import ImageComponent from '~src/components/ImageComponent';
@@ -88,7 +86,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 		if (userId !== 0 && !userId) {
 			payload = { addresses: addresses };
 		} else {
-			payload = { userId: userId };
+			payload = { addresses: addresses || [], userId: userId };
 		}
 		const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 		if (data) {

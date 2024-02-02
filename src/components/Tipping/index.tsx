@@ -212,7 +212,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		}
 	};
 	const handleSetTip = async (txHash: any) => {
-		const { error } = await nextApiClientFetch<MessageType>('/api/v1/Tipping', {
+		const { error } = await nextApiClientFetch<MessageType>('/api/v1/tipping', {
 			amount: Number(tipInput) || 0,
 			remark: `${remark}${remark.length ? (remark[remark.length - 1] !== '.' ? '.' : '') : ''} Tipped via Polkassembly`.trim(),
 			tipFrom: address,
@@ -459,7 +459,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 											name='remark'
 											value={remark}
 											onChange={(e) => setRemark(e.target.value)}
-											className='ml-4 h-[40px] w-[524px] rounded-[4px] max-sm:w-full'
+											className='ml-4 h-[40px] w-[524px] rounded-[4px] bg-transparent dark:border-separatorDark max-sm:w-full'
 											placeholder='Say something nice with your tip(optional)'
 										/>
 										<SaySomethingIcon className='-ml-2.5 mt-[-68.8px]' />

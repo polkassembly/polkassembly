@@ -116,10 +116,11 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if (!profile || !profile?.cover_image?.length) return;
 		(async () => {
 			try {
-				const res = await fetch(profile?.cover_image || '');
-				setIsValidCoverImage(res.ok);
+				const obj = new Image();
+				obj.src = profile?.cover_image || '';
+				obj.onload = () => setIsValidCoverImage(true);
+				obj.onerror = () => setIsValidCoverImage(false);
 			} catch (err) {
-				setIsValidCoverImage(false);
 				console.log(err);
 			}
 		})();

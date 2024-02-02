@@ -26,6 +26,7 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 
 const { Panel } = Collapse;
 
@@ -42,9 +43,14 @@ interface IDelegates {
 		total: number;
 		capital: number;
 		votingPower: number;
+		lockedPeriod: number;
 	};
 }
 
+const getIsSingleDelegation = (delegations: IDelegation[]) => {
+	const filteredData = delegations.filter((delegation) => Number(delegations[0]?.balance) === Number(delegation?.balance) && delegations[0]?.lockPeriod === delegation?.lockPeriod);
+	return filteredData?.length === delegations?.length;
+};
 const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus) => {
 	const dataObj: any = {};
 	data.map((delegation) => {
@@ -55,6 +61,7 @@ const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegatio
 					capital: Number(delegate?.balance),
 					delegations: [delegate],
 					expand: false,
+					lockedPeriod: delegate?.lockPeriod,
 					total: 1,
 					votingPower: Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
 				};
@@ -63,6 +70,7 @@ const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegatio
 					...dataObj[val],
 					capital: dataObj[val].capital + Number(delegate?.balance),
 					delegations: [...dataObj[val].delegations, delegate],
+					lockedPeriod: delegate?.lockPeriod,
 					total: dataObj[val]?.total + 1,
 					votingPower: dataObj[val].votingPower + Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
 				};
@@ -88,12 +96,19 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
 	]);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+
+	useEffect(() => {
+		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || '');
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [addressWithIdentity]);
+
 	const content = (
 		<div className='flex flex-col'>
 			<Radio.Group
 				className='flex max-h-[200px] flex-col overflow-y-auto'
 				onChange={(e) => setCheckedAddress(e.target.value)}
-				value={checkedAddress.length ? checkedAddress : getSubstrateAddress(addressWithIdentity || '')}
+				value={checkedAddress?.length ? checkedAddress : getSubstrateAddress(addressWithIdentity || '')}
 				defaultValue={getSubstrateAddress(addressWithIdentity || '')}
 			>
 				{addresses?.map((address) => (
@@ -117,22 +132,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 			</Radio.Group>
 		</div>
 	);
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || addresses?.[0]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, addressWithIdentity]);
+	}, [network]);
 
 	const getData = async () => {
-		if (!api || !apiReady || !checkedAddress.length) return;
+		if (!api || !apiReady || !(checkedAddress?.length || addressWithIdentity?.length)) return;
 
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			address: checkedAddress || addressWithIdentity || ''
+			address: checkedAddress || addressWithIdentity
 		});
 		if (data) {
 			const received: ITrackDelegation[] = [];
@@ -171,7 +186,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, addresses, checkedAddress, userProfile, network]);
+	}, [api, apiReady, network, checkedAddress]);
 
 	const handleExpand = (address: string, type: ETrackDelegationStatus) => {
 		const newData = type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations;
@@ -261,13 +276,16 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							expandIcon={({ isActive }) => {
 								return (
 									<div className='flex h-full items-end justify-end'>
-										<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
+										{!!Object.keys(item?.data || {})?.length && (
+											<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
+										)}{' '}
 									</div>
 								);
 							}}
 							collapsible={!Object.keys(item?.data || {})?.length ? 'disabled' : 'header'}
 						>
 							<Panel
+								collapsible={!Object.keys(item?.data || {})?.length ? 'disabled' : 'header'}
 								header={
 									<div className='channel-header flex w-full items-center gap-2'>
 										<Image
@@ -285,20 +303,23 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 								key={index}
 							>
 								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
-									<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-										<span className='flex items-center justify-center gap-1'>
-											index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
-										</span>
-										<span className='flex w-[40%] items-center justify-center gap-1'>
-											{item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Delegated By' : 'Delegate To'}{' '}
-											<ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
-										</span>
-										<span className='flex items-center justify-center gap-1'>
-											Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
-										</span>
-										<span className='w-[10%]' />
-									</div>
-									{!!item?.data &&
+									{!!Object.keys(item?.data || {}).length && (
+										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
+											<span className='flex items-center justify-center gap-1'>
+												index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+											</span>
+											<span className='flex w-[40%] items-center justify-center gap-1'>
+												{item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Delegated By' : 'Delegate To'}{' '}
+												<ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+											</span>
+											<span className='flex items-center justify-center gap-1'>
+												Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+											</span>
+											<span className='w-[10%] max-lg:w-[5%]' />
+										</div>
+									)}
+									{!!Object.keys(item?.data || {}).length &&
+										item?.data &&
 										Object.entries(item?.data)?.map(([address, value], idx) => {
 											return (
 												<div
@@ -314,24 +335,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															handleExpand(address, item?.status);
 														}}
 													>
-														<span>#{idx + 1}</span>
-														<span className='w-[50%]'>
-															<div
-																className='flex justify-between'
-																key={address}
-															>
-																<Address
-																	address={address}
-																	displayInline
-																	disableTooltip
-																	usernameMaxLength={30}
-																/>
-																<span>
-																	{formatedBalance(String(value.votingPower), unit, 2)} {unit}
-																</span>
-															</div>
-														</span>
-														<span>
+														<span className='w-[15%] max-lg:w-[5%]'>#{idx + 1}</span>
+														<div
+															className='flex w-[40%] items-center justify-center max-lg:w-[60%]'
+															key={address}
+														>
+															<Address
+																address={address}
+																displayInline
+																disableTooltip
+																usernameMaxLength={isMobile ? 5 : 30}
+															/>
+														</div>
+														<div className='flex w-[50%] items-center justify-center text-sm'>
+															{formatedBalance(String(value.votingPower), unit, 2)} {unit}
+														</div>
+														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
 													</div>
@@ -349,10 +368,11 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																			/>
 																			{item?.status === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Delegated By' : 'Delegate To'}
 																		</span>
-																		<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+																		<span className='text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 																			<Address
 																				address={address}
 																				disableTooltip
+																				disableHeader
 																				iconSize={16}
 																				addressClassName='dark:text-blue-dark-high text-xs font-semibold'
 																				addressWithVerifiedTick
@@ -362,50 +382,69 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Votes
+																			<VoterIcon /> Voting Power
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
-																			{value?.delegations?.length === 1 ? `${formatedBalance(String(value?.votingPower), unit, 2)} ${unit}` : 'Multiple'}
+																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
+																				? `${formatedBalance(String(value?.votingPower), unit, 2)} ${unit}`
+																				: 'Multiple'}
 																		</span>
 																	</div>
+																	{getIsSingleDelegation(value?.delegations) && (
+																		<div className='flex justify-between'>
+																			<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																				<ConvictionIcon /> Conviction
+																			</span>
+																			<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>{value?.lockedPeriod || 0.1}x</span>
+																		</div>
+																	)}
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
 																			<CapitalIcon /> Capital
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
-																			{value?.delegations?.length === 1 ? `${formatedBalance(String(value?.capital), unit, 2)} ${unit}` : 'Multiple'}
+																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
+																				? `${formatedBalance(String(value?.capital), unit, 2)} ${unit}`
+																				: 'Multiple'}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
-																		<div className='flex flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<span>Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}</span>
-																			{value?.delegations?.length !== 1 && (
-																				<div className='flex w-full justify-end text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-																					{' '}
-																					VP: Voting Power, Ca: Capital, Co: Conviction
-																				</div>
-																			)}
+																		<div className='flex w-[300px] flex-col items-start justify-between gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
+																			Tracks {value?.delegations?.length !== 1 ? `(${value?.delegations?.length})` : ''}
 																		</div>
-																		<div className='flex flex-col gap-1 text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high'>
-																			{value?.delegations.map((delegate) => (
-																				<div
+																		<div
+																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
+																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
+																			}`}
+																		>
+																			{value?.delegations.map((delegate, trackIndex) => (
+																				<span
 																					key={delegate?.track}
-																					className='flex items-center justify-end'
+																					className='flex items-center'
 																				>
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
 																						.join(' ')}{' '}
-																					{value?.delegations.length !== 1 &&
-																						`(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
-																							String(delegate?.balance),
-																							unit,
-																							2
-																						)} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`}
-																				</div>
+																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
+																						? `(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
+																								String(delegate?.balance),
+																								unit,
+																								2
+																						  )} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`
+																						: trackIndex !== value.delegations.length - 1
+																						? ', '
+																						: ''}
+																					{}
+																				</span>
 																			))}
 																		</div>
 																	</div>
 																</div>
+																{value?.delegations?.length !== 1 && !getIsSingleDelegation(value?.delegations) && (
+																	<div className='mt-2 flex w-full justify-start text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+																		VP: Voting Power, Ca: Capital, Co: Conviction
+																	</div>
+																)}
 															</div>
 														</div>
 													)}

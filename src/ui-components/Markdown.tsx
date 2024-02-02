@@ -168,6 +168,12 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		h3 {
 			font-family: font_default !important;
 		}
+		p mark {
+			margin-top: -3px;
+			margin-right: -2px;
+			font-weight: 500;
+			color: #000 !important;
+		}
 	}
 
 	&.mde-autocomplete-content {
@@ -196,7 +202,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 
 	return (
 		<StyledMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
+			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} w-full`}
 			rehypePlugins={[rehypeRaw, remarkGfm]}
 			linkTarget='_blank'
 			theme={theme}

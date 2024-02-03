@@ -41,7 +41,6 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
-	console.log(address);
 
 	useEffect(() => {
 		if (!address) return;
@@ -63,8 +62,6 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 			address: address
 		});
 		if (data) {
-			console.log(data, 'data');
-
 			setDelegatesData(data);
 		} else {
 			console.log(error);

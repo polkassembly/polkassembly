@@ -12,7 +12,6 @@ import { ICurvesInformationStore } from './curvesInformation/@types';
 import { ITippingStore } from './Tipping/@types';
 import { ITreasuryProposalStore } from './treasuryProposal/@types';
 import { IVoteDataStore } from './voteData/@types';
-import { IDelegationDashboard } from './delegationDashboard/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -40,9 +39,6 @@ const useTreasuryProposalSelector = () => {
 const useVoteDataSelector = () => {
 	return useSelector<TAppState, IVoteDataStore>((state) => state.voteData);
 };
-const useDelegationDashboardSelector = () => {
-	return useSelector<TAppState, IDelegationDashboard>((state) => state.delegationDashboard);
-};
 
 export {
 	useNetworkSelector,
@@ -52,6 +48,5 @@ export {
 	useCurvesInformationSelector,
 	useTippingDataSelector,
 	useTreasuryProposalSelector,
-	useVoteDataSelector,
-	useDelegationDashboardSelector
+	useVoteDataSelector
 };

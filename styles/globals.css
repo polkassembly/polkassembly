@@ -200,8 +200,8 @@ p > a:hover {
   border-radius: 10px;
 }
 
-.ant-tabs-tab-bg-white dark:bg-none .ant-tabs-tab:not(.ant-tabs-tab-active) {
-  background-color: white;
+.ant-tabs-tab-bg-white dark:bg-transparent .ant-tabs-tab:not(.ant-tabs-tab-active) {
+  background-color: transparent;
   border-top-color: white;
   border-left-color: white;
   border-right-color: white;
@@ -599,7 +599,7 @@ z-index: 1050 !important;
 }
 
 .dark .ant-tabs-nav-list {
-  background-color: #0D0D0D !important;
+  background-color: transparent !important;
   border-radius: 12px 12px 0px 0px !important;
 }
 
@@ -830,4 +830,3 @@ z-index: 1050 !important;
 .tick-icon-container  {
   transform: scale(0.7);
 }
-

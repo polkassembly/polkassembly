@@ -170,14 +170,15 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 			track: trackMetaData.trackId
 		});
 		if (data && data[0]?.delegations[0]?.to) {
-			setDelegatedTo(data[0]?.delegations[0]?.to);
+			setDelegatedTo(data[0]?.delegations[0]?.to || '');
 		}
 	};
 
 	useEffect(() => {
+		if (!loginAddress || isNaN(trackMetaData.trackId)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trackMetaData.trackId]);
+	}, [trackMetaData.trackId, loginAddress]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {

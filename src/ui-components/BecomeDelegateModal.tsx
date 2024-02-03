@@ -10,10 +10,10 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
 import Address from './Address';
+import { ProfileDetailsResponse } from '~src/auth/types';
 
 interface DetailsState {
 	userId: number | null;
@@ -27,11 +27,11 @@ interface Props {
 	isModalOpen: boolean;
 	setIsModalOpen: (pre: boolean) => void;
 	className?: string;
-	userBio: string;
-	setUserBio: (userBio: string) => void;
+	profileDetails: ProfileDetailsResponse;
+	setProfileDetails: (profileDetails: ProfileDetailsResponse) => void;
 }
 
-const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBio }: Props) => {
+const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, setProfileDetails }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
@@ -46,17 +46,14 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const fetchUserID = async (address: string) => {
-		const substrateAddress = getSubstrateAddress(address);
-		if (substrateAddress) {
-			try {
-				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
-				if (error || !data || !data.username || !data.user_id) {
-					return;
-				}
-				setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
-			} catch (error) {
-				console.log(error);
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
 			}
+			setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -72,13 +69,17 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', { ...details, bio: trimmedBio });
 
 		if (data) {
-			setUserBio(details.bio);
+			setProfileDetails({
+				...profileDetails,
+				bio: trimmedBio
+			});
 			setLoading(false);
 			setIsModalOpen(false);
 		} else console.log(error);
 	};
 
 	useEffect(() => {
+		if (!delegationDashboardAddress) return;
 		fetchUserID(delegationDashboardAddress);
 	}, [delegationDashboardAddress]);
 
@@ -107,6 +108,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, setUserBi
 							<Address
 								address={delegationDashboardAddress}
 								displayInline
+								isTruncateUsername={false}
 							/>
 						</div>
 					</div>

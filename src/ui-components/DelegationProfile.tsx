@@ -35,50 +35,39 @@ const BecomeDelegateEditModal = dynamic(() => import('src/ui-components/BecomeDe
 interface Props {
 	isSearch?: boolean;
 	className?: string;
-	userBio: string;
-	setUserBio: (userBio: string) => void;
 	profileDetails: ProfileDetailsResponse;
-	address: string;
-	setIsModalOpen: (userBio: boolean) => void;
+	setProfileDetails: (profileDetails: ProfileDetailsResponse) => void;
+	setIsModalOpen: (pre: boolean) => void;
 }
 
-const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDetails, address, setIsModalOpen }: Props) => {
-	const { image, social_links, username, bio } = profileDetails;
+const DelegationProfile = ({ isSearch, className, profileDetails, setProfileDetails, setIsModalOpen }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { username, delegationDashboardAddress: address } = userProfile;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
+	const { image, social_links, bio } = profileDetails;
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
 	const encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-	// console.log('bio', bio);
-	// console.log('userBio', userBio);
 
 	const handleData = async () => {
-		// setLoading(true);
-
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
 		if (data && data[0]?.bio) {
-			setUserBio(data[0].bio);
+			const bio = data[0].bio;
+			setProfileDetails({ ...profileDetails, bio });
 		} else {
+			setProfileDetails({ ...profileDetails, bio: '' });
 			console.log(error);
 		}
-		// setLoading(false);
 	};
-	useEffect(() => {
-		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
-			setApi(apiContext.relayApi);
-			setApiReady(apiContext.relayApiReady);
-		} else {
-			if (!apiContext.api || !apiContext.apiReady) return;
-			setApi(apiContext.api);
-			setApiReady(apiContext.apiReady);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
 
+	useEffect(() => {
+		handleData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 	const handleIdentityInfo = () => {
 		if (!api || !apiReady) return;
 
@@ -97,17 +86,25 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 
 		return () => unsubscribe && unsubscribe();
 	};
+
+	useEffect(() => {
+		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
+			setApi(apiContext.relayApi);
+			setApiReady(apiContext.relayApiReady);
+		} else {
+			if (!apiContext.api || !apiContext.apiReady) return;
+			setApi(apiContext.api);
+			setApiReady(apiContext.apiReady);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
+
 	useEffect(() => {
 		if (!api || !apiReady || !address || !encodedAddr) return;
+
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address, encodedAddr, network]);
-
-	useEffect(() => {
-		handleData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
-	useEffect(() => {}, [username]);
 
 	const success = () => {
 		messageApi.open({
@@ -120,7 +117,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 		copyToClipboard(address);
 	};
 
-	return username && username?.length > 0 ? (
+	return (
 		<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 			<div className='flex w-full gap-[34px] '>
 				<div className='w-3/10'>
@@ -132,9 +129,9 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 					/>
 				</div>
 				<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
-					{address && address.length > 0 && (
+					{address && (
 						<div className='flex items-center gap-1'>
-							{address && userProfile?.username && (
+							{address && username && (
 								<Address
 									address={address}
 									disableIdenticon
@@ -142,7 +139,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 									destroyTooltipOnHide
 									className='flex gap-1'
 									usernameClassName='text-2xl'
-									passedUsername={userProfile?.username}
+									passedUsername={username}
 									usernameMaxLength={20}
 								/>
 							)}
@@ -160,15 +157,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 						</div>
 					)}
 
-					{userBio && (
-						<h2
-							className={`mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high ${
-								username === userProfile.username && 'cursor-pointer'
-							}`}
-						>
-							{userBio}
-						</h2>
-					)}
+					{bio ? <h2 className={'mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>{bio}</h2> : null}
 					{identity && social_links && (
 						<SocialsHandle
 							className='mt-4 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'
@@ -185,7 +174,7 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 			{!isSearch && (
 				<div className='flex items-start justify-start gap-2.5 text-pink_primary'>
 					<span>
-						{userBio ? (
+						{bio ? (
 							<div className='flex space-x-2'>
 								<Tooltip
 									title='Coming Soon'
@@ -229,14 +218,10 @@ const DelegationProfile = ({ isSearch, className, userBio, setUserBio, profileDe
 				isEditModalOpen={isEditModalOpen}
 				setIsEditModalOpen={setIsEditModalOpen}
 				className=''
-				userBio={userBio}
-				setUserBio={setUserBio}
+				profileDetails={profileDetails}
+				setProfileDetails={setProfileDetails}
 				IsUsedForEdit={true}
 			/>
-		</div>
-	) : (
-		<div className='h-52 p-6'>
-			<Skeleton />
 		</div>
 	);
 };

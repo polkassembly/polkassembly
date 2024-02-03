@@ -4,6 +4,7 @@
 import { Alert, Button, Tooltip } from 'antd';
 import dynamic from 'next/dynamic';
 import React from 'react';
+import { ProfileDetailsResponse } from '~src/auth/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 // import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -18,11 +19,11 @@ interface Props {
 	isModalOpen?: boolean;
 	setIsModalOpen?: (pre: boolean) => void;
 	className?: string;
-	userBio?: string;
-	setUserBio?: (userBio: string) => void;
+	profileDetails?: ProfileDetailsResponse;
+	setProfileDetails?: (profileDetails: ProfileDetailsResponse) => void;
 }
 
-const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Props) => {
+const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, setProfileDetails }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const showModal = () => {
 		setIsModalOpen && setIsModalOpen(true);
@@ -96,8 +97,8 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, userBio, setUserBio }: Pr
 				isModalOpen={isModalOpen}
 				setIsModalOpen={setIsModalOpen}
 				className=''
-				userBio={userBio}
-				setUserBio={setUserBio}
+				profileDetails={profileDetails}
+				setProfileDetails={setProfileDetails}
 			/>
 		</div>
 	);

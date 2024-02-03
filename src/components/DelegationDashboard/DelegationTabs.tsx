@@ -35,14 +35,12 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 		user_id: 0,
 		username: ''
 	});
-	const [userBio, setUserBio] = useState<string>('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
 		if (data) {
-			setProfileDetails({ ...profileDetails, ...data });
-			// console.log('PROFILE Details', profileDetails);
+			setProfileDetails((prevProfileDetails) => ({ ...prevProfileDetails, ...data }));
 		} else {
 			console.log(error);
 		}
@@ -61,8 +59,8 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 					<BecomeDelegate
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
-						userBio={userBio}
-						setUserBio={setUserBio}
+						profileDetails={profileDetails}
+						setProfileDetails={setProfileDetails}
 					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -77,15 +75,13 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 					<BecomeDelegate
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
-						userBio={userBio}
-						setUserBio={setUserBio}
+						profileDetails={profileDetails}
+						setProfileDetails={setProfileDetails}
 					/>
 					<DelegationProfile
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
-						userBio={userBio}
-						setUserBio={setUserBio}
 						profileDetails={profileDetails}
-						address={userProfile.delegationDashboardAddress}
+						setProfileDetails={setProfileDetails}
 						setIsModalOpen={setIsModalOpen}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>

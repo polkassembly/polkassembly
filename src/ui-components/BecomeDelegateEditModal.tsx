@@ -10,9 +10,9 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import Address from './Address';
+import { ProfileDetailsResponse } from '~src/auth/types';
 
 interface DetailsState {
 	userId: number | null;
@@ -26,11 +26,11 @@ interface Props {
 	isEditModalOpen: boolean;
 	setIsEditModalOpen: (pre: boolean) => void;
 	className?: string;
-	userBio: string;
-	setUserBio: (userBio: string) => void;
+	profileDetails: ProfileDetailsResponse;
+	setProfileDetails: (profileDetails: ProfileDetailsResponse) => void;
 }
 
-const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, className, setUserBio }: Props) => {
+const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, className, profileDetails, setProfileDetails }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
@@ -41,21 +41,16 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 		userId: 0,
 		username: ''
 	});
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const fetchUserID = async (address: string) => {
-		const substrateAddress = getSubstrateAddress(address);
-		if (substrateAddress) {
-			try {
-				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
-				if (error || !data || !data.username || !data.user_id) {
-					return;
-				}
-				setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
-			} catch (error) {
-				console.log(error);
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
 			}
+			setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
+		} catch (error) {
+			console.log(error);
 		}
 	};
 
@@ -67,17 +62,20 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 			setLoading(false);
 			return;
 		}
-
 		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', { ...details, bio: trimmedBio });
 
 		if (data) {
-			setUserBio(details.bio);
 			setLoading(false);
 			setIsEditModalOpen(false);
+			setProfileDetails({
+				...profileDetails,
+				bio: details.bio
+			});
 		} else console.log(error);
 	};
 
 	useEffect(() => {
+		if (!delegationDashboardAddress) return;
 		fetchUserID(delegationDashboardAddress);
 	}, [delegationDashboardAddress]);
 
@@ -106,6 +104,7 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 							<Address
 								address={delegationDashboardAddress}
 								displayInline
+								isTruncateUsername={false}
 							/>
 						</div>
 					</div>
@@ -123,14 +122,14 @@ const BecomeDelegateEditModal = ({ isEditModalOpen, setIsEditModalOpen, classNam
 					</div>
 					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
-							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium tracking-wide text-white dark:bg-pink_primary ${
+							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary tracking-wide text-white dark:bg-pink_primary ${
 								details.bio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'
 							onClick={handleSubmit}
 							disabled={!details.bio || loading}
 						>
-							<span className='text-white'>Edit</span>
+							<span className='text-base font-medium text-white'>Edit</span>
 						</Button>
 					</div>
 				</AuthForm>

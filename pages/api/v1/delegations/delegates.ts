@@ -18,7 +18,7 @@ const firestore_db = admin.firestore();
 export const getDelegatesData = async (network: string, address?: string) => {
 	if (!network || !isOpenGovSupported(network)) return [];
 
-	const encodedAddr = address ? getEncodedAddress(String(address), network) : '';
+	const encodedAddr = address ? getEncodedAddress(String(address), network) : address;
 
 	const novaDelegatesKusama = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/polkadot.json').then((res) => res.json());
 	const novaDelegatesPolkadot = await fetch('https://raw.githubusercontent.com/novasamatech/opengov-delegate-registry/master/registry/kusama.json').then((res) => res.json());

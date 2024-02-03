@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Skeleton, message } from 'antd';
+import { Button, Skeleton, message } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -203,12 +203,12 @@ const DelegationProfile = ({ isSearch, className, profileDetails, setProfileDeta
 								>
 									<MessengerIcon />
 								</Tooltip>
-								<CustomButton
+								<Button
 									onClick={() => setIsModalOpen(true)}
-									className={'border-[#E5007A] bg-white py-3 font-medium text-pink_primary dark:bg-black'}
+									className={'m-1 border-[#E5007A] bg-white py-3 font-medium text-pink_primary dark:bg-black'}
 								>
 									Become a Delegate
-								</CustomButton>
+								</Button>
 							</div>
 						)}
 					</span>

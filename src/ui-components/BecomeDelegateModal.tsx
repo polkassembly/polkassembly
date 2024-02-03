@@ -42,8 +42,6 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 		userId: 0,
 		username: ''
 	});
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 
 	const fetchUserID = async (address: string) => {
 		try {

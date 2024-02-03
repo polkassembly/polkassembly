@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import React from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-// import BecomeDelegateModal from '~src/ui-components/BecomeDelegateModal';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Loader from '~src/ui-components/Loader';
 
@@ -37,7 +36,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, setProfil
 				<Button
 					onClick={showModal}
 					disabled={!currentUser.id}
-					className={'border-[#E5007A] bg-pink_primary font-medium text-white dark:text-black'}
+					className={'border-pink_primary bg-pink_primary font-medium text-white dark:text-black'}
 				>
 					{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 				</Button>

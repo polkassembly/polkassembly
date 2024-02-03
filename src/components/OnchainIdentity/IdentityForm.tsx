@@ -110,6 +110,16 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
+	let registrarNum: number;
+
+	switch (network) {
+		case 'polkadot':
+			registrarNum = 3;
+			break;
+		case 'kusama':
+			registrarNum = 5;
+			break;
+	}
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -231,7 +241,7 @@ const IdentityForm = ({
 		});
 		if (!api || !apiReady || !okAll) return;
 		const identityTx = api.tx?.identity?.setIdentity(info);
-		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 

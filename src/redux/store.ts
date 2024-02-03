@@ -17,7 +17,6 @@ import { IUserDetailsStore } from './userDetails/@types';
 import { deleteLocalStorageToken, getLocalStorageToken } from '~src/services/auth.service';
 import { isExpired } from 'react-jwt';
 import { voteDataStore } from './voteData';
-import { delegationDashboardStore } from './delegationDashboard';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -101,8 +100,7 @@ export const makeStore = () => {
 		[curvesInformationStore.name]: curvesInformationStore.reducer,
 		[tippingStore.name]: tippingStore.reducer,
 		[treasuryProposalStore.name]: treasuryProposalStore.reducer,
-		[voteDataStore.name]: voteDataStore.reducer,
-		[delegationDashboardStore.name]: delegationDashboardStore.reducer
+		[voteDataStore.name]: voteDataStore.reducer
 	});
 
 	if (isServer) {

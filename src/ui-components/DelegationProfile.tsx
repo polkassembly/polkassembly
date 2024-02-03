@@ -205,7 +205,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, setProfileDeta
 								</Tooltip>
 								<Button
 									onClick={() => setIsModalOpen(true)}
-									className={'m-1 border-[#E5007A] bg-white py-3 font-medium text-pink_primary dark:bg-black'}
+									className={' mt-1 border-[#E5007A] bg-white font-medium text-pink_primary dark:bg-black'}
 								>
 									Become a Delegate
 								</Button>

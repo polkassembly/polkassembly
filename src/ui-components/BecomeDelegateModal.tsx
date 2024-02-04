@@ -7,13 +7,12 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
 import Address from './Address';
-import { ProfileDetailsResponse } from '~src/auth/types';
+import { IDelegationProfileType } from '~src/auth/types';
 
 interface DetailsState {
 	userId: number | null;
@@ -27,35 +26,23 @@ interface Props {
 	isModalOpen: boolean;
 	setIsModalOpen: (pre: boolean) => void;
 	className?: string;
-	profileDetails: ProfileDetailsResponse;
-	setProfileDetails: (profileDetails: ProfileDetailsResponse) => void;
+	profileDetails: IDelegationProfileType;
+	userBio: string;
+	setUserBio: (pre: string) => void;
 }
 
-const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, setProfileDetails }: Props) => {
+const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, userBio, setUserBio }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [details, setDetails] = useState<DetailsState>({
 		address: delegationDashboardAddress,
-		bio: '',
+		bio: userBio,
 		isNovaWalletDelegate: false,
-		userId: 0,
-		username: ''
+		userId: profileDetails.user_id,
+		username: profileDetails.username
 	});
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-
-	const fetchUserID = async (address: string) => {
-		try {
-			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${address}`, undefined, 'GET');
-			if (error || !data || !data.username || !data.user_id) {
-				return;
-			}
-			setDetails((prevDetails) => ({ ...prevDetails, userId: data.user_id, username: data.username }));
-		} catch (error) {
-			console.log(error);
-		}
-	};
 
 	const handleSubmit = async () => {
 		setLoading(true);
@@ -69,19 +56,11 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', { ...details, bio: trimmedBio });
 
 		if (data) {
-			setProfileDetails({
-				...profileDetails,
-				bio: trimmedBio
-			});
+			setUserBio(trimmedBio);
 			setLoading(false);
 			setIsModalOpen(false);
 		} else console.log(error);
 	};
-
-	useEffect(() => {
-		if (!delegationDashboardAddress) return;
-		fetchUserID(delegationDashboardAddress);
-	}, [delegationDashboardAddress]);
 
 	return (
 		<Modal
@@ -120,8 +99,10 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							name='bio'
 							className='h-[40px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-medium'
 							placeholder='Add message for delegate address'
-							value={details.bio}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDetails({ ...details, bio: e.target.value })}
+							value={userBio}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setUserBio(e.target.value);
+							}}
 						/>
 					</div>
 					<div className='mb-7 mt-6 rounded-[4px] px-5'>
@@ -135,11 +116,11 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
 							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:bg-pink_primary ${
-								details.bio || loading ? '' : 'opacity-60'
+								userBio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'
 							onClick={handleSubmit}
-							disabled={!details.bio || loading}
+							disabled={!userBio || loading}
 						>
 							<span className='text-white'>Confirm</span>
 						</Button>

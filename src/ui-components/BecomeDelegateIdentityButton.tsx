@@ -32,7 +32,7 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 					onClick={() => {
 						handleIdentityButtonClick(), closeModal();
 					}}
-					className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-[#E5007A]'
+					className='-mt-[2px] inline-flex cursor-pointer text-xs font-medium text-pink_primary'
 				>
 					<ImageIcon
 						src='/assets/delegation-tracks/shield-icon-pink.svg'

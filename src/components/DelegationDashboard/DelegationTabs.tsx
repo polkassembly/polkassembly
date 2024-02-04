@@ -12,44 +12,62 @@ import { Skeleton, TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { ProfileDetailsResponse } from '~src/auth/types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import { IDelegationProfileType } from '~src/auth/types';
 
 interface Props {
 	className?: string;
 	theme?: string;
 	isLoggedOut: boolean;
-	userDetails: any;
 }
 
-const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) => {
+const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 	const userProfile = useUserDetailsSelector();
-	const { username, delegationDashboardAddress } = userProfile;
-	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
-		addresses: [],
-		badges: [],
+	const { delegationDashboardAddress } = userProfile;
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
 		bio: '',
 		image: '',
 		social_links: [],
-		title: '',
 		user_id: 0,
 		username: ''
 	});
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [userBio, setUserBio] = useState<string>('');
 
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
-		if (data) {
-			setProfileDetails((prevProfileDetails) => ({ ...prevProfileDetails, ...data }));
-		} else {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(
+				`api/v1/auth/data/profileWithAddress?address=${delegationDashboardAddress}`,
+				undefined,
+				'GET'
+			);
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				bio: data.profile.bio || '',
+				image: data.profile.image || '',
+				social_links: data.profile.social_links || [],
+				user_id: data.user_id,
+				username: data.username
+			});
+		} catch (error) {
 			console.log(error);
 		}
 	};
 
 	useEffect(() => {
+		setProfileDetails({
+			bio: '',
+			image: '',
+			social_links: [],
+			user_id: 0,
+			username: ''
+		});
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username, delegationDashboardAddress]);
+	}, [delegationDashboardAddress]);
 
 	const tabItems: TabsProps['items'] = [
 		{
@@ -60,7 +78,8 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
 						profileDetails={profileDetails}
-						setProfileDetails={setProfileDetails}
+						userBio={userBio}
+						setUserBio={setUserBio}
 					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -76,19 +95,21 @@ const DelegationTabs = ({ className, theme, isLoggedOut, userDetails }: Props) =
 						isModalOpen={isModalOpen}
 						setIsModalOpen={setIsModalOpen}
 						profileDetails={profileDetails}
-						setProfileDetails={setProfileDetails}
+						userBio={userBio}
+						setUserBio={setUserBio}
 					/>
 					<DelegationProfile
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						profileDetails={profileDetails}
-						setProfileDetails={setProfileDetails}
 						setIsModalOpen={setIsModalOpen}
+						userBio={userBio}
+						setUserBio={setUserBio}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
-						{!!userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
+						{!!userProfile?.delegationDashboardAddress && userProfile?.delegationDashboardAddress?.length > 0 ? (
 							<DashboardTrackListing
 								theme={theme}
-								address={String(userDetails.delegationDashboardAddress)}
+								address={String(userProfile.delegationDashboardAddress)}
 							/>
 						) : (
 							<Skeleton />

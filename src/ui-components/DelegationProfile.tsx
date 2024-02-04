@@ -67,11 +67,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 		}
 	};
 
-	useEffect(() => {
-		setUserBio('');
-		handleData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
 	const handleIdentityInfo = () => {
 		if (!api || !apiReady) return;
 
@@ -108,6 +103,12 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, address, encodedAddr, network]);
+
+	useEffect(() => {
+		setUserBio('');
+		handleData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const success = () => {
 		messageApi.open({

@@ -14,7 +14,7 @@ import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
 import Address from './Address';
 import { IDelegationProfileType } from '~src/auth/types';
 
-interface DetailsState {
+interface IDetailsState {
 	userId: number | null;
 	username: string;
 	address: string;
@@ -35,28 +35,25 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 	const currentUser = useUserDetailsSelector();
 	const { delegationDashboardAddress } = currentUser;
 	const [loading, setLoading] = useState<boolean>(false);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [details, setDetails] = useState<DetailsState>({
-		address: delegationDashboardAddress,
-		bio: userBio,
-		isNovaWalletDelegate: false,
-		userId: profileDetails.user_id,
-		username: profileDetails.username
-	});
 
 	const handleSubmit = async () => {
 		setLoading(true);
-		const trimmedBio = details.bio.trim();
+		const trimmedBio = userBio.trim();
 
 		if (!trimmedBio) {
 			setLoading(false);
 			return;
 		}
-
-		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', { ...details, bio: trimmedBio });
+		const requestData: IDetailsState = {
+			address: delegationDashboardAddress,
+			bio: trimmedBio,
+			isNovaWalletDelegate: false,
+			userId: profileDetails.user_id,
+			username: profileDetails.username
+		};
+		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', requestData);
 
 		if (data) {
-			setUserBio(trimmedBio);
 			setLoading(false);
 			setIsModalOpen(false);
 		} else console.log(error);

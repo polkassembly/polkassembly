@@ -97,7 +97,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 						</label>
 						<Input
 							name='bio'
-							className='h-[40px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-medium'
+							className='h-[40px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
 							placeholder='Add message for delegate address'
 							value={userBio}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

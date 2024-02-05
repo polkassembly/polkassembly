@@ -20,6 +20,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
@@ -28,7 +29,11 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, hash_contains } = query;
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -84,6 +89,15 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

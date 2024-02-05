@@ -17,6 +17,8 @@ import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import PAProfile from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
 
 interface IUserProfileProps {
 	userPosts: {
@@ -31,7 +33,11 @@ interface IUserProfileProps {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { params, req } = context;
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -97,11 +103,20 @@ const EmptyState = styled.div`
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, error, className } = props;
 	const { resolvedTheme: theme } = useTheme();
-
+	const router = useRouter();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

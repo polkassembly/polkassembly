@@ -16,7 +16,11 @@ interface IPrivacyPage {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;

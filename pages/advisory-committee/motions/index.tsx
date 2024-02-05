@@ -21,9 +21,14 @@ import MotionsIcon from '~assets/icons/motions-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -50,12 +55,21 @@ const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 
+	const router = useRouter();
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

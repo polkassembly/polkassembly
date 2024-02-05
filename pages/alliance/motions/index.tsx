@@ -18,9 +18,14 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -47,12 +52,21 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
+	const router = useRouter();
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -62,6 +76,7 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
+				network: network,
 				page
 			}
 		});

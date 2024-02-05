@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -17,12 +18,17 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const proposalType = ProposalType.OPEN_GOV;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -46,8 +52,19 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { post, error, network } = props;
 	const dispatch = useDispatch();
 
+	const router = useRouter();
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

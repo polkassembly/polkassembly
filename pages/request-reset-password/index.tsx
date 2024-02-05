@@ -17,10 +17,12 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import queueNotification from '~src/ui-components/QueueNotification';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
@@ -28,7 +30,11 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -39,12 +45,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const RequestResetPassword: FC<Props> = (props) => {
 	const dispatch = useDispatch();
 
+	const router = useRouter();
+	const { network } = useNetworkSelector();
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 

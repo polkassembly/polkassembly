@@ -20,11 +20,16 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const proposalType = ProposalType.ADVISORY_COMMITTEE;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { motion } = query;
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -63,6 +68,15 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

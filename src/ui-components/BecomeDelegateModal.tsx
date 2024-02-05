@@ -13,6 +13,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
 import Address from './Address';
 import { IDelegationProfileType } from '~src/auth/types';
+import { NotificationStatus } from '~src/types';
+import queueNotification from './QueueNotification';
 
 interface IDetailsState {
 	userId: number | null;
@@ -29,16 +31,18 @@ interface Props {
 	profileDetails: IDelegationProfileType;
 	userBio: string;
 	setUserBio: (pre: string) => void;
+	onchainUsername: string;
+	isEditMode?: boolean;
 }
 
-const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, userBio, setUserBio }: Props) => {
-	const currentUser = useUserDetailsSelector();
-	const { delegationDashboardAddress } = currentUser;
+const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, userBio, setUserBio, onchainUsername, isEditMode = false }: Props) => {
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [newBio, setNewBio] = useState<string>(userBio || '');
 
 	const handleSubmit = async () => {
 		setLoading(true);
-		const trimmedBio = userBio.trim();
+		const trimmedBio = newBio.trim();
 
 		if (!trimmedBio) {
 			setLoading(false);
@@ -49,21 +53,34 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			bio: trimmedBio,
 			isNovaWalletDelegate: false,
 			userId: profileDetails.user_id,
-			username: profileDetails.username
+			username: !onchainUsername?.length ? profileDetails?.username : onchainUsername
 		};
 		const { data, error } = await nextApiClientFetch('api/v1/delegations/become-pa-delegate', requestData);
-
 		if (data) {
 			setLoading(false);
+			setUserBio(newBio);
 			setIsModalOpen(false);
-		} else console.log(error);
+			queueNotification({
+				header: 'Success!',
+				message: isEditMode ? 'Delegation Mandate Updated Successfully' : 'Congrats! Delegate Created Successfully',
+				status: NotificationStatus.SUCCESS
+			});
+		} else if (error) {
+			console.log(error);
+			queueNotification({
+				header: 'Error!',
+				message: error,
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+		}
 	};
 
 	return (
 		<Modal
 			title={
 				<div className='flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-					Become A Delegate
+					{isEditMode ? 'Edit Delegate Details' : 'Become A Delegate'}
 				</div>
 			}
 			open={isModalOpen}
@@ -76,7 +93,10 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			}}
 			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
-			<Spin spinning={loading}>
+			<Spin
+				spinning={loading}
+				className='h-[250px]'
+			>
 				<AuthForm onSubmit={handleSubmit}>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
@@ -90,15 +110,16 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 					</div>
 					<div className='mt-6 px-5'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-							Your Delegation Mandate<span className='font-semibold text-[#FF3C5F]'>*</span>
+							{isEditMode ? 'Edit Delegation Mandate' : 'Your Delegation Mandate'}
+							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
 						<Input
 							name='bio'
-							className='h-[40px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
+							className='h-10 border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
 							placeholder='Add message for delegate address'
-							value={userBio}
+							value={newBio || userBio}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setUserBio(e.target.value);
+								setNewBio(e.target.value);
 							}}
 						/>
 					</div>
@@ -112,14 +133,14 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 					</div>
 					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
-							className={`flex h-[40px] w-full items-center justify-center space-x-2 rounded-[4px] bg-pink_primary text-sm font-medium text-white dark:bg-pink_primary ${
+							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-sm font-medium text-white dark:bg-pink_primary ${
 								userBio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'
 							onClick={handleSubmit}
 							disabled={!userBio || loading}
 						>
-							<span className='text-white'>Confirm</span>
+							<span className='text-white'>{isEditMode ? 'Edit' : 'Confirm'}</span>
 						</Button>
 					</div>
 				</AuthForm>

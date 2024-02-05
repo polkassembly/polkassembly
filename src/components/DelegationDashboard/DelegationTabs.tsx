@@ -12,9 +12,12 @@ import { Skeleton, TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
+import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { useApiContext } from '~src/context';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -24,8 +27,11 @@ interface Props {
 
 const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 	const userProfile = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress } = userProfile;
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
 		bio: '',
 		image: '',
@@ -57,6 +63,27 @@ const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 		}
 	};
 
+	const handleIdentityInfo = () => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+
+		const encodedAddr = delegationDashboardAddress ? getEncodedAddress(delegationDashboardAddress, network) || '' : '';
+
+		api.derive.accounts
+			.info(encodedAddr, (info: DeriveAccountInfo) => {
+				setIdentity(info.identity);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+
+		return () => unsubscribe && unsubscribe();
+	};
+
 	useEffect(() => {
 		setProfileDetails({
 			bio: '',
@@ -66,8 +93,12 @@ const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 			username: ''
 		});
 		getData();
+
+		if (!api || !apiReady) return;
+		handleIdentityInfo();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [delegationDashboardAddress]);
+	}, [delegationDashboardAddress, api, apiReady]);
 
 	const tabItems: TabsProps['items'] = [
 		{
@@ -80,6 +111,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 						profileDetails={profileDetails}
 						userBio={userBio}
 						setUserBio={setUserBio}
+						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<TotalDelegationData />
 					<TrendingDelegates />
@@ -97,6 +129,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 						profileDetails={profileDetails}
 						userBio={userBio}
 						setUserBio={setUserBio}
+						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<DelegationProfile
 						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
@@ -104,6 +137,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut }: Props) => {
 						setIsModalOpen={setIsModalOpen}
 						userBio={userBio}
 						setUserBio={setUserBio}
+						identity={identity || null}
 					/>
 					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
 						{!!userProfile?.delegationDashboardAddress && userProfile?.delegationDashboardAddress?.length > 0 ? (

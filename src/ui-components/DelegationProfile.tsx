@@ -2,10 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Skeleton, Spin, message } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
-import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { ApiContext } from '~src/context/ApiContext';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
@@ -17,18 +16,15 @@ import Address from '~src/ui-components/Address';
 import SocialsHandle from './SocialsHandle';
 import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { ApiPromise } from '@polkadot/api';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import Loader from './Loader';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
 
-const BecomeDelegateEditModal = dynamic(() => import('src/ui-components/BecomeDelegateEditModal'), {
-	loading: () => <Loader />,
+const BecomeDelegateModal = dynamic(() => import('src/ui-components/BecomeDelegateModal'), {
+	loading: () => <Skeleton.Avatar active />,
 	ssr: false
 });
 
@@ -39,18 +35,14 @@ interface Props {
 	setIsModalOpen: (pre: boolean) => void;
 	userBio: string;
 	setUserBio: (pre: string) => void;
+	identity: DeriveAccountRegistration | null;
 }
 
-const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen }: Props) => {
+const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUserBio, setIsModalOpen, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { delegationDashboardAddress: address } = userProfile;
 	const { network } = useNetworkSelector();
-	const apiContext = useContext(ApiContext);
 	const { image, social_links, username, bio } = profileDetails;
-	const [api, setApi] = useState<ApiPromise>();
-	const [apiReady, setApiReady] = useState(false);
-	const encodedAddr = address ? getEncodedAddress(address, network) || '' : '';
-	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [messageApi, contextHolder] = message.useMessage();
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -66,43 +58,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 			setLoading(false);
 		}
 	};
-
-	const handleIdentityInfo = () => {
-		if (!api || !apiReady) return;
-
-		let unsubscribe: () => void;
-
-		api.derive.accounts
-			.info(encodedAddr, (info: DeriveAccountInfo) => {
-				setIdentity(info.identity);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => {
-				console.error(e);
-			});
-
-		return () => unsubscribe && unsubscribe();
-	};
-
-	useEffect(() => {
-		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
-			setApi(apiContext.relayApi);
-			setApiReady(apiContext.relayApiReady);
-		} else {
-			if (!apiContext.api || !apiContext.apiReady) return;
-			setApi(apiContext.api);
-			setApiReady(apiContext.apiReady);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address]);
-
-	useEffect(() => {
-		if (!api || !apiReady || !address || !encodedAddr) return;
-		handleIdentityInfo();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, address, encodedAddr, network]);
 
 	useEffect(() => {
 		setUserBio('');
@@ -122,7 +77,10 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	};
 
 	return (
-		<Spin spinning={loading}>
+		<Spin
+			spinning={loading}
+			className='h-[150px]'
+		>
 			<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
 				<div className='flex w-full gap-[34px] '>
 					<div className='w-3/10'>
@@ -219,14 +177,14 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 						</span>
 					</div>
 				)}
-				<BecomeDelegateEditModal
-					isEditModalOpen={isEditModalOpen}
-					setIsEditModalOpen={setIsEditModalOpen}
-					className=''
+				<BecomeDelegateModal
+					isModalOpen={isEditModalOpen}
+					onchainUsername={identity?.display || identity?.legal || ''}
+					setIsModalOpen={setIsEditModalOpen}
 					profileDetails={profileDetails}
-					IsUsedForEdit={true}
 					userBio={userBio}
 					setUserBio={setUserBio}
+					isEditMode
 				/>
 			</div>
 		</Spin>

@@ -21,9 +21,10 @@ interface Props {
 	profileDetails?: IDelegationProfileType;
 	userBio?: string;
 	setUserBio?: (pre: string) => void;
+	onchainUsername: string;
 }
 
-const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, setUserBio }: Props) => {
+const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, setUserBio, onchainUsername }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const showModal = () => {
 		setIsModalOpen && setIsModalOpen(true);
@@ -100,6 +101,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 				profileDetails={profileDetails}
 				userBio={userBio}
 				setUserBio={setUserBio}
+				onchainUsername={onchainUsername}
 			/>
 		</div>
 	);

@@ -90,7 +90,7 @@ const DelegationSuccessPopup = ({
 			maskClosable={false}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
+				<h2 className='mt-4 flex flex-col items-center text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
 					<ImageIcon
 						src={'/assets/delegation-tracks/success-delegate.svg'}
 						alt='multi vote initiated icon'

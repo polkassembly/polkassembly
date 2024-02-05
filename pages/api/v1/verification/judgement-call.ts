@@ -11,6 +11,7 @@ import messages from '~src/auth/utils/messages';
 export interface IJudgementProps {
 	identityHash: string;
 	userAddress: string;
+	network: string;
 }
 const handler: NextApiHandler<{ hash: string } | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
@@ -21,7 +22,11 @@ const handler: NextApiHandler<{ hash: string } | MessageType> = async (req, res)
 	if (!identityHash || !userAddress) return res.status(400).json({ message: 'Invalid identityHash or userAddress' });
 
 	const response = await fetch('https://us-central1-individual-node-watcher.cloudfunctions.net/judgementCall', {
-		body: JSON.stringify({ identityHash, userAddress }),
+		body: JSON.stringify({
+			identityHash: '0x7860acdc1510c94aba652346eb114db0c83e2bb169839ecff702f84b951104dd',
+			network: 'kusama',
+			userAddress: 'GhQ1dfLujcHnKedJmBeqJiNXJvY9D6vJRetgjn7Bp1T4fUb'
+		}),
 		headers: {
 			Authorization: `${process.env.IDENTITY_JUDGEMENT_AUTH}`,
 			'Content-Type': 'application/json'

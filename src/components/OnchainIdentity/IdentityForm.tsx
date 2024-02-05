@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Alert, Divider, Form, FormInstance, Input, Spin } from 'antd';
+import { Alert, Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -24,6 +24,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 const ZERO_BN = new BN(0);
 
@@ -52,7 +53,7 @@ interface ValueState {
 	okAll: boolean;
 }
 
-function checkValue(
+export function checkValue(
 	hasValue: boolean,
 	value: string | null | undefined,
 	minLength: number,
@@ -109,6 +110,16 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
+	let registrarNum: number;
+
+	switch (network) {
+		case 'polkadot':
+			registrarNum = 3;
+			break;
+		case 'kusama':
+			registrarNum = 5;
+			break;
+	}
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -230,7 +241,7 @@ const IdentityForm = ({
 		});
 		if (!api || !apiReady || !okAll) return;
 		const identityTx = api.tx?.identity?.setIdentity(info);
-		const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
 		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 

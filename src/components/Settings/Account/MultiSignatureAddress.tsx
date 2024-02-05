@@ -5,7 +5,9 @@ import { DownOutlined, PlusOutlined, UpOutlined, MinusCircleOutlined } from '@an
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Checkbox, Divider, Form, Input, InputNumber, Modal } from 'antd';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import { Alert, Checkbox, Divider, Form, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from 'src/context';
@@ -21,8 +23,8 @@ import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
-
 import { ChallengeMessage, ChangeResponseType } from '~src/auth/types';
+import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -278,7 +280,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 				</div>
 			}
 			open={open}
-			className='mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+			className={classNames(poppins.className, poppins.variable, 'mb-8 md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay')}
 			footer={
 				<div className='flex items-center justify-end'>
 					{[

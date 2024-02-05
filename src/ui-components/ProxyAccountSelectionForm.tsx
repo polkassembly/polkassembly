@@ -69,12 +69,8 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
-		console.log(selectedProxyAddress);
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
-		console.log(wallet, changedWallet);
-		console.log(addressData);
 		const exists = addressData?.accounts.some((account) => account.address === selectedProxyAddress);
-		console.log(exists);
 		setIsProxyExistsOnWallet?.(exists || true);
 	};
 
@@ -144,7 +140,6 @@ const ProxyAccountSelectionForm = ({
 					theme={theme}
 					isModal={true}
 					onWalletSelect={(e) => {
-						console.log(e);
 						setChangedWallet(e);
 						getAllAccounts();
 					}}

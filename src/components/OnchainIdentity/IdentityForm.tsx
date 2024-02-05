@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Alert, Divider, Form, FormInstance, Spin } from 'antd';
+import { Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,6 +25,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -294,7 +295,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue '
 						message={
 							<span className='dark:text-blue-dark-high'>
 								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
@@ -306,7 +307,7 @@ const IdentityForm = ({
 					<Alert
 						showIcon
 						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='h-10 rounded-[4px] text-sm text-bodyBlue'
 						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
 					/>
 				)}
@@ -545,7 +546,7 @@ const IdentityForm = ({
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
-						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='mt-6 rounded-[4px]'
 						type='info'
 						showIcon
 						message={

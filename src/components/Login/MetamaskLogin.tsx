@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
@@ -39,6 +39,7 @@ import { useTheme } from 'next-themes';
 import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -486,7 +487,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
 										description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 										type='info'
 										showIcon
 									/>
@@ -528,7 +528,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										{isSignUp && (
 											<Alert
 												showIcon
-												className='mb-2 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+												className='mb-2'
 												type='info'
 												message={
 													<span className='dark:text-blue-dark-high'>

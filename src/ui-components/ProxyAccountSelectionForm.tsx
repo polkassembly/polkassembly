@@ -15,6 +15,7 @@ import { CloseIcon } from './CustomIcons';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
 
 interface Props {
 	proxyAddresses: string[];
@@ -31,26 +32,14 @@ interface Props {
 	setIsProxyExistsOnWallet?: (pre: boolean) => void;
 }
 
-const ProxyAccountSelectionForm = ({
-	isBalanceUpdated,
-	onBalanceChange,
-	withBalance,
-	address,
-	proxyAddresses,
-	className,
-	theme,
-	inputClassName,
-	wallet,
-	setIsProxyExistsOnWallet
-}: Props) => {
+const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBalance, address, proxyAddresses, className, theme, inputClassName, wallet }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [changedWallet, setChangedWallet] = useState('');
 	const { loginAddress } = useUserDetailsSelector();
-
-	console.log(wallet);
 
 	const dropdownMenuItems: ItemType[] = proxyAddresses.map((proxyAddress) => {
 		return {
@@ -71,60 +60,77 @@ const ProxyAccountSelectionForm = ({
 		if (!api || !apiReady || !wallet) return;
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		const exists = addressData?.accounts.some((account) => account.address === selectedProxyAddress);
-		setIsProxyExistsOnWallet?.(exists || true);
+		console.log('child', exists);
+		if (exists) {
+			setIsProxyExistsOnWallet(exists);
+		}
 	};
-
+	console.log(isProxyExistsOnWallet);
 	return (
 		<>
-			<article className='mt-2 flex w-full flex-col'>
-				<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
-					<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
-					{address && withBalance && (
-						<Balance
-							address={address}
-							onChange={onBalanceChange}
-							isBalanceUpdated={isBalanceUpdated}
-						/>
-					)}
-				</div>
-				<Dropdown
-					trigger={['click']}
-					overlayClassName='z-[2000]'
-					className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
-					menu={{
-						items: dropdownMenuItems,
-						onClick: (e: any) => {
-							if (e.key !== '1') {
-								setSelectedProxyAddress(e.key);
-							}
-						}
-					}}
-					theme={theme}
-				>
-					<div className='flex items-center justify-between '>
-						<Address
-							address={selectedProxyAddress || proxyAddresses[0]}
-							className='flex flex-1 items-center'
-							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
-							disableAddressClick
-							disableTooltip
-						/>
-						<Button
-							className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
-							onClick={(e) => {
-								e.preventDefault;
-								e.stopPropagation();
-								setShowWalletModal?.(!showWalletModal);
-							}}
-						>
-							Change Wallet
-						</Button>
-						<span className='mx-2 mb-1'>
-							<DownIcon />
-						</span>
+			{proxyAddresses.length > 0 ? (
+				<article className='mt-2 flex w-full flex-col'>
+					<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
+						<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
+						{address && withBalance && (
+							<Balance
+								address={address}
+								onChange={onBalanceChange}
+								isBalanceUpdated={isBalanceUpdated}
+							/>
+						)}
 					</div>
-				</Dropdown>
-			</article>
+					<Dropdown
+						trigger={['click']}
+						overlayClassName='z-[2000]'
+						className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+						menu={{
+							items: dropdownMenuItems,
+							onClick: (e: any) => {
+								if (e.key !== '1') {
+									setSelectedProxyAddress(e.key);
+								}
+							}
+						}}
+						theme={theme}
+					>
+						<div className='flex items-center justify-between '>
+							<Address
+								address={selectedProxyAddress || proxyAddresses[0]}
+								className='flex flex-1 items-center'
+								addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
+								disableAddressClick
+								disableTooltip
+							/>
+							<Button
+								className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
+								onClick={(e) => {
+									e.preventDefault;
+									e.stopPropagation();
+									setShowWalletModal?.(!showWalletModal);
+								}}
+							>
+								Change Wallet
+							</Button>
+							<span className='mx-2 mb-1'>
+								<DownIcon />
+							</span>
+						</div>
+					</Dropdown>
+				</article>
+			) : (
+				<div className='mt-2 flex items-center gap-x-1'>
+					<InfoIcon />
+					<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>No proxy addresses found</p>
+				</div>
+			)}
+
+			{!isProxyExistsOnWallet == false && (
+				<div className='mt-2 flex items-center gap-x-1'>
+					<InfoIcon />
+					<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy Address is not available on current wallet</p>
+				</div>
+			)}
 
 			<Modal
 				open={showWalletModal}
@@ -144,12 +150,6 @@ const ProxyAccountSelectionForm = ({
 						getAllAccounts();
 					}}
 					showWeb2Option={false}
-					// setLoginOpen={setLoginOpen}
-					// isDelegation={isDelegation}
-					// setSignupOpen={setSignupOpen}
-					// onWalletSelect={onWalletSelect}
-					// walletError={walletError}
-					// setWithPolkasafe={setWithPolkasafe}
 				/>
 			</Modal>
 		</>

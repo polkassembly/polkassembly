@@ -61,7 +61,7 @@ interface Props {
 	className?: string;
 	setWithPolkasafe?: any;
 	theme?: string;
-	showWeb2Option?: boolean;
+	showWeb2Option: boolean;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme, showWeb2Option }) => {

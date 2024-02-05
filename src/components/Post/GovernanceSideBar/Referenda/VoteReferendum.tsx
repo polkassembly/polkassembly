@@ -56,7 +56,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
-import InfoIcon from '~assets/icons/red-info-alert.svg';
+// import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
@@ -153,7 +153,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
-	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>();
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
@@ -162,12 +162,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const [delegatedTo, setDelegatedTo] = useState('');
 	const getProxies = async (address: any) => {
-		console.log(loginAddress, address);
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
-			console.log(proxyAddr);
 		}
 	};
 
@@ -380,6 +378,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setVote(value as EVoteDecisionType);
 		handleModalReset();
 	};
+
+	console.log('parent', isProxyExistsOnWallet);
 	const handleSubmit = async () => {
 		// GAEvent for proposal voting
 		trackEvent('proposal_voting', 'voted_proposal', {
@@ -892,12 +892,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
 									/>
 								)}
-								{isProxyExistsOnWallet && (
+								{/* {isProxyExistsOnWallet == false && (
 									<div className='mt-2 flex items-center gap-x-1'>
 										<InfoIcon />
 										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy Address is not available on current wallet</p>
 									</div>
-								)}
+								)} */}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
@@ -936,6 +936,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)

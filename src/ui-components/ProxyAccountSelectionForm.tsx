@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Dropdown } from '~src/ui-components/Dropdown';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import Address from './Address';
 import { poppins } from 'pages/_app';
@@ -45,10 +45,10 @@ const ProxyAccountSelectionForm = ({
 	inputClassName,
 	wallet,
 	setSelectedProxyAddress,
-	selectedProxyAddress
+	selectedProxyAddress,
+	setIsProxyExistsOnWallet
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
-	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [changedWallet, setChangedWallet] = useState('');
@@ -75,10 +75,15 @@ const ProxyAccountSelectionForm = ({
 		const exists = addressData?.accounts.some((account) => account.address === selectedProxyAddress);
 		console.log('child', exists);
 		if (exists) {
-			setIsProxyExistsOnWallet(exists);
+			setIsProxyExistsOnWallet?.(exists);
 		}
 	};
-	console.log(isProxyExistsOnWallet);
+
+	useEffect(() => {
+		getAllAccounts();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedProxyAddress]);
+
 	return (
 		<>
 			{proxyAddresses.length > 0 ? (
@@ -138,13 +143,6 @@ const ProxyAccountSelectionForm = ({
 				</div>
 			)}
 
-			{!isProxyExistsOnWallet == false && (
-				<div className='mt-2 flex items-center gap-x-1'>
-					<InfoIcon />
-					<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy Address is not available on current wallet</p>
-				</div>
-			)}
-
 			<Modal
 				open={showWalletModal}
 				footer={false}
@@ -163,6 +161,7 @@ const ProxyAccountSelectionForm = ({
 						getAllAccounts();
 					}}
 					showWeb2Option={false}
+					setShowWalletModal={setShowWalletModal}
 				/>
 			</Modal>
 		</>

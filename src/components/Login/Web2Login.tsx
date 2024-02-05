@@ -57,6 +57,7 @@ interface Props {
 	isModal?: boolean;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
+	setShowWalletModal?: (pre: boolean) => void;
 	isDelegation?: boolean;
 	className?: string;
 	setWithPolkasafe?: any;
@@ -64,7 +65,19 @@ interface Props {
 	showWeb2Option: boolean;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme, showWeb2Option }) => {
+const Web2Login: FC<Props> = ({
+	className,
+	walletError,
+	onWalletSelect,
+	setLoginOpen,
+	isModal,
+	setSignupOpen,
+	isDelegation,
+	setWithPolkasafe,
+	theme,
+	showWeb2Option,
+	setShowWalletModal
+}) => {
 	const { username } = validation;
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -177,7 +190,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 					className='web3-login-container flex flex-col px-24'
 				>
 					<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
-					<div>
+					<div onClick={() => setShowWalletModal?.(false)}>
 						<WalletButtons
 							disabled={loading}
 							onWalletSelect={onWalletSelect}

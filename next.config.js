@@ -18,6 +18,17 @@ const nextConfig = {
 					{ key: 'X-Frame-Options', value: 'SAMEORIGIN' },
 					{ key: 'Content-Security-Policy', value: "default-src 'self'; img-src '*'" }
 				]
+			},
+			{
+				// browser will not cache, sever will cache for 5 minutes and will serve stale content while revalidating for 59 seconds
+				source: '/api/v1/posts/:path*',
+				has: [
+					{
+						type: 'host',
+						value: 'api.polkassembly.io'
+					}
+				],
+				headers: [{ key: 'Cache-Control', value: 'max-age=0, s-maxage=300, stale-while-revalidate=59' }]
 			}
 		];
 	},

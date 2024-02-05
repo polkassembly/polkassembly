@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Select, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -20,6 +20,8 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import Web3 from 'web3';
+import Select from '~src/basic-components/Select';
+import SelectOption from '~src/basic-components/Select/SelectOption';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { chainProperties } from '~src/global/networkConstants';
@@ -56,17 +58,17 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const convictionOpts = useMemo(
 		() => [
-			<Select.Option
+			<SelectOption
 				key={0}
 				value={0}
 			>
 				{'0.1x voting balance, no lockup period'}
-			</Select.Option>,
+			</SelectOption>,
 			...CONVICTIONS.map(([value, lock]) => (
-				<Select.Option
+				<SelectOption
 					key={value}
 					value={value}
-				>{`${value}x voting balance, locked for ${lock * oneEnactmentPeriodInDays[network]} days`}</Select.Option>
+				>{`${value}x voting balance, locked for ${lock * oneEnactmentPeriodInDays[network]} days`}</SelectOption>
 			))
 		],
 		[CONVICTIONS, network]

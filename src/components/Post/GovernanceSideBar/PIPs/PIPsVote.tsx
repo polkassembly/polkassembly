@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Alert, Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -36,6 +36,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import SelectOption from '~src/basic-components/Select/SelectOption';
 
 const ZERO_BN = new BN(0);
 
@@ -64,38 +65,38 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option
-						className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+					<SelectOption
+						className={`text-bodyBlue  ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
 						{'0.1x voting balance, no lockup period'}
-					</Select.Option>,
+					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
-						<Select.Option
-							className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+						<SelectOption
+							className={`text-bodyBlue ${poppins.variable}`}
 							key={value}
 							value={value}
-						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
 					))
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option
-			className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+		<SelectOption
+			className={`text-bodyBlue ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
 			{'0.1x voting balance, no lockup period'}
-		</Select.Option>,
+		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
-			<Select.Option
-				className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+			<SelectOption
+				className={`text-bodyBlue ${poppins.variable}`}
 				key={value}
 				value={value}
-			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
 		))
 	];
 };

@@ -20,7 +20,7 @@ const nextConfig = {
 				]
 			},
 			{
-				// browser will not cache, sever will cache for 1 hour and will serve stale content while revalidating for 59 seconds
+				// browser will not cache, sever will cache for 5 minutes and will serve stale content while revalidating for 59 seconds
 				source: '/api/v1/posts/:path*',
 				has: [
 					{

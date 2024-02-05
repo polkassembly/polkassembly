@@ -291,7 +291,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && !alreadyVerifiedfields?.alreadyVerified && (
+				{/* {availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && !alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
 						type='error'
@@ -302,7 +302,7 @@ const IdentityForm = ({
 							</span>
 						}
 					/>
-				)}
+				)} */}
 				{alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon

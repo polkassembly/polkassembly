@@ -880,11 +880,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								{showProxyDropdown && (
 									<ProxyAccountSelectionForm
 										proxyAddresses={proxyAddresses}
-										className='rounded-[4px] px-3 py-1'
 										theme={theme}
 										address={address}
 										withBalance
 										onBalanceChange={handleOnBalanceChange}
+										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										inputClassName='rounded-[4px] px-3 py-1'
 									/>
 								)}
 								{/* aye nye split abstain buttons */}

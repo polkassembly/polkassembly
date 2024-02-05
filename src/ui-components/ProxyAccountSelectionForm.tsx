@@ -19,9 +19,10 @@ interface Props {
 	address?: string;
 	onBalanceChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
+	inputClassName?: string;
 }
 
-const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBalance, address, proxyAddresses, className, theme }: Props) => {
+const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBalance, address, proxyAddresses, className, theme, inputClassName }: Props) => {
 	console.log(proxyAddresses);
 	const dropdownMenuItems: ItemType[] = proxyAddresses.map((proxyAddress) => {
 		return {
@@ -59,11 +60,9 @@ const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBala
 			<Dropdown
 				trigger={['click']}
 				overlayClassName='z-[2000]'
-				className={' proxyDropdown dark:border-separatorDark'}
-				wrapClassName={`${className}`}
+				className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
 				menu={{ items: dropdownMenuItems }}
 				theme={theme}
-				style={{ border: '1px solid #d2d8e0' }}
 			>
 				<div className='flex items-center justify-between '>
 					<Address
@@ -73,7 +72,7 @@ const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBala
 						disableAddressClick
 						disableTooltip
 					/>
-					<Button className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue'>Change Wallet</Button>
+					<Button className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'>Change Wallet</Button>
 					<span className='mx-2 mb-1'>
 						<DownIcon />
 					</span>

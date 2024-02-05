@@ -53,7 +53,7 @@ const initAuthResponse: IAuthResponse = {
 
 interface Props {
 	onWalletSelect: (wallet: Wallet) => void;
-	walletError: string | undefined;
+	walletError?: string | undefined;
 	isModal?: boolean;
 	setLoginOpen?: (pre: boolean) => void;
 	setSignupOpen?: (pre: boolean) => void;
@@ -61,9 +61,10 @@ interface Props {
 	className?: string;
 	setWithPolkasafe?: any;
 	theme?: string;
+	showWeb2Option?: boolean;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme }) => {
+const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLoginOpen, isModal, setSignupOpen, isDelegation, setWithPolkasafe, theme, showWeb2Option }) => {
 	const { username } = validation;
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -164,7 +165,7 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 		<Container className={`flex flex-col rounded-md bg-white shadow-md dark:bg-section-dark-overlay ${className} `}>
 			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
-				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>Login to Polkassembly</span>
+				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>{showWeb2Option ? 'Login to Polkassembly' : 'Change Wallet'}</span>
 			</div>
 			<Divider
 				style={{ background: '#D2D8E0', flexGrow: 1 }}
@@ -186,15 +187,17 @@ const Web2Login: FC<Props> = ({ className, walletError, onWalletSelect, setLogin
 							isLoginFlow={true}
 						/>
 					</div>
-					<p
-						className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
-						onClick={() => {
-							setWeb2LoginClicked(true);
-							setWeb3Login(false);
-						}}
-					>
-						Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
-					</p>
+					{showWeb2Option && (
+						<p
+							className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
+							onClick={() => {
+								setWeb2LoginClicked(true);
+								setWeb3Login(false);
+							}}
+						>
+							Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
+						</p>
+					)}
 				</AuthForm>
 			)}
 			{defaultWallets.length === 0 && isDelegation && (

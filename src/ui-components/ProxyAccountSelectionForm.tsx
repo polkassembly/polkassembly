@@ -30,12 +30,25 @@ interface Props {
 	showWalletModal?: boolean;
 	wallet?: any;
 	setIsProxyExistsOnWallet?: (pre: boolean) => void;
+	setSelectedProxyAddress?: (pre: string) => void;
+	selectedProxyAddress?: string;
 }
 
-const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBalance, address, proxyAddresses, className, theme, inputClassName, wallet }: Props) => {
+const ProxyAccountSelectionForm = ({
+	isBalanceUpdated,
+	onBalanceChange,
+	withBalance,
+	address,
+	proxyAddresses,
+	className,
+	theme,
+	inputClassName,
+	wallet,
+	setSelectedProxyAddress,
+	selectedProxyAddress
+}: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
-	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [changedWallet, setChangedWallet] = useState('');
@@ -88,7 +101,7 @@ const ProxyAccountSelectionForm = ({ isBalanceUpdated, onBalanceChange, withBala
 							items: dropdownMenuItems,
 							onClick: (e: any) => {
 								if (e.key !== '1') {
-									setSelectedProxyAddress(e.key);
+									setSelectedProxyAddress?.(e.key);
 								}
 							}
 						}}

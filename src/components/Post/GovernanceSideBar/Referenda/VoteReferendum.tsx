@@ -161,6 +161,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const [delegatedTo, setDelegatedTo] = useState('');
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
 		if (proxies) {
@@ -538,6 +540,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
+			proxyAddress: selectedProxyAddress,
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});
@@ -890,6 +893,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}
 										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+										setSelectedProxyAddress={setSelectedProxyAddress}
+										selectedProxyAddress={selectedProxyAddress}
 									/>
 								)}
 								{/* {isProxyExistsOnWallet == false && (

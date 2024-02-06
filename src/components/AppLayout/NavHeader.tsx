@@ -271,6 +271,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			menu={{ items: dropdownMenuItems }}
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
+			className='cursor-pointer'
 			theme={theme}
 		>
 			{children}

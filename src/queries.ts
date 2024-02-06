@@ -2290,3 +2290,10 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
   }
 }
 `;
+
+export const TOTAL_DELEGATE_BALANCE = `query DelegateBalance ($type_eq:DelegationType!= OpenGov, $to_in: [String!]){
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq, to_in: $to_in}) {
+    to
+    balance
+  }
+}`;

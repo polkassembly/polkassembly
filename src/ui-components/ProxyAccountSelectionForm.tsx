@@ -146,7 +146,7 @@ const ProxyAccountSelectionForm = ({
 			<Modal
 				open={showWalletModal}
 				footer={false}
-				className={`${poppins.variable} ${poppins.className} -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`{${className} ${poppins.variable} ${poppins.className} -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName='vaibhav'
 				closeIcon={<CloseIcon className='mt-6 text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {
@@ -170,6 +170,9 @@ const ProxyAccountSelectionForm = ({
 
 export default styled(ProxyAccountSelectionForm)`
 	.ant-dropdown-trigger {
+		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+	}
+	.ant-modal-content {
 		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 	}
 `;

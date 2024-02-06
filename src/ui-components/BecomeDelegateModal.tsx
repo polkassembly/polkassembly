@@ -122,6 +122,9 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
 								setNewBio(e.target.value);
 							}}
+							onPressEnter={(e) => {
+								e.preventDefault();
+							}}
 						/>
 					</div>
 					<div className='mb-7 mt-6 rounded-[4px] px-5'>

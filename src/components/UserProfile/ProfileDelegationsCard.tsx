@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { poppins } from 'pages/_app';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import React, { useEffect, useState } from 'react';
-import { ProfileDetailsResponse } from '~src/auth/types';
+import { IDelegationProfileType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext } from '~src/context';
-import { ETrackDelegationStatus, IDelegation } from '~src/types';
+import { ETrackDelegationStatus, IDelegate, IDelegation } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -26,7 +26,14 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { delegationSupportedNetworks } from '../DelegationDashboard';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
+import dynamic from 'next/dynamic';
+
+const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
+	ssr: false
+});
 
 const { Panel } = Collapse;
 
@@ -35,6 +42,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
+	onchainIdentity?: DeriveAccountRegistration | null;
 }
 interface IDelegates {
 	[index: string]: {
@@ -51,6 +59,7 @@ const getIsSingleDelegation = (delegations: IDelegation[]) => {
 	const filteredData = delegations.filter((delegation) => Number(delegations[0]?.balance) === Number(delegation?.balance) && delegations[0]?.lockPeriod === delegation?.lockPeriod);
 	return filteredData?.length === delegations?.length;
 };
+
 const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus, checkedAddress: string, network: string) => {
 	const dataObj: any = {};
 	const encodedAddress = getEncodedAddress(checkedAddress, network);
@@ -92,10 +101,10 @@ const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegatio
 	return dataObj;
 };
 
-const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }: Props) => {
+const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { id: loginId, username } = useUserDetailsSelector();
+	const { id: loginId, username, loginAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { addresses } = userProfile;
@@ -104,11 +113,14 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 	const [checkedAddress, setCheckedAddress] = useState<string>(getSubstrateAddress(addressWithIdentity || '') || '');
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
+	const [delegationMandate, setDelegationMandate] = useState<string>('');
 	const [collapseItems, setCollapseItems] = useState([
 		{ data: receiveDelegations, label: 'RECEIVED DELEGATION', src: '/assets/profile/received-delegation.svg', status: ETrackDelegationStatus.RECEIVED_DELEGATION },
 		{ data: delegatedDelegations, label: 'DELEGATED', src: '/assets/profile/delegated.svg', status: ETrackDelegationStatus.DELEGATED }
 	]);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [becomeDelegateModal, setOpenBecomeDelegateModal] = useState<boolean>(false);
+	const [editDelegationMandate, setOpenEditDelegationMandate] = useState<boolean>(false);
 
 	useEffect(() => {
 		setCheckedAddress(getSubstrateAddress(addressWithIdentity || '') || '');
@@ -196,10 +208,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 			setLoading(false);
 		}
 	};
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network, checkedAddress]);
 
 	const handleExpand = (address: string, type: ETrackDelegationStatus) => {
 		const newData = type === ETrackDelegationStatus.DELEGATED ? delegatedDelegations : receiveDelegations;
@@ -218,6 +226,23 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 		});
 		setCollapseItems(updatedData);
 	};
+
+	const handleData = async () => {
+		setDelegationMandate('');
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: loginAddress });
+		if (data && data[0]?.bio) {
+			setDelegationMandate(data[0]?.bio);
+		} else {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		getData();
+		handleData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, checkedAddress]);
+
 	return (
 		<Spin spinning={loading}>
 			<div
@@ -253,6 +278,24 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 							<span>Delegate</span>
 						</CustomButton>
 					)}
+					{userProfile?.user_id === loginId && !!(username || '')?.length && !delegationMandate?.length && (
+						<CustomButton
+							className='delegation-buttons border-none shadow-none'
+							variant='default'
+							buttonsize='xs'
+							size='large'
+							onClick={() => setOpenBecomeDelegateModal(true)}
+						>
+							<Image
+								src='/assets/icons/delegate-profile.svg'
+								alt=''
+								width={18}
+								height={18}
+								className='mr-2'
+							/>
+							<span className='mr-10'>Become A Delegate</span>
+						</CustomButton>
+					)}
 				</div>
 				{addresses.length > 1 && (
 					<div className=''>
@@ -272,13 +315,22 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 					</div>
 				)}
 				{/*TODO delegation bio */}
-				{/* <div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
-          <span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
-          <span className='font-normal'>
-            Maecenas eget ligula vitae enim posuere volutpat. Pellentesque sed tellus pretium, pellentesque risus vitae, convallis dui. Pellentesque sed tellus pretium, Vestibulum
-            nec leo at dui euismod lacinia non quis risus. Vivamus lobortis felis lectus, et consequat lacus dapibus in.
-          </span>
-        </div> */}
+				{!!delegationMandate.length && (
+					<div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
+						<span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
+						<span
+							className={`flex flex-wrap items-center justify-start font-normal ${userProfile?.user_id === loginId && 'cursor-pointer'}`}
+							onClick={() => {
+								if (userProfile?.user_id !== loginId) return;
+								setOpenEditDelegationMandate(true);
+								setOpenBecomeDelegateModal(true);
+							}}
+						>
+							{delegationMandate}
+						</span>
+					</div>
+				)}
+
 				<div className='flex flex-col gap-4'>
 					{collapseItems?.map((item, index) => (
 						<Collapse
@@ -474,6 +526,18 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}
 					defaultTarget={getEncodedAddress(addresses.length > 0 ? addressWithIdentity : addresses?.[0], network) || ''}
+				/>
+			)}
+			{delegationSupportedNetworks.includes(network) && (
+				<BecomeDelegateModal
+					isModalOpen={becomeDelegateModal}
+					setIsModalOpen={setOpenBecomeDelegateModal}
+					profileDetails={userProfile as IDelegationProfileType}
+					userBio={delegationMandate}
+					setUserBio={setDelegationMandate}
+					onchainUsername={onchainIdentity?.display || onchainIdentity?.legal || ''}
+					defaultAddress={checkedAddress}
+					isEditMode={editDelegationMandate}
 				/>
 			)}
 		</Spin>

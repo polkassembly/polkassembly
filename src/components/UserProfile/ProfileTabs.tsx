@@ -14,6 +14,8 @@ import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { IStats } from '.';
 import { ClipboardIcon, ProfileOverviewIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+
 interface Props {
 	className?: string;
 	theme?: string;
@@ -26,6 +28,7 @@ interface Props {
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
 	statsArr: IStats[];
 	setStatsArr: (pre: IStats[]) => void;
+	onchainIdentity?: DeriveAccountRegistration | null;
 }
 
 const ProfileTabs = ({
@@ -39,7 +42,8 @@ const ProfileTabs = ({
 	profileDetails,
 	setProfileDetails,
 	statsArr,
-	setStatsArr
+	setStatsArr,
+	onchainIdentity
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
@@ -74,6 +78,7 @@ const ProfileTabs = ({
 					setSelectedAddresses={setSelectedAddresses}
 					profileDetails={profileDetails}
 					setProfileDetails={setProfileDetails}
+					onchainIdentity={onchainIdentity}
 				/>
 			),
 			key: 'Overview',

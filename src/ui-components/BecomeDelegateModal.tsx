@@ -34,9 +34,10 @@ interface Props {
 	setUserBio: (pre: string) => void;
 	onchainUsername: string;
 	isEditMode?: boolean;
+	defaultAddress?: string;
 }
 
-const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, userBio, setUserBio, onchainUsername, isEditMode = false }: Props) => {
+const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDetails, userBio, setUserBio, onchainUsername, isEditMode = false, defaultAddress }: Props) => {
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [newBio, setNewBio] = useState<string>(userBio || '');
@@ -50,7 +51,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			return;
 		}
 		const requestData: IDetailsState = {
-			address: delegationDashboardAddress,
+			address: defaultAddress || delegationDashboardAddress,
 			bio: trimmedBio,
 			isNovaWalletDelegate: false,
 			userId: profileDetails.user_id,
@@ -103,7 +104,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 						<div className='w-full rounded-md border border-solid border-[#d2d8e0] px-3 py-[10px]'>
 							<Address
-								address={delegationDashboardAddress}
+								address={defaultAddress || delegationDashboardAddress}
 								displayInline
 								isTruncateUsername={false}
 							/>
@@ -139,7 +140,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 					</div>
 					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
-							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-sm font-medium text-white dark:bg-pink_primary ${
+							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white dark:bg-pink_primary ${
 								userBio || loading ? '' : 'opacity-60'
 							}`}
 							type='primary'

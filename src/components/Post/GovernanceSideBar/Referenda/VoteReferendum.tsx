@@ -897,7 +897,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										selectedProxyAddress={selectedProxyAddress}
 									/>
 								)}
-								{isProxyExistsOnWallet == false && (
+								{!isProxyExistsOnWallet && (
 									<div className='mt-2 flex items-center gap-x-1'>
 										<InfoIcon />
 										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy Address is not available on current wallet</p>

@@ -62,7 +62,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 			setIsModalOpen(false);
 			queueNotification({
 				header: 'Success!',
-				message: isEditMode ? 'Delegation Mandate Updated Successfully' : 'Congrats! Delegate Created Successfully',
+				message: isEditMode ? 'Delegation Mandate Updated Successfully' : 'Congrats! You have been successfully registered as a delegate',
 				status: NotificationStatus.SUCCESS
 			});
 		} else if (error) {

@@ -9,12 +9,15 @@ import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { Button, Skeleton } from 'antd';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
 import DelegationTabs from './DelegationTabs';
+import { useApiContext } from '~src/context';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 interface Props {
 	className?: string;
@@ -29,11 +32,14 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
+	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 
 	useEffect(() => {
 		if (!window) return;
@@ -43,6 +49,33 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile, userDetails]);
+
+	const handleIdentityInfo = () => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+
+		const encodedAddr = userDetails.delegationDashboardAddress ? getEncodedAddress(userDetails.delegationDashboardAddress, network) || '' : '';
+
+		api.derive.accounts
+			.info(encodedAddr, (info: DeriveAccountInfo) => {
+				setIdentity(info.identity);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+
+		return () => unsubscribe && unsubscribe();
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		handleIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {
@@ -74,7 +107,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{isLoggedOut && (
 				<>
-					<BecomeDelegate />
+					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData />
 					<TrendingDelegates />
 				</>
@@ -82,6 +115,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 
 			{!isLoggedOut && userDetails.loginAddress && (
 				<DelegationTabs
+					identity={identity}
 					theme={theme}
 					isLoggedOut={isLoggedOut}
 				/>

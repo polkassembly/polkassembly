@@ -187,7 +187,7 @@ const Web2Login: FC<Props> = ({
 			{web3Login && (
 				<AuthForm
 					onSubmit={handleSubmitForm}
-					className='web3-login-container flex flex-col px-24'
+					className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-24' : 'px-12'}`}
 				>
 					<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
 					<div onClick={() => setShowWalletModal?.(false)}>

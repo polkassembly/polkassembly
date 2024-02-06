@@ -5,10 +5,10 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Modal } from 'antd';
+import { Divider, Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-// import NovaWalletIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
@@ -80,30 +80,82 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setOpen(true);
 		setAddress(address);
 	};
+
 	return (
 		<div
 			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
-				delegate?.dataSource === 'nova' ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
+				delegate?.dataSource.includes('nova') ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
-			{delegate?.dataSource === 'nova' && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
-					{/* <NovaWalletIcon /> */}
-					<ImageIcon
-						src='/assets/delegation-tracks/nova-wallet.svg'
-						alt='nova wallet icon'
-					/>
-					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
-				</div>
-			)}
+			{delegate?.dataSource.length > 1 ? (
+				<div
+					className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid px-5 ${
+						delegate?.dataSource.length > 1
+							? 'border-[#485F7D] bg-[#EDEFF3] dark:border-[#9E9E9E] dark:bg-[#3D3F41]'
+							: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
+					} `}
+				>
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div>
+							<div className='flex items-center space-x-1'>
+								<PolkadotIcon />
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly</span>
+							</div>
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
+							/>
+						</div>
+					)}
 
-			{delegate?.dataSource === 'parity' && (
-				<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-[11px] rounded-t-[6px] border-[1px] border-solid border-pink_primary px-5 dark:bg-[#33071E]'>
-					<ParityTechIcon />
-					<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
+					{delegate?.dataSource.includes('parity') && (
+						<>
+							<div className='flex items-center space-x-[6px]'>
+								<ParityTechIcon />
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot</span>
+							</div>
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
+							/>
+						</>
+					)}
+					{delegate?.dataSource.includes('nova') && (
+						<div className='flex items-center space-x-1 '>
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet</span>
+						</div>
+					)}
 				</div>
+			) : (
+				<>
+					{delegate?.dataSource.includes('nova') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
+							{/* <NovaWalletIcon /> */}
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('parity') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
+							<ParityTechIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
+							<PolkadotIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+						</div>
+					)}
+				</>
 			)}
-
 			<div className='flex items-center justify-between px-5 pt-5'>
 				<div className='flex gap-2 max-lg:justify-start'>
 					<Address
@@ -222,21 +274,21 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-							<div className='flex items-end justify-center gap-1'>
+						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+							<div className='flex items-center justify-center gap-1'>
 								{formatedBalance(balance.toString(), unit, 2)}
-								<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
+								<span className='mt-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 							</div>
-							<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
+							<div className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>Voting power</div>
 						</div>
-						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-1.5  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.voted_proposals_count}
-							<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
+							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>Voted proposals </span>
 							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
 						</div>
-						<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{delegate?.active_delegation_count}
-							<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
+							<span className='font-normaltext-[#576D8B] mb-[2px] text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
 						</div>
 					</div>
 				</div>

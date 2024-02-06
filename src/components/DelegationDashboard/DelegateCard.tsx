@@ -96,7 +96,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					} `}
 				>
 					{delegate?.dataSource.includes('polkassembly') && (
-						<div>
+						<div className='flex items-center space-x-3'>
 							<div className='flex items-center space-x-1'>
 								<PolkadotIcon />
 								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly</span>
@@ -109,7 +109,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					)}
 
 					{delegate?.dataSource.includes('parity') && (
-						<>
+						<div className='flex items-center space-x-3'>
 							<div className='flex items-center space-x-[6px]'>
 								<ParityTechIcon />
 								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot</span>
@@ -118,7 +118,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								type='vertical'
 								className='bg-[#7F8FA4]'
 							/>
-						</>
+						</div>
 					)}
 					{delegate?.dataSource.includes('nova') && (
 						<div className='flex items-center space-x-1 '>

@@ -12,6 +12,7 @@ import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -31,6 +32,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, posts, error, count, showSimilarPost, statusItem } = props;
 	const noPosts = count === 0 || isNaN(Number(count));
+	const { network } = useNetworkSelector();
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -60,7 +62,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 							>
 								{
 									<Link
-										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}`}
+										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}?network=${network}`}
 										target={showSimilarPost ? '_blank' : '_self'}
 									>
 										<GovernanceCard

@@ -42,7 +42,7 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 			key: 'index',
 			render: (index, obj) => {
 				return (
-					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(obj.proposalType) as any)}/${index}`}>
+					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(obj.proposalType) as any)}/${index}?network=${network}`}>
 						<div className='text-sidebarBlue'>
 							{obj.type} #{index}
 						</div>

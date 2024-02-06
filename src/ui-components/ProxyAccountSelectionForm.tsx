@@ -74,7 +74,6 @@ const ProxyAccountSelectionForm = ({
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length) {
 			const exists = addressData?.accounts.filter((account) => account.address === selectedProxyAddress)?.length;
-			console.log('child', exists);
 			setIsProxyExistsOnWallet?.(!!exists);
 		}
 	};

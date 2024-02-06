@@ -381,7 +381,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		handleModalReset();
 	};
 
-	console.log('parent', isProxyExistsOnWallet);
 	const handleSubmit = async () => {
 		// GAEvent for proposal voting
 		trackEvent('proposal_voting', 'voted_proposal', {

@@ -12,11 +12,8 @@ import { ETrackDelegationStatus, IDelegate, IDelegation } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { formatedBalance } from '~src/util/formatedBalance';
-import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
-import { formatBalance } from '@polkadot/util';
 import VoterIcon from '~assets/icons/vote-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
@@ -30,6 +27,7 @@ import { delegationSupportedNetworks } from '../DelegationDashboard';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import dynamic from 'next/dynamic';
+import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false
@@ -106,7 +104,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 	const { network } = useNetworkSelector();
 	const { id: loginId, username, loginAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { addresses } = userProfile;
 	const [receiveDelegations, setReceiveDelegations] = useState<IDelegates>();
 	const [delegatedDelegations, setDelegatedDelegations] = useState<IDelegates>();
@@ -156,15 +153,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 			</Radio.Group>
 		</div>
 	);
-
-	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
 
 	const getData = async () => {
 		if (!api || !apiReady || !(checkedAddress?.length || addressWithIdentity?.length)) return;
@@ -411,9 +399,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																usernameMaxLength={isMobile ? 5 : 30}
 															/>
 														</div>
-														<div className='flex w-[50%] items-center justify-center text-sm'>
-															{formatedBalance(String(value.votingPower), unit, 2)} {unit}
-														</div>
+														<div className='flex w-[50%] items-center justify-center text-sm'>{parseBalance(String(value?.votingPower), 2, true, network)} </div>
 														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
@@ -450,7 +436,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${formatedBalance(String(value?.votingPower), unit, 2)} ${unit}`
+																				? `${parseBalance(String(value?.votingPower), 2, true, network)}`
 																				: 'Multiple'}
 																		</span>
 																	</div>
@@ -468,7 +454,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${formatedBalance(String(value?.capital), unit, 2)} ${unit}`
+																				? `${parseBalance(String(value?.capital), 2, true, network)}`
 																				: 'Multiple'}
 																		</span>
 																	</div>
@@ -490,11 +476,12 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																						.split('_')
 																						.join(' ')}{' '}
 																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
-																						? `(VP: ${formatedBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), unit, 2)} ${unit}, Ca: ${formatedBalance(
+																						? `(VP: ${parseBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), 2, true, network)}, Ca: ${parseBalance(
 																								String(delegate?.balance),
-																								unit,
-																								2
-																						  )} ${unit}, Co: ${delegate?.lockPeriod || 0.1}x)`
+																								2,
+																								true,
+																								network
+																						  )}, Co: ${delegate?.lockPeriod || 0.1}x)`
 																						: trackIndex !== value.delegations.length - 1
 																						? ', '
 																						: ''}

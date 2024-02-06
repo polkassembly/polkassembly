@@ -122,8 +122,10 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
 								setNewBio(e.target.value);
 							}}
-							onPressEnter={(e) => {
-								e.preventDefault();
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' && !e.shiftKey) {
+									e.stopPropagation(); // Prevent form submission but allow newline insertion
+								}
 							}}
 						/>
 					</div>

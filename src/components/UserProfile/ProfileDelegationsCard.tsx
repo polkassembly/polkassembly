@@ -51,29 +51,41 @@ const getIsSingleDelegation = (delegations: IDelegation[]) => {
 	const filteredData = delegations.filter((delegation) => Number(delegations[0]?.balance) === Number(delegation?.balance) && delegations[0]?.lockPeriod === delegation?.lockPeriod);
 	return filteredData?.length === delegations?.length;
 };
-const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus) => {
+const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus, checkedAddress: string, network: string) => {
 	const dataObj: any = {};
+	const encodedAddress = getEncodedAddress(checkedAddress, network);
 	data.map((delegation) => {
 		delegation?.delegations.map((delegate) => {
-			const val = type === ETrackDelegationStatus.RECEIVED_DELEGATION ? delegate?.from : delegate?.to;
-			if (dataObj[val] === undefined) {
-				dataObj[val] = {
-					capital: Number(delegate?.balance),
-					delegations: [delegate],
-					expand: false,
-					lockedPeriod: delegate?.lockPeriod,
-					total: 1,
-					votingPower: Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
-				};
+			let val;
+			if (type === ETrackDelegationStatus.RECEIVED_DELEGATION) {
+				if (getEncodedAddress(delegate?.from, network) !== encodedAddress) {
+					val = delegate.from;
+				}
 			} else {
-				dataObj[val] = {
-					...dataObj[val],
-					capital: dataObj[val].capital + Number(delegate?.balance),
-					delegations: [...dataObj[val].delegations, delegate],
-					lockedPeriod: delegate?.lockPeriod,
-					total: dataObj[val]?.total + 1,
-					votingPower: dataObj[val].votingPower + Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
-				};
+				if (getEncodedAddress(delegate?.to, network) !== encodedAddress) {
+					val = delegate.to;
+				}
+			}
+			if (val) {
+				if (dataObj[val] === undefined) {
+					dataObj[val] = {
+						capital: Number(delegate?.balance),
+						delegations: [delegate],
+						expand: false,
+						lockedPeriod: delegate?.lockPeriod,
+						total: 1,
+						votingPower: Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
+					};
+				} else {
+					dataObj[val] = {
+						...dataObj[val],
+						capital: dataObj[val].capital + Number(delegate?.balance),
+						delegations: [...dataObj[val].delegations, delegate],
+						lockedPeriod: delegate?.lockPeriod,
+						total: dataObj[val]?.total + 1,
+						votingPower: dataObj[val].votingPower + Number(delegate?.balance) * (delegate?.lockPeriod ? delegate?.lockPeriod : 1)
+					};
+				}
 			}
 		});
 	});
@@ -156,12 +168,13 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 			data.map((item) => {
 				if (item.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) {
 					received.push(item);
-				} else if (item.status.includes(ETrackDelegationStatus.DELEGATED)) {
+				}
+				if (item.status.includes(ETrackDelegationStatus.DELEGATED)) {
 					delegated.push(item);
 				}
 			});
-			const uniqueReceived = handleUniqueDelegations(received, ETrackDelegationStatus.RECEIVED_DELEGATION);
-			const uniqueDelegated = handleUniqueDelegations(delegated, ETrackDelegationStatus.DELEGATED);
+			const uniqueReceived = handleUniqueDelegations(received, ETrackDelegationStatus.RECEIVED_DELEGATION, checkedAddress, network);
+			const uniqueDelegated = handleUniqueDelegations(delegated, ETrackDelegationStatus.DELEGATED, checkedAddress, network);
 
 			setReceiveDelegations(uniqueReceived);
 
@@ -343,7 +356,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity }:
 															<Address
 																address={address}
 																displayInline
-																disableTooltip
 																usernameMaxLength={isMobile ? 5 : 30}
 															/>
 														</div>

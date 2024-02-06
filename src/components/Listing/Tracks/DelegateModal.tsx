@@ -82,7 +82,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		isNaN(conviction) ||
 		isTargetAddressSame ||
 		loading ||
-		txFee.lte(ZERO_BN) ||
 		availableBalance.lte(txFee.add(bnBalance));
 
 	useEffect(() => {
@@ -125,7 +124,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
 		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
-		if (!checkedTrack?.length && !checkedTracksList.length) return;
+
+		if (!checkedTrack && !checkedTracksList.length) return;
 
 		setLoading(true);
 		const checkedArr =
@@ -247,11 +247,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setAvailableBalance(balance);
 	};
 
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
-
 	const handleOnchangeConviction = (value: number) => {
 		let conviction = 0;
 		let lockValue = 0;
@@ -275,6 +270,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -436,6 +436,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								</div>
 
 								<BalanceInput
+									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}

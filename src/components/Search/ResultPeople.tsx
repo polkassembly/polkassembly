@@ -4,10 +4,10 @@
 import React from 'react';
 import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import DelegationProfile from '~src/ui-components/DelegationProfile';
 import { ProfileDetails } from '~src/auth/types';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+import SearchProfile from './SearchProfile';
 
 interface IUser {
 	username: string;
@@ -40,7 +40,7 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 						target='_blank'
 						key={index}
 					>
-						<DelegationProfile
+						<SearchProfile
 							address={user?.defaultAddress || ''}
 							username={user?.username}
 							isSearch={true}

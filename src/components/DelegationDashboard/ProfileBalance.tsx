@@ -90,7 +90,7 @@ const ProfileBalances = ({ className }: Props) => {
 			<div className={`${className} flex h-full items-center gap-2 py-4 max-md:px-2.5`}>
 				{balancesArr.map((balance) => (
 					<div
-						key={balance.key}
+						key={balance?.label}
 						className='flex h-full gap-1'
 					>
 						<div className='flex h-[71px] flex-col justify-start gap-1'>

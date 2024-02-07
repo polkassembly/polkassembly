@@ -430,11 +430,13 @@ export interface IDelegation {
 export interface IDelegate {
 	name?: string;
 	address: string;
+	created_at?: Date | string;
 	bio: string;
 	active_delegation_count: number;
 	voted_proposals_count: number;
 	isNovaWalletDelegate?: boolean;
-	dataSource: 'nova' | 'parity' | 'other';
+	dataSource: string[];
+	user_id?: number;
 }
 
 export enum EVoteDecisionType {

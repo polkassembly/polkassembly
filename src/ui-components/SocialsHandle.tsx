@@ -42,7 +42,6 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 			key: ESocialType.TWITTER,
 			value: onchainIdentity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
 		},
-		{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
 		{
 			isVerified: (!!onchainIdentity?.email && isGood) || false,
 			key: ESocialType.EMAIL,
@@ -52,7 +51,8 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 			isVerified: (!!onchainIdentity?.riot && isGood) || false,
 			key: ESocialType.RIOT,
 			value: onchainIdentity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
-		}
+		},
+		{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' }
 	]);
 
 	const handleSocials = () => {
@@ -62,7 +62,6 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 				key: ESocialType.TWITTER,
 				value: onchainIdentity?.twitter || socials?.find((social) => social.type === 'Twitter')?.link || ''
 			},
-			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' },
 			{
 				isVerified: (!!onchainIdentity?.email && isGood) || false,
 				key: ESocialType.EMAIL,
@@ -72,7 +71,8 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 				isVerified: (!!onchainIdentity?.riot && isGood) || false,
 				key: ESocialType.RIOT,
 				value: onchainIdentity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
-			}
+			},
+			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' }
 		]);
 	};
 	const handleKiltSocialFields = (verified: boolean, key: ESocialType, value: string) => {
@@ -157,27 +157,6 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 
 	return (
 		<div className={classNames(className, 'flex items-center gap-1.5')}>
-			{socialLinks?.map((social: any, index: number) => {
-				const link = identityArr?.find((s) => s.key === social)?.value || '';
-				const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
-				return (
-					link && (
-						<div
-							title={link ? String(link) : ''}
-							key={index}
-						>
-							<SocialLink
-								className={`flex h-[${boxSize}px] w-[${boxSize}px] ${boxSize === 24 && 'h-6 w-6'} items-center justify-center rounded-full hover:text-[#576D8B] ${
-									isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'
-								}`}
-								link={link as string}
-								type={social}
-								iconClassName={`text-[${iconSize}px] ${isVerified ? 'text-white' : 'text-[#96A4B6]'}`}
-							/>
-						</div>
-					)
-				);
-			})}
 			{!!onchainIdentity?.web && (
 				<Link
 					target='_blank'
@@ -199,6 +178,27 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 					/>
 				</Link>
 			)}
+			{socialLinks?.map((social: any, index: number) => {
+				const link = identityArr?.find((s) => s.key === social)?.value || '';
+				const isVerified = identityArr.find((s) => s.key === social)?.isVerified || false;
+				return (
+					link && (
+						<div
+							title={link ? String(link) : ''}
+							key={index}
+						>
+							<SocialLink
+								className={`flex h-[${boxSize}px] w-[${boxSize}px] ${boxSize === 24 && 'h-6 w-6'} items-center justify-center rounded-full hover:text-[#576D8B] ${
+									isVerified ? 'bg-[#51D36E]' : 'bg-[#edeff3]'
+								}`}
+								link={link as string}
+								type={social}
+								iconClassName={`text-[${iconSize}px] ${isVerified ? 'text-white bg-[#51D36E]' : 'text-[#96A4B6] bg-[#edeff3]'}`}
+							/>
+						</div>
+					)
+				);
+			})}
 			{address && (
 				<Link
 					target='_blank'

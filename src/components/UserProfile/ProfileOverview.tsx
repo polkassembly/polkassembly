@@ -12,6 +12,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import dynamic from 'next/dynamic';
 import EditProfileModal from './EditProfile';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 
 const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
 	ssr: false
@@ -32,9 +33,20 @@ interface Props {
 	setSelectedAddresses: (pre: string[]) => void;
 	profileDetails: ProfileDetailsResponse;
 	setProfileDetails: React.Dispatch<React.SetStateAction<ProfileDetailsResponse>>;
+	onchainIdentity?: DeriveAccountRegistration | null;
 }
 
-const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, selectedAddresses, setSelectedAddresses, profileDetails, setProfileDetails }: Props) => {
+const ProfileOverview = ({
+	className,
+	userProfile,
+	addressWithIdentity,
+	theme,
+	selectedAddresses,
+	setSelectedAddresses,
+	profileDetails,
+	setProfileDetails,
+	onchainIdentity
+}: Props) => {
 	const { network } = useNetworkSelector();
 	const { username } = useUserDetailsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
@@ -170,6 +182,7 @@ const ProfileOverview = ({ className, userProfile, addressWithIdentity, theme, s
 							<ProfileDelegationsCard
 								userProfile={userProfile}
 								addressWithIdentity={addressWithIdentity}
+								onchainIdentity={onchainIdentity}
 							/>
 						)}
 						{!TippingUnavailableNetworks.includes(network) && (

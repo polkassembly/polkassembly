@@ -20,12 +20,21 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
-	const [notificationVisible, setNotificationVisible] = useState(!isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network));
+	const [notificationVisible, setNotificationVisible] = useState(!(isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network)));
+
+	console.log(isIdentityUnverified, onchainIdentitySupportedNetwork.includes(network));
+
+	// KILT --> FALSE & FALSE --> TRUE
+	// POLKADOT --> FALSE & TRUE --> TRUE (INCASE OF VERIFIED ACCOUNT)
+	// POLKADOT --> TRUE & TRUE --> FALSE (NON-VERIFIED ACCOUNT)
+
+	// POLKADOT --> FALSE & TRUE --> FALSE (INCASE OF VERIFIED ACCOUNT)
+	// (!(FALSE && TRUE)) --> TRUE
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
-		const nudgeStatus = sessionStorage.getItem('identityNudgeStatus');
+		const nudgeStatus = localStorage.getItem('identityNudgeStatus');
 
 		if (nudgeStatus !== 'viewed') {
 			setIsOpen(true);
@@ -36,10 +45,10 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 
 	function handleNudgeClose() {
 		setNotificationVisible(true);
-		sessionStorage.setItem('identityNudgeStatus', 'viewed');
+		localStorage.setItem('identityNudgeStatus', 'viewed');
 	}
 	function handleNotificationNudgeClose() {
-		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
+		localStorage.setItem('notificationNudgeStatus', 'viewed');
 		setNotificationVisible(false);
 		setIsOpen(false);
 	}
@@ -47,7 +56,7 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	function handleSetNotificationClicked() {
 		router.push('/settings?tab=notifications');
 		setNotificationVisible(false);
-		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
+		localStorage.setItem('notificationNudgeStatus', 'viewed');
 	}
 
 	if (isOpen === null || !isOpen) return null;

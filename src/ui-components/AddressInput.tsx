@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Identicon from '@polkadot/react-identicon';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { addressPrefix } from 'src/global/networkConstants';
 import Web3 from 'web3';
@@ -13,6 +13,7 @@ import HelperTooltip from './HelperTooltip';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -79,6 +80,9 @@ const AddressInput = ({
 		}
 	};
 
+	useEffect(() => {
+		setAddress(defaultAddress || '');
+	}, [defaultAddress]);
 	useEffect(() => {
 		const addr = (disabled ? defaultAddress : address) || '';
 		if (skipFormatCheck) {

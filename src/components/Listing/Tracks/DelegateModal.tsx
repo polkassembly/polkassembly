@@ -55,7 +55,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsSelector();
-	const [target, setTarget] = useState<string>('');
+	const [target, setTarget] = useState<string>(defaultTarget || '');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock, setLockValue] = useState<number>(0);
@@ -82,7 +82,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		isNaN(conviction) ||
 		isTargetAddressSame ||
 		loading ||
-		txFee.lte(ZERO_BN) ||
 		availableBalance.lte(txFee.add(bnBalance));
 
 	useEffect(() => {
@@ -94,9 +93,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 		if (defaultTarget) {
 			form.setFieldValue('targetAddress', defaultTarget);
+			setTarget(defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, defaultTarget]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
@@ -124,7 +124,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
 		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
-		if (!checkedTrack && !checkedTracksList) return;
+
+		if (!checkedTrack && !checkedTracksList.length) return;
 
 		setLoading(true);
 		const checkedArr =
@@ -152,7 +153,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: [delegationDashboardAddress]
+			address: delegationDashboardAddress
 		});
 		if (data) {
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
@@ -218,12 +219,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((!checkedTrack && !checkedList) || !getEncodedAddress(target, network)) return;
+		if ((!checkedTrack?.length && !checkedList?.length) || !getEncodedAddress(target, network)) return;
 		setLoading(true);
 
 		const checkedArr =
 			checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList] : [...checkedList];
 		setCheckedTrackArr(checkedArr);
+		if (checkedArr?.length === 0) return;
 
 		const txArr = checkedArr?.map((trackName) =>
 			api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString())
@@ -244,11 +246,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 		setAvailableBalance(balance);
 	};
-
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
 
 	const handleOnchangeConviction = (value: number) => {
 		let conviction = 0;
@@ -273,6 +270,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -387,8 +389,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<AddressInput
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
-									label={'Beneficiary Address'}
-									placeholder='Add beneficiary address'
+									label={'Delegate To'}
+									placeholder='Add Delegatee Address'
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);
@@ -423,7 +425,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<span
 										onClick={() => {
 											setBnBalance(availableBalance);
-											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit).replace(/,/g, '')));
 										}}
 									>
 										<Balance
@@ -434,6 +436,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								</div>
 
 								<BalanceInput
+									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}

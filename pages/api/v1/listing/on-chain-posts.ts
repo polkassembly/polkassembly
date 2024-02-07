@@ -131,7 +131,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (data) {
 		if (Array.isArray(data?.proposer_address)) {
 			if (data.proposer_address.length > 0) {
-				proposer_address = data?.proposer_address[0];
+				proposer_address = data?.proposer_address?.[0];
 			}
 		} else if (typeof data.proposer_address === 'string') {
 			proposer_address = data.proposer_address;

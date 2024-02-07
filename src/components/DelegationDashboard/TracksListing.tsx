@@ -103,7 +103,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			addresses: [delegationDashboardAddress]
+			address: delegationDashboardAddress
 		});
 		if (data) {
 			const rows = data?.map((track: any, index: number) => {

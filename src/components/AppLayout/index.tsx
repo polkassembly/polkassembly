@@ -71,7 +71,6 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import ReferendaActionModal from '../Forms/ReferendaActionModal';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -263,6 +262,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const dispatch = useDispatch();
 	const getReferendaDropdown = (): any => {
@@ -931,7 +931,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)}
 
 			<Footer theme={theme} />
-			{referendaModal && (
+			{/* {referendaModal && (
 				<>
 					<ReferendaActionModal
 						referendaModal={referendaModal}
@@ -939,7 +939,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 					/>
 				</>
-			)}
+			)} */}
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

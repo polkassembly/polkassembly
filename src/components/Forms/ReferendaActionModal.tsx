@@ -8,10 +8,10 @@ import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Form, Modal, Steps } from 'antd';
 import { poppins } from 'pages/_app';
-import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
@@ -50,19 +50,27 @@ interface Props {
 	className?: string;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
+	openModal: boolean;
+	setOpenModal: (pre: boolean) => void;
+	openLoginPrompt: boolean;
+	setOpenLoginPrompt: (pre: boolean) => void;
+	setProposerAddress: (pre: string) => void;
 }
 
-const ReferendaActionModal = ({ referendaModal, className, openAddressLinkedModal, setOpenAddressLinkedModal }: Props) => {
+const ReferendaActionModal = ({
+	referendaModal,
+	className,
+	openAddressLinkedModal,
+	setOpenAddressLinkedModal,
+	openModal,
+	setOpenModal,
+	openLoginPrompt,
+	setOpenLoginPrompt,
+	setProposerAddress
+}: Props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const currentUser = useUserDetailsSelector();
-	const { id } = currentUser;
 	const { network } = useNetworkSelector();
-	// const { beneficiaries } = useTreasuryProposalSelector();
-	// const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-	const [proposerAddress, setProposerAddress] = useState<string>('');
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
-	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [writeProposalForm] = Form.useForm();
 	const [title, setTitle] = useState<string>('');
@@ -70,18 +78,6 @@ const ReferendaActionModal = ({ referendaModal, className, openAddressLinkedModa
 	const [tags, setTags] = useState<string[]>([]);
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
-
-	const handleClick = () => {
-		if (id) {
-			if (proposerAddress.length > 0) {
-				setOpenModal(!openModal);
-			} else if (setOpenAddressLinkedModal) {
-				setOpenAddressLinkedModal(true);
-			}
-		} else {
-			setOpenLoginPrompt(true);
-		}
-	};
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -103,15 +99,6 @@ const ReferendaActionModal = ({ referendaModal, className, openAddressLinkedModa
 
 	return (
 		<div className={className}>
-			<div
-				className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
-				onClick={handleClick}
-			>
-				<CreatePropoosalIcon className='ml-[-31px] cursor-pointer' />
-				<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>
-					{referendaModal === 1 ? 'Create Referenda' : referendaModal === 2 ? 'Cancel Referenda' : referendaModal === 3 ? 'Kill Referenda' : 'Create Treasury Proposal'}
-				</p>
-			</div>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}

@@ -33,6 +33,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -163,12 +164,15 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			/>
 			<div className='mr-2 flex justify-between'>
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
-				{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-					<div className='flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
-						<IdentityCaution />
-						<span className='ml-2'>Social verification incomplete</span>
-					</div>
-				)}
+				<div className='flex justify-between space-x-4'>
+					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+						<div className='flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
+							<IdentityCaution />
+							<span className='ml-2'>Social verification incomplete</span>
+						</div>
+					)}
+					<ProposalActionButtons />
+				</div>
 			</div>
 			<div className='mx-1 mt-2 md:mt-6'>
 				{networkSocialsData && (

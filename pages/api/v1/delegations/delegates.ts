@@ -130,8 +130,16 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const result: IDelegate[] = [];
 
 	for (const [index, delegateData] of subsquidResults.entries()) {
+		const receivedDelgations: any = {};
+
 		if (!delegateData || delegateData.status !== 'fulfilled') continue;
-		const delegationCount = Number(delegateData.value.data?.votingDelegationsConnection?.totalCount || 0);
+
+		delegateData.value.data?.votingDelegations?.map((delegation: any) => {
+			if (receivedDelgations[delegation?.from] === undefined) {
+				receivedDelgations[delegation?.from] = 1;
+			}
+		});
+
 		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
 
 		const address = Object.keys(subsquidFetches)[index];
@@ -158,7 +166,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		}
 
 		const newDelegate: IDelegate = {
-			active_delegation_count: delegationCount,
+			active_delegation_count: Object.keys(receivedDelgations)?.length || 0,
 			address,
 			bio,
 			dataSource,

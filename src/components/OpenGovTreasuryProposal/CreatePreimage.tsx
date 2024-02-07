@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
+import { Alert, Button, Form, FormInstance, Radio, Spin } from 'antd';
 import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, INIT_BENEFICIARIES, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
@@ -48,6 +48,7 @@ import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import Input from '~src/basic-components/Input';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -186,7 +187,7 @@ const CreatePreimage = ({
 		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-				if (network == AllNetworks.ROCOCO) {
+				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
 					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 				} else {
 					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
@@ -411,7 +412,7 @@ const CreatePreimage = ({
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-				if (network == AllNetworks.ROCOCO) {
+				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
 					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 				} else {
 					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));

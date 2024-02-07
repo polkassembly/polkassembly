@@ -17,7 +17,6 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
 import cleanError from '~src/util/cleanError';
@@ -38,6 +37,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
+import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 
 interface Props {
@@ -50,11 +50,12 @@ interface Props {
 	onConfirm?: (pre?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
-	walletAlertTitle: string;
+	walletAlertTitle?: string;
 	accountAlertTitle?: string;
 	accountSelectionFormTitle?: string;
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
+	isUsedInDelegationModal?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -88,7 +89,6 @@ const AddressConnectModal = ({
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const [multisig, setMultisig] = useState<string>('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
@@ -425,7 +425,7 @@ const AddressConnectModal = ({
 			}
 			closable={closable}
 			onCancel={() => setOpen(false)}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin
 				spinning={loading}

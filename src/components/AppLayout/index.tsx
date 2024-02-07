@@ -69,7 +69,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import SetIdentityNudge from '~src/ui-components/SetIdentityNudge';
+import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
@@ -104,7 +104,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT];
+export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,
@@ -323,6 +323,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		return { label: <RefMenu />, key: '', icon: '', disabled: true };
 	};
 
+	// const [notificationVisible, setNotificationVisible] = useState(true);
+	const dispatch = useDispatch();
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
@@ -827,10 +829,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
 			/>
-			{!!userId && isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-				<SetIdentityNudge
+
+			{userId && (
+				<TopNudges
 					handleSetIdentityClick={handleIdentityButtonClick}
 					isIdentitySet={isIdentitySet}
+					isIdentityUnverified={isIdentityUnverified}
 				/>
 			)}
 			<Layout hasSider>
@@ -887,7 +891,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<BigToggleButton />
 					</div>
 				</Drawer>
-				{[AllNetworks.PICASSO].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+				{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<OpenGovHeaderBanner network={network} />

@@ -16,6 +16,7 @@ import { treasuryProposalStore } from './treasuryProposal';
 import { IUserDetailsStore } from './userDetails/@types';
 import { deleteLocalStorageToken, getLocalStorageToken } from '~src/services/auth.service';
 import { isExpired } from 'react-jwt';
+import { voteDataStore } from './voteData';
 import { initialConnectAddressStore } from './initialConnectAddress';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
@@ -100,7 +101,9 @@ export const makeStore = () => {
 		[curvesInformationStore.name]: curvesInformationStore.reducer,
 		[tippingStore.name]: tippingStore.reducer,
 		[treasuryProposalStore.name]: treasuryProposalStore.reducer,
-		[initialConnectAddressStore.name]: initialConnectAddressStore.reducer
+		[voteDataStore.name]: voteDataStore.reducer,
+    [initialConnectAddressStore.name]: initialConnectAddressStore.reducer
+
 	});
 
 	if (isServer) {

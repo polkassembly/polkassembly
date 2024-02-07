@@ -13,11 +13,14 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { getSubdomain } from '~src/util/getSubdomain';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
 	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
 	if (queryNetwork) {
 		network = queryNetwork;
+	}
+	if (query.network) {
+		network = query.network as string;
 	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);

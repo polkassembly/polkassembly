@@ -31,6 +31,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (queryNetwork) {
 		network = queryNetwork;
 	}
+	if (query.network) {
+		network = query.network as string;
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 

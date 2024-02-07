@@ -155,11 +155,14 @@ const generateSiteMap = (network: string, urls: string[]): string => {
  `;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
 	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
 	if (queryNetwork) {
 		network = queryNetwork;
+	}
+	if (query.network) {
+		network = query.network as string;
 	}
 
 	const allUrls = [];

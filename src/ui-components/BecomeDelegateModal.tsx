@@ -144,7 +144,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							}`}
 							type='primary'
 							onClick={handleSubmit}
-							disabled={!userBio || loading}
+							disabled={loading}
 						>
 							<span className='text-white'>{isEditMode ? 'Edit' : 'Confirm'}</span>
 						</Button>

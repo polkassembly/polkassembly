@@ -138,7 +138,6 @@ const DashboardTrackListing = ({ className }: Props) => {
 			getData();
 		}
 		setStatusValue(ETrackDelegationStatus.ALL);
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegationDashboardAddress, api, apiReady]);
 
@@ -165,7 +164,9 @@ const DashboardTrackListing = ({ className }: Props) => {
 						<Radio
 							key={key}
 							disabled={loading}
-							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${ETrackDelegationStatus.ALL === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]'}`}
+							className={`px-3 py-2 text-xs text-bodyBlue dark:text-blue-dark-high ${
+								key === status && 'rounded-[26px] bg-[#FEF2F8] dark:bg-[#33071E]' // This will now only apply to the "ALL" status
+							}`}
 							value={key as ETrackDelegationStatus}
 						>
 							{key.charAt(0).toUpperCase() + key.split('_').join(' ').slice(1, key.length)} ({value})

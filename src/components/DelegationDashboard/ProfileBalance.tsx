@@ -94,7 +94,7 @@ const ProfileBalances = ({ className }: Props) => {
 						className='flex h-full gap-1'
 					>
 						<div className='flex h-[71px] flex-col justify-start gap-1'>
-							<div className='gap-1 text-2xl font-semibold tracking-[0.0015em] text-white'>
+							<div className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} gap-1 text-2xl font-semibold tracking-[0.0015em] text-white`}>
 								{formatedBalance(balance.value, unit, 2)}
 								<span className='ml-1 text-sm font-medium tracking-[0.015em] text-white'>{unit}</span>
 							</div>

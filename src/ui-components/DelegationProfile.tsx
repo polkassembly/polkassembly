@@ -8,10 +8,8 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
-import MessengerIcon from '~assets/icons/messenger.svg';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import Tooltip from '~src/basic-components/Tooltip';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from './SocialsHandle';
 import { IDelegate } from '~src/types';
@@ -93,7 +91,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 					</div>
 					<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
 						{address && (
-							<div className='flex items-center gap-1'>
+							<div className='flex items-center'>
 								{address && (
 									<Address
 										address={address}
@@ -120,10 +118,10 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							</div>
 						)}
 
-						{userBio || bio ? <h2 className={'mt-2.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>{userBio || bio}</h2> : null}
+						{userBio || bio ? <h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>{userBio || bio}</h2> : null}
 						{identity && social_links && (
 							<SocialsHandle
-								className='mt-4 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'
+								className='mt-3 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'
 								socials={social_links}
 								address={address}
 								onchainIdentity={identity}
@@ -139,13 +137,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 						<span>
 							{userBio || bio ? (
 								<div className='flex space-x-2'>
-									<Tooltip
-										title='Coming Soon'
-										key={1}
-										color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'
-									>
-										<MessengerIcon />
-									</Tooltip>
 									<CustomButton
 										onClick={() => setIsEditModalOpen(true)}
 										height={40}
@@ -159,13 +150,6 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 								</div>
 							) : (
 								<div className='flex items-center justify-center gap-2'>
-									<Tooltip
-										title='Coming Soon'
-										key={1}
-										color='linear-gradient(0deg, #5A46FF, #5A46FF), linear-gradient(0deg, #AD00FF, #AD00FF), linear-gradient(0deg, #407BFF, #407BFF), #FFFFFF'
-									>
-										<MessengerIcon />
-									</Tooltip>
 									<Button
 										onClick={() => setIsModalOpen(true)}
 										className={'h-10 border-pink_primary bg-white font-medium text-pink_primary dark:bg-black'}

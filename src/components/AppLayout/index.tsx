@@ -934,7 +934,7 @@ export default styled(AppLayout)`
 
 	.ant-drawer-content-wrapper,
 	.ant-drawer-content {
-		max-width: 256px !important;
+		max-width: 236px !important;
 		box-shadow: none !important;
 		min-width: 60px !important;
 	}
@@ -953,7 +953,7 @@ export default styled(AppLayout)`
 	}
 
 	.ant-menu-item .delegation {
-		font-size: 20px !important;
+		font-size: 12px !important;
 	}
 	.ant-menu-item .delegation .opacity {
 		opacity: 1 !important;
@@ -983,7 +983,7 @@ export default styled(AppLayout)`
 	.ant-menu-title-content {
 		color: #485f7d !important;
 		font-weight: 500;
-		font-size: 14px;
+		font-size: 12px;
 		line-height: 21px;
 		letter-spacing: 0.01em;
 	}

@@ -29,7 +29,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 	const currentUser = useUserDetailsSelector();
 	const [isBecomedelegateVisible, setsBecomedelegateVisible] = useState(true);
 	const showModal = () => {
-		setIsModalOpen && setIsModalOpen(true);
+		setIsModalOpen?.(true);
 	};
 	function handleNotificationNudgeClose() {
 		setsBecomedelegateVisible(false);

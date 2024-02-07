@@ -20,7 +20,7 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
-	const [notificationVisible, setNotificationVisible] = useState(true);
+	const [notificationVisible, setNotificationVisible] = useState(!isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network));
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -35,12 +35,13 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	}, [api, apiReady]);
 
 	function handleNudgeClose() {
+		setNotificationVisible(true);
 		sessionStorage.setItem('identityNudgeStatus', 'viewed');
-		setIsOpen(false);
 	}
 	function handleNotificationNudgeClose() {
 		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
 		setNotificationVisible(false);
+		setIsOpen(false);
 	}
 
 	function handleSetNotificationClicked() {
@@ -50,7 +51,6 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	}
 
 	if (isOpen === null || !isOpen) return null;
-
 	return (
 		<>
 			{notificationVisible ? (

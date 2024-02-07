@@ -20,7 +20,7 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
-	const [notificationVisible, setNotificationVisible] = useState(!isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network));
+	const [notificationVisible, setNotificationVisible] = useState(!(isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network)));
 
 	useEffect(() => {
 		if (!api || !apiReady) return;

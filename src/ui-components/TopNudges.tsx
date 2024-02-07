@@ -36,10 +36,10 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 
 	function handleNudgeClose() {
 		setNotificationVisible(true);
-		localStorage.setItem('identityNudgeStatus', 'viewed');
+		sessionStorage.setItem('identityNudgeStatus', 'viewed');
 	}
 	function handleNotificationNudgeClose() {
-		localStorage.setItem('notificationNudgeStatus', 'viewed');
+		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
 		setNotificationVisible(false);
 		setIsOpen(false);
 	}
@@ -47,12 +47,10 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	function handleSetNotificationClicked() {
 		router.push('/settings?tab=notifications');
 		setNotificationVisible(false);
-		localStorage.setItem('notificationNudgeStatus', 'viewed');
+		sessionStorage.setItem('notificationNudgeStatus', 'viewed');
 	}
 
 	if (isOpen === null || !isOpen) return null;
-	console.log('notificationVisible', notificationVisible);
-
 	return (
 		<>
 			{notificationVisible ? (

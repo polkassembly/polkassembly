@@ -14,6 +14,7 @@ import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_whi
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import styled from 'styled-components';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -229,4 +230,75 @@ const ReferendaActionModal = ({
 	);
 };
 
-export default ReferendaActionModal;
+export default styled(ReferendaActionModal)`
+	.opengov-proposals .ant-modal-content {
+		padding: 16px 0px !important;
+	}
+	.opengov-proposals .ant-modal-close {
+		margin-top: 2px;
+	}
+	.opengov-proposals .ant-progress .ant-progress-inner:not(.ant-progress-circle-gradient) .ant-progress-circle-path {
+		stroke: var(--pink_primary);
+		stroke-width: 6px;
+		background: red;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-icon .ant-steps-icon {
+		font-size: 14px !important;
+		color: #7788a1 !important;
+		font-weight: 700 !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-icon .ant-steps-icon {
+		font-size: 14px !important;
+		font-weight: 700 !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		font-size: 14px !important;
+		color: #96a4b6 !important;
+		line-height: 21px !important;
+		font-weight: 500 !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		color: var(--bodyBlue) !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		color: #96a4b6 !important;
+	}
+	.ant-steps .ant-steps-item .ant-steps-item-container .ant-steps-item-tail {
+		top: 0px !important;
+		padding: 4px 15px !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after,
+	.opengov-proposals .ant-steps .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after,
+	.opengov-proposals .ant-steps .ant-steps-item-tail::after {
+		background-color: #d2d8e0 !important;
+	}
+	.opengov-proposals .ant-steps.ant-steps-label-vertical .ant-steps-item-content {
+		width: 100% !important;
+		display: flex !important;
+		margin-top: 8px;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-icon {
+		background: #51d36e;
+		border: none !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+		color: white !important;
+	}
+	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
+	}
+	input::placeholder {
+		color: #7c899b;
+		font-weight: 400 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+		letter-spacing: 0.0025em !important;
+	}
+	.ant-steps .ant-steps-item-wait .ant-steps-item-icon {
+		background-color: ${(props) => (props.theme === 'dark' ? '#dde4ed' : 'rgba(0, 0, 0, 0.06)')} !important;
+	}
+`;

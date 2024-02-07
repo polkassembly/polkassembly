@@ -28,9 +28,11 @@ const ProposalActionButtons = () => {
 		if (id) {
 			if (proposerAddress.length > 0) {
 				setReferendaModal(num);
+				setIsDropdownActive(false);
 				setOpenModal(!openModal);
 			} else if (setOpenAddressLinkedModal) {
 				setReferendaModal(num);
+				setIsDropdownActive(false);
 				setOpenAddressLinkedModal(true);
 			}
 		} else {

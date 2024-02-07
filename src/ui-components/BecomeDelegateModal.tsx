@@ -109,14 +109,14 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							/>
 						</div>
 					</div>
-					<div className='mt-6 px-5'>
+					<div className='mt-6 px-6'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
 							{isEditMode ? 'Edit Delegation Mandate' : 'Your Delegation Mandate'}
 							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
 						<InputTextarea
 							name='bio'
-							className='min-h-[100px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
+							className='min-h-[100px] border px-3 py-2 text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
 							placeholder='Add message for delegate address'
 							value={newBio || userBio}
 							onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {

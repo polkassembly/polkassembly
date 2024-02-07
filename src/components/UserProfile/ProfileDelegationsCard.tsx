@@ -102,7 +102,7 @@ const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegatio
 const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { id: loginId, username, loginAddress } = useUserDetailsSelector();
+	const { id: loginId, username } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { addresses } = userProfile;
 	const [receiveDelegations, setReceiveDelegations] = useState<IDelegates>();
@@ -215,9 +215,9 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 		setCollapseItems(updatedData);
 	};
 
-	const handleData = async () => {
+	const handleDelegationMandate = async () => {
 		setDelegationMandate('');
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: loginAddress });
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: checkedAddress });
 		if (data && data[0]?.bio) {
 			setDelegationMandate(data[0]?.bio);
 		} else {
@@ -227,7 +227,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 
 	useEffect(() => {
 		getData();
-		handleData();
+		handleDelegationMandate();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network, checkedAddress]);
 

@@ -228,3 +228,11 @@ export interface I2FAGenerateResponse {
 	url: string;
 	base32_secret: string;
 }
+
+export interface IDelegationProfileType {
+	image: string;
+	social_links: ISocial[];
+	user_id: number;
+	username: string;
+	bio: string;
+}

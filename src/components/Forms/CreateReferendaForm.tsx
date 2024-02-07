@@ -13,18 +13,15 @@ import AddressInput from '~src/ui-components/AddressInput';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, Wallet } from '~src/types';
+import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
-import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { BN, BN_HUNDRED, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
-import { poppins } from 'pages/_app';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { chainProperties } from '~src/global/networkConstants';
 import Loader from '~src/ui-components/Loader';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
@@ -96,13 +93,11 @@ const ZERO_BN = new BN(0);
 
 export default function CreateReferendaForm() {
 	const { api, apiReady } = useApiContext();
-	const { loginAddress, loginWallet } = useUserDetailsSelector();
+	const { address, availableBalance } = useInitialConnectAddress();
+	const { loginWallet } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const [address, setAddress] = useState<string>(loginAddress);
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const [palletRPCs, setPalletRPCs] = useState<ItemType[]>([]);
 	const [callables, setCallables] = useState<ItemType[]>([]);
 	const [paramFields, setParamFields] = useState<ParamField[] | null>(null);
@@ -210,19 +205,6 @@ export default function CreateReferendaForm() {
 				message: error.message,
 				status: NotificationStatus.ERROR
 			});
-		}
-	};
-
-	const handleOnBalanceChange = async (balanceStr: string) => {
-		if (!api || !apiReady) {
-			return;
-		}
-		let balance = new BN(0);
-		try {
-			balance = new BN(balanceStr);
-			setAvailableBalance(balance);
-		} catch (err) {
-			console.log(err);
 		}
 	};
 
@@ -398,35 +380,14 @@ export default function CreateReferendaForm() {
 		} catch (e) {
 			console.error('Error in ManualExtrinsic');
 			console.error(e);
-			console.error(e);
 		}
 	}, [api, areAllParamsFilled, callable, apiReady, palletRpc, transformedParams]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
-		if (!window) {
-			return;
-		}
-
-		if (loginWallet) {
-			(async () => {
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-				setAccounts(accountsData?.accounts || []);
-			})();
-		} else {
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-				})();
-			}
-		}
 		const submissionDeposite = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
 		setSubmissionDeposite(submissionDeposite);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [useUserDetailsSelector]);
+	}, [api, apiReady]);
 
 	return (
 		<section className='w-full'>
@@ -452,18 +413,6 @@ export default function CreateReferendaForm() {
 					}
 				/>
 			)}
-			<AccountSelectionForm
-				title='Select an Account'
-				isTruncateUsername={false}
-				accounts={accounts}
-				address={address}
-				withBalance
-				onBalanceChange={handleOnBalanceChange}
-				onAccountChange={setAddress}
-				className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-				inputClassName='rounded-[4px] px-3 py-1'
-				theme={theme}
-			/>
 			{loadingStatus.isLoading && (
 				<div className='flex flex-col items-center justify-center'>
 					<Loader />

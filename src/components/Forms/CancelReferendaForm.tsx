@@ -2,40 +2,32 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
+import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { BN } from '@polkadot/util';
 import { Alert, Form, Input } from 'antd';
-import { useTheme } from 'next-themes';
-import { poppins } from 'pages/_app';
 import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
 import { APPNAME } from '~src/global/appName';
-import { chainProperties } from '~src/global/networkConstants';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { NotificationStatus, Wallet } from '~src/types';
-import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
+import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { NotificationStatus } from '~src/types';
 import Loader from '~src/ui-components/Loader';
 import Markdown from '~src/ui-components/Markdown';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
-import { formatedBalance } from '~src/util/formatedBalance';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import _ from 'lodash';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 const ZERO_BN = new BN(0);
 
 export default function CancelReferendaForm() {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress, loginWallet } = useUserDetailsSelector();
-	const { resolvedTheme: theme } = useTheme();
-
-	const [address, setAddress] = useState<string>(loginAddress);
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
+	const { loginWallet } = useUserDetailsSelector();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	const { address, availableBalance } = useInitialConnectAddress();
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [error, setError] = useState<string>('');
 	const [postData, setPostData] = useState<{ title: string; content: string; index: string }>({
@@ -47,10 +39,6 @@ export default function CancelReferendaForm() {
 	const [form] = Form.useForm();
 	const formName = 'kill-ref-form';
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-
-	const handleAccountChange = (address: string) => {
-		setAddress(address);
-	};
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
@@ -170,19 +158,6 @@ export default function CancelReferendaForm() {
 		}
 	};
 
-	const handleOnBalanceChange = async (balanceStr: string) => {
-		if (!api || !apiReady) {
-			return;
-		}
-		let balance = new BN(0);
-		try {
-			balance = new BN(balanceStr);
-			setAvailableBalance(balance);
-		} catch (err) {
-			console.log(err);
-		}
-	};
-
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const handleDebounceData = useCallback(_.debounce(getReferendaData, 500), []);
 
@@ -191,30 +166,6 @@ export default function CancelReferendaForm() {
 		const submissionDeposite = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
 		setSubmissionDeposite(submissionDeposite);
 	}, [api, apiReady]);
-
-	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		if (!window) {
-			return;
-		}
-
-		if (loginWallet) {
-			(async () => {
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-				setAccounts(accountsData?.accounts || []);
-			})();
-		} else {
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-				})();
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [useUserDetailsSelector]);
 
 	return (
 		<div className='w-full'>
@@ -240,18 +191,6 @@ export default function CancelReferendaForm() {
 					}
 				/>
 			)}
-			<AccountSelectionForm
-				title='Select an Account'
-				isTruncateUsername={false}
-				accounts={accounts}
-				address={address}
-				withBalance
-				onBalanceChange={handleOnBalanceChange}
-				onAccountChange={handleAccountChange}
-				className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-				inputClassName='rounded-[4px] px-3 py-1'
-				theme={theme}
-			/>
 			<Form
 				form={form}
 				name={formName}

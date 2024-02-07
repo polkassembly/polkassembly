@@ -4,9 +4,11 @@
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { IinitialConnectAddress } from './@types';
+import { BN } from '@polkadot/util';
 
 const initialState: IinitialConnectAddress = {
-	address: ''
+	address: '',
+	availableBalance: new BN(0)
 };
 
 export const initialConnectAddressStore = createSlice({
@@ -15,9 +17,13 @@ export const initialConnectAddressStore = createSlice({
 	reducers: {
 		setClearInitialState: (state) => {
 			state.address = '';
+			state.availableBalance = new BN(0);
 		},
 		setConnectAddress: (state, action: PayloadAction<string>) => {
 			state.address = action.payload;
+		},
+		setInitialAvailableBalance: (state, action: PayloadAction<BN>) => {
+			state.availableBalance = action.payload;
 		}
 	}
 });
@@ -29,5 +35,10 @@ const setConnectAddress: any = (address: string) => {
 		dispatch(initialConnectAddressActions.setConnectAddress(address));
 	};
 };
+const setInitialAvailableBalance: any = (num: BN) => {
+	return (dispatch: any) => {
+		dispatch(initialConnectAddressActions.setInitialAvailableBalance(num));
+	};
+};
 
-export { setConnectAddress };
+export { setConnectAddress, setInitialAvailableBalance };

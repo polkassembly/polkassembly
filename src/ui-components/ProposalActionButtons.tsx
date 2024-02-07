@@ -5,15 +5,16 @@
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
-import { Dropdown, MenuProps } from 'antd';
-import ThreeDotsIcon from '~assets/icons/three-dots-darkGray.svg';
+import { MenuProps } from 'antd';
+import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-// import { useTheme } from 'next-themes';
+import { useTheme } from 'next-themes';
+import { Dropdown } from './Dropdown';
 
 const ProposalActionButtons = () => {
-	// const { resolvedTheme: theme } = useTheme();
+	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
@@ -50,9 +51,9 @@ const ProposalActionButtons = () => {
 						alt='cancel referendum icon'
 						className=''
 					/>
-					<div className='flex flex-col'>
-						<span className='text-sm font-medium text-blue-light-medium'>Cancel Referendum</span>
-						<span className='text-xs font-normal text-blue-light-medium'>Cancel the referendum and return the deposit</span>
+					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
+						<span className='text-sm font-medium '>Cancel Referendum</span>
+						<span className='text-xs font-normal '>Cancel the referendum and return the deposit</span>
 					</div>
 				</div>
 			)
@@ -69,9 +70,9 @@ const ProposalActionButtons = () => {
 						alt='kill referendum icon'
 						className=''
 					/>
-					<div className='flex flex-col'>
-						<span className='text-sm font-medium text-blue-light-medium'>Kill Referendum</span>
-						<span className='text-xs font-normal text-blue-light-medium'>Cancel the referendum and slash the deposit</span>
+					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
+						<span className='text-sm font-medium '>Kill Referendum</span>
+						<span className='text-xs font-normal '>Cancel the referendum and slash the deposit</span>
 					</div>
 				</div>
 			)
@@ -99,10 +100,10 @@ const ProposalActionButtons = () => {
 				/>
 				<div className='-mt-1'>
 					<Dropdown
-						// theme={theme}
+						theme={theme}
 						overlayStyle={{ marginTop: '20px' }}
 						className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
-							isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+							theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 						}`}
 						overlayClassName='z-[1056'
 						placement='bottomRight'

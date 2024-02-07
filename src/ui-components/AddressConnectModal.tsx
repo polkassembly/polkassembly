@@ -38,7 +38,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
-import { setConnectAddress } from '~src/redux/initialConnectAddress';
+import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 
 interface Props {
 	className?: string;
@@ -289,6 +289,7 @@ const AddressConnectModal = ({
 			onConfirm && onConfirm(address);
 			setOpen(false);
 			setLoading(false);
+			dispatch(setConnectAddress(address));
 		}
 	};
 
@@ -323,6 +324,7 @@ const AddressConnectModal = ({
 		}
 		const availableBalance = new BN(balanceStr);
 		setAvailableBalance(availableBalance);
+		dispatch(setInitialAvailableBalance(availableBalance));
 	};
 
 	useEffect(() => {

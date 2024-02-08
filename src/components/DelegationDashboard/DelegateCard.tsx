@@ -23,9 +23,9 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { socialLinks } from '../UserProfile/Socials';
-import Markdown from '~src/ui-components/Markdown';
 
 interface Props {
 	delegate: IDelegate;
@@ -83,160 +83,148 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	return (
 		<div
-			className={`flex flex-col justify-between rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
+			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
 				delegate?.dataSource.includes('nova') ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
-			<div>
-				{delegate?.dataSource.length > 1 ? (
-					<div
-						className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid px-5 ${
-							delegate?.dataSource.length > 1
-								? 'border-[#485F7D] bg-[#EDEFF3] dark:border-[#9E9E9E] dark:bg-[#3D3F41]'
-								: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
-						} `}
-					>
-						{delegate?.dataSource.includes('polkassembly') && (
-							<div className='flex items-center space-x-3'>
-								<div className='flex items-center space-x-1'>
-									<PolkadotIcon />
-									<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly</span>
-								</div>
-								<Divider
-									type='vertical'
-									className='bg-[#7F8FA4]'
-								/>
-							</div>
-						)}
-
-						{delegate?.dataSource.includes('parity') && (
-							<div className='flex items-center space-x-3'>
-								<div className='flex items-center space-x-[6px]'>
-									<ParityTechIcon />
-									<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot</span>
-								</div>
-								<Divider
-									type='vertical'
-									className='bg-[#7F8FA4]'
-								/>
-							</div>
-						)}
-						{delegate?.dataSource.includes('nova') && (
-							<div className='flex items-center space-x-1 '>
-								<ImageIcon
-									src='/assets/delegation-tracks/nova-wallet.svg'
-									alt='nova wallet icon'
-								/>
-								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet</span>
-							</div>
-						)}
-					</div>
-				) : (
-					<>
-						{delegate?.dataSource.includes('nova') && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
-								{/* <NovaWalletIcon /> */}
-								<ImageIcon
-									src='/assets/delegation-tracks/nova-wallet.svg'
-									alt='nova wallet icon'
-								/>
-								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
-							</div>
-						)}
-						{delegate?.dataSource.includes('parity') && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
-								<ParityTechIcon />
-								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
-							</div>
-						)}
-						{delegate?.dataSource.includes('polkassembly') && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
+			{delegate?.dataSource.length > 1 ? (
+				<div
+					className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid px-5 ${
+						delegate?.dataSource.length > 1
+							? 'border-[#485F7D] bg-[#EDEFF3] dark:border-[#9E9E9E] dark:bg-[#3D3F41]'
+							: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
+					} `}
+				>
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div className='flex items-center space-x-3'>
+							<div className='flex items-center space-x-1'>
 								<PolkadotIcon />
-								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly</span>
 							</div>
-						)}
-					</>
-				)}
-				<div className='flex items-center justify-between px-5 pt-5'>
-					<div className='flex gap-2 max-lg:justify-start'>
-						<Address
-							address={delegate?.address}
-							displayInline
-							destroyTooltipOnHide
-							iconSize={34}
-							usernameClassName='font-semibold'
-							isTruncateUsername={false}
-							className='flex items-center'
-						/>
-
-						<div className='-mt-5 mr-2 flex gap-2'>
-							{socialLinks
-								?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TWITTER)
-								.map((social, index) => {
-									const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
-									return (
-										<SocialLink
-											className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
-											key={index}
-											link={link}
-											disable={!link}
-											type={social}
-											iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
-										/>
-									);
-								})}
-						</div>
-					</div>
-					<button
-						disabled={disabled}
-						onClick={handleClick}
-						className={`flex cursor-pointer items-center space-x-[6px] border-none bg-transparent px-2 ${disabled && 'opacity-50'}`}
-					>
-						<DelegatesProfileIcon />
-						<span className='text-sm font-medium text-pink_primary'>Delegate</span>
-					</button>
-				</div>
-
-				<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 min-h-[56px] pl-[56px] text-sm dark:text-blue-dark-high'}>
-					<p className='bio w-[80%]'>
-						{delegate?.bio ? (
-							<Markdown
-								className='post-content'
-								md={delegate?.bio}
-								isDelegateCard={true}
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
 							/>
-						) : (
-							'No Bio'
-						)}
-					</p>
-					{delegate?.bio.length > 100 && (
-						<span
-							onClick={() => setOpenReadMore(true)}
-							className='cursor-pointer text-xs leading-3 text-[#1B61FF]'
-						>
-							Read more
-						</span>
+						</div>
+					)}
+
+					{delegate?.dataSource.includes('parity') && (
+						<div className='flex items-center space-x-3'>
+							<div className='flex items-center space-x-[6px]'>
+								<ParityTechIcon />
+								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot</span>
+							</div>
+							<Divider
+								type='vertical'
+								className='bg-[#7F8FA4]'
+							/>
+						</div>
+					)}
+					{delegate?.dataSource.includes('nova') && (
+						<div className='flex items-center space-x-1 '>
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet</span>
+						</div>
 					)}
 				</div>
+			) : (
+				<>
+					{delegate?.dataSource.includes('nova') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
+							{/* <NovaWalletIcon /> */}
+							<ImageIcon
+								src='/assets/delegation-tracks/nova-wallet.svg'
+								alt='nova wallet icon'
+							/>
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Nova Wallet Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('parity') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
+							<ParityTechIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
+						</div>
+					)}
+					{delegate?.dataSource.includes('polkassembly') && (
+						<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
+							<PolkadotIcon />
+							<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+						</div>
+					)}
+				</>
+			)}
+			<div className='flex items-center justify-between px-5 pt-5'>
+				<div className='flex gap-2 max-lg:justify-start'>
+					<Address
+						address={delegate?.address}
+						displayInline
+						destroyTooltipOnHide
+						iconSize={34}
+						usernameClassName='font-semibold'
+						isTruncateUsername={false}
+						className='flex items-center'
+					/>
+
+					<div className='-mt-5 mr-2 flex gap-2'>
+						{socialLinks
+							?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TWITTER)
+							.map((social, index) => {
+								const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
+								return (
+									<SocialLink
+										className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
+										key={index}
+										link={link}
+										disable={!link}
+										type={social}
+										iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
+									/>
+								);
+							})}
+					</div>
+				</div>
+				<CustomButton
+					disabled={disabled}
+					onClick={handleClick}
+					height={40}
+					variant='default'
+					className={`ml-1 mt-[1px] gap-2 border-none px-2 ${disabled && 'opacity-50'}`}
+				>
+					<DelegatesProfileIcon />
+					<span className='text-sm font-medium'>Delegate</span>
+				</CustomButton>
+			</div>
+
+			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
+				<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
+				{delegate?.bio.length > 100 && (
+					<span
+						onClick={() => setOpenReadMore(true)}
+						className='mt-1 flex cursor-pointer items-center justify-center text-xs leading-3 text-[#1B61FF]'
+					>
+						Read more
+					</span>
+				)}
 			</div>
 			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
-				<div className='flex w-[33%] flex-col items-center py-3 font-semibold text-bodyBlue dark:text-blue-dark-high'>
-					<div className='flex flex-wrap items-end justify-center gap-1 '>
-						<span className='px-1 text-2xl font-semibold'>{formatedBalance(balance.toString(), unit, 2)}</span>
-						<span className='mb-[2.5px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex items-end justify-center gap-1'>
+						{formatedBalance(balance.toString(), unit, 2)}
+						<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className='mt-[2px] text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
+					<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] py-3 text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
-					<span className='text-2xl font-semibold'>{delegate?.voted_proposals_count}</span>
-					<div className='mt-[2px] flex flex-col items-center'>
-						<span className='mb-[2px] text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voted proposals </span>
-						<span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
-					</div>
+				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+					{delegate?.voted_proposals_count}
+					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
+					<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
 				</div>
-				<div className='flex w-[33%] flex-col items-center py-3'>
-					<span className='text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.active_delegation_count}</span>
-					<span className='mb-[2px] mt-[2px] text-center text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Received Delegation</span>
+				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					{delegate?.active_delegation_count}
+					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
 				</div>
 			</div>
 			<DelegateModal
@@ -283,17 +271,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 
 					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
-						<p className='w-[90%]'>
-							{delegate?.bio ? (
-								<Markdown
-									className='post-content'
-									md={delegate?.bio}
-									isAutoComplete={true}
-								/>
-							) : (
-								'No Bio'
-							)}
-						</p>
+						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>

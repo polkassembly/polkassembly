@@ -7,7 +7,7 @@ import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
@@ -78,6 +78,10 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 		}
 	};
 
+	useEffect(() => {
+		setNewBio(userBio);
+	}, [userBio]);
+
 	return (
 		<Modal
 			title={
@@ -119,7 +123,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							name='bio'
 							className='min-h-[100px] border text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
 							placeholder='Add message for delegate address'
-							value={newBio || userBio}
+							value={newBio}
 							onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
 								setNewBio(e.target.value);
 							}}

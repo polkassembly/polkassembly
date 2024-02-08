@@ -25,6 +25,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { socialLinks } from '../UserProfile/Socials';
+import Markdown from '~src/ui-components/Markdown';
 
 interface Props {
 	delegate: IDelegate;
@@ -82,7 +83,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	return (
 		<div
-			className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
+			className={`flex flex-col justify-between rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
 				delegate?.dataSource.includes('nova') ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
 			} ${className}`}
 		>
@@ -195,21 +196,33 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</button>
 			</div>
 
-			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
-				<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
-				{delegate?.bio.length > 100 && (
-					<span
-						onClick={() => setOpenReadMore(true)}
-						className='mt-1 flex cursor-pointer items-center justify-center text-xs leading-3 text-[#1B61FF]'
-					>
-						Read more
-					</span>
-				)}
+			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
+				<p className='bio w-[80%]'>
+					{delegate?.bio ? (
+						<Markdown
+							className=''
+							md={delegate.bio}
+							imgHidden={true}
+						/>
+					) : (
+						'No Bio'
+					)}
+				</p>
+				<p>
+					{delegate?.bio.length > 100 && (
+						<span
+							onClick={() => setOpenReadMore(true)}
+							className='flex h-full cursor-pointer items-end text-xs leading-3 text-[#1B61FF]'
+						>
+							Read more
+						</span>
+					)}
+				</p>
 			</div>
 			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 				<div className='flex w-[33%] flex-col items-center py-3 font-semibold text-bodyBlue dark:text-blue-dark-high'>
-					<div className='flex items-end justify-center gap-1 '>
-						<span className='text-2xl font-semibold'>{formatedBalance(balance.toString(), unit, 2)}</span>
+					<div className='flex flex-wrap items-end justify-center gap-1 '>
+						<span className='px-1 text-2xl font-semibold'>{formatedBalance(balance.toString(), unit, 2)}</span>
 						<span className='mb-[2.5px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 					</div>
 					<div className='mt-[2px] text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
@@ -270,7 +283,17 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 
 					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
-						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
+						<p className='w-[90%]'>
+							{delegate?.bio ? (
+								<Markdown
+									className='post-content'
+									md={delegate?.bio}
+									isAutoComplete={true}
+								/>
+							) : (
+								'No Bio'
+							)}
+						</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>

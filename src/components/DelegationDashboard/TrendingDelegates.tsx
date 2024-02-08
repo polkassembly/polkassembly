@@ -34,10 +34,11 @@ const TrendingDelegates = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const itemsPerPage = showMore ? 10 : 6;
+	const itemsPerPage = showMore ? delegatesData.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
+	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
+
 	const onChange = (page: number) => {
 		setCurrentPage(page);
 	};
@@ -101,9 +102,9 @@ const TrendingDelegates = () => {
 				</div>
 				<span
 					onClick={() => setShowMore(!showMore)}
-					className='cursor-pointer text-xs font-medium text-pink_primary'
+					className='mr-[3px] cursor-pointer text-xs font-medium text-pink_primary'
 				>
-					{showMore ? 'Show Less' : 'Show More'}
+					{showMore ? 'Show Less' : 'Show All'}
 				</span>
 			</div>
 
@@ -124,20 +125,22 @@ const TrendingDelegates = () => {
 								/>
 							))}
 					</div>
-					<div className='mt-6 flex justify-end'>
-						<Pagination
-							theme={theme}
-							size='large'
-							defaultCurrent={1}
-							current={currentPage}
-							onChange={onChange}
-							total={delegatesData.length || 0}
-							showSizeChanger={false}
-							pageSize={itemsPerPage}
-							responsive={true}
-							hideOnSinglePage={true}
-						/>
-					</div>
+					{!showMore && delegatesData.length > 6 && (
+						<div className='mt-6 flex justify-end'>
+							<Pagination
+								theme={theme}
+								size='large'
+								defaultCurrent={1}
+								current={currentPage}
+								onChange={onChange}
+								total={delegatesData.length}
+								showSizeChanger={false}
+								pageSize={itemsPerPage}
+								responsive={true}
+								hideOnSinglePage={true}
+							/>
+						</div>
+					)}
 				</div>
 			</Spin>
 		</div>

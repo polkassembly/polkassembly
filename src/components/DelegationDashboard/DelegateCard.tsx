@@ -197,18 +197,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</button>
 				</div>
 
-				<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
+				<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 min-h-[56px] pl-[56px] text-sm dark:text-blue-dark-high'}>
 					<p className='bio w-[80%]'>{delegate?.bio ? delegate.bio : 'No Bio'}</p>
-					<p>
-						{delegate?.bio.length > 100 && (
-							<span
-								onClick={() => setOpenReadMore(true)}
-								className='flex h-full cursor-pointer items-end text-xs leading-3 text-[#1B61FF]'
-							>
-								Read more
-							</span>
-						)}
-					</p>
+					{delegate?.bio.length > 100 && (
+						<span
+							onClick={() => setOpenReadMore(true)}
+							className='cursor-pointer text-xs leading-3 text-[#1B61FF]'
+						>
+							Read more
+						</span>
+					)}
 				</div>
 			</div>
 			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>

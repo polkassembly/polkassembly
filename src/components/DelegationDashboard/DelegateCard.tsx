@@ -23,9 +23,9 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { socialLinks } from '../UserProfile/Socials';
+import Markdown from '~src/ui-components/Markdown';
 
 interface Props {
 	delegate: IDelegate;
@@ -186,16 +186,14 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							})}
 					</div>
 				</div>
-				<CustomButton
+				<button
 					disabled={disabled}
 					onClick={handleClick}
-					height={40}
-					variant='default'
-					className={`ml-1 mt-[1px] gap-2 border-none px-2 ${disabled && 'opacity-50'}`}
+					className={`flex cursor-pointer items-center space-x-[6px] border-none bg-transparent px-2 ${disabled && 'opacity-50'}`}
 				>
 					<DelegatesProfileIcon />
-					<span className='text-sm font-medium'>Delegate</span>
-				</CustomButton>
+					<span className='text-sm font-medium text-pink_primary'>Delegate</span>
+				</button>
 			</div>
 
 			<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
@@ -210,21 +208,23 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				)}
 			</div>
 			<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-					<div className='flex items-end justify-center gap-1'>
-						{formatedBalance(balance.toString(), unit, 2)}
-						<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
+				<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex flex-wrap items-end justify-center'>
+						<span className='px-1 text-2xl font-semibold'>{formatedBalance(balance.toString(), unit, 2)}</span>
+						<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
-					<div className='font-normaltext-[#576D8B] mt-[4px] text-xs dark:text-blue-dark-medium'>Voting power</div>
+					<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-4  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
-					{delegate?.voted_proposals_count}
-					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-xs dark:text-blue-dark-medium'>Voted proposals </span>
-					<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
+				<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] py-3  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
+					<span className='text-2xl font-semibold'>{delegate?.voted_proposals_count}</span>
+					<div className='mt-[2px] flex flex-col items-center'>
+						<span className='mb-[2px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voted proposals </span>
+						<span className='text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>(Past 30 days)</span>
+					</div>
 				</div>
-				<div className='flex w-[33%] flex-col items-center pt-4 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
-					{delegate?.active_delegation_count}
-					<span className='font-normaltext-[#576D8B] mb-[2px] mt-1 text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
+				<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<span className='text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{delegate?.active_delegation_count}</span>
+					<span className='mb-[2px] mt-1 text-center text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Received Delegation</span>
 				</div>
 			</div>
 			<DelegateModal
@@ -271,7 +271,17 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 
 					<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm dark:text-blue-dark-high'}>
-						<p className='w-[90%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
+						<p className='w-[90%]'>
+							{delegate?.bio ? (
+								<Markdown
+									className='post-content'
+									md={delegate?.bio}
+									isPreview={true}
+								/>
+							) : (
+								'No Bio'
+							)}
+						</p>
 					</div>
 					<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
@@ -279,16 +289,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								{formatedBalance(balance.toString(), unit, 2)}
 								<span className='mt-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 							</div>
-							<div className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>Voting power</div>
+							<div className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>
 						</div>
 						<div className='flex w-[33%] flex-col items-center border-0 border-x-[1px] border-solid border-[#D2D8E0] pt-1.5  text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'>
 							{delegate?.voted_proposals_count}
-							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>Voted proposals </span>
-							<span className='font-normaltext-[#576D8B] text-xs dark:text-blue-dark-medium'>(Past 30 days)</span>
+							<span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voted proposals </span>
+							<span className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>(Past 30 days)</span>
 						</div>
 						<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 							{delegate?.active_delegation_count}
-							<span className='font-normaltext-[#576D8B] mb-[2px] text-center text-xs dark:text-blue-dark-medium'>Received Delegation</span>
+							<span className='mb-[2px] text-center text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Received Delegation</span>
 						</div>
 					</div>
 				</div>

@@ -51,7 +51,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 								</Button>
 								<span onClick={handleNotificationNudgeClose}>
-									<CloseIcon className='mt-1 cursor-pointer dark:text-white' />
+									<CloseIcon className='mt-1 dark:text-white' />
 								</span>
 							</div>
 						</div>

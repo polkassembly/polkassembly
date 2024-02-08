@@ -198,7 +198,17 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</div>
 
 				<div className={'tracking-[0.015em]text-[#576D8B] mb-[16px] mt-2 min-h-[56px] pl-[56px] text-sm dark:text-blue-dark-high'}>
-					<p className='bio w-[80%]'>{delegate?.bio ? delegate.bio : 'No Bio'}</p>
+					<p className='bio w-[80%]'>
+						{delegate?.bio ? (
+							<Markdown
+								className='post-content'
+								md={delegate?.bio}
+								isDelegateCard={true}
+							/>
+						) : (
+							'No Bio'
+						)}
+					</p>
 					{delegate?.bio.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(true)}

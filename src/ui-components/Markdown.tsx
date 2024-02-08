@@ -16,6 +16,7 @@ interface Props {
 	md: string;
 	imgHidden?: boolean;
 	theme?: string;
+	isDelegateCard?: boolean;
 }
 
 const StyledMarkdown = styled(ReactMarkdown)`
@@ -145,6 +146,99 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 	}
 
+	&,
+	&.delegate-preview-content {
+		font-size: 14px;
+		margin-bottom: 0;
+		margin-top: 0;
+		overflow-wrap: break-word;
+		max-width: 100%;
+		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+
+		* {
+			max-width: 100% !important;
+		}
+
+		p,
+		span,
+		blockquote,
+		ul,
+		ol,
+		dl,
+		table {
+			line-height: 160%;
+			color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+		}
+
+		h1 {
+			font-size: 14px;
+		}
+
+		h2 {
+			font-size: 14px;
+			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+		}
+
+		h3,
+		h4 {
+			font-size: 14px;
+			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+		}
+		p > h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-size: 14px;
+			margin-bottom: 0;
+			margin-top: 0;
+		}
+
+		ul,
+		ol {
+			padding-left: 2rem;
+			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+
+			li {
+				padding-left: 0.8rem;
+				margin-bottom: 1.2rem;
+				font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+			}
+
+			li > input {
+				display: none;
+			}
+		}
+
+		a {
+			color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+			&:hover {
+				text-decoration: none;
+				color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
+			}
+		}
+
+		blockquote {
+			color: grey_primary;
+			border-left-style: solid;
+			border-left-width: 0.25rem;
+			border-left-color: grey_primary;
+			font-size: 0.9rem;
+			& > :first-child {
+				margin-top: 0;
+			}
+			& > :last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		img {
+			display: none !important;
+		}
+	}
+
 	&.mde-preview-content {
 		h1,
 		h2,
@@ -196,13 +290,15 @@ const StyledMarkdown = styled(ReactMarkdown)`
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, isDelegateCard = false, imgHidden = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
 	return (
 		<StyledMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} w-full`}
+			className={`${className} ${isPreview && 'mde-preview-content'} ${isDelegateCard && 'delegate-preview-content'} ${imgHidden && 'hide-image'} ${
+				isAutoComplete && 'mde-autocomplete-content'
+			} w-full`}
 			rehypePlugins={[rehypeRaw, remarkGfm]}
 			linkTarget='_blank'
 			theme={theme}

@@ -705,11 +705,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
-		if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network) {
 			postQuery = GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE;
 		}
 
-		if (proposalType === ProposalType.TIPS || (proposalType === ProposalType.ADVISORY_COMMITTEE && strPostId.toLowerCase() !== strPostId.toUpperCase())) {
+		if (
+			proposalType === ProposalType.TIPS ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist' && strPostId.toLowerCase() !== strPostId.toUpperCase())
+		) {
 			postVariables = {
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
@@ -989,7 +992,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) {
+		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {

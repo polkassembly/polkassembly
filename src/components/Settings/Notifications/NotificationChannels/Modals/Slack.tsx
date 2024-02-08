@@ -38,7 +38,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 			className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			wrapClassName='dark:bg-modalOverlayDark'
 			title={
-				<h3 className='mb-5 flex items-center gap-3'>
+				<h3 className='mb-5 flex items-center gap-3 dark:text-white'>
 					{icon} {title}
 				</h3>
 			}
@@ -49,7 +49,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 		>
 			<div className=''>
 				<ol>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Click this invite link <br />
 						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
 							<a
@@ -61,7 +61,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							</a>
 						</span>
 					</li>
-					<li className='list-inside leading-[40px]'>
+					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:
 						<br />
 						<span
@@ -81,7 +81,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 						{token && (
 							<>
 								<br />
-								<span>Verification Token: </span>
+								<span className='dark:text-white'>Verification Token: </span>
 								<span
 									onClick={() => handleCopyClicked(token)}
 									className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'

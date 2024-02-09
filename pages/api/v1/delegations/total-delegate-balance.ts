@@ -10,6 +10,7 @@ import { TOTAL_DELEGATE_BALANCE } from '~src/queries';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import BN from 'bn.js';
 import messages from '~src/auth/utils/messages';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ZERO_BN = new BN(0);
 export interface IDelegateBalance {
@@ -31,7 +32,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 			network,
 			query: TOTAL_DELEGATE_BALANCE,
 			variables: {
-				to_in: addresses,
+				to_in: addresses.map((item) => getEncodedAddress(item, network)),
 				type_eq: isOpenGovSupported(network) ? 'OpenGov' : 'Democracy'
 			}
 		});

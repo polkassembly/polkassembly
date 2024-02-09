@@ -38,6 +38,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 	const [totalLockedBalance, setTotalLockedBalance] = useState<BN>(ZERO_BN);
 	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
 	const [delegatBalance, setDelegateBalance] = useState<BN>(ZERO_BN);
+	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
 
 	const getData = async () => {
 		if (!selectedAddresses.length) return;
@@ -45,8 +46,10 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 			addresses: selectedAddresses
 		});
 		if (data) {
-			const bnBalance = new BN(data.totalDelegateBalance);
+			const bnBalance = new BN(data.delegateBalance);
+			const bnVotingPower = new BN(data?.votingPower);
 			setDelegateBalance(bnBalance);
+			setVotingPower(bnVotingPower);
 		} else if (error) {
 			console.log(error);
 		}
@@ -62,19 +65,20 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				const balances = await userProfileBalances({ address, api, apiReady, network });
 				return { free: balances.freeBalance, locked: balances.lockedBalance, transferable: balances.transferableBalance };
 			});
-			const resolves = await Promise.allSettled(promises);
-			let lock = ZERO_BN;
+			let locked = ZERO_BN;
 			let transferable = ZERO_BN;
+			const resolves = await Promise.allSettled(promises);
+
 			let free = ZERO_BN;
 			resolves.map((item) => {
 				if (item.status === 'fulfilled') {
-					lock = item?.value?.locked.add(lock);
+					locked = item?.value?.locked.add(locked);
 					transferable = item?.value?.transferable.add(transferable);
 					free = item?.value?.free.add(free);
 				}
 			});
 			setTransferableBalance(transferable);
-			setTotalLockedBalance(lock);
+			setTotalLockedBalance(locked);
 			setFreeBalance(free);
 		})();
 
@@ -113,7 +117,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				/>
 				<div className='flex flex-shrink-0 flex-col'>
 					<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>VOTING POWER</span>
-					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(freeBalance.add(delegatBalance).toString(), 2, true, network)}</span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(votingPower.toString(), 2, true, network)}</span>
 				</div>
 				<EqualIcon className='text-4xl font-normal text-lightBlue dark:text-icon-dark-inactive' />
 				<div className='flex flex-shrink-0 flex-col'>

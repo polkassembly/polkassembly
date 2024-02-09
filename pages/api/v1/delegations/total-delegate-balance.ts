@@ -14,7 +14,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const ZERO_BN = new BN(0);
 export interface IDelegateBalance {
-	totalDelegateBalance: string;
+	delegateBalance: string;
+	votingPower: string;
 }
 interface Props {
 	addresses: string[];
@@ -37,12 +38,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 			}
 		});
 		let totalDelegateBalance = ZERO_BN;
+		let votingPower = ZERO_BN;
 		data['data']?.votingDelegations.map((item: any) => {
 			const bnBalance = new BN(item?.balance);
+			const bnLockedPeriod = new BN(item?.lockPeriod || 0);
 			totalDelegateBalance = totalDelegateBalance.add(bnBalance);
+			votingPower = item?.lockPeriod ? votingPower.add(totalDelegateBalance.mul(bnLockedPeriod)) : votingPower.add(totalDelegateBalance);
 		});
 		const delegationStats: IDelegateBalance = {
-			totalDelegateBalance: totalDelegateBalance.toString()
+			delegateBalance: totalDelegateBalance.toString(),
+			votingPower: votingPower.toString()
 		};
 		return res.status(200).json(delegationStats as any);
 	} catch (error) {

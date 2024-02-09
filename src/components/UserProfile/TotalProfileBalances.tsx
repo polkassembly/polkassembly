@@ -46,6 +46,8 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 	}, [network]);
 
 	useEffect(() => {
+		setTotalLockedBalance(ZERO_BN);
+		setTransferableBalance(ZERO_BN);
 		(async () => {
 			const promises = selectedAddresses.map(async (address) => {
 				const balances = await userProfileBalances({ address, api, apiReady, network });
@@ -54,12 +56,11 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 			let locked = ZERO_BN;
 			let transferable = ZERO_BN;
 			const resolves = await Promise.allSettled(promises);
-			setTotalLockedBalance(ZERO_BN);
-			setTransferableBalance(ZERO_BN);
+
 			resolves.map((item) => {
 				if (item.status === 'fulfilled') {
-					locked = item?.value?.locked.add(totalLockedBalance);
-					transferable = item?.value?.transferable.add(transferableBalance);
+					locked = item?.value?.locked.add(locked);
+					transferable = item?.value?.transferable.add(transferable);
 				}
 			});
 			setTotalLockedBalance(locked);

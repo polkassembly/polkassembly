@@ -1086,4 +1086,22 @@ export default styled(AppLayout)`
 	.ant-drawer .ant-drawer-footer {
 		border: none !important;
 	}
+	.ant-menu-inline .ant-menu-item {
+		height: 36px !important;
+	}
+	.ant-menu-vertical > .ant-menu-item {
+		height: 36px !important;
+	}
+	.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+		height: 36px !important;
+	}
+	.ant-menu-submenu-title {
+		height: 36px !important;
+	}
+	.ant-menu-vertical > .ant-menu-item > li:first-child {
+		height: 40px !important;
+	}
+	.ant-menu-root > li:first-child {
+		height: 60px !important;
+	}
 `;

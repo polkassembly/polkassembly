@@ -2,12 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
 import remarkGfm from 'remark-gfm';
 import { useTheme } from 'next-themes';
+import HighlightMenu from './HighlightMenu';
 
 interface Props {
 	className?: string;
@@ -200,15 +201,23 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
+	const markdownRef = useRef<HTMLDivElement>(null);
+
 	return (
-		<StyledMarkdown
-			className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} w-full`}
-			rehypePlugins={[rehypeRaw, remarkGfm]}
-			linkTarget='_blank'
-			theme={theme}
+		<div
+			ref={markdownRef}
+			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
 		>
-			{sanitisedMd}
-		</StyledMarkdown>
+			<HighlightMenu markdownRef={markdownRef} />
+			<StyledMarkdown
+				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
+				rehypePlugins={[rehypeRaw, remarkGfm]}
+				linkTarget='_blank'
+				theme={theme}
+			>
+				{sanitisedMd}
+			</StyledMarkdown>
+		</div>
 	);
 };
 

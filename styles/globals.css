@@ -732,6 +732,7 @@ z-index: 1050 !important;
 
 .dark .dark-text-white *{
   color: white !important;
+  overflow-x: auto !important;
 }
 
 .dark .dark-text-white a,

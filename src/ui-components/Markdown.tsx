@@ -30,8 +30,8 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 		* {
 			max-width: 100% !important;
+			overflow-x: auto !important;
 		}
-
 		.hide-image img {
 			display: none !important;
 		}
@@ -119,7 +119,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		img {
-			max-width: 100%;
+			overflow-x: auto !important;
 			margin: 2rem 0;
 		}
 

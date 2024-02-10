@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Radio, Table } from 'antd';
+import { Radio } from 'antd';
+import Table from '~src/basic-components/Tables/Table';
 
 import styled from 'styled-components';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -239,14 +240,14 @@ const DashboardTrackListing = ({ className }: Props) => {
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
 		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
-		font-size: 14px;
+		font-size: 14px !important;
 		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
-		line-height: 21px;
-		white-space: nowrap;
+		line-height: 21px !important;
+		white-space: nowrap !important;
 		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.column .ant-table-thead > tr > th:nth-child(1) {
-		text-align: center;
+		text-align: center !important;
 	}
 	.ant-table-cell {
 		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
@@ -258,7 +259,7 @@ export default styled(DashboardTrackListing)`
 	}
 	@media only screen and (max-width: 1024px) {
 		.column .ant-table-thead > tr > th:nth-child(2) {
-			text-align: center;
+			text-align: center !important;
 		}
 	}
 `;

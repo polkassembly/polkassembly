@@ -52,5 +52,5 @@ export {
 	useTippingDataSelector,
 	useTreasuryProposalSelector,
 	useVoteDataSelector,
-  useInitialConnectAddress
+	useInitialConnectAddress
 };

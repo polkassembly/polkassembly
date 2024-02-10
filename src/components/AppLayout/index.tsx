@@ -324,7 +324,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	// const [notificationVisible, setNotificationVisible] = useState(true);
-	const dispatch = useDispatch();
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {

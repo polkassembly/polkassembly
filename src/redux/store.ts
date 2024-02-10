@@ -102,8 +102,7 @@ export const makeStore = () => {
 		[tippingStore.name]: tippingStore.reducer,
 		[treasuryProposalStore.name]: treasuryProposalStore.reducer,
 		[voteDataStore.name]: voteDataStore.reducer,
-    [initialConnectAddressStore.name]: initialConnectAddressStore.reducer
-
+		[initialConnectAddressStore.name]: initialConnectAddressStore.reducer
 	});
 
 	if (isServer) {

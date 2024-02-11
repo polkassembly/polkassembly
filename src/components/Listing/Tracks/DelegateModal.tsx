@@ -36,6 +36,7 @@ import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
+import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
@@ -74,6 +75,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
+	const [days, setDays] = useState<number>(0);
 	const isTargetAddressSame =
 		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
 	const delegateButtonDisable =
@@ -83,7 +86,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		isNaN(conviction) ||
 		isTargetAddressSame ||
 		loading ||
-		txFee.lte(ZERO_BN) ||
 		availableBalance.lte(txFee.add(bnBalance));
 
 	useEffect(() => {
@@ -126,7 +128,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
 		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
-		if (!checkedTrack?.length && !checkedTracksList.length) return;
+
+		if (!checkedTrack && !checkedTracksList.length) return;
 
 		setLoading(true);
 		const checkedArr =
@@ -150,6 +153,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
+		const res = api.consts.convictionVoting.voteLockingPeriod;
+		const num = res.toJSON();
+		const days = blockToDays(num, network);
+		setDays(days);
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
@@ -204,6 +211,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessPopup(true);
+		setIsBalanceUpdated(true);
 		onConfirm?.(bnBalance.toString(), target, conviction);
 		setLoading(false);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
@@ -248,11 +256,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setAvailableBalance(balance);
 	};
 
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
-
 	const handleOnchangeConviction = (value: number) => {
 		let conviction = 0;
 		let lockValue = 0;
@@ -276,6 +279,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -432,11 +440,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										<Balance
 											address={delegationDashboardAddress}
 											onChange={handleOnBalanceChange}
+											isDelegating={true}
+											isBalanceUpdated={isBalanceUpdated}
 										/>
 									</span>
 								</div>
 
 								<BalanceInput
+									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}
@@ -480,12 +491,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									</div>
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px] dark:bg-inactiveIconDark'>
-									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
+									<div className='flex items-center justify-center gap-2.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
 									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
+										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>

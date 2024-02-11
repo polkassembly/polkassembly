@@ -9,7 +9,8 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Skeleton, Table } from 'antd';
+import { Skeleton } from 'antd';
+import Table from '~src/basic-components/Tables/Table';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';

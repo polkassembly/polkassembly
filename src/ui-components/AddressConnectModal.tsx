@@ -55,6 +55,7 @@ interface Props {
 	accountSelectionFormTitle?: string;
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
+	isUsedInDelegationModal?: boolean;
 }
 
 const ZERO_BN = new BN(0);

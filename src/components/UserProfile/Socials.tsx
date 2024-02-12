@@ -2,13 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { LinkOutlined } from '@ant-design/icons';
-import { Alert, Input } from 'antd';
 import React, { FC } from 'react';
-import { ProfileDetails } from '~src/auth/types';
-import { socialLinks } from './Details';
+import { Alert } from 'antd';
+import { ESocialType, ProfileDetails } from '~src/auth/types';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
 import styled from 'styled-components';
+import { LinkOutlined } from '@ant-design/icons';
+import Input from '~src/basic-components/Input';
 
 interface ISocialsProps {
 	loading: boolean;
@@ -18,48 +18,57 @@ interface ISocialsProps {
 	theme?: string;
 }
 
+export const socialLinks = [ESocialType.EMAIL, ESocialType.TWITTER, ESocialType.TELEGRAM, ESocialType.RIOT, ESocialType.DISCORD];
+
 const getPlaceholder = (socialLink: string) => {
 	switch (socialLink) {
 		case 'Email':
-			return 'Enter Email';
+			return 'Enter your email address';
 		case 'Riot':
-			return 'ex: https://riot.im/app/#/user/@handle:matrix.org';
+			return 'eg: https://riot.im/app/#/user/@handle:matrix.org';
 		case 'Twitter':
-			return 'ex: https://twitter.com/handle';
+			return 'eg: https://twitter.com/handle';
 		case 'Telegram':
-			return 'ex: https://t.me/handle';
+			return 'eg: https://t.me/handle';
 		case 'Discord':
-			return 'ex: https://discordapp.com/users/handle';
+			return 'eg: https://discordapp.com/users/handle';
 		default:
 			return `Enter ${socialLink} URL`;
 	}
 };
 
 const Socials: FC<ISocialsProps> = (props) => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { loading, profile, setProfile, errorCheck, theme } = props;
+	const { loading, profile, setProfile, errorCheck } = props;
 
 	return (
-		<div className='flex max-h-[552px] flex-col gap-y-4'>
+		<div className='flex max-h-[552px] flex-col gap-6'>
 			{socialLinks.map((socialLink) => {
 				const strLink = socialLink.toString();
 				return (
-					<article key={strLink}>
+					<article
+						key={strLink}
+						className='flex gap-2'
+					>
 						<label
-							className='flex cursor-pointer items-center gap-x-[6px] text-base font-normal text-[#485F7D] dark:text-blue-dark-medium'
+							className='mb-0.5 flex w-[160px] cursor-pointer items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'
 							htmlFor={strLink}
 						>
-							<SocialIcon type={socialLink} />
+							<div className='flex h-10 w-10 items-center justify-center rounded-full bg-[#eceff3] text-textGreyColor dark:bg-[#dee3ea]'>
+								<SocialIcon
+									className='text-xl'
+									type={socialLink}
+								/>
+							</div>
 							<span>{strLink}</span>
 						</label>
 						<Input
-							className='h-10 rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] text-[#1D2632] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							className='h-10 rounded-[4px] border-[1px] border-solid border-[rgba(72,95,125,0.2)] text-sm text-bodyBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							size='large'
 							type='url'
 							classNames={{
 								input: 'dark:bg-transparent dark:placeholder:text-borderColorDark dark:text-white'
 							}}
-							prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
+							prefix={strLink === 'Email' ? '' : <LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
 							placeholder={getPlaceholder(strLink)}
 							onChange={(e) => {
 								const value = e.target.value.trim();
@@ -112,5 +121,12 @@ export default styled(Socials)`
 	.ant-input .ant-input-lg {
 		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
 		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1D2632')} !important;
+	}
+	input::placeholder {
+		font-weight: 300 !important;
+		font-size: 14px !important;
+		line-height: 21px !important;
+		letter-spacing: 0.0025em !important;
+		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
 	}
 `;

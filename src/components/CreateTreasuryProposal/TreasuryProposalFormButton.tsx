@@ -6,7 +6,7 @@ import { CheckCircleFilled, DownOutlined, LoadingOutlined, UpOutlined, WarningFi
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import Identicon from '@polkadot/react-identicon';
-import { Divider, Form, Input, Modal, Spin } from 'antd';
+import { Divider, Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 //TODO: import { useAddPolkassemblyProposalMutation } from 'src/generated/graphql';
@@ -32,6 +32,9 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import OpenGovTreasuryProposal from '../OpenGovTreasuryProposal';
+import { treasuryProposalCreationAllowedNetwork } from '../AiBot/AiBot';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -318,6 +321,20 @@ const TreasuryProposalFormButton = ({
 		}
 	};
 
+	const createProposalBtn = (
+		<CustomButton
+			className='delegation-buttons'
+			variant='primary'
+			width={175}
+			height={40}
+		>
+			<OpenGovTreasuryProposal
+				theme={theme}
+				isUsedInTreasuryTrack={true}
+			/>
+		</CustomButton>
+	);
+
 	const triggerBtn = (
 		<button
 			disabled={!id}
@@ -349,7 +366,7 @@ const TreasuryProposalFormButton = ({
 		</Spin>
 	) : (
 		<>
-			{!id ? triggerBtnLoginDisabled : triggerBtn}
+			{!id ? triggerBtnLoginDisabled : treasuryProposalCreationAllowedNetwork.includes(network) ? createProposalBtn : triggerBtn}
 
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark p-5 before:h-0 md:p-10'
@@ -405,7 +422,7 @@ const TreasuryProposalFormButton = ({
 												value={submitWithAccount}
 												className={`${
 													submitWithAccount === '' ? 'px-[0.5em]' : 'pl-10'
-												} dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
+												}  dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]`}
 												onChange={(e) => setSubmitWithAccount(e.target.value)}
 												placeholder='Account Address'
 											/>

@@ -645,7 +645,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='replies-buttons-container flex flex-wrap items-center gap-3'>
+						<div className='replies-buttons-container flex flex-wrap items-center gap-1'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}

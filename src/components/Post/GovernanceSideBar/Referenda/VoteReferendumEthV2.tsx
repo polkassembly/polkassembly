@@ -546,6 +546,20 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									}
 								/>
 							)}
+							{availableWallets[Wallet.SUBWALLET] && (
+								<WalletButton
+									className={`${wallet === Wallet.SUBWALLET ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+									disabled={!apiReady}
+									onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
+									name='Subwallet'
+									icon={
+										<WalletIcon
+											which={Wallet.SUBWALLET}
+											className='h-6 w-6'
+										/>
+									}
+								/>
+							)}
 						</div>
 						{!isTalismanEthereum && (
 							<Alert

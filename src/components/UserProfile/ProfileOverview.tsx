@@ -53,7 +53,6 @@ const ProfileOverview = ({
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [showFullBio, setShowFullBio] = useState<boolean>(false);
 	const { bio, badges } = profileDetails;
-	console.log(bio);
 	return (
 		<div className={classNames(className, 'mt-6')}>
 			{TippingUnavailableNetworks.includes(network) && !delegationSupportedNetworks.includes(network) ? (

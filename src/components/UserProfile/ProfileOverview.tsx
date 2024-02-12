@@ -53,13 +53,13 @@ const ProfileOverview = ({
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [showFullBio, setShowFullBio] = useState<boolean>(false);
 	const { bio, badges } = profileDetails;
-
+	console.log(bio);
 	return (
 		<div className={classNames(className, 'mt-6')}>
 			{TippingUnavailableNetworks.includes(network) && !delegationSupportedNetworks.includes(network) ? (
 				<div className='flex w-full gap-6'>
 					<div className='flex w-[60%] flex-col gap-6 max-lg:w-full'>
-						{(!!bio?.length || username === userProfile.username) && (
+						{!!bio?.length && (
 							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
 								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 									<Image
@@ -72,10 +72,21 @@ const ProfileOverview = ({
 								</span>
 								<span
 									className={classNames('text-sm font-normal', !bio?.length && 'cursor-pointer ')}
-									onClick={() => setOpenEditModal(true)}
+									onClick={() => {
+										if (username !== userProfile.username) return;
+										setOpenEditModal(true);
+									}}
 								>
-									{bio?.length ? 'hjghvghvhhv ghfv tgfcvrtdxccccccccccccccccccccccccccccccccccccccccccc' : username === userProfile.username ? 'Click here to add bio' : ''}
+									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
 								</span>
+								{(bio?.length || 0) > 300 && (
+									<span
+										className='-mt-4 cursor-pointer text-xs text-pink_primary'
+										onClick={() => setShowFullBio(!showFullBio)}
+									>
+										{showFullBio ? 'Show less' : 'See More'}
+									</span>
+								)}
 								{!!badges?.length && (
 									<span>
 										{badges.map((badge) => (
@@ -135,7 +146,10 @@ const ProfileOverview = ({
 								</span>
 								<span
 									className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}
-									onClick={() => setOpenEditModal(true)}
+									onClick={() => {
+										if (username !== userProfile?.username) return;
+										setOpenEditModal(true);
+									}}
 								>
 									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
 								</span>

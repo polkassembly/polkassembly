@@ -16,12 +16,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import _ from 'lodash';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-<<<<<<< HEAD:src/components/Forms/CancelReferendaForm.tsx
-=======
 import { setSigner } from '~src/util/create-referenda/setSigner';
 import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import { EKillOrCancel } from './enum';
->>>>>>> a786d582f8abf710ca792231f09b6509f92e6a48:src/components/Forms/CancelOrKillReferendaForm.tsx
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ZERO_BN = new BN(0);
@@ -236,19 +233,6 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 							/>
 						</div>
 					</Form>
-<<<<<<< HEAD:src/components/Forms/CancelReferendaForm.tsx
-					<div className=' mt-4 flex items-center justify-end'>
-						<CustomButton
-							variant='primary'
-							htmlType='submit'
-							buttonsize='sm'
-							onClick={handleSubmit}
-							className='w-min'
-							disabled={availableBalance.lte(submissionDeposite)}
-						>
-							Cancel Referendum
-						</CustomButton>
-=======
 					<div className=' mt-4 flex items-center justify-between'>
 						<div className='flex items-center justify-end'>
 							<CustomButton
@@ -261,7 +245,6 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
 							</CustomButton>
 						</div>
->>>>>>> a786d582f8abf710ca792231f09b6509f92e6a48:src/components/Forms/CancelOrKillReferendaForm.tsx
 					</div>
 				</>
 			)}

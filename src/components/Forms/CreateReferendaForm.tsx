@@ -593,20 +593,20 @@ export default function CreateReferendaForm() {
 					</Radio.Group>
 				</div>
 			)}
-			{methodCall && (
-				<div className=' mt-4 flex items-center justify-between'>
-					<div className='flex items-center justify-end'>
-						<CustomButton
-							variant='primary'
-							htmlType='submit'
-							buttonsize='sm'
-							onClick={handleSubmit}
-						>
-							Create Referendum
-						</CustomButton>
-					</div>
+			<div className=' mt-4 flex items-center justify-between'>
+				<div className='flex items-center justify-end'>
+					<CustomButton
+						variant='primary'
+						htmlType='submit'
+						buttonsize='sm'
+						onClick={handleSubmit}
+						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
+						disabled={!methodCall || !selectedTrack}
+					>
+						Create Referendum
+					</CustomButton>
 				</div>
-			)}
+			</div>
 		</section>
 	);
 }

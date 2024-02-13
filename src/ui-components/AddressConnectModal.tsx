@@ -41,7 +41,6 @@ import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
 
-
 interface Props {
 	className?: string;
 	open: boolean;

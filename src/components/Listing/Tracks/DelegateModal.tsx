@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Checkbox, Form, Modal, Slider, Spin } from 'antd';
+import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -37,6 +37,7 @@ import { delegationSupportedNetworks } from '~src/components/DelegationDashboard
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
 import blockToDays from '~src/util/blockToDays';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -376,7 +377,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+										className='mb-4 h-10 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
@@ -422,7 +423,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+										className='mb mt-2 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									/>
@@ -562,7 +563,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mb-4 rounded-[4px]'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

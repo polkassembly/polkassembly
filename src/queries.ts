@@ -1345,10 +1345,10 @@ export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDele
   }
 }`;
 
-export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `
-query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
-  votingDelegationsConnection(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
-    totalCount
+export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
+  votingDelegations(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
+    to 
+    from
   }
   convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
     totalCount

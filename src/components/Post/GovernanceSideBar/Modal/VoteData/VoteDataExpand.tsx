@@ -68,7 +68,7 @@ const VoteDataExpand = () => {
 			<Divider />
 			<div className='flex justify-between px-4 pb-3 dark:bg-section-dark-overlay'>
 				<div className=''>
-					<span className='text-sm font-medium text-blue-light-medium'>Voter</span>
+					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>Voter</span>
 					<div>
 						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 							<a
@@ -101,7 +101,7 @@ const VoteDataExpand = () => {
 					</div>
 				</div>
 				<div className='flex flex-col'>
-					<span className='text-sm font-medium text-blue-light-medium'>Voting Power</span>
+					<span className='text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>Voting Power</span>
 					<span className='text-sm font-normal tracking-tighter'>
 						{parseBalance(
 							voteData && voteData.decision !== 'abstain'
@@ -138,13 +138,13 @@ const VoteDataExpand = () => {
 						<div className='flex flex-col gap-1 border-x-0 border-t-0 border-dashed border-[#D2D8E0] px-1 pb-2 dark:border-[#3B444F] dark:border-separatorDark'>
 							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 									<VoterIcon /> Voting Power
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.selfVotingPower || 0).toString(), 2, true, network)}</span>
 							</div>
 							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 									<ConvictionIcon /> Conviction
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
@@ -152,7 +152,7 @@ const VoteDataExpand = () => {
 								</span>
 							</div>
 							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 									<CapitalIcon /> Capital
 								</span>
 								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
@@ -167,19 +167,19 @@ const VoteDataExpand = () => {
 								<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
 									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 									<div className='mt-1.5 flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 											<VoterIcon /> Voting Power
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
 									</div>
 									<div className='flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 											<EmailIcon /> Delegators
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
 									</div>
 									<div className='flex justify-between'>
-										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
 											<CapitalIcon /> Capital
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>

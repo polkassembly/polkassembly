@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Divider, Form, Modal, Spin } from 'antd';
+import { Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -39,6 +39,8 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
+import Alert from '~src/basic-components/Alert';
+
 
 interface Props {
 	className?: string;
@@ -502,7 +504,7 @@ const AddressConnectModal = ({
 								</ul>
 							}
 							showIcon
-							className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mt-4'
 							type='info'
 						/>
 					)}
@@ -518,7 +520,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
 						/>
 					)}
 					<Form
@@ -563,7 +565,7 @@ const AddressConnectModal = ({
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 							<Alert
 								type='info'
-								className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mt-4 rounded-[4px]'
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
@@ -572,7 +574,7 @@ const AddressConnectModal = ({
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
-						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='mt-6 rounded-[4px]'
 						type='info'
 						showIcon
 						message={

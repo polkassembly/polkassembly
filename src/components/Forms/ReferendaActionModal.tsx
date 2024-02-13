@@ -14,17 +14,13 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import styled from 'styled-components';
+import { EKillOrCancel } from './enum';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
 });
 
-const CancelReferendaForm = dynamic(() => import('../Forms/CancelReferendaForm'), {
-	loading: () => <Loader />,
-	ssr: false
-});
-
-const KillReferendaForm = dynamic(() => import('../Forms/KillReferendaForm'), {
+const CancelOrKillReferendaForm = dynamic(() => import('./CancelOrKillReferendaForm'), {
 	loading: () => <Loader />,
 	ssr: false
 });
@@ -213,8 +209,8 @@ const ReferendaActionModal = ({
 					{steps?.step === 1 && (
 						<>
 							{referendaModal === 1 && <CreateReferendaForm />}
-							{referendaModal === 2 && <CancelReferendaForm />}
-							{referendaModal === 3 && <KillReferendaForm />}
+							{referendaModal === 2 && <CancelOrKillReferendaForm type={EKillOrCancel.CANCEL} />}
+							{referendaModal === 3 && <CancelOrKillReferendaForm type={EKillOrCancel.KILL} />}
 						</>
 					)}
 				</div>

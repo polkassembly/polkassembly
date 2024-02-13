@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -36,6 +36,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -436,7 +437,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										type='error'
 										message={<span className='dark:text-blue-dark-high'>{balanceErr}</span>}
 										showIcon
-										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+										className='mb-4 h-10 rounded-[4px]'
 									/>
 								)}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -451,7 +452,6 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -465,13 +465,13 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
+										isVoting
 									/>
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 

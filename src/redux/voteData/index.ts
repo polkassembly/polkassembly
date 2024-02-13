@@ -20,9 +20,6 @@ export const voteDataStore = createSlice({
 	initialState,
 	name: 'voteData',
 	reducers: {
-		// setActive: (state, action: PayloadAction<boolean | undefined>) => {
-		// state.active = action.payload;
-		// },
 		setClearInitialState: (state) => {
 			state.voteType = null;
 			state.voteData = null;
@@ -31,7 +28,6 @@ export const voteDataStore = createSlice({
 			state.isReferendum2 = false;
 			state.delegatorLoading = initialState.delegatorLoading;
 			state.delegatedData = null;
-			// state.active = initialState.active;
 		},
 		setDelegatorLoadingFalse: (state) => {
 			state.delegatorLoading = false;
@@ -71,7 +67,6 @@ export const voteDataStore = createSlice({
 });
 
 export const {
-	// setActive,
 	setIsVoteDataModalClose,
 	setIsVoteDataModalOpen,
 	setClearInitialState,

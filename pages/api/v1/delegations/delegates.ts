@@ -55,9 +55,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			return { ...item, dataSource: 'parity' };
 		})
 	];
-
 	const combinedDelegatesUniqueData: any = {};
-
 	combinedDelegates.map((item) => {
 		const addr = getEncodedAddress(item?.address, network) || item?.address;
 		if (combinedDelegatesUniqueData[addr] === undefined) {
@@ -130,42 +128,54 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const result: IDelegate[] = [];
 
 	for (const [index, delegateData] of subsquidResults.entries()) {
-		if (!delegateData || delegateData.status !== 'fulfilled') continue;
-		const delegationCount = Number(delegateData.value.data?.votingDelegationsConnection?.totalCount || 0);
-		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
+		const receivedDelgations: any = {};
 
+		if (!delegateData || delegateData.status !== 'fulfilled') continue;
+
+		delegateData.value.data?.votingDelegations?.map((delegation: any) => {
+			if (receivedDelgations[delegation?.from] === undefined) {
+				receivedDelgations[delegation?.from] = 1;
+			}
+		});
+
+		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
 		const address = Object.keys(subsquidFetches)[index];
 		if (!address) continue;
 		let bio = '';
+		let username = '';
 		const dataSource = [];
 		if (combinedDelegatesUniqueData[address]?.nova) {
 			if (combinedDelegatesUniqueData[address]?.nova?.longDescription?.length) {
 				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
+				username = combinedDelegatesUniqueData[address]?.nova?.name;
 			}
 			dataSource.push('nova');
 		}
 		if (combinedDelegatesUniqueData[address]?.parity) {
 			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {
 				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto;
+				username = combinedDelegatesUniqueData[address]?.parity?.name;
 			}
 			dataSource.push('parity');
 		}
 		if (combinedDelegatesUniqueData[address]?.polkassembly) {
 			if (combinedDelegatesUniqueData[address]?.polkassembly?.bio?.length) {
 				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio;
+				username = combinedDelegatesUniqueData[address]?.polkassembly?.name;
 			}
 			dataSource.push('polkassembly');
 		}
-
-		const newDelegate: IDelegate = {
-			active_delegation_count: delegationCount,
-			address,
-			bio,
-			dataSource,
-			name: combinedDelegates[index].name,
-			voted_proposals_count: votesCount
-		};
-		result.push(newDelegate);
+		if (combinedDelegatesUniqueData[address]) {
+			const newDelegate: IDelegate = {
+				active_delegation_count: Object.keys(receivedDelgations)?.length || 0,
+				address,
+				bio,
+				dataSource,
+				name: username,
+				voted_proposals_count: votesCount
+			};
+			result.push(newDelegate);
+		}
 	}
 	return result;
 };

@@ -5,13 +5,24 @@
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
-import { MenuProps } from 'antd';
+import { MenuProps, Skeleton } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
+import dynamic from 'next/dynamic';
+
+const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
+	loading: () => (
+		<Skeleton.Button
+			className='w-[100%]'
+			active
+		/>
+	),
+	ssr: false
+});
 
 const ProposalActionButtons = () => {
 	const { resolvedTheme: theme } = useTheme();
@@ -45,7 +56,26 @@ const ProposalActionButtons = () => {
 			key: '1',
 			label: (
 				<div
-					className='mt-2 flex items-center space-x-2'
+					className='mb-2 flex items-center space-x-2'
+					onClick={() => handleClick(1)}
+				>
+					<ImageIcon
+						src='/assets/icons/create-referedum-icon.svg'
+						alt='create referendum icon'
+						className=''
+					/>
+					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
+						<span className='text-sm font-medium '>Create Referendum</span>
+						<span className='text-xs font-normal '>Create a referendum across any track</span>
+					</div>
+				</div>
+			)
+		},
+		{
+			key: '2',
+			label: (
+				<div
+					className='mb-2 flex items-center space-x-2'
 					onClick={() => handleClick(2)}
 				>
 					<ImageIcon
@@ -55,13 +85,13 @@ const ProposalActionButtons = () => {
 					/>
 					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
 						<span className='text-sm font-medium '>Cancel Referendum</span>
-						<span className='text-xs font-normal '>Cancel the referendum and return the deposit</span>
+						<span className='text-xs font-normal '>Cancel a referendum and return the deposit</span>
 					</div>
 				</div>
 			)
 		},
 		{
-			key: '2',
+			key: '3',
 			label: (
 				<div
 					className='mb-2 flex items-center space-x-2'
@@ -74,7 +104,7 @@ const ProposalActionButtons = () => {
 					/>
 					<div className='flex flex-col text-blue-light-medium dark:text-blue-dark-high'>
 						<span className='text-sm font-medium '>Kill Referendum</span>
-						<span className='text-xs font-normal '>Cancel the referendum and slash the deposit</span>
+						<span className='text-xs font-normal '>Cancel a referendum and slash the deposit</span>
 					</div>
 				</div>
 			)
@@ -88,18 +118,12 @@ const ProposalActionButtons = () => {
 					width={226}
 					height={32}
 					variant='primary'
-					text={
-						<div className='flex items-center space-x-1'>
-							<ImageIcon
-								src='/assets/icons/create-treasury-proposal-icon.svg'
-								alt='proposerIcon'
-								className='-mt-[2px]'
-							/>
-							<span>Create Treasury Proposal</span>
-						</div>
-					}
-					onClick={() => handleClick(1)}
-				/>
+				>
+					<OpenGovTreasuryProposal
+						theme={theme}
+						isUsedInReferedumComponent={true}
+					/>
+				</CustomButton>
 				<div className='-mt-1'>
 					<Dropdown
 						theme={theme}

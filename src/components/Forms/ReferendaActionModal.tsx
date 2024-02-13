@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import Loader from '~src/ui-components/Loader';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -52,6 +51,7 @@ interface Props {
 	openLoginPrompt: boolean;
 	setOpenLoginPrompt: (pre: boolean) => void;
 	setProposerAddress: (pre: string) => void;
+	theme?: string;
 }
 
 const ReferendaActionModal = ({
@@ -63,9 +63,9 @@ const ReferendaActionModal = ({
 	setOpenModal,
 	openLoginPrompt,
 	setOpenLoginPrompt,
-	setProposerAddress
+	setProposerAddress,
+	theme
 }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });

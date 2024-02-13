@@ -602,7 +602,7 @@ export default function CreateReferendaForm() {
 							buttonsize='sm'
 							onClick={handleSubmit}
 						>
-							Create a Referenda
+							Create Referendum
 						</CustomButton>
 					</div>
 				</div>

@@ -33,6 +33,7 @@ import {
 	setShowMultisigInfoCard
 } from '~src/redux/treasuryProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -51,6 +52,7 @@ interface Props {
 	className?: string;
 	theme?: string;
 	isUsedInTreasuryTrack?: boolean;
+	isUsedInReferedumComponent?: boolean;
 }
 
 export interface ISteps {
@@ -140,7 +142,7 @@ export const INIT_BENEFICIARIES = [
 	}
 ];
 
-const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) => {
+const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
@@ -302,25 +304,39 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack }: Props) =>
 
 	return (
 		<div className={className}>
-			<div
-				className={`${
-					isUsedInTreasuryTrack
-						? 'flex'
-						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
-				}`}
-				onClick={handleClick}
-			>
-				{isUsedInTreasuryTrack ? (
-					<CreateProposalWhiteIcon className='mr-2' />
-				) : (
-					<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
-				)}
-				{isUsedInTreasuryTrack ? (
-					<p className='m-0 p-0'>Create Proposal</p>
-				) : (
-					<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
-				)}
-			</div>
+			{isUsedInReferedumComponent ? (
+				<div
+					className='flex items-center space-x-1'
+					onClick={handleClick}
+				>
+					<ImageIcon
+						src='/assets/icons/create-treasury-proposal-icon.svg'
+						alt='Create Treasury Proposal icon'
+						className='-mt-[2px]'
+					/>
+					<span className='text-sm font-medium text-white'>Create Treasury Proposal</span>
+				</div>
+			) : (
+				<div
+					className={`${
+						isUsedInTreasuryTrack
+							? 'flex'
+							: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center rounded-[8px] align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					}`}
+					onClick={handleClick}
+				>
+					{isUsedInTreasuryTrack ? (
+						<CreateProposalWhiteIcon className='mr-2' />
+					) : (
+						<CreatePropoosalIcon className={`${isUsedInTreasuryTrack ? 'scale-200' : 'ml-[-31px] cursor-pointer'}`} />
+					)}
+					{isUsedInTreasuryTrack ? (
+						<p className='m-0 p-0'>Create Proposal</p>
+					) : (
+						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] dark:text-blue-dark-medium'>Create Treasury Proposal</p>
+					)}
+				</div>
+			)}
 			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}

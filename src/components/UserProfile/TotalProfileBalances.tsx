@@ -46,20 +46,25 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 	}, [network]);
 
 	useEffect(() => {
+		setTotalLockedBalance(ZERO_BN);
+		setTransferableBalance(ZERO_BN);
 		(async () => {
 			const promises = selectedAddresses.map(async (address) => {
 				const balances = await userProfileBalances({ address, api, apiReady, network });
 				return { locked: balances.lockedBalance, transferable: balances.transferableBalance };
 			});
+			let locked = ZERO_BN;
+			let transferable = ZERO_BN;
 			const resolves = await Promise.allSettled(promises);
-			setTotalLockedBalance(ZERO_BN);
-			setTransferableBalance(ZERO_BN);
+
 			resolves.map((item) => {
 				if (item.status === 'fulfilled') {
-					setTotalLockedBalance(item?.value?.locked.add(totalLockedBalance));
-					setTransferableBalance(item?.value?.transferable.add(transferableBalance));
+					locked = item?.value?.locked.add(locked);
+					transferable = item?.value?.transferable.add(transferable);
 				}
 			});
+			setTotalLockedBalance(locked);
+			setTransferableBalance(transferable);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, selectedAddresses, userProfile]);

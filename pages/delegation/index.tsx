@@ -7,7 +7,8 @@ import React, { useEffect } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import DelegationDashboard from '~src/components/DelegationDashboard';
 // import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
-import CopyContentIcon from '~assets/icons/content-copy.svg';
+import CopyContentIcon from '~assets/icons/content_copy_small.svg';
+import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
 import copyToClipboard from 'src/util/copyToClipboard';
 import { message } from 'antd';
 import SEOHead from '~src/global/SEOHead';
@@ -19,6 +20,7 @@ import { delegationSupportedNetworks } from '~src/components/DelegationDashboard
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getSubdomain } from '~src/util/getSubdomain';
+import { useTheme } from 'next-themes';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -45,6 +47,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 };
 
 const Delegation = (props: { network: string }) => {
+	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { asPath } = useRouter();
 
@@ -97,7 +100,7 @@ const Delegation = (props: { network: string }) => {
 							handleCopylink();
 						}}
 					>
-						Copy Page Link <CopyContentIcon className='ml-1' />
+						Copy Page Link <span className='ml-1'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
 					</button>
 				</div>
 			</div>

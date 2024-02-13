@@ -1345,10 +1345,10 @@ export const ACTIVE_DELEGATIONS_TO_OR_FROM_ADDRESS_FOR_TRACK = `query ActiveDele
   }
 }`;
 
-export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `
-query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
-  votingDelegationsConnection(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
-    totalCount
+export const RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS = `query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
+  votingDelegations(orderBy: createdAt_ASC, where: {to_eq: $address, endedAtBlock_isNull: true}) {
+    to 
+    from
   }
   convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
     totalCount
@@ -2275,6 +2275,18 @@ export const TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES = `query MyQuery($addr
 },
   totalProposals: proposalsConnection(orderBy: createdAtBlock_DESC, where: {proposer_in: $addresses}) {
     totalCount
+  }
+}
+`;
+
+export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:DelegationType!=OpenGov){
+ totalDelegatedVotes: convictionDelegatedVotesConnection(orderBy: id_ASC, where: {removedAtBlock_isNull: true}) {
+    totalCount
+  }
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq}) {
+    from
+    to
+    balance
   }
 }
 `;

@@ -5,13 +5,13 @@
 import { Input as AntdInput } from 'antd';
 import { TextAreaProps } from 'antd/es/input/TextArea';
 import { useTheme } from 'next-themes';
-import { FC, PropsWithChildren } from 'react';
+import { FC } from 'react';
 
 interface Props extends TextAreaProps {
 	className?: string;
 }
 
-const InputTextarea: FC<PropsWithChildren<Props>> = (props) => {
+const InputTextarea: FC<Props> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { className } = props;
 	return (

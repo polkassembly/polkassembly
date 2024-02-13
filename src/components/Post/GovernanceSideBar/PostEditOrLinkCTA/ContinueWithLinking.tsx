@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Form, Input, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
 import React, { FC, useState } from 'react';
@@ -14,6 +14,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import LinkPostPreview from './LinkPostPreview';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

@@ -331,7 +331,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			web3 = new Web3(walletConnectProvider as any);
 			chainId = walletConnectProvider.wc.chainId;
 		} else {
-			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
+			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : wallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).ethereum);
 			chainId = await web3.eth.net.getId();
 		}
 
@@ -360,7 +360,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		} else if (vote === EVoteDecisionType.ABSTAIN) {
 			tx = voteContract.methods.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
 		}
-
 		tx.send({
 			from: address,
 			to: contractAddress

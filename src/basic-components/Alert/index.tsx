@@ -9,7 +9,7 @@ interface Props extends AlertProps {
 	className?: string;
 }
 
-const Alert: FC<Props> = ({ type, showIcon = false, className, ...props }) => {
+const Alert: FC<Props> = ({ type = 'info', showIcon = false, className, ...props }) => {
 	const typeClasses =
 		type === 'info'
 			? 'dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
@@ -29,4 +29,5 @@ const Alert: FC<Props> = ({ type, showIcon = false, className, ...props }) => {
 		/>
 	);
 };
+
 export default Alert;

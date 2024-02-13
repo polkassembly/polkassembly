@@ -104,6 +104,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 							className='text-sm font-normal text-bodyBlue '
 							showIcon
 							message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
+							type='info'
 						/>
 					)}
 					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>

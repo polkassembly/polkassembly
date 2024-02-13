@@ -262,66 +262,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const dispatch = useDispatch();
-	const getReferendaDropdown = (): any => {
-		const referendaItems: ItemType[] = [
-			{
-				key: 'create referendum',
-				label: (
-					<span
-						onClick={() => {
-							setReferendaModal(1), setOpenAddressLinkedModal(true), setSidedrawer(false);
-						}}
-					>
-						Create Referendum
-					</span>
-				)
-			},
-			{
-				key: 'cancel referendum',
-				label: (
-					<span
-						onClick={() => {
-							setReferendaModal(2), setOpenAddressLinkedModal(true), setSidedrawer(false);
-						}}
-					>
-						Cancel Referendum
-					</span>
-				)
-			},
-			{
-				key: 'kill referendum',
-				label: (
-					<span
-						onClick={() => {
-							setReferendaModal(3), setOpenAddressLinkedModal(true), setSidedrawer(false);
-						}}
-					>
-						Kill Referendum
-					</span>
-				)
-			}
-		];
-		const RefMenu = () => {
-			return (
-				<Dropdown
-					theme={theme}
-					menu={{ items: referendaItems }}
-					trigger={['hover']}
-					className='profile-dropdown cursor-pointer'
-					overlayClassName='z-[1056]'
-				>
-					<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
-						Select Referenda
-						<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
-					</div>
-				</Dropdown>
-			);
-		};
-		return { label: <RefMenu />, key: '', icon: '', disabled: true };
-	};
 
 	// const [notificationVisible, setNotificationVisible] = useState(true);
 	useEffect(() => {
@@ -825,7 +766,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
-		if (loginAddress) gov2Items = [gov2Items.shift(), getReferendaDropdown(), ...gov2Items];
+		// if (loginAddress) gov2Items = [gov2Items.shift(), getReferendaDropdown(), ...gov2Items];
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 

@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { Alert, Checkbox, Divider, Form, InputNumber, Modal } from 'antd';
+import { Checkbox, Divider, Form, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from 'src/context';
@@ -29,6 +29,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	open?: boolean;
@@ -314,7 +315,6 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 						<Alert
 							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension</span>}
 							type='error'
-							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					)}
 				</div>

@@ -3,8 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -40,7 +41,7 @@ const Loader = ({ className, timeout, text, timeoutText = 'Process timeout', siz
 					/>
 				) : (
 					<Alert
-						className='w-2/3 text-center dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+						className='w-2/3 text-center'
 						type='error'
 						message={<span className='dark:text-blue-dark-high'>{timeoutText}</span>}
 					/>

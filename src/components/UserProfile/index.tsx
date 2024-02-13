@@ -198,6 +198,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				profileDetails={profileDetails}
 				statsArr={statsArr}
 				setStatsArr={setStatsArr}
+				onchainIdentity={onChainIdentity}
 			/>
 		</div>
 	);

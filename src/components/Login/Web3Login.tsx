@@ -6,7 +6,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -42,6 +42,7 @@ import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -554,7 +555,6 @@ const Web3Login: FC<Props> = ({
 													description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 													type='info'
 													showIcon
-													className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 												/>
 											</div>
 										)}
@@ -595,7 +595,7 @@ const Web3Login: FC<Props> = ({
 													{isSignUp && (
 														<Alert
 															showIcon
-															className='mb-2 px-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+															className='mb-2 px-4 '
 															type='info'
 															message={
 																<span className='dark:text-blue-dark-high'>

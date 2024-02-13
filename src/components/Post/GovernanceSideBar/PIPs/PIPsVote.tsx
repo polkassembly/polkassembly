@@ -465,6 +465,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 										className={`${poppins.variable} ${poppins.className} text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										withoutInfo={true}
+										isVoting
 									/>
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
 									<Alert

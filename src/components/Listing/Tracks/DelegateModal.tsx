@@ -426,6 +426,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										className='mb mt-2 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+										type='info'
 									/>
 								)}
 

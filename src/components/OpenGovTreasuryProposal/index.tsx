@@ -79,7 +79,7 @@ export interface IPreimage {
 	notePreimageTx: SubmittableExtrinsic<'promise'> | null;
 	preimageHash: string;
 	preimageLength: number;
-	storageFee: BN;
+	storageFee?: BN;
 }
 const ZERO_BN = new BN(0);
 

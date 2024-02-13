@@ -14,9 +14,6 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
@@ -31,6 +28,9 @@ import { EEnactment, IEnactment } from '../OpenGovTreasuryProposal';
 import { IAdvancedDetails } from '../OpenGovTreasuryProposal/CreatePreimage';
 import { useCurrentBlock } from '~src/hooks';
 import DownArrow from '~assets/icons/down-icon.svg';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { setSigner } from '~src/util/create-referenda/setSigner';
+import { createPreImage } from '~src/util/create-referenda/createPreImage';
 
 interface ParamField {
 	name: string;
@@ -104,7 +104,7 @@ export default function CreateReferendaForm() {
 	const [formState, setFormState] = useState(initFormState);
 	const { palletRpc, callable, inputParams } = formState;
 	const [transformedParams, setTransformedParams] = useState<any>();
-	const [methodCall, setMethodCall] = useState<string>('');
+	const [methodCall, setMethodCall] = useState<SubmittableExtrinsic<'promise'> | null>();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const [selectedTrack, setSelectedTrack] = useState('');
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
@@ -122,55 +122,20 @@ export default function CreateReferendaForm() {
 		if (!loginWallet) {
 			return;
 		}
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-
-		if (!wallet || !api || !apiReady) {
-			console.log('wallet not found');
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet
-						.enable(APPNAME)
-						.then((value: any) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error: any) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-
-		if (!injected) {
-			console.log('injected not found');
-			return;
-		}
-
-		api.setSigner(injected.signer);
+		await setSigner(api, loginWallet);
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
+			const proposalPreImage = createPreImage(api, methodCall);
+			const preImageTx = proposalPreImage.notePreimageTx;
 			const origin: any = { Origins: selectedTrack };
-			console.log(methodCall);
-			const proposal = api.tx.referenda.submit(origin, { Lookup: { hash: methodCall, len: String(1) } }, { After: BN_HUNDRED });
+			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
+			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
 
 			const onSuccess = async () => {
 				queueNotification({
 					header: 'Success!',
-					message: `Propsal #${proposal.hash} successful.`,
+					message: `Propsal #${proposalTx.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
@@ -194,7 +159,7 @@ export default function CreateReferendaForm() {
 				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 				onFailed,
 				onSuccess,
-				tx: proposal
+				tx: mainTx
 			});
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -376,7 +341,7 @@ export default function CreateReferendaForm() {
 		try {
 			const extrinsic = transformedParams ? api.tx[palletRpc][callable](...transformedParams) : api.tx[palletRpc][callable]();
 
-			if (extrinsic) setMethodCall(extrinsic.method.toHex());
+			if (extrinsic) setMethodCall(extrinsic);
 		} catch (e) {
 			console.error('Error in ManualExtrinsic');
 			console.error(e);

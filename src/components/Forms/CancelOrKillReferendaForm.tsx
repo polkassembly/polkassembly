@@ -1,33 +1,33 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
+import { BN, BN_HUNDRED } from '@polkadot/util';
+import { Alert, Form, Input } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
 import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { NotificationStatus } from '~src/types';
-import { Alert, Form, Input } from 'antd';
-import _ from 'lodash';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { NotificationStatus, PostOrigin } from '~src/types';
+import Loader from '~src/ui-components/Loader';
 import Markdown from '~src/ui-components/Markdown';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
-import { BN } from '@polkadot/util';
-import Loader from '~src/ui-components/Loader';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import _ from 'lodash';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import { setSigner } from '~src/util/create-referenda/setSigner';
+import { createPreImage } from '~src/util/create-referenda/createPreImage';
+import { EKillOrCancel } from './enum';
+
 const ZERO_BN = new BN(0);
 
-export default function KillReferendaForm() {
+export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCancel }) {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginWallet } = useUserDetailsSelector();
-	const { address, availableBalance } = useInitialConnectAddress();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
+	const { address, availableBalance } = useInitialConnectAddress();
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [error, setError] = useState<string>('');
 	const [postData, setPostData] = useState<{ title: string; content: string; index: string }>({
@@ -37,58 +37,26 @@ export default function KillReferendaForm() {
 	});
 
 	const [form] = Form.useForm();
-	const formName = 'kill-ref-form';
+	const formName = 'kill-or-cancel-ref-form';
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
 			return;
 		}
-		if (!loginWallet) {
+		if (!loginWallet || postData.index) {
 			return;
 		}
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
-
-		if (!wallet || !api || !apiReady) {
-			console.log('wallet not found');
-			return;
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet
-						.enable(APPNAME)
-						.then((value: any) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error: any) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-		}
-
-		if (!injected) {
-			console.log('injected not found');
-			return;
-		}
-
-		api.setSigner(injected.signer);
+		await setSigner(api, loginWallet);
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
-			const proposal = api.tx.referenda.kill(+postData?.index);
+			const proposal = type === EKillOrCancel.CANCEL ? api.tx.referenda.cancel(Number(postData.index)) : api.tx.referenda.kill(Number(postData.index));
+			const proposalPreImage = createPreImage(api, proposal);
+			const preImageTx = proposalPreImage.notePreimageTx;
+			const origin: any = { Origins: PostOrigin.REFERENDUM_CANCELLER };
+			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
+			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
 
 			const onSuccess = async () => {
 				queueNotification({
@@ -117,7 +85,7 @@ export default function KillReferendaForm() {
 				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
 				onFailed,
 				onSuccess,
-				tx: proposal
+				tx: mainTx
 			});
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -263,11 +231,11 @@ export default function KillReferendaForm() {
 							<CustomButton
 								variant='primary'
 								htmlType='submit'
-								buttonsize='xs'
+								buttonsize='sm'
 								onClick={handleSubmit}
 								disabled={availableBalance.lte(submissionDeposite)}
 							>
-								Kill a Referenda
+								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
 							</CustomButton>
 						</div>
 					</div>

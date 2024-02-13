@@ -233,18 +233,16 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 							/>
 						</div>
 					</Form>
-					<div className=' mt-4 flex items-center justify-between'>
-						<div className='flex items-center justify-end'>
-							<CustomButton
-								variant='primary'
-								htmlType='submit'
-								buttonsize='sm'
-								onClick={handleSubmit}
-								disabled={availableBalance.lte(submissionDeposite)}
-							>
-								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
-							</CustomButton>
-						</div>
+					<div className='mt-6 flex items-center justify-end'>
+						<CustomButton
+							variant='primary'
+							htmlType='submit'
+							buttonsize='sm'
+							onClick={handleSubmit}
+							disabled={availableBalance.lte(submissionDeposite)}
+						>
+							{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
+						</CustomButton>
 					</div>
 				</>
 			)}

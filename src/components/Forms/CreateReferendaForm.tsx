@@ -385,7 +385,7 @@ export default function CreateReferendaForm() {
 				</div>
 			)}
 			<div className='flex items-center gap-x-2'>
-				<div className='w-full'>
+				<div className='mt-2 w-full'>
 					<label className='input-label dark:text-blue-dark-medium'>Pallet</label>
 					<Dropdown
 						theme={theme}
@@ -404,7 +404,7 @@ export default function CreateReferendaForm() {
 					</Dropdown>
 				</div>
 				{palletRpc && (
-					<div className='w-full'>
+					<div className='mt-2 w-full'>
 						<label className='input-label dark:text-blue-dark-medium'>Method</label>
 						<Dropdown
 							theme={theme}
@@ -593,19 +593,17 @@ export default function CreateReferendaForm() {
 					</Radio.Group>
 				</div>
 			)}
-			<div className=' mt-4 flex items-center justify-between'>
-				<div className='flex items-center justify-end'>
-					<CustomButton
-						variant='primary'
-						htmlType='submit'
-						buttonsize='sm'
-						onClick={handleSubmit}
-						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={!methodCall || !selectedTrack}
-					>
-						Create Referendum
-					</CustomButton>
-				</div>
+			<div className='mt-6 flex items-center justify-end'>
+				<CustomButton
+					variant='primary'
+					htmlType='submit'
+					buttonsize='sm'
+					onClick={handleSubmit}
+					className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
+					disabled={!methodCall || !selectedTrack}
+				>
+					Create Referendum
+				</CustomButton>
 			</div>
 		</section>
 	);

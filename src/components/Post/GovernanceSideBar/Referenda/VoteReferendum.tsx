@@ -56,7 +56,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
-import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
@@ -872,15 +871,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
-								<div className='mt-2'>
-									<Checkbox
-										value=''
-										className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-										onChange={() => setShowProxyDropdown(!showProxyDropdown)}
-									>
-										<p className='m-0 mt-1 p-0'>Vote with proxy</p>
-									</Checkbox>
-								</div>
+								{proxyAddresses && proxyAddresses?.length > 0 && (
+									<div className='mt-2'>
+										<Checkbox
+											value=''
+											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+										>
+											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+										</Checkbox>
+									</div>
+								)}
 								{showProxyDropdown && (
 									<ProxyAccountSelectionForm
 										proxyAddresses={proxyAddresses}
@@ -895,12 +896,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setSelectedProxyAddress={setSelectedProxyAddress}
 										selectedProxyAddress={selectedProxyAddress}
 									/>
-								)}
-								{!isProxyExistsOnWallet && (
-									<div className='mt-2 flex items-center gap-x-1'>
-										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy Address is not available on current wallet</p>
-									</div>
 								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
@@ -1129,6 +1124,9 @@ export default React.memo(styled(VoteReferendum)`
 		padding: 0px !important;
 	}
 	.dark .ant-segmented-group label {
+		background-color: transparent !important;
+	}
+	.ant-checkbox .ant-checkbox-inner {
 		background-color: transparent !important;
 	}
 `);

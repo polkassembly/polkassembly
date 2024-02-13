@@ -835,3 +835,8 @@ z-index: 1050 !important;
   border: 1px solid #d2d8e0 !important;
 }
 
+.walletIcon-container {
+  height: 20px !important;
+  width: 20px !important;
+}
+

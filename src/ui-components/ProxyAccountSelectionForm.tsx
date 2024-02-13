@@ -12,10 +12,12 @@ import Balance from '~src/components/Balance';
 import { Button, Modal } from 'antd';
 import Web2Login from '~src/components/Login/Web2Login';
 import { CloseIcon } from './CustomIcons';
+import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
+import { Wallet } from '~src/types';
 
 interface Props {
 	proxyAddresses: string[];
@@ -51,7 +53,8 @@ const ProxyAccountSelectionForm = ({
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const [changedWallet, setChangedWallet] = useState('');
+	const [changedWallet, setChangedWallet] = useState(wallet);
+	const [walletType, setWalletType] = useState<any>();
 	const { loginAddress } = useUserDetailsSelector();
 
 	const dropdownMenuItems: ItemType[] = proxyAddresses.map((proxyAddress) => {
@@ -71,17 +74,32 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
+		console.log(changedWallet);
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length) {
 			const exists = addressData?.accounts.filter((account) => account.address === selectedProxyAddress)?.length;
 			setIsProxyExistsOnWallet?.(!!exists);
+		}
+
+		if (changedWallet === 'subwallet-js') {
+			setWalletType(Wallet.SUBWALLET);
+		} else if (changedWallet === 'polkadot-js') {
+			setWalletType(Wallet.POLKADOT);
+		} else if (changedWallet === 'talisman') {
+			setWalletType(Wallet.TALISMAN);
+		} else if (changedWallet === 'polkagate') {
+			setWalletType(Wallet.POLKAGATE);
+		} else if (changedWallet === 'polywallet') {
+			setWalletType(Wallet.POLYWALLET);
+		} else if (changedWallet === 'polkasafe') {
+			setWalletType(Wallet.POLKASAFE);
 		}
 	};
 
 	useEffect(() => {
 		getAllAccounts();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedProxyAddress]);
+	}, [selectedProxyAddress, changedWallet]);
 
 	return (
 		<>
@@ -118,6 +136,10 @@ const ProxyAccountSelectionForm = ({
 								addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 								disableAddressClick
 								disableTooltip
+							/>
+							<WalletIcon
+								which={walletType}
+								className='walletIcon-container mr-2'
 							/>
 							<Button
 								className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
@@ -156,6 +178,7 @@ const ProxyAccountSelectionForm = ({
 					theme={theme}
 					isModal={true}
 					onWalletSelect={(e) => {
+						console.log(e);
 						setChangedWallet(e);
 						getAllAccounts();
 					}}

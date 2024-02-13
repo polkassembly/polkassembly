@@ -5,6 +5,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
+
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useQuoteCommentContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 
@@ -15,6 +17,8 @@ interface IHiglightMenuProps {
 const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const { postData } = usePostDataContext();
+
+	const { id } = useUserDetailsSelector();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
@@ -76,7 +80,9 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 		setQuotedText(selectedText);
 		const commentForm = document.getElementById('comment-form');
 
-		commentForm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		const commentLogin = document.getElementById('comment-login-prompt');
+
+		id ? commentForm?.scrollIntoView({ behavior: 'smooth', block: 'center' }) : commentLogin?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	};
 
 	return (
@@ -84,7 +90,7 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 			ref={menuRef}
 			className={`fixed z-[999] ${
 				selectedText ? 'block' : 'hidden'
-			} flex h-16 w-20 flex-col justify-between gap-1 rounded-md bg-highlightBg p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-highlightBg after:border-l-transparent after:border-r-transparent after:content-['']`}
+			} bg-highlightBg after:border-highlightBg flex h-16 w-20 flex-col justify-between gap-1 rounded-md p-3 text-sm text-white after:absolute after:left-[65%] after:top-[64px] after:border-8 after:border-b-0 after:border-solid after:border-l-transparent after:border-r-transparent after:content-['']`}
 			style={{ left: menuPosition.left, top: menuPosition.top - 10 }}
 		>
 			<div

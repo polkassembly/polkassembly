@@ -20,6 +20,7 @@ import { BN } from '@polkadot/util';
 import Loader from '~src/ui-components/Loader';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 const ZERO_BN = new BN(0);
 
 export default function KillReferendaForm() {
@@ -197,9 +198,15 @@ export default function KillReferendaForm() {
 				onFinish={handleSubmit}
 			>
 				<div className='mt-3 flex flex-col gap-1'>
-					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-						<span className='flex items-center'>Referenda Index</span>
-					</label>
+					<div className='flex gap-1'>
+						<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
+							<span className='flex items-center'>Referenda Index</span>
+						</label>
+						<HelperTooltip
+							text='Enter Referendum Index to take any action'
+							className='dark:text-blue-dark-medium'
+						/>
+					</div>
 					<Form.Item
 						name='referenda-index'
 						rules={[
@@ -241,7 +248,7 @@ export default function KillReferendaForm() {
 								<Input
 									defaultValue={postData?.title}
 									value={postData?.title}
-									className='text-black dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									className='rounded-md py-2 text-black opacity-70 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									disabled
 								/>
 							</Form.Item>
@@ -252,24 +259,22 @@ export default function KillReferendaForm() {
 							</label>
 							<Markdown
 								imgHidden
-								className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 dark:border-[#3B444F] dark:bg-section-dark-overlay
+								className='post-content cursor-not-allowed rounded-md border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 opacity-70 dark:border-[#3B444F] dark:bg-section-dark-overlay
 								dark:text-blue-dark-high '
 								md={postData.content}
 							/>
 						</div>
 					</Form>
-					<div className=' mt-4 flex items-center justify-between'>
-						<div className='flex items-center justify-end'>
-							<CustomButton
-								variant='primary'
-								htmlType='submit'
-								buttonsize='xs'
-								onClick={handleSubmit}
-								disabled={availableBalance.lte(submissionDeposite)}
-							>
-								Kill a Referenda
-							</CustomButton>
-						</div>
+					<div className=' mt-4 flex items-center justify-end'>
+						<CustomButton
+							variant='primary'
+							buttonsize='xs'
+							onClick={handleSubmit}
+							className='w-min'
+							disabled={availableBalance.lte(submissionDeposite)}
+						>
+							Kill Referendum
+						</CustomButton>
 					</div>
 				</>
 			)}

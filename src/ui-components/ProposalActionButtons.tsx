@@ -128,6 +128,7 @@ const ProposalActionButtons = () => {
 				openLoginPrompt={openLoginPrompt}
 				setOpenLoginPrompt={setOpenLoginPrompt}
 				setProposerAddress={setProposerAddress}
+				theme={theme}
 			/>
 		</>
 	);

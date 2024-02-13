@@ -774,6 +774,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											network
 										)} required to create a Transaction.`}
 										showIcon
+										type='info'
 										className='mb-6'
 									/>
 								)}
@@ -782,6 +783,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={walletErr.message}
 										description={walletErr.description}
 										showIcon
+										type='warning'
 									/>
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (

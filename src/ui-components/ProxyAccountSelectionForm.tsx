@@ -18,6 +18,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useApiContext } from '~src/context';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import { Wallet } from '~src/types';
+import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 interface Props {
 	proxyAddresses: string[];
@@ -74,10 +75,9 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
-		console.log(changedWallet);
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
-		if (addressData?.accounts?.length) {
-			const exists = addressData?.accounts.filter((account) => account.address === selectedProxyAddress)?.length;
+		if (addressData?.accounts?.length && selectedProxyAddress) {
+			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
 			setIsProxyExistsOnWallet?.(!!exists);
 		}
 
@@ -109,7 +109,7 @@ const ProxyAccountSelectionForm = ({
 						<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
 						{address && withBalance && (
 							<Balance
-								address={address}
+								address={selectedProxyAddress || ''}
 								onChange={onBalanceChange}
 								isBalanceUpdated={isBalanceUpdated}
 							/>

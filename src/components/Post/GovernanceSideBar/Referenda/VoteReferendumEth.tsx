@@ -475,6 +475,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								theme={theme}
+								isVoting
 							/>
 						) : !wallet ? (
 							<Alert

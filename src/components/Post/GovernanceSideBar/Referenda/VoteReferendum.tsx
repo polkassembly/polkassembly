@@ -824,6 +824,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											isVoting
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (

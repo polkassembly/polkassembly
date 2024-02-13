@@ -239,6 +239,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 						withBalance
 						onAccountChange={onAccountChange}
 						theme={theme}
+						isVoting
 					/>
 
 					<AyeNayButtons

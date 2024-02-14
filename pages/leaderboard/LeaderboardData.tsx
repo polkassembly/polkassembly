@@ -21,7 +21,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			dataIndex: 'rank',
 			fixed: 'left',
 			key: 'rank',
-			// render: () => <div className='text-blue-light-high dark:text-blue-dark-high'>Rank</div>,
+			render: (rank) => <p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{rank}</p>,
 			title: 'Rank',
 			width: 15
 		},
@@ -30,10 +30,10 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			filteredValue: [searchedUsername || ''],
 			fixed: 'left',
 			key: 'user',
-			// render: () => <div className='text-blue-light-high dark:text-blue-dark-high'>User</div>,
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
 			},
+			render: (user) => <p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{user}</p>,
 			title: 'User',
 			width: 250
 		},
@@ -68,7 +68,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 						alt='calenderIcon'
 						className='icon-container'
 					/>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-separatorDark'>{userSince}</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{userSince}</p>
 				</div>
 			),
 			// sorter: (record1, record2) => {

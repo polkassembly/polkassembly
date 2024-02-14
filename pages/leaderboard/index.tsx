@@ -3,10 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
+// import FirstPlaceCard from '~assets/FirstPlace.svg';
+// import SecondPlaceCard from '~assets/SecondPlace.svg';
+// import ThirdPlaceCard from '~assets/ThirdPlace.svg';
+
 import { useNetworkSelector } from '~src/redux/selectors';
 import LeaderboardData from './LeaderboardData';
 import { useTheme } from 'next-themes';
 import { Input } from 'antd';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const Leaderboard = () => {
 	const { network } = useNetworkSelector();
@@ -25,6 +30,23 @@ const Leaderboard = () => {
 					<TrophyIcon className='absolute right-[764px] top-[56px] z-10' />
 					<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
 					<p className='m-0 flex items-center justify-center p-0 text-sm text-white '>Find your rank in {network} ecosystem</p>
+					<div className='m-0 mt-16 flex items-center justify-center gap-x-2 p-0'>
+						<ImageIcon
+							src='/assets/SecondPlace.svg'
+							alt='secondPlace'
+							className='place-container m-0 p-0'
+						/>
+						<ImageIcon
+							src='/assets/FirstPlace.svg'
+							alt='firstPlace'
+							className='place-container m-0 p-0'
+						/>
+						<ImageIcon
+							src='/assets/ThirdPlace.svg'
+							alt='thirdPlace'
+							className='place-container m-0 p-0'
+						/>
+					</div>
 				</div>
 				<div className='mt-20 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
 					<div className='flex items-center'>

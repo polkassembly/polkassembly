@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Skeleton } from 'antd';
+import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -18,6 +18,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -100,9 +101,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-bodyBlue dark:border-separatorDark dark:bg-[#05263F]'
+							className='text-sm font-normal text-bodyBlue '
 							showIcon
 							message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
+							type='info'
 						/>
 					)}
 					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>
@@ -150,7 +152,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
-							className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mb-4 mt-4 '
 							showIcon
 							type='info'
 							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}

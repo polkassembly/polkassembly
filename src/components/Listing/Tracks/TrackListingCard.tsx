@@ -53,7 +53,6 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	console.log(initialCountForAll, initialCountForSubmitted, initialCountForVoting, initialCountForClosed);
 
 	const items = [
 		{

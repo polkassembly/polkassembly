@@ -30,6 +30,7 @@ interface Props {
 	isTruncateUsername?: boolean;
 	theme?: string;
 	showProxyDropdown?: boolean;
+	isVoting?: boolean;
 }
 
 const AccountSelectionForm = ({
@@ -50,6 +51,7 @@ const AccountSelectionForm = ({
 	addressTextClassName,
 	isTruncateUsername = true,
 	showProxyDropdown,
+	isVoting = false,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme
 }: Props) => {
@@ -75,6 +77,7 @@ const AccountSelectionForm = ({
 						address={address}
 						onChange={onBalanceChange}
 						isBalanceUpdated={isBalanceUpdated}
+						isVoting={isVoting}
 					/>
 				)}
 			</div>

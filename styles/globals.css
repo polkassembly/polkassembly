@@ -68,6 +68,7 @@
   --lightGreyTextColor: #909090;
   --lightWhite: #F6F7F9;
   --textGreyColor: #576D8B;
+  --highlightBg: #363636;
 }
 
 ::-webkit-scrollbar {
@@ -731,6 +732,7 @@ z-index: 1050 !important;
 
 .dark .dark-text-white *{
   color: white !important;
+  overflow-x: auto !important;
 }
 
 .dark .dark-text-white a,

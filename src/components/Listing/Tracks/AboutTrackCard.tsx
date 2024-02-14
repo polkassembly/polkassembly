@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Divider, Skeleton } from 'antd';
+import { Divider, Skeleton } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -31,6 +31,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
 import Link from 'next/link';
+import Alert from '~src/basic-components/Alert';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -295,7 +296,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 			{delegatedTo && (
 				<Alert
 					message={
-						<span className='flex items-center text-[13px] dark:text-blue-dark-high'>
+						<span className='flex items-center text-[13px]'>
 							You have delegated vote to
 							<Address
 								address={delegatedTo}

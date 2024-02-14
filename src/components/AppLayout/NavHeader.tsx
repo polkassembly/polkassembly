@@ -207,7 +207,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					href='/settings?tab=account'
+					href={`/settings?tab=account&network=${network}`}
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
 					<span>Settings</span>

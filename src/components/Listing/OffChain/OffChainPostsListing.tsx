@@ -9,6 +9,7 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 import { getSinglePostLinkFromProposalType, OffChainProposalType } from '~src/global/proposalType';
 
 import OffChainCard from './OffChainCard';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IOffChainPostsListingProps {
 	className?: string;
@@ -18,6 +19,7 @@ interface IOffChainPostsListingProps {
 }
 
 const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts, proposalType }) => {
+	const { network } = useNetworkSelector();
 	if (!posts || !posts.length) {
 		return (
 			<div className={className}>
@@ -29,7 +31,7 @@ const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts
 		<div className={`${className} flex flex-col `}>
 			{posts.map((post, index) => (
 				<div key={post.post_id}>
-					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}`}>
+					<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${post.post_id}?network=${network}`}>
 						<OffChainCard
 							post_id={post.post_id}
 							className={`${(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'}`}

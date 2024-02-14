@@ -33,6 +33,9 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { defaultNetwork } from '~src/global/defaultNetwork';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -46,14 +49,20 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
-	const network = getNetworkFromReqHeaders(req.headers);
-
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	const subDomain: any = req?.headers?.host?.split('.')[0];
+	if (![subDomain].includes(network)) {
+		network = (query.network as string) || network || defaultNetwork;
+		if (queryNetwork) {
+			network = queryNetwork;
+		}
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-
 	if (process.env.IS_CACHING_ALLOWED == '1') {
 		const redisData = await redisGet(`${network}_latestActivity_OpenGov`);
 		if (redisData) {
@@ -122,9 +131,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;

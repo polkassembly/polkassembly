@@ -22,13 +22,21 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 interface Props {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query.network) {
+		network = query.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -45,7 +53,7 @@ const Settings: FC<Props> = (props) => {
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
 	const handleTabClick = (key: string) => {
-		router.push(`/settings?tab=${key}`);
+		router.push(`/settings?tab=${key}&network=${network}`);
 	};
 
 	const tabItems = useMemo(
@@ -73,6 +81,15 @@ const Settings: FC<Props> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

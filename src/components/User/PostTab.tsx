@@ -7,6 +7,7 @@ import React, { FC } from 'react';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import GovernanceCard from '../GovernanceCard';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface IPostTabProps {
 	posts: IUserPost[];
@@ -14,6 +15,7 @@ interface IPostTabProps {
 
 const PostTab: FC<IPostTabProps> = (props) => {
 	const { posts } = props;
+	const { network } = useNetworkSelector();
 	return (
 		<div className='mt-2.5 flex h-full max-h-[530px] flex-col gap-y-3 overflow-y-auto pr-2'>
 			{!posts || posts.length === 0 ? (
@@ -25,7 +27,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 					return (
 						<Link
 							key={post.id}
-							href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}`}
+							href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}?network=${network}`}
 						>
 							<GovernanceCard
 								className={`${(i + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'}`}

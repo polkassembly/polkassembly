@@ -167,7 +167,7 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{vote && (
-								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
 									Vote :
 									{vote === EVoteDecisionType.AYE ? (
 										<p>
@@ -216,7 +216,7 @@ const DelegationSuccessPopup = ({
 							)}
 							{votedAt && (
 								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-									Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
+									Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-medium'>{votedAt}</span>
 								</div>
 							)}
 						</div>

@@ -40,6 +40,11 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTheme } from 'next-themes';
+import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
+import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
+import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
+import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -94,6 +99,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [successModal, setSuccessModal] = useState(false);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -432,10 +438,18 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-					<span className='text-base font-medium'>Aye</span>
+					{vote === EVoteDecisionType.AYE ? (
+						<LikeWhite className='mb-[3px] mr-2' />
+					) : theme === 'dark' ? (
+						<DarkLikeGray className='mb-[3px] mr-2' />
+					) : (
+						<LikeGray className='mb-[3px] mr-2' />
+					)}
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
 				</div>
 			),
 			value: 'aye'
@@ -443,9 +457,18 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>Nay</span>
+					{vote === EVoteDecisionType.NAY ? (
+						<DislikeWhite className='-mb-[3px] mr-2' />
+					) : theme === 'dark' ? (
+						<DarkDislikeGray className='-mb-[3px] mr-2' />
+					) : (
+						<DislikeGray className='-mb-[3px] mr-2' />
+					)}
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
 				</div>
 			),
 			value: 'nay'
@@ -458,10 +481,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
+							}`}
 						>
 							{' '}
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
+							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
 					),
 					value: 'split'
@@ -469,11 +495,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
+							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
 					value: 'abstain'
@@ -503,7 +530,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-						<CastVoteIcon className='mt-1' />
+						{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 					</div>
 				}
@@ -599,6 +626,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								isVoting={true}
+								theme={theme}
 							/>
 						) : !wallet ? (
 							<Alert
@@ -713,7 +741,6 @@ export default styled(VoteReferendumEthV2)`
 		align-items: center;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: #243a57 !important;
 	}
 	alignment-close .ant-input-number-in-from-item {
 		height: 39.85px !important;
@@ -731,7 +758,6 @@ export default styled(VoteReferendumEthV2)`
 		padding: 0px !important;
 	}
 	.alignment-close .ant-select-selection-item {
-		color: #243a57 !important;
 	}
 	.alignment-close .ant-select-focused {
 		border: 1px solid #e5007a !important;

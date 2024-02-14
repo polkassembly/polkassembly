@@ -21,7 +21,6 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 interface IGrantsProps {
 	data?: IPostsListingResponse;
@@ -30,14 +29,7 @@ interface IGrantsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -47,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
-				destination: `/grants?page=${page}&sortBy=${sortValues.NEWEST}&filterBy=${filterBy}&network=${network}`,
+				destination: `/grants?page=${page}&sortBy=${sortValues.NEWEST}&filterBy=${filterBy}`,
 				permanent: false
 			}
 		};
@@ -76,23 +68,13 @@ const Grants: FC<IGrantsProps> = (props) => {
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
-		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
-			router.push({
-				query: {
-					network: network
-				}
-			});
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { id } = useUserDetailsSelector();
+	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

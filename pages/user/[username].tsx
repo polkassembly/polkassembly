@@ -42,20 +42,14 @@ export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBEAM
 ];
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query, params }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+export const getServerSideProps: GetServerSideProps = async (context) => {
+	const req = context.req;
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const username = params?.username;
+	const username = context.params?.username;
 	if (!username) {
 		return {
 			props: {

@@ -5,7 +5,6 @@
 import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 import { IPreimageData, getLatestPreimage } from 'pages/api/v1/preimages/latest';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,7 +14,6 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
@@ -24,14 +22,7 @@ const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { hash = '' } = query;
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -51,19 +42,8 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
-		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
-			router.push({
-				query: {
-					network: network
-				}
-			});
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -43,7 +43,6 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { defaultNetwork } from '~src/global/defaultNetwork';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -61,26 +60,17 @@ interface IHomeProps {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
-	const subDomain: any = req?.headers?.host?.split('.')[0];
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (![subDomain].includes(network)) {
-		network = (query.network as string) || network || defaultNetwork;
-		if (queryNetwork) {
-			network = queryNetwork;
-		}
-	}
-
 	if (networkRedirect) return networkRedirect;
 
 	if (isOpenGovSupported(network) && !req.headers.referer) {
 		return {
 			props: {},
 			redirect: {
-				destination: `${![subDomain].includes(network) ? '/opengov' : `/opengov?network=${query.network as string}`}`
+				destination: '/opengov'
 			}
 		};
 	}

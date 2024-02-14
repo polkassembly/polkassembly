@@ -136,7 +136,7 @@ const getUserDropDown = (
 			label: (
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
-					href={`/settings?tab=account&network=${network}`}
+					href='/settings?tab=account'
 				>
 					<SettingOutlined />
 					<span>Settings</span>

@@ -25,17 +25,9 @@ import { Pagination } from '~src/ui-components/Pagination';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -68,21 +60,12 @@ const Tips: FC<ITipsProps> = (props) => {
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
-		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
-			router.push({
-				query: {
-					network: network
-				}
-			});
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
@@ -91,7 +74,6 @@ const Tips: FC<ITipsProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				network: network,
 				page
 			}
 		});

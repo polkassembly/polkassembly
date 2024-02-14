@@ -24,7 +24,6 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { usePostDataContext } from '~src/context';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -34,14 +33,7 @@ interface IDiscussionsProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -51,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
-				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}&network=${network}`,
+				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}`,
 				permanent: false
 			}
 		};
@@ -99,15 +91,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
-		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
-			router.push({
-				query: {
-					network: network
-				}
-			});
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

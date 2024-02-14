@@ -26,20 +26,12 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 const proposalType = ProposalType.TECHNICAL_PIPS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { id } = query;
 
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -69,15 +61,6 @@ const TechnicalPIPsPost: FC<ITechCommPostProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
-		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
-			router.push({
-				query: {
-					network: network
-				}
-			});
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

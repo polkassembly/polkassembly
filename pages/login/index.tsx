@@ -41,15 +41,8 @@ const WalletConnectLogin = dynamic(() => import('src/components/Login/WalletConn
 	ssr: false
 });
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
-	if (queryNetwork) {
-		network = queryNetwork;
-	}
-	if (query.network) {
-		network = query.network as string;
-	}
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;

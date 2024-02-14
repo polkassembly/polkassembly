@@ -5,7 +5,7 @@
 import { Col, Row, Dropdown } from 'antd';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
-import { chainProperties, network as AllNetworks } from 'src/global/networkConstants';
+import { chainProperties, network } from 'src/global/networkConstants';
 import { ArrowDownIcon } from './CustomIcons';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useRouter } from 'next/router';
@@ -14,8 +14,6 @@ import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import HightlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Card from '~src/basic-components/Cards/Card';
-import { useDispatch } from 'react-redux';
-import { setNetwork } from '~src/redux/network';
 
 type DropdownMenuItemType = {
 	key: any;
@@ -30,8 +28,8 @@ const testChains: DropdownMenuItemType[] = [];
 
 let link = '';
 
-for (const key of Object.keys(AllNetworks)) {
-	const keyVal = AllNetworks[key as keyof typeof AllNetworks];
+for (const key of Object.keys(network)) {
+	const keyVal = network[key as keyof typeof network];
 	if (key === 'TANGANIKA') continue;
 
 	link = ['MOONBASE', 'MOONRIVER', 'MOONBEAM', 'KILT'].includes(key)
@@ -87,21 +85,8 @@ interface INetworkDropdown {
 const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 	const { isSmallScreen, setSidedrawer, isSearch, setSelectedNetworks, selectedNetworks = [], allowedNetwork } = props;
 	const { network } = useNetworkSelector();
-	const dispatch = useDispatch();
 	const [openFilter, setOpenFilter] = useState<boolean>(false);
 	const router = useRouter();
-
-	function getSubdomain(url: string) {
-		const urlObj = new URL(url);
-		const hostname = urlObj.hostname;
-		const parts = hostname.split('.');
-		if (parts.length > 2) {
-			parts.pop();
-			parts.pop();
-			return parts.join('.');
-		}
-		return '';
-	}
 	const handleLink = (option: DropdownMenuItemType) => {
 		setOpenFilter(false);
 		if (isSearch && setSelectedNetworks && selectedNetworks) {
@@ -113,15 +98,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				setSelectedNetworks([...selectedNetworks, option.key]);
 			}
 		} else {
-			const currentUrl = window.location.href;
-			const subDomain = getSubdomain(currentUrl);
-			if (subDomain && subDomain !== '' && [subDomain].includes(network)) {
-				router.push(option.link);
-			} else {
-				router.push(`/?network=${AllNetworks[option.key as keyof typeof AllNetworks]}`);
-				setSelectedNetworks?.([option.key]);
-				dispatch(setNetwork(AllNetworks[option.key as keyof typeof AllNetworks]));
-			}
+			router.push(option.link);
 		}
 	};
 

@@ -372,7 +372,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						<div
 							className='mr-2 lg:mr-0'
 							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation', {
+								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
 									userId: id || '',
 									userName: username || ''
 								});

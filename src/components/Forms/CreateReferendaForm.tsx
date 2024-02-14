@@ -129,7 +129,11 @@ export default function CreateReferendaForm() {
 			const proposalPreImage = createPreImage(api, methodCall);
 			const preImageTx = proposalPreImage.notePreimageTx;
 			const origin: any = { Origins: selectedTrack };
-			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
+			const proposalTx = api.tx.referenda.submit(
+				origin,
+				{ Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } },
+				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+			);
 			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
 
 			const onSuccess = async () => {

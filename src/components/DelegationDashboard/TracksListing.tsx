@@ -19,6 +19,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -41,6 +42,8 @@ const DashboardTrackListing = ({ className }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
+
 	const [status, setStatusValue] = useState<ETrackDelegationStatus>(ETrackDelegationStatus.ALL);
 	const [statusCounts, setStatusCounts] = useState<{ all: number; delegated: number; received_delegation: number; undelegated: number }>({
 		all: 0,
@@ -183,6 +186,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 					rowClassName='cursor-pointer'
 					loading={loading || !delegationDashboardAddress}
 					pagination={false}
+					theme={theme}
 					onRow={(row: ITrackDataType) => {
 						return {
 							onClick: () => {

@@ -3,15 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
-// import FirstPlaceCard from '~assets/FirstPlace.svg';
-// import SecondPlaceCard from '~assets/SecondPlace.svg';
-// import ThirdPlaceCard from '~assets/ThirdPlace.svg';
-
 import { useNetworkSelector } from '~src/redux/selectors';
 import LeaderboardData from './LeaderboardData';
 import { useTheme } from 'next-themes';
 import { Input } from 'antd';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import Image from 'next/image';
 
 const Leaderboard = () => {
 	const { network } = useNetworkSelector();
@@ -32,24 +28,33 @@ const Leaderboard = () => {
 					<p className='m-0 flex items-center justify-center p-0 text-sm text-white '>Find your rank in {network} ecosystem</p>
 				</div>
 			</div>
-			<div className='m-0 mt-16 flex w-full items-center justify-center gap-x-2 p-0'>
-				<ImageIcon
-					src='/assets/SecondPlace.svg'
-					alt='secondPlace'
-					className='place-container m-0 p-0'
-				/>
-				<ImageIcon
-					src='/assets/FirstPlace.svg'
-					alt='firstPlace'
-					className='place-container m-0 p-0'
-				/>
-				<ImageIcon
-					src='/assets/ThirdPlace.svg'
-					alt='thirdPlace'
-					className='place-container m-0 p-0'
-				/>
+			<div className='m-0 -ml-1 mt-6 flex w-full items-center justify-center p-0'>
+				<div>
+					<Image
+						src='/assets/SecondPlace.svg'
+						alt='secondPlace'
+						width={396}
+						height={197}
+					/>
+				</div>
+				<div>
+					<Image
+						src='/assets/FirstPlace.svg'
+						alt='firstPlace'
+						width={456}
+						height={217}
+					/>
+				</div>
+				<div>
+					<Image
+						src='/assets/ThirdPlace.svg'
+						alt='thirdPlace'
+						width={396}
+						height={197}
+					/>
+				</div>
 			</div>
-			<div className='mt-20 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
+			<div className='mt-8 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center'>
 					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
 					<div className='ml-auto flex'>

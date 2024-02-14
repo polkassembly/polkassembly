@@ -397,4 +397,8 @@ export default styled(LeaderboardData)`
 	.ant-table-tbody > tr {
 		heigth: 56px !important;
 	}
+	.ant-table-wrapper .ant-table-pagination-right {
+		justify-content: center !important;
+		margin-top: 36px !important;
+	}
 `;

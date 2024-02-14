@@ -8,6 +8,9 @@ import LeaderboardData from './LeaderboardData';
 import { useTheme } from 'next-themes';
 import { Input } from 'antd';
 import Image from 'next/image';
+import StarIcon from '~assets/icons/StarIcon.svg';
+import InfoIcon from '~assets/info.svg';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const Leaderboard = () => {
 	const { network } = useNetworkSelector();
@@ -36,14 +39,124 @@ const Leaderboard = () => {
 						width={396}
 						height={197}
 					/>
+					<div>
+						<div className='absolute right-[1050px] top-[282px] w-[94px]'>
+							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
+							<div
+								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+								style={{ border: '0.9px solid #9EA1A7' }}
+							>
+								<StarIcon />
+								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+								<InfoIcon style={{ transform: 'scale(0.8)' }} />
+							</div>
+						</div>
+						<div className='absolute right-[932px] top-[366px] flex h-[18px] w-[336px] items-center'>
+							<p className='m-0 p-0'>Vaibhav Gr8</p>
+							<div className='ml-auto flex'>
+								{theme === 'dark' ? (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkDark.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								) : (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkLight.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
 				</div>
-				<div>
+				<div className='h-[218px] w-[458px]'>
 					<Image
 						src='/assets/FirstPlace.svg'
 						alt='firstPlace'
 						width={456}
 						height={217}
 					/>
+					<div className='h-[218px] w-[458px]'>
+						<div className='absolute right-[628px] top-[274px] w-[94px]'>
+							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 01</p>
+							<div
+								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+								style={{ border: '0.9px solid #9EA1A7' }}
+							>
+								<StarIcon />
+								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+								<InfoIcon style={{ transform: 'scale(0.8)' }} />
+							</div>
+						</div>
+						<div className='absolute right-[478px] top-[356px] flex h-[18px] w-[392px] items-center'>
+							<p className='m-0 p-0'>Vaibhav Gr8</p>
+							<div className='ml-auto flex'>
+								{theme === 'dark' ? (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkDark.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								) : (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkLight.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
 				</div>
 				<div>
 					<Image
@@ -52,6 +165,61 @@ const Leaderboard = () => {
 						width={396}
 						height={197}
 					/>
+					<div>
+						<div className='absolute right-[200px] top-[282px] w-[94px]'>
+							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 03</p>
+							<div
+								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+								style={{ border: '0.9px solid #9EA1A7' }}
+							>
+								<StarIcon />
+								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+								<InfoIcon style={{ transform: 'scale(0.8)' }} />
+							</div>
+						</div>
+						<div className='absolute right-[78px] top-[366px] flex h-[18px] w-[336px] items-center'>
+							<p className='m-0 p-0'>Vaibhav Gr8</p>
+							<div className='ml-auto flex'>
+								{theme === 'dark' ? (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkDark.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								) : (
+									<div className='flex items-center justify-start'>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
+											alt='delegation-icon'
+											className='icon-container mr-4'
+										/>
+										<ImageIcon
+											src='/assets/icons/auctionIcons/BookmarkLight.svg'
+											alt='delegation-icon'
+											className='icon-container'
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div className='mt-8 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>

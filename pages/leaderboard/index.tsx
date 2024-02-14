@@ -30,46 +30,46 @@ const Leaderboard = () => {
 					<TrophyIcon className='absolute right-[764px] top-[56px] z-10' />
 					<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
 					<p className='m-0 flex items-center justify-center p-0 text-sm text-white '>Find your rank in {network} ecosystem</p>
-					<div className='m-0 mt-16 flex items-center justify-center gap-x-2 p-0'>
-						<ImageIcon
-							src='/assets/SecondPlace.svg'
-							alt='secondPlace'
-							className='place-container m-0 p-0'
-						/>
-						<ImageIcon
-							src='/assets/FirstPlace.svg'
-							alt='firstPlace'
-							className='place-container m-0 p-0'
-						/>
-						<ImageIcon
-							src='/assets/ThirdPlace.svg'
-							alt='thirdPlace'
-							className='place-container m-0 p-0'
+				</div>
+			</div>
+			<div className='m-0 mt-16 flex w-full items-center justify-center gap-x-2 p-0'>
+				<ImageIcon
+					src='/assets/SecondPlace.svg'
+					alt='secondPlace'
+					className='place-container m-0 p-0'
+				/>
+				<ImageIcon
+					src='/assets/FirstPlace.svg'
+					alt='firstPlace'
+					className='place-container m-0 p-0'
+				/>
+				<ImageIcon
+					src='/assets/ThirdPlace.svg'
+					alt='thirdPlace'
+					className='place-container m-0 p-0'
+				/>
+			</div>
+			<div className='mt-20 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
+				<div className='flex items-center'>
+					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
+					<div className='ml-auto flex'>
+						<Input.Search
+							placeholder='enter address to search'
+							className='m-0 h-[48px] w-[285px] rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							onSearch={(value) => {
+								setSearchedUsername(value);
+							}}
+							onChange={(e) => {
+								setSearchedUsername(e.target.value);
+							}}
 						/>
 					</div>
 				</div>
-				<div className='mt-20 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
-					<div className='flex items-center'>
-						<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
-						<div className='ml-auto flex'>
-							<Input.Search
-								placeholder='enter address to search'
-								className='m-0 h-[48px] w-[285px] rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-								onSearch={(value) => {
-									setSearchedUsername(value);
-								}}
-								onChange={(e) => {
-									setSearchedUsername(e.target.value);
-								}}
-							/>
-						</div>
-					</div>
-					<LeaderboardData
-						className='mt-6'
-						theme={theme}
-						searchedUsername={searchedUsername}
-					/>
-				</div>
+				<LeaderboardData
+					className='mt-6'
+					theme={theme}
+					searchedUsername={searchedUsername}
+				/>
 			</div>
 		</section>
 	);

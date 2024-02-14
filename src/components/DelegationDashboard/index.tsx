@@ -115,7 +115,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				</>
 			)}
 
-			{!isLoggedOut && (
+			{!isLoggedOut && userDetails.loginAddress && (
 				<DelegationTabs
 					identity={identity}
 					theme={theme}

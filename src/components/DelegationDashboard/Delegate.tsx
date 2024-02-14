@@ -75,7 +75,11 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress, api, apiReady]);
 
-	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')];
+	const addressess = [
+		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
+		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
+		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
+	];
 
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
@@ -155,7 +159,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 							className='mb-4 mt-4 '
 							showIcon
 							type='info'
-							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
 						/>
 					)}
 
@@ -163,9 +167,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 							{[
 								...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-								...delegatesData
-									.filter((item) => ![...addressess, getSubstrateAddress('13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K')].includes(getSubstrateAddress(item?.address)))
-									.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+								...delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 							].map((delegate, index) => (
 								<DelegateCard
 									trackNum={trackDetails?.trackId}

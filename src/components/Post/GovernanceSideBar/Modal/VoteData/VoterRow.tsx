@@ -22,10 +22,22 @@ import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
 import Loader from '~src/ui-components/Loader';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useVoteDataSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import AbstainGray from '~assets/icons/abstainGray.svg';
+import { useDispatch } from 'react-redux';
+import {
+	setIsReferendum2,
+	setIsVoteDataModalOpen,
+	setSetDelegatedData,
+	setSetDelegationVoteModal,
+	setTally,
+	setVoteData,
+	setVoteType,
+	setDelegatorLoadingFalse,
+	setDelegatorLoadingTrue
+} from '~src/redux/voteData';
 
 interface IVoterRow {
 	className?: string;
@@ -103,18 +115,24 @@ const VoterRow: FC<IVoterRow> = ({
 }) => {
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
-	const [delegatorLoading, setDelegatorLoading] = useState(true);
+	// const [delegatorLoading, setDelegatorLoading] = useState<boolean>(true);
+	const { delegatorLoading } = useVoteDataSelector();
 	const [delegatedData, setDelegatedData] = useState<any>(null);
 	const [voteDecision, setVoteDecision] = useState('');
 	const { resolvedTheme: theme } = useTheme();
+	const dispatch = useDispatch();
+	const isSmallScreen = window.innerWidth < 640;
+
 	useEffect(() => {
-		if (!active) {
-			return;
-		}
+		// if (!active) {
+		// return;
+		// }
 		if (delegatedData === null) {
 			(async () => {
+				dispatch(setDelegatorLoadingTrue());
 				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
 				const { data, error } = await nextApiClientFetch<any>(url);
+
 				if (error) {
 					console.log('Error in fetching delegated Data');
 				}
@@ -125,9 +143,10 @@ const VoterRow: FC<IVoterRow> = ({
 					};
 					setDelegatedData(payload);
 				}
-				setDelegatorLoading(false);
+				dispatch(setDelegatorLoadingFalse());
 			})();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [active, decision, delegatedData, referendumId, voteData.voter, voteType]);
 
 	useEffect(() => {
@@ -148,11 +167,11 @@ const VoterRow: FC<IVoterRow> = ({
 						{voteType === VoteType.REFERENDUM_V2 && voteData?.txnHash ? (
 							<a
 								href={`https://${network}.moonscan.io/tx/${voteData?.txnHash}`}
-								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+								className={`w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}
 							>
 								<Address
 									isVoterAddress
-									usernameClassName='w-[250px]'
+									usernameClassName=' sm:w-[250px]'
 									isSubVisible={false}
 									displayInline
 									showFullAddress
@@ -161,11 +180,11 @@ const VoterRow: FC<IVoterRow> = ({
 							</a>
 						) : (
 							<div
-								className={`w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}
+								className={`w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}
 								onClick={(e) => e.stopPropagation()}
 							>
 								<Address
-									usernameClassName='overflow-ellipsis w-[250px] '
+									usernameClassName='overflow-ellipsis sm:w-[250px]'
 									isSubVisible={false}
 									displayInline
 									showFullAddress
@@ -175,7 +194,7 @@ const VoterRow: FC<IVoterRow> = ({
 						)}
 					</div>
 				) : (
-					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[190px] overflow-ellipsis ${voteData?.decision === 'abstain' ? 'w-[220px]' : ''}`}>
+					<div className={`${isUsedInVotedModal ? '-ml-1' : ''} w-[160px] overflow-ellipsis sm:w-[190px] ${voteData?.decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>
 						{voteDecision === 'Nay' && (
 							<div className='flex gap-x-2'>
 								<DislikeFilled className='text-[red]' />
@@ -202,12 +221,16 @@ const VoterRow: FC<IVoterRow> = ({
 						<div
 							className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? '-ml-7' : ''} w-[120px] overflow-ellipsis ${
 								voteData?.decision === 'abstain' ? 'w-[160px]' : ''
-							} text-bodyBlue dark:text-blue-dark-high`}
+							} hidden text-bodyBlue dark:text-blue-dark-high sm:flex`}
 						>
 							{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
 						</div>
 						{voteData?.decision !== 'abstain' && (
-							<div className={`${isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''} w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
+							<div
+								className={`${
+									isUsedInVotedModal && voteData?.decision !== 'abstain' ? 'ml-3' : ''
+								} hidden w-[105px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:flex`}
+							>
 								{`${voteData.lockPeriod === 0 ? '0.1' : voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}`}
 							</div>
 						)}
@@ -219,149 +242,185 @@ const VoterRow: FC<IVoterRow> = ({
 				)}
 
 				{(voteData.totalVotingPower || voteData.votingPower) && (
-					<div className={`${isUsedInVotedModal && voteData?.decision === 'abstain' ? 'ml-[72px]' : ''} w-[90px] overflow-ellipsis text-bodyBlue dark:text-blue-dark-high`}>
+					<div
+						className={`${
+							isUsedInVotedModal && voteData?.decision === 'abstain' ? 'sm:ml-[72px]' : ''
+						} mr-4 w-full overflow-ellipsis text-bodyBlue dark:text-blue-dark-high sm:mr-0 sm:w-[90px]`}
+					>
 						{parseBalance(
 							voteData?.decision !== 'abstain' ? (voteData.totalVotingPower || voteData.votingPower).toString() : (BigInt(voteData?.balance?.abstain || 0) / BigInt(10)).toString(),
 							2,
 							true,
 							network
 						)}
+						{isSmallScreen && voteData?.delegatedVotes?.length > 0 ? ' /d' : ''}
 					</div>
 				)}
 			</div>
 		</div>
 	);
-	return voteData?.delegatedVotes?.length > 0 && voteData?.decision !== 'abstain' ? (
+
+	return voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${
-				active ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
-			} w-[550px] gap-[0px] rounded-none border-0 ${className}`}
+				active && !isSmallScreen ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+			} w-full gap-[0px]  rounded-none border-0 sm:w-[550px] ${className}`}
 			size='large'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
-				return isActive ? <CollapseUpIcon /> : <CollapseDownIcon />;
+				return isSmallScreen ? (
+					<span
+						onClick={(e) => {
+							e.preventDefault();
+							dispatch(setSetDelegatedData(delegatedData));
+							dispatch(setIsReferendum2(isReferendum2));
+							dispatch(setSetDelegationVoteModal(setDelegationVoteModal));
+							dispatch(setTally(tally));
+							dispatch(setVoteData(voteData));
+							dispatch(setVoteType(voteType as any));
+							dispatch(setIsVoteDataModalOpen());
+						}}
+					>
+						<CollapseDownIcon />
+					</span>
+				) : isActive ? (
+					<CollapseUpIcon />
+				) : (
+					<CollapseDownIcon />
+				);
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
 			theme={theme}
+			// isSmallScreen={isSmallScreen}
 		>
 			<StyledCollapse.Panel
 				className={`rounded-none p-0 ${
-					active ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
+					active && !isSmallScreen ? 'border-x-0 border-y-0 border-b-2 border-solid  border-pink_primary' : ''
 				} gap-[0px] text-bodyBlue dark:text-blue-dark-high dark:[&>.ant-collapse-content]:bg-section-dark-overlay`}
 				key={1}
 				header={<Title />}
 			>
-				<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
-					<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
-						<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-							<CalenderIcon /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
-						</span>
-						{voteData?.decision !== 'abstain' && isReferendum2 && (
-							<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
-								<PowerIcon />
-								Voting Power:{' '}
-								<span className='text-bodyBlue dark:text-blue-dark-high'>
-									{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
-								</span>
+				{!isSmallScreen && (
+					<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
+						<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
+								<CalenderIcon /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 							</span>
-						)}
-					</div>
-					<div>
-						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
-						<div className='flex justify-between'>
-							<div className='flex w-[200px] flex-col gap-1'>
-								<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<VoterIcon /> Voting Power
+							{voteData?.decision !== 'abstain' && isReferendum2 && (
+								<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
+									<PowerIcon />
+									Voting Power:{' '}
+									<span className='text-bodyBlue dark:text-blue-dark-high'>
+										{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
 									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
+								</span>
+							)}
+						</div>
+						<div>
+							<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
+							<div className='flex justify-between'>
+								<div className='flex w-[200px] flex-col gap-1'>
+									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+									<div className='flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<VoterIcon /> Voting Power
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
+									</div>
+									<div className='flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<ConvictionIcon /> Conviction
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+											{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
+										</span>
+									</div>
+									<div className='flex justify-between'>
+										<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+											<CapitalIcon /> Capital
+										</span>
+										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+											{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
+										</span>
+									</div>
 								</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<ConvictionIcon /> Conviction
-									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-										{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
-									</span>
-								</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<CapitalIcon /> Capital
-									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-										{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
-									</span>
-								</div>
-							</div>
-							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
-							<div className='mr-3 flex w-[200px] flex-col gap-1'>
-								<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<VoterIcon /> Voting Power
-									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
-								</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<EmailIcon /> Delegators
-									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
-								</div>
-								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-										<CapitalIcon /> Capital
-									</span>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-										{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
-									</span>
-								</div>
+								{voteData?.delegatedVotes?.length > 0 && (
+									<>
+										<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
+										<div className='mr-3 flex w-[200px] flex-col gap-1'>
+											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+											<div className='flex justify-between'>
+												<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+													<VoterIcon /> Voting Power
+												</span>
+												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
+											</div>
+											<div className='flex justify-between'>
+												<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+													<EmailIcon /> Delegators
+												</span>
+												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
+											</div>
+											<div className='flex justify-between'>
+												<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+													<CapitalIcon /> Capital
+												</span>
+												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
+													{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}
+												</span>
+											</div>
+										</div>
+									</>
+								)}
 							</div>
 						</div>
-					</div>
-					<Divider
-						dashed
-						className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
-					/>
-					<div>
-						<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
-						<div className='mb-2 flex items-center text-xs font-semibold'>
-							<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
-							<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
-							{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
-							<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
-						</div>
-						<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
-							{voteData.delegatedVotes.map((data: any, i: number) => (
-								<DelegationListRow
-									key={i}
-									voteType={voteType}
-									voteData={data}
+						{voteData?.delegatedVotes?.length > 0 && (
+							<>
+								<Divider
+									dashed
+									className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 								/>
-							))}
-						</div>
-						{delegatorLoading ? (
-							<Skeleton.Button active />
-						) : (
-							delegatedData?.delegator > 10 && (
-								<p
-									className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
-									onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData.voter })}
-								>
-									Show More
-								</p>
-							)
+								<div>
+									<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+									<div className='mb-2 flex items-center text-xs font-semibold'>
+										<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
+										<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
+										{network !== AllNetworks.COLLECTIVES ? <div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div> : null}
+										<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+									</div>
+									<div className='flex max-h-[70px] flex-col gap-1 overflow-y-auto pr-2'>
+										{voteData?.delegatedVotes.map((data: any, i: number) => (
+											<DelegationListRow
+												key={i}
+												voteType={voteType}
+												voteData={data}
+											/>
+										))}
+									</div>
+									{delegatorLoading ? (
+										<Skeleton.Button active />
+									) : (
+										delegatedData?.delegator > 10 && (
+											<p
+												className='m-0 mt-2 cursor-pointer text-xs font-medium text-pink_primary'
+												onClick={() => setDelegationVoteModal({ isOpen: true, voter: voteData.voter })}
+											>
+												Show More
+											</p>
+										)
+									)}
+								</div>
+							</>
 						)}
 					</div>
-				</div>
+				)}
 			</StyledCollapse.Panel>
 		</StyledCollapse>
 	) : (
 		<div
-			className={`w-[552px] border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high ${
+			className={`w-full border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:w-[550px] ${
 				isUsedInVotedModal ? '' : `${className}`
 			}`}
 		>

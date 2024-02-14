@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import dayjs from 'dayjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -141,9 +142,10 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 		const user_addresses = await getAddressesFromUserId(userDoc.id);
 
 		const user: ProfileDetailsResponse = {
-			addresses: user_addresses.map((a) => a?.address) || [],
+			addresses: user_addresses?.map((a) => a?.address)?.filter((address) => !!address) || [],
 			badges: [],
 			bio: '',
+			created_at: dayjs((userDoc.created_at as any)?.toDate?.() || userDoc.created_at).toDate(),
 			image: '',
 			title: '',
 			user_id: userDoc.id,

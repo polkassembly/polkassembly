@@ -116,7 +116,7 @@ const TrendingDelegates = () => {
 			</div>
 
 			<Spin spinning={loading}>
-				<div>
+				<div className='min-h-[200px]'>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
 							...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),

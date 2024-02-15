@@ -136,8 +136,8 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								disabled={
 									!address ||
 									!(getEncodedAddress(address, network) || isAddress(address)) ||
-									address === delegationDashboardAddress ||
-									getEncodedAddress(address, network) === delegationDashboardAddress ||
+									address === currentUser?.delegationDashboardAddress ||
+									getEncodedAddress(address, network) === currentUser?.delegationDashboardAddress ||
 									disabled
 								}
 							>

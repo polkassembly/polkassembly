@@ -55,7 +55,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const getData = async () => {
 		if (!api || !apiReady) return;
 
-		if (!(getEncodedAddress(address, network) || isAddress(address)) && address.length > 0) return;
+		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {

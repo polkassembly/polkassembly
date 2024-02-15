@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
 import { ApiPromise } from '@polkadot/api';
-import { Modal, Table as AntdTable, Tooltip, message } from 'antd';
+import { Modal, Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -25,34 +25,12 @@ import executeTx from '~src/util/executeTx';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import copyToClipboard from '~src/util/copyToClipboard';
 import Loader from '~src/ui-components/Loader';
+import Table from '~src/basic-components/Tables/Table';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
 	theme?: string;
 }
-
-const Table = styled(AntdTable)`
-	.ant-table-thead > tr > th {
-		background: ${(props) => (props.theme === 'dark' ? '#1C1D1F' : '#fafafa')} !important;
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'black')} !important;
-		font-weight: 500 !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
-	}
-	.ant-table-thead > tr > th::before {
-		background: none !important;
-	}
-	.ant-table-tbody > tr {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
-	}
-	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
-	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
-		background-color: none !important;
-	}
-	td {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : 'white')} !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #323232' : '')} !important;
-	}
-`;
 
 interface UnnoteButtonProps {
 	proposer: string;

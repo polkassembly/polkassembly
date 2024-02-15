@@ -103,9 +103,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					<ProfileBalances />
 				</div>
 			)}
-			{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
+			{(isLoggedOut || !userDetails.loginAddress) && (
+				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+			)}
 
-			{isLoggedOut && (
+			{(isLoggedOut || !userDetails.loginAddress) && (
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData />

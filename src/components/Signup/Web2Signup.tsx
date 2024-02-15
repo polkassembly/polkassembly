@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Divider, Form, Modal, Skeleton } from 'antd';
+import { Divider, Form, Modal, Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -26,6 +26,7 @@ import { useDispatch } from 'react-redux';
 import { IconSignup } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -206,14 +207,14 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 						}
 						type='info'
 						showIcon
-						className='changeColor px-8 text-[#243A57] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-white'
+						className='changeColor px-8 text-[#243A57] dark:text-white'
 					/>
 				)}
 				{walletError && (
 					<Alert
 						message={<span className='dark:text-blue-dark-high'>{walletError}</span>}
 						type='error'
-						className='px-8 dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+						className='px-8 '
 					/>
 				)}
 				<AuthForm

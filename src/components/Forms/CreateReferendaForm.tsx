@@ -4,7 +4,7 @@
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
-import { Alert, Form, Input, Radio, Spin } from 'antd';
+import { Alert, Button, Form, Input, Radio, Spin } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
@@ -24,7 +24,7 @@ import Loader from '~src/ui-components/Loader';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SelectTracks from '../OpenGovTreasuryProposal/SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { EEnactment, IEnactment } from '../OpenGovTreasuryProposal';
+import { EEnactment, IEnactment, ISteps } from '../OpenGovTreasuryProposal';
 import { IAdvancedDetails } from '../OpenGovTreasuryProposal/CreatePreimage';
 import { useCurrentBlock } from '~src/hooks';
 import DownArrow from '~assets/icons/down-icon.svg';
@@ -92,7 +92,7 @@ const transformParams = (paramFields: ParamField[], inputParams: any[], opts = {
 };
 const ZERO_BN = new BN(0);
 
-export default function CreateReferendaForm() {
+export default function CreateReferendaForm({ setSteps }: { setSteps: (pre: ISteps) => void }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
 	const { loginWallet } = useUserDetailsSelector();
@@ -607,7 +607,13 @@ export default function CreateReferendaForm() {
 						</Radio.Group>
 					</div>
 				)}
-				<div className='mt-6 flex items-center justify-end'>
+				<div className='mt-6 flex items-center justify-end space-x-3'>
+					<Button
+						onClick={() => setSteps({ percent: 100, step: 0 })}
+						className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+					>
+						Back
+					</Button>
 					<CustomButton
 						variant='primary'
 						htmlType='submit'

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { BN, BN_HUNDRED } from '@polkadot/util';
-import { Alert, Form, Input, Spin } from 'antd';
+import { Alert, Button, Form, Input, Spin } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
@@ -21,10 +21,11 @@ import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import { EKillOrCancel } from './enum';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { LoadingOutlined } from '@ant-design/icons';
+import { ISteps } from '../OpenGovTreasuryProposal';
 
 const ZERO_BN = new BN(0);
 
-export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCancel }) {
+export default function CancelOrKillReferendaForm({ type, setSteps }: { type: EKillOrCancel; setSteps: (pre: ISteps) => void }) {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginWallet } = useUserDetailsSelector();
@@ -243,15 +244,22 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 								/>
 							</div>
 						</Form>
-						<div className='mt-6 flex items-center justify-end'>
+						<div className='mt-6 flex items-center justify-end space-x-3'>
+							<Button
+								onClick={() => setSteps({ percent: 100, step: 0 })}
+								className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
+							>
+								Back
+							</Button>
 							<CustomButton
 								variant='primary'
 								htmlType='submit'
 								buttonsize='sm'
 								onClick={handleSubmit}
+								className='w-min'
 								disabled={availableBalance.lte(submissionDeposite)}
 							>
-								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
+								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} Referendum
 							</CustomButton>
 						</div>
 					</>

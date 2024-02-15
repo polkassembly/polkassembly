@@ -208,9 +208,19 @@ const ReferendaActionModal = ({
 
 					{steps?.step === 1 && (
 						<>
-							{referendaModal === 1 && <CreateReferendaForm />}
-							{referendaModal === 2 && <CancelOrKillReferendaForm type={EKillOrCancel.CANCEL} />}
-							{referendaModal === 3 && <CancelOrKillReferendaForm type={EKillOrCancel.KILL} />}
+							{referendaModal === 1 && <CreateReferendaForm setSteps={setSteps} />}
+							{referendaModal === 2 && (
+								<CancelOrKillReferendaForm
+									setSteps={setSteps}
+									type={EKillOrCancel.CANCEL}
+								/>
+							)}
+							{referendaModal === 3 && (
+								<CancelOrKillReferendaForm
+									setSteps={setSteps}
+									type={EKillOrCancel.KILL}
+								/>
+							)}
 						</>
 					)}
 				</div>

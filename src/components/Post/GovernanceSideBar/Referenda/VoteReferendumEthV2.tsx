@@ -13,7 +13,7 @@ import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wa
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import Web3 from 'web3';
+import { BrowserProvider, Contract } from 'ethers';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -53,7 +53,7 @@ interface Props {
 
 const abi = require('../../../../moonbeamConvictionVoting.json');
 
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, address }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -328,11 +328,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 
 		if (walletConnectProvider?.wc.connected) {
 			await walletConnectProvider.enable();
-			web3 = new Web3(walletConnectProvider as any);
+			web3 = new BrowserProvider(walletConnectProvider as any);
 			chainId = walletConnectProvider.wc.chainId;
 		} else {
-			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
-			chainId = await web3.eth.net.getId();
+			web3 = new BrowserProvider(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
+			const { chainId: id } = await web3.getNetwork();
+			chainId = Number(id.toString());
 		}
 
 		if (chainId !== chainProperties[network].chainId) {
@@ -345,31 +346,30 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
 
-		const voteContract = new web3.eth.Contract(abi, contractAddress);
+		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		let tx;
 		if (vote === EVoteDecisionType.AYE) {
-			tx = voteContract.methods.voteYes(referendumId, lockedBalance.toString(), conviction);
+			tx = () => voteContract.voteYes(referendumId, lockedBalance.toString(), conviction);
 		} else if (vote === EVoteDecisionType.NAY) {
-			tx = voteContract.methods.voteNo(referendumId, lockedBalance.toString(), conviction);
+			tx = () => voteContract.voteNo(referendumId, lockedBalance.toString(), conviction);
 		} else if (vote === EVoteDecisionType.SPLIT) {
-			tx = voteContract.methods.voteSplit(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString());
+			tx = () => voteContract.voteSplit(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString());
 		} else if (vote === EVoteDecisionType.ABSTAIN) {
-			tx = voteContract.methods.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
+			tx = () => voteContract.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
 		}
 
-		tx.send({
-			from: address,
-			to: contractAddress
-		})
-			.on('transactionHash', (hash: string) => {
-				setLoadingStatus({ isLoading: true, message: `Transaction hash ${hash.slice(0, 10)}...` });
-				console.log('transactionHash', hash);
-			})
-			.then(() => {
+		// tx().on('transactionHash', (hash: string) => {
+		// setLoadingStatus({ isLoading: true, message: `Transaction hash ${hash.slice(0, 10)}...` });
+		// console.log('transactionHash', hash);
+		// })
+		tx?.()
+			.then((res) => {
+				setLoadingStatus({ isLoading: true, message: `Transaction hash ${res.hash.slice(0, 10)}...` });
+				console.log('transactionHash', res.hash);
 				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress!' });
 				handleLastVoteSave(vote, totalVoteValue);
 				setShowModal(false);
@@ -615,7 +615,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								onBalanceChange={(balance: BN) => setLockedBalance(balance)}
 								convictionClassName={className}
 								handleSubmit={async () => await handleSubmit()}
-								disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
+								disabled={false}
+								// disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}

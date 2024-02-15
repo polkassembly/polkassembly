@@ -6,7 +6,7 @@ import { checkAddress } from '@polkadot/util-crypto';
 import { Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { addressPrefix } from 'src/global/networkConstants';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 
 import EthIdenticon from './EthIdenticon';
 import HelperTooltip from './HelperTooltip';
@@ -60,13 +60,13 @@ const AddressInput = ({
 		setAddress(address);
 
 		if (skipFormatCheck) {
-			if (getEncodedAddress(address, network) || Web3.utils.isAddress(address)) {
+			if (getEncodedAddress(address, network) || isAddress(address)) {
 				onChange(address);
 			}
 			return;
 		}
 
-		const isValidMetaAddress = Web3.utils.isAddress(address, addressPrefix[network]);
+		const isValidMetaAddress = isAddress(address);
 		const [validAddress] = checkAddress(address, addressPrefix[network]);
 
 		if (validAddress || isValidMetaAddress) {
@@ -87,7 +87,7 @@ const AddressInput = ({
 		const addr = (disabled ? defaultAddress : address) || '';
 		if (skipFormatCheck) {
 			if (addr) {
-				if (getEncodedAddress(addr, network) || Web3.utils.isAddress(addr)) {
+				if (getEncodedAddress(addr, network) || isAddress(addr)) {
 					setIsValid(true);
 					checkValidAddress?.(true);
 					onChange(addr);
@@ -102,7 +102,7 @@ const AddressInput = ({
 			return;
 		}
 
-		const isValidMetaAddress = Web3.utils.isAddress(addr, addressPrefix[network]);
+		const isValidMetaAddress = isAddress(addr);
 		const [validAddress] = checkAddress(addr, addressPrefix[network]);
 
 		if (validAddress || isValidMetaAddress) {

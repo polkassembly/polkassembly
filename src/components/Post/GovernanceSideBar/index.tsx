@@ -68,7 +68,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import Web3 from 'web3';
+import { BrowserProvider, Contract } from 'ethers';
 import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
@@ -93,7 +93,7 @@ interface IGovernanceSidebarProps {
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 const abi = require('src/moonbeamConvictionVoting.json');
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
@@ -708,11 +708,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		if (!api || !apiReady || !track_number) return;
 		setLoading(true);
 		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-			const web3 = new Web3((window as any).ethereum);
+			const web3 = new BrowserProvider((window as any).ethereum);
 
-			const chainId = await web3.eth.net.getId();
+			const { chainId } = await web3.getNetwork();
 
-			if (chainId !== chainProperties[network].chainId) {
+			if (Number(chainId.toString()) !== chainProperties[network].chainId) {
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${network} network`,
@@ -722,13 +722,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				setLoading(false);
 				return;
 			}
-			const contract = new web3.eth.Contract(abi, contractAddress);
-			contract.methods
+			const contract = new Contract(contractAddress, abi, await web3.getSigner());
+			contract
 				.removeVote(postIndex)
-				.send({
-					from: address,
-					to: contractAddress
-				})
 				.then((result: any) => {
 					console.log(result);
 					onSuccess();

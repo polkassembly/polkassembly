@@ -8,7 +8,7 @@ import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useApiContext } from '~src/context';
 import { IDelegate } from '~src/types';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
@@ -44,7 +44,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 
 	useEffect(() => {
 		if (!address) return;
-		if ((getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network)) {
+		if ((getEncodedAddress(address, network) || isAddress(address)) && address !== getEncodedAddress(address, network)) {
 			setAddressAlert(true);
 		}
 		setTimeout(() => {
@@ -55,7 +55,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const getData = async () => {
 		if (!api || !apiReady) return;
 
-		if (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
+		if (!(getEncodedAddress(address, network) || isAddress(address)) && address.length > 0) return;
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
@@ -130,7 +130,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								}}
 								disabled={
 									!address ||
-									!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) ||
+									!(getEncodedAddress(address, network) || isAddress(address)) ||
 									address === delegationDashboardAddress ||
 									getEncodedAddress(address, network) === delegationDashboardAddress ||
 									disabled
@@ -146,8 +146,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						<label className='mt-1 text-sm font-normal text-red-500'>You cannot delegate to your own address. Please enter a different wallet address.</label>
 					)}
 
-					{!address ||
-						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
+					{!address || (!(getEncodedAddress(address, network) || isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
 							className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

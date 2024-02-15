@@ -377,7 +377,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 	return (
 		<Table
 			columns={columns}
-			className={`${className}`}
+			className={`${className} w-full overflow-x-auto`}
 			dataSource={dataSource}
 			pagination={{ pageSize: 10 }}
 			theme={theme}

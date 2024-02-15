@@ -7,7 +7,6 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import LeaderboardData from './LeaderboardData';
 import { useTheme } from 'next-themes';
 import { Input } from 'antd';
-import Image from 'next/image';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -31,27 +30,23 @@ const Leaderboard = () => {
 					<p className='m-0 flex items-center justify-center p-0 text-sm text-white '>Find your rank in {network} ecosystem</p>
 				</div>
 			</div>
-			<div className='m-0 -ml-1 mt-6 flex w-full items-center justify-center p-0'>
-				<div>
-					<Image
-						src='/assets/SecondPlace.svg'
-						alt='secondPlace'
-						width={396}
-						height={197}
-					/>
-					<div>
-						<div className='absolute right-[1050px] top-[282px] w-[94px]'>
-							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
-							<div
-								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-								style={{ border: '0.9px solid #9EA1A7' }}
-							>
-								<StarIcon />
-								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-								<InfoIcon style={{ transform: 'scale(0.8)' }} />
-							</div>
+
+			<div className='mt-6 flex w-full items-center justify-center'>
+				<div
+					style={{ backgroundImage: "url('/assets/SecondPlace.svg')" }}
+					className='relative h-[197px] w-[396px] bg-cover bg-center bg-no-repeat'
+				>
+					<div className='ml-2 h-[197px] w-[396px]'>
+						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
+						<div
+							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+							style={{ border: '0.9px solid #9EA1A7' }}
+						>
+							<StarIcon />
+							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+							<InfoIcon style={{ transform: 'scale(0.8)' }} />
 						</div>
-						<div className='absolute right-[932px] top-[366px] flex h-[18px] w-[336px] items-center'>
+						<div className='mx-auto mt-6 flex w-[336px] items-center'>
 							<p className='m-0 p-0'>Vaibhav Gr8</p>
 							<div className='ml-auto flex'>
 								{theme === 'dark' ? (
@@ -93,28 +88,24 @@ const Leaderboard = () => {
 								)}
 							</div>
 						</div>
+						<div className='divider-container mx-auto mt-6 w-[336px] ' />
 					</div>
 				</div>
-				<div className='h-[218px] w-[458px]'>
-					<Image
-						src='/assets/FirstPlace.svg'
-						alt='firstPlace'
-						width={456}
-						height={217}
-					/>
-					<div className='h-[218px] w-[458px]'>
-						<div className='absolute right-[628px] top-[274px] w-[94px]'>
-							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 01</p>
-							<div
-								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-								style={{ border: '0.9px solid #9EA1A7' }}
-							>
-								<StarIcon />
-								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-								<InfoIcon style={{ transform: 'scale(0.8)' }} />
-							</div>
+				<div
+					style={{ backgroundImage: "url('/assets/FirstPlace.svg')" }}
+					className='relative h-[217px] w-[456px] bg-cover bg-center bg-no-repeat'
+				>
+					<div className='ml-2 h-[217px] w-[456px]'>
+						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 01</p>
+						<div
+							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+							style={{ border: '0.9px solid #9EA1A7' }}
+						>
+							<StarIcon />
+							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+							<InfoIcon style={{ transform: 'scale(0.8)' }} />
 						</div>
-						<div className='absolute right-[478px] top-[356px] flex h-[18px] w-[392px] items-center'>
+						<div className='mx-auto mt-6 flex w-[396px] items-center'>
 							<p className='m-0 p-0'>Vaibhav Gr8</p>
 							<div className='ml-auto flex'>
 								{theme === 'dark' ? (
@@ -156,28 +147,24 @@ const Leaderboard = () => {
 								)}
 							</div>
 						</div>
+						<div className='divider-container mx-auto mt-6 w-[396px] ' />
 					</div>
 				</div>
-				<div>
-					<Image
-						src='/assets/ThirdPlace.svg'
-						alt='thirdPlace'
-						width={396}
-						height={197}
-					/>
-					<div>
-						<div className='absolute right-[200px] top-[282px] w-[94px]'>
-							<p className='m-0 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 03</p>
-							<div
-								className='flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-								style={{ border: '0.9px solid #9EA1A7' }}
-							>
-								<StarIcon />
-								<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-								<InfoIcon style={{ transform: 'scale(0.8)' }} />
-							</div>
+				<div
+					style={{ backgroundImage: "url('/assets/ThirdPlace.svg')" }}
+					className='relative h-[197px] w-[396px] bg-cover bg-center bg-no-repeat'
+				>
+					<div className='ml-2 h-[197px] w-[396px]'>
+						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
+						<div
+							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
+							style={{ border: '0.9px solid #9EA1A7' }}
+						>
+							<StarIcon />
+							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
+							<InfoIcon style={{ transform: 'scale(0.8)' }} />
 						</div>
-						<div className='absolute right-[78px] top-[366px] flex h-[18px] w-[336px] items-center'>
+						<div className='mx-auto mt-6 flex w-[336px] items-center'>
 							<p className='m-0 p-0'>Vaibhav Gr8</p>
 							<div className='ml-auto flex'>
 								{theme === 'dark' ? (
@@ -219,9 +206,11 @@ const Leaderboard = () => {
 								)}
 							</div>
 						</div>
+						<div className='divider-container mx-auto mt-6 w-[336px] ' />
 					</div>
 				</div>
 			</div>
+
 			<div className='mt-8 rounded-xxl bg-white px-6 py-9 shadow-md dark:bg-section-dark-overlay'>
 				<div className='flex items-center'>
 					<p className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>

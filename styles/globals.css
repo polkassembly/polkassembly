@@ -836,3 +836,7 @@ z-index: 1050 !important;
 .place-container {
   transform: scale(0.95);
 }
+
+.divider-container {
+  border-top: 1px solid #D2D8E0 !important;
+}

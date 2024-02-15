@@ -5,8 +5,9 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Checkbox, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -62,6 +63,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const { apiReady, api } = useApiContext();
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const {
 		setPostData,
@@ -83,6 +87,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [successModal, setSuccessModal] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const convictionOpts = useMemo(() => {
 		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
@@ -251,6 +269,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			decision: vote,
 			isWeb3Login: currentUser?.web3signup,
 			postId: referendumId,
+			proxyAddress: selectedProxyAddress,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
@@ -476,6 +495,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								withoutInfo={true}
 								theme={theme}
 								isVoting
+								showProxyDropdown={showProxyDropdown}
 							/>
 						) : !wallet ? (
 							<Alert
@@ -484,6 +504,32 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								type='info'
 							/>
 						) : null}
+						{proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='mt-2'>
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+								>
+									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+								</Checkbox>
+							</div>
+						)}
+						{showProxyDropdown && (
+							<ProxyAccountSelectionForm
+								proxyAddresses={proxyAddresses}
+								theme={theme}
+								address={address}
+								withBalance
+								onBalanceChange={handleOnBalanceChange}
+								className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-1'
+								wallet={wallet}
+								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+								setSelectedProxyAddress={setSelectedProxyAddress}
+								selectedProxyAddress={selectedProxyAddress}
+							/>
+						)}
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
 						<Segmented
 							block
@@ -510,6 +556,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							conviction={conviction}
 							setConviction={setConviction}
 							convictionOpts={convictionOpts}
+							isProxyExistsOnWallet={isProxyExistsOnWallet}
 						/>
 					</Spin>
 				</>
@@ -590,5 +637,8 @@ export default styled(VoteReferendum)`
 	}
 	.alignment-close .ant-modal-close:hover {
 		margin-top: 4px;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
 	}
 `;

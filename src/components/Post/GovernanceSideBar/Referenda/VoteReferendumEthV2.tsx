@@ -5,7 +5,8 @@
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -40,6 +41,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -57,6 +59,8 @@ const abi = require('../../../../moonbeamConvictionVoting.json');
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, address }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
+
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const { walletConnectProvider, id, loginAddress, loginWallet } = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -65,6 +69,9 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkSelector();
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const {
 		setPostData,
 		postData: { postType: proposalType }
@@ -94,6 +101,20 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [successModal, setSuccessModal] = useState(false);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -306,6 +327,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			decision: vote,
 			isWeb3Login: currentUser?.web3signup,
 			postId: referendumId,
+			proxyAddress: selectedProxyAddress,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
@@ -363,7 +385,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		}
 
 		tx.send({
-			from: address,
+			from: selectedProxyAddress || address,
 			to: contractAddress
 		})
 			.on('transactionHash', (hash: string) => {
@@ -586,6 +608,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								isVoting={true}
+								showProxyDropdown={showProxyDropdown}
 							/>
 						) : !wallet ? (
 							<Alert
@@ -595,6 +618,32 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								showIcon
 							/>
 						) : null}
+						{proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='mt-2'>
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+								>
+									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+								</Checkbox>
+							</div>
+						)}
+						{showProxyDropdown && (
+							<ProxyAccountSelectionForm
+								proxyAddresses={proxyAddresses}
+								theme={theme}
+								address={address}
+								withBalance
+								onBalanceChange={handleOnBalanceChange}
+								className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-1'
+								wallet={wallet}
+								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+								setSelectedProxyAddress={setSelectedProxyAddress}
+								selectedProxyAddress={selectedProxyAddress}
+							/>
+						)}
 
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
 						<Segmented
@@ -620,6 +669,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
+								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 
@@ -636,6 +686,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
+								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 
@@ -653,6 +704,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
+								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 					</Spin>
@@ -685,6 +737,9 @@ export default styled(VoteReferendumEthV2)`
 	}
 	.vote-form-cont {
 		padding: 12px;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
 	}
 	.alignment-close .ant-select-selector {
 		border: 1px soild !important;
@@ -737,5 +792,8 @@ export default styled(VoteReferendumEthV2)`
 	}
 	.alignment-close .ant-modal-close:hover {
 		margin-top: 4px;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
 	}
 `;

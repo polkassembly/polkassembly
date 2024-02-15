@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Form } from 'antd';
+import { Form } from 'antd';
 import BN from 'bn.js';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import { InjectedTypeWithCouncilBoolean } from '~src/ui-components/AddressDropdo
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -176,7 +177,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 		<>
 			<h3 className='dashboard-heading mb-6 dark:text-white'>Endorse with account!</h3>
 			<Alert
-				className='mb-6 dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+				className='mb-6'
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>

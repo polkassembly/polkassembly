@@ -14,7 +14,8 @@ import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Modal } from 'antd';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
-import { useCurvesInformationSelector } from '~src/redux/selectors';
+import { useCurvesInformationSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface IRefV2ThresholdDataProps {
 	canVote: boolean;
@@ -25,6 +26,7 @@ interface IRefV2ThresholdDataProps {
 const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, thresholdData, canVote }) => {
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
+	const currentUser = useUserDetailsSelector();
 	const { approval, support, approvalThreshold, supportThreshold } = useCurvesInformationSelector();
 	useEffect(() => {
 		if (thresholdOpen && isCurvesRender) {
@@ -44,6 +46,10 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 						<button
 							onClick={() => {
 								setOpen(true);
+								trackEvent('view_vote_history_clicked', 'clicked_view_vote_history', {
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
 							}}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
 						>

@@ -11,7 +11,6 @@ import { Divider, Empty, Segmented, Spin, Tooltip, message } from 'antd';
 import Address from '~src/ui-components/Address';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatBalance } from '@polkadot/util';
 import { useApiContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITip } from 'pages/api/v1/tipping';
@@ -99,15 +98,6 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 			setLoading(false);
 		}
 	};
-
-	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: unit
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady]);
 
 	useEffect(() => {
 		setDollarToTokenBalance({

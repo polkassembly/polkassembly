@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Skeleton } from 'antd';
+import { Skeleton, Spin } from 'antd';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -18,6 +18,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,
@@ -32,15 +33,14 @@ interface Props {
 
 const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	const { api, apiReady } = useApiContext();
+	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const [expandProposals, setExpandProposals] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
-	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
-	const currentUser = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!address) return;
@@ -72,9 +72,13 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, delegationDashboardAddress, api, apiReady]);
+	}, [address, currentUser?.delegationDashboardAddress, api, apiReady]);
 
-	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')];
+	const addressess = [
+		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
+		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
+		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
+	];
 
 	return (
 		<div className={`${className} mt-[22px] rounded-[14px] bg-white px-[37px] py-6 dark:bg-section-dark-overlay`}>
@@ -100,9 +104,10 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 				<div className='mt-[24px]'>
 					{disabled && (
 						<Alert
-							className='text-sm font-normal text-bodyBlue dark:border-separatorDark dark:bg-[#05263F]'
+							className='text-sm font-normal text-bodyBlue '
 							showIcon
 							message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
+							type='info'
 						/>
 					)}
 					<h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}>
@@ -131,8 +136,8 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 								disabled={
 									!address ||
 									!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) ||
-									address === delegationDashboardAddress ||
-									getEncodedAddress(address, network) === delegationDashboardAddress ||
+									address === currentUser?.delegationDashboardAddress ||
+									getEncodedAddress(address, network) === currentUser?.delegationDashboardAddress ||
 									disabled
 								}
 							>
@@ -142,7 +147,7 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						</div>
 					</div>
 
-					{getEncodedAddress(address, network) === delegationDashboardAddress && (
+					{getEncodedAddress(address, network) === currentUser?.delegationDashboardAddress && (
 						<label className='mt-1 text-sm font-normal text-red-500'>You cannot delegate to your own address. Please enter a different wallet address.</label>
 					)}
 
@@ -150,32 +155,30 @@ const Delegate = ({ className, trackDetails, disabled }: Props) => {
 						(!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 					{addressAlert && (
 						<Alert
-							className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mb-4 mt-4 '
 							showIcon
 							type='info'
-							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+							message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
 						/>
 					)}
 
-					{!loading ? (
-						<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
-							{[
-								...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-								...delegatesData
-									.filter((item) => ![...addressess, getSubstrateAddress('13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K')].includes(getSubstrateAddress(item?.address)))
-									.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
-							].map((delegate, index) => (
-								<DelegateCard
-									trackNum={trackDetails?.trackId}
-									key={index}
-									delegate={delegate}
-									disabled={disabled}
-								/>
-							))}
-						</div>
-					) : (
-						<Skeleton className='mt-6' />
-					)}
+					{
+						<Spin spinning={loading}>
+							<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
+								{[
+									...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
+									...delegatesData.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+								].map((delegate, index) => (
+									<DelegateCard
+										trackNum={trackDetails?.trackId}
+										key={index}
+										delegate={delegate}
+										disabled={disabled}
+									/>
+								))}
+							</div>
+						</Spin>
+					}
 				</div>
 			)}
 			<DelegateModal

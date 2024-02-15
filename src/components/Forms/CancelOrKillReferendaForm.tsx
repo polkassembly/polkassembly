@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { BN, BN_HUNDRED } from '@polkadot/util';
-import { Alert, Form, Input } from 'antd';
+import { Alert, Form, Input, Spin } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
@@ -20,6 +20,7 @@ import { setSigner } from '~src/util/create-referenda/setSigner';
 import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import { EKillOrCancel } from './enum';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const ZERO_BN = new BN(0);
 
@@ -40,6 +41,7 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 	const [form] = Form.useForm();
 	const formName = 'kill-or-cancel-ref-form';
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
@@ -55,6 +57,7 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 			const proposal = type === EKillOrCancel.CANCEL ? api.tx.referenda.cancel(Number(postData.index)) : api.tx.referenda.kill(Number(postData.index));
 			const proposalPreImage = createPreImage(api, proposal);
 			const preImageTx = proposalPreImage.notePreimageTx;
+			setLoading(true);
 			const origin: any = { Origins: PostOrigin.REFERENDUM_CANCELLER };
 			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
 			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
@@ -66,6 +69,7 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
+				setLoading(false);
 			};
 
 			const onFailed = (message: string) => {
@@ -75,8 +79,9 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 					message,
 					status: NotificationStatus.ERROR
 				});
+				setLoading(false);
 			};
-
+			setLoading(true);
 			await executeTx({
 				address,
 				api,
@@ -89,6 +94,7 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 				tx: mainTx
 			});
 		} catch (error) {
+			setLoading(false);
 			setLoadingStatus({ isLoading: false, message: '' });
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -137,115 +143,120 @@ export default function CancelOrKillReferendaForm({ type }: { type: EKillOrCance
 	}, [api, apiReady]);
 
 	return (
-		<div className='w-full'>
-			{availableBalance.lte(submissionDeposite) && (
-				<Alert
-					className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-					type='info'
-					showIcon
-					message={
-						<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-							Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
-						</span>
-					}
-					description={
-						<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-							<li className='mt-0 flex w-full justify-between'>
-								<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-								</span>
-							</li>
-						</div>
-					}
-				/>
-			)}
-			<Form
-				form={form}
-				name={formName}
-				onFinish={handleSubmit}
-			>
-				<div className='mt-3 flex flex-col gap-1'>
-					<div className='flex gap-1'>
-						<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-							<span className='flex items-center'>Referenda Index</span>
-						</label>
-						<HelperTooltip
-							text='Enter Referendum Index to take any action'
-							className='dark:text-blue-dark-medium'
-						/>
-					</div>
-					<Form.Item
-						name='referenda-index'
-						rules={[
-							{
-								message: 'Please enter referenda index',
-								required: true
-							}
-						]}
-					>
-						<Input
-							type='number'
-							className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-							placeholder='Enter Referenda Index'
-							onChange={(e) => handleDebounceData(e.target.value)}
-						/>
-					</Form.Item>
-				</div>
-			</Form>
-
-			{loadingStatus.isLoading && (
-				<div className='flex flex-col items-center justify-center'>
-					<Loader />
-					{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
-				</div>
-			)}
-			{error && postData.index && <span className='text-[#FF4D4F]'>{error}</span>}
-			{!error && !loadingStatus.isLoading && postData && (postData?.title || postData?.content) && (
-				<>
-					<Form
-						name='post-content-form'
-						layout='vertical'
-						initialValues={postData}
-					>
-						<div className='flex flex-col gap-1'>
+		<Spin
+			spinning={loading}
+			indicator={<LoadingOutlined />}
+		>
+			<div className='w-full'>
+				{availableBalance.lte(submissionDeposite) && (
+					<Alert
+						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						type='info'
+						showIcon
+						message={
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+								Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
+							</span>
+						}
+						description={
+							<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
+								<li className='mt-0 flex w-full justify-between'>
+									<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+									</span>
+								</li>
+							</div>
+						}
+					/>
+				)}
+				<Form
+					form={form}
+					name={formName}
+					onFinish={handleSubmit}
+				>
+					<div className='mt-3 flex flex-col gap-1'>
+						<div className='flex gap-1'>
 							<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-								<span className='flex items-center'>Title</span>
+								<span className='flex items-center'>Referenda Index</span>
 							</label>
-							<Form.Item name='title'>
-								<Input
-									defaultValue={postData?.title}
-									value={postData?.title}
-									className='rounded-md py-2 text-black opacity-70 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									disabled
-								/>
-							</Form.Item>
-						</div>
-						<div className='flex flex-col gap-1'>
-							<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-								<span className='flex items-center'>Content</span>
-							</label>
-							<Markdown
-								imgHidden
-								className='post-content cursor-not-allowed rounded-md border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 opacity-70 dark:border-[#3B444F] dark:bg-section-dark-overlay
-								dark:text-blue-dark-high '
-								md={postData.content}
+							<HelperTooltip
+								text='Enter Referendum Index to take any action'
+								className='dark:text-blue-dark-medium'
 							/>
 						</div>
-					</Form>
-					<div className='mt-6 flex items-center justify-end'>
-						<CustomButton
-							variant='primary'
-							htmlType='submit'
-							buttonsize='sm'
-							onClick={handleSubmit}
-							disabled={availableBalance.lte(submissionDeposite)}
+						<Form.Item
+							name='referenda-index'
+							rules={[
+								{
+									message: 'Please enter referenda index',
+									required: true
+								}
+							]}
 						>
-							{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
-						</CustomButton>
+							<Input
+								type='number'
+								className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								placeholder='Enter Referenda Index'
+								onChange={(e) => handleDebounceData(e.target.value)}
+							/>
+						</Form.Item>
 					</div>
-				</>
-			)}
-		</div>
+				</Form>
+
+				{loadingStatus.isLoading && (
+					<div className='flex flex-col items-center justify-center'>
+						<Loader />
+						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
+					</div>
+				)}
+				{error && postData.index && <span className='text-[#FF4D4F]'>{error}</span>}
+				{!error && !loadingStatus.isLoading && postData && (postData?.title || postData?.content) && (
+					<>
+						<Form
+							name='post-content-form'
+							layout='vertical'
+							initialValues={postData}
+						>
+							<div className='flex flex-col gap-1'>
+								<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
+									<span className='flex items-center'>Title</span>
+								</label>
+								<Form.Item name='title'>
+									<Input
+										defaultValue={postData?.title}
+										value={postData?.title}
+										className='rounded-md py-2 text-black opacity-70 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										disabled
+									/>
+								</Form.Item>
+							</div>
+							<div className='flex flex-col gap-1'>
+								<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
+									<span className='flex items-center'>Content</span>
+								</label>
+								<Markdown
+									imgHidden
+									className='post-content cursor-not-allowed rounded-md border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 opacity-70 dark:border-[#3B444F] dark:bg-section-dark-overlay
+								dark:text-blue-dark-high '
+									md={postData.content}
+								/>
+							</div>
+						</Form>
+						<div className='mt-6 flex items-center justify-end'>
+							<CustomButton
+								variant='primary'
+								htmlType='submit'
+								buttonsize='sm'
+								onClick={handleSubmit}
+								disabled={availableBalance.lte(submissionDeposite)}
+							>
+								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} a Referenda
+							</CustomButton>
+						</div>
+					</>
+				)}
+			</div>
+		</Spin>
 	);
 }

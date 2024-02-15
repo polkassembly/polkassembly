@@ -4,7 +4,7 @@
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
-import { Alert, Form, Input, Radio } from 'antd';
+import { Alert, Form, Input, Radio, Spin } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
@@ -31,6 +31,7 @@ import DownArrow from '~assets/icons/down-icon.svg';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { setSigner } from '~src/util/create-referenda/setSigner';
 import { createPreImage } from '~src/util/create-referenda/createPreImage';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface ParamField {
 	name: string;
@@ -111,6 +112,7 @@ export default function CreateReferendaForm() {
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -128,6 +130,7 @@ export default function CreateReferendaForm() {
 		try {
 			const proposalPreImage = createPreImage(api, methodCall);
 			const preImageTx = proposalPreImage.notePreimageTx;
+			setLoading(true);
 			const origin: any = { Origins: selectedTrack };
 			const proposalTx = api.tx.referenda.submit(
 				origin,
@@ -143,6 +146,7 @@ export default function CreateReferendaForm() {
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
+				setLoading(false);
 			};
 
 			const onFailed = (message: string) => {
@@ -152,8 +156,9 @@ export default function CreateReferendaForm() {
 					message,
 					status: NotificationStatus.ERROR
 				});
+				setLoading(false);
 			};
-
+			setLoading(true);
 			await executeTx({
 				address,
 				api,
@@ -166,6 +171,7 @@ export default function CreateReferendaForm() {
 				tx: mainTx
 			});
 		} catch (error) {
+			setLoading(false);
 			setLoadingStatus({ isLoading: false, message: '' });
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -359,256 +365,261 @@ export default function CreateReferendaForm() {
 	}, [api, apiReady]);
 
 	return (
-		<section className='w-full'>
-			{availableBalance.lte(submissionDeposite) && (
-				<Alert
-					className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-					type='info'
-					showIcon
-					message={
-						<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-							Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
-						</span>
-					}
-					description={
-						<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-							<li className='mt-0 flex w-full justify-between'>
-								<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-								</span>
-							</li>
-						</div>
-					}
-				/>
-			)}
-			{loadingStatus.isLoading && (
-				<div className='flex flex-col items-center justify-center'>
-					<Loader />
-					{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
-				</div>
-			)}
-			<div className='flex items-center gap-x-2'>
-				<div className='mt-2 w-full'>
-					<label className='input-label dark:text-blue-dark-medium'>Pallet</label>
-					<Dropdown
-						theme={theme}
-						overlayClassName='z-[1056]'
-						trigger={['click']}
-						menu={{
-							items: palletRPCs,
-							onClick: (e: any) => onPalletCallableParamChange(e, 'palletRpc')
-						}}
-						className={'border border-white'}
-					>
-						<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
-							<span className='flex items-center gap-x-2'>{palletRpc || <span className='text-text_secondary'>Pallet</span>}</span>
-							<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
-						</div>
-					</Dropdown>
-				</div>
-				{palletRpc && (
+		<Spin
+			spinning={loading}
+			indicator={<LoadingOutlined />}
+		>
+			<section className='w-full'>
+				{availableBalance.lte(submissionDeposite) && (
+					<Alert
+						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						type='info'
+						showIcon
+						message={
+							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+								Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
+							</span>
+						}
+						description={
+							<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
+								<li className='mt-0 flex w-full justify-between'>
+									<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+									</span>
+								</li>
+							</div>
+						}
+					/>
+				)}
+				{loadingStatus.isLoading && (
+					<div className='flex flex-col items-center justify-center'>
+						<Loader />
+						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
+					</div>
+				)}
+				<div className='flex items-center gap-x-2'>
 					<div className='mt-2 w-full'>
-						<label className='input-label dark:text-blue-dark-medium'>Method</label>
+						<label className='input-label dark:text-blue-dark-medium'>Pallet</label>
 						<Dropdown
 							theme={theme}
+							overlayClassName='z-[1056]'
 							trigger={['click']}
 							menu={{
-								items: callables,
-								onClick: (e: any) => onPalletCallableParamChange(e, 'callable')
+								items: palletRPCs,
+								onClick: (e: any) => onPalletCallableParamChange(e, 'palletRpc')
 							}}
+							className={'border border-white'}
 						>
-							<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
-								<span className='flex items-center gap-x-2'>{callable || <span className='text-text_secondary'>Method</span>}</span>
+							<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
+								<span className='flex items-center gap-x-2'>{palletRpc || <span className='text-text_secondary'>Pallet</span>}</span>
 								<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
 							</div>
 						</Dropdown>
 					</div>
-				)}
-			</div>
-			{paramFields?.map((paramField, ind) => {
-				return (
-					<div
-						key={ind}
-						className='mt-2'
-					>
-						<label className='input-label dark:text-blue-dark-medium'>
-							{paramField.name}
-							{paramField.optional ? ' (optional)' : ''}
-						</label>
-						{['i8', 'i16', 'i32', 'i64', 'i128', 'u8', 'u16', 'u32', 'u64', 'u128', 'u256'].includes(
-							paramField.raw.info === TypeDefInfo.Compact && paramField.raw.sub ? (paramField.raw.sub as any)?.type : paramField.raw.type
-						) && ['Amount', 'Balance', 'BalanceOf'].includes(paramField.typeName) ? (
-							<BalanceInput
+					{palletRpc && (
+						<div className='mt-2 w-full'>
+							<label className='input-label dark:text-blue-dark-medium'>Method</label>
+							<Dropdown
 								theme={theme}
-								onChange={(balance) => onParamChange(balance.toString(), { ind, paramField })}
-							/>
-						) : ['AccountId', 'Address', 'LookupSource', 'MultiAddress'].includes(paramField.type) ? (
-							<AddressInput
-								theme={theme}
-								onChange={(address) => onParamChange(address, { ind, paramField })}
-								placeholder={paramField.type}
-								className='!mt-0'
-							/>
-						) : (
-							<Input
-								placeholder={paramField.type}
-								type='text'
-								className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-								value={inputParams[ind]?.value || ''}
-								onChange={(event) => onParamChange(event.target.value, { ind, paramField })}
-							/>
-						)}
-					</div>
-				);
-			})}
-			<div className='mt-6'>
-				<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-					Select Track{' '}
-					<span>
-						<HelperTooltip
-							text='Track selection is done based on the amount requested.'
-							className='ml-1'
-						/>
-					</span>
-				</label>
-				<SelectTracks
-					tracksArr={trackArr}
-					onTrackChange={(track) => {
-						setSelectedTrack(track);
-						// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
-						// getPreimageTxFee();
-						// setSteps({ percent: 100, step: 1 });
-					}}
-					selectedTrack={selectedTrack}
-				/>
-			</div>
-
-			{/* {isPreimage !== null && ( */}
-			<div
-				className='mt-6 flex cursor-pointer items-center gap-2'
-				onClick={() => setOpenAdvanced(!openAdvanced)}
-			>
-				<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
-				<DownArrow className='down-icon' />
-			</div>
-			{/* )} */}
-			{openAdvanced && (
-				<div className='preimage mt-3 flex flex-col'>
+								trigger={['click']}
+								menu={{
+									items: callables,
+									onClick: (e: any) => onPalletCallableParamChange(e, 'callable')
+								}}
+							>
+								<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
+									<span className='flex items-center gap-x-2'>{callable || <span className='text-text_secondary'>Method</span>}</span>
+									<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
+								</div>
+							</Dropdown>
+						</div>
+					)}
+				</div>
+				{paramFields?.map((paramField, ind) => {
+					return (
+						<div
+							key={ind}
+							className='mt-2'
+						>
+							<label className='input-label dark:text-blue-dark-medium'>
+								{paramField.name}
+								{paramField.optional ? ' (optional)' : ''}
+							</label>
+							{['i8', 'i16', 'i32', 'i64', 'i128', 'u8', 'u16', 'u32', 'u64', 'u128', 'u256'].includes(
+								paramField.raw.info === TypeDefInfo.Compact && paramField.raw.sub ? (paramField.raw.sub as any)?.type : paramField.raw.type
+							) && ['Amount', 'Balance', 'BalanceOf'].includes(paramField.typeName) ? (
+								<BalanceInput
+									theme={theme}
+									onChange={(balance) => onParamChange(balance.toString(), { ind, paramField })}
+								/>
+							) : ['AccountId', 'Address', 'LookupSource', 'MultiAddress'].includes(paramField.type) ? (
+								<AddressInput
+									theme={theme}
+									onChange={(address) => onParamChange(address, { ind, paramField })}
+									placeholder={paramField.type}
+									className='!mt-0'
+								/>
+							) : (
+								<Input
+									placeholder={paramField.type}
+									type='text'
+									className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									value={inputParams[ind]?.value || ''}
+									onChange={(event) => onParamChange(event.target.value, { ind, paramField })}
+								/>
+							)}
+						</div>
+					);
+				})}
+				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-						Enactment{' '}
+						Select Track{' '}
 						<span>
 							<HelperTooltip
-								text='A custom delay can be set for enactment of approved proposals.'
+								text='Track selection is done based on the amount requested.'
 								className='ml-1'
 							/>
 						</span>
 					</label>
-					<Radio.Group
-						className='enactment mt-1 flex flex-col gap-2'
-						value={enactment.key}
-						onChange={(e) => {
-							setEnactment({ ...enactment, key: e.target.value });
+					<SelectTracks
+						tracksArr={trackArr}
+						onTrackChange={(track) => {
+							setSelectedTrack(track);
+							// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+							// getPreimageTxFee();
+							// setSteps({ percent: 100, step: 1 });
 						}}
-					>
-						<Radio
-							value={EEnactment.At_Block_No}
-							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
-						>
-							<div className='flex h-10 items-center gap-2'>
-								<span className='w-[150px]'>
-									At Block no.
-									<HelperTooltip
-										className='ml-1'
-										text='Allows you to choose a custom block number for enactment.'
-									/>
-								</span>
-								<span>
-									{enactment.key === EEnactment.At_Block_No && (
-										<Form.Item
-											name='at_block'
-											rules={[
-												{
-													message: 'Invalid Block no.',
-													validator(rule, value, callback) {
-														const bnValue = new (BN as any)(Number(value) >= 0 ? value : '0') || ZERO_BN;
-
-														if (callback && value?.length > 0 && ((currentBlock && bnValue?.lt(currentBlock)) || (value?.length && Number(value) <= 0))) {
-															callback(rule.message?.toString());
-														} else {
-															callback();
-														}
-													}
-												}
-											]}
-										>
-											<Input
-												name='at_block'
-												value={String(advancedDetails.atBlockNo?.toString())}
-												className='mt-4 w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-												onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
-											/>
-										</Form.Item>
-									)}
-								</span>
-							</div>
-						</Radio>
-						<Radio
-							value={EEnactment.After_No_Of_Blocks}
-							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
-						>
-							<div className='flex h-[30px] items-center gap-2'>
-								<span className='w-[150px]'>
-									After no. of Blocks
-									<HelperTooltip
-										text='Allows you to choose a custom delay in terms of blocks for enactment.'
-										className='ml-1'
-									/>
-								</span>
-								<span>
-									{enactment.key === EEnactment.After_No_Of_Blocks && (
-										<Form.Item
-											name='after_blocks'
-											rules={[
-												{
-													message: 'Invalid no. of Blocks',
-													validator(rule, value, callback) {
-														const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
-														if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
-															callback(rule.message?.toString());
-														} else {
-															callback();
-														}
-													}
-												}
-											]}
-										>
-											<Input
-												name='after_blocks'
-												defaultValue={100}
-												className='mt-4 w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-												onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
-											/>
-										</Form.Item>
-									)}
-								</span>
-							</div>
-						</Radio>
-					</Radio.Group>
+						selectedTrack={selectedTrack}
+					/>
 				</div>
-			)}
-			<div className='mt-6 flex items-center justify-end'>
-				<CustomButton
-					variant='primary'
-					htmlType='submit'
-					buttonsize='sm'
-					onClick={handleSubmit}
-					className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-					disabled={!methodCall || !selectedTrack}
+
+				{/* {isPreimage !== null && ( */}
+				<div
+					className='mt-6 flex cursor-pointer items-center gap-2'
+					onClick={() => setOpenAdvanced(!openAdvanced)}
 				>
-					Create Referendum
-				</CustomButton>
-			</div>
-		</section>
+					<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+					<DownArrow className='down-icon' />
+				</div>
+				{/* )} */}
+				{openAdvanced && (
+					<div className='preimage mt-3 flex flex-col'>
+						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+							Enactment{' '}
+							<span>
+								<HelperTooltip
+									text='A custom delay can be set for enactment of approved proposals.'
+									className='ml-1'
+								/>
+							</span>
+						</label>
+						<Radio.Group
+							className='enactment mt-1 flex flex-col gap-2'
+							value={enactment.key}
+							onChange={(e) => {
+								setEnactment({ ...enactment, key: e.target.value });
+							}}
+						>
+							<Radio
+								value={EEnactment.At_Block_No}
+								className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+							>
+								<div className='flex h-10 items-center gap-2'>
+									<span className='w-[150px]'>
+										At Block no.
+										<HelperTooltip
+											className='ml-1'
+											text='Allows you to choose a custom block number for enactment.'
+										/>
+									</span>
+									<span>
+										{enactment.key === EEnactment.At_Block_No && (
+											<Form.Item
+												name='at_block'
+												rules={[
+													{
+														message: 'Invalid Block no.',
+														validator(rule, value, callback) {
+															const bnValue = new (BN as any)(Number(value) >= 0 ? value : '0') || ZERO_BN;
+
+															if (callback && value?.length > 0 && ((currentBlock && bnValue?.lt(currentBlock)) || (value?.length && Number(value) <= 0))) {
+																callback(rule.message?.toString());
+															} else {
+																callback();
+															}
+														}
+													}
+												]}
+											>
+												<Input
+													name='at_block'
+													value={String(advancedDetails.atBlockNo?.toString())}
+													className='mt-4 w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+													onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
+												/>
+											</Form.Item>
+										)}
+									</span>
+								</div>
+							</Radio>
+							<Radio
+								value={EEnactment.After_No_Of_Blocks}
+								className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+							>
+								<div className='flex h-[30px] items-center gap-2'>
+									<span className='w-[150px]'>
+										After no. of Blocks
+										<HelperTooltip
+											text='Allows you to choose a custom delay in terms of blocks for enactment.'
+											className='ml-1'
+										/>
+									</span>
+									<span>
+										{enactment.key === EEnactment.After_No_Of_Blocks && (
+											<Form.Item
+												name='after_blocks'
+												rules={[
+													{
+														message: 'Invalid no. of Blocks',
+														validator(rule, value, callback) {
+															const bnValue = new BN(Number(value) >= 0 ? value : '0') || ZERO_BN;
+															if (callback && value?.length > 0 && (bnValue?.lt(BN_ONE) || (value?.length && Number(value) <= 0))) {
+																callback(rule.message?.toString());
+															} else {
+																callback();
+															}
+														}
+													}
+												]}
+											>
+												<Input
+													name='after_blocks'
+													defaultValue={100}
+													className='mt-4 w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+													onChange={(e) => handleAdvanceDetailsChange(EEnactment.After_No_Of_Blocks, e.target.value)}
+												/>
+											</Form.Item>
+										)}
+									</span>
+								</div>
+							</Radio>
+						</Radio.Group>
+					</div>
+				)}
+				<div className='mt-6 flex items-center justify-end'>
+					<CustomButton
+						variant='primary'
+						htmlType='submit'
+						buttonsize='sm'
+						onClick={handleSubmit}
+						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
+						disabled={!methodCall || !selectedTrack}
+					>
+						Create Referendum
+					</CustomButton>
+				</div>
+			</section>
+		</Spin>
 	);
 }

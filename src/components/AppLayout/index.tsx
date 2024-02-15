@@ -888,17 +888,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-
 			<Footer theme={theme} />
-			{/* {referendaModal && (
-				<>
-					<ReferendaActionModal
-						referendaModal={referendaModal}
-						openAddressLinkedModal={openAddressLinkedModal}
-						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-					/>
-				</>
-			)} */}
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

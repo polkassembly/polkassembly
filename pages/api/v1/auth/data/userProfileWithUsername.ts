@@ -142,7 +142,7 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 		const user_addresses = await getAddressesFromUserId(userDoc.id);
 
 		const user: ProfileDetailsResponse = {
-			addresses: user_addresses.map((a) => a?.address) || [],
+			addresses: user_addresses?.map((a) => a?.address)?.filter((address) => !!address) || [],
 			badges: [],
 			bio: '',
 			created_at: dayjs((userDoc.created_at as any)?.toDate?.() || userDoc.created_at).toDate(),

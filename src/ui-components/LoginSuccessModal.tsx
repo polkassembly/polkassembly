@@ -3,10 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import AuthForm from 'src/ui-components/AuthForm';
-// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
-// import { Alert, Button, Divider, Form } from 'antd';
-// import ConfirmationIcon from '~assets/icons/Confirmation.svg';
-import { Alert, Divider, Form } from 'antd';
+import { Divider, Form } from 'antd';
 import messages from '~src/util/messages';
 import { username } from '~src/util/validation';
 import { MailIcon, WhiteMailIcon } from '~src/ui-components/CustomIcons';
@@ -24,6 +21,7 @@ import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	// setLoading: (pre: boolean) => void;
@@ -186,14 +184,14 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							</div>
 							{!isError ? (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									className='mb-5 mt-1 p-3 text-sm'
 									message={<span className='dark:text-blue-dark-high'>You can update your username from the settings page.</span>}
 									type='info'
 									showIcon
 								/>
 							) : (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+									className='mb-5 mt-1 p-3 text-sm'
 									message={<span className='dark:text-blue-dark-high'>Username already exists. Please try again </span>}
 									type='error'
 									showIcon
@@ -290,14 +288,14 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 							</div>
 							{!emailError ? (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									className='mb-5 mt-1 p-3 text-sm'
 									message={<span className='dark:text-blue-dark-high'>You can set your email later from the settings page.</span>}
 									type='info'
 									showIcon
 								/>
 							) : (
 								<Alert
-									className='mb-5 mt-1 p-3 text-sm dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+									className='mb-5 mt-1 p-3 text-sm'
 									message={<span className='dark:text-blue-dark-high'>Email already exists. Please use a different email or link your address with the existing account.</span>}
 									type='error'
 									showIcon

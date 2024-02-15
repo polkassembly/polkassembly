@@ -10,9 +10,11 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { Spin } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const TrendingDelegates = () => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
@@ -23,10 +25,11 @@ const TrendingDelegates = () => {
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates');
 		if (data) {
 			setDelegatesData(data);
+			setLoading(false);
 		} else {
 			console.log(error);
+			setLoading(false);
 		}
-		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -34,10 +37,11 @@ const TrendingDelegates = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const itemsPerPage = showMore ? 10 : 6;
+	const itemsPerPage = showMore ? delegatesData.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
+	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
+
 	const onChange = (page: number) => {
 		setCurrentPage(page);
 	};
@@ -67,7 +71,11 @@ const TrendingDelegates = () => {
 			setCurrentPage(totalPages);
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
-	const addressess = [getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'), getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')];
+	const addressess = [
+		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
+		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
+		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
+	];
 
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
@@ -101,43 +109,44 @@ const TrendingDelegates = () => {
 				</div>
 				<span
 					onClick={() => setShowMore(!showMore)}
-					className='cursor-pointer text-xs font-medium text-pink_primary'
+					className='mr-[3px] cursor-pointer text-xs font-medium text-pink_primary'
 				>
-					{showMore ? 'Show Less' : 'Show More'}
+					{showMore ? 'Show Less' : 'Show All'}
 				</span>
 			</div>
 
 			<Spin spinning={loading}>
-				<div>
+				<div className='min-h-[200px]'>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
 							...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-							...delegatesData
-								.filter((item) => ![...addressess, getSubstrateAddress('13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K')].includes(getSubstrateAddress(item?.address)))
-								.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+							...delegatesData.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address))).sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 						]
 							.slice(startIndex, endIndex)
 							.map((delegate, index) => (
 								<DelegateCard
 									key={index}
 									delegate={delegate}
+									disabled={!delegationDashboardAddress}
 								/>
 							))}
 					</div>
-					<div className='mt-6 flex justify-end'>
-						<Pagination
-							theme={theme}
-							size='large'
-							defaultCurrent={1}
-							current={currentPage}
-							onChange={onChange}
-							total={delegatesData.length || 0}
-							showSizeChanger={false}
-							pageSize={itemsPerPage}
-							responsive={true}
-							hideOnSinglePage={true}
-						/>
-					</div>
+					{!showMore && delegatesData.length > 6 && (
+						<div className='mt-6 flex justify-end'>
+							<Pagination
+								theme={theme}
+								size='large'
+								defaultCurrent={1}
+								current={currentPage}
+								onChange={onChange}
+								total={delegatesData.length}
+								showSizeChanger={false}
+								pageSize={itemsPerPage}
+								responsive={true}
+								hideOnSinglePage={true}
+							/>
+						</div>
+					)}
 				</div>
 			</Spin>
 		</div>

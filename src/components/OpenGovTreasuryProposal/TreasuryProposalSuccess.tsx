@@ -26,13 +26,16 @@ interface Props {
 	className?: string;
 	open: boolean;
 	onCancel: () => void;
-	proposerAddress: string;
-	fundingAmount: BN;
-	selectedTrack: string;
-	preimageHash: string;
-	preimageLength: number | null;
-	beneficiaryAddresses: IBeneficiary[];
-	postId: number;
+	proposerAddress?: string;
+	fundingAmount?: BN;
+	selectedTrack?: string;
+	preimageHash?: string;
+	preimageLength?: number | null;
+	beneficiaryAddresses?: IBeneficiary[];
+	postId?: number;
+	isCancelReferendaForm?: boolean;
+	isKillReferendumForm?: boolean;
+	isCreateReferendumForm?: boolean;
 }
 
 const getDefaultTrackMetaData = () => {
@@ -59,7 +62,10 @@ const TreasuryProposalSuccessPopup = ({
 	beneficiaryAddresses,
 	preimageLength,
 	selectedTrack,
-	postId
+	postId,
+	isCreateReferendumForm,
+	isKillReferendumForm,
+	isCancelReferendaForm
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -108,13 +114,21 @@ const TreasuryProposalSuccessPopup = ({
 					src='/assets/delegation-tracks/success-delegate.svg'
 					alt='success delegate icon'
 				/>
-				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Proposal created successfully for</label>
+				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					{isCancelReferendaForm
+						? 'ProposReferendumal Canceled Successfully '
+						: isKillReferendumForm
+						? 'Referendum Killed successfully'
+						: isCreateReferendumForm
+						? 'Referendum created successfully for'
+						: 'Proposal created successfully for'}
+				</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						{formatedBalance(fundingAmount.toString(), unit)} {unit}
 					</span>
 				)}
-				{proposerAddress && beneficiaryAddresses?.[0]?.address?.length > 0 && selectedTrack && preimageHash && preimageLength && (
+				{proposerAddress && beneficiaryAddresses && beneficiaryAddresses?.[0]?.address?.length > 0 && selectedTrack && preimageHash && preimageLength && (
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
@@ -129,7 +143,7 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Beneficiary Address:</span>
 								<div className='flex flex-col gap-2'>
-									{beneficiaryAddresses.map((beneficiary, index) => (
+									{beneficiaryAddresses?.map((beneficiary, index) => (
 										<Beneficiary
 											beneficiary={beneficiary}
 											key={index}
@@ -149,7 +163,7 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Funding Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{formatedBalance(fundingAmount.toString(), unit)} {unit}
+									{fundingAmount && formatedBalance(fundingAmount.toString(), unit)} {unit}
 								</span>
 							</span>
 							<span className='flex items-center'>

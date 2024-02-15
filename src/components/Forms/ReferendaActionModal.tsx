@@ -15,6 +15,7 @@ import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import styled from 'styled-components';
 import { EKillOrCancel } from './enum';
+import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -75,6 +76,7 @@ const ReferendaActionModal = ({
 	const [tags, setTags] = useState<string[]>([]);
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
+	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -93,6 +95,12 @@ const ReferendaActionModal = ({
 	};
 
 	useEffect(() => {}, [network]);
+
+	const successPopupProps = {
+		isCancelReferendaForm: referendaModal === 2,
+		isCreateReferendumForm: referendaModal === 1,
+		isKillReferendumForm: referendaModal === 3
+	};
 
 	return (
 		<div className={className}>
@@ -208,23 +216,38 @@ const ReferendaActionModal = ({
 
 					{steps?.step === 1 && (
 						<>
-							{referendaModal === 1 && <CreateReferendaForm setSteps={setSteps} />}
+							{referendaModal === 1 && (
+								<CreateReferendaForm
+									setSteps={setSteps}
+									setOpenSuccess={setOpenSuccess}
+								/>
+							)}
 							{referendaModal === 2 && (
 								<CancelOrKillReferendaForm
 									setSteps={setSteps}
 									type={EKillOrCancel.CANCEL}
+									setOpenSuccess={setOpenSuccess}
 								/>
 							)}
 							{referendaModal === 3 && (
 								<CancelOrKillReferendaForm
 									setSteps={setSteps}
 									type={EKillOrCancel.KILL}
+									setOpenSuccess={setOpenSuccess}
 								/>
 							)}
 						</>
 					)}
 				</div>
 			</Modal>
+			<TreasuryProposalSuccessPopup
+				open={openSuccess}
+				onCancel={() => {
+					setOpenSuccess(false);
+					handleClose();
+				}}
+				{...successPopupProps}
+			/>
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}

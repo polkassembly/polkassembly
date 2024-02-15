@@ -92,7 +92,7 @@ const transformParams = (paramFields: ParamField[], inputParams: any[], opts = {
 };
 const ZERO_BN = new BN(0);
 
-export default function CreateReferendaForm({ setSteps }: { setSteps: (pre: ISteps) => void }) {
+export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setSteps: (pre: ISteps) => void; setOpenSuccess: (pre: boolean) => void }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
 	const { loginWallet } = useUserDetailsSelector();
@@ -147,6 +147,7 @@ export default function CreateReferendaForm({ setSteps }: { setSteps: (pre: ISte
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
 				setLoading(false);
+				setOpenSuccess(true);
 			};
 
 			const onFailed = (message: string) => {

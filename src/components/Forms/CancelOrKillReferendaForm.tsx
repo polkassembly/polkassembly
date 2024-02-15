@@ -25,7 +25,15 @@ import { ISteps } from '../OpenGovTreasuryProposal';
 
 const ZERO_BN = new BN(0);
 
-export default function CancelOrKillReferendaForm({ type, setSteps }: { type: EKillOrCancel; setSteps: (pre: ISteps) => void }) {
+export default function CancelOrKillReferendaForm({
+	type,
+	setSteps,
+	setOpenSuccess
+}: {
+	type: EKillOrCancel;
+	setSteps: (pre: ISteps) => void;
+	setOpenSuccess: (pre: boolean) => void;
+}) {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const { loginWallet } = useUserDetailsSelector();
@@ -71,6 +79,7 @@ export default function CancelOrKillReferendaForm({ type, setSteps }: { type: EK
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
 				setLoading(false);
+				setOpenSuccess(true);
 			};
 
 			const onFailed = (message: string) => {

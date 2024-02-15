@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Form, Input, Row } from 'antd';
+import { Form, Row } from 'antd';
 import { Rule } from 'antd/lib/form';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -19,6 +19,8 @@ import Header from '../Header';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 interface IPasswordProps {
 	name: string;
@@ -49,7 +51,8 @@ const Password: FC<IPasswordProps> = ({ name, placeholder, rules, onChange }) =>
 				name={name}
 				rules={rules}
 			>
-				<Input.Password
+				<Input
+					type='password'
 					onChange={onChange}
 					placeholder={placeholder}
 					className='rounded-md border-grey_border px-4 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] md:min-w-[250px]'
@@ -240,7 +243,6 @@ const Profile = () => {
 						<Alert
 							type='error'
 							message={<span className='dark:text-blue-dark-high'>{err}</span>}
-							className='dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
 						/>
 					</div>
 				)}

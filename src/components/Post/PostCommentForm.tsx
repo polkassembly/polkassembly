@@ -33,6 +33,7 @@ import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import Tooltip from '~src/basic-components/Tooltip';
+import { useQuoteCommentContext } from '~src/context';
 
 interface IPostCommentFormProps {
 	className?: string;
@@ -77,6 +78,8 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const [selectedIcon, setSelectedIcon] = useState(null);
 	const [isPosted, setIsPosted] = useState(false);
 	const [formContent, setFormContent] = useState('');
+
+	const { setQuotedText } = useQuoteCommentContext();
 
 	useEffect(() => {
 		switch (voteDecision) {
@@ -187,6 +190,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setContent('');
 		form.resetFields();
 		form.setFieldValue('content', '');
+		setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
 		postIndex && createSubscription(postIndex);
 		const commentId = v4();

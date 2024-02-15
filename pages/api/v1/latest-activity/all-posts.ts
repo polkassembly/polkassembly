@@ -49,7 +49,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 
 		let variables: any = {
 			limit: numListingLimit,
-			type_in: gov1ProposalTypes
+			type_in: gov1ProposalTypes(network)
 		};
 
 		if (strGovType === 'open_gov') {
@@ -141,7 +141,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			if (network === AllNetworks.ZEITGEIST) {
 				query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
 			}
-
 			let subsquidRes: any = {};
 			try {
 				subsquidRes = await fetchSubsquid({
@@ -412,7 +411,6 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count: onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
-
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,

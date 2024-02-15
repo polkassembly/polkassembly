@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,8 +38,6 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -53,6 +51,10 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import Address from '~src/ui-components/Address';
+import Alert from '~src/basic-components/Alert';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -64,6 +66,7 @@ interface Props {
 	proposalType: ProposalType;
 	address: string;
 	theme?: string;
+	track_number?: number;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -115,7 +118,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, track_number }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -151,6 +154,24 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const [delegatedTo, setDelegatedTo] = useState('');
+
+	const getData = async (address: any) => {
+		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: address,
+			track: track_number
+		});
+		if (data && data[0]?.delegations[0]?.to) {
+			setDelegatedTo(data[0]?.delegations[0]?.to);
+		} else {
+			setDelegatedTo('');
+		}
+	};
+
+	useEffect(() => {
+		getData(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [track_number, address]);
 
 	useEffect(() => {
 		getWallet();
@@ -752,29 +773,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										)} required to create a Transaction.`}
 										showIcon
 										className='mb-6'
+										type='info'
 									/>
 								)}
-								{((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) ||
-									(isBalanceErr &&
-										!loadingStatus.isLoading &&
-										wallet &&
-										ayeVoteValue
-											.add(nayVoteValue)
-											.add(abstainVoteValue)
-											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance) && (
-											<Alert
-												type='info'
-												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
-												showIcon
-												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-											/>
-										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
 									<Alert
 										message={walletErr.message}
 										description={walletErr.description}
 										showIcon
+										type='warning'
 									/>
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -782,7 +789,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -816,6 +822,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											isVoting
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
@@ -823,10 +830,26 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 
+								{delegatedTo && (
+									<Alert
+										message={
+											<span className='flex items-center dark:text-blue-dark-high'>
+												This account has already delegated vote to
+												<Address
+													address={delegatedTo}
+													className='ml-2 text-sm'
+													iconSize={20}
+												/>
+											</span>
+										}
+										showIcon
+										type='warning'
+										className='mt-4'
+									/>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
@@ -859,6 +882,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -883,6 +917,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -908,6 +953,17 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 							</>

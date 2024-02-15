@@ -53,8 +53,9 @@ const VoteDataModal: FC<IVoteDataModal> = ({ setOpen, open, onchainId, proposalT
 				</div>
 			}
 			open={open}
-			closable
+			// closable
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			maskClosable={false}
 			className={'sm:w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			onCancel={() => {
 				setOpen(false);

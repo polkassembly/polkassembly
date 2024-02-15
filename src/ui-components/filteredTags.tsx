@@ -7,10 +7,11 @@ import React, { FC, useEffect, useState } from 'react';
 
 interface IFilteredTags {
 	statusItem?: any[];
+	count?: number;
 }
 
 const FilteredTags: FC<IFilteredTags> = (props) => {
-	const { statusItem } = props;
+	const { statusItem, count } = props;
 	const [tags, setTags] = useState<string[]>([]);
 	const router = useRouter();
 
@@ -38,6 +39,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 								{tag.charAt(0).toUpperCase() + tag.slice(1)}
 							</div>
 						))}
+						<p className='m-0 ml-1 p-0 text-xs'>({count})</p>
 					</div>
 				</div>
 			) : null}
@@ -55,6 +57,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 									{statusItem?.length > 1 && index < statusItem.length - 1 ? ', ' : ''}
 								</div>
 							))}
+							<p className='m-0 ml-1 p-0'>({count})</p>
 						</div>
 					</div>
 				</div>

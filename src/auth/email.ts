@@ -8,6 +8,7 @@ import { reportContentEmailTemplate, spamCommentReportTemplate, spamPostReportTe
 
 import { UndoEmailChangeToken, User } from './types';
 import { FIREBASE_FUNCTIONS_URL } from '~src/components/Settings/Notifications/utils';
+import { NOTIFICATION_ENGINE_API_KEY } from '~src/util/notification_engine_constants';
 
 const apiKey = process.env.SENDGRID_API_KEY;
 const FROM = {
@@ -39,7 +40,7 @@ export const sendVerificationEmail = (user: User, token: string, network: string
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
-			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-api-key': NOTIFICATION_ENGINE_API_KEY || '',
 			'x-source': 'polkassembly'
 		},
 		method: 'POST'
@@ -66,7 +67,7 @@ export const sendResetPasswordEmail = (user: User, token: string, network: strin
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
-			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-api-key': NOTIFICATION_ENGINE_API_KEY || '',
 			'x-source': 'polkassembly'
 		},
 		method: 'POST'
@@ -169,7 +170,7 @@ export const sendUndoEmailChangeEmail = (user: User, undoToken: UndoEmailChangeT
 		headers: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
-			'x-api-key': '47c058d8-2ddc-421e-aeb5-e2aa99001949',
+			'x-api-key': NOTIFICATION_ENGINE_API_KEY || '',
 			'x-source': 'polkassembly'
 		},
 		method: 'POST'

@@ -5,8 +5,7 @@
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
-import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
+import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -42,6 +41,10 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import { useTheme } from 'next-themes';
+import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
+import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
+import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
+import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
 
 const ZERO_BN = new BN(0);
 
@@ -59,8 +62,6 @@ const abi = require('../../../../moonbeamConvictionVoting.json');
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
 
 const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVote, setLastVote, address }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
-
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const { walletConnectProvider, id, loginAddress, loginWallet } = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -69,9 +70,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
 	const [isAccountLoading, setIsAccountLoading] = useState(false);
 	const { network } = useNetworkSelector();
-	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
-	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
-	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const {
 		setPostData,
 		postData: { postType: proposalType }
@@ -101,20 +99,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 	const [successModal, setSuccessModal] = useState(false);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
-	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
-
-	const getProxies = async (address: any) => {
-		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
-		if (proxies) {
-			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
-			setProxyAddresses(proxyAddr);
-		}
-	};
-
-	useEffect(() => {
-		getProxies(address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
+	const { resolvedTheme: theme } = useTheme();
 
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
@@ -327,7 +312,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			decision: vote,
 			isWeb3Login: currentUser?.web3signup,
 			postId: referendumId,
-			proxyAddress: selectedProxyAddress,
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
@@ -354,7 +338,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			web3 = new Web3(walletConnectProvider as any);
 			chainId = walletConnectProvider.wc.chainId;
 		} else {
-			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
+			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : wallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).ethereum);
 			chainId = await web3.eth.net.getId();
 		}
 
@@ -383,9 +367,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		} else if (vote === EVoteDecisionType.ABSTAIN) {
 			tx = voteContract.methods.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
 		}
-
 		tx.send({
-			from: selectedProxyAddress || address,
+			from: address,
 			to: contractAddress
 		})
 			.on('transactionHash', (hash: string) => {
@@ -455,10 +438,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.AYE ? 'bg-[#2ED47A] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-8 w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-[3px] mr-2' /> : <LikeGray className='mb-[3px] mr-2' />}
-					<span className='text-base font-medium'>Aye</span>
+					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-1 mr-2' /> : theme === 'dark' ? <DarkLikeGray className='mb-1 mr-2' /> : <LikeGray className='mb-1 mr-2' />}
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
 				</div>
 			),
 			value: 'aye'
@@ -466,9 +451,18 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.NAY ? 'bg-[#F53C3C] text-white' : ''}`}
+					className={`ml-1 mr-1 flex h-8 w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
+					}`}
 				>
-					{vote === EVoteDecisionType.NAY ? <DislikeWhite className='mr-2  ' /> : <DislikeGray className='mr-2' />} <span className='text-base font-medium'>Nay</span>
+					{vote === EVoteDecisionType.NAY ? (
+						<DislikeWhite className='-mb-1 mr-2' />
+					) : theme === 'dark' ? (
+						<DarkDislikeGray className='-mb-1 mr-2' />
+					) : (
+						<DislikeGray className='-mb-1 mr-2' />
+					)}
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
 				</div>
 			),
 			value: 'nay'
@@ -481,10 +475,13 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${vote === EVoteDecisionType.SPLIT ? 'bg-[#FFBF60] text-white' : ''}`}
+							className={`flex h-8 w-32 items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
+							}`}
 						>
 							{' '}
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : <SplitGray className='mr-2' />} <span className='text-base font-medium'>Split</span>{' '}
+							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
 					),
 					value: 'split'
@@ -492,11 +489,12 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-[#576D8B] ${
-								vote === EVoteDecisionType.ABSTAIN ? 'bg-[#407BFF] text-white' : ''
+							className={` ml-2 flex h-8 w-32 items-center  justify-center rounded-[4px] text-textGreyColor ${
+								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className='mb-[3px] mr-2' /> <span className='text-base font-medium'>Abstain</span>
+							<StopOutlined className={`mb-1 mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
 					value: 'abstain'
@@ -525,8 +523,8 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-						<CastVoteIcon className='mt-1' />
+					<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center justify-center gap-2 rounded-t-sm border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+						{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 					</div>
 				}
@@ -564,6 +562,20 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									icon={
 										<WalletIcon
 											which={Wallet.METAMASK}
+											className='h-6 w-6'
+										/>
+									}
+								/>
+							)}
+							{availableWallets[Wallet.SUBWALLET] && (
+								<WalletButton
+									className={`${wallet === Wallet.SUBWALLET ? 'h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-12 w-16'}`}
+									disabled={!apiReady}
+									onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
+									name='Subwallet'
+									icon={
+										<WalletIcon
+											which={Wallet.SUBWALLET}
 											className='h-6 w-6'
 										/>
 									}
@@ -608,7 +620,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								isVoting={true}
-								showProxyDropdown={showProxyDropdown}
+								theme={theme}
 							/>
 						) : !wallet ? (
 							<Alert
@@ -618,32 +630,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								showIcon
 							/>
 						) : null}
-						{proxyAddresses && proxyAddresses?.length > 0 && (
-							<div className='mt-2'>
-								<Checkbox
-									value=''
-									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-									onChange={() => setShowProxyDropdown(!showProxyDropdown)}
-								>
-									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
-								</Checkbox>
-							</div>
-						)}
-						{showProxyDropdown && (
-							<ProxyAccountSelectionForm
-								proxyAddresses={proxyAddresses}
-								theme={theme}
-								address={address}
-								withBalance
-								onBalanceChange={handleOnBalanceChange}
-								className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
-								inputClassName='rounded-[4px] px-3 py-1'
-								wallet={wallet}
-								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
-								setSelectedProxyAddress={setSelectedProxyAddress}
-								selectedProxyAddress={selectedProxyAddress}
-							/>
-						)}
 
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>
 						<Segmented
@@ -669,7 +655,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
-								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 
@@ -686,7 +671,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
-								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 
@@ -704,7 +688,6 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}
-								isProxyExistsOnWallet={isProxyExistsOnWallet}
 							/>
 						)}
 					</Spin>
@@ -738,9 +721,6 @@ export default styled(VoteReferendumEthV2)`
 	.vote-form-cont {
 		padding: 12px;
 	}
-	.ant-checkbox .ant-checkbox-inner {
-		background-color: transparent !important;
-	}
 	.alignment-close .ant-select-selector {
 		border: 1px soild !important;
 		border-color: #d2d8e0 !important;
@@ -755,7 +735,6 @@ export default styled(VoteReferendumEthV2)`
 		align-items: center;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: #243a57 !important;
 	}
 	alignment-close .ant-input-number-in-from-item {
 		height: 39.85px !important;
@@ -773,7 +752,6 @@ export default styled(VoteReferendumEthV2)`
 		padding: 0px !important;
 	}
 	.alignment-close .ant-select-selection-item {
-		color: #243a57 !important;
 	}
 	.alignment-close .ant-select-focused {
 		border: 1px solid #e5007a !important;
@@ -792,8 +770,5 @@ export default styled(VoteReferendumEthV2)`
 	}
 	.alignment-close .ant-modal-close:hover {
 		margin-top: 4px;
-	}
-	.ant-checkbox .ant-checkbox-inner {
-		background-color: transparent !important;
 	}
 `;

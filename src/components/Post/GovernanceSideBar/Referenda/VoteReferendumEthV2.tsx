@@ -569,7 +569,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							)}
 							{availableWallets[Wallet.SUBWALLET] && (
 								<WalletButton
-									className={`${wallet === Wallet.SUBWALLET ? 'h-h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-12 w-16'}`}
+									className={`${wallet === Wallet.SUBWALLET ? 'h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-12 w-16'}`}
 									disabled={!apiReady}
 									onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
 									name='Subwallet'

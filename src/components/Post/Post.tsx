@@ -81,6 +81,11 @@ const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 	ssr: false
 });
 
+const PostStats = dynamic(() => import('./Tabs/PostStats'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
@@ -432,6 +437,18 @@ const Post: FC<IPostProps> = (props) => {
 					),
 					key: 'onChainInfo',
 					label: 'On Chain Info'
+				},
+				{
+					children: (
+						<PostStats
+							postId={post?.post_id}
+							postType={proposalType}
+							tally={post?.tally}
+							statusHistory={post?.statusHistory}
+						/>
+					),
+					key: 'stats',
+					label: 'Stats'
 				}
 			);
 		}

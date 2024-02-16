@@ -18,6 +18,7 @@ import VotesDelegationCard from './VotesDelegationCard';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import VoteConvictions from './VoteConvictions';
 import VoteDelegationsByConviction from './VoteDelegationsByConviction';
+import TimeSplit from './TimeSplit';
 
 interface IPostStatsProps {
 	postId: string;
@@ -54,6 +55,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const [totalVotesBalance, setTotalVotesBalance] = useState<BN>(new BN(0));
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
+	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -200,6 +202,34 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 			{} as { [key: string]: { delegated: number; solo: number } }
 		);
 
+		const votesByTimeSplit = allVotes?.data.reduce(
+			(acc, vote) => {
+				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const voteCreatedAt = new Date(vote.createdAt);
+				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
+
+				if (timeSplit == 0) {
+					acc[0] = acc[0] ? acc[0] + 1 : 1;
+				} else if (timeSplit <= 7) {
+					acc[7] = acc[7] ? acc[7] + 1 : 1;
+				} else if (timeSplit <= 10) {
+					acc[10] = acc[10] ? acc[10] + 1 : 1;
+				} else if (timeSplit <= 14) {
+					acc[14] = acc[14] ? acc[14] + 1 : 1;
+				} else if (timeSplit <= 20) {
+					acc[20] = acc[20] ? acc[20] + 1 : 1;
+				} else if (timeSplit <= 24) {
+					acc[24] = acc[24] ? acc[24] + 1 : 1;
+				} else if (timeSplit <= 28) {
+					acc[28] = acc[28] ? acc[28] + 1 : 1;
+				} else {
+					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + 1 : 1;
+				}
+				return acc;
+			},
+			{} as { [key: number]: number }
+		);
+
 		const delegated = allVotes?.data.filter((vote) => vote.isDelegatedVote);
 
 		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
@@ -209,6 +239,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		setVotesByConviction(votesByConviction as any);
 		setVotesByDelegation(votesByDelegation as any);
 		setDelegatedVotesCount(delegated.length);
+		setVotesByTimeSplit(votesByTimeSplit as any);
 		setDelegatedBalance(delegatedBalance);
 	}, [allVotes]);
 
@@ -242,6 +273,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					totalIssuance={totalIssuance}
 				/>
 			</div>
+			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
 			<div className='flex flex-col items-center gap-5 md:flex-row'>
 				<VoteConvictions votesByConviction={votesByConviction} />
 				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />

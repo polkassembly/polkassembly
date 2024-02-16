@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';

@@ -23,9 +23,10 @@ interface Props {
 	setAvailableBalance?: (pre: string) => void;
 	classname?: string;
 	isDelegating?: boolean;
+	isVoting?: boolean;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
@@ -87,7 +88,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
 					const locked = new BN(result.data?.frozen?.toBigInt().toString());
-					if (isReferendum || isDelegating) {
+					if ((isReferendum && isVoting) || isDelegating) {
 						setBalance(result.data?.free?.toString() || '0');
 						setAvailableBalance?.(result.data?.free?.toString() || '0');
 						onChange?.(result.data?.free?.toString() || '0');

@@ -68,7 +68,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 		for (const votingDelegation of votingDelegationsArr) {
 			if (trackDelegation.status.length >= 2) break;
 
-			if ((encodedAddress || address) === votingDelegation.from) {
+			if ([encodedAddress, address].includes(votingDelegation.from)) {
 				if (!trackDelegation.status.includes(ETrackDelegationStatus.DELEGATED)) trackDelegation.status.push(ETrackDelegationStatus.DELEGATED);
 			} else {
 				if (!trackDelegation.status.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)) trackDelegation.status.push(ETrackDelegationStatus.RECEIVED_DELEGATION);

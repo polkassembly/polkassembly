@@ -49,12 +49,13 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 	];
 
 	return (
-		<div className='h-[280px] w-full max-w-xl'>
+		<div className='h-[280px] w-full max-w-xl border border-gray-500 p-5'>
+			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
 			<ResponsiveBar
 				data={chartData}
 				keys={['delegated', 'solo']}
 				indexBy='conviction'
-				margin={{ bottom: 50, left: 60, right: 10, top: 50 }}
+				margin={{ bottom: 50, left: 10, right: 10, top: 10 }}
 				padding={0.5}
 				valueScale={{ type: 'linear' }}
 				indexScale={{ round: true, type: 'band' }}

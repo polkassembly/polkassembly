@@ -107,23 +107,23 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				setTallyData({
 					abstain:
 						typeof parsedReferendumInfo.ongoing.tally.abstain === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.abstain).toString(),
+							? new BN(parsedReferendumInfo.ongoing.tally.abstain.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.abstain),
 					ayes:
 						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.ayes).toString(),
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
 					nays:
 						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex').toString()
-							: new BN(parsedReferendumInfo.ongoing.tally.nays).toString()
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.nays)
 				});
 			}
 		} else {
 			setTallyData({
-				abstain: new BN(tally?.abstain || 0, 'hex').toString(),
-				ayes: new BN(tally?.ayes || 0, 'hex').toString(),
-				nays: new BN(tally?.nays || 0, 'hex').toString()
+				abstain: new BN(tally?.abstain || 0, 'hex'),
+				ayes: new BN(tally?.ayes || 0, 'hex'),
+				nays: new BN(tally?.nays || 0, 'hex')
 			});
 		}
 	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally?.abstain, tally?.ayes, tally?.nays]);

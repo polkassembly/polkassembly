@@ -54,10 +54,10 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 				data={chartData}
 				keys={['delegated', 'solo']}
 				indexBy='conviction'
-				margin={{ top: 50, right: 10, bottom: 50, left: 60 }}
+				margin={{ bottom: 50, left: 60, right: 10, top: 50 }}
 				padding={0.5}
 				valueScale={{ type: 'linear' }}
-				indexScale={{ type: 'band', round: true }}
+				indexScale={{ round: true, type: 'band' }}
 				colors={(bar) => colors[bar.id]}
 				borderColor={{
 					from: 'color',
@@ -66,15 +66,15 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 				axisTop={null}
 				axisRight={null}
 				axisBottom={{
-					tickSize: 5,
 					tickPadding: 5,
 					tickRotation: 0,
+					tickSize: 5,
 					truncateTickAt: 0
 				}}
 				axisLeft={{
-					tickSize: 5,
 					tickPadding: 5,
 					tickRotation: 0,
+					tickSize: 5,
 					truncateTickAt: 0
 				}}
 				enableLabel={false}
@@ -86,19 +86,9 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 				}}
 				legends={[
 					{
-						dataFrom: 'keys',
 						anchor: 'bottom',
+						dataFrom: 'keys',
 						direction: 'row',
-						justify: false,
-						translateX: 30,
-						translateY: 50,
-						itemsSpacing: 2,
-						itemWidth: 100,
-						itemHeight: 20,
-						itemDirection: 'left-to-right',
-						itemOpacity: 0.85,
-						symbolSize: 6,
-						symbolShape: 'circle',
 						effects: [
 							{
 								on: 'hover',
@@ -106,7 +96,17 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 									itemOpacity: 1
 								}
 							}
-						]
+						],
+						itemDirection: 'left-to-right',
+						itemHeight: 20,
+						itemOpacity: 0.85,
+						itemWidth: 100,
+						itemsSpacing: 2,
+						justify: false,
+						symbolShape: 'circle',
+						symbolSize: 6,
+						translateX: 30,
+						translateY: 50
 					}
 				]}
 				role='application'

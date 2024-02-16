@@ -63,7 +63,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 				indexBy='conviction'
 				indexScale={{ round: true, type: 'band' }}
 				keys={['aye', 'nay', 'abstain']}
-				margin={{ top: 50, right: 10, bottom: 50, left: 60 }}
+				margin={{ bottom: 50, left: 60, right: 10, top: 50 }}
 				padding={0.5}
 				valueScale={{ type: 'linear' }}
 				borderColor={{

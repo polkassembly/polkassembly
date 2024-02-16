@@ -87,11 +87,11 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 				legends={[
 					{
 						dataFrom: 'keys',
-						anchor: 'bottom-center',
+						anchor: 'bottom',
 						direction: 'row',
 						justify: false,
-						translateX: 80,
-						translateY: 210,
+						translateX: 30,
+						translateY: 50,
 						itemsSpacing: 2,
 						itemWidth: 100,
 						itemHeight: 20,

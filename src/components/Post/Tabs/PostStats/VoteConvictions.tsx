@@ -93,7 +93,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 				}}
 				legends={[
 					{
-						anchor: 'bottom-center',
+						anchor: 'bottom',
 						dataFrom: 'keys',
 						direction: 'row',
 						effects: [
@@ -112,8 +112,8 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 						justify: false,
 						symbolShape: 'circle',
 						symbolSize: 6,
-						translateX: 80,
-						translateY: 210
+						translateX: 20,
+						translateY: 50
 					}
 				]}
 				role='application'

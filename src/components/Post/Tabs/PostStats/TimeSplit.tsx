@@ -66,7 +66,6 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
 					enablePoints={false}
 					enableGridX={false}
 					colors={['#4064FF']}
-					borderColor='#4064FF'
 					axisTop={null}
 					axisRight={null}
 					pointSize={5}

@@ -832,3 +832,7 @@ z-index: 1050 !important;
 .tick-icon-container  {
   transform: scale(0.7);
 }
+
+.dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+}

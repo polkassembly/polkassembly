@@ -438,17 +438,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`ml-1 mr-1 flex h-8 w-full items-center justify-center rounded-[4px] text-textGreyColor ${
 						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
 					}`}
 				>
-					{vote === EVoteDecisionType.AYE ? (
-						<LikeWhite className='mb-[3px] mr-2' />
-					) : theme === 'dark' ? (
-						<DarkLikeGray className='mb-[3px] mr-2' />
-					) : (
-						<LikeGray className='mb-[3px] mr-2' />
-					)}
+					{vote === EVoteDecisionType.AYE ? <LikeWhite className='mb-1 mr-2' /> : theme === 'dark' ? <DarkLikeGray className='mb-1 mr-2' /> : <LikeGray className='mb-1 mr-2' />}
 					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
 				</div>
 			),
@@ -457,16 +451,16 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`ml-1 mr-1 flex h-8 w-full items-center justify-center rounded-[4px] text-textGreyColor ${
 						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
 					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
-						<DislikeWhite className='-mb-[3px] mr-2' />
+						<DislikeWhite className='-mb-1 mr-2' />
 					) : theme === 'dark' ? (
-						<DarkDislikeGray className='-mb-[3px] mr-2' />
+						<DarkDislikeGray className='-mb-1 mr-2' />
 					) : (
-						<DislikeGray className='-mb-[3px] mr-2' />
+						<DislikeGray className='-mb-1 mr-2' />
 					)}
 					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
 				</div>
@@ -481,7 +475,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={`flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={`flex h-8 w-32 items-center  justify-center rounded-[4px] text-textGreyColor ${
 								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
@@ -495,11 +489,11 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-[126px] items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={` ml-2 flex h-8 w-32 items-center  justify-center rounded-[4px] text-textGreyColor ${
 								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<StopOutlined className={`mb-1 mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
 							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
 						</div>
 					),
@@ -529,7 +523,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+					<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center justify-center gap-2 rounded-t-sm border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 						<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 					</div>
@@ -575,7 +569,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 							)}
 							{availableWallets[Wallet.SUBWALLET] && (
 								<WalletButton
-									className={`${wallet === Wallet.SUBWALLET ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+									className={`${wallet === Wallet.SUBWALLET ? 'h-h-12 w-16 border border-solid border-pink_primary hover:border-pink_primary' : 'h-12 w-16'}`}
 									disabled={!apiReady}
 									onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
 									name='Subwallet'

@@ -29,6 +29,7 @@ interface Props {
 }
 
 export interface IProfileVoteHistoryRespose {
+	createdAt: Date;
 	decision: 'yes' | 'no';
 	balance: string;
 	lockPeriod: number | string;

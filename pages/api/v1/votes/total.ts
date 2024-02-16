@@ -73,6 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 		}
 		return {
 			balance: vote?.balance?.value || vote?.balance?.abstain || '0',
+			createdAt: vote?.createdAt,
 			decision: vote?.decision || null,
 			delegatedTo: vote?.delegatedTo || '',
 			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,

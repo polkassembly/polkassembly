@@ -5,7 +5,7 @@ import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 
 const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) => {
-	const colors = {
+	const colors: { [key: string]: string } = {
 		abstain: '#407BFF',
 		aye: '#6DE1A2',
 		nay: '#FF778F'

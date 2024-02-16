@@ -5,7 +5,7 @@ import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 
 const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation: any[] }) => {
-	const colors = {
+	const colors: { [key: string]: string } = {
 		delegated: '#796EEC',
 		solo: '#B6B0FB'
 	};

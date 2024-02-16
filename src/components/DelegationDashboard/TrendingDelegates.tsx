@@ -33,6 +33,11 @@ const TrendingDelegates = () => {
 	const [address, setAddress] = useState<string>('');
 
 	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
 		if (!address) return;
 		if ((getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network)) {
 			setAddressAlert(true);

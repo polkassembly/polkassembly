@@ -300,7 +300,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		voteContract
+		await voteContract
 			.standard_vote(referendumId, aye, lockedBalance.toString(), conviction)
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress' });

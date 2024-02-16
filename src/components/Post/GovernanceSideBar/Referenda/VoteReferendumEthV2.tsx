@@ -363,11 +363,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 			tx = () => voteContract.voteSplitAbstain(referendumId, ayeVoteValue?.toString(), nayVoteValue?.toString(), abstainVoteValue?.toString());
 		}
 
-		// tx().on('transactionHash', (hash: string) => {
-		// setLoadingStatus({ isLoading: true, message: `Transaction hash ${hash.slice(0, 10)}...` });
-		// console.log('transactionHash', hash);
-		// })
-		tx?.()
+		await tx?.()
 			.then((res) => {
 				setLoadingStatus({ isLoading: true, message: `Transaction hash ${res.hash.slice(0, 10)}...` });
 				console.log('transactionHash', res.hash);
@@ -616,8 +612,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								onBalanceChange={(balance: BN) => setLockedBalance(balance)}
 								convictionClassName={className}
 								handleSubmit={async () => await handleSubmit()}
-								disabled={false}
-								// disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
+								disabled={!wallet || !lockedBalance || isBalanceErr || lockedBalance.lte(ZERO_BN)}
 								conviction={conviction}
 								setConviction={setConviction}
 								convictionOpts={convictionOpts}

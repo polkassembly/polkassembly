@@ -196,7 +196,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract
+		await contract
 			.remove_vote(refIndex.toString())
 			.then((result: any) => {
 				console.log(result);
@@ -241,7 +241,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract
+		await contract
 			.unlock(address)
 			.then((result: any) => {
 				console.log(result);

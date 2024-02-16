@@ -298,7 +298,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract
+		await contract
 			.removeVote(vote.refIndex)
 			.then((result: any) => {
 				console.log(result);
@@ -368,7 +368,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract
+		await contract
 			.unlock(unlock.trackId, address)
 			.then((result: any) => {
 				console.log(result);

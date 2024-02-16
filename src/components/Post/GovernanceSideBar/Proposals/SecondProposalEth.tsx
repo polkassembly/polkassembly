@@ -236,7 +236,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 
 		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
-		voteContract
+		await voteContract
 			.second(proposalId, seconds)
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });

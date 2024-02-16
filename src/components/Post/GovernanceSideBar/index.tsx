@@ -723,7 +723,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				return;
 			}
 			const contract = new Contract(contractAddress, abi, await web3.getSigner());
-			contract
+			await contract
 				.removeVote(postIndex)
 				.then((result: any) => {
 					console.log(result);

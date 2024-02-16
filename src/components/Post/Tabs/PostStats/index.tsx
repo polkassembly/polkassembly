@@ -48,7 +48,6 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const [activeIssuance, setActiveIssuance] = useState<any>(0);
 	const [totalIssuance, setTotalIssuance] = useState<any>(0);
 	const voteType = getVotingTypeFromProposalType(postType);
-	const [delegatedVotes, setDelegatedVotes] = useState<any[]>([]);
 	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -201,8 +200,6 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 			{} as { [key: string]: { delegated: number; solo: number } }
 		);
 
-		console.log('votedByDelegation', votesByDelegation);
-
 		const delegated = allVotes?.data.filter((vote) => vote.isDelegatedVote);
 
 		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
@@ -212,21 +209,16 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		setVotesByConviction(votesByConviction as any);
 		setVotesByDelegation(votesByDelegation as any);
 		setDelegatedVotesCount(delegated.length);
-		setDelegatedVotes(delegated);
 		setDelegatedBalance(delegatedBalance);
 	}, [allVotes]);
 
 	useEffect(() => {
 		handleAyeNayCount();
 		(async () => {
-			const data = await getReferendumV2VoteInfo();
-			console.log('data', data);
+			await getReferendumV2VoteInfo();
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
-
-	console.log('allVotes', allVotes);
-	console.log('delegatedVotes', delegatedVotes);
 
 	return (
 		<div>

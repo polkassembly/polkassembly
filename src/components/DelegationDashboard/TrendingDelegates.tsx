@@ -24,7 +24,6 @@ const TrendingDelegates = () => {
 	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);

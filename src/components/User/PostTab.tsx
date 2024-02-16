@@ -27,7 +27,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 					return (
 						<Link
 							key={post.id}
-							href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}?network=${network}`}
+							href={`/${getSinglePostLinkFromProposalType(post.type)}/${post.id}/?network=${network}`}
 						>
 							<GovernanceCard
 								className={`${(i + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : 'dark:bg-section-dark-overlay'}`}

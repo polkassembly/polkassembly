@@ -168,7 +168,7 @@ const TimelineContainer: React.FC<ITimelineContainerProps> = (props) => {
 					className={`${isCollapsed ? 'min-h-[40px]' : `min-h-${minHeight}`} relative -mb-[2px] -ml-2 mt-[16px] w-[2px]`}
 					style={{ backgroundColor: activeColor }}
 				>
-					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip' ? timeline.hash : timeline.index}?network=${network}`}>
+					<Link href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(type as any) as any)}/${type === 'Tip' ? timeline.hash : timeline.index}/?network=${network}`}>
 						<p
 							className='-left-[5px] -top-7 -mt-[40px] flex h-[33px] w-[250px] flex-row gap-1 whitespace-nowrap text-base font-normal leading-6'
 							style={{ color: activeColor, fontWeight: '500', marginLeft: '-4px' }}

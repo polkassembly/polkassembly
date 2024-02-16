@@ -33,7 +33,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	const { className, posts, error, count, showSimilarPost, statusItem } = props;
 	const noPosts = count === 0 || isNaN(Number(count));
 	const { network } = useNetworkSelector();
-
+	console.log('hellow');
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (noPosts || posts.length === 0) {
@@ -62,7 +62,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 							>
 								{
 									<Link
-										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}?network=${network}`}
+										href={`/${getSinglePostLinkFromProposalType(getFirestoreProposalType(post.type as any) as any)}/${post.post_id}/?network=${network}`}
 										target={showSimilarPost ? '_blank' : '_self'}
 									>
 										<GovernanceCard

@@ -13,6 +13,7 @@ interface Props {
 }
 const LinkCard = ({ timeline, proposalType }: Props) => {
 	const { network } = useNetworkSelector();
+	console.log('here');
 	return (
 		<div className='mb-6 w-full rounded-md bg-white px-4 py-5 drop-shadow-md dark:bg-section-dark-overlay'>
 			{timeline?.map((item: any, index: number) => {
@@ -30,7 +31,7 @@ const LinkCard = ({ timeline, proposalType }: Props) => {
 					<Link
 						key={index}
 						className='cursor-pointer text-lg font-medium text-bodyBlue dark:text-blue-dark-high max-md:text-sm'
-						href={`/${getSinglePostLinkFromProposalType(firestoreProposalType as any)}/${item?.type === 'Tip' ? item?.hash : item?.index}?network=${network}`}
+						href={`/${getSinglePostLinkFromProposalType(firestoreProposalType as any)}/${item?.type === 'Tip' ? item?.hash : item?.index}/?network=${network}`}
 					>
 						<span className=''>{item?.type === 'ReferendumV2' ? 'Open Gov Referendum' : item?.type?.split(/(?=[A-Z])/).join(' ')}</span>
 						<span className='mx-2 text-pink_primary'>#{item?.index}</span>

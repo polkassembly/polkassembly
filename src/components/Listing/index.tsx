@@ -90,7 +90,7 @@ const Listing: FC<IListingProps> = (props) => {
 					>
 						{
 							<Link
-								href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}?network=${network}`}
+								href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}/?network=${network}`}
 							>
 								<GovernanceCard
 									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}

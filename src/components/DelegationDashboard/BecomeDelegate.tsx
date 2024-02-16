@@ -46,7 +46,7 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 								<Button
 									onClick={showModal}
 									disabled={!currentUser.id || !currentUser.loginAddress}
-									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${!currentUser.id || (!currentUser.loginAddress && 'opacity-50')}`}
+									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
 								>
 									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 								</Button>

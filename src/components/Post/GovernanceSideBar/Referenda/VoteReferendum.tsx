@@ -38,8 +38,6 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -177,6 +175,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [address]);
 
 	const getData = async (address: any) => {
+		if (!address) return;
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
 			track: track_number

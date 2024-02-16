@@ -833,6 +833,7 @@ z-index: 1050 !important;
   transform: scale(0.7);
 }
 
+<<<<<<< HEAD
 .proxyDropdown {
   border: 1px solid #d2d8e0 !important;
 }
@@ -842,3 +843,8 @@ z-index: 1050 !important;
   width: 20px !important;
 }
 
+=======
+.dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
+}
+>>>>>>> ef50104f8f909cc70b8a18e405e3587c99a3c69d

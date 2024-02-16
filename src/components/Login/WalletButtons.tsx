@@ -52,6 +52,22 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 			<div className={`wallet-buttons-container ${isOptionalLogin ? '' : 'flex'} mt-3 max-w-xs flex-col items-center justify-center gap-4 sm:mx-2 sm:max-w-none sm:flex-row`}>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
 					<WalletButton
+						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
+						// disabled={!availableWallets[Wallet.SUBWALLET]}
+						onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
+						name='SubWallet'
+						icon={
+							<WalletIcon
+								which={Wallet.SUBWALLET}
+								className={`h-8 w-8 px-1 ${isOptionalLogin ? 'mr-1' : ''}`}
+							/>
+						}
+						isAvailable={availableWallets[Wallet.SUBWALLET]}
+						isOptionalLogin={isOptionalLogin}
+						text='SubWallet'
+						isLoginFlow={isLoginFlow}
+					/>
+					<WalletButton
 						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
 						// disabled={!availableWallets[Wallet.POLKADOT]}
 						onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
@@ -81,22 +97,6 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						isOptionalLogin={isOptionalLogin}
 						isAvailable={availableWallets[Wallet.TALISMAN]}
 						text='Talisman'
-						isLoginFlow={isLoginFlow}
-					/>
-					<WalletButton
-						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
-						// disabled={!availableWallets[Wallet.SUBWALLET]}
-						onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
-						name='SubWallet'
-						icon={
-							<WalletIcon
-								which={Wallet.SUBWALLET}
-								className={`h-8 w-8 px-1 ${isOptionalLogin ? 'mr-1' : ''}`}
-							/>
-						}
-						isAvailable={availableWallets[Wallet.SUBWALLET]}
-						isOptionalLogin={isOptionalLogin}
-						text='SubWallet'
 						isLoginFlow={isLoginFlow}
 					/>
 				</div>

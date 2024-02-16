@@ -10,9 +10,11 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { Spin } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const TrendingDelegates = () => {
 	const [loading, setLoading] = useState<boolean>(false);
+	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
@@ -23,10 +25,11 @@ const TrendingDelegates = () => {
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates');
 		if (data) {
 			setDelegatesData(data);
+			setLoading(false);
 		} else {
 			console.log(error);
+			setLoading(false);
 		}
-		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -113,7 +116,7 @@ const TrendingDelegates = () => {
 			</div>
 
 			<Spin spinning={loading}>
-				<div>
+				<div className='min-h-[200px]'>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
 							...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
@@ -124,6 +127,7 @@ const TrendingDelegates = () => {
 								<DelegateCard
 									key={index}
 									delegate={delegate}
+									disabled={!delegationDashboardAddress}
 								/>
 							))}
 					</div>

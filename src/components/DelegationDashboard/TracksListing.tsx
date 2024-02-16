@@ -20,6 +20,7 @@ import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -102,7 +103,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !delegationDashboardAddress) return;
 
 		setLoading(true);
 
@@ -116,9 +117,11 @@ const DashboardTrackListing = ({ className }: Props) => {
 				return {
 					active_proposals: track?.active_proposals_count,
 					delegated_by: track?.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)
-						? track?.delegations.filter((row: IDelegation) => row?.to === delegationDashboardAddress)
+						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) === getEncodedAddress(delegationDashboardAddress, network))
 						: null, //rece
-					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED) ? track?.delegations.filter((row: IDelegation) => row?.to !== delegationDashboardAddress) : null,
+					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED)
+						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) !== getEncodedAddress(delegationDashboardAddress, network))
+						: null,
 					description: trackData[1]?.description,
 					index: index + 1,
 					status: track?.status,

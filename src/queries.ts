@@ -2290,3 +2290,67 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
   }
 }
 `;
+
+export const GET_TOTAL_VOTES_FOR_PROPOSAL = `
+query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int  ) {
+  flattenedConvictionVotes(where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}, orderBy: voter_DESC) {
+    type
+    voter
+    lockPeriod
+    decision
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    createdAt
+    createdAtBlock
+    proposal {
+      description
+      createdAt
+      index
+      proposer
+      status
+      type
+      trackNumber
+      statusHistory {
+        id
+        status
+      }
+    }
+    proposalIndex
+    delegatedTo
+    isDelegated
+    parentVote {
+      extrinsicIndex
+      selfVotingPower
+      type
+      voter
+      lockPeriod
+      delegatedVotingPower
+      delegatedVotes(where: {removedAtBlock_isNull: true}) {
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        lockPeriod
+        votingPower
+      }
+    }
+  }
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+}`;

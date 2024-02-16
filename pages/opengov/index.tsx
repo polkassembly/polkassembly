@@ -53,8 +53,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	const LATEST_POSTS_LIMIT = 8;
 
 	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
 	const subDomain: any = req?.headers?.host?.split('.')[0];
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
 	if (![subDomain].includes(network)) {
 		network = (query.network as string) || network || defaultNetwork;
 		if (queryNetwork) {

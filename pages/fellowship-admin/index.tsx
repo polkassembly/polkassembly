@@ -26,12 +26,22 @@ import { getSubdomain } from '~src/util/getSubdomain';
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = query;
 	let network = getNetworkFromReqHeaders(req.headers);
-	const queryNetwork = new URL(req.headers.referer || '').searchParams.get('network');
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
 	if (queryNetwork) {
 		network = queryNetwork;
 	}
-	if (query.network) {
-		network = query.network as string;
+	if (query?.network) {
+		network = query?.network as string;
 	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
@@ -123,9 +133,9 @@ const FellowshipAdmin: FC<IFellowshipAdminProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
-		const currentUrl = window.location.href;
+		const currentUrl = window ? window.location.href : '';
 		const subDomain = getSubdomain(currentUrl);
-		if (network && ![subDomain].includes(network)) {
+		if (network && ![subDomain]?.includes(network)) {
 			router.push({
 				query: {
 					network: network

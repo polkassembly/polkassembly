@@ -16,6 +16,8 @@ interface IPostTabProps {
 const PostTab: FC<IPostTabProps> = (props) => {
 	const { posts } = props;
 	const { network } = useNetworkSelector();
+	console.log('there');
+
 	return (
 		<div className='mt-2.5 flex h-full max-h-[530px] flex-col gap-y-3 overflow-y-auto pr-2'>
 			{!posts || posts.length === 0 ? (

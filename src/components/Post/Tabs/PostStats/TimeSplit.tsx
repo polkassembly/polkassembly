@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import { ResponsiveLine } from '@nivo/line';
+import { useTheme } from 'next-themes';
 
 interface ITimeSplitProps {
 	className?: string;
@@ -10,6 +11,8 @@ interface ITimeSplitProps {
 }
 
 const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
+	const { resolvedTheme: theme } = useTheme();
+
 	const chartData = [
 		{
 			color: '#4064FF',
@@ -48,7 +51,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
 	];
 
 	return (
-		<div className='w-full rounded-xl border'>
+		<div className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay'>
 			<h2 className='text-xl font-semibold'>Time Split</h2>
 			<div className={`${className} relative -mt-7 flex h-[180px] items-center justify-center gap-x-2`}>
 				<ResponsiveLine
@@ -74,6 +77,32 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
 					pointBorderColor={{ from: 'serieColor' }}
 					pointLabelYOffset={-12}
 					useMesh={true}
+					theme={{
+						axis: {
+							ticks: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 11,
+									outlineColor: 'transparent',
+									outlineWidth: 0
+								}
+							}
+						},
+						grid: {
+							line: {
+								stroke: '#D2D8E0',
+								strokeDasharray: '2 2',
+								strokeWidth: 1
+							}
+						},
+						tooltip: {
+							container: {
+								background: theme === 'dark' ? '#1E2126' : '#fff',
+								color: theme === 'dark' ? '#fff' : '#576D8B',
+								fontSize: 11
+							}
+						}
+					}}
 				/>
 			</div>
 		</div>

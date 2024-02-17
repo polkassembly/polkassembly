@@ -58,9 +58,9 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, a
 		}
 	];
 	return (
-		<div className='flex-1 rounded-xl border'>
+		<div className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 pb-0 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Total Votes Casted</h2>
-			<div className={`${className} relative -mt-7 flex h-[180px] items-center justify-center gap-x-2`}>
+			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}
 					margin={{ bottom: 10, left: 0, right: 0, top: 10 }}
@@ -93,7 +93,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, a
 							itemDirection: 'left-to-right',
 							itemHeight: 19,
 							itemOpacity: 1,
-							itemTextColor: '#999',
+							itemTextColor: theme === 'dark' ? '#fff' : '#576D8B',
 							itemWidth: 60,
 							itemsSpacing: 0,
 							justify: false,
@@ -103,6 +103,15 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, a
 							translateY: -10
 						}
 					]}
+					theme={{
+						tooltip: {
+							container: {
+								background: theme === 'dark' ? '#1E2126' : '#fff',
+								color: theme === 'dark' ? '#fff' : '#576D8B',
+								fontSize: 11
+							}
+						}
+					}}
 				/>
 				<p className='absolute bottom-5 flex items-end gap-2 text-3xl font-bold dark:text-white'>
 					{formatUSDWithUnits(highestVote.toString(), 1)} <span className='text-xl font-normal'>DOT</span>

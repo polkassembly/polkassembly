@@ -3,8 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
+import { useTheme } from 'next-themes';
 
 const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation: any[] }) => {
+	const { resolvedTheme: theme } = useTheme();
+
 	const colors: { [key: string]: string } = {
 		delegated: '#796EEC',
 		solo: '#B6B0FB'
@@ -49,71 +52,100 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 	];
 
 	return (
-		<div className='h-[280px] w-full max-w-xl border border-gray-500 p-5'>
+		<div className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
-			<ResponsiveBar
-				data={chartData}
-				keys={['delegated', 'solo']}
-				indexBy='conviction'
-				margin={{ bottom: 50, left: 10, right: 10, top: 10 }}
-				padding={0.5}
-				valueScale={{ type: 'linear' }}
-				indexScale={{ round: true, type: 'band' }}
-				colors={(bar) => colors[bar.id]}
-				borderColor={{
-					from: 'color',
-					modifiers: [['darker', 1.6]]
-				}}
-				axisTop={null}
-				axisRight={null}
-				axisBottom={{
-					tickPadding: 5,
-					tickRotation: 0,
-					tickSize: 5,
-					truncateTickAt: 0
-				}}
-				axisLeft={{
-					tickPadding: 5,
-					tickRotation: 0,
-					tickSize: 5,
-					truncateTickAt: 0
-				}}
-				enableLabel={false}
-				labelSkipWidth={6}
-				labelSkipHeight={12}
-				labelTextColor={{
-					from: 'color',
-					modifiers: [['darker', 1.6]]
-				}}
-				legends={[
-					{
-						anchor: 'bottom',
-						dataFrom: 'keys',
-						direction: 'row',
-						effects: [
-							{
-								on: 'hover',
-								style: {
-									itemOpacity: 1
+			<div className='h-[250px]'>
+				<ResponsiveBar
+					data={chartData}
+					keys={['delegated', 'solo']}
+					indexBy='conviction'
+					margin={{ bottom: 50, left: 30, right: 10, top: 10 }}
+					padding={0.5}
+					valueScale={{ type: 'linear' }}
+					indexScale={{ round: true, type: 'band' }}
+					colors={(bar) => colors[bar.id]}
+					borderColor={{
+						from: 'color',
+						modifiers: [['darker', 1.6]]
+					}}
+					axisTop={null}
+					axisRight={null}
+					axisBottom={{
+						tickPadding: 5,
+						tickRotation: 0,
+						tickSize: 5,
+						truncateTickAt: 0
+					}}
+					axisLeft={{
+						tickPadding: 5,
+						tickRotation: 0,
+						tickSize: 5,
+						truncateTickAt: 0
+					}}
+					enableLabel={false}
+					labelSkipWidth={6}
+					labelSkipHeight={12}
+					labelTextColor={{
+						from: 'color',
+						modifiers: [['darker', 1.6]]
+					}}
+					legends={[
+						{
+							anchor: 'bottom',
+							dataFrom: 'keys',
+							direction: 'row',
+							effects: [
+								{
+									on: 'hover',
+									style: {
+										itemOpacity: 1
+									}
+								}
+							],
+							itemDirection: 'left-to-right',
+							itemHeight: 20,
+							itemOpacity: 0.85,
+							itemTextColor: theme === 'dark' ? '#fff' : '#576D8B',
+							itemWidth: 100,
+							itemsSpacing: 2,
+							justify: false,
+							symbolShape: 'circle',
+							symbolSize: 6,
+							translateX: 30,
+							translateY: 50
+						}
+					]}
+					role='application'
+					theme={{
+						axis: {
+							ticks: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 11,
+									outlineColor: 'transparent',
+									outlineWidth: 0
 								}
 							}
-						],
-						itemDirection: 'left-to-right',
-						itemHeight: 20,
-						itemOpacity: 0.85,
-						itemWidth: 100,
-						itemsSpacing: 2,
-						justify: false,
-						symbolShape: 'circle',
-						symbolSize: 6,
-						translateX: 30,
-						translateY: 50
-					}
-				]}
-				role='application'
-				ariaLabel='Nivo bar chart demo'
-				barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
-			/>
+						},
+						grid: {
+							line: {
+								stroke: '#D2D8E0',
+								strokeDasharray: '2 2',
+								strokeWidth: 1
+							}
+						},
+						tooltip: {
+							container: {
+								background: theme === 'dark' ? '#1E2126' : '#fff',
+								color: theme === 'dark' ? '#fff' : '#576D8B',
+								fontSize: 11
+							}
+						}
+					}}
+					ariaLabel='Nivo bar chart demo'
+					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
+				/>
+			</div>
 		</div>
 	);
 };

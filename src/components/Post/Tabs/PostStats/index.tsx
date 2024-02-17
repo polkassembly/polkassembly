@@ -19,6 +19,7 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import VoteConvictions from './VoteConvictions';
 import VoteDelegationsByConviction from './VoteDelegationsByConviction';
 import TimeSplit from './TimeSplit';
+import VoteDistribution from './VoteDistribution';
 
 interface IPostStatsProps {
 	postId: string;
@@ -56,6 +57,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
 	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
+	const [votesDistribution, setVotesDistribution] = useState<{ ayes: any[]; nays: any[]; abstain: any[] }>({ abstain: [], ayes: [], nays: [] });
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -230,6 +232,29 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 			{} as { [key: number]: number }
 		);
 
+		const votesDistribution = allVotes?.data.reduce(
+			(acc, vote) => {
+				if (vote.decision === 'yes') {
+					acc.ayes.push({
+						balance: Number(vote.balance),
+						voter: vote.voter
+					});
+				} else if (vote.decision === 'no') {
+					acc.nays.push({
+						balance: Number(vote.balance),
+						voter: vote.voter
+					});
+				} else {
+					acc.abstain.push({
+						balance: Number(vote.balance),
+						voter: vote.voter
+					});
+				}
+				return acc;
+			},
+			{ abstain: [], ayes: [], nays: [] } as { ayes: any[]; nays: any[]; abstain: any[] }
+		);
+
 		const delegated = allVotes?.data.filter((vote) => vote.isDelegatedVote);
 
 		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
@@ -239,6 +264,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		setVotesByConviction(votesByConviction as any);
 		setVotesByDelegation(votesByDelegation as any);
 		setDelegatedVotesCount(delegated.length);
+		setVotesDistribution(votesDistribution);
 		setVotesByTimeSplit(votesByTimeSplit as any);
 		setDelegatedBalance(delegatedBalance);
 	}, [allVotes]);
@@ -273,6 +299,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					totalIssuance={totalIssuance}
 				/>
 			</div>
+			<VoteDistribution votesDistribution={votesDistribution} />
 			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
 			<div className='flex flex-col items-center gap-5 md:flex-row'>
 				<VoteConvictions votesByConviction={votesByConviction} />

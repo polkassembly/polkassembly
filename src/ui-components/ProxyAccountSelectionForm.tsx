@@ -18,6 +18,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useApiContext } from '~src/context';
 import { Wallet } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import NetworkIcon from '~assets/icons/USB.svg';
 
 interface Props {
 	proxyAddresses: string[];
@@ -136,19 +137,31 @@ const ProxyAccountSelectionForm = ({
 							disableAddressClick
 							disableTooltip
 						/>
-						<WalletIcon
+						<div
+							className='mr-18 flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
+							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
+						>
+							<NetworkIcon />
+							<p className='m-0 p-0 text-[10px] text-lightBlue'>Proxy Address</p>
+						</div>
+						{/* <WalletIcon
 							which={walletType}
 							isProxyAccountForm={true}
 							className='walletIcon-container mr-2'
-						/>
+						/> */}
 						<Button
-							className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
+							className='flex h-[28px] items-center border bg-transparent text-xs text-bodyBlue hover:border-[#D2D8E0] hover:bg-[#EFF0F1] dark:border-separatorDark dark:text-white'
 							onClick={(e) => {
 								e.preventDefault;
 								e.stopPropagation();
 								setShowWalletModal?.(!showWalletModal);
 							}}
 						>
+							<WalletIcon
+								which={walletType}
+								isProxyAccountForm={true}
+								className='walletIcon-container mr-2'
+							/>
 							Change Wallet
 						</Button>
 						<span className='mx-2 mb-1'>
@@ -161,8 +174,8 @@ const ProxyAccountSelectionForm = ({
 			<Modal
 				open={showWalletModal}
 				footer={false}
-				className={`${className} ${poppins.variable} ${poppins.className} -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				wrapClassName='vaibhav'
+				className={`${className} ${poppins.variable} ${poppins.className} alignment-close -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName={`custom-modal-backdrop ${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {
 					setShowWalletModal?.(false);
@@ -191,5 +204,8 @@ export default styled(ProxyAccountSelectionForm)`
 		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 		padding: 0 !important;
 		padding-bottom: 8px !important;
+	}
+	.custom-modal-backdrop {
+		background-color: rgba(0, 0, 0, 0.2);
 	}
 `;

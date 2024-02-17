@@ -13,7 +13,6 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export enum EDecision {
 	YES = 'yes',
@@ -134,8 +133,6 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesHistoryResponse | MessageType>) {
-	storeApiKeyUsage(req);
-
 	const { listingLimit = LISTING_LIMIT, page = 1, voterAddress, proposalType, proposalIndex } = req.body;
 
 	const network = String(req.headers['x-network']);

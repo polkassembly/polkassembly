@@ -56,11 +56,20 @@ const nextConfig = {
 	compiler: {
 		styledComponents: true
 	},
-	webpack(config) {
+	webpack(config, { isServer }) {
 		config.module.rules.push({
 			test: /\.svg$/,
 			use: ['@svgr/webpack']
 		});
+
+		if (!isServer) {
+			config.resolve.fallback = {
+				net: false,
+				fs: false,
+				tls: false,
+				child_process: false
+			};
+		}
 
 		return config;
 	}

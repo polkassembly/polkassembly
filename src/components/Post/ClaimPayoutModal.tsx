@@ -5,13 +5,14 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { Alert, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
+import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';
@@ -159,7 +160,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 
 					{extensionNotAvailable && (
 						<Alert
-							className='mb-6 dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+							className='mb-6'
 							type='warning'
 							message={<span className='dark:text-blue-dark-high'>Please install polkadot.js extension to claim.</span>}
 						/>

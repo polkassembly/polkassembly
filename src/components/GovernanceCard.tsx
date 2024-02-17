@@ -143,7 +143,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
-	if (ProposalType.ADVISORY_COMMITTEE === proposalType) {
+	if (ProposalType.ADVISORY_COMMITTEE === proposalType && network === 'zeitgeist') {
 		titleString =
 			title ||
 			method ||

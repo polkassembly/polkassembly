@@ -430,11 +430,13 @@ export interface IDelegation {
 export interface IDelegate {
 	name?: string;
 	address: string;
+	created_at?: Date | string;
 	bio: string;
 	active_delegation_count: number;
 	voted_proposals_count: number;
 	isNovaWalletDelegate?: boolean;
-	dataSource: 'nova' | 'parity' | 'other';
+	dataSource: string[];
+	user_id?: number;
 }
 
 export enum EVoteDecisionType {
@@ -531,4 +533,23 @@ export interface IVotesCount {
 	ayes: number;
 	nays: number;
 	abstain?: number;
+}
+
+/*
+  Please do not remove this, its not used in the code but it is used for reference.
+	This is the structure of the api_keys collection in firestore.
+*/
+export interface IApiKeyUsageData {
+	[route_name: string]: {
+		count: number;
+		last_used_at: Date;
+	};
+}
+
+export interface IApiKeyData {
+	key: string;
+	usage: IApiKeyUsageData;
+	created_at: Date;
+	updated_at: Date;
+	owner: string;
 }

@@ -833,6 +833,16 @@ z-index: 1050 !important;
   transform: scale(0.7);
 }
 
+.proxyDropdown {
+  border: 1px solid #d2d8e0 !important;
+}
+
+.walletIcon-container {
+  height: 20px !important;
+  width: 20px !important;
+  transform: scale(0.7);
+}
+
 .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
 }

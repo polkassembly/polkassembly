@@ -16,7 +16,6 @@ import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
-import InfoIcon from '~assets/icons/red-info-alert.svg';
 import { Wallet } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
@@ -79,6 +78,7 @@ const ProxyAccountSelectionForm = ({
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
 			setIsProxyExistsOnWallet?.(!!exists);
+			console.log(exists);
 		}
 
 		if (changedWallet === 'subwallet-js') {
@@ -103,73 +103,67 @@ const ProxyAccountSelectionForm = ({
 
 	return (
 		<>
-			{proxyAddresses.length > 0 ? (
-				<article className='mt-2 flex w-full flex-col'>
-					<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
-						<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
-						{address && withBalance && (
-							<Balance
-								address={selectedProxyAddress || ''}
-								onChange={onBalanceChange}
-								isBalanceUpdated={isBalanceUpdated}
-							/>
-						)}
-					</div>
-					<Dropdown
-						trigger={['click']}
-						overlayClassName='z-[2000]'
-						className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
-						menu={{
-							items: dropdownMenuItems,
-							onClick: (e: any) => {
-								if (e.key !== '1') {
-									setSelectedProxyAddress?.(e.key);
-								}
-							}
-						}}
-						theme={theme}
-					>
-						<div className='flex items-center justify-between '>
-							<Address
-								address={selectedProxyAddress || proxyAddresses[0]}
-								className='flex flex-1 items-center'
-								addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
-								disableAddressClick
-								disableTooltip
-							/>
-							<WalletIcon
-								which={walletType}
-								className='walletIcon-container mr-2'
-							/>
-							<Button
-								className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
-								onClick={(e) => {
-									e.preventDefault;
-									e.stopPropagation();
-									setShowWalletModal?.(!showWalletModal);
-								}}
-							>
-								Change Wallet
-							</Button>
-							<span className='mx-2 mb-1'>
-								<DownIcon />
-							</span>
-						</div>
-					</Dropdown>
-				</article>
-			) : (
-				<div className='mt-2 flex items-center gap-x-1'>
-					<InfoIcon />
-					<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>No proxy addresses found</p>
+			<article className='mt-2 flex w-full flex-col'>
+				<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
+					<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
+					{address && withBalance && (
+						<Balance
+							address={selectedProxyAddress || ''}
+							onChange={onBalanceChange}
+							isBalanceUpdated={isBalanceUpdated}
+						/>
+					)}
 				</div>
-			)}
+				<Dropdown
+					trigger={['click']}
+					overlayClassName='z-[2000]'
+					className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+					menu={{
+						items: dropdownMenuItems,
+						onClick: (e: any) => {
+							if (e.key !== '1') {
+								setSelectedProxyAddress?.(e.key);
+							}
+						}
+					}}
+					theme={theme}
+				>
+					<div className='flex items-center justify-between '>
+						<Address
+							address={selectedProxyAddress || proxyAddresses[0]}
+							className='flex flex-1 items-center'
+							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
+							disableAddressClick
+							disableTooltip
+						/>
+						<WalletIcon
+							which={walletType}
+							isProxyAccountForm={true}
+							className='walletIcon-container mr-2'
+						/>
+						<Button
+							className='flex h-[25px] items-center border bg-transparent text-xs text-bodyBlue dark:border-separatorDark dark:text-white'
+							onClick={(e) => {
+								e.preventDefault;
+								e.stopPropagation();
+								setShowWalletModal?.(!showWalletModal);
+							}}
+						>
+							Change Wallet
+						</Button>
+						<span className='mx-2 mb-1'>
+							<DownIcon />
+						</span>
+					</div>
+				</Dropdown>
+			</article>
 
 			<Modal
 				open={showWalletModal}
 				footer={false}
-				className={`{${className} ${poppins.variable} ${poppins.className} -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				className={`${className} ${poppins.variable} ${poppins.className} -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName='vaibhav'
-				closeIcon={<CloseIcon className='mt-6 text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {
 					setShowWalletModal?.(false);
 				}}
@@ -178,7 +172,6 @@ const ProxyAccountSelectionForm = ({
 					theme={theme}
 					isModal={true}
 					onWalletSelect={(e) => {
-						console.log(e);
 						setChangedWallet(e);
 						getAllAccounts();
 					}}
@@ -196,5 +189,7 @@ export default styled(ProxyAccountSelectionForm)`
 	}
 	.ant-modal-content {
 		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+		padding: 0 !important;
+		padding-bottom: 8px !important;
 	}
 `;

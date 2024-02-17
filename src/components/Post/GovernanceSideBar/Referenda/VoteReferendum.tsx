@@ -56,6 +56,7 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import Alert from '~src/basic-components/Alert';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -166,6 +167,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
+			// setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
 
@@ -898,6 +900,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										selectedProxyAddress={selectedProxyAddress}
 									/>
 								)}
+								{showProxyDropdown && !isProxyExistsOnWallet && (
+									<div className='mt-2 flex items-center gap-x-1'>
+										<InfoIcon />
+										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+									</div>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
@@ -971,6 +979,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										multisig={multisig}
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
 										wallet={wallet}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
@@ -1008,6 +1017,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
@@ -1129,5 +1139,9 @@ export default React.memo(styled(VoteReferendum)`
 	}
 	.ant-checkbox .ant-checkbox-inner {
 		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
 	}
 `);

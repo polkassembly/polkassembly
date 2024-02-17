@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 
@@ -33,6 +34,8 @@ export const getOnChainAddressDetails = async (address: string | string[] | unde
 };
 
 const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { address } = req.body;
 
 	const network = String(req.headers['x-network']);

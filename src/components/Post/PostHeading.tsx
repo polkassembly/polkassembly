@@ -166,7 +166,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
 						?.map((v) => (v === 'referendumV2' ? 'Referenda' : v.charAt(0).toUpperCase() + v.slice(1)))
-						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}#${onchainId || `${hash.slice(0, 5)}...${hash.slice(hash.length - 5, hash.length)}`}`
+						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}${
+						onchainId !== undefined || onchainId === 0 ? `#${onchainId}` : `${hash ? `${hash.slice(0, 5)}...${hash.slice(-5)}` : ''}`
+					}`
 				) : (
 					<>
 						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}

@@ -167,7 +167,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
-			// setSelectedProxyAddress(proxyAddr[0]);
+			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
 

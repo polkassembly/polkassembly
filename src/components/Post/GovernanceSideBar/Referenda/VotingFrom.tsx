@@ -169,7 +169,7 @@ const VotingForm = ({
 					text='Confirm'
 					variant='primary'
 					buttonsize='xs'
-					className={`mr-6 ${disabled && 'opacity-50'} font-semibold`}
+					className={`mr-6 ${(disabled || !isProxyExistsOnWallet) && 'opacity-50'} font-semibold`}
 				/>
 			</div>
 		</Form>

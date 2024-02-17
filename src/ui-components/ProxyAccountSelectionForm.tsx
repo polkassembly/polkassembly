@@ -79,7 +79,6 @@ const ProxyAccountSelectionForm = ({
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
 			setIsProxyExistsOnWallet?.(!!exists);
-			console.log(exists);
 		}
 
 		if (changedWallet === 'subwallet-js') {

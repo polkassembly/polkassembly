@@ -5,6 +5,8 @@
 import { NextApiHandler } from 'next';
 
 import messages from '~src/util/messages';
+import storeApiKeyUsage from './storeApiKeyUsage';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 type TWithErrorHandling = (handler: NextApiHandler) => NextApiHandler;
 
@@ -15,6 +17,12 @@ const withErrorHandling: TWithErrorHandling = (handler) => {
 
 		try {
 			await handler(req, res);
+
+			//check if prod or test, if subdomain is a valid network it is prod, else test
+			if (Object.values(AllNetworks).includes(req.headers.host?.split('.')[0] as string)) {
+				// store api key usage
+				await storeApiKeyUsage(req);
+			}
 		} catch (error) {
 			// console log needed for logging on server
 			console.log('Error in API : ', error);

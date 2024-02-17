@@ -534,3 +534,22 @@ export interface IVotesCount {
 	nays: number;
 	abstain?: number;
 }
+
+/*
+  Please do not remove this, its not used in the code but it is used for reference.
+	This is the structure of the api_keys collection in firestore.
+*/
+export interface IApiKeyUsageData {
+	[route_name: string]: {
+		count: number;
+		last_used_at: Date;
+	};
+}
+
+export interface IApiKeyData {
+	key: string;
+	usage: IApiKeyUsageData;
+	created_at: Date;
+	updated_at: Date;
+	owner: string;
+}

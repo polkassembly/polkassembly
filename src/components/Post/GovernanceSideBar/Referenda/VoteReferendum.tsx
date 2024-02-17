@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,8 +38,6 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -56,6 +54,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
+import Alert from '~src/basic-components/Alert';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -158,6 +157,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [delegatedTo, setDelegatedTo] = useState('');
 
 	const getData = async (address: any) => {
+		if (!address) return;
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
 			track: track_number
@@ -774,6 +774,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										)} required to create a Transaction.`}
 										showIcon
 										className='mb-6'
+										type='info'
 									/>
 								)}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
@@ -781,6 +782,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={walletErr.message}
 										description={walletErr.description}
 										showIcon
+										type='warning'
 									/>
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -788,7 +790,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -822,6 +823,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											isVoting
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
@@ -829,7 +831,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 
@@ -847,7 +848,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										}
 										showIcon
 										type='warning'
-										className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+										className='mt-4'
 									/>
 								)}
 								{/* aye nye split abstain buttons */}

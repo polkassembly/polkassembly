@@ -732,6 +732,7 @@ z-index: 1050 !important;
 
 .dark .dark-text-white *{
   color: white !important;
+  overflow-x: auto !important;
 }
 
 .dark .dark-text-white a,
@@ -830,4 +831,8 @@ z-index: 1050 !important;
   
 .tick-icon-container  {
   transform: scale(0.7);
+}
+
+.dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
+  text-shadow: none !important;
 }

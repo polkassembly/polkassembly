@@ -175,7 +175,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 			/>
 			<ProfileCard
 				className='mx-2 max-lg:mt-[180px]'
-				userProfile={userProfile}
+				userProfile={profileDetails}
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}
 			/>
@@ -188,7 +188,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				setStatsArr={setStatsArr}
 			/>
 			<ProfileTabs
-				userProfile={userProfile}
+				userProfile={profileDetails}
 				theme={theme}
 				addressWithIdentity={addressWithIdentity}
 				selectedAddresses={selectedAddresses}

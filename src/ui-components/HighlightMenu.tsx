@@ -5,6 +5,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import QuoteIcon from '~assets/icons/quote-icon.svg';
 import TwitterIcon from '~assets/icons/twitter.svg';
+
+import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useQuoteCommentContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 
@@ -15,6 +17,8 @@ interface IHiglightMenuProps {
 const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 	const { setQuotedText } = useQuoteCommentContext();
 	const { postData } = usePostDataContext();
+
+	const { id } = useUserDetailsSelector();
 	const [selectedText, setSelectedText] = useState('');
 	const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 });
 
@@ -76,7 +80,9 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 		setQuotedText(selectedText);
 		const commentForm = document.getElementById('comment-form');
 
-		commentForm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		const commentLogin = document.getElementById('comment-login-prompt');
+
+		id ? commentForm?.scrollIntoView({ behavior: 'smooth', block: 'center' }) : commentLogin?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	};
 
 	return (

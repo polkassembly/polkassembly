@@ -138,19 +138,14 @@ const ProxyAccountSelectionForm = ({
 							disableTooltip
 						/>
 						<div
-							className='mr-18 flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
+							className='mr-[96px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
 							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
 						>
 							<NetworkIcon />
 							<p className='m-0 p-0 text-[10px] text-lightBlue'>Proxy Address</p>
 						</div>
-						{/* <WalletIcon
-							which={walletType}
-							isProxyAccountForm={true}
-							className='walletIcon-container mr-2'
-						/> */}
 						<Button
-							className='flex h-[28px] items-center border bg-transparent text-xs text-bodyBlue hover:border-[#D2D8E0] hover:bg-[#EFF0F1] dark:border-separatorDark dark:text-white'
+							className='flex h-[25px] items-center border border-[#D2D8E0] bg-[#F9FAFB] p-0 px-2 text-xs text-bodyBlue hover:border-[#D2D8E0] hover:bg-[#EFF0F1] dark:border-separatorDark dark:text-white'
 							onClick={(e) => {
 								e.preventDefault;
 								e.stopPropagation();
@@ -160,7 +155,7 @@ const ProxyAccountSelectionForm = ({
 							<WalletIcon
 								which={walletType}
 								isProxyAccountForm={true}
-								className='walletIcon-container mr-2'
+								className='walletIcon-container mr-[2px]'
 							/>
 							Change Wallet
 						</Button>

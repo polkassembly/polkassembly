@@ -3,11 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable indent */
 /* eslint-disable sort-keys */
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-	enabled: process.env.ANALYZE === 'true'
-});
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	async headers() {
@@ -71,4 +66,4 @@ const nextConfig = {
 	}
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+module.exports = nextConfig;

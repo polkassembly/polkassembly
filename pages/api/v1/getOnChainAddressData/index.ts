@@ -6,7 +6,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 
-export const SUBSCAN_API_KEY = '056b677410ac226bea971a3e03de66fa';
+export const SUBSCAN_API_KEY = '74d1845ab15f4b889a64dfef074ef222';
 
 export const SUBSCAN_API_HEADERS = {
 	Accept: 'application/json',

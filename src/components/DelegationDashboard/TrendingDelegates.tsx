@@ -8,7 +8,7 @@ import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
-import { Alert, Spin } from 'antd';
+import { Alert, Button, Checkbox, Spin } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -18,6 +18,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import Web3 from 'web3';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { useApiContext } from '~src/context';
+import Popover from '~src/basic-components/Popover';
+import { poppins } from 'pages/_app';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
@@ -75,10 +77,6 @@ const TrendingDelegates = () => {
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
 
-	const onChange = (page: number) => {
-		setCurrentPage(page);
-	};
-
 	const prevPage = () => {
 		setCurrentPage((oldPage) => {
 			let prevPage = oldPage - 1;
@@ -109,6 +107,33 @@ const TrendingDelegates = () => {
 		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
 		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
 	];
+
+	const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
+
+	// const onChange = () => {};
+
+	const content = (
+		<div className='flex flex-col'>
+			<Checkbox.Group
+				className='flex max-h-[200px] flex-col overflow-y-auto'
+				// onChange={handleDataSourceChange}
+				// value={selectedDataSources}
+			>
+				{allDataSource?.map((source, index) => (
+					<div
+						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						key={index}
+					>
+						<Checkbox
+							className='cursor-pointer text-pink_primary'
+							value={source}
+						/>
+						{source.charAt(0).toUpperCase() + source.slice(1)}
+					</div>
+				))}
+			</Checkbox.Group>
+		</div>
+	);
 
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
@@ -166,7 +191,7 @@ const TrendingDelegates = () => {
 						placeholder='Enter address to Delegate vote'
 						onChange={(e) => setAddress(e.target.value)}
 						value={address}
-						className='h-[44px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+						className='h-[44px] border-none dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 
 					<CustomButton
@@ -190,6 +215,18 @@ const TrendingDelegates = () => {
 						<span className='text-sm font-medium text-white'>Delegate</span>
 					</CustomButton>
 				</div>
+				<Popover
+					content={content}
+					placement='bottomRight'
+					zIndex={1056}
+				>
+					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-[#D2D8E0] p-2 dark:border-borderColorDark dark:bg-section-dark-overlay'>
+						<ImageIcon
+							src='/assets/icons/filter-icon-delegates.svg'
+							alt='filter icon'
+						/>
+					</Button>
+				</Popover>
 			</div>
 
 			{getEncodedAddress(address, network) === delegationDashboardAddress && (
@@ -229,7 +266,9 @@ const TrendingDelegates = () => {
 								size='large'
 								defaultCurrent={1}
 								current={currentPage}
-								onChange={onChange}
+								onChange={(page: number) => {
+									setCurrentPage(page);
+								}}
 								total={delegatesData.length}
 								showSizeChanger={false}
 								pageSize={itemsPerPage}

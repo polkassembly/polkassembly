@@ -152,7 +152,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !delegationDashboardAddress) return;
 		const res = api.consts.convictionVoting.voteLockingPeriod;
 		const num = res.toJSON();
 		const days = blockToDays(num, network);
@@ -283,7 +283,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
+	}, [open, delegationDashboardAddress, api, apiReady]);
 
 	const content = (
 		<div className='flex flex-col'>

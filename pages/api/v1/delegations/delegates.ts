@@ -12,6 +12,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
 import { IDelegate } from '~src/types';
 import * as admin from 'firebase-admin';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
@@ -181,6 +182,8 @@ export const getDelegatesData = async (network: string, address?: string) => {
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate[] | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 

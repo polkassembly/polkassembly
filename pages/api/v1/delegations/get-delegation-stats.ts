@@ -9,6 +9,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { TOTAL_DELEGATATION_STATS } from '~src/queries';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import BN from 'bn.js';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const ZERO_BN = new BN(0);
 export interface IDelegationStats {
@@ -18,6 +19,8 @@ export interface IDelegationStats {
 	totalDelegators: number;
 }
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationStats | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 	try {

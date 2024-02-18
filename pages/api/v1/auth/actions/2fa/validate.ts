@@ -11,8 +11,11 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import { TOTP } from 'otpauth';
 import { redisDel, redisGet } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { auth_code = null, tfa_token = null, user_id = null, login_address, login_wallet } = req.body;

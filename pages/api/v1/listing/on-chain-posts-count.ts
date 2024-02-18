@@ -12,6 +12,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { ProposalType, getStatusesFromCustomStatus, getSubsquidProposalType } from '~src/global/proposalType';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_PROPOSALS_LISTING_COUNT_BY_TYPE } from '~src/queries';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IGetOnChainPostsCountParams {
 	network: string;
@@ -95,6 +96,8 @@ export async function getOnChainPostsCount(params: IGetOnChainPostsCountParams):
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, trackNo, trackStatus, proposalType } = req.query;
 
 	const network = String(req.headers['x-network']);

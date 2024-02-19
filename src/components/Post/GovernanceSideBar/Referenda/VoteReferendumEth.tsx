@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin, Alert } from 'antd';
+import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -38,6 +38,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -443,7 +444,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 						{isBalanceErr && !loadingStatus.isLoading && wallet && (
@@ -451,7 +451,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								type='info'
 								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
 								showIcon
-								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -459,7 +459,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 								showIcon
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 
@@ -476,13 +475,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								theme={theme}
+								isVoting
 							/>
 						) : !wallet ? (
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 								showIcon
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						) : null}
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>

@@ -17,6 +17,7 @@ import _sendCommentReportMail from '~src/api-utils/_sendCommentReportMail';
 import _sendPostSpamReportMail from '~src/api-utils/_sendPostSpamReportMail';
 import _sendReplyReportMail from '~src/api-utils/_sendReplyReportMail';
 import { redisGet, redisSetex } from 'src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IReportContentResponse {
 	message: string;
@@ -24,6 +25,8 @@ export interface IReportContentResponse {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IReportContentResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

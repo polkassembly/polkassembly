@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -71,6 +72,8 @@ export async function getLatestPreimage(params: IPrams): Promise<IApiResponse<IP
 }
 
 const handler: NextApiHandler<IPreimageData | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	const { hash } = req.query;
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });

@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -32,6 +33,8 @@ export const updateComments = async (postId: string, network: string, postType: 
 };
 
 const handler: NextApiHandler<string | { error: MessageType | string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, postType, comments } = req.body;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });

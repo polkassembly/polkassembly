@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Alert, Modal } from 'antd';
+import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
@@ -20,6 +20,7 @@ import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -163,7 +164,7 @@ const TreasuryProposalSuccessPopup = ({
 					</div>
 				)}
 				<Alert
-					className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					className='mt-6 rounded-[4px] text-bodyBlue'
 					showIcon
 					type='info'
 					message={

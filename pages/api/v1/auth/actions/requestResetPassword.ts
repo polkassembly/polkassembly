@@ -9,8 +9,11 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import { isValidNetwork } from '~src/api-utils';
 import messages from '~src/auth/utils/messages';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

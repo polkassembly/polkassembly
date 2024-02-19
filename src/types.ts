@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
-import { ProposalType } from './global/proposalType';
+import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 
@@ -430,11 +430,13 @@ export interface IDelegation {
 export interface IDelegate {
 	name?: string;
 	address: string;
+	created_at?: Date | string;
 	bio: string;
 	active_delegation_count: number;
 	voted_proposals_count: number;
 	isNovaWalletDelegate?: boolean;
-	dataSource: 'nova' | 'parity' | 'other';
+	dataSource: string[];
+	user_id?: number;
 }
 
 export enum EVoteDecisionType {
@@ -531,4 +533,66 @@ export interface IVotesCount {
 	ayes: number;
 	nays: number;
 	abstain?: number;
+}
+
+/*
+  Please do not remove this, its not used in the code but it is used for reference.
+	This is the structure of the api_keys collection in firestore.
+*/
+export interface IApiKeyUsageData {
+	[route_name: string]: {
+		count: number;
+		last_used_at: Date;
+	};
+}
+
+export interface IApiKeyData {
+	key: string;
+	usage: IApiKeyUsageData;
+	created_at: Date;
+	updated_at: Date;
+	owner: string;
+}
+
+export enum EDecision {
+	YES = 'yes',
+	NO = 'no',
+	ABSTAIN = 'abstain'
+}
+
+export interface IVoteHistory {
+	timestamp?: string | undefined;
+	decision: EDecision;
+	type: VoteType;
+	blockNumber: number;
+	index: number;
+	proposalType: TSubsquidProposalType;
+	balance?: {
+		value?: string;
+		nay?: string;
+		aye?: string;
+		abstain?: string;
+	};
+	createdAt?: string;
+	createdAtBlock?: number;
+	lockPeriod?: string;
+	isDelegated?: boolean;
+	removedAtBlock?: null | number;
+	removedAt?: null | string;
+	voter?: string;
+	delegatedVotes?: Array<any>;
+	parentVote?: Array<any>;
+}
+
+export interface IVotesHistoryResponse {
+	count: number;
+	votes: IVoteHistory[];
+}
+export interface IGetVotesHistoryParams {
+	network: string;
+	listingLimit?: string | string[] | number;
+	page?: string | string[] | number;
+	voterAddress?: string | string[];
+	proposalType?: ProposalType | string | string[];
+	proposalIndex?: string | string[] | number;
 }

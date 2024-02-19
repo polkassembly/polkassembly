@@ -945,6 +945,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
 										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
@@ -980,6 +981,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
 										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										wallet={wallet}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
@@ -1018,6 +1020,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
 										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)

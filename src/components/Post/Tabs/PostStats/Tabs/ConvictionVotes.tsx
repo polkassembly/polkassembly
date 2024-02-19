@@ -13,6 +13,7 @@ import BN from 'bn.js';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
+import NudgeIcon from '~assets/icons/analytics/nudge-icon.svg';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -111,30 +112,36 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 	}, [allVotes]);
 
 	return (
-		<div className='flex flex-col gap-5'>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<TotalVotesCard
-					ayeValue={bnToIntBalance(tallyData.ayes)}
-					nayValue={bnToIntBalance(tallyData.nays)}
-					abstainValue={bnToIntBalance(tallyData.abstain)}
-					isCurrencyValue={true}
-				/>
-				<VotesDelegationCard
-					delegatedValue={bnToIntBalance(delegatedBalance)}
-					soloValue={bnToIntBalance(soloBalance)}
-					isCurrencyValue={true}
-				/>
-				<VotesTurnoutCard
-					activeIssuance={activeIssuance}
-					totalIssuance={totalIssuance}
-				/>
+		<>
+			<div className='mb-10 flex  items-center gap-2 rounded-lg border bg-[#B6B0FB36] px-5 py-2 shadow-md'>
+				<NudgeIcon className='m-0 h-6 w-6' />
+				<span className='text-sm font-semibold'>Conviction vote is the amount used for voting multiplied by the conviction</span>
 			</div>
-			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<VoteConvictions votesByConviction={votesByConviction} />
-				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
+			<div className='flex flex-col gap-5'>
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<TotalVotesCard
+						ayeValue={bnToIntBalance(tallyData.ayes)}
+						nayValue={bnToIntBalance(tallyData.nays)}
+						abstainValue={bnToIntBalance(tallyData.abstain)}
+						isCurrencyValue={true}
+					/>
+					<VotesDelegationCard
+						delegatedValue={bnToIntBalance(delegatedBalance)}
+						soloValue={bnToIntBalance(soloBalance)}
+						isCurrencyValue={true}
+					/>
+					<VotesTurnoutCard
+						activeIssuance={activeIssuance}
+						totalIssuance={totalIssuance}
+					/>
+				</div>
+				<TimeSplit votesByTimeSplit={votesByTimeSplit} />
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<VoteConvictions votesByConviction={votesByConviction} />
+					<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

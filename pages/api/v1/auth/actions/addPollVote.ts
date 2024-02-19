@@ -16,8 +16,11 @@ import { ProposalType } from '~src/global/proposalType';
 import { IOptionPollVote, IPollVote } from '~src/types';
 
 import { getPollCollectionName } from '../../polls';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

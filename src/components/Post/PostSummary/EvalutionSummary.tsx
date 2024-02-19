@@ -11,9 +11,7 @@ interface Props {
 }
 
 const EvalutionSummary = ({ isProfileView, address }: Props) => {
-	const {
-		postData: { proposer, beneficiaries }
-	} = usePostDataContext();
+	const { postData } = usePostDataContext();
 
 	return isProfileView && address ? (
 		<div>
@@ -25,19 +23,19 @@ const EvalutionSummary = ({ isProfileView, address }: Props) => {
 	) : (
 		<div className='mt-4 pb-4 text-bodyBlue dark:text-blue-dark-high'>
 			<label className='tracking[0.01em] text-lg font-medium'>Evaluation Summary</label>
-			{beneficiaries?.length === 1 || !beneficiaries?.length ? (
+			{postData?.beneficiaries?.length === 1 || !postData?.beneficiaries?.length ? (
 				<div className='mt-4 flex items-center gap-2.5'>
-					{<span className='text-sm tracking-[0.01em]'>{beneficiaries?.length === 1 ? 'Beneficiary is' : 'Proposer is'}</span>}
+					{<span className='text-sm tracking-[0.01em]'>{postData?.beneficiaries?.length === 1 ? 'Beneficiary is' : 'Proposer is'}</span>}
 					<BeneficiaryCard
-						key={beneficiaries?.length === 1 ? beneficiaries?.[0]?.address : proposer}
-						address={beneficiaries?.length === 1 ? beneficiaries?.[0]?.address : proposer}
+						key={postData?.beneficiaries?.length === 1 ? postData?.beneficiaries?.[0]?.address : postData?.proposer}
+						address={postData?.beneficiaries?.length === 1 ? postData?.beneficiaries?.[0]?.address : postData?.proposer}
 					/>
 				</div>
 			) : (
 				<div className='mt-4 flex flex-col gap-3'>
-					<span className='text-sm tracking-[0.01em]'>The {beneficiaries.length} Beneficiaries of this proposal are as follows: </span>
-					{!!beneficiaries?.length &&
-						beneficiaries?.map((beneficiary) => (
+					<span className='text-sm tracking-[0.01em]'>The {postData?.beneficiaries.length} Beneficiaries of this proposal are as follows: </span>
+					{!!postData?.beneficiaries?.length &&
+						postData?.beneficiaries?.map((beneficiary) => (
 							<BeneficiaryCard
 								key={beneficiary.address}
 								address={beneficiary.address}

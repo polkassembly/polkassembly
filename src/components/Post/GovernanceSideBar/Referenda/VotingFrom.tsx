@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, FormInstance, Select } from 'antd';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import { ReactNode } from 'react-markdown/lib/ast-to-react';
@@ -9,6 +9,7 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -28,6 +29,15 @@ interface Props {
 	conviction: number;
 	setConviction: (pre: number) => void;
 	convictionOpts: ReactNode;
+	showMultisig?: any;
+	initiatorBalance?: any;
+	multisig?: any;
+	isBalanceErr?: any;
+	loadingStatus?: any;
+	wallet?: any;
+	ayeVoteValue?: any;
+	isProxyExistsOnWallet?: boolean;
+	showProxyDropdown?: boolean;
 }
 
 const VotingForm = ({
@@ -42,9 +52,19 @@ const VotingForm = ({
 	convictionOpts,
 	conviction,
 	setConviction,
-	convictionClassName
+	convictionClassName,
+	showMultisig,
+	initiatorBalance,
+	multisig,
+	isBalanceErr,
+	loadingStatus,
+	wallet,
+	ayeVoteValue,
+	isProxyExistsOnWallet,
+	showProxyDropdown
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const [isBalanceSet, setIsBalanceSet] = useState(false);
 
 	const ConvictionSelect = ({ className }: { className?: string }) => (
 		<Form.Item className={className}>
@@ -70,14 +90,16 @@ const VotingForm = ({
 			style={{ maxWidth: 600 }}
 		>
 			{[EFormType.ABSTAIN_FORM].includes(formName) && (
-				<BalanceInput
-					label={'Abstain vote value'}
-					placeholder={'Add balance'}
-					onChange={(balance: BN) => onAbstainValueChange?.(balance)}
-					className='text-sm font-medium'
-					formItemName={'abstainVote'}
-					theme={theme}
-				/>
+				<>
+					<BalanceInput
+						label={'Abstain vote value'}
+						placeholder={'Add balance'}
+						onChange={(balance: BN) => onAbstainValueChange?.(balance)}
+						className='text-sm font-medium'
+						formItemName={'abstainVote'}
+						theme={theme}
+					/>
+				</>
 			)}
 
 			{[EFormType.ABSTAIN_FORM, EFormType.SPLIT_FORM].includes(formName) && (
@@ -98,7 +120,21 @@ const VotingForm = ({
 						className='text-sm font-medium'
 						formItemName={'nayVote'}
 						theme={theme}
+						setIsBalanceSet={setIsBalanceSet}
 					/>
+
+					{isBalanceSet && (
+						<div className='-mt-5 mb-5'>
+							{showMultisig ||
+								(initiatorBalance && !multisig) ||
+								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
+									<div className='flex items-center gap-x-1'>
+										<InfoIcon />
+										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
+									</div>
+								))}
+						</div>
+					)}
 				</>
 			)}
 			{[EFormType.AYE_NAY_FORM].includes(formName) && (
@@ -111,18 +147,31 @@ const VotingForm = ({
 						className='border-[#D2D8E0] text-sm font-medium dark:border-[#3B444F]'
 						formItemName='balance'
 						theme={theme}
+						setIsBalanceSet={setIsBalanceSet}
 					/>
+					{isBalanceSet && (
+						<div className='-mt-5 mb-5'>
+							{showMultisig ||
+								(initiatorBalance && !multisig) ||
+								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
+									<div className='flex items-center gap-x-1'>
+										<InfoIcon />
+										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
+									</div>
+								))}
+						</div>
+					)}
 					<ConvictionSelect className={`${convictionClassName}`} />
 				</>
 			)}
 			<div className='-ml-6 -mr-6 mt-[-1px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
 				<CustomButton
 					htmlType='submit'
-					disabled={disabled}
+					disabled={disabled || (showProxyDropdown && !isProxyExistsOnWallet)}
 					text='Confirm'
 					variant='primary'
 					buttonsize='xs'
-					className={`mr-6 ${disabled && 'opacity-50'} font-semibold`}
+					className={`mr-6 ${(disabled || (showProxyDropdown && !isProxyExistsOnWallet)) && 'opacity-50'} font-semibold`}
 				/>
 			</div>
 		</Form>

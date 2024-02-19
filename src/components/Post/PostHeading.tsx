@@ -14,7 +14,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
-import PostHistoryModal from '~src/ui-components/PostHistoryModal';
+// import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
@@ -98,13 +98,14 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			track_name,
 			cid,
 			history,
-			content,
+			// content,
 			summary,
 			identityId,
 			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
@@ -165,7 +166,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
 						?.map((v) => (v === 'referendumV2' ? 'Referenda' : v.charAt(0).toUpperCase() + v.slice(1)))
-						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}#${onchainId || `${hash.slice(0, 5)}...${hash.slice(hash.length - 5, hash.length)}`}`
+						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}${
+						onchainId !== undefined || onchainId === 0 ? `#${onchainId}` : `${hash ? `${hash.slice(0, 5)}...${hash.slice(-5)}` : ''}`
+					}`
 				) : (
 					<>
 						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}
@@ -253,7 +256,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{history && history.length > 0 && (
+			{/* {history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -261,7 +264,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)}
+			)} */}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

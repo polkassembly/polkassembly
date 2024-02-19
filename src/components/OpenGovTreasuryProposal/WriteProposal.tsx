@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Form, FormInstance, Input, Radio, Spin } from 'antd';
+import { Form, FormInstance, Radio, Spin } from 'antd';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
 import { ISteps } from '.';
@@ -16,6 +16,8 @@ import styled from 'styled-components';
 import ContentForm from '../ContentForm';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -235,7 +237,7 @@ const WriteProposal = ({
 					{isDiscussionLinked === false && (
 						<Alert
 							type='info'
-							className='icon-alert dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='icon-alert'
 							showIcon
 							message={
 								<span className='text-[13px] font-normal text-bodyBlue dark:text-blue-dark-high'>

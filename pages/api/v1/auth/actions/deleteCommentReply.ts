@@ -11,8 +11,11 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { isValidNetwork } from '~src/api-utils';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
@@ -31,6 +32,8 @@ async function getOAuthRequestToken(network: string): Promise<any> {
 }
 
 const handler: NextApiHandler<MessageType | { url: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 
 	const { twitterHandle } = req.query;

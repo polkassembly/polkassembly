@@ -111,7 +111,6 @@ const Web3Login: FC<Props> = ({
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
-			console.log(chosenWallet);
 			const wallet = chosenWallet === 'subwallet-js' ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
 				setExtensionNotFound(true);

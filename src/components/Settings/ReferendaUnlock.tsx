@@ -298,8 +298,10 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
+		console.log('Unlocking for referenda #', vote.toString());
+
 		await contract
-			.removeVote(vote.refIndex)
+			.removeVote(vote.refIndex.toString())
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus((prev) => {

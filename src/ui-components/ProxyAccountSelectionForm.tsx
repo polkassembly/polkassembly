@@ -75,12 +75,6 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
-		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
-		if (addressData?.accounts?.length && selectedProxyAddress) {
-			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
-			setIsProxyExistsOnWallet?.(!!exists);
-		}
-
 		if (changedWallet === 'subwallet-js') {
 			setWalletType(Wallet.SUBWALLET);
 		} else if (changedWallet === 'polkadot-js') {
@@ -93,6 +87,12 @@ const ProxyAccountSelectionForm = ({
 			setWalletType(Wallet.POLYWALLET);
 		} else if (changedWallet === 'polkasafe') {
 			setWalletType(Wallet.POLKASAFE);
+		}
+
+		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
+		if (addressData?.accounts?.length && selectedProxyAddress) {
+			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
+			setIsProxyExistsOnWallet?.(!!exists);
 		}
 	};
 

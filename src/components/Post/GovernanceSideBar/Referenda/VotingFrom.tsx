@@ -37,6 +37,7 @@ interface Props {
 	wallet?: any;
 	ayeVoteValue?: any;
 	isProxyExistsOnWallet?: boolean;
+	showProxyDropdown?: boolean;
 }
 
 const VotingForm = ({
@@ -59,7 +60,8 @@ const VotingForm = ({
 	loadingStatus,
 	wallet,
 	ayeVoteValue,
-	isProxyExistsOnWallet
+	isProxyExistsOnWallet,
+	showProxyDropdown
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isBalanceSet, setIsBalanceSet] = useState(false);
@@ -165,11 +167,11 @@ const VotingForm = ({
 			<div className='-ml-6 -mr-6 mt-[-1px] flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] pt-5 dark:border-[#3B444F]'>
 				<CustomButton
 					htmlType='submit'
-					disabled={disabled || !isProxyExistsOnWallet}
+					disabled={disabled || (showProxyDropdown && !isProxyExistsOnWallet)}
 					text='Confirm'
 					variant='primary'
 					buttonsize='xs'
-					className={`mr-6 ${(disabled || !isProxyExistsOnWallet) && 'opacity-50'} font-semibold`}
+					className={`mr-6 ${(disabled || (showProxyDropdown && !isProxyExistsOnWallet)) && 'opacity-50'} font-semibold`}
 				/>
 			</div>
 		</Form>

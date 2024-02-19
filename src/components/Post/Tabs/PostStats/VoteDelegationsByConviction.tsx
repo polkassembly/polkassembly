@@ -3,53 +3,40 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
+import BN from 'bn.js';
 import { useTheme } from 'next-themes';
+import formatBnBalance from 'src/util/formatBnBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
+import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
+
+const ZERO = new BN(0);
 
 const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation: any[] }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
+
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
 
 	const colors: { [key: string]: string } = {
 		delegated: '#796EEC',
 		solo: '#B6B0FB'
 	};
 
-	const chartData = [
-		{
-			conviction: '0.1x',
-			delegated: votesByDelegation[0.1]?.delegated || 0,
-			solo: votesByDelegation[0.1]?.solo || 0
-		},
-		{
-			conviction: '1x',
-			delegated: votesByDelegation[1]?.delegated || 0,
-			solo: votesByDelegation[1]?.solo || 0
-		},
-		{
-			conviction: '2x',
-			delegated: votesByDelegation[2]?.delegated || 0,
-			solo: votesByDelegation[2]?.solo || 0
-		},
-		{
-			conviction: '3x',
-			delegated: votesByDelegation[3]?.delegated || 0,
-			solo: votesByDelegation[3]?.solo || 0
-		},
-		{
-			conviction: '4x',
-			delegated: votesByDelegation[4]?.delegated || 0,
-			solo: votesByDelegation[4]?.solo || 0
-		},
-		{
-			conviction: '5x',
-			delegated: votesByDelegation[5]?.delegated || 0,
-			solo: votesByDelegation[5]?.solo || 0
-		},
-		{
-			conviction: '6x',
-			delegated: votesByDelegation[6]?.delegated || 0,
-			solo: votesByDelegation[6]?.solo || 0
-		}
-	];
+	const getDelegatedAndSoloVotes = (conviction: number) => {
+		const delegated = bnToIntBalance(votesByDelegation[conviction]?.delegated || ZERO) || votesByDelegation[conviction]?.delegated || 0;
+		const solo = bnToIntBalance(votesByDelegation[conviction]?.solo || ZERO) || votesByDelegation[conviction]?.solo || 0;
+		return { delegated, solo };
+	};
+
+	const chartData = Array.from({ length: 7 }, (_, i) => {
+		const conv = i === 0 ? 0.1 : i;
+		return {
+			conviction: `${conv}x`,
+			...getDelegatedAndSoloVotes(conv)
+		};
+	});
 
 	return (
 		<div className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
@@ -59,7 +46,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 					data={chartData}
 					keys={['delegated', 'solo']}
 					indexBy='conviction'
-					margin={{ bottom: 50, left: 30, right: 10, top: 10 }}
+					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
@@ -77,6 +64,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 						truncateTickAt: 0
 					}}
 					axisLeft={{
+						format: (value) => formatUSDWithUnits(value, 1),
 						tickPadding: 5,
 						tickRotation: 0,
 						tickSize: 5,
@@ -144,6 +132,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 						}
 					}}
 					ariaLabel='Nivo bar chart demo'
+					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
 				/>
 			</div>

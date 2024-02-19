@@ -73,7 +73,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 								{
 									on: 'hover',
 									style: {
-										itemTextColor: '#000'
+										itemTextColor: '#808080'
 									}
 								}
 							],

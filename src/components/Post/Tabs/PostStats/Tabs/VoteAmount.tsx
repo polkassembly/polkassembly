@@ -42,22 +42,21 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 	useEffect(() => {
 		if (!allVotes?.data) return;
 
-		console.log('allVotes', allVotes);
-
 		const votesByConviction = allVotes?.data.reduce(
 			(acc, vote) => {
 				const conviction = vote.lockPeriod.toString();
+				const votingBalance = new BN(vote.balance);
 				if (!acc[conviction]) {
 					acc[conviction] = {
-						abstain: 0,
-						no: 0,
-						yes: 0
+						abstain: ZERO,
+						no: ZERO,
+						yes: ZERO
 					};
 				}
-				acc[conviction][vote.decision]++;
+				acc[conviction][vote.decision] = new BN(acc[conviction][vote.decision]).add(votingBalance);
 				return acc;
 			},
-			{} as { [key: string]: { yes: number; no: number; abstain: number } }
+			{} as { [key: string]: { yes: BN; no: BN; abstain: BN } }
 		);
 
 		const tallyData = allVotes?.data.reduce(
@@ -70,56 +69,55 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 		);
 
 		const votesByDelegation = allVotes?.data.reduce(
-			(acc, vote) => {
+			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
+				const voteBalance = new BN(vote.balance);
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {
-						delegated: 0,
-						solo: 0
+						delegated: ZERO,
+						solo: ZERO
 					};
 				}
-				acc[conviction][delegation]++;
+				acc[conviction][delegation] = new BN(acc[conviction][delegation]).add(voteBalance);
 				return acc;
 			},
-			{} as { [key: string]: { delegated: number; solo: number } }
+			{} as { [key: string]: { delegated: BN; solo: BN } }
 		);
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
 				const proposalCreatedAt = new Date(vote.proposal.createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
-				const voteBalance = Number(vote.balance);
+				const voteBalance = new BN(vote.balance);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
 				if (timeSplit == 0) {
-					acc[0] = acc[0] ? acc[0] + voteBalance : 1;
+					acc[0] = acc[0] ? new BN(acc[0]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? acc[7] + voteBalance : 1;
+					acc[7] = acc[7] ? new BN(acc[7]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? acc[10] + voteBalance : 1;
+					acc[10] = acc[10] ? new BN(acc[10]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? acc[14] + voteBalance : 1;
+					acc[14] = acc[14] ? new BN(acc[14]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? acc[20] + voteBalance : 1;
+					acc[20] = acc[20] ? new BN(acc[20]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? acc[24] + voteBalance : 1;
+					acc[24] = acc[24] ? new BN(acc[24]).add(voteBalance) : ZERO;
 				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? acc[28] + voteBalance : 1;
+					acc[28] = acc[28] ? new BN(acc[28]).add(voteBalance) : ZERO;
 				} else {
-					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + voteBalance : 1;
+					acc[timeSplit] = acc[timeSplit] ? new BN(acc[timeSplit]).add(voteBalance) : ZERO;
 				}
 				return acc;
 			},
-			{} as { [key: number]: number }
+			{} as { [key: number]: BN }
 		);
 
 		const delegated = allVotes?.data.filter((vote) => vote.isDelegatedVote);
 
 		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
 		const allBalances = allVotes?.data.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
-
-		console.log(tallyData);
 
 		setVotesByConviction(votesByConviction as any);
 		setVotesByDelegation(votesByDelegation as any);
@@ -133,9 +131,9 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 		<div className='flex flex-col gap-5'>
 			<div className='flex flex-col items-center gap-5 md:flex-row'>
 				<TotalVotesCard
-					ayeValue={bnToIntBalance(tallyData.ayes)}
-					nayValue={bnToIntBalance(tallyData.nays)}
-					abstainValue={bnToIntBalance(tallyData.abstain)}
+					ayeValue={bnToIntBalance(tallyData?.ayes || ZERO)}
+					nayValue={bnToIntBalance(tallyData?.nays || ZERO)}
+					abstainValue={bnToIntBalance(tallyData?.abstain || ZERO)}
 					isCurrencyValue={true}
 				/>
 				<VotesDelegationCard
@@ -148,7 +146,10 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 					totalIssuance={totalIssuance}
 				/>
 			</div>
-			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
+			<TimeSplit
+				votesByTimeSplit={votesByTimeSplit}
+				axisLabel='Voting Power'
+			/>
 			<div className='flex flex-col items-center gap-5 md:flex-row'>
 				<VoteConvictions votesByConviction={votesByConviction} />
 				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />

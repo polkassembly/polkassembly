@@ -3,48 +3,36 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import { ResponsiveLine } from '@nivo/line';
+import BN from 'bn.js';
 import { useTheme } from 'next-themes';
+import { useNetworkSelector } from '~src/redux/selectors';
+import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
+import formatBnBalance from 'src/util/formatBnBalance';
 
 interface ITimeSplitProps {
 	className?: string;
 	votesByTimeSplit: any[];
+	axisLabel?: string;
 }
 
-const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
+const ZERO = new BN(0);
+
+const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
+
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
 
 	const chartData = [
 		{
 			color: '#4064FF',
 			data: [
-				{
-					x: '0',
-					y: votesByTimeSplit[0] || 0
-				},
-				{
-					x: '7',
-					y: votesByTimeSplit[7] || 0
-				},
-				{
-					x: '10',
-					y: votesByTimeSplit[10] || 0
-				},
-				{
-					x: '14',
-					y: votesByTimeSplit[14] || 0
-				},
-				{
-					x: '20',
-					y: votesByTimeSplit[20] || 0
-				},
-				{
-					x: '24',
-					y: votesByTimeSplit[24] || 0
-				},
-				{
-					x: '28',
-					y: votesByTimeSplit[28] || 0
-				}
+				...[0, 7, 10, 14, 20, 24, 28].map((x) => ({
+					x: x.toString(),
+					y: bnToIntBalance(votesByTimeSplit[x] || ZERO) || votesByTimeSplit[x] || 0
+				}))
 			],
 			id: 'votes'
 		}
@@ -56,7 +44,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
 			<div className={`${className} relative -mt-7 flex h-[180px] items-center justify-center gap-x-2`}>
 				<ResponsiveLine
 					data={chartData}
-					margin={{ bottom: 20, left: 40, right: 10, top: 40 }}
+					margin={{ bottom: 20, left: 50, right: 10, top: 40 }}
 					xScale={{ type: 'point' }}
 					yScale={{
 						max: 'auto',
@@ -71,6 +59,20 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, votesByTimeSplit }) => {
 					colors={['#4064FF']}
 					axisTop={null}
 					axisRight={null}
+					axisLeft={{
+						format: (value) => formatUSDWithUnits(value, 1)
+					}}
+					tooltip={({ point }) => {
+						return (
+							<div className={`flex gap-2 rounded-md bg-white p-2 capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-1 text-[11px] shadow-md`}>
+								<span className='text-xs font-semibold'>Days: {point.data.xFormatted}</span>
+								<span className='text-xs font-semibold'>
+									{axisLabel ? `${axisLabel}: ` : 'votes: '}
+									{formatUSDWithUnits(point.data.yFormatted.toString(), 1)}
+								</span>
+							</div>
+						);
+					}}
 					pointSize={5}
 					pointColor={{ theme: 'background' }}
 					pointBorderWidth={2}

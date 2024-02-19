@@ -65,7 +65,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 								{
 									on: 'hover',
 									style: {
-										itemTextColor: '#000'
+										itemTextColor: '#808080'
 									}
 								}
 							],

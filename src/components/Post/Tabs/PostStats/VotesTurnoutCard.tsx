@@ -72,7 +72,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 								{
 									on: 'hover',
 									style: {
-										itemTextColor: '#000'
+										itemTextColor: '#808080'
 									}
 								}
 							],

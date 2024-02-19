@@ -28,8 +28,6 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 	useEffect(() => {
 		if (!allVotes?.data) return;
 
-		console.log('allVotes', allVotes);
-
 		const votesByConviction = allVotes?.data.reduce(
 			(acc, vote) => {
 				const conviction = vote.lockPeriod.toString();

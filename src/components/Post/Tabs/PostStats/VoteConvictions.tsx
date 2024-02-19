@@ -2,61 +2,37 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
+import BN from 'bn.js';
 import { ResponsiveBar } from '@nivo/bar';
 import { useTheme } from 'next-themes';
+import formatBnBalance from 'src/util/formatBnBalance';
+import { useNetworkSelector } from '~src/redux/selectors';
+import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
+
+const ZERO = new BN(0);
 
 const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
+
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
 
 	const colors: { [key: string]: string } = {
 		abstain: '#407BFF',
 		aye: '#6DE1A2',
 		nay: '#FF778F'
 	};
-	const chartData = [
-		{
-			abstain: votesByConviction[0.1]?.abstain || 0,
-			aye: votesByConviction[0.1]?.yes || 0,
-			conviction: '0.1x',
-			nay: votesByConviction[0.1]?.no || 0
-		},
-		{
-			abstain: votesByConviction[1]?.abstain || 0,
-			aye: votesByConviction[1]?.yes || 0,
-			conviction: '1x',
-			nay: votesByConviction[1]?.no || 0
-		},
-		{
-			abstain: votesByConviction[2]?.abstain || 0,
-			aye: votesByConviction[2]?.yes || 0,
-			conviction: '2x',
-			nay: votesByConviction[2]?.no || 0
-		},
-		{
-			abstain: votesByConviction[3]?.abstain || 0,
-			aye: votesByConviction[3]?.yes || 0,
-			conviction: '3x',
-			nay: votesByConviction[3]?.no || 0
-		},
-		{
-			abstain: votesByConviction[4]?.abstain || 0,
-			aye: votesByConviction[4]?.yes || 0,
-			conviction: '4x',
-			nay: votesByConviction[4]?.no || 0
-		},
-		{
-			abstain: votesByConviction[5]?.abstain || 0,
-			aye: votesByConviction[5]?.yes || 0,
-			conviction: '5x',
-			nay: votesByConviction[5]?.no || 0
-		},
-		{
-			abstain: votesByConviction[6]?.abstain || 0,
-			aye: votesByConviction[6]?.yes || 0,
-			conviction: '6x',
-			nay: votesByConviction[6]?.no || 0
-		}
-	];
+	const chartData = Array.from({ length: 8 }, (_, i) => {
+		const conv = i === 0 ? 0.1 : i;
+		return {
+			abstain: bnToIntBalance(votesByConviction[conv]?.abstain || ZERO) || votesByConviction[conv]?.abstain || 0,
+			aye: bnToIntBalance(votesByConviction[conv]?.yes || ZERO) || votesByConviction[conv]?.yes || 0,
+			conviction: `${conv}x`,
+			nay: bnToIntBalance(votesByConviction[conv]?.no || ZERO) || votesByConviction[conv]?.no || 0
+		};
+	});
 
 	return (
 		<div className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
@@ -68,7 +44,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 					indexBy='conviction'
 					indexScale={{ round: true, type: 'band' }}
 					keys={['aye', 'nay', 'abstain']}
-					margin={{ bottom: 50, left: 30, right: 10, top: 10 }}
+					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
 					borderColor={{
@@ -84,6 +60,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 						truncateTickAt: 0
 					}}
 					axisLeft={{
+						format: (value) => formatUSDWithUnits(value, 1),
 						tickPadding: 5,
 						tickRotation: 0,
 						tickSize: 5,
@@ -151,6 +128,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 						}
 					}}
 					ariaLabel='Nivo bar chart demo'
+					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
 				/>
 			</div>

@@ -75,24 +75,25 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 			(acc, vote) => {
 				const proposalCreatedAt = new Date(vote.proposal.createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
+				const convictionBalance = Number(vote.balance) * Number(vote.lockPeriod);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
 				if (timeSplit == 0) {
-					acc[0] = acc[0] ? acc[0] + 1 : 1;
+					acc[0] = acc[0] ? acc[0] + convictionBalance : 1;
 				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? acc[7] + 1 : 1;
+					acc[7] = acc[7] ? acc[7] + convictionBalance : 1;
 				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? acc[10] + 1 : 1;
+					acc[10] = acc[10] ? acc[10] + convictionBalance : 1;
 				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? acc[14] + 1 : 1;
+					acc[14] = acc[14] ? acc[14] + convictionBalance : 1;
 				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? acc[20] + 1 : 1;
+					acc[20] = acc[20] ? acc[20] + convictionBalance : 1;
 				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? acc[24] + 1 : 1;
+					acc[24] = acc[24] ? acc[24] + convictionBalance : 1;
 				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? acc[28] + 1 : 1;
+					acc[28] = acc[28] ? acc[28] + convictionBalance : 1;
 				} else {
-					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + 1 : 1;
+					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + convictionBalance : 1;
 				}
 				return acc;
 			},

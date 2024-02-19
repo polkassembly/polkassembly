@@ -9,7 +9,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import { IDelegate } from '~src/types';
 import * as admin from 'firebase-admin';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
@@ -27,7 +27,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const parityDelegatesKusama = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 	const novaDelegates = network === 'kusama' ? novaDelegatesKusama : novaDelegatesPolkadot;
 	const parityDelegates = network === 'kusama' ? parityDelegatesKusama : parityDelegatesPolkadot;
-	if (address && !(encodedAddr || Web3.utils.isAddress(String(address)))) return [];
+	if (address && !(encodedAddr || isAddress(String(address)))) return [];
 
 	const subsquidFetches: { [index: string]: any } = {};
 
@@ -188,7 +188,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate[] | {
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { address } = req.body;
-	if (address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
+	if (address && !(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
 
 	const result = await getDelegatesData(network, address ? String(address) : undefined);
 	return res.status(200).json(result as IDelegate[]);

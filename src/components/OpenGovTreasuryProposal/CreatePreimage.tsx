@@ -11,7 +11,7 @@ import SelectTracks from './SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
 import AddressInput from '~src/ui-components/AddressInput';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
@@ -712,7 +712,7 @@ const CreatePreimage = ({
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddresses: beneficiaryAddresses }, Boolean(isPreimage));
 		setSteps({ percent: fundingAmount.gt(ZERO_BN) && address?.length > 0 ? 100 : 60, step: 1 });
 		if (address.length > 0) {
-			(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+			(getEncodedAddress(address, network) || isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
 		}
 		setTimeout(() => {
 			setAddressAlert(false);
@@ -971,7 +971,7 @@ const CreatePreimage = ({
 											/>
 
 											{beneficiary.address
-												? !(getEncodedAddress(beneficiary.address, network) || Web3.utils.isAddress(beneficiary.address)) && (
+												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
 														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
 												  )
 												: null}

@@ -29,6 +29,7 @@ interface Props {
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
 	theme?: string;
+	showProxyDropdown?: boolean;
 	isVoting?: boolean;
 }
 
@@ -49,6 +50,7 @@ const AccountSelectionForm = ({
 	linkAddressTextDisabled = false,
 	addressTextClassName,
 	isTruncateUsername = true,
+	showProxyDropdown,
 	isVoting = false,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme
@@ -91,6 +93,7 @@ const AccountSelectionForm = ({
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
 				isTruncateUsername={isTruncateUsername}
+				showProxyDropdown={showProxyDropdown}
 			/>
 		</article>
 	);

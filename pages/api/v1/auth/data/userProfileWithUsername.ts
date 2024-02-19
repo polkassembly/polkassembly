@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import dayjs from 'dayjs';
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType, ProfileDetailsResponse, User } from '~src/auth/types';
@@ -168,6 +169,8 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const { username = '' } = req.query;
 	if (typeof username !== 'string' || !username) return res.status(400).json({ message: 'Invalid username.' });
 

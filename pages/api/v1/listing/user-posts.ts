@@ -17,6 +17,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IReaction } from '../posts/on-chain-post';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const getTimeline = (
 	proposals: any,
@@ -566,6 +567,8 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 
 // expects proposerAddress
 const handler: NextApiHandler<IUserPostsListingResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 

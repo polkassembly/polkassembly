@@ -5,6 +5,14 @@
 import { NextApiRequest } from 'next';
 import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 
+/**
+ * Stores api key usage into firebase
+ * IMPORTANT: use inside pages/api
+ * Use without await keyword as 'fire-and-forget'
+ * See: https://github.com/vercel/next.js/discussions/12573#discussioncomment-2799468
+ * @export
+ * @param {NextApiRequest} req
+ */
 export default async function storeApiKeyUsage(req: NextApiRequest) {
 	try {
 		const apiKey = (req.headers['x-api-key'] || 'unknown') as string;

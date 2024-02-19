@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { firestore } from 'firebase-admin';
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -17,6 +18,8 @@ export interface IAddressesResponse {
 }
 
 const handler: NextApiHandler<IAddressesResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { addresses } = req.body;
 	if (!addresses || !Array.isArray(addresses)) return res.status(400).json({ error: `addresses ${addresses} must be an array of string.` });
 

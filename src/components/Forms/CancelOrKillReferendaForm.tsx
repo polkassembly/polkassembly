@@ -191,7 +191,7 @@ export default function CancelOrKillReferendaForm({
 								<span className='flex items-center'>Referenda Index</span>
 							</label>
 							<HelperTooltip
-								text='Enter Referendum Index to take any action'
+								text={type === EKillOrCancel.CANCEL ? 'Enter referendum number you want to cancel' : 'Enter referendum number you want to kill'}
 								className='dark:text-blue-dark-medium'
 							/>
 						</div>
@@ -201,6 +201,14 @@ export default function CancelOrKillReferendaForm({
 								{
 									message: 'Please enter referenda index',
 									required: true
+								},
+								{
+									validator: (_, value) => {
+										if (!value || (value && Number(value) > -1)) {
+											return Promise.resolve();
+										}
+										return Promise.reject(new Error('Please enter a positive number'));
+									}
 								}
 							]}
 						>

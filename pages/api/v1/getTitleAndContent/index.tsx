@@ -34,7 +34,7 @@ export const getTitleAndContent = async ({ network, index }: { network: string; 
 		if (!proposalData) {
 			return {
 				data: { content: '', title: '' } as ITitleAndContent,
-				error: 'proposal not found',
+				error: 'The Proposal number is not valid',
 				status: 200
 			};
 		}
@@ -50,7 +50,7 @@ export const getTitleAndContent = async ({ network, index }: { network: string; 
 		if (!canVote) {
 			return {
 				data: { content: '', title: '' } as ITitleAndContent,
-				error: `current proposal status is ${proposalData.status}`,
+				error: `The Proposal is currently in ${proposalData.status} status and cannot be cancelled or killed`,
 				status: 200
 			};
 		}

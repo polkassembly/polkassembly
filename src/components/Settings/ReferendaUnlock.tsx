@@ -11,7 +11,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from 'src/types';
 import { Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
-import { BrowserProvider, Contract } from 'ethers';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
@@ -293,15 +293,25 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			};
 		});
 
-		const contract = new Contract(contractAddress, abi, await web3.getSigner());
+		const signer = await web3.getSigner();
+
+		const contract = new Contract(contractAddress, abi, signer);
+
+		const gasPrice = await contract.removeVote.estimateGas(vote.refIndex.toString());
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		console.log('Unlocking for referenda #', vote.toString());
+		console.log('Removing vote for referenda #', vote.refIndex.toString());
 
 		await contract
-			.removeVote(vote.refIndex.toString())
+			.removeVote(vote.refIndex.toString(), {
+				gasLimit
+			})
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus((prev) => {

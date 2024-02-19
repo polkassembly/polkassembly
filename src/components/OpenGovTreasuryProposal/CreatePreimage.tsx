@@ -188,11 +188,7 @@ const CreatePreimage = ({
 		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
-				}
+				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -415,8 +411,6 @@ const CreatePreimage = ({
 			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
 					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
 				}
 			}
 		});
@@ -973,7 +967,7 @@ const CreatePreimage = ({
 											{beneficiary.address
 												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
 														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
-												  )
+													)
 												: null}
 										</div>
 										<div className='-mb-[69px]'>
@@ -1270,7 +1264,7 @@ const CreatePreimage = ({
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
-									  )
+										)
 									: preimageHash?.length === 0 || invalidPreimageHash()) && 'opacity-50'
 							}`}
 							disabled={
@@ -1283,7 +1277,7 @@ const CreatePreimage = ({
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
-									  )
+										)
 									: preimageHash?.length === 0 || invalidPreimageHash()
 							}
 						>

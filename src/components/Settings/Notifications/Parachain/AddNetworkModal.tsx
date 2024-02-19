@@ -59,7 +59,7 @@ const AddNetworkModal = ({
 				: {
 						...net,
 						selected: checked
-				  }
+					}
 		);
 		setAllNetworks({ ...allNetworks, [chain]: payload });
 	};

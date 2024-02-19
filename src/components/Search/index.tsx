@@ -159,8 +159,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			!isSuperSearch
 				? [`network:${network}`]
 				: selectedNetworks.length > 0
-				? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
-				: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
+					? selectedNetworks.map((networkStr) => `network:${networkStr.toLowerCase()}`)
+					: allowedNetwork.map((networkStr) => `network:${networkStr.toLowerCase()}`),
 			selectedTags.map((tag) => {
 				return `tags:${tag}`;
 			}),

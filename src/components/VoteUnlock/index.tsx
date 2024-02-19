@@ -355,8 +355,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					{!totalUnlockableBalance.eq(ZERO_BN)
 						? 'Unlock Your Tokens'
 						: handlePrevData(totalLockData).length
-						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
-						: 'No Unlocks Available'}
+							? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
+							: 'No Unlocks Available'}
 				</Button>
 			</div>
 			<Modal

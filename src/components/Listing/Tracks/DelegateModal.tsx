@@ -176,7 +176,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						? {
 								name: values[0],
 								trackId: values[1].trackId
-						  }
+							}
 						: null;
 				});
 				setTrackArr(tracks);
@@ -418,7 +418,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>
-									  )
+										)
 									: null}
 
 								{addressAlert && (

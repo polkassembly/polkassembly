@@ -14,12 +14,12 @@ const Alert: FC<Props> = ({ type = 'info', showIcon = false, className, ...props
 		type === 'info'
 			? 'dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 			: type === 'error'
-			? 'dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
-			: type === 'success'
-			? 'dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'
-			: type === 'warning'
-			? 'dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
-			: '';
+				? 'dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+				: type === 'success'
+					? 'dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'
+					: type === 'warning'
+						? 'dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+						: '';
 	return (
 		<AntdAlert
 			{...props}

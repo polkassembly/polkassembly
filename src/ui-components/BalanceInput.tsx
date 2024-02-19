@@ -23,7 +23,7 @@ interface Props {
 	className?: string;
 	label?: string;
 	helpText?: string;
-	onChange: (balance: BN) => void;
+	onChange?: (balance: BN) => void;
 	placeholder?: string;
 	address?: string;
 	withBalance?: boolean;
@@ -70,10 +70,10 @@ const BalanceInput = ({
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if (isValid) {
 			setInputValue?.(value || '0');
-			onChange(balance);
+			onChange?.(balance);
 			setIsBalanceSet?.(true);
 		} else {
-			onChange(ZERO_BN);
+			onChange?.(ZERO_BN);
 			setInputValue?.('0');
 			setIsBalanceSet?.(false);
 		}
@@ -136,7 +136,7 @@ const BalanceInput = ({
 										}
 									}
 								}
-						  ]
+							]
 				}
 			>
 				<Input

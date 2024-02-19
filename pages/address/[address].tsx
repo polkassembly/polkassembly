@@ -51,12 +51,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		? await getOnChainUserPosts({
 				addresses: [address] || [],
 				network
-		  })
+			})
 		: await getUserPosts({
 				addresses: userProfile?.data?.addresses || [],
 				network,
 				userId: userProfile?.data?.user_id
-		  });
+			});
 
 	const props: IUserProfileProps = {
 		network,
@@ -160,7 +160,7 @@ export default styled(UserProfile)`
 		color: #464f60 !important;
 	}
 	.ant-segmented-item-selected {
-		text: 14px;
+		font-size: 14px;
 		font-weight: 600 !important;
 		color: var(--pink_primary) !important;
 	}

@@ -116,7 +116,7 @@ export const updatePostLinkInGroup: TUpdatePostLinkInGroup = async (params) => {
 				: {
 						id: postType === 'tips' ? postId : Number(postId),
 						type: postType
-				  }
+					}
 		},
 		{ merge: true }
 	);

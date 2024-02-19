@@ -41,10 +41,7 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 			throw apiErrorWithStatusCode(`No user found with the address '${address}'.`, 404);
 		}
 
-		const userDoc = await firestore_db
-			.collection('users')
-			.doc(String(addressDoc.data()?.user_id))
-			.get();
+		const userDoc = await firestore_db.collection('users').doc(String(addressDoc.data()?.user_id)).get();
 		if (!userDoc.exists) {
 			throw apiErrorWithStatusCode(`No user found with the address '${address}'.`, 404);
 		}

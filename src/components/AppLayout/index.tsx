@@ -357,7 +357,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 							</div>
 						</div>
-				  )
+					)
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -369,19 +369,19 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			? [
 					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Motions', '/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Tips', '/tips', <TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl
 			? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)]
@@ -392,7 +392,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
@@ -400,14 +400,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
+					]
 				: [],
 		AdvisoryCommittee:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
 						getSiderMenuItem('Motions', '/advisory-committee/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
+					]
 				: []
 	};
 	if (isGrantsSupported(network)) {
@@ -434,8 +434,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
-							? [
-									...[
+								? [
+										...[
+											getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+											getSiderMenuItem(
+												'Child Bounties',
+												'/child_bounties',
+												<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+											)
+										]
+									]
+								: [
+										...gov1Items.treasuryItems,
 										getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 										getSiderMenuItem(
 											'Child Bounties',
@@ -443,16 +453,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 										)
 									]
-							  ]
-							: [
-									...gov1Items.treasuryItems,
-									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-									getSiderMenuItem(
-										'Child Bounties',
-										'/child_bounties',
-										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
-									)
-							  ]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -461,7 +461,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									'/child_bounties',
 									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)
-						  ]
+							]
 				),
 
 				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
@@ -614,7 +614,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 						</div>
 					</div>
-			  )
+				)
 			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),

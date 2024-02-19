@@ -87,7 +87,8 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 							container: {
 								background: theme === 'dark' ? '#1E2126' : '#fff',
 								color: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 11
+								fontSize: 11,
+								textTransform: 'capitalize'
 							}
 						}
 					}}

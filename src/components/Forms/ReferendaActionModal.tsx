@@ -116,7 +116,15 @@ const ReferendaActionModal = ({
 						setOpenModal(true);
 						setProposerAddress(address);
 					}}
-					walletAlertTitle='Treasury proposal creation'
+					walletAlertTitle={
+						referendaModal === 1
+							? 'Creating a Referendum'
+							: referendaModal === 2
+							? 'Cancelling a Referendum'
+							: referendaModal === 3
+							? 'Killing a Referendum'
+							: 'Treasury Proposal Creation'
+					}
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'

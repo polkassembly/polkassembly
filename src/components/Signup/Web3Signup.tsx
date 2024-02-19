@@ -99,7 +99,7 @@ const Web3Signup: FC<Props> = ({
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
 		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
-			const wallet = chosenWallet === 'subwallet-js' ? (window as any).SubWallet : (window as any).talismanEth;
+			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
 				setExtensionNotFound(true);
 				setIsAccountLoading(false);
@@ -117,12 +117,14 @@ const Web3Signup: FC<Props> = ({
 				setAccountsNotFound(false);
 			}
 
+			const walletName = chosenWallet === Wallet.SUBWALLET ? Wallet.SUBWALLET : chosenWallet === Wallet.TALISMAN ? Wallet.TALISMAN : 'MetaMask';
+
 			const injectedAccounts = accounts.map(
 				(account) =>
 					({
 						address: account,
-						name: 'metamask',
-						source: 'metamask'
+						name: walletName,
+						source: walletName
 					}) as InjectedAccount
 			);
 

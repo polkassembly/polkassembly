@@ -110,75 +110,110 @@ const Web3Login: FC<Props> = ({
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
-
-		if (!wallet) {
-			setExtensionNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet
-						.enable(APPNAME)
-						.then((value) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			setIsAccountLoading(false);
-			console.log(err?.message);
-			if (err?.message == 'Rejected') {
-				setWalletError('');
-				handleToggle();
-			} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
-				setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
-				handleToggle();
-			} else if (err?.message == 'Wallet Timeout') {
-				setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
-				handleToggle();
+		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
+			console.log(chosenWallet);
+			const wallet = chosenWallet === 'subwallet-js' ? (window as any).SubWallet : (window as any).talismanEth;
+			if (!wallet) {
+				setExtensionNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setExtensionNotFound(false);
 			}
-		}
-		if (!injected) {
-			return;
-		}
+			const accounts: string[] = (await wallet.request({ method: 'eth_requestAccounts' })) || [];
 
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
+			if (accounts.length === 0) {
+				setAccountsNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setAccountsNotFound(false);
+			}
+
+			const injectedAccounts = accounts.map(
+				(account) =>
+					({
+						address: account,
+						name: 'metamask',
+						source: 'metamask'
+					}) as InjectedAccount
+			);
+
+			setAccounts(injectedAccounts);
+			if (injectedAccounts.length > 0) {
+				setAddress(injectedAccounts[0].address);
+			}
 			setIsAccountLoading(false);
 			return;
 		} else {
-			setAccountsNotFound(false);
+			const injectedWindow = window as Window & InjectedWindow;
+			const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
+			if (!wallet) {
+				setExtensionNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setExtensionNotFound(false);
+			}
+
+			let injected: Injected | undefined;
+			try {
+				injected = await new Promise((resolve, reject) => {
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Wallet Timeout'));
+					}, 60000); // wait 60 sec
+
+					if (wallet && wallet.enable) {
+						wallet
+							.enable(APPNAME)
+							.then((value) => {
+								clearTimeout(timeoutId);
+								resolve(value);
+							})
+							.catch((error) => {
+								reject(error);
+							});
+					}
+				});
+			} catch (err) {
+				setIsAccountLoading(false);
+				console.log(err?.message);
+				if (err?.message == 'Rejected') {
+					setWalletError('');
+					handleToggle();
+				} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
+					setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
+					handleToggle();
+				} else if (err?.message == 'Wallet Timeout') {
+					setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
+					handleToggle();
+				}
+			}
+			if (!injected) {
+				return;
+			}
+
+			const accounts = await injected.accounts.get();
+			if (accounts.length === 0) {
+				setAccountsNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setAccountsNotFound(false);
+			}
+
+			accounts.forEach((account) => {
+				account.address = getEncodedAddress(account.address, network) || account.address;
+			});
+
+			setAccounts(accounts);
+			if (accounts.length > 0) {
+				setAddress(accounts[0].address);
+			}
+
+			setIsAccountLoading(false);
+			return;
 		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setAddress(accounts[0].address);
-		}
-
-		setIsAccountLoading(false);
-		return;
 	};
 
 	const onAccountChange = (address: string) => {

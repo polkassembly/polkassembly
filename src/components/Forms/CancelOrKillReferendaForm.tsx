@@ -56,7 +56,7 @@ export default function CancelOrKillReferendaForm({
 		if (!api || !apiReady) {
 			return;
 		}
-		if (!loginWallet || postData.index) {
+		if (!loginWallet || !postData.index) {
 			return;
 		}
 		await setSigner(api, loginWallet);

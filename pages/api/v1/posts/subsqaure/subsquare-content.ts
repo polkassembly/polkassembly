@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import fetchWithTimeout from '~src/api-utils/timeoutFetch';
@@ -65,6 +66,8 @@ export const getSubSquareContentAndTitle = async (proposalType: string | string[
 };
 
 const handler: NextApiHandler<{ data: { content: any | string; title: string | any } | undefined } | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Anchor, Empty } from 'antd';
+import { Anchor, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -42,6 +42,7 @@ import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
+import Alert from '~src/basic-components/Alert';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -266,7 +267,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							message={<span className='dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
 							type='info'
 							showIcon
-							className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						/>
 					) : (
 						<PostCommentForm
@@ -276,7 +276,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</>
 			) : (
-				<div className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-alertColorDark'>
+				<div
+					id='comment-login-prompt'
+					className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-[6px] bg-[#E6F4FF] shadow-md dark:bg-alertColorDark'
+				>
 					<Image
 						src='/assets/icons/alert-login.svg'
 						width={20}

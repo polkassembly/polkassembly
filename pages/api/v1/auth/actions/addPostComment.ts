@@ -15,12 +15,15 @@ import { PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IAddPostCommentResponse {
 	id: string;
 }
 
 const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const network = String(req.headers['x-network']);
 	// res.status(500).json({ message: 'Invalid' });

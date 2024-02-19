@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import dayjs from 'dayjs';
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType, ProfileDetailsResponse, User } from '~src/auth/types';
@@ -141,9 +143,10 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 		const user_addresses = await getAddressesFromUserId(userDoc.id);
 
 		const user: ProfileDetailsResponse = {
-			addresses: user_addresses.map((a) => a?.address) || [],
+			addresses: user_addresses?.map((a) => a?.address)?.filter((address) => !!address) || [],
 			badges: [],
 			bio: '',
+			created_at: dayjs((userDoc.created_at as any)?.toDate?.() || userDoc.created_at).toDate(),
 			image: '',
 			title: '',
 			user_id: userDoc.id,
@@ -166,6 +169,8 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const { username = '' } = req.query;
 	if (typeof username !== 'string' || !username) return res.status(400).json({ message: 'Invalid username.' });
 

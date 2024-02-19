@@ -10,9 +10,10 @@ import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import messages from '~src/auth/utils/messages';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { TOTAL_PROPOSALS_COUNT_BY_ADDRESSES } from '~src/queries';
+import { TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES } from '~src/queries';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 interface Props {
 	network: string;
 	userId?: any;
@@ -35,16 +36,17 @@ export const getUserPostCount = async (params: Props) => {
 		}
 		const subsquidRes = await fetchSubsquid({
 			network,
-			query: TOTAL_PROPOSALS_COUNT_BY_ADDRESSES,
+			query: TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES,
 			variables: {
-				proposer_in: (addresses?.length ? addresses : user_addresses).map((address) => getEncodedAddress(address, network) || '')
+				addresses: (addresses?.length ? addresses : user_addresses).map((address) => getEncodedAddress(address, network) || '')
 			}
 		});
 		return {
 			data: JSON.parse(
 				JSON.stringify({
 					discussions: discussionsCounts || 0,
-					proposals: subsquidRes['data']['proposalsConnection']?.totalCount || 0
+					proposals: subsquidRes['data']['totalProposals'].totalCount || 0,
+					votes: subsquidRes['data']['totalVotes'].totalCount || 0
 				})
 			),
 			error: null,
@@ -60,6 +62,8 @@ export const getUserPostCount = async (params: Props) => {
 };
 
 const handler: NextApiHandler<{ discussions: number; proposals: number } | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 

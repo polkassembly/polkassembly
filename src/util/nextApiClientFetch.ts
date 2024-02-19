@@ -18,6 +18,7 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any },
 		headers: {
 			Authorization: 'Bearer ' + token,
 			'Content-Type': 'application/json',
+			'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY || '',
 			'x-network': network
 		},
 		method: method || 'POST'

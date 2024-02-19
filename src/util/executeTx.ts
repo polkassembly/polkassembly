@@ -4,9 +4,6 @@
 
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { PublicAddress } from '~src/auth/types';
-import nextApiClientFetch from './nextApiClientFetch';
-import getSubstrateAddress from './getSubstrateAddress';
 
 interface Props {
 	api: ApiPromise;
@@ -14,6 +11,7 @@ interface Props {
 	network: string;
 	tx: SubmittableExtrinsic<'promise'>;
 	address: string;
+	proxyAddress?: string;
 	params?: any;
 	errorMessageFallback: string;
 	onSuccess: (pre?: any) => Promise<void> | void;
@@ -21,27 +19,13 @@ interface Props {
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
 }
-const executeTx = async ({ api, apiReady, network, tx, address, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
+const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
 	if (!api || !apiReady || !tx) return;
 
-	let proxyForAddress = '';
-
-	try {
-		const { data: publicAddress, error: fetchError } = await nextApiClientFetch<PublicAddress>(`api/v1/auth/data/address?address=${address}`);
-
-		if (!fetchError && publicAddress) {
-			proxyForAddress = publicAddress.proxy_for?.find((proxyForEntry) => proxyForEntry.network === network)?.address || '';
-		}
-	} catch (error) {
-		console.log('Error in fetching address details', error);
-	}
-
-	proxyForAddress = proxyForAddress ? getSubstrateAddress(proxyForAddress) ?? '' : '';
-
-	const extrinsic = proxyForAddress ? api.tx.proxy.proxy(proxyForAddress, null, tx) : tx;
+	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
 
 	extrinsic
-		.signAndSend(address, params, async ({ status, events, txHash }: any) => {
+		.signAndSend(proxyAddress ?? address, params, async ({ status, events, txHash }: any) => {
 			if (status.isInvalid) {
 				console.log('Transaction invalid');
 				setStatus?.('Transaction invalid');

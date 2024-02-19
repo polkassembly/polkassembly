@@ -2,34 +2,22 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import BN from 'bn.js';
 import React, { FC } from 'react';
-import formatBnBalance from 'src/util/formatBnBalance';
-import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { ResponsivePie } from '@nivo/pie';
 import { useTheme } from 'next-themes';
 
 interface IVoteDelegationProps {
-	delegatedVotesCount: number;
-	combinedVotesCount: number;
-	delegatedVotesBalance: BN;
-	totalVotesBalance: BN;
+	delegatedValue: number;
+	soloValue: number;
 	className?: string;
+	isCurrencyValue?: boolean;
 }
 
-const ZERO = new BN(0);
-
-const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedVotesCount, combinedVotesCount, className, delegatedVotesBalance, totalVotesBalance }) => {
-	const { network } = useNetworkSelector();
+const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloValue, className, isCurrencyValue }) => {
 	const { resolvedTheme: theme } = useTheme();
 
-	const bnToIntBalance = function (bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-
-	const soloVotesBalance = totalVotesBalance?.sub(delegatedVotesBalance);
-	const highestVoteBalance = Math.max(bnToIntBalance(delegatedVotesBalance || ZERO), bnToIntBalance(soloVotesBalance || ZERO));
+	const maxValue = Math.max(Number(delegatedValue), Number(soloValue));
 
 	const delegatedColor = '#796EEC';
 	const soloColor = '#B6B0FB';
@@ -39,13 +27,13 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedVotesCount, co
 			color: delegatedColor,
 			id: 'delegated',
 			label: 'Delegated',
-			value: delegatedVotesCount
+			value: delegatedValue
 		},
 		{
 			color: soloColor,
 			id: 'solo',
 			label: 'Solo',
-			value: combinedVotesCount - delegatedVotesCount
+			value: soloValue
 		}
 	];
 	return (
@@ -103,9 +91,10 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedVotesCount, co
 							}
 						}
 					}}
+					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
 				<p className='absolute bottom-5 flex items-end gap-2 text-3xl font-bold dark:text-white'>
-					{formatUSDWithUnits(highestVoteBalance.toString(), 1)} <span className='text-xl font-normal'>DOT</span>
+					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='text-xl font-normal'>DOT</span>}
 				</p>
 			</div>
 		</div>

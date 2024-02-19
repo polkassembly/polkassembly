@@ -2,36 +2,23 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import BN from 'bn.js';
 import React, { FC } from 'react';
-import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
-import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ResponsivePie } from '@nivo/pie';
 
 interface ITotalVotesProps {
-	ayeVotes?: BN;
+	ayeValue?: number;
 	className?: string;
-	nayVotes?: BN;
-	ayesCount?: number;
-	naysCount?: number;
-	abstainCount?: number;
-	abstainVotes?: BN;
+	nayValue?: number;
+	abstainValue?: number;
+	isCurrencyValue?: boolean;
 }
 
-const ZERO = new BN(0);
-
-const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, ayesCount, naysCount, abstainCount, abstainVotes }) => {
-	const { network } = useNetworkSelector();
-
+const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue }) => {
 	const { resolvedTheme: theme } = useTheme();
 
-	const bnToIntBalance = function (bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-
-	const highestVote = Math.max(bnToIntBalance(ayeVotes || ZERO), bnToIntBalance(nayVotes || ZERO), bnToIntBalance(abstainVotes || ZERO));
+	const maxValue = Math.max(Number(ayeValue), Number(nayValue), Number(abstainValue));
 
 	const ayeColor = theme === 'dark' ? '#64A057' : '#2ED47A';
 	const nayColor = theme === 'dark' ? '#BD2020' : '#E84865';
@@ -42,19 +29,19 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, a
 			color: ayeColor,
 			id: 'aye',
 			label: 'Aye',
-			value: ayesCount
+			value: ayeValue
 		},
 		{
 			color: nayColor,
 			id: 'nay',
 			label: 'Nay',
-			value: naysCount
+			value: nayValue
 		},
 		{
 			color: abstainColor,
 			id: 'abstain',
 			label: 'Abstain',
-			value: abstainCount
+			value: abstainValue
 		}
 	];
 	return (
@@ -112,9 +99,10 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeVotes, className, nayVotes, a
 							}
 						}
 					}}
+					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
 				<p className='absolute bottom-5 flex items-end gap-2 text-3xl font-bold dark:text-white'>
-					{formatUSDWithUnits(highestVote.toString(), 1)} <span className='text-xl font-normal'>DOT</span>
+					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='text-xl font-normal'>DOT</span>}
 				</p>
 			</div>
 		</div>

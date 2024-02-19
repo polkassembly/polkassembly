@@ -11,15 +11,15 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { IVotesCount, LoadingStatusType } from 'src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ApiPromise } from '@polkadot/api';
-import TotalVotesCard from './TotalVotesCard';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
-import VotesTurnoutCard from './VotesTurnoutCard';
-import VotesDelegationCard from './VotesDelegationCard';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
-import VoteConvictions from './VoteConvictions';
-import VoteDelegationsByConviction from './VoteDelegationsByConviction';
-import TimeSplit from './TimeSplit';
-import VoteDistribution from './VoteDistribution';
+import { StatTabs } from './Tabs/StatTabs';
+import ConvictionVotes from './Tabs/ConvictionVotes';
+import VoteAmount from './Tabs/VoteAmount';
+import Accounts from './Tabs/Accounts';
+import ConvictionVotesIcon from '~assets/icons/analytics/conviction-votes.svg';
+import VoteAmountIcon from '~assets/icons/analytics/vote-amount.svg';
+import AccountIcon from '~assets/icons/analytics/accounts.svg';
 
 interface IPostStatsProps {
 	postId: string;
@@ -50,14 +50,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const [activeIssuance, setActiveIssuance] = useState<any>(0);
 	const [totalIssuance, setTotalIssuance] = useState<any>(0);
 	const voteType = getVotingTypeFromProposalType(postType);
-	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
-	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
-	const [totalVotesBalance, setTotalVotesBalance] = useState<BN>(new BN(0));
-	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
-	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
-	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
-	const [votesDistribution, setVotesDistribution] = useState<{ ayes: any[]; nays: any[]; abstain: any[] }>({ abstain: [], ayes: [], nays: [] });
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -168,108 +161,6 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	}, [getReferendumV2VoteInfo, postId, voteType]);
 
 	useEffect(() => {
-		if (!allVotes?.data) return;
-
-		console.log('allVotes', allVotes);
-
-		const votesByConviction = allVotes?.data.reduce(
-			(acc, vote) => {
-				const conviction = vote.lockPeriod.toString();
-				if (!acc[conviction]) {
-					acc[conviction] = {
-						abstain: 0,
-						no: 0,
-						yes: 0
-					};
-				}
-				acc[conviction][vote.decision]++;
-				return acc;
-			},
-			{} as { [key: string]: { yes: number; no: number; abstain: number } }
-		);
-
-		const votesByDelegation = allVotes?.data.reduce(
-			(acc, vote) => {
-				const conviction = vote.lockPeriod.toString();
-				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
-				if (!acc[conviction]) {
-					acc[conviction] = {
-						delegated: 0,
-						solo: 0
-					};
-				}
-				acc[conviction][delegation]++;
-				return acc;
-			},
-			{} as { [key: string]: { delegated: number; solo: number } }
-		);
-
-		const votesByTimeSplit = allVotes?.data.reduce(
-			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
-				const voteCreatedAt = new Date(vote.createdAt);
-				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
-
-				if (timeSplit == 0) {
-					acc[0] = acc[0] ? acc[0] + 1 : 1;
-				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? acc[7] + 1 : 1;
-				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? acc[10] + 1 : 1;
-				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? acc[14] + 1 : 1;
-				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? acc[20] + 1 : 1;
-				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? acc[24] + 1 : 1;
-				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? acc[28] + 1 : 1;
-				} else {
-					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + 1 : 1;
-				}
-				return acc;
-			},
-			{} as { [key: number]: number }
-		);
-
-		const votesDistribution = allVotes?.data.reduce(
-			(acc, vote) => {
-				if (vote.decision === 'yes') {
-					acc.ayes.push({
-						balance: Number(vote.balance),
-						voter: vote.voter
-					});
-				} else if (vote.decision === 'no') {
-					acc.nays.push({
-						balance: Number(vote.balance),
-						voter: vote.voter
-					});
-				} else {
-					acc.abstain.push({
-						balance: Number(vote.balance),
-						voter: vote.voter
-					});
-				}
-				return acc;
-			},
-			{ abstain: [], ayes: [], nays: [] } as { ayes: any[]; nays: any[]; abstain: any[] }
-		);
-
-		const delegated = allVotes?.data.filter((vote) => vote.isDelegatedVote);
-
-		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
-		const allBalances = allVotes?.data.reduce((acc, vote) => acc.add(new BN(vote.balance)), new BN(0));
-
-		setTotalVotesBalance(allBalances);
-		setVotesByConviction(votesByConviction as any);
-		setVotesByDelegation(votesByDelegation as any);
-		setDelegatedVotesCount(delegated.length);
-		setVotesDistribution(votesDistribution);
-		setVotesByTimeSplit(votesByTimeSplit as any);
-		setDelegatedBalance(delegatedBalance);
-	}, [allVotes]);
-
-	useEffect(() => {
 		handleAyeNayCount();
 		(async () => {
 			await getReferendumV2VoteInfo();
@@ -277,35 +168,51 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
 
-	return (
-		<div className='flex flex-col gap-5'>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<TotalVotesCard
-					ayeVotes={tallyData.ayes}
-					nayVotes={tallyData.nays}
-					abstainVotes={tallyData.abstain}
-					ayesCount={totalVotesCount.ayes}
-					naysCount={totalVotesCount.nays}
-					abstainCount={totalVotesCount.abstain}
-				/>
-				<VotesDelegationCard
-					delegatedVotesCount={delegatedVotesCount}
-					combinedVotesCount={allVotes?.totalCount || 0}
-					delegatedVotesBalance={delegatedBalance}
-					totalVotesBalance={totalVotesBalance}
-				/>
-				<VotesTurnoutCard
-					activeIssuance={activeIssuance}
+	const tabItems: any[] = [
+		{
+			children: (
+				<ConvictionVotes
 					totalIssuance={totalIssuance}
+					activeIssuance={activeIssuance}
+					tallyData={tallyData}
+					allVotes={allVotes}
 				/>
-			</div>
-			<VoteDistribution votesDistribution={votesDistribution} />
-			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<VoteConvictions votesByConviction={votesByConviction} />
-				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
-			</div>
-		</div>
+			),
+			icon: <ConvictionVotesIcon />,
+			key: 'conviction-votes',
+			label: 'Conviction Votes'
+		},
+		{
+			children: (
+				<VoteAmount
+					totalIssuance={totalIssuance}
+					activeIssuance={activeIssuance}
+					allVotes={allVotes}
+				/>
+			),
+			icon: <VoteAmountIcon />,
+			key: 'vote-amount',
+			label: 'Vote Amount'
+		},
+		{
+			children: (
+				<Accounts
+					totalIssuance={totalIssuance}
+					activeIssuance={activeIssuance}
+					allVotes={allVotes}
+					totalVotesCount={totalVotesCount}
+				/>
+			),
+			icon: <AccountIcon />,
+			key: 'account',
+			label: 'Account'
+		}
+	];
+
+	return (
+		<>
+			<StatTabs items={tabItems} />
+		</>
 	);
 };
 

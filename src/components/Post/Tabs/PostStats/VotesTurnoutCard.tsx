@@ -7,6 +7,7 @@ import React, { FC } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ResponsivePie } from '@nivo/pie';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useTheme } from 'next-themes';
 
 interface IVotesTurnoutProps {
@@ -97,6 +98,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 							}
 						}
 					}}
+					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
 				<p className='absolute bottom-5 block gap-2 text-3xl font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
 			</div>

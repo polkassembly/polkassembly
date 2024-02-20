@@ -10,7 +10,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, LoadingStatusType, NotificationStatus } from 'src/types';
 import { Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
-import Web3 from 'web3';
+import { BrowserProvider, Contract } from 'ethers';
 
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
@@ -43,7 +43,7 @@ interface Vote {
 	voteType: EVoteDecisionType | null;
 }
 
-const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE || '';
 
 const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkSelector();
@@ -176,11 +176,11 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		}
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
 
-		const chainId = await web3.eth.net.getId();
+		const { chainId } = await web3.getNetwork();
 
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -191,17 +191,13 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
+		await contract
 			.remove_vote(refIndex.toString())
-			.send({
-				from: address,
-				to: contractAddress
-			})
 			.then((result: any) => {
 				console.log(result);
 				queueNotification({
@@ -226,11 +222,10 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 	const handleUnlock = async () => {
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
+		const { chainId } = await web3.getNetwork();
 
-		const chainId = await web3.eth.net.getId();
-
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -241,17 +236,13 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
+		await contract
 			.unlock(address)
-			.send({
-				from: address,
-				to: contractAddress
-			})
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus({ isLoading: false, message: '' });

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Alert, Form, Modal, Select, Spin } from 'antd';
+import { Form, Modal, Select, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -38,6 +38,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -320,7 +321,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				>
 					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
 						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+							className='mt-6 rounded-[4px] text-bodyBlue'
 							showIcon
 							type='error'
 							message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}

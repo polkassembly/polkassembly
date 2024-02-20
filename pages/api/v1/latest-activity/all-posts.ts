@@ -26,6 +26,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { chainProperties, network as AllNetworks } from '~src/global/networkConstants';
 import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -426,6 +427,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 }
 
 const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { govType, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);

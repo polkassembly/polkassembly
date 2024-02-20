@@ -9,9 +9,10 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import { IDelegate } from '~src/types';
 import * as admin from 'firebase-admin';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
@@ -26,7 +27,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const parityDelegatesKusama = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 	const novaDelegates = network === 'kusama' ? novaDelegatesKusama : novaDelegatesPolkadot;
 	const parityDelegates = network === 'kusama' ? parityDelegatesKusama : parityDelegatesPolkadot;
-	if (address && !(encodedAddr || Web3.utils.isAddress(String(address)))) return [];
+	if (address && !(encodedAddr || isAddress(String(address)))) return [];
 
 	const subsquidFetches: { [index: string]: any } = {};
 
@@ -55,9 +56,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			return { ...item, dataSource: 'parity' };
 		})
 	];
-
 	const combinedDelegatesUniqueData: any = {};
-
 	combinedDelegates.map((item) => {
 		const addr = getEncodedAddress(item?.address, network) || item?.address;
 		if (combinedDelegatesUniqueData[addr] === undefined) {
@@ -130,52 +129,66 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const result: IDelegate[] = [];
 
 	for (const [index, delegateData] of subsquidResults.entries()) {
-		if (!delegateData || delegateData.status !== 'fulfilled') continue;
-		const delegationCount = Number(delegateData.value.data?.votingDelegationsConnection?.totalCount || 0);
-		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
+		const receivedDelgations: any = {};
 
+		if (!delegateData || delegateData.status !== 'fulfilled') continue;
+
+		delegateData.value.data?.votingDelegations?.map((delegation: any) => {
+			if (receivedDelgations[delegation?.from] === undefined) {
+				receivedDelgations[delegation?.from] = 1;
+			}
+		});
+
+		const votesCount = Number(delegateData.value.data?.convictionVotesConnection?.totalCount || 0);
 		const address = Object.keys(subsquidFetches)[index];
 		if (!address) continue;
 		let bio = '';
+		let username = '';
 		const dataSource = [];
 		if (combinedDelegatesUniqueData[address]?.nova) {
 			if (combinedDelegatesUniqueData[address]?.nova?.longDescription?.length) {
 				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
+				username = combinedDelegatesUniqueData[address]?.nova?.name;
 			}
 			dataSource.push('nova');
 		}
 		if (combinedDelegatesUniqueData[address]?.parity) {
 			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {
 				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto;
+				username = combinedDelegatesUniqueData[address]?.parity?.name;
 			}
 			dataSource.push('parity');
 		}
 		if (combinedDelegatesUniqueData[address]?.polkassembly) {
 			if (combinedDelegatesUniqueData[address]?.polkassembly?.bio?.length) {
 				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio;
+				username = combinedDelegatesUniqueData[address]?.polkassembly?.name;
 			}
 			dataSource.push('polkassembly');
 		}
-
-		const newDelegate: IDelegate = {
-			active_delegation_count: delegationCount,
-			address,
-			bio,
-			dataSource,
-			name: combinedDelegates[index].name,
-			voted_proposals_count: votesCount
-		};
-		result.push(newDelegate);
+		if (combinedDelegatesUniqueData[address]) {
+			const newDelegate: IDelegate = {
+				active_delegation_count: Object.keys(receivedDelgations)?.length || 0,
+				address,
+				bio,
+				dataSource,
+				name: username,
+				voted_proposals_count: votesCount
+			};
+			result.push(newDelegate);
+		}
 	}
 	return result;
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate[] | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { address } = req.body;
-	if (address && !(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
+	if (address && !(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
 
 	const result = await getDelegatesData(network, address ? String(address) : undefined);
 	return res.status(200).json(result as IDelegate[]);

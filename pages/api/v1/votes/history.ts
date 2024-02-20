@@ -6,56 +6,15 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
-import { ProposalType, TSubsquidProposalType, VoteType, getSubsquidProposalType } from '~src/global/proposalType';
+import { getSubsquidProposalType } from '~src/global/proposalType';
 import { GET_VOTE_HISTORY_BY_VOTER_ADDRESS_AND_PROPOSAL_INDEX } from '~src/queries';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IGetVotesHistoryParams, IVoteHistory, IVotesHistoryResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
-export enum EDecision {
-	YES = 'yes',
-	NO = 'no',
-	ABSTAIN = 'abstain'
-}
-
-export interface IVoteHistory {
-	timestamp?: string | undefined;
-	decision: EDecision;
-	type: VoteType;
-	blockNumber: number;
-	index: number;
-	proposalType: TSubsquidProposalType;
-	balance?: {
-		value?: string;
-		nay?: string;
-		aye?: string;
-		abstain?: string;
-	};
-	createdAt?: string;
-	createdAtBlock?: number;
-	lockPeriod?: string;
-	isDelegated?: boolean;
-	removedAtBlock?: null | number;
-	removedAt?: null | string;
-	voter?: string;
-	delegatedVotes?: Array<any>;
-	parentVote?: Array<any>;
-}
-
-export interface IVotesHistoryResponse {
-	count: number;
-	votes: IVoteHistory[];
-}
-export interface IGetVotesHistoryParams {
-	network: string;
-	listingLimit?: string | string[] | number;
-	page?: string | string[] | number;
-	voterAddress?: string | string[];
-	proposalType?: ProposalType | string | string[];
-	proposalIndex?: string | string[] | number;
-}
 export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<IApiResponse<IVotesHistoryResponse>> {
 	try {
 		const { voterAddress, network, listingLimit, page, proposalIndex, proposalType } = params;
@@ -131,7 +90,10 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 		};
 	}
 }
+
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesHistoryResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const { listingLimit = LISTING_LIMIT, page = 1, voterAddress, proposalType, proposalIndex } = req.body;
 
 	const network = String(req.headers['x-network']);

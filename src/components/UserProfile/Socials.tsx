@@ -3,12 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { FC } from 'react';
-import { Alert } from 'antd';
 import { ESocialType, ProfileDetails } from '~src/auth/types';
 import { SocialIcon } from '~src/ui-components/SocialLinks';
 import styled from 'styled-components';
 import { LinkOutlined } from '@ant-design/icons';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 interface ISocialsProps {
 	loading: boolean;
@@ -107,7 +107,7 @@ const Socials: FC<ISocialsProps> = (props) => {
 			})}
 			{errorCheck && (
 				<Alert
-					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark '
+					className='mt-4 h-[40px] rounded-[4px] border-none px-5 py-2 text-sm text-bodyBlue outline-none  '
 					message={<span className='dark:text-blue-dark-high'>{errorCheck}</span>}
 					type='info'
 					showIcon

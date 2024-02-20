@@ -3,11 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { firestore_db } from '~src/services/firebaseInit';
 
 const handler: NextApiHandler<any> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { user_id, proposal_id } = req.body;
 	let doc = firestore_db.collection('proposal_tracking').doc();
 

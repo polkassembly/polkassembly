@@ -10,12 +10,15 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { ITip } from '.';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export enum ETipStatus {
 	GIVEN = 'Given',
 	RECEIVED = 'Received'
 }
 const handler: NextApiHandler<ITip[] | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

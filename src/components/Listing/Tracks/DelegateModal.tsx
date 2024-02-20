@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Checkbox, Form, Modal, Slider, Spin } from 'antd';
+import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -24,7 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -36,6 +36,8 @@ import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
+import blockToDays from '~src/util/blockToDays';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -73,6 +75,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
+	const [days, setDays] = useState<number>(0);
 	const isTargetAddressSame =
 		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
 	const delegateButtonDisable =
@@ -100,7 +104,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
-		(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+		(getEncodedAddress(target, network) || isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
 		setTimeout(() => {
 			setAddressAlert(false);
 		}, 5000);
@@ -148,7 +152,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !delegationDashboardAddress) return;
+		const res = api.consts.convictionVoting.voteLockingPeriod;
+		const num = res.toJSON();
+		const days = blockToDays(num, network);
+		setDays(days);
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
@@ -203,6 +211,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessPopup(true);
+		setIsBalanceUpdated(true);
 		onConfirm?.(bnBalance.toString(), target, conviction);
 		setLoading(false);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
@@ -274,7 +283,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
+	}, [open, delegationDashboardAddress, api, apiReady]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -368,7 +377,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+										className='mb-4 h-10 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
@@ -405,7 +414,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									theme={theme}
 								/>
 								{target
-									? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && (
+									? (!(getEncodedAddress(target, network) || isAddress(target)) || isTargetAddressSame) && (
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>
@@ -414,9 +423,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+										className='mb mt-2 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+										type='info'
 									/>
 								)}
 
@@ -431,6 +441,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										<Balance
 											address={delegationDashboardAddress}
 											onChange={handleOnBalanceChange}
+											isDelegating={true}
+											isBalanceUpdated={isBalanceUpdated}
 										/>
 									</span>
 								</div>
@@ -480,12 +492,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									</div>
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px] dark:bg-inactiveIconDark'>
-									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
+									<div className='flex items-center justify-center gap-2.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
 									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
+										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
@@ -552,7 +564,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mb-4 rounded-[4px]'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

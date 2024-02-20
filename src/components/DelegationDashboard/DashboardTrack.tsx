@@ -9,7 +9,8 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Skeleton, Table } from 'antd';
+import { Skeleton } from 'antd';
+import Table from '~src/basic-components/Tables/Table';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import { ETrackDelegationStatus, IDelegation } from '~src/types';
@@ -107,6 +108,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	}, [network]);
 
 	const getData = async () => {
+		if (!address?.length) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
@@ -202,9 +204,10 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white px-1 dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<Table
 											className='column'
+											theme={theme}
 											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
 											dataSource={rowData
-												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row.delegatedTo === address : row.delegatedTo !== address))
+												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
 												?.map((item, index) => {
 													return { ...item, index: index + 1 };
 												})}

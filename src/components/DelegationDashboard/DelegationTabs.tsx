@@ -147,8 +147,4 @@ export default styled(DelegationTabs)`
 	.ant-tabs-tab-active .active-icon {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}
-	//dark mode icon color change
-	// .dark .darkmode-icons {
-	// filter: brightness(100%) saturate(0%) contrast(4) invert(100%) !important;
-	// }
 `;

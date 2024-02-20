@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Button, Form, FormInstance, Radio, Spin } from 'antd';
+import { Button, Form, FormInstance, Radio, Spin } from 'antd';
 import { EBeneficiaryAddressesAction, EBeneficiaryAddressesActionType, EEnactment, IEnactment, INIT_BENEFICIARIES, IPreimage, ISteps } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import BN from 'bn.js';
@@ -11,7 +11,7 @@ import SelectTracks from './SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
 import AddressInput from '~src/ui-components/AddressInput';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
@@ -49,6 +49,7 @@ import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import Input from '~src/basic-components/Input';
+import Alert from '~src/basic-components/Alert';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -711,7 +712,7 @@ const CreatePreimage = ({
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddresses: beneficiaryAddresses }, Boolean(isPreimage));
 		setSteps({ percent: fundingAmount.gt(ZERO_BN) && address?.length > 0 ? 100 : 60, step: 1 });
 		if (address.length > 0) {
-			(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+			(getEncodedAddress(address, network) || isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
 		}
 		setTimeout(() => {
 			setAddressAlert(false);
@@ -894,7 +895,7 @@ const CreatePreimage = ({
 							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
-									className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
+									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 									showIcon
 									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
@@ -922,7 +923,7 @@ const CreatePreimage = ({
 								/>
 								{showIdentityInfoCardForProposer && network.includes('polkadot') && (
 									<Alert
-										className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
+										className='icon-fix mt-2 rounded-[4px] dark:text-blue-dark-high'
 										showIcon
 										type='info'
 										message={
@@ -970,7 +971,7 @@ const CreatePreimage = ({
 											/>
 
 											{beneficiary.address
-												? !(getEncodedAddress(beneficiary.address, network) || Web3.utils.isAddress(beneficiary.address)) && (
+												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
 														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
 												  )
 												: null}
@@ -1013,7 +1014,7 @@ const CreatePreimage = ({
 
 							{addressAlert && (
 								<Alert
-									className='mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									className='mt-2 rounded-[4px]'
 									showIcon
 									message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
 									type='info'
@@ -1022,7 +1023,7 @@ const CreatePreimage = ({
 
 							{showMultisigInfoCard && !isMultisigCardLoading && (
 								<Alert
-									className='mt-2 rounded-[4px] text-[13px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+									className='mt-2 rounded-[4px] text-[13px]'
 									showIcon
 									message={<span className='text-[13px] dark:text-blue-dark-high'>Using a multisig proposal address provides a higher chance for the proposal to pass. </span>}
 									description={
@@ -1046,7 +1047,7 @@ const CreatePreimage = ({
 							)}
 							{showIdentityInfoCardForBeneficiary && !isIdentityCardLoading && network.includes('polkadot') && (
 								<Alert
-									className='icon-fix mt-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark dark:text-blue-dark-high'
+									className='icon-fix mt-2 rounded-[4px] dark:text-blue-dark-high'
 									showIcon
 									type='info'
 									message={
@@ -1236,7 +1237,7 @@ const CreatePreimage = ({
 					{showAlert && !isPreimage && !txFee.eq(ZERO_BN) && (
 						<Alert
 							type='info'
-							className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mt-6 rounded-[4px] text-bodyBlue '
 							showIcon
 							description={
 								<span className='text-xs dark:text-blue-dark-high'>

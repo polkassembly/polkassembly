@@ -11,7 +11,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from 'src/types';
 import { Divider, Form, Spin } from 'antd';
 import Loader from 'src/ui-components/Loader';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
@@ -52,7 +52,7 @@ interface Unlock {
 	amount: BN;
 }
 
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 interface IReferendaUnlockStatus {
 	remove: {
@@ -270,11 +270,11 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		}
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
 
-		const chainId = await web3.eth.net.getId();
+		const { chainId } = await web3.getNetwork();
 
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -293,16 +293,24 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			};
 		});
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const signer = await web3.getSigner();
+
+		const contract = new Contract(contractAddress, abi, signer);
+
+		const gasPrice = await contract.removeVote.estimateGas(vote.refIndex.toString());
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
-			.removeVote(vote.refIndex)
-			.send({
-				from: address,
-				to: contractAddress
+		console.log('Removing vote for referenda #', vote.refIndex.toString());
+
+		await contract
+			.removeVote(vote.refIndex.toString(), {
+				gasLimit
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -344,11 +352,11 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 	const handleUnlock = async (unlock: Unlock) => {
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
 
-		const chainId = await web3.eth.net.getId();
+		const { chainId } = await web3.getNetwork();
 
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -367,17 +375,13 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 			};
 		});
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
+		await contract
 			.unlock(unlock.trackId, address)
-			.send({
-				from: address,
-				to: contractAddress
-			})
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus((prev) => {

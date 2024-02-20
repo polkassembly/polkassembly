@@ -31,6 +31,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -131,7 +132,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (data) {
 		if (Array.isArray(data?.proposer_address)) {
 			if (data.proposer_address.length > 0) {
-				proposer_address = data?.proposer_address[0];
+				proposer_address = data?.proposer_address?.[0];
 			}
 		} else if (typeof data.proposer_address === 'string') {
 			proposer_address = data.proposer_address;
@@ -997,6 +998,8 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });

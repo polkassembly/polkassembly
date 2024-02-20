@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
@@ -24,6 +25,8 @@ export async function getNotificationSettings(token: string) {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<{ notification_preferences: IUserNotificationSettings } | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Token not found' });
 

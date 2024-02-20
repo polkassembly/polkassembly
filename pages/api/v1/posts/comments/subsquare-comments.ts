@@ -8,6 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { ProposalType } from '~src/global/proposalType';
 import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
 import fetchWithTimeout from '~src/api-utils/timeoutFetch';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -123,6 +124,8 @@ export const getSubSquareComments = async (proposalType: string, network: string
 };
 
 const handler: NextApiHandler<{ data: any } | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { proposalType, id } = req.query;
 	const network = String(req.headers['x-network']);
 

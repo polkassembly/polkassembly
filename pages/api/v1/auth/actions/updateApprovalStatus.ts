@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -13,6 +14,8 @@ import messages from '~src/auth/utils/messages';
 import firebaseAdmin from '~src/services/firebaseInit';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 

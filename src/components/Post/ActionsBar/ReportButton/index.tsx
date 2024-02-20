@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Form, Input, Modal, Select } from 'antd';
+import { Form, Modal, Select } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -17,6 +17,7 @@ import { IComment } from '../../Comment/Comment';
 import { deleteContentByMod } from '~src/util/deleteContentByMod';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import InputTextarea from '~src/basic-components/Input/InputTextarea';
 
 interface IReportButtonProps {
 	type: string;
@@ -271,7 +272,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						label='Comments (300 char max)'
 						rules={[{ required: true }]}
 					>
-						<Input.TextArea
+						<InputTextarea
 							name='comments'
 							showCount
 							rows={4}

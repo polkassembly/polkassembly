@@ -34,13 +34,13 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 			color: turnoutColor,
 			id: 'turnout',
 			label: 'Turnout',
-			value: activeIssuance
+			value: bnToIntBalance(activeIssuance)
 		},
 		{
 			color: issuanceColor,
 			id: 'issuance',
 			label: 'Issuance',
-			value: bnToIntBalance(totalIssuance) - bnToIntBalance(activeIssuance)
+			value: bnToIntBalance(new BN(totalIssuance).sub(new BN(activeIssuance)))
 		}
 	];
 	return (

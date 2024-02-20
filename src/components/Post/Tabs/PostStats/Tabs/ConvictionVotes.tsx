@@ -14,6 +14,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import NudgeIcon from '~assets/icons/analytics/nudge-icon.svg';
+import { Divider } from 'antd';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -141,6 +142,10 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'
+				/>
+				<Divider
+					dashed
+					className='my-2 border-[#D2D8E0]'
 				/>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<VoteConvictions votesByConviction={votesByConviction} />

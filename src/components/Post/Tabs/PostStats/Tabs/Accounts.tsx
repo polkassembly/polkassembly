@@ -11,6 +11,7 @@ import VoteConvictions from '../VoteConvictions';
 import VoteDelegationsByConviction from '../VoteDelegationsByConviction';
 import BN from 'bn.js';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
+import { Divider } from 'antd';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -115,6 +116,10 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 				/>
 			</div>
 			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
+			<Divider
+				dashed
+				className='my-2 border-[#D2D8E0]'
+			/>
 			<div className='flex flex-col items-center gap-5 md:flex-row'>
 				<VoteConvictions votesByConviction={votesByConviction} />
 				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />

@@ -178,9 +178,13 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					allVotes={allVotes}
 				/>
 			),
-			icon: <ConvictionVotesIcon />,
 			key: 'conviction-votes',
-			label: 'Conviction Votes'
+			label: (
+				<>
+					<ConvictionVotesIcon />
+					<span>Conviction Votes</span>
+				</>
+			)
 		},
 		{
 			children: (
@@ -190,9 +194,13 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					allVotes={allVotes}
 				/>
 			),
-			icon: <VoteAmountIcon />,
 			key: 'vote-amount',
-			label: 'Vote Amount'
+			label: (
+				<>
+					<VoteAmountIcon />
+					<span>Vote Amount</span>
+				</>
+			)
 		},
 		{
 			children: (
@@ -203,9 +211,13 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					totalVotesCount={totalVotesCount}
 				/>
 			),
-			icon: <AccountIcon />,
 			key: 'account',
-			label: 'Account'
+			label: (
+				<>
+					<AccountIcon />
+					<span>Account</span>
+				</>
+			)
 		}
 	];
 

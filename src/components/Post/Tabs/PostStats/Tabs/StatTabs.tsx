@@ -19,11 +19,12 @@ const StyledTabs = styled(Tabs)`
 	.ant-tabs-tab-btn {
 		display: flex;
 		align-items: center;
+		gap: 10px;
 	}
 	.ant-tabs-nav::before {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '')} !important;
 	}
-	.ant-tabs-tab-icon svg {
+	.ant-tabs-tab svg {
 		fill: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 	}
 	.ant-tabs-nav-list::after {
@@ -31,7 +32,7 @@ const StyledTabs = styled(Tabs)`
 		width: 100%;
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e1e6eb')} !important;
 	}
-	.ant-tabs-tab:not(.ant-tabs-tab-active) .ant-tabs-tab-icon svg {
+	.ant-tabs-tab:not(.ant-tabs-tab-active) svg {
 		fill: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#485F7D')} !important;
 	}
 

@@ -24,7 +24,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 		aye: '#6DE1A2',
 		nay: '#FF778F'
 	};
-	const chartData = Array.from({ length: 8 }, (_, i) => {
+	const chartData = Array.from({ length: 7 }, (_, i) => {
 		const conv = i === 0 ? 0.1 : i;
 		return {
 			abstain: bnToIntBalance(votesByConviction[conv]?.abstain || ZERO) || votesByConviction[conv]?.abstain || 0,

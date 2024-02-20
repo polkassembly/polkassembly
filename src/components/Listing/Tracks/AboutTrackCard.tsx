@@ -302,11 +302,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								address={delegatedTo}
 								className='ml-2 text-sm'
 								iconSize={20}
+								displayInline
+								isTruncateUsername={false}
 							/>
 							<Link
 								href={`https://${network}.polkassembly.io/delegation${path}`}
 								target='_blank'
-								className='ml-2 text-xs text-pink_primary'
+								className='ml-2 mt-1 text-xs text-pink_primary'
 							>
 								View Details
 							</Link>

@@ -107,6 +107,12 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 					role='application'
 					theme={{
 						axis: {
+							domain: {
+								line: {
+									stroke: '#D2D8E0',
+									strokeWidth: 1
+								}
+							},
 							ticks: {
 								text: {
 									fill: theme === 'dark' ? '#fff' : '#576D8B',

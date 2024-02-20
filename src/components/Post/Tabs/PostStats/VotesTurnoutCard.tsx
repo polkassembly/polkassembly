@@ -50,13 +50,13 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}
-					margin={{ bottom: 10, left: 0, right: 0, top: 10 }}
+					margin={{ bottom: 0, left: 5, right: 5, top: 0 }}
 					startAngle={-90}
 					endAngle={90}
 					innerRadius={0.85}
 					padAngle={2}
 					cornerRadius={45}
-					activeOuterRadiusOffset={8}
+					activeOuterRadiusOffset={5}
 					borderWidth={1}
 					colors={({ data }) => data.color}
 					borderColor={{
@@ -102,7 +102,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 					}}
 					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
-				<p className='absolute bottom-5 block gap-2 text-3xl font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
+				<p className='absolute bottom-5 block gap-2 text-2xl font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
 			</div>
 		</Card>
 	);

@@ -82,6 +82,12 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 					useMesh={true}
 					theme={{
 						axis: {
+							domain: {
+								line: {
+									stroke: '#D2D8E0',
+									strokeWidth: 1
+								}
+							},
 							ticks: {
 								text: {
 									fill: theme === 'dark' ? '#fff' : '#576D8B',

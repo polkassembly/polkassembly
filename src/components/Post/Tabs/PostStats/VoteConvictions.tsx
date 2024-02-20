@@ -21,10 +21,11 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 	};
 
 	const colors: { [key: string]: string } = {
-		abstain: '#407BFF',
-		aye: '#6DE1A2',
-		nay: '#FF778F'
+		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
+		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
+		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
+
 	const chartData = Array.from({ length: 7 }, (_, i) => {
 		const conv = i === 0 ? 0.1 : i;
 		return {
@@ -103,6 +104,12 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 					role='application'
 					theme={{
 						axis: {
+							domain: {
+								line: {
+									stroke: '#D2D8E0',
+									strokeWidth: 1
+								}
+							},
 							ticks: {
 								text: {
 									fill: theme === 'dark' ? '#fff' : '#576D8B',

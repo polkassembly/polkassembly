@@ -8,6 +8,7 @@ import styled from 'styled-components';
 const StyledTabs = styled(Tabs)`
 	.ant-tabs-tab:not(.ant-tabs-tab-active) {
 		border-bottom-color: ${(props) => (props.theme == 'dark' ? '#4B4B4B' : '#e1e6eb')} !important;
+		color: ${(props) => (props.theme == 'dark' ? '#f3f3f3' : '#485F7D')} !important;
 		font-weight: 400;
 	}
 	.ant-tabs-tab {
@@ -33,7 +34,7 @@ const StyledTabs = styled(Tabs)`
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e1e6eb')} !important;
 	}
 	.ant-tabs-tab:not(.ant-tabs-tab-active) svg {
-		fill: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#485F7D')} !important;
+		fill: ${(props) => (props.theme == 'dark' ? '#f3f3f3' : '#485F7D')} !important;
 	}
 
 	.ant-tabs-tab-active {

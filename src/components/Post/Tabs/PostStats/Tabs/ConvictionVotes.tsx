@@ -118,8 +118,8 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 	return (
 		<>
 			<div className='mb-10 flex  items-center gap-2 rounded-lg border bg-[#B6B0FB36] px-5 py-2 shadow-md'>
-				<NudgeIcon className='m-0 h-6 w-6' />
-				<span className='text-sm font-semibold'>Conviction vote is the amount used for voting multiplied by the conviction</span>
+				<NudgeIcon className='m-0 h-6 w-6 text-[#243A57] dark:fill-white' />
+				<span className='text-sm font-semibold dark:text-white'>Conviction vote is the amount used for voting multiplied by the conviction</span>
 			</div>
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>

@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
+import { Card } from 'antd';
 
 const ZERO = new BN(0);
 
@@ -39,7 +40,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 	});
 
 	return (
-		<div className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
@@ -136,7 +137,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
 				/>
 			</div>
-		</div>
+		</Card>
 	);
 };
 

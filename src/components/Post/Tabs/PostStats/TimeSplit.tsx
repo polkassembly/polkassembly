@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import formatBnBalance from 'src/util/formatBnBalance';
+import { Card } from 'antd';
 
 interface ITimeSplitProps {
 	className?: string;
@@ -39,7 +40,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 	];
 
 	return (
-		<div className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay'>
+		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Time Split</h2>
 			<div className={`${className} relative -mt-7 flex h-[180px] items-center justify-center gap-x-2`}>
 				<ResponsiveLine
@@ -108,7 +109,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 					}}
 				/>
 			</div>
-		</div>
+		</Card>
 	);
 };
 

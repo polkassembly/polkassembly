@@ -8,6 +8,7 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ResponsivePie } from '@nivo/pie';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 
 interface IVotesTurnoutProps {
@@ -44,7 +45,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 		}
 	];
 	return (
-		<div className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 pb-0 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
+		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Turnout Percentage</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
@@ -103,7 +104,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 				/>
 				<p className='absolute bottom-5 block gap-2 text-3xl font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
 			</div>
-		</div>
+		</Card>
 	);
 };
 

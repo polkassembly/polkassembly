@@ -6,6 +6,7 @@ import React, { FC } from 'react';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { ResponsivePie } from '@nivo/pie';
 import { useTheme } from 'next-themes';
+import { Card } from 'antd';
 
 interface IVoteDelegationProps {
 	delegatedValue: number;
@@ -37,7 +38,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 		}
 	];
 	return (
-		<div className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-3 pb-0 drop-shadow-md dark:bg-section-dark-overlay lg:max-w-[512px]'>
+		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Delegated Vs Solo</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
@@ -98,7 +99,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='text-xl font-normal'>DOT</span>}
 				</p>
 			</div>
-		</div>
+		</Card>
 	);
 };
 

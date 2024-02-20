@@ -20,6 +20,7 @@ import Accounts from './Tabs/Accounts';
 import ConvictionVotesIcon from '~assets/icons/analytics/conviction-votes.svg';
 import VoteAmountIcon from '~assets/icons/analytics/vote-amount.svg';
 import AccountIcon from '~assets/icons/analytics/accounts.svg';
+import { useTheme } from 'next-themes';
 
 interface IPostStatsProps {
 	postId: string;
@@ -32,6 +33,7 @@ const ZERO = new BN(0);
 
 const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useContext(ApiContext);
 
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
@@ -223,7 +225,10 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 
 	return (
 		<>
-			<StatTabs items={tabItems} />
+			<StatTabs
+				items={tabItems}
+				theme={theme}
+			/>
 		</>
 	);
 };

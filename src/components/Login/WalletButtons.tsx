@@ -67,22 +67,24 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						text='SubWallet'
 						isLoginFlow={isLoginFlow}
 					/>
-					<WalletButton
-						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
-						// disabled={!availableWallets[Wallet.POLKADOT]}
-						onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
-						name='Polkadot.js'
-						icon={
-							<WalletIcon
-								which={Wallet.POLKADOT}
-								className='h-6 w-6'
-							/>
-						}
-						isOptionalLogin={isOptionalLogin}
-						isAvailable={availableWallets[Wallet.POLKADOT]}
-						isLoginFlow={isLoginFlow}
-						text='Polkadot.js'
-					/>
+					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+						<WalletButton
+							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
+							// disabled={!availableWallets[Wallet.POLKADOT]}
+							onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
+							name='Polkadot.js'
+							icon={
+								<WalletIcon
+									which={Wallet.POLKADOT}
+									className='h-6 w-6'
+								/>
+							}
+							isOptionalLogin={isOptionalLogin}
+							isAvailable={availableWallets[Wallet.POLKADOT]}
+							isLoginFlow={isLoginFlow}
+							text='Polkadot.js'
+						/>
+					)}
 					<WalletButton
 						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`}
 						// disabled={!availableWallets[Wallet.TALISMAN]}
@@ -101,22 +103,26 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					/>
 				</div>
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
-					<WalletButton
-						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''}`}
-						// disabled={!availableWallets[Wallet.POLKAGATE]}
-						onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
-						name='PolkaGate'
-						icon={
-							<WalletIcon
-								which={Wallet.POLKAGATE}
-								className='h-8 w-8'
-							/>
-						}
-						isAvailable={availableWallets[Wallet.POLKAGATE]}
-						isOptionalLogin={isOptionalLogin}
-						text='PolkaGate'
-						isLoginFlow={isLoginFlow}
-					/>
+					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+						<WalletButton
+							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${
+								selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''
+							}`}
+							// disabled={!availableWallets[Wallet.POLKAGATE]}
+							onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
+							name='PolkaGate'
+							icon={
+								<WalletIcon
+									which={Wallet.POLKAGATE}
+									className='h-8 w-8'
+								/>
+							}
+							isAvailable={availableWallets[Wallet.POLKAGATE]}
+							isOptionalLogin={isOptionalLogin}
+							text='PolkaGate'
+							isLoginFlow={isLoginFlow}
+						/>
+					)}
 					{showPolkasafe && onPolkasafeSelect && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}

@@ -15,6 +15,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import NudgeIcon from '~assets/icons/analytics/nudge-icon.svg';
 import { Divider } from 'antd';
+import VoteDistribution from '../VoteDistribution';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -32,6 +33,11 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
 	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
+	const [votesDistribution, setVotesDistribution] = useState<{ ayes: any[]; nays: any[]; abstain: any[] }>({
+		abstain: [],
+		ayes: [],
+		nays: []
+	});
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -108,11 +114,35 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 		const delegatedBalance = delegated.reduce((acc, vote) => acc.add(new BN(vote.balance).mul(new BN(vote.lockPeriod))), new BN(0));
 		const allBalances = allVotes?.data.reduce((acc, vote) => acc.add(new BN(vote.balance).mul(new BN(vote.lockPeriod))), new BN(0));
 
+		const votesDistribution = allVotes?.data.reduce(
+			(acc, vote) => {
+				if (vote.decision === 'yes') {
+					acc.ayes.push({
+						balance: bnToIntBalance(new BN(vote.balance)),
+						voter: vote.voter
+					});
+				} else if (vote.decision === 'no') {
+					acc.nays.push({
+						balance: bnToIntBalance(new BN(vote.balance)),
+						voter: vote.voter
+					});
+				} else {
+					acc.abstain.push({
+						balance: bnToIntBalance(new BN(vote.balance)),
+						voter: vote.voter
+					});
+				}
+				return acc;
+			},
+			{ abstain: [], ayes: [], nays: [] } as { ayes: any[]; nays: any[]; abstain: any[] }
+		);
+
 		setVotesByConviction(votesByConviction as any);
 		setVotesByDelegation(votesByDelegation as any);
 		setVotesByTimeSplit(votesByTimeSplit as any);
 		setDelegatedBalance(delegatedBalance);
 		setSoloBalance(allBalances.sub(delegatedBalance));
+		setVotesDistribution(votesDistribution);
 	}, [allVotes]);
 
 	return (
@@ -139,6 +169,7 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 						totalIssuance={totalIssuance}
 					/>
 				</div>
+				<VoteDistribution votesDistribution={votesDistribution} />
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'

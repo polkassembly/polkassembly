@@ -51,6 +51,7 @@ interface Props {
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
 	onConfirm?: (pre?: any) => void;
+	onConfirmClick?: any;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
 	walletAlertTitle?: string;
@@ -79,7 +80,8 @@ const AddressConnectModal = ({
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
 	isBalanceUpdated,
-	isUsedInOnChainId
+	isUsedInOnChainId,
+	onConfirmClick
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -310,6 +312,9 @@ const AddressConnectModal = ({
 			setShowMultisig(false);
 			setMultisig('');
 			onConfirm && onConfirm(address);
+			if (isUsedInOnChainId) {
+				onConfirmClick && onConfirmClick(address, selectedProxyAddress);
+			}
 			setOpen(false);
 			setLoading(false);
 		}

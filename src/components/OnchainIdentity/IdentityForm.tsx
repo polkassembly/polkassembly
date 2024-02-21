@@ -48,6 +48,7 @@ interface Props {
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
 	alreadyVerifiedfields: IVerifiedFields;
+	proxyAddress?: string;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -95,7 +96,8 @@ const IdentityForm = ({
 	closeModal,
 	setIsIdentityCallDone,
 	setIdentityHash,
-	setAddressChangeModalOpen
+	setAddressChangeModalOpen,
+	proxyAddress
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -346,6 +348,34 @@ const IdentityForm = ({
 						/>
 					</div>
 				</div>
+				{proxyAddress && (
+					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+						<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
+							Your ProxyAddress{' '}
+							<HelperTooltip
+								className='ml-1'
+								text='Please note the verification cannot be transferred to another address.'
+							/>
+						</label>
+						{address && (
+							<Balance
+								address={proxyAddress || ''}
+								onChange={handleOnAvailableBalanceChange}
+							/>
+						)}
+					</div>
+				)}
+				{proxyAddress && (
+					<div className='flex w-full items-end gap-2 text-sm '>
+						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<Address
+								address={proxyAddress || ''}
+								isTruncateUsername={false}
+								displayInline
+							/>
+						</div>
+					</div>
+				)}
 				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>

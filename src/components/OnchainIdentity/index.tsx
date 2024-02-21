@@ -100,6 +100,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const [proxyAddress, setProxyAddress] = useState('');
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -336,10 +337,12 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [txFee, step]);
 
-	const handleConfirm = (address: string) => {
+	const handleConfirm = (address: string, proxyAddress: string) => {
+		console.log('proxy', proxyAddress);
 		setOpen(true);
 		openAddressModal ? openAddressModal?.(false) : setOpenAddressLinkedModal(false);
 		setAddress(address);
+		setProxyAddress(proxyAddress);
 		form.setFieldValue('address', address);
 	};
 
@@ -353,7 +356,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					walletAlertTitle='On chain identity.'
 					localStorageWalletKeyName='identityWallet'
 					localStorageAddressKeyName='identityAddress'
-					onConfirm={(address: string) => handleConfirm(address)}
+					onConfirmClick={(address: string, proxyAddress: string) => handleConfirm(address, proxyAddress)}
 					isUsedInOnChainId={true}
 				/>
 			)}
@@ -460,6 +463,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							socials={socials}
 							onChangeSocials={setSocials}
 							address={address}
+							proxyAddress={proxyAddress}
 							setTxFee={setTxFee}
 							setStartLoading={setLoading}
 							onCancel={handleCancel}

@@ -217,7 +217,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} w-[584px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${poppins.variable} ${poppins.className} h-[686px] w-[604px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 						closeIcon={<CloseIcon className='mt-2.5 text-lightBlue dark:text-icon-dark-inactive' />}
 						title={
 							<div
@@ -342,6 +342,15 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 							<p className='m-0 p-0 text-sm font-normal leading-[18px] text-sidebarBlue dark:text-white'>
 								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.
 							</p>
+							<div
+								className='mb-1'
+								style={{ borderTop: '1.5px dashed #D2D8E0' }}
+							>
+								<p className='m-0 mt-5 p-0 text-sm font-normal leading-[18px] text-sidebarBlue dark:text-blue-dark-high'>
+									<span className='font-semibold'>NOTE: </span>
+									Tokens get locked only if a referendum passes here
+								</p>
+							</div>
 						</section>
 					</Modal>
 				</Spin>

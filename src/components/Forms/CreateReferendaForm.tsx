@@ -94,11 +94,13 @@ const ZERO_BN = new BN(0);
 export default function CreateReferendaForm({
 	setSteps,
 	setOpenSuccess,
-	handleClose
+	handleClose,
+	afterProposalCreated
 }: {
 	setSteps: (pre: ISteps) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	handleClose: () => void;
+	afterProposalCreated: (postId: number) => Promise<void>;
 }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
@@ -143,11 +145,13 @@ export default function CreateReferendaForm({
 				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
 			);
 			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
+			const post_id = Number(await api.query.referenda.referendumCount());
 
 			const onSuccess = async () => {
+				afterProposalCreated(post_id);
 				queueNotification({
 					header: 'Success!',
-					message: `Proposal #${proposalTx.hash} successful.`,
+					message: `Proposal #${post_id} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });

@@ -28,12 +28,14 @@ export default function CancelOrKillReferendaForm({
 	type,
 	setSteps,
 	setOpenSuccess,
-	handleClose
+	handleClose,
+	afterProposalCreated
 }: {
 	type: EKillOrCancel;
 	setSteps: (pre: ISteps) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	handleClose: () => void;
+	afterProposalCreated: (postId: number) => Promise<void>;
 }) {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -69,11 +71,12 @@ export default function CancelOrKillReferendaForm({
 			const origin: any = { Origins: PostOrigin.REFERENDUM_CANCELLER };
 			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
 			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
-
+			const post_id = Number(await api.query.referenda.referendumCount());
 			const onSuccess = async () => {
+				afterProposalCreated(post_id);
 				queueNotification({
 					header: 'Success!',
-					message: `Proposal #${proposal.hash} successful.`,
+					message: `Proposal #${post_id} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });

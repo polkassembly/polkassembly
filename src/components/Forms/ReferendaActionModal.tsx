@@ -10,12 +10,16 @@ import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import styled from 'styled-components';
 import { EKillOrCancel } from './enum';
 import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { CreatePostResponseType } from '~src/auth/types';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -52,8 +56,14 @@ interface Props {
 	openLoginPrompt: boolean;
 	setOpenLoginPrompt: (pre: boolean) => void;
 	setProposerAddress: (pre: string) => void;
+	proposerAddress: string;
 	theme?: string;
 }
+
+const getDiscussionIdFromLink = (discussion: string) => {
+	const splitedArr = discussion?.split('/');
+	return splitedArr[splitedArr.length - 1];
+};
 
 const ReferendaActionModal = ({
 	referendaModal,
@@ -65,6 +75,7 @@ const ReferendaActionModal = ({
 	openLoginPrompt,
 	setOpenLoginPrompt,
 	setProposerAddress,
+	proposerAddress,
 	theme
 }: Props) => {
 	const { network } = useNetworkSelector();
@@ -77,6 +88,40 @@ const ReferendaActionModal = ({
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
+	const { id: userId } = useUserDetailsSelector();
+	const [postId, setPostId] = useState(0);
+
+	const handleCreateDiscussion = async (postId: number) => {
+		setPostId(postId);
+		const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
+		console.log({
+			content,
+			discussionId: discussionId || null,
+			postId,
+			proposerAddress,
+			tags,
+			title,
+			userId
+		});
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			content,
+			discussionId: discussionId || null,
+			postId,
+			proposerAddress,
+			tags,
+			title,
+			userId
+		});
+
+		if (apiError || !data?.post_id) {
+			queueNotification({
+				header: 'Error',
+				message: apiError,
+				status: NotificationStatus.ERROR
+			});
+			console.error(apiError);
+		}
+	};
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -229,6 +274,7 @@ const ReferendaActionModal = ({
 									setSteps={setSteps}
 									setOpenSuccess={setOpenSuccess}
 									handleClose={handleClose}
+									afterProposalCreated={handleCreateDiscussion}
 								/>
 							)}
 							{referendaModal === 2 && (
@@ -237,6 +283,7 @@ const ReferendaActionModal = ({
 									type={EKillOrCancel.CANCEL}
 									setOpenSuccess={setOpenSuccess}
 									handleClose={handleClose}
+									afterProposalCreated={handleCreateDiscussion}
 								/>
 							)}
 							{referendaModal === 3 && (
@@ -245,6 +292,7 @@ const ReferendaActionModal = ({
 									type={EKillOrCancel.KILL}
 									setOpenSuccess={setOpenSuccess}
 									handleClose={handleClose}
+									afterProposalCreated={handleCreateDiscussion}
 								/>
 							)}
 						</>
@@ -257,6 +305,7 @@ const ReferendaActionModal = ({
 					setOpenSuccess(false);
 					handleClose();
 				}}
+				postId={postId}
 				{...successPopupProps}
 			/>
 			<ReferendaLoginPrompts

@@ -235,6 +235,7 @@ const ReferendaActionModal = ({
 									setSteps={setSteps}
 									type={EKillOrCancel.CANCEL}
 									setOpenSuccess={setOpenSuccess}
+									handleClose={handleClose}
 								/>
 							)}
 							{referendaModal === 3 && (
@@ -242,6 +243,7 @@ const ReferendaActionModal = ({
 									setSteps={setSteps}
 									type={EKillOrCancel.KILL}
 									setOpenSuccess={setOpenSuccess}
+									handleClose={handleClose}
 								/>
 							)}
 						</>

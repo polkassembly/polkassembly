@@ -20,7 +20,6 @@ import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { BN, BN_HUNDRED, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import Loader from '~src/ui-components/Loader';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SelectTracks from '../OpenGovTreasuryProposal/SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -92,7 +91,15 @@ const transformParams = (paramFields: ParamField[], inputParams: any[], opts = {
 };
 const ZERO_BN = new BN(0);
 
-export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setSteps: (pre: ISteps) => void; setOpenSuccess: (pre: boolean) => void }) {
+export default function CreateReferendaForm({
+	setSteps,
+	setOpenSuccess,
+	handleClose
+}: {
+	setSteps: (pre: ISteps) => void;
+	setOpenSuccess: (pre: boolean) => void;
+	handleClose: () => void;
+}) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
 	const { loginWallet } = useUserDetailsSelector();
@@ -112,7 +119,6 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -130,7 +136,6 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 		try {
 			const proposalPreImage = createPreImage(api, methodCall);
 			const preImageTx = proposalPreImage.notePreimageTx;
-			setLoading(true);
 			const origin: any = { Origins: selectedTrack };
 			const proposalTx = api.tx.referenda.submit(
 				origin,
@@ -142,11 +147,11 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 			const onSuccess = async () => {
 				queueNotification({
 					header: 'Success!',
-					message: `Propsal #${proposalTx.hash} successful.`,
+					message: `Proposal #${proposalTx.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
-				setLoading(false);
+				handleClose();
 				setOpenSuccess(true);
 			};
 
@@ -157,9 +162,7 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 					message,
 					status: NotificationStatus.ERROR
 				});
-				setLoading(false);
 			};
-			setLoading(true);
 			await executeTx({
 				address,
 				api,
@@ -172,7 +175,6 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 				tx: mainTx
 			});
 		} catch (error) {
-			setLoading(false);
 			setLoadingStatus({ isLoading: false, message: '' });
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -367,7 +369,7 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 
 	return (
 		<Spin
-			spinning={loading}
+			spinning={loadingStatus.isLoading}
 			indicator={<LoadingOutlined />}
 		>
 			<section className='w-full'>
@@ -395,7 +397,7 @@ export default function CreateReferendaForm({ setSteps, setOpenSuccess }: { setS
 				)}
 				{loadingStatus.isLoading && (
 					<div className='flex flex-col items-center justify-center'>
-						<Loader />
+						{/* <Loader /> */}
 						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
 					</div>
 				)}

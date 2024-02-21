@@ -8,7 +8,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
 import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { NotificationStatus, PostOrigin } from '~src/types';
-import Loader from '~src/ui-components/Loader';
 import Markdown from '~src/ui-components/Markdown';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
@@ -28,11 +27,13 @@ const ZERO_BN = new BN(0);
 export default function CancelOrKillReferendaForm({
 	type,
 	setSteps,
-	setOpenSuccess
+	setOpenSuccess,
+	handleClose
 }: {
 	type: EKillOrCancel;
 	setSteps: (pre: ISteps) => void;
 	setOpenSuccess: (pre: boolean) => void;
+	handleClose: () => void;
 }) {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -50,7 +51,6 @@ export default function CancelOrKillReferendaForm({
 	const [form] = Form.useForm();
 	const formName = 'kill-or-cancel-ref-form';
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady) {
@@ -66,7 +66,6 @@ export default function CancelOrKillReferendaForm({
 			const proposal = type === EKillOrCancel.CANCEL ? api.tx.referenda.cancel(Number(postData.index)) : api.tx.referenda.kill(Number(postData.index));
 			const proposalPreImage = createPreImage(api, proposal);
 			const preImageTx = proposalPreImage.notePreimageTx;
-			setLoading(true);
 			const origin: any = { Origins: PostOrigin.REFERENDUM_CANCELLER };
 			const proposalTx = api.tx.referenda.submit(origin, { Lookup: { hash: proposalPreImage.preimageHash, len: proposalPreImage.preimageLength } }, { After: BN_HUNDRED });
 			const mainTx = api.tx.utility.batchAll([preImageTx, proposalTx]);
@@ -74,11 +73,11 @@ export default function CancelOrKillReferendaForm({
 			const onSuccess = async () => {
 				queueNotification({
 					header: 'Success!',
-					message: `Propsal #${proposal.hash} successful.`,
+					message: `Proposal #${proposal.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });
-				setLoading(false);
+				handleClose();
 				setOpenSuccess(true);
 			};
 
@@ -89,9 +88,7 @@ export default function CancelOrKillReferendaForm({
 					message,
 					status: NotificationStatus.ERROR
 				});
-				setLoading(false);
 			};
-			setLoading(true);
 			await executeTx({
 				address,
 				api,
@@ -104,7 +101,6 @@ export default function CancelOrKillReferendaForm({
 				tx: mainTx
 			});
 		} catch (error) {
-			setLoading(false);
 			setLoadingStatus({ isLoading: false, message: '' });
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
@@ -154,7 +150,7 @@ export default function CancelOrKillReferendaForm({
 
 	return (
 		<Spin
-			spinning={loading}
+			spinning={loadingStatus.isLoading}
 			indicator={<LoadingOutlined />}
 		>
 			<div className='w-full'>
@@ -224,7 +220,7 @@ export default function CancelOrKillReferendaForm({
 
 				{loadingStatus.isLoading && (
 					<div className='flex flex-col items-center justify-center'>
-						<Loader />
+						{/* <Loader /> */}
 						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
 					</div>
 				)}

@@ -116,11 +116,11 @@ const TreasuryProposalSuccessPopup = ({
 				/>
 				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
 					{isCancelReferendaForm
-						? 'ProposReferendumal Canceled Successfully '
+						? 'Referendum Canceled Successfully '
 						: isKillReferendumForm
 						? 'Referendum Killed successfully'
 						: isCreateReferendumForm
-						? 'Referendum created successfully for'
+						? 'Referendum created successfully'
 						: 'Proposal created successfully for'}
 				</label>
 				{fundingAmount && (

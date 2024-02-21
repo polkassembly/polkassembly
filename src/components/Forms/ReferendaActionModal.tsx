@@ -19,7 +19,7 @@ import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposa
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { NotificationStatus, PostOrigin } from '~src/types';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -90,6 +90,7 @@ const ReferendaActionModal = ({
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
 	const { id: userId } = useUserDetailsSelector();
 	const [postId, setPostId] = useState(0);
+	const [selectedTrack, setSelectedTrack] = useState('');
 
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
@@ -275,6 +276,8 @@ const ReferendaActionModal = ({
 									setOpenSuccess={setOpenSuccess}
 									handleClose={handleClose}
 									afterProposalCreated={handleCreateDiscussion}
+									selectedTrack={selectedTrack}
+									setSelectedTrack={setSelectedTrack}
 								/>
 							)}
 							{referendaModal === 2 && (
@@ -306,6 +309,7 @@ const ReferendaActionModal = ({
 					handleClose();
 				}}
 				postId={postId}
+				selectedTrack={referendaModal === 3 ? PostOrigin.REFERENDUM_KILLER : referendaModal === 2 ? PostOrigin.REFERENDUM_CANCELLER : selectedTrack}
 				{...successPopupProps}
 			/>
 			<ReferendaLoginPrompts

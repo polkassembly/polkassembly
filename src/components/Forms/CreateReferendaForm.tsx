@@ -95,12 +95,16 @@ export default function CreateReferendaForm({
 	setSteps,
 	setOpenSuccess,
 	handleClose,
-	afterProposalCreated
+	afterProposalCreated,
+	selectedTrack,
+	setSelectedTrack
 }: {
 	setSteps: (pre: ISteps) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	handleClose: () => void;
 	afterProposalCreated: (postId: number) => Promise<void>;
+	selectedTrack: string;
+	setSelectedTrack: React.Dispatch<React.SetStateAction<string>>;
 }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
@@ -116,7 +120,7 @@ export default function CreateReferendaForm({
 	const [transformedParams, setTransformedParams] = useState<any>();
 	const [methodCall, setMethodCall] = useState<SubmittableExtrinsic<'promise'> | null>();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
-	const [selectedTrack, setSelectedTrack] = useState('');
+
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();

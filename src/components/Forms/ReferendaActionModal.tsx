@@ -228,6 +228,7 @@ const ReferendaActionModal = ({
 								<CreateReferendaForm
 									setSteps={setSteps}
 									setOpenSuccess={setOpenSuccess}
+									handleClose={handleClose}
 								/>
 							)}
 							{referendaModal === 2 && (

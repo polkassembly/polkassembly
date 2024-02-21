@@ -20,6 +20,8 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { useApiContext } from '~src/context';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
@@ -27,12 +29,15 @@ const TrendingDelegates = () => {
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
+	const [filteredDelegates, setFilteredDelegates] = useState<IDelegate[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
+	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
+	const [checkAll, setCheckAll] = useState(false);
 
 	useEffect(() => {
 		getData();
@@ -48,6 +53,15 @@ const TrendingDelegates = () => {
 			setAddressAlert(false);
 		}, 5000);
 	}, [network, address]);
+
+	useEffect(() => {
+		if (checkedList.length > 0) {
+			const filtered = delegatesData?.filter((delegate) => delegate?.dataSource?.some((dataSource) => checkedList.includes(dataSource)));
+			setFilteredDelegates(filtered);
+		} else {
+			setFilteredDelegates(delegatesData);
+		}
+	}, [delegatesData, checkedList]);
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -72,7 +86,7 @@ const TrendingDelegates = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress]);
 
-	const itemsPerPage = showMore ? delegatesData.length : 6;
+	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
@@ -110,14 +124,22 @@ const TrendingDelegates = () => {
 
 	const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
 
-	// const onChange = () => {};
+	const onChange = (list: CheckboxValueType[]) => {
+		setCheckedList(list);
+		setCheckAll(list.length === allDataSource.length);
+	};
+	const onCheckAllChange = (e: CheckboxChangeEvent) => {
+		const list = e.target.checked ? allDataSource.map((source) => source) : [];
+		setCheckedList(list);
+		setCheckAll(e.target.checked);
+	};
 
 	const content = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
 				className='flex max-h-[200px] flex-col overflow-y-auto'
-				// onChange={handleDataSourceChange}
-				// value={selectedDataSources}
+				onChange={onChange}
+				value={checkedList}
 			>
 				{allDataSource?.map((source, index) => (
 					<div
@@ -127,6 +149,8 @@ const TrendingDelegates = () => {
 						<Checkbox
 							className='cursor-pointer text-pink_primary'
 							value={source}
+							checked={checkAll}
+							onChange={onCheckAllChange}
 						/>
 						{source.charAt(0).toUpperCase() + source.slice(1)}
 					</div>
@@ -247,8 +271,10 @@ const TrendingDelegates = () => {
 				<div className='min-h-[200px]'>
 					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
 						{[
-							...delegatesData.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-							...delegatesData.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address))).sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+							...filteredDelegates.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
+							...filteredDelegates
+								.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address)))
+								.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
 						]
 							.slice(startIndex, endIndex)
 							.map((delegate, index) => (
@@ -269,7 +295,7 @@ const TrendingDelegates = () => {
 								onChange={(page: number) => {
 									setCurrentPage(page);
 								}}
-								total={delegatesData.length}
+								total={filteredDelegates.length}
 								showSizeChanger={false}
 								pageSize={itemsPerPage}
 								responsive={true}

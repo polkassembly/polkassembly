@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Divider, Form, Modal, Spin } from 'antd';
+import { Checkbox, Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -39,6 +39,9 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
 import Alert from '~src/basic-components/Alert';
+import ProxyAccountSelectionForm from './ProxyAccountSelectionForm';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -56,6 +59,7 @@ interface Props {
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
 	isUsedInDelegationModal?: boolean;
+	isUsedInOnChainId?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -74,7 +78,8 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
-	isBalanceUpdated
+	isBalanceUpdated,
+	isUsedInOnChainId
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -101,6 +106,25 @@ const AddressConnectModal = ({
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
+	const { resolvedTheme: theme } = useTheme();
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			setSelectedProxyAddress(proxyAddr[0]);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -552,9 +576,11 @@ const AddressConnectModal = ({
 									accounts={accounts}
 									address={address}
 									withBalance={true}
+									showProxyDropdown={showProxyDropdown}
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
+									inputClassName='rounded-[4px] px-3 py-1'
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
@@ -565,6 +591,38 @@ const AddressConnectModal = ({
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
 						) : null}
+						{isUsedInOnChainId && accounts.length > 0 && proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='mt-2'>
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+								>
+									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+								</Checkbox>
+							</div>
+						)}
+						{showProxyDropdown && (
+							<ProxyAccountSelectionForm
+								proxyAddresses={proxyAddresses}
+								theme={theme}
+								address={address}
+								withBalance
+								onBalanceChange={handleOnBalanceChange}
+								className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+								inputClassName='rounded-[4px] px-3 py-1'
+								wallet={wallet}
+								setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+								setSelectedProxyAddress={setSelectedProxyAddress}
+								selectedProxyAddress={selectedProxyAddress}
+							/>
+						)}
+						{showProxyDropdown && !isProxyExistsOnWallet && (
+							<div className='mt-2 flex items-center gap-x-1'>
+								<InfoIcon />
+								<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+							</div>
+						)}
 					</Form>
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (

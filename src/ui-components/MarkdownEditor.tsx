@@ -10,9 +10,9 @@ import Markdown from './Markdown';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import { useState } from 'react';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
 import debounce from 'lodash/debounce';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { algolia_client } from '~src/components/Search';
 
 const StyledTextArea = styled.div`
 	textarea {
@@ -178,21 +178,37 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsSelector();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
 
-	const loadSuggestions = async (text: string) => {
-		return new Promise<Suggestion[]>((accept) => {
-			const savedUsers = global.window.localStorage.getItem('users');
-			const users: string[] = savedUsers ? savedUsers.split(',') : [];
+	function loadSuggestions(text: string): Promise<Suggestion[]> {
+		const pattern = text;
 
-			const suggestions: Suggestion[] = users
-				.map((user) => ({
-					preview: user,
-					value: `[@${user}](${global.window.location.origin}/user/${user})`
-				}))
-				.filter((i) => i.preview.toLowerCase().includes(text.toLowerCase()));
+		const queries = [
+			{
+				indexName: 'polkassembly_users',
+				params: {
+					hitsPerPage: 6,
+					restrictSearchableAttributes: ['username']
+				},
+				query: pattern
+			}
+		];
 
-			accept(suggestions);
-		});
-	};
+		return algolia_client
+			.search(queries, { strategy: 'none' })
+			.then((response) => {
+				const usernameHits = response.results[0]?.hits || [];
+
+				const suggestions: Suggestion[] = usernameHits.map((user: any) => ({
+					preview: `@${user.username}`,
+					value: `[@${user.username}](/user/${user.username})`
+				}));
+
+				return suggestions;
+			})
+			.catch((error) => {
+				console.error('Error fetching suggestions:', error);
+				return [];
+			});
+	}
 
 	// Generator function to save images pasted. This generator should 1) Yield the image URL. 2) Return true if the save was successful or false, otherwise
 	const handleSaveImage = async function* (data: any) {
@@ -288,6 +304,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 				onTabChange={setSelectedTab}
 				selectedTab={selectedTab}
 				loadSuggestions={loadSuggestions}
+				suggestionTriggerCharacters={['@']}
 				toolbarCommands={[['bold', 'header', 'link', 'quote', 'strikethrough', 'code', 'image', 'ordered-list', 'unordered-list']]}
 				{...props}
 				paste={{

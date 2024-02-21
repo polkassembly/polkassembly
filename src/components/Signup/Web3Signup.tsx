@@ -6,7 +6,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -38,6 +38,7 @@ import LoginSuccessModal from '~src/ui-components/LoginSuccessModal';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -97,74 +98,111 @@ const Web3Signup: FC<Props> = ({
 	};
 
 	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
-
-		if (!wallet) {
-			setExtensionNotFound(true);
-			setIsAccountLoading(false);
-			return;
-		} else {
-			setExtensionNotFound(false);
-		}
-
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet!
-						.enable(APPNAME)
-						.then((value) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			setIsAccountLoading(false);
-			console.log(err?.message);
-			if (err?.message == 'Rejected') {
-				setWalletError('');
-				handleToggle();
-			} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
-				setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
-				handleToggle();
-			} else if (err?.message == 'Wallet Timeout') {
-				setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
-				handleToggle();
+		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
+			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
+			if (!wallet) {
+				setExtensionNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setExtensionNotFound(false);
 			}
-		}
-		if (!injected) {
-			return;
-		}
+			const accounts: string[] = (await wallet.request({ method: 'eth_requestAccounts' })) || [];
 
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			setAccountsNotFound(true);
+			if (accounts.length === 0) {
+				setAccountsNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setAccountsNotFound(false);
+			}
+
+			const walletName = chosenWallet === Wallet.SUBWALLET ? Wallet.SUBWALLET : chosenWallet === Wallet.TALISMAN ? Wallet.TALISMAN : 'MetaMask';
+
+			const injectedAccounts = accounts.map(
+				(account) =>
+					({
+						address: account,
+						name: walletName,
+						source: walletName
+					}) as InjectedAccount
+			);
+
+			setAccounts(injectedAccounts);
+			if (injectedAccounts.length > 0) {
+				setAddress(injectedAccounts[0].address);
+			}
 			setIsAccountLoading(false);
 			return;
 		} else {
-			setAccountsNotFound(false);
-		}
+			const injectedWindow = window as Window & InjectedWindow;
+			const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
+			if (!wallet) {
+				setExtensionNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setExtensionNotFound(false);
+			}
 
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
+			let injected: Injected | undefined;
+			try {
+				injected = await new Promise((resolve, reject) => {
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Wallet Timeout'));
+					}, 60000); // wait 60 sec
 
-		setAccounts(accounts);
-		if (accounts.length > 0) {
-			setAddress(accounts[0].address);
+					if (wallet && wallet.enable) {
+						wallet
+							.enable(APPNAME)
+							.then((value) => {
+								clearTimeout(timeoutId);
+								resolve(value);
+							})
+							.catch((error) => {
+								reject(error);
+							});
+					}
+				});
+			} catch (err) {
+				setIsAccountLoading(false);
+				console.log(err?.message);
+				if (err?.message == 'Rejected') {
+					setWalletError('');
+					handleToggle();
+				} else if (err?.message == 'Pending authorisation request already exists for this site. Please accept or reject the request.') {
+					setWalletError('Pending authorisation request already exists. Please accept or reject the request on the wallet extension and try again.');
+					handleToggle();
+				} else if (err?.message == 'Wallet Timeout') {
+					setWalletError('Wallet authorisation timed out. Please accept or reject the request on the wallet extension and try again.');
+					handleToggle();
+				}
+			}
+			if (!injected) {
+				return;
+			}
+
+			const accounts = await injected.accounts.get();
+			if (accounts.length === 0) {
+				setAccountsNotFound(true);
+				setIsAccountLoading(false);
+				return;
+			} else {
+				setAccountsNotFound(false);
+			}
+
+			accounts.forEach((account) => {
+				account.address = getEncodedAddress(account.address, network) || account.address;
+			});
+
+			setAccounts(accounts);
+			if (accounts.length > 0) {
+				setAddress(accounts[0].address);
+			}
+
+			setIsAccountLoading(false);
+			return;
 		}
-		setIsAccountLoading(false);
-		return;
 	};
 
 	const onAccountChange = (address: string) => {
@@ -405,7 +443,6 @@ const Web3Signup: FC<Props> = ({
 												description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
 												type='info'
 												showIcon
-												className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 											/>
 										</div>
 									)}

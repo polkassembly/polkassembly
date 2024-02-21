@@ -529,7 +529,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 						>
 							<span className='flex items-center'>
-								<EditIcon className='mr-1' />
+								<EditIcon className='mr-1 text-bodyBlue dark:text-white' />
 								<p className='m-0 -ml-[3px] p-0'>Edit</p>
 							</span>
 						</div>

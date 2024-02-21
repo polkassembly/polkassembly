@@ -29,6 +29,8 @@ interface Props {
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
 	theme?: string;
+	showProxyDropdown?: boolean;
+	isVoting?: boolean;
 }
 
 const AccountSelectionForm = ({
@@ -48,6 +50,8 @@ const AccountSelectionForm = ({
 	linkAddressTextDisabled = false,
 	addressTextClassName,
 	isTruncateUsername = true,
+	showProxyDropdown,
+	isVoting = false,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme
 }: Props) => {
@@ -73,6 +77,7 @@ const AccountSelectionForm = ({
 						address={address}
 						onChange={onBalanceChange}
 						isBalanceUpdated={isBalanceUpdated}
+						isVoting={isVoting}
 					/>
 				)}
 			</div>
@@ -83,11 +88,12 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={inputClassName}
+				className={`${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9]' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
 				isTruncateUsername={isTruncateUsername}
+				showProxyDropdown={showProxyDropdown}
 			/>
 		</article>
 	);

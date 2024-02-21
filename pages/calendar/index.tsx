@@ -639,6 +639,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 											onNavigate={setMiniCalSelectedDate}
 											localizer={localizer}
 											events={calendarEvents}
+											startAccessor='start_time'
+											endAccessor='end_time'
 											components={{
 												event: () => null,
 												eventWrapper: EventWrapperComponent,
@@ -704,6 +706,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 											view={selectedView}
 											events={calendarEvents}
 											popup={false}
+											startAccessor='start_time'
+											endAccessor='end_time'
 											components={{
 												event: Event,
 												eventWrapper: EventWrapperComponent,

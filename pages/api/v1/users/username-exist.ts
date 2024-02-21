@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -12,6 +13,8 @@ export interface IUsernameExistResponse {
 }
 
 const handler: NextApiHandler<IUsernameExistResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { username } = req.query;
 	if (!username) {
 		return res.status(400).json({ message: `Invalid username ${username}.` });

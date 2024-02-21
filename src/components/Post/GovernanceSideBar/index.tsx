@@ -6,7 +6,7 @@ import { ClockCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal, Spin } from 'antd';
+import { Button, Form, Modal, Spin } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -39,13 +39,12 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
-import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { EVoteDecisionType, ILastVote, IVotesCount, NotificationStatus, Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, IVoteHistory, IVotesCount, IVotesHistoryResponse, NotificationStatus, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -68,15 +67,14 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import Web3 from 'web3';
+import { BrowserProvider, Contract } from 'ethers';
 import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
 import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
+// import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
-
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;
@@ -94,7 +92,7 @@ interface IGovernanceSidebarProps {
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 const abi = require('src/moonbeamConvictionVoting.json');
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
@@ -168,7 +166,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const [isLastVoteLoading, setIsLastVoteLoading] = useState(true);
 	const isRun = useRef(false);
 	const dispatch = useDispatch();
-
+	const [trackNumber, setTrackNumber] = useState('');
 	const canVote =
 		Boolean(post.status) &&
 		[
@@ -402,6 +400,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 				if (tracks && Array.isArray(tracks)) {
 					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+					if (track) {
+						setTrackNumber((track as any[])[0]);
+					}
 					if (track && Array.isArray(track) && track.length > 1) {
 						const trackInfo = track[1] as any;
 						const { decisionPeriod } = trackInfo;
@@ -706,11 +707,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		if (!api || !apiReady || !track_number) return;
 		setLoading(true);
 		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-			const web3 = new Web3((window as any).ethereum);
+			const web3 = new BrowserProvider((window as any).ethereum);
 
-			const chainId = await web3.eth.net.getId();
+			const { chainId } = await web3.getNetwork();
 
-			if (chainId !== chainProperties[network].chainId) {
+			if (Number(chainId.toString()) !== chainProperties[network].chainId) {
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${network} network`,
@@ -720,13 +721,9 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				setLoading(false);
 				return;
 			}
-			const contract = new web3.eth.Contract(abi, contractAddress);
-			contract.methods
+			const contract = new Contract(contractAddress, abi, await web3.getSigner());
+			await contract
 				.removeVote(postIndex)
-				.send({
-					from: address,
-					to: contractAddress
-				})
 				.then((result: any) => {
 					console.log(result);
 					onSuccess();
@@ -756,177 +753,179 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				spinning={isLastVoteLoading}
 				indicator={<LoadingOutlined />}
 			>
-				<div className='mb-1.5 flex items-center justify-between'>
-					<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
-					{!isDelegated && (
-						<CustomButton
-							variant='primary'
-							text='Remove Vote'
-							loading={loading}
-							onClick={handleRemoveVote}
-							height={18}
-							fontSize='xs'
-							className='border-none p-0 text-red-500 underline dark:bg-section-dark-overlay'
-						/>
-					)}
-				</div>
+				<GovSidebarCard>
+					<div>
+						<div className='mb-1.5 flex items-center justify-between'>
+							<span className='flex h-[18px] items-center text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+							{!isDelegated && (
+								<Button
+									loading={loading}
+									onClick={handleRemoveVote}
+									className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+								>
+									Remove Vote
+								</Button>
+							)}
+						</div>
 
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
-					<Tooltip
-						placement='bottom'
-						title='Decision'
-						color={'#E5007A'}
-						className='max-w-[100px] max-[345px]:w-auto'
-					>
-						<span className='h-[25px]'>
-							{decision == 'yes' ? (
-								<p>
-									<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
-								</p>
-							) : decision == 'no' ? (
-								<p>
-									<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
-								</p>
-							) : decision == 'abstain' && !(balance as any).abstain ? (
-								<p>
-									<SplitYellow className='mb-[-2px]' /> <span className='font-medium capitalize text-[#FFBF60]'>{'Split'}</span>
-								</p>
-							) : decision == 'abstain' && (balance as any).abstain ? (
-								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' />
-									<span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
-								</p>
-							) : null}
-						</span>
-					</Tooltip>
+						<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
+							<Tooltip
+								placement='bottom'
+								title='Decision'
+								color={'#E5007A'}
+								className='max-w-[100px] max-[345px]:w-auto'
+							>
+								<span className='h-[25px]'>
+									{decision == 'yes' ? (
+										<p>
+											<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
+										</p>
+									) : decision == 'no' ? (
+										<p>
+											<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
+										</p>
+									) : decision == 'abstain' && !(balance as any).abstain ? (
+										<p>
+											<SplitYellow className='mb-[-2px]' /> <span className='font-medium capitalize text-[#FFBF60]'>{'Split'}</span>
+										</p>
+									) : decision == 'abstain' && (balance as any).abstain ? (
+										<p className='flex justify-center align-middle'>
+											<AbstainGray className='mb-[-8px] mr-1' />
+											<span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
+										</p>
+									) : null}
+								</span>
+							</Tooltip>
 
-					<Tooltip
-						placement='bottom'
-						title='Vote Date'
-						color={'#E5007A'}
-						className=' max-[345px]:w-auto'
-					>
-						<span className=''>
-							<ClockCircleOutlined className='mr-1' />
-							{dayjs(createdAt, 'YYYY-MM-DD').format("Do MMM'YY")}
-						</span>
-					</Tooltip>
+							<Tooltip
+								placement='bottom'
+								title='Vote Date'
+								color={'#E5007A'}
+								className=' max-[345px]:w-auto'
+							>
+								<span className=''>
+									<ClockCircleOutlined className='mr-1' />
+									{dayjs(createdAt, 'YYYY-MM-DD').format("Do MMM'YY")}
+								</span>
+							</Tooltip>
 
-					<Tooltip
-						placement='bottom'
-						title='Amount'
-						color={'#E5007A'}
-						className=' max-[345px]:w-auto'
-					>
-						<span>
-							{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
-							{formatedBalance(balance, unit)}
-							{` ${unit}`}
-						</span>
-					</Tooltip>
+							<Tooltip
+								placement='bottom'
+								title='Amount'
+								color={'#E5007A'}
+								className=' max-[345px]:w-auto'
+							>
+								<span>
+									{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
+									{formatedBalance(balance, unit)}
+									{` ${unit}`}
+								</span>
+							</Tooltip>
 
-					{!isNaN(Number(lockPeriod)) && (
-						<Tooltip
-							placement='bottom'
-							title='Conviction'
-							color={'#E5007A'}
-							className='ml-[-5px]'
-						>
-							<span title='Conviction'>
-								{theme === 'dark' ? <DarkConvictionIcon className='mr-1' /> : <ConvictionIcon className='mr-1' />}
-								{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x{isDelegated && '/d'}
-								{''}
-							</span>
-						</Tooltip>
-					)}
-				</div>
+							{!isNaN(Number(lockPeriod)) && (
+								<Tooltip
+									placement='bottom'
+									title='Conviction'
+									color={'#E5007A'}
+									className='ml-[-5px]'
+								>
+									<span title='Conviction'>
+										{theme === 'dark' ? <DarkConvictionIcon className='mr-1' /> : <ConvictionIcon className='mr-1' />}
+										{Number(lockPeriod) === 0 ? '0.1' : lockPeriod}x{isDelegated && '/d'}
+										{''}
+									</span>
+								</Tooltip>
+							)}
+						</div>
+					</div>
+				</GovSidebarCard>
 			</Spin>
 		);
 	};
 
 	const LastVoteInfoLocalState: FC<ILastVote> = ({ balance, conviction, decision }) => {
 		return (
-			<div>
-				<div className='mb-1.5 flex items-center justify-between'>
-					<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
-					<CustomButton
-						variant='primary'
-						text='Remove Vote'
-						loading={loading}
-						onClick={handleRemoveVote}
-						height={18}
-						fontSize='xs'
-						className='border-none p-0 text-red-500 underline dark:bg-section-dark-overlay'
-					/>
-				</div>
-				<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
-					<Tooltip
-						placement='bottom'
-						title='Decision'
-						color={'#E5007A'}
-						className=''
-					>
-						<span className='h-[25px]'>
-							{decision === EVoteDecisionType.AYE ? (
-								<p>
-									<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
-								</p>
-							) : decision === EVoteDecisionType.NAY ? (
-								<div>
-									<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
-								</div>
-							) : decision === EVoteDecisionType.SPLIT ? (
-								<p>
-									<SplitYellow className='mb-[-2px]' /> <span className='font-medium capitalize text-[#FFBF60]'>{'Split'}</span>
-								</p>
-							) : decision === EVoteDecisionType.ABSTAIN ? (
-								<p className='flex justify-center align-middle'>
-									<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
-								</p>
-							) : null}
-						</span>
-					</Tooltip>
-					<Tooltip
-						placement='bottom'
-						title='Vote Date'
-						color={'#E5007A'}
-						className=''
-					>
-						<span className=''>
-							<ClockCircleOutlined className='mr-1' />
-							{dayjs().format("Do MMM 'YY")}
-						</span>
-					</Tooltip>
-					{balance && (
+			<GovSidebarCard>
+				<div>
+					<div className='mb-1.5 flex items-center justify-between'>
+						<span className='mb-[5px] text-[12px] font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Last Vote:</span>
+						<Button
+							loading={loading}
+							onClick={handleRemoveVote}
+							className=' flex h-[18px] items-center justify-center rounded-[4px] border-none bg-transparent p-0 text-xs font-medium text-red-500 underline shadow-none dark:bg-section-dark-overlay'
+						>
+							Remove Vote
+						</Button>
+					</div>
+					<div className='mb-[-5px] flex justify-between text-[12px] font-normal leading-6 text-bodyBlue dark:text-blue-dark-high'>
 						<Tooltip
 							placement='bottom'
-							title='Amount'
+							title='Decision'
 							color={'#E5007A'}
 							className=''
 						>
-							<span>
-								<MoneyIcon className='mr-1' />
-								{formatedBalance(balance?.toString(), unit)}
-								{` ${unit}`}
+							<span className='h-[25px]'>
+								{decision === EVoteDecisionType.AYE ? (
+									<p>
+										<AyeGreen /> <span className='font-medium capitalize text-[#2ED47A]'>{'Aye'}</span>
+									</p>
+								) : decision === EVoteDecisionType.NAY ? (
+									<div>
+										<DislikeIcon className='text-[#F53C3C]' /> <span className='mb-[5px] font-medium capitalize text-[#F53C3C]'>{'Nay'}</span>
+									</div>
+								) : decision === EVoteDecisionType.SPLIT ? (
+									<p>
+										<SplitYellow className='mb-[-2px]' /> <span className='font-medium capitalize text-[#FFBF60]'>{'Split'}</span>
+									</p>
+								) : decision === EVoteDecisionType.ABSTAIN ? (
+									<p className='flex justify-center align-middle'>
+										<AbstainGray className='mb-[-8px] mr-1' /> <span className='font-medium capitalize  text-bodyBlue dark:text-blue-dark-high'>{'Abstain'}</span>
+									</p>
+								) : null}
 							</span>
 						</Tooltip>
-					)}
-
-					{!isNaN(Number(conviction)) && (
 						<Tooltip
 							placement='bottom'
-							title='Conviction'
+							title='Vote Date'
 							color={'#E5007A'}
-							className='ml-[-5px]'
+							className=''
 						>
-							<span title='Conviction'>
-								<ConvictionIcon className='mr-1' />
-								{Number(conviction) === 0 ? '0.1' : conviction}x
+							<span className=''>
+								<ClockCircleOutlined className='mr-1' />
+								{dayjs().format("Do MMM 'YY")}
 							</span>
 						</Tooltip>
-					)}
+						{balance && (
+							<Tooltip
+								placement='bottom'
+								title='Amount'
+								color={'#E5007A'}
+								className=''
+							>
+								<span>
+									<MoneyIcon className='mr-1' />
+									{formatedBalance(balance?.toString(), unit)}
+									{` ${unit}`}
+								</span>
+							</Tooltip>
+						)}
+
+						{!isNaN(Number(conviction)) && (
+							<Tooltip
+								placement='bottom'
+								title='Conviction'
+								color={'#E5007A'}
+								className='ml-[-5px]'
+							>
+								<span title='Conviction'>
+									<ConvictionIcon className='mr-1' />
+									{Number(conviction) === 0 ? '0.1' : conviction}x
+								</span>
+							</Tooltip>
+						)}
+					</div>
 				</div>
-			</div>
+			</GovSidebarCard>
 		);
 	};
 	const RenderLastVote =
@@ -1049,6 +1048,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
+															track_number={trackNumber}
 														/>
 
 														{RenderLastVote}
@@ -1111,6 +1111,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
+																track_number={trackNumber}
 															/>
 														)}
 														{RenderLastVote}

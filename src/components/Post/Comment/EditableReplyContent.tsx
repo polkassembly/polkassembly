@@ -531,8 +531,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			? {
 					key: 1,
 					label: (
-						<Button
-							className={'flex items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
+						<button
+							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
 							disabled={loading}
 							onClick={toggleEdit}
 						>
@@ -545,7 +545,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									<FormOutlined className='mr-1 dark:text-blue-dark-helper' /> Edit
 								</span>
 							)}
-						</Button>
+						</button>
 					)
 			  }
 			: null,
@@ -553,13 +553,13 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			? {
 					key: 2,
 					label: (
-						<Button
-							className={'flex items-center border-none bg-transparent pl-1.5 pr-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+						<button
+							className={'flex cursor-pointer items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 							onClick={deleteReply}
 						>
 							<DeleteOutlined />
 							<span className='m-0 p-1'>Delete</span>
-						</Button>
+						</button>
 					)
 			  }
 			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
@@ -645,7 +645,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='replies-buttons-container flex flex-wrap items-center gap-3'>
+						<div className='replies-buttons-container flex flex-wrap items-center gap-1'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}

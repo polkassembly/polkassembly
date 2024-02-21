@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -23,6 +23,7 @@ import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;

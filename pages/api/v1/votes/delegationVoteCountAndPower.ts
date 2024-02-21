@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import BN from 'bn.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -16,6 +17,8 @@ export interface IVotesResponse {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, decision, type, voter } = req.query;
 
 	if (!String(voter)) {

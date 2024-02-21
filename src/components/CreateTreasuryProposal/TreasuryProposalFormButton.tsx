@@ -275,7 +275,7 @@ const TreasuryProposalFormButton = ({
 			const onSuccess = async () => {
 				queueNotification({
 					header: 'Success!',
-					message: `Propsal #${proposal.hash} successful.`,
+					message: `Proposal #${proposal.hash} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
 				setLoadingStatus({ isLoading: false, message: '' });

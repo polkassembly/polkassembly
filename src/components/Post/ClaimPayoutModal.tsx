@@ -172,6 +172,7 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 								title='Please select your account'
 								accounts={availableAccounts}
 								address={selectedAddress}
+								inputClassName='rounded-[4px] px-3 py-1'
 								withBalance
 								onAccountChange={onAccountChange}
 							/>

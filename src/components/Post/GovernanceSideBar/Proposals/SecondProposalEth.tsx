@@ -307,6 +307,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 						address={address}
 						withBalance
 						onAccountChange={onAccountChange}
+						inputClassName='rounded-[4px] px-3 py-1'
 					/>
 				</Spin>
 			</Modal>

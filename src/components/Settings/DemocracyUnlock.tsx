@@ -298,6 +298,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 								onAccountChange={onAccountChange}
 								withBalance
 								isBalanceUpdated={isBalanceUpdated}
+								inputClassName='rounded-[4px] px-3 py-1'
 							/>
 						) : (
 							<span className='text-sidebarBlue'>

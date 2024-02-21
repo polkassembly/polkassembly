@@ -524,6 +524,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 												onAccountChange={onAccountChange}
 												linkAddressTextDisabled
 												className='p-4'
+												inputClassName='rounded-[4px] px-3 py-1'
 											/>
 										</div>
 										{isSignUp && (

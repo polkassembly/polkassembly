@@ -238,6 +238,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 						withBalance
 						onAccountChange={onAccountChange}
 						theme={theme}
+						inputClassName='rounded-[4px] px-3 py-1'
 						isVoting
 					/>
 

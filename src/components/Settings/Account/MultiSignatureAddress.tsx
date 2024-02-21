@@ -439,6 +439,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							title='Sign with account'
 							accounts={accounts}
 							address={signatory}
+							inputClassName='rounded-[4px] px-3 py-1'
 							onAccountChange={onAccountChange}
 						/>
 					</section>

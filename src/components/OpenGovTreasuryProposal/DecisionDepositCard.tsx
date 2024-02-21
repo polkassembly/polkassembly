@@ -452,6 +452,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 										onAccountChange={(address) => setAddress(address)}
 										onBalanceChange={handleOnBalanceChange}
 										className='text-sm text-[#485F7D] dark:text-blue-dark-medium'
+										inputClassName='rounded-[4px] px-3 py-1'
 									/>
 								) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 									<Alert

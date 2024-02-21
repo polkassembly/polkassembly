@@ -555,6 +555,7 @@ const AddressConnectModal = ({
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
+									inputClassName='rounded-[4px] px-3 py-1'
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

@@ -157,6 +157,7 @@ const EndorseTip = ({ accounts, address, className, getAccounts, tipHash, onAcco
 				address={address}
 				onAccountChange={onAccountChange}
 				withBalance
+				inputClassName='rounded-[4px] px-3 py-1'
 			/>
 			<BalanceInput
 				label={'Value'}

@@ -139,6 +139,7 @@ const SecondProposal = ({ className, proposalId, address, accounts, onAccountCha
 						address={address}
 						withBalance
 						onAccountChange={onAccountChange}
+						inputClassName='rounded-[4px] px-3 py-1'
 					/>
 				</Spin>
 			</Modal>

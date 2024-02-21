@@ -454,6 +454,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 									address={address}
 									onAccountChange={onAccountChange}
 									withBalance
+									inputClassName='rounded-[4px] px-3 py-1'
 									isBalanceUpdated={isBalanceUpdated}
 								/>
 							) : (

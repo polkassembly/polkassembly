@@ -279,6 +279,7 @@ const WalletConnectSignup = ({ className, setMethod, isModal, setSignupOpen }: P
 								address={address}
 								onAccountChange={onAccountChange}
 								linkAddressTextDisabled
+								inputClassName='rounded-[4px] px-3 py-1'
 							/>
 						</div>
 

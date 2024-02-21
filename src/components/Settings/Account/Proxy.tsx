@@ -282,6 +282,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 										accounts={accounts}
 										address={proxiedAddress}
 										onAccountChange={onProxiedAccountChange}
+										inputClassName='rounded-[4px] px-3 py-1'
 									/>
 								</section>
 								<section>
@@ -289,6 +290,7 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 										isDisabled={loading}
 										title='Select proxy account'
 										accounts={accounts}
+										inputClassName='rounded-[4px] px-3 py-1'
 										address={proxyAddress}
 										onAccountChange={(address) => setProxyAddress(address)}
 									/>

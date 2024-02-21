@@ -370,6 +370,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 									withBalance
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
+									inputClassName='rounded-[4px] px-3 py-1'
 								/>
 
 								<AddressInput

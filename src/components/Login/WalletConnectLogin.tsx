@@ -429,6 +429,7 @@ const WalletConnectLogin = ({ className, setDisplayWeb2, setPolkadotWallet, isMo
 									<AccountSelectionForm
 										isTruncateUsername={false}
 										title='Choose linked account'
+										inputClassName='rounded-[4px] px-3 py-1'
 										accounts={accounts}
 										address={address}
 										onAccountChange={onAccountChange}

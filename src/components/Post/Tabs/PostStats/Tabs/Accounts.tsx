@@ -13,13 +13,13 @@ import BN from 'bn.js';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 
-interface IVotesAmountProps {
+interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
 	totalVotesCount: any;
 	activeIssuance: BN;
 	totalIssuance: BN;
 }
-const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: IVotesAmountProps) => {
+const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: IVotesAccountProps) => {
 	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [soloVotesCount, setSoloVotesCount] = useState<number>(0);
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);

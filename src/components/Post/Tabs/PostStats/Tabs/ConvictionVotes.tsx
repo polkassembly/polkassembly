@@ -17,7 +17,7 @@ import NudgeIcon from '~assets/icons/analytics/nudge-icon.svg';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 
-interface IVotesAmountProps {
+interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
 	tallyData: any;
 	activeIssuance: BN;
@@ -25,7 +25,7 @@ interface IVotesAmountProps {
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }: IVotesAmountProps) => {
+const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -147,9 +147,9 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 
 	return (
 		<>
-			<div className='mb-10 flex  items-center gap-1 rounded-lg border bg-[#B6B0FB36] px-5 py-2 shadow-md'>
-				<NudgeIcon className='m-0 h-6 w-6 text-[#243A57] dark:fill-white' />
-				<span className='text-sm font-semibold dark:text-white'>Conviction vote is the amount used for voting multiplied by the conviction</span>
+			<div className='mb-5 flex  items-center gap-1 rounded-lg border bg-[#B6B0FB36] px-5 py-2'>
+				<NudgeIcon className='m-0 h-6 w-6 fill-blue-light-high dark:fill-white' />
+				<span className='text-sm font-semibold text-blue-light-high dark:text-white'>Conviction vote is the amount used for voting multiplied by the conviction</span>
 			</div>
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>

@@ -17,10 +17,6 @@ import { StatTabs } from './Tabs/StatTabs';
 import ConvictionVotes from './Tabs/ConvictionVotes';
 import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
-import ConvictionVotesIcon from '~assets/icons/analytics/conviction-votes.svg';
-import VoteAmountIcon from '~assets/icons/analytics/vote-amount.svg';
-import AccountIcon from '~assets/icons/analytics/accounts.svg';
-import { useTheme } from 'next-themes';
 
 interface IPostStatsProps {
 	postId: string;
@@ -33,7 +29,6 @@ const ZERO = new BN(0);
 
 const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
-	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useContext(ApiContext);
 
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
@@ -53,6 +48,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const [totalIssuance, setTotalIssuance] = useState<any>(0);
 	const voteType = getVotingTypeFromProposalType(postType);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
+	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -181,12 +177,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				/>
 			),
 			key: 'conviction-votes',
-			label: (
-				<>
-					<ConvictionVotesIcon />
-					<span>Conviction Votes</span>
-				</>
-			)
+			label: 'Conviction Votes'
 		},
 		{
 			children: (
@@ -197,12 +188,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				/>
 			),
 			key: 'vote-amount',
-			label: (
-				<>
-					<VoteAmountIcon />
-					<span>Vote Amount</span>
-				</>
-			)
+			label: 'Vote Amount'
 		},
 		{
 			children: (
@@ -214,12 +200,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				/>
 			),
 			key: 'account',
-			label: (
-				<>
-					<AccountIcon />
-					<span>Account</span>
-				</>
-			)
+			label: 'Account'
 		}
 	];
 
@@ -227,8 +208,14 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		<>
 			<StatTabs
 				items={tabItems}
-				theme={theme}
+				setActiveTab={setActiveTab}
+				activeTab={activeTab}
 			/>
+			{tabItems.map((item) => {
+				if (item.key === activeTab) {
+					return item.children;
+				}
+			})}
 		</>
 	);
 };

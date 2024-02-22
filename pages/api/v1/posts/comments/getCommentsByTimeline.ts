@@ -14,6 +14,7 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
 import { ESentiments } from '~src/types';
 import { getSubSquareComments } from './subsquare-comments';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface ITimelineComments {
 	comments: {
@@ -103,6 +104,8 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 };
 
 const handler: NextApiHandler<ITimelineComments | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postTimeline } = req.body;
 	const network = String(req.headers['x-network']);
 

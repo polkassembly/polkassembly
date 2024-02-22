@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import type { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -21,6 +22,8 @@ export interface IChildBountiesResponse {
 
 // expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);

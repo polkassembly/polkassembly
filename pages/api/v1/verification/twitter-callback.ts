@@ -4,6 +4,7 @@
 
 import { NextApiHandler } from 'next';
 import { promisify } from 'util';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
@@ -102,6 +103,8 @@ export const getTwitterCallback = async ({ network, oauthVerifier, oauthRequestT
 };
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { oauthVerifier, oauthRequestToken } = req.query;
 
 	const network = String(req.headers['x-network']);

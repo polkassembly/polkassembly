@@ -9,10 +9,13 @@ import firebaseAdmin, { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') {
 		return res.status(400).json({ message: 'Invalid method in request body' });
 	}

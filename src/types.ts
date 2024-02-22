@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Dispatch, SetStateAction } from 'react';
 import { network, tokenSymbol } from './global/networkConstants';
-import { ProposalType } from './global/proposalType';
+import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
 
@@ -329,6 +329,13 @@ export interface IPostHistory {
 	title: string;
 }
 
+export enum EReferendumType {
+	TREASURER = 'treasury',
+	CANCEL = 'cancel',
+	KILL = 'kill',
+	OTHER = 'other'
+}
+
 export interface Post {
 	user_id: number;
 	content: string;
@@ -350,6 +357,7 @@ export interface Post {
 	summary?: string;
 	createdOnPolkassembly?: boolean;
 	inductee_address?: string;
+	typeOfReferendum?: EReferendumType;
 }
 
 export interface IPostTag {
@@ -552,4 +560,47 @@ export interface IApiKeyData {
 	created_at: Date;
 	updated_at: Date;
 	owner: string;
+}
+
+export enum EDecision {
+	YES = 'yes',
+	NO = 'no',
+	ABSTAIN = 'abstain'
+}
+
+export interface IVoteHistory {
+	timestamp?: string | undefined;
+	decision: EDecision;
+	type: VoteType;
+	blockNumber: number;
+	index: number;
+	proposalType: TSubsquidProposalType;
+	balance?: {
+		value?: string;
+		nay?: string;
+		aye?: string;
+		abstain?: string;
+	};
+	createdAt?: string;
+	createdAtBlock?: number;
+	lockPeriod?: string;
+	isDelegated?: boolean;
+	removedAtBlock?: null | number;
+	removedAt?: null | string;
+	voter?: string;
+	delegatedVotes?: Array<any>;
+	parentVote?: Array<any>;
+}
+
+export interface IVotesHistoryResponse {
+	count: number;
+	votes: IVoteHistory[];
+}
+export interface IGetVotesHistoryParams {
+	network: string;
+	listingLimit?: string | string[] | number;
+	page?: string | string[] | number;
+	voterAddress?: string | string[];
+	proposalType?: ProposalType | string | string[];
+	proposalIndex?: string | string[] | number;
 }

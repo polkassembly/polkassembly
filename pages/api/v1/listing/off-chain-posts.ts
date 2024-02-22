@@ -19,6 +19,7 @@ import messages from '~src/util/messages';
 
 import { getReactions } from '../posts/on-chain-post';
 import { IPostsListingResponse, getProposerAddressFromFirestorePostData, getSpamUsersCountForPosts } from './on-chain-posts';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IGetOffChainPostsParams {
 	network: string;
@@ -221,6 +222,8 @@ export async function getOffChainPosts(params: IGetOffChainPostsParams): Promise
 
 // expects page, sortBy, proposalType and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | IApiErrorResponse> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, proposalType = OffChainProposalType.DISCUSSIONS, sortBy = sortValues.COMMENTED, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });

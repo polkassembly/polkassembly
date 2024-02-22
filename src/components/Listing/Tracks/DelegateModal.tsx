@@ -24,7 +24,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -104,7 +104,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
-		(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+		(getEncodedAddress(target, network) || isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
 		setTimeout(() => {
 			setAddressAlert(false);
 		}, 5000);
@@ -414,7 +414,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									theme={theme}
 								/>
 								{target
-									? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && (
+									? (!(getEncodedAddress(target, network) || isAddress(target)) || isTargetAddressSame) && (
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>

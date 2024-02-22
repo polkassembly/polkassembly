@@ -13,6 +13,7 @@ import authServiceInstance from '~src/auth/auth';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IReq {
 	type: 'email' | 'twitter';
@@ -39,6 +40,8 @@ if (apiKey) {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { account, type, checkingVerified } = req.body as unknown as IReq;
 
 	const network = String(req.headers['x-network']);

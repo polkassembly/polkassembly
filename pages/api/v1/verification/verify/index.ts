@@ -9,6 +9,7 @@ import firebaseAdmin from '~src/services/firebaseInit';
 import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IVerifyResponse {
 	status: boolean;
@@ -17,6 +18,8 @@ export interface IVerifyResponse {
 const firestore = firebaseAdmin.firestore();
 
 const handler: NextApiHandler<IVerifyResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { token, type } = req.query;
 	const network = String(req.headers['x-network']);
 

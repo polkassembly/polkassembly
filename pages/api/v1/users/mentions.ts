@@ -80,8 +80,14 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		userRefs.push(firestore_db.collection('users').doc(String(activityData?.by)));
 	}
 
-	const results = await firestore_db.getAll(...refs);
-	const usersResult = await firestore_db.getAll(...userRefs);
+	let results: any[] = [];
+	let userResults: any[] = [];
+	if (results?.length) {
+		results = await firestore_db.getAll(...refs);
+	}
+	if (userResults?.length) {
+		userResults = await firestore_db.getAll(...userRefs);
+	}
 	const postReplyCommentData: any = {};
 	const usersData: any = {};
 	results.map((result) => {
@@ -90,7 +96,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			postReplyCommentData[data?.id] = data;
 		}
 	});
-	usersResult.map((result) => {
+	userResults.map((result) => {
 		const data = result.data();
 		usersData[data?.id] = data;
 	});

@@ -24,7 +24,7 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 			</Link>
 			<div className='bg-mainBg -mt-1 items-center rounded-md border-0 border-l-[1.5px] border-solid border-pink_primary px-4 pb-0.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
 				<Markdown
-					md={activity?.content.length > 200 ? `${activity?.content.slice(1, 200)}...` : activity?.content}
+					md={activity?.content?.length > 200 ? `${activity?.content?.slice(1, 200)}...` : activity?.content}
 					imgHidden
 				/>
 			</div>

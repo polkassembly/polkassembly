@@ -103,7 +103,10 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			);
 		}
 	}
-	const results = await firestore_db?.getAll(...refs);
+	let results: any[] = [];
+	if (results?.length) {
+		results = await firestore_db?.getAll(...refs);
+	}
 	const values: any = {};
 	results.map((result) => {
 		if (result.exists) {

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { CommentsIcon, DownArrowIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Popover, Spin } from 'antd';
+import { Checkbox, Empty, Popover, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { poppins } from 'pages/_app';
@@ -75,7 +75,6 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 		if (data) {
 			setUserActivities(data?.data);
 			setCount(data?.totalCount || 0);
-			console.log(data);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -119,12 +118,12 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 	return (
 		<Spin
 			spinning={loading}
-			className='min-h-38'
+			className='min-h-[280px]'
 		>
 			<div
 				className={classNames(
 					className,
-					'min-h-32 mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -155,91 +154,95 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 					</div>
 				</div>
 				<div className='flex  flex-col gap-6'>
-					{userActivities.map((activity, index) => {
-						return (
-							<div key={index}>
-								{activity.type === EUserActivityType.MENTIONED && (
-									<div className='flex items-start gap-5 font-normal'>
-										<ImageComponent
-											alt='profile img'
-											src={userProfile.image}
-											className='flex h-[40px] w-[40px] items-center justify-center'
-										/>
-										<div className='flex  flex-col gap-1'>
-											<div className='flex items-center gap-2'>
-												<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
-												<span className='text-xs  text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
-												<div className='flex gap-2'>
-													{!!activity?.mentions &&
-														activity?.mentions?.map((username, index) => (
-															<Link
-																key={username}
-																href={`/user/${username}`}
-																target='_blank'
-																className='text-sm font-medium'
-															>
-																@{username}
-																{(activity?.mentions?.length || 0) - 1 !== index && ','}
-															</Link>
-														))}
+					{userActivities?.length
+						? userActivities.map((activity, index) => {
+								return (
+									<div key={index}>
+										{activity.type === EUserActivityType.MENTIONED && (
+											<div className='flex items-start gap-5 font-normal'>
+												<ImageComponent
+													alt='profile img'
+													src={userProfile.image}
+													className='flex h-[40px] w-[40px] items-center justify-center'
+												/>
+												<div className='flex  flex-col gap-1'>
+													<div className='flex items-center gap-2'>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-xs  text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
+														<div className='flex gap-2'>
+															{!!activity?.mentions &&
+																activity?.mentions?.map((username, index) => (
+																	<Link
+																		key={username}
+																		href={`/user/${username}`}
+																		target='_blank'
+																		className='text-sm font-medium'
+																	>
+																		@{username}
+																		{(activity?.mentions?.length || 0) - 1 !== index && ','}
+																	</Link>
+																))}
+														</div>
+														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>in</span>
+													</div>
+													<ActivityBottomContent activity={activity} />
 												</div>
-												<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>in</span>
 											</div>
-											<ActivityBottomContent activity={activity} />
-										</div>
-									</div>
-								)}
-								{activity.type === EUserActivityType.REACTED && (
-									<div className='flex  items-start gap-5'>
-										<span className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}>
-											{activity.reaction == '👍' ? (
-												<>
-													<LikeOutlined className='text-sm text-white' />
-												</>
-											) : (
-												<>
-													<DislikeFilled className='text-sm text-[#FF3C5F]' />
-												</>
-											)}
-										</span>
-										<div className='flex  flex-col gap-1'>
-											<div className='flex items-center gap-2'>
-												<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
-												<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
-												{activity.reaction == '👍' ? (
-													<span className='flex items-center gap-2 text-pink_primary'>
-														<LikeOutlined className='text-base' /> Aye
-													</span>
-												) : (
-													<span className='flex items-center gap-2 text-[#FF3C5F]'>
-														<DislikeFilled className='mt-0.5 text-base' />
-														Nay
-													</span>
-												)}
-											</div>
-											<ActivityBottomContent activity={activity} />
-										</div>
-									</div>
-								)}
-								{[EUserActivityType.COMMENTED, EUserActivityType.REPLIED].includes(activity.type) && (
-									<div className='flex items-start gap-5'>
-										<span className={'flex rounded-full border-[1px] border-solid border-pink_primary p-3'}>
-											<CommentsIcon className='text-pink_primary' />
-										</span>
-										<div className='flex  flex-col gap-1'>
-											<div className='flex items-center gap-2'>
-												<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
-												<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
-													added a {activity?.type === EUserActivityType.COMMENTED ? 'comment' : 'reply'} on
+										)}
+										{activity.type === EUserActivityType.REACTED && (
+											<div className='flex  items-start gap-5'>
+												<span
+													className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}
+												>
+													{activity.reaction == '👍' ? (
+														<>
+															<LikeOutlined className='text-sm text-white' />
+														</>
+													) : (
+														<>
+															<DislikeFilled className='text-sm text-[#FF3C5F]' />
+														</>
+													)}
 												</span>
+												<div className='flex  flex-col gap-1'>
+													<div className='flex items-center gap-2'>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
+														{activity.reaction == '👍' ? (
+															<span className='flex items-center gap-2 text-pink_primary'>
+																<LikeOutlined className='text-base' /> Aye
+															</span>
+														) : (
+															<span className='flex items-center gap-2 text-[#FF3C5F]'>
+																<DislikeFilled className='mt-0.5 text-base' />
+																Nay
+															</span>
+														)}
+													</div>
+													<ActivityBottomContent activity={activity} />
+												</div>
 											</div>
-											<ActivityBottomContent activity={activity} />
-										</div>
+										)}
+										{[EUserActivityType.COMMENTED, EUserActivityType.REPLIED].includes(activity.type) && (
+											<div className='flex items-start gap-5'>
+												<span className={'flex rounded-full border-[1px] border-solid border-pink_primary p-3'}>
+													<CommentsIcon className='text-pink_primary' />
+												</span>
+												<div className='flex  flex-col gap-1'>
+													<div className='flex items-center gap-2'>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
+															added a {activity?.type === EUserActivityType.COMMENTED ? 'comment' : 'reply'} on
+														</span>
+													</div>
+													<ActivityBottomContent activity={activity} />
+												</div>
+											</div>
+										)}
 									</div>
-								)}
-							</div>
-						);
-					})}
+								);
+						  })
+						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
 				</div>
 				<Pagination
 					theme={theme}

@@ -102,9 +102,14 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			userRefs.push(firestore_db.collection('users').doc(String(activityData?.by)));
 		}
 	}
-
-	const results = await firestore_db.getAll(...refs);
-	const usersResult = await firestore_db.getAll(...userRefs);
+	let results: any[] = [];
+	let usersResult: any[] = [];
+	if (refs.length) {
+		results = await firestore_db.getAll(...refs);
+	}
+	if (usersResult.length) {
+		usersResult = await firestore_db.getAll(...userRefs);
+	}
 	const postReplyCommentData: any = {};
 	results.map((result) => {
 		if (result.exists) {

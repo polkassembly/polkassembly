@@ -15,6 +15,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
+import Nudge from './Nudge';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -159,38 +160,41 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 	}, [allVotes]);
 
 	return (
-		<div className='flex flex-col gap-5'>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<TotalVotesCard
-					ayeValue={bnToIntBalance(tallyData?.ayes || ZERO)}
-					nayValue={bnToIntBalance(tallyData?.nays || ZERO)}
-					abstainValue={bnToIntBalance(tallyData?.abstain || ZERO)}
-					isCurrencyValue={true}
+		<>
+			<Nudge text='Vote amount is the number of tokens used for voting' />
+			<div className='flex flex-col gap-5'>
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<TotalVotesCard
+						ayeValue={bnToIntBalance(tallyData?.ayes || ZERO)}
+						nayValue={bnToIntBalance(tallyData?.nays || ZERO)}
+						abstainValue={bnToIntBalance(tallyData?.abstain || ZERO)}
+						isCurrencyValue={true}
+					/>
+					<VotesDelegationCard
+						delegatedValue={bnToIntBalance(delegatedBalance)}
+						soloValue={bnToIntBalance(soloBalance)}
+						isCurrencyValue={true}
+					/>
+					<VotesTurnoutCard
+						activeIssuance={activeIssuance}
+						totalIssuance={totalIssuance}
+					/>
+				</div>
+				<VoteDistribution votesDistribution={votesDistribution} />
+				<TimeSplit
+					votesByTimeSplit={votesByTimeSplit}
+					axisLabel='Voting Power'
 				/>
-				<VotesDelegationCard
-					delegatedValue={bnToIntBalance(delegatedBalance)}
-					soloValue={bnToIntBalance(soloBalance)}
-					isCurrencyValue={true}
+				<Divider
+					dashed
+					className='my-2 border-[#D2D8E0]'
 				/>
-				<VotesTurnoutCard
-					activeIssuance={activeIssuance}
-					totalIssuance={totalIssuance}
-				/>
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<VoteConvictions votesByConviction={votesByConviction} />
+					<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
+				</div>
 			</div>
-			<VoteDistribution votesDistribution={votesDistribution} />
-			<TimeSplit
-				votesByTimeSplit={votesByTimeSplit}
-				axisLabel='Voting Power'
-			/>
-			<Divider
-				dashed
-				className='my-2 border-[#D2D8E0]'
-			/>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<VoteConvictions votesByConviction={votesByConviction} />
-				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
-			</div>
-		</div>
+		</>
 	);
 };
 

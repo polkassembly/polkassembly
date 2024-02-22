@@ -147,7 +147,7 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 
 	return (
 		<>
-			<Nudge text='Conviction vote is the amount used for voting multiplied by the conviction' />
+			<Nudge text='Conviction vote is the number of tokens used for voting multiplied by conviction' />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard

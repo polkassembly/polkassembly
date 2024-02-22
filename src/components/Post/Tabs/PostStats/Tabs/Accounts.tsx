@@ -12,6 +12,7 @@ import VoteDelegationsByConviction from '../VoteDelegationsByConviction';
 import BN from 'bn.js';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
+import Nudge from './Nudge';
 
 interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
@@ -99,32 +100,35 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 	}, [allVotes]);
 
 	return (
-		<div className='flex flex-col gap-5'>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<TotalVotesCard
-					ayeValue={totalVotesCount.ayes}
-					nayValue={totalVotesCount.nays}
-					abstainValue={totalVotesCount.abstain}
+		<>
+			<Nudge text='Accounts is the number of unique addresses casting a vote' />
+			<div className='flex flex-col gap-5'>
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<TotalVotesCard
+						ayeValue={totalVotesCount.ayes}
+						nayValue={totalVotesCount.nays}
+						abstainValue={totalVotesCount.abstain}
+					/>
+					<VotesDelegationCard
+						delegatedValue={delegatedVotesCount}
+						soloValue={soloVotesCount}
+					/>
+					<VotesTurnoutCard
+						activeIssuance={activeIssuance}
+						totalIssuance={totalIssuance}
+					/>
+				</div>
+				<TimeSplit votesByTimeSplit={votesByTimeSplit} />
+				<Divider
+					dashed
+					className='my-2 border-[#D2D8E0]'
 				/>
-				<VotesDelegationCard
-					delegatedValue={delegatedVotesCount}
-					soloValue={soloVotesCount}
-				/>
-				<VotesTurnoutCard
-					activeIssuance={activeIssuance}
-					totalIssuance={totalIssuance}
-				/>
+				<div className='flex flex-col items-center gap-5 md:flex-row'>
+					<VoteConvictions votesByConviction={votesByConviction} />
+					<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
+				</div>
 			</div>
-			<TimeSplit votesByTimeSplit={votesByTimeSplit} />
-			<Divider
-				dashed
-				className='my-2 border-[#D2D8E0]'
-			/>
-			<div className='flex flex-col items-center gap-5 md:flex-row'>
-				<VoteConvictions votesByConviction={votesByConviction} />
-				<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
-			</div>
-		</div>
+		</>
 	);
 };
 

@@ -29,6 +29,8 @@ import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
 import Tooltip from '~src/basic-components/Tooltip';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -352,7 +354,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													referendumId={referendumId}
 												/>
 											))}
-										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+										{decision && !votesRes?.[decision]?.votes?.length && (
+											<PostEmptyState
+												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+												imageStyle={{ height: 260 }}
+											/>
+										)}
 									</div>
 								) : (
 									<div className='max-h-[360px] w-full sm:w-min'>
@@ -375,7 +382,12 @@ const VotersList: FC<IVotersListProps> = (props) => {
 													isUsedInVotedModal={isUsedInVotedModal}
 												/>
 											))}
-										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
+										{decision && !votesRes?.[decision]?.votes?.length && (
+											<PostEmptyState
+												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+												imageStyle={{ height: 260 }}
+											/>
+										)}
 									</div>
 								)}
 							</VoteContainer>

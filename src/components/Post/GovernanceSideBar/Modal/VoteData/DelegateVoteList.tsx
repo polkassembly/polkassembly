@@ -18,6 +18,8 @@ import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface IVotersListProps {
 	className?: string;
@@ -158,7 +160,10 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 									/>
 								))
 							) : (
-								<PostEmptyState />
+								<PostEmptyState
+									image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+									imageStyle={{ height: 260 }}
+								/>
 							)}
 						</div>
 

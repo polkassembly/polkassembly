@@ -16,6 +16,8 @@ import { ErrorState, PostEmptyState } from './UIStates';
 import { poppins } from 'pages/_app';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const LatestActivityWrapper = ({ children }: { children: ReactNode }) => <div className='flex h-[500px] items-center justify-center overflow-y-auto'>{children}</div>;
@@ -37,9 +39,14 @@ export const ErrorLatestActivity = ({ errorMessage }: { errorMessage: string }) 
 };
 
 export const EmptyLatestActivity = () => {
+	const { resolvedTheme: theme } = useTheme();
+
 	return (
 		<LatestActivityWrapper>
-			<PostEmptyState />
+			<PostEmptyState
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
+			/>
 		</LatestActivityWrapper>
 	);
 };

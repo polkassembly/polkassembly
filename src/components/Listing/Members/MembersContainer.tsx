@@ -69,12 +69,6 @@ const MembersContainer = ({ className }: { className?: string }) => {
 				className='mt-8'
 				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
 				imageStyle={{ height: 260 }}
-				description={
-					<div className='p-5'>
-						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
-						<p>Usually its done within a few seconds</p>
-					</div>
-				}
 			/>
 		);
 	}

@@ -18,6 +18,8 @@ import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IVoteHistory, IVotesHistoryResponse } from '~src/types';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface ICouncilVotesProps {
 	address: string;
@@ -147,7 +149,10 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 						</div>
 					</div>
 				) : (
-					<PostEmptyState />
+					<PostEmptyState
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						imageStyle={{ height: 260 }}
+					/>
 				)}
 			</Spin>
 		</div>

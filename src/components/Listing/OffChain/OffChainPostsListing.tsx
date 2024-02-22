@@ -9,6 +9,9 @@ import { PostEmptyState } from 'src/ui-components/UIStates';
 import { getSinglePostLinkFromProposalType, OffChainProposalType } from '~src/global/proposalType';
 
 import OffChainCard from './OffChainCard';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 interface IOffChainPostsListingProps {
 	className?: string;
@@ -18,10 +21,15 @@ interface IOffChainPostsListingProps {
 }
 
 const OffChainPostsListing: FC<IOffChainPostsListingProps> = ({ className, posts, proposalType }) => {
+	const { resolvedTheme: theme } = useTheme();
 	if (!posts || !posts.length) {
 		return (
 			<div className={className}>
-				<PostEmptyState postCategory={proposalType} />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+					postCategory={proposalType}
+				/>
 			</div>
 		);
 	}

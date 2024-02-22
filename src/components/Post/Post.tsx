@@ -40,6 +40,9 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -116,6 +119,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
+
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 
 	const handleCanEdit = useCallback(async () => {
@@ -297,7 +301,11 @@ const Post: FC<IPostProps> = (props) => {
 	if (!post) {
 		return (
 			<div className='mt-16'>
-				<PostEmptyState postCategory={proposalType} />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+					postCategory={proposalType}
+				/>
 			</div>
 		);
 	}
@@ -584,7 +592,11 @@ const Post: FC<IPostProps> = (props) => {
 											</div>
 										) : (
 											<div className={`${className} mt-5`}>
-												<PostEmptyState text='No Active Proposals' />
+												<PostEmptyState
+													image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+													imageStyle={{ height: 260 }}
+													text='No Active Proposals'
+												/>
 											</div>
 										)}
 									</div>

@@ -26,6 +26,8 @@ import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface IVotersListProps {
 	className?: string;
@@ -378,7 +380,10 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</div>
 						))
 					) : (
-						<PostEmptyState />
+						<PostEmptyState
+							image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+							imageStyle={{ height: 260 }}
+						/>
 					)}
 				</div>
 

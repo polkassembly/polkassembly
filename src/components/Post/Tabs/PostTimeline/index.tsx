@@ -7,6 +7,9 @@ import { usePostDataContext } from '~src/context';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 
 import TimelineContainer from './TimelineContainer';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface IPostTimelineProps {
 	className?: string;
@@ -14,6 +17,7 @@ interface IPostTimelineProps {
 
 const PostTimeline: FC<IPostTimelineProps> = (props) => {
 	const { className } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const {
 		postData: { timeline }
 	} = usePostDataContext();
@@ -29,7 +33,10 @@ const PostTimeline: FC<IPostTimelineProps> = (props) => {
 					);
 				})
 			) : (
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
 			)}
 		</div>
 	);

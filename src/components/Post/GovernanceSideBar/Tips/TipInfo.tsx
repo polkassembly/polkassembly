@@ -12,6 +12,9 @@ import formatBnBalance from 'src/util/formatBnBalance';
 
 import Address from '../../../../ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 interface ITippersInfo {
 	tipper: string;
@@ -42,7 +45,7 @@ const getMedian = (list: ITippersInfo[], members: string[], proposer?: string, r
 
 const TipInfo: FC<ITipInfoProps> = (props) => {
 	const { network } = useNetworkSelector();
-
+	const { resolvedTheme: theme } = useTheme();
 	const { tippers, receiver, proposer, status } = props;
 
 	const { api, apiReady } = useContext(ApiContext);
@@ -73,7 +76,13 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 		}
 	}, [tippers, members, proposer, receiver]);
 
-	if (!tippers) return <PostEmptyState />;
+	if (!tippers)
+		return (
+			<PostEmptyState
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
+			/>
+		);
 
 	const pendingTippers = members.filter((item) => !tippers?.find((tip) => tip.tipper === item));
 
@@ -145,7 +154,10 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 					) : null}
 				</div>
 			) : (
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
 			)}
 		</>
 	);

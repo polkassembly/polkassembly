@@ -11,6 +11,9 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
@@ -29,6 +32,7 @@ interface ITrackListingStatusTabContentProps {
 
 const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (props) => {
 	const { posts, className, error, count, statusItem } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -39,7 +43,18 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 			</div>
 		);
 
-	if (noPosts && posts?.length < 1) return <PostEmptyState />;
+	if (noPosts && posts?.length < 1)
+		return (
+			<PostEmptyState
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
+				description={
+					<div className='-mt-1 px-5 py-2'>
+						<p>No Proposal Available</p>
+					</div>
+				}
+			/>
+		);
 
 	if (posts && posts.length > 0) {
 		return (

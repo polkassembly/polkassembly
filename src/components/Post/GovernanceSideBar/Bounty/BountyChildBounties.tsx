@@ -15,6 +15,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;
@@ -80,7 +82,10 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 							)
 					)
 				) : (
-					<PostEmptyState />
+					<PostEmptyState
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						imageStyle={{ height: 260 }}
+					/>
 				)}
 				<PaginationContainer className='mt-4 flex items-center justify-end'>
 					<Pagination

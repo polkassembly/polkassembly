@@ -15,6 +15,9 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { useNetworkSelector } from '~src/redux/selectors';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 export type WhitelistMember = { accountId: string; rank?: number };
 
@@ -26,7 +29,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 	const [error, setError] = useState<any>();
 	const [members, setMembers] = useState<WhitelistMember[]>([]);
 	const [noMembers, setNoMembers] = useState<boolean>(false);
-
+	const { resolvedTheme: theme } = useTheme();
 	const getWhitelistMembers = async () => {
 		if (!api || !apiReady) {
 			return;
@@ -138,7 +141,10 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 	if (noMembers) {
 		return (
 			<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
 			</div>
 		);
 	}

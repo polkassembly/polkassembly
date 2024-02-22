@@ -7,6 +7,9 @@ import React, { FC } from 'react';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import GovernanceCard from '../GovernanceCard';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 interface IPostTabProps {
 	posts: IUserPost[];
@@ -14,11 +17,16 @@ interface IPostTabProps {
 
 const PostTab: FC<IPostTabProps> = (props) => {
 	const { posts } = props;
+	const { resolvedTheme: theme } = useTheme();
+
 	return (
 		<div className='mt-2.5 flex h-full max-h-[530px] flex-col gap-y-3 overflow-y-auto pr-2'>
 			{!posts || posts.length === 0 ? (
 				<div className='flex h-full items-center justify-center'>
-					<PostEmptyState />
+					<PostEmptyState
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						imageStyle={{ height: 260 }}
+					/>
 				</div>
 			) : (
 				posts.map((post, i) => {

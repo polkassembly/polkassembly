@@ -19,7 +19,7 @@ import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposa
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, PostOrigin } from '~src/types';
+import { NotificationStatus, PostOrigin, EReferendumType } from '~src/types';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -95,15 +95,6 @@ const ReferendaActionModal = ({
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
 		const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-		console.log({
-			content,
-			discussionId: discussionId || null,
-			postId,
-			proposerAddress,
-			tags,
-			title,
-			userId
-		});
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
 			content,
 			discussionId: discussionId || null,
@@ -111,6 +102,7 @@ const ReferendaActionModal = ({
 			proposerAddress,
 			tags,
 			title,
+			typeOfReferendum: referendaModal === 3 ? EReferendumType.KILL : referendaModal === 2 ? EReferendumType.CANCEL : EReferendumType.OTHER,
 			userId
 		});
 

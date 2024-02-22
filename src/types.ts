@@ -329,6 +329,13 @@ export interface IPostHistory {
 	title: string;
 }
 
+export enum EReferendumType {
+	TREASURER = 'treasury',
+	CANCEL = 'cancel',
+	KILL = 'kill',
+	OTHER = 'other'
+}
+
 export interface Post {
 	user_id: number;
 	content: string;
@@ -350,6 +357,7 @@ export interface Post {
 	summary?: string;
 	createdOnPolkassembly?: boolean;
 	inductee_address?: string;
+	typeOfReferendum?: EReferendumType;
 }
 
 export interface IPostTag {

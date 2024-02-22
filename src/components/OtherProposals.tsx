@@ -12,9 +12,12 @@ import { LoadingLatestActivity } from 'src/ui-components/LatestActivityStates';
 import StatusTag from 'src/ui-components/StatusTag';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 const { Panel } = Collapse;
 
@@ -28,6 +31,7 @@ interface IOtherProposalsProps {
 const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, currPostOnchainID, proposerAddress }) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(true);
+	const { resolvedTheme: theme } = useTheme();
 	const [proposals, setProposals] = useState<IProposalsObj>({
 		democracy: [],
 		treasury: []
@@ -179,7 +183,15 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 
 			{!loading && !error && proposals && proposals.treasury.length === 0 && proposals.democracy.length === 0 && (
 				<div className='mt-36 flex items-center justify-center'>
-					<PostEmptyState description='No other proposals found' />
+					<PostEmptyState
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						imageStyle={{ height: 260 }}
+						description={
+							<div className='p-5'>
+								<p>No other proposals found</p>
+							</div>
+						}
+					/>
 				</div>
 			)}
 		</div>

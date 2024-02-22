@@ -10,6 +10,9 @@ import { poppins } from 'pages/_app';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -25,6 +28,7 @@ const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 
 const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) => {
 	const { className, posts, error, count } = props;
+	const { resolvedTheme: theme } = useTheme();
 
 	const noPosts = count === 0 || isNaN(Number(count));
 	if (error) return <ErrorState errorMessage={error} />;
@@ -32,7 +36,15 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	if (noPosts)
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+					description={
+						<div className='p-5'>
+							<p>No Active Proposal</p>
+						</div>
+					}
+				/>{' '}
 			</div>
 		);
 

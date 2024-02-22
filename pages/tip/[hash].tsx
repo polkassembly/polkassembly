@@ -24,7 +24,9 @@ import { useState } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const proposalType = ProposalType.TIPS;
@@ -57,6 +59,7 @@ const TipPost: FC<ITipPostProps> = (props) => {
 	const router = useRouter();
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const { hash } = router.query;
 
 	useEffect(() => {
@@ -76,19 +79,14 @@ const TipPost: FC<ITipPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={
-					<ImageIcon
-						src='/assets/icons/empty-state-image.svg'
-						alt='empty state image icon'
-					/>
-				}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
 						<p>Usually its done within a few seconds</p>
 					</div>
 				}
-				imageStyle={{ height: 300 }}
 			/>
 		);
 	}

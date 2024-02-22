@@ -5,6 +5,9 @@
 import { Divider, Space } from 'antd';
 import React from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -12,10 +15,14 @@ interface Props {
 }
 
 const AllianceAnnouncementsListing = ({ className, data }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	if (!data.length)
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
 			</div>
 		);
 

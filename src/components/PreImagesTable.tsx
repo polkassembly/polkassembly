@@ -26,6 +26,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import copyToClipboard from '~src/util/copyToClipboard';
 import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -270,7 +272,13 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	];
 
 	if (preimages) {
-		if (!preimages || !preimages.length) return <PostEmptyState />;
+		if (!preimages || !preimages.length)
+			return (
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
+			);
 
 		const tableData: any[] = [];
 

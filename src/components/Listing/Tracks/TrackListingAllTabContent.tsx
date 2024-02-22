@@ -12,7 +12,9 @@ import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTheme } from 'next-themes';
 import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -32,6 +34,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, posts, error, count, showSimilarPost, statusItem } = props;
 	const noPosts = count === 0 || isNaN(Number(count));
+	const { resolvedTheme: theme } = useTheme();
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -39,7 +42,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 		return (
 			<div className={`${className} mt-6`}>
 				<PostEmptyState
-					image={<EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
 					imageStyle={{ height: 260 }}
 					description={
 						<div className='-mt-1 px-5 py-2'>

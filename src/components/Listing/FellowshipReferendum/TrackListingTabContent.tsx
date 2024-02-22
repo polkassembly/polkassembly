@@ -10,6 +10,9 @@ import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
@@ -25,6 +28,8 @@ interface ITrackListingTabContentProps {
 
 const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 	const { className, posts, error, count } = props;
+	const { resolvedTheme: theme } = useTheme();
+
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (error)
@@ -39,7 +44,10 @@ const TrackListingTabContent: FC<ITrackListingTabContentProps> = (props) => {
 	if (noPosts)
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+				/>
 			</div>
 		);
 

@@ -10,6 +10,9 @@ import { getSinglePostLinkFromProposalType, ProposalType } from '~src/global/pro
 import GovernanceCard from '../GovernanceCard';
 import getReferendumVotes from '~src/util/getReferendumVotes';
 import { useNetworkSelector } from '~src/redux/selectors';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 interface IListingProps {
 	className?: string;
@@ -23,6 +26,7 @@ const Listing: FC<IListingProps> = (props) => {
 	const { className, proposalType, isTip, tipStartedIndex } = props;
 
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [posts, setPosts] = useState(props.posts || []);
 	useEffect(() => {
 		if (!network || !props.posts || !props.posts.length || proposalType != ProposalType.REFERENDUMS) return;
@@ -52,7 +56,11 @@ const Listing: FC<IListingProps> = (props) => {
 	if (!posts || !posts.length) {
 		return (
 			<div className={className}>
-				<PostEmptyState postCategory={proposalType} />
+				<PostEmptyState
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+					postCategory={proposalType}
+				/>
 			</div>
 		);
 	}

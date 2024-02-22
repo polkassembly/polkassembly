@@ -9,7 +9,6 @@ import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
-import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
@@ -20,6 +19,9 @@ import { checkIsOnChain } from '~src/util/checkIsOnChain';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useTheme } from 'next-themes';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 const proposalType = ProposalType.ADVISORY_COMMITTEE;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -51,6 +53,7 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	const router = useRouter();
 	const { id } = router.query;
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (!api || !apiReady || !error || !status || !id || status !== 404) {
@@ -69,14 +72,14 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={<EmptyIcon />}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
 						<p>Usually its done within a few seconds</p>
 					</div>
 				}
-				imageStyle={{ height: 300 }}
 			/>
 		);
 	}

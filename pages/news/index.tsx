@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { FC, useEffect } from 'react';
@@ -17,6 +18,8 @@ import { setNetwork } from '~src/redux/network';
 import { NetworkSocials } from '~src/types';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -41,6 +44,7 @@ enum Profile {
 
 const News: FC<Props> = ({ data, error, network }) => {
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -49,7 +53,13 @@ const News: FC<Props> = ({ data, error, network }) => {
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	if (!data?.twitter) return <PostEmptyState />;
+	if (!data?.twitter)
+		return (
+			<PostEmptyState
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
+			/>
+		);
 
 	const profile = data?.twitter.split('/')[3] || Profile.Polkadot;
 	const isPolkadotOrKusama = profile === Profile.Kusama || profile === Profile.Polkadot;

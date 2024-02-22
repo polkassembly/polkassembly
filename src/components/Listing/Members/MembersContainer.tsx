@@ -8,6 +8,9 @@ import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 
 import MembersListing from './MembersListing';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
+import { useTheme } from 'next-themes';
 
 const MembersContainer = ({ className }: { className?: string }) => {
 	const { api, apiReady } = useContext(ApiContext);
@@ -15,6 +18,7 @@ const MembersContainer = ({ className }: { className?: string }) => {
 	const [members, setMembers] = useState<string[]>([]);
 	const [runnersUp, setRunnersup] = useState<string[]>([]);
 	const [prime, setPrime] = useState<string>('');
+	const { resolvedTheme: theme } = useTheme();
 
 	const [noCouncil, setNoCouncil] = useState(false);
 
@@ -60,7 +64,19 @@ const MembersContainer = ({ className }: { className?: string }) => {
 	}
 
 	if (noCouncil || !members.length) {
-		return <PostEmptyState className='mt-8' />;
+		return (
+			<PostEmptyState
+				className='mt-8'
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
+				description={
+					<div className='p-5'>
+						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
+						<p>Usually its done within a few seconds</p>
+					</div>
+				}
+			/>
+		);
 	}
 
 	if (members.length || runnersUp.length) {

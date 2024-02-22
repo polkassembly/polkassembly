@@ -22,8 +22,10 @@ import { useState, useEffect } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
+import EmptyStateDark from '~assets/emptyStateDarkMode.svg';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { useTheme } from 'next-themes';
 
 const proposalType = ProposalType.FELLOWSHIP_REFERENDUMS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
@@ -56,6 +58,7 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -74,19 +77,14 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={
-					<ImageIcon
-						src='/assets/icons/empty-state-image.svg'
-						alt='empty state image icon'
-					/>
-				}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				imageStyle={{ height: 260 }}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
 						<p>Usually its done within a few seconds</p>
 					</div>
 				}
-				imageStyle={{ height: 300 }}
 			/>
 		);
 	}

@@ -12,6 +12,7 @@ import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import EmptyStateLight from '~assets/emptyStateLightMode.svg';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;
@@ -36,8 +37,16 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 
 	if (noPosts || posts.length === 0) {
 		return (
-			<div className={className}>
-				<PostEmptyState />
+			<div className={`${className} mt-6`}>
+				<PostEmptyState
+					image={<EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					imageStyle={{ height: 260 }}
+					description={
+						<div className='-mt-1 px-5 py-2'>
+							<p>No Proposal Available</p>
+						</div>
+					}
+				/>
 			</div>
 		);
 	}

@@ -32,6 +32,7 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
 import Link from 'next/link';
 import Alert from '~src/basic-components/Alert';
+import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -277,6 +278,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'LeaseAdmin', 'GeneralAdmin'].includes(trackName) && (
+							<ProposalActionButtons
+								isCreateProposal={trackName === 'root' || trackName === 'LeaseAdmin' || trackName === 'GeneralAdmin'}
+								isCancelProposal={trackName === 'ReferendumCanceller'}
+								isKillProposal={trackName === 'ReferendumKiller'}
+							/>
+						)}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'

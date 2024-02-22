@@ -377,11 +377,19 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
+		const gasPrice = await contract.unlock.estimateGas(unlock.trackId, address);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		await contract
-			.unlock(unlock.trackId, address)
+			.unlock(unlock.trackId, address, {
+				gasLimit
+			})
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus((prev) => {

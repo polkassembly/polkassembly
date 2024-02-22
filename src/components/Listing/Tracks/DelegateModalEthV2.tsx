@@ -19,7 +19,7 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
-import { BrowserProvider, Contract } from 'ethers';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { chainProperties } from '~src/global/networkConstants';
@@ -270,8 +270,16 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 
 		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
+		const gasPrice = await voteContract.delegate.estimateGas(trackNum, target, conviction, bnBalance);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 		await voteContract
-			.delegate(trackNum, target, conviction, bnBalance)
+			.delegate(trackNum, target, conviction, bnBalance, {
+				gasLimit
+			})
 			.then((result: any) => {
 				console.log(result);
 				queueNotification({

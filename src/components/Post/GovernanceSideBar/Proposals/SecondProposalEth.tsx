@@ -12,7 +12,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getNetwork from 'src/util/getNetwork';
-import { BrowserProvider, Contract, getAddress } from 'ethers';
+import { BrowserProvider, Contract, formatUnits, getAddress } from 'ethers';
 
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
@@ -23,6 +23,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import BN from 'bn.js';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -236,8 +237,16 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 
 		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
+		const gasPrice = await voteContract.second.estimateGas(proposalId, seconds);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 		await voteContract
-			.second(proposalId, seconds)
+			.second(proposalId, seconds, {
+				gasLimit
+			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });
 				queueNotification({

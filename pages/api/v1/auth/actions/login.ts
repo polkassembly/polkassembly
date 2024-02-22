@@ -3,12 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType, IAuthResponse } from '~src/auth/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IAuthResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const { username = '', password = '' } = req.body;
 

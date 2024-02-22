@@ -39,13 +39,12 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
-import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
 import { formatBalance } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { EVoteDecisionType, ILastVote, IVotesCount, NotificationStatus, Wallet } from '~src/types';
+import { EVoteDecisionType, ILastVote, IVoteHistory, IVotesCount, IVotesHistoryResponse, NotificationStatus, Wallet } from '~src/types';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
 import { DislikeIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -68,7 +67,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
@@ -93,7 +92,7 @@ interface IGovernanceSidebarProps {
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
 const abi = require('src/moonbeamConvictionVoting.json');
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 export function getReferendumVotingFinishHeight(timeline: any[], openGovType: TOpenGov) {
 	let height = 0;
@@ -708,11 +707,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		if (!api || !apiReady || !track_number) return;
 		setLoading(true);
 		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
-			const web3 = new Web3((window as any).ethereum);
+			const web3 = new BrowserProvider((window as any).ethereum);
 
-			const chainId = await web3.eth.net.getId();
+			const { chainId } = await web3.getNetwork();
 
-			if (chainId !== chainProperties[network].chainId) {
+			if (Number(chainId.toString()) !== chainProperties[network].chainId) {
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${network} network`,
@@ -722,12 +721,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 				setLoading(false);
 				return;
 			}
-			const contract = new web3.eth.Contract(abi, contractAddress);
-			contract.methods
-				.removeVote(postIndex)
-				.send({
-					from: address,
-					to: contractAddress
+			const contract = new Contract(contractAddress, abi, await web3.getSigner());
+
+			const gasPrice = await contract.removeVote.estimateGas(postIndex);
+			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+			// increase gas by 15%
+			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
+			await contract
+				.removeVote(postIndex, {
+					gasLimit
 				})
 				.then((result: any) => {
 					console.log(result);

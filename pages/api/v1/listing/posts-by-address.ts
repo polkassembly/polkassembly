@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -88,6 +89,8 @@ export async function getPostsByAddress(params: IGetPostsByAddressParams): Promi
 
 // expects proposerAddress
 const handler: NextApiHandler<IPostsByAddressListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { proposerAddress } = req.query;
 
 	const network = String(req.headers['x-network']);

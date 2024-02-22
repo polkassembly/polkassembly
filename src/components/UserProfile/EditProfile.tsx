@@ -32,6 +32,7 @@ interface IEditProfileModalProps {
 	openModal?: boolean;
 	setOpenModal?: (pre: boolean) => void;
 	fromDelegation?: boolean;
+	onConfirm?: (pre?: any) => void;
 }
 
 const getDefaultProfile: () => ProfileDetails = () => {
@@ -47,7 +48,7 @@ const getDefaultProfile: () => ProfileDetails = () => {
 
 const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false } = props;
+	const { data, id, setProfileDetails, openModal, setOpenModal, fromDelegation = false, onConfirm } = props;
 	const [open, setOpen] = useState(false);
 	const [profile, setProfile] = useState(getDefaultProfile());
 	const [loading, setLoading] = useState(false);
@@ -189,6 +190,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				message: 'Your profile is updated.',
 				status: NotificationStatus.SUCCESS
 			});
+			onConfirm?.();
 			setProfileDetails((prev) => {
 				return {
 					...prev,
@@ -206,11 +208,10 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				router.push(`/user/${username}`);
 			}
 		}
-
 		setLoading(false);
 		setErrorCheck({ ...errorCheck, basicInformationError: '' });
 		setOpen(false);
-		setOpenModal && setOpenModal(false);
+		setOpenModal?.(false);
 	};
 	return (
 		<div>
@@ -250,7 +251,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 							onClick={async () => {
 								try {
 									await updateProfileData();
-
 									//GAEvent to track user profile edit
 									trackEvent('user_profile_updated', 'user_profile_edit', {
 										userId: currentUser?.id || '',

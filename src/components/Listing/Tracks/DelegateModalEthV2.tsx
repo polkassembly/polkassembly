@@ -19,6 +19,7 @@ import BalanceInput from 'src/ui-components/BalanceInput';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import Web3 from 'web3';
 import Select from '~src/basic-components/Select';
 import SelectOption from '~src/basic-components/Select/SelectOption';
@@ -32,7 +33,7 @@ import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
 
 const abi = require('../../../moonbeamConvictionVoting.json');
 
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 const ZERO_BN = new BN(0);
 
@@ -251,11 +252,12 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 
 		if (walletConnectProvider?.wc.connected) {
 			await walletConnectProvider.enable();
-			web3 = new Web3(walletConnectProvider as any);
+			web3 = new BrowserProvider(walletConnectProvider as any);
 			chainId = walletConnectProvider.wc.chainId;
 		} else {
-			web3 = new Web3((window as any).ethereum);
-			chainId = await web3.eth.net.getId();
+			web3 = new BrowserProvider((window as any).ethereum);
+			const { chainId: id } = await web3.getNetwork();
+			chainId = Number(id.toString());
 		}
 
 		if (chainId !== chainProperties[network].chainId) {
@@ -269,13 +271,17 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 
 		console.log(trackNum, target, conviction, bnBalance);
 
-		const voteContract = new web3.eth.Contract(abi, contractAddress);
+		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
-		voteContract.methods
-			.delegate(trackNum, target, conviction, bnBalance)
-			.send({
-				from: address,
-				to: contractAddress
+		const gasPrice = await voteContract.delegate.estimateGas(trackNum, target, conviction, bnBalance);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
+		await voteContract
+			.delegate(trackNum, target, conviction, bnBalance, {
+				gasLimit
 			})
 			.then((result: any) => {
 				console.log(result);

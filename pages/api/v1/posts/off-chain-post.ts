@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { redisGet, redisSet } from '~src/auth/redis';
 import { generateKey } from '~src/util/getRedisKeys';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IGetOffChainPostParams {
 	network: string;
@@ -300,6 +301,8 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 
 // expects optional discussionType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, proposalType = OffChainProposalType.DISCUSSIONS } = req.query;
 
 	const network = String(req.headers['x-network']);

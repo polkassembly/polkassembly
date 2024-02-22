@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -11,15 +12,17 @@ import { CreatePostResponseType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
-import { Post } from '~src/types';
+import { EReferendumType, Post } from '~src/types';
 
 const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, title, postId, userId, proposerAddress, tags, discussionId, proposalType } = req.body;
+	const { content, title, postId, userId, proposerAddress, tags, discussionId, proposalType, typeOfReferendum = EReferendumType.TREASURER } = req.body;
 	if (!content || !title || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (isNaN(Number(userId)) || isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid parameters in request body' });
@@ -75,6 +78,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		tags: tags,
 		title,
 		topic_id: 4,
+		typeOfReferendum,
 		user_id: user.id
 	};
 

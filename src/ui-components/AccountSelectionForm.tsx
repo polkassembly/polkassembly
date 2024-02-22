@@ -43,7 +43,7 @@ const AccountSelectionForm = ({
 	className,
 	isBalanceUpdated,
 	isDisabled,
-	inputClassName,
+	inputClassName = 'rounded-[4px] px-3 py-1',
 	isSwitchButton,
 	setSwitchModalOpen,
 	withoutInfo,

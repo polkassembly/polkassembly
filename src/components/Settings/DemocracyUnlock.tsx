@@ -10,7 +10,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, LoadingStatusType, NotificationStatus } from 'src/types';
 import { Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
-import { BrowserProvider, Contract, formatUnits } from 'ethers';
+import { BrowserProvider, Contract } from 'ethers';
 
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
@@ -193,19 +193,11 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
-		const gasPrice = await contract.remove_vote.estimateGas(refIndex.toString());
-		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
-
-		// increase gas by 15%
-		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
-
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		await contract
-			.remove_vote(refIndex.toString(), {
-				gasLimit
-			})
+			.remove_vote(refIndex.toString())
 			.then((result: any) => {
 				console.log(result);
 				queueNotification({
@@ -246,19 +238,11 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
-		const gasPrice = await contract.unlock.estimateGas(address);
-		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
-
-		// increase gas by 15%
-		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
-
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		await contract
-			.unlock(address, {
-				gasLimit
-			})
+			.unlock(address)
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus({ isLoading: false, message: '' });

@@ -67,7 +67,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
-import { BrowserProvider, Contract, formatUnits } from 'ethers';
+import { BrowserProvider, Contract } from 'ethers';
 import { useTheme } from 'next-themes';
 import { setCurvesInformation } from '~src/redux/curvesInformation';
 import RHSCardSlides from '~src/components/RHSCardSlides';
@@ -723,16 +723,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 			const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
-			const gasPrice = await contract.removeVote.estimateGas(postIndex);
-			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
-
-			// increase gas by 15%
-			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
-
 			await contract
-				.removeVote(postIndex, {
-					gasLimit
-				})
+				.removeVote(postIndex)
 				.then((result: any) => {
 					console.log(result);
 					onSuccess();

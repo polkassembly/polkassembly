@@ -7,6 +7,8 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { ResponsivePie } from '@nivo/pie';
 import { useTheme } from 'next-themes';
 import { Card } from 'antd';
+import DelegatedIcon from '~assets/icons/analytics/delegated.svg';
+import DelegatedIconDark from '~assets/icons/analytics/delegated-dark.svg';
 
 interface IVoteDelegationProps {
 	delegatedValue: number;
@@ -38,8 +40,11 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 		}
 	];
 	return (
-		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='text-xl font-semibold'>Delegated Vs Solo</h2>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+			<h2 className='flex items-center gap-2 text-base font-semibold'>
+				{theme === 'dark' ? <DelegatedIconDark /> : <DelegatedIcon />}
+				Delegated Vs Solo
+			</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}
@@ -79,11 +84,16 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 							justify: false,
 							symbolShape: 'circle',
 							symbolSize: 6,
-							translateX: 20,
+							translateX: 25,
 							translateY: -10
 						}
 					]}
 					theme={{
+						legends: {
+							text: {
+								fontSize: 12
+							}
+						},
 						tooltip: {
 							container: {
 								background: theme === 'dark' ? '#1E2126' : '#fff',
@@ -95,8 +105,8 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 					}}
 					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
-				<p className='absolute bottom-5 flex items-end gap-2 text-2xl font-bold dark:text-white'>
-					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='text-xl font-normal'>DOT</span>}
+				<p className='absolute bottom-6 flex items-end gap-2 text-lg font-bold dark:text-white'>
+					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-white'>DOT</span>}
 				</p>
 			</div>
 		</Card>

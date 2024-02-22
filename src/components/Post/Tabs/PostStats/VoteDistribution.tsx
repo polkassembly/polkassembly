@@ -25,7 +25,7 @@ const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: an
 	};
 
 	return (
-		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white'>
+		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Vote Distribution</h2>
 			<div className='flex w-full flex-col gap-2 overflow-hidden lg:flex-row'>
 				{sortedAyes.length ? (

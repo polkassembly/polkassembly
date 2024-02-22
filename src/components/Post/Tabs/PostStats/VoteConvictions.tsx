@@ -37,7 +37,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 	});
 
 	return (
-		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Conviction used by Accounts</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
@@ -49,6 +49,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
+					borderRadius={3}
 					borderColor={{
 						from: 'color',
 						modifiers: [['darker', 1.6]]
@@ -97,7 +98,7 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 							justify: false,
 							symbolShape: 'circle',
 							symbolSize: 6,
-							translateX: 20,
+							translateX: -20,
 							translateY: 50
 						}
 					]}
@@ -124,6 +125,12 @@ const VoteConvictions = ({ votesByConviction }: { votesByConviction: any[] }) =>
 								stroke: '#D2D8E0',
 								strokeDasharray: '2 2',
 								strokeWidth: 1
+							}
+						},
+						legends: {
+							text: {
+								fontSize: 12,
+								textTransform: 'capitalize'
 							}
 						},
 						tooltip: {

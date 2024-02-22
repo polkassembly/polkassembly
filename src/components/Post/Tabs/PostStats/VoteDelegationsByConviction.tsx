@@ -40,7 +40,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 	});
 
 	return (
-		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
@@ -52,6 +52,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
 					colors={(bar) => colors[bar.id]}
+					borderRadius={3}
 					borderColor={{
 						from: 'color',
 						modifiers: [['darker', 1.6]]
@@ -100,7 +101,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 							justify: false,
 							symbolShape: 'circle',
 							symbolSize: 6,
-							translateX: 30,
+							translateX: 20,
 							translateY: 50
 						}
 					]}
@@ -127,6 +128,12 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 								stroke: '#D2D8E0',
 								strokeDasharray: '2 2',
 								strokeWidth: 1
+							}
+						},
+						legends: {
+							text: {
+								fontSize: 12,
+								textTransform: 'capitalize'
 							}
 						},
 						tooltip: {

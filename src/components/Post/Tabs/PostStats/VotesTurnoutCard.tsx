@@ -10,6 +10,8 @@ import { ResponsivePie } from '@nivo/pie';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
+import TurnoutIcon from '~assets/icons/analytics/turnout.svg';
+import TurnoutDarkIcon from '~assets/icons/analytics/turnout-dark.svg';
 
 interface IVotesTurnoutProps {
 	activeIssuance: BN;
@@ -45,8 +47,8 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 		}
 	];
 	return (
-		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='text-xl font-semibold'>Turnout Percentage</h2>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+			<h2 className='flex items-center gap-2 text-base font-semibold'>{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} Turnout Percentage</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}
@@ -86,11 +88,16 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 							justify: false,
 							symbolShape: 'circle',
 							symbolSize: 6,
-							translateX: 20,
+							translateX: 15,
 							translateY: -10
 						}
 					]}
 					theme={{
+						legends: {
+							text: {
+								fontSize: 12
+							}
+						},
 						tooltip: {
 							container: {
 								background: theme === 'dark' ? '#1E2126' : '#fff',
@@ -102,7 +109,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 					}}
 					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
-				<p className='absolute bottom-5 block gap-2 text-2xl font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
+				<p className='absolute bottom-6 block gap-2 text-lg font-bold dark:text-white'>{turnoutPercentage ? `${turnoutPercentage.toFixed(1)}%` : ''}</p>
 			</div>
 		</Card>
 	);

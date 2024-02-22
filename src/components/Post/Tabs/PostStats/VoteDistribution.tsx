@@ -1,15 +1,25 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Card } from 'antd';
+import { Card, Popover } from 'antd';
 import { useTheme } from 'next-themes';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
-const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] } }) => {
+interface IVoteDistributionProps {
+	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
+}
+const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const sortedAyes = votesDistribution.ayes.sort((a, b) => b.balance - a.balance);
 	const sortedNays = votesDistribution.nays.sort((a, b) => b.balance - a.balance);
 	const sortedAbstain = votesDistribution.abstain.sort((a, b) => b.balance - a.balance);
+
+	const totalAyeVotes = sortedAyes.reduce((acc, cur) => acc + cur.balance, 0);
+	const totalNayVotes = sortedNays.reduce((acc, cur) => acc + cur.balance, 0);
+	const totalAbstainVotes = sortedAbstain.reduce((acc, cur) => acc + cur.balance, 0);
+
+	console.log('totalAyeVotes', formatUSDWithUnits(totalNayVotes));
 
 	const colors: { [key: string]: string } = {
 		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
@@ -58,7 +68,8 @@ const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: an
 								<GridItem
 									key={index}
 									color={colors.aye}
-									balance={item.balance}
+									voter={item.voter}
+									votePercent={(item.balance / totalAyeVotes) * 100}
 									size={item.balance / 1.0e3}
 								/>
 							);
@@ -76,8 +87,9 @@ const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: an
 								<GridItem
 									key={index}
 									color={colors.nay}
-									balance={item.balance}
+									voter={item.voter}
 									size={item.balance / 1.0e3}
+									votePercent={(item.balance / totalNayVotes) * 100}
 								/>
 							);
 						})}
@@ -94,8 +106,9 @@ const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: an
 								<GridItem
 									key={index}
 									color={colors.abstain}
-									balance={item.balance}
+									voter={item.voter}
 									size={item.balance / 1.0e3}
+									votePercent={(item.balance / totalAbstainVotes) * 100}
 								/>
 							);
 						})}
@@ -106,7 +119,7 @@ const VoteDistribution = ({ votesDistribution }: { votesDistribution: { ayes: an
 	);
 };
 
-const GridItem = ({ size, color }: { size: number; balance: number; color: string }) => {
+const GridItem = ({ size, color, votePercent, voter }: { size: number; voter: string; color: string; votePercent: number }) => {
 	const style = {
 		backgroundColor: color,
 		border: `2px solid ${color}`,
@@ -115,7 +128,23 @@ const GridItem = ({ size, color }: { size: number; balance: number; color: strin
 		gridRow: 'span 5'
 	};
 
-	return <div style={style}></div>;
+	return (
+		<Popover
+			title=''
+			trigger='hover'
+			arrow={false}
+			overlayClassName='dark:bg-section-dark-overlay dark:text-white'
+			overlayStyle={{ padding: '0px' }}
+			content={
+				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high hover:scale-105 hover:opacity-80 dark:text-white'>
+					<span>{`${voter.slice(0, 5)}...${voter.slice(-3)}`}</span>
+					<span>{votePercent.toFixed(2) + '%'}</span>
+				</div>
+			}
+		>
+			<div style={style}></div>
+		</Popover>
+	);
 };
 
 export default VoteDistribution;

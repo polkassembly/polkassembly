@@ -65,7 +65,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 					}}
 					tooltip={({ point }) => {
 						return (
-							<div className={`flex gap-2 rounded-md bg-white p-2 capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-1 text-[11px] shadow-md`}>
+							<div className={`flex gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
 								<span className='text-xs font-semibold'>Days: {point.data.xFormatted}</span>
 								<span className='text-xs font-semibold'>
 									{axisLabel ? `${axisLabel}: ` : 'votes: '}

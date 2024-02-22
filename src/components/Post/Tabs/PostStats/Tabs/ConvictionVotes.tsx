@@ -118,17 +118,17 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 			(acc, vote) => {
 				if (vote.decision === 'yes') {
 					acc.ayes.push({
-						balance: bnToIntBalance(new BN(vote.balance)),
+						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
 						voter: vote.voter
 					});
 				} else if (vote.decision === 'no') {
 					acc.nays.push({
-						balance: bnToIntBalance(new BN(vote.balance)),
+						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
 						voter: vote.voter
 					});
 				} else {
 					acc.abstain.push({
-						balance: bnToIntBalance(new BN(vote.balance)),
+						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
 						voter: vote.voter
 					});
 				}

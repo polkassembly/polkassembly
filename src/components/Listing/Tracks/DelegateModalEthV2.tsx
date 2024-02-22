@@ -20,7 +20,6 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import { BrowserProvider, Contract, formatUnits } from 'ethers';
-import Web3 from 'web3';
 import Select from '~src/basic-components/Select';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import CustomButton from '~src/basic-components/buttons/CustomButton';

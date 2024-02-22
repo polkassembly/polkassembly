@@ -15,14 +15,13 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { NotificationStatus, PostOrigin } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
-import { BN, BN_HUNDRED, BN_MAX_INTEGER, BN_ONE } from '@polkadot/util';
+import { BN, BN_HUNDRED, BN_ONE } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SelectTracks from '../OpenGovTreasuryProposal/SelectTracks';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EEnactment, IEnactment, ISteps } from '../OpenGovTreasuryProposal';
 import { IAdvancedDetails } from '../OpenGovTreasuryProposal/CreatePreimage';
 import { useCurrentBlock } from '~src/hooks';
@@ -120,7 +119,6 @@ export default function CreateReferendaForm({
 	const [transformedParams, setTransformedParams] = useState<any>();
 	const [methodCall, setMethodCall] = useState<SubmittableExtrinsic<'promise'> | null>();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
-
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();
@@ -315,18 +313,10 @@ export default function CreateReferendaForm({
 		});
 	};
 	const trackArr: string[] = [];
-	const maxSpendArr: { track: string; maxSpend: number }[] = [];
 
 	if (network) {
-		Object.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
-			if (value.group === 'Treasury') {
-				trackArr.push(key);
-				if (value?.maxSpend === -1) {
-					maxSpendArr.push({ maxSpend: Number(BN_MAX_INTEGER.toString()), track: key });
-				} else {
-					maxSpendArr.push({ maxSpend: value?.maxSpend, track: key });
-				}
-			}
+		Object.values(PostOrigin).forEach((value) => {
+			trackArr.push(value);
 		});
 	}
 

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, Input, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import React, { FC, useEffect, useState } from 'react';
 import ContentForm from '~src/components/ContentForm';
@@ -18,6 +18,7 @@ import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import AddTags from '~src/ui-components/AddTags';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 interface ILinkingAndEditingProps {
 	setLinkingAndEditingOpen: React.Dispatch<React.SetStateAction<boolean>>;

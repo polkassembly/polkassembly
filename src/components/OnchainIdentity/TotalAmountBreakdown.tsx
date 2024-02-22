@@ -7,9 +7,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
-import { Alert } from 'antd';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
-import DownArrowIcon from '~assets/icons/down-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 // import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -21,6 +19,8 @@ import { ILoading, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { DownArrowIcon } from '~src/ui-components/CustomIcons';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -124,7 +124,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					className='mt-4 h-10 rounded-[4px] text-[13px] text-bodyBlue '
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
@@ -132,7 +132,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				<Alert
 					showIcon
 					type='info'
-					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue '
 					description={
 						<span className='dark:text-blue-dark-high'>
 							To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.
@@ -172,7 +172,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 							onClick={() => setAmountBreakup(!amountBreakup)}
 						>
 							{formatedBalance(perSocialBondFee.add(registerarFee.add(minDeposite)).toString(), unit, 2)} {unit}
-							{amountBreakup ? <DownArrowIcon className='ml-2' /> : <UpArrowIcon className='ml-2' />}
+							{amountBreakup ? <DownArrowIcon className='ml-2 text-2xl' /> : <UpArrowIcon className='ml-2 text-xl' />}
 						</span>
 						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
 					</div>

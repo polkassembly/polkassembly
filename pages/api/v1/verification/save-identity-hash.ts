@@ -10,8 +10,11 @@ import { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	const { identityHash } = req.query;
 	if (req.method !== 'POST') {

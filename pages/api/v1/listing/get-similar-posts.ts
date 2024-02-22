@@ -12,8 +12,11 @@ import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType'
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { getNetworkBasedSubsquidQuery, getResults } from '../utils/similar-proposals';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId, proposalType, tags, trackNumber, trackGroup } = req.body;
 	const network = String(req.headers['x-network']);
 	const query = getNetworkBasedSubsquidQuery(network, proposalType);

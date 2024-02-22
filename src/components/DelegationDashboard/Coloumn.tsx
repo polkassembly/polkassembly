@@ -372,7 +372,7 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 				return (
 					<div className='flex items-center justify-start gap-1 text-sm font-normal tracking-wide text-bodyBlue dark:text-white max-lg:flex-col'>
 						<Address
-							address={addresses?.[0].from || ''}
+							address={addresses?.[0]?.from || ''}
 							isTruncateUsername={false}
 							displayInline
 							iconSize={24}

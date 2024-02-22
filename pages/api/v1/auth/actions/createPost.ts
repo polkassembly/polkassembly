@@ -19,6 +19,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
+import { postCreatingActivity } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -106,11 +107,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	await postDocRef
 		.set(newPost)
-		.then(() => {
+		.then(async () => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
 			if (tags && Array.isArray(tags) && tags.length > 0) {
 				batch.commit();
 			}
+			await postCreatingActivity({ content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
 			return;
 		})
 		.catch((error) => {

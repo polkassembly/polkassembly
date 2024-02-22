@@ -14,6 +14,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { removeReactionActivity } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -60,9 +61,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	if (!userReactionsSnapshot.empty) {
 		const reactionDocRef = userReactionsSnapshot.docs[0].ref;
+		const reactionData = (await reactionDocRef.get()).data();
 		await reactionDocRef
 			.delete()
-			.then(() => {
+			.then(async () => {
+				if (reactionData?.id) {
+					await removeReactionActivity({ network, reactionId: reactionData?.id, userId: userId });
+				}
 				return res.status(200).json({ message: 'Reaction removed.' });
 			})
 			.catch((error) => {

@@ -4,7 +4,6 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -12,6 +11,8 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import { createReactionsActivity } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -21,7 +22,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction } = req.body;
+	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction, commentAuthorId, replyAuthorId, postAuthorUsername } = req.body;
 
 	if (setReplyReaction) {
 		if (!userId || isNaN(postId) || (!commentId && !replyId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
@@ -44,9 +45,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions');
 	}
 
+	let postAuthorId: number = 0;
+
+	const { data } = await getUserProfileWithUsername(postAuthorUsername);
+	if (data) {
+		postAuthorId = data?.user_id;
+	}
+
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
-	let reactionDoc;
+	let reactionDoc: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> | FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>;
 	let reactionData = {};
 
 	const userReactionQuerySnapshot = await userReactionQuery.get();
@@ -72,7 +80,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await reactionsCollRef
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
-		.then(() => {
+		.then(async () => {
+			if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
+				await createReactionsActivity({
+					commentAuthorId,
+					commentId,
+					network,
+					postAuthorId,
+					postId,
+					postType,
+					reactionAuthorId: userId,
+					reactionId: reactionDoc.id,
+					replyAuthorId,
+					replyId,
+					userId
+				});
+			}
+
 			return res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {

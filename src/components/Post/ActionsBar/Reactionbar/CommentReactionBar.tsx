@@ -5,7 +5,6 @@
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useState } from 'react';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-
 import ReactionButton from './ReactionButton';
 
 interface ICommentReactionBarProps {
@@ -15,9 +14,20 @@ interface ICommentReactionBarProps {
 	importedReactions?: boolean;
 	replyId?: string;
 	isReactionOnReply?: boolean;
+	commentAuthorId: number;
+	replyAuthorId?: number;
 }
 
-const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, className, replyId, comment_reactions, commentId, importedReactions = false }) => {
+const CommentReactionBar: FC<ICommentReactionBarProps> = ({
+	isReactionOnReply,
+	className,
+	replyId,
+	comment_reactions,
+	commentId,
+	importedReactions = false,
+	commentAuthorId,
+	replyAuthorId
+}) => {
 	const [reactionsDisabled, setReactionsDisabled] = useState(false);
 	const [reactions, setReactions] = useState<IReactions>(comment_reactions);
 	const [openLikeModal, setLikeModalOpen] = useState<boolean>(false);
@@ -40,6 +50,8 @@ const CommentReactionBar: FC<ICommentReactionBarProps> = ({ isReactionOnReply, c
 							importedReactions={importedReactions}
 							replyId={replyId}
 							isReactionOnReply={isReactionOnReply}
+							commentAuthorId={commentAuthorId}
+							replyAuthorId={replyAuthorId}
 						/>
 					);
 				})}

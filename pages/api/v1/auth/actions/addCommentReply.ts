@@ -16,6 +16,8 @@ import { CommentReply } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import { createReplyActivity } from '../../utils/create-activity';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -29,7 +31,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType } = req.body;
+	const { userId, commentId, content, postId, postType, postAuthorUsername, commentAuthorId } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
@@ -48,6 +50,13 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const last_comment_at = new Date();
 	const newReplyRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc();
 
+	let postAuthorId: number = 0;
+
+	const { data } = await getUserProfileWithUsername(postAuthorUsername);
+	if (data) {
+		postAuthorId = data?.user_id;
+	}
+
 	const newReply: CommentReply = {
 		content,
 		created_at: new Date(),
@@ -61,13 +70,27 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 
 	await newReplyRef
 		.set(newReply)
-		.then(() => {
+		.then(async () => {
 			postRef.update({
 				last_comment_at
 			});
 
 			const triggerName = 'newReplyAdded';
 
+			if (!isNaN(postAuthorId)) {
+				await createReplyActivity({
+					commentAuthorId,
+					commentId,
+					content,
+					network,
+					postAuthorId: postAuthorId,
+					postId,
+					postType,
+					replyAuthorId: userId,
+					replyId: newReply?.id,
+					userId
+				});
+			}
 			const args = {
 				commentId: String(commentId),
 				network,

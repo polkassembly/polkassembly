@@ -14,6 +14,8 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { deleteCommentOrReply } from '../../utils/create-activity';
+import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -23,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { commentId, postId, postType, trackNumber = null } = req.body;
+	const { commentId, postId, postType, trackNumber = null, userId } = req.body;
 	if (!commentId || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -61,10 +63,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.update({
 			isDeleted: true
 		})
-		.then(() => {
+		.then(async () => {
 			postRef.update({
 				last_comment_at
 			});
+			await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+
 			return res.status(200).json({ message: 'Comment saved.' });
 		})
 		.catch((error) => {

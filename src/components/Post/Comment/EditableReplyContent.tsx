@@ -53,7 +53,20 @@ interface Props {
 const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.location.href}`;
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
-const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
+const EditableReplyContent = ({
+	isSubsquareUser,
+	isReactionOnReply,
+	userId,
+	className,
+	commentId,
+	content,
+	replyId,
+	userName,
+	reply,
+	proposer,
+	is_custom_username,
+	comment
+}: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -73,7 +86,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 	const toggleEdit = () => setIsEditing(!isEditing);
 
 	const {
-		postData: { postType, postIndex, track_number }
+		postData: { postType, postIndex, track_number, username: postAuthorUsername }
 	} = usePostDataContext();
 
 	useEffect(() => {
@@ -238,8 +251,10 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 		const replyContent = replyToreplyForm.getFieldValue('content');
 		if (!replyContent) return;
 		const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
+			commentAuthorId: comment?.user_id,
 			commentId: commentId,
 			content: replyContent,
+			postAuthorUsername,
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			trackNumber: track_number,
@@ -353,8 +368,10 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 
 		if (id) {
 			const { data, error } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addCommentReply', {
+				commentAuthorId: comment.user_id,
 				commentId: commentId,
 				content: replyContent,
+				postAuthorUsername,
 				postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 				postType: reply.post_type || postType,
 				trackNumber: track_number,
@@ -491,7 +508,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			replyId,
-			trackNumber: track_number
+			trackNumber: track_number,
+			userId: id
 		});
 
 		if (deleteReplyError || !data) {
@@ -653,6 +671,8 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 								importedReactions={isSubsquareUser}
 								replyId={replyId}
 								isReactionOnReply={isReactionOnReply}
+								commentAuthorId={comment.user_id}
+								replyAuthorId={reply?.user_id}
 							/>
 							<div className='reply-buttons-container item-center flex flex-wrap gap-3'>
 								{id ? (

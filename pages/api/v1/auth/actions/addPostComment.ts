@@ -16,6 +16,8 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import { createCommentActivity } from '../../utils/create-activity';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -26,11 +28,10 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const network = String(req.headers['x-network']);
-	// res.status(500).json({ message: 'Invalid' });
-	// return;
+
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;
+	const { userId, content, postId, postType, sentiment, trackNumber = null, postAuthorUsername } = req.body;
 	if (!userId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
@@ -49,6 +50,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	const last_comment_at = new Date();
 	const newCommentRef = postRef.collection('comments').doc();
+	let postAuthorId: number = 0;
 
 	const newComment: PostComment = {
 		content: content,
@@ -62,6 +64,11 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		user_profile_img: user?.profile?.image || '',
 		username: user.username
 	};
+
+	const { data } = await getUserProfileWithUsername(postAuthorUsername);
+	if (data) {
+		postAuthorId = data?.user_id;
+	}
 
 	const subsquidProposalType = getSubsquidLikeProposalType(postType);
 
@@ -80,11 +87,13 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	await newCommentRef
 		.set(newComment)
-		.then(() => {
+		.then(async () => {
 			postRef.update({
 				last_comment_at
 			});
-
+			if (!isNaN(postAuthorId)) {
+				await createCommentActivity({ commentAuthorId: userId, commentId: newComment.id, content, network, postAuthorId, postId, postType, userId });
+			}
 			const triggerName = 'newCommentAdded';
 
 			const args = {
@@ -102,7 +111,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
-
 			return res.status(200).json({
 				id: newComment.id
 			});

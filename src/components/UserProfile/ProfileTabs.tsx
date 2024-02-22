@@ -7,14 +7,17 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import { Tabs } from '~src/ui-components/Tabs';
 import ProfileOverview from './ProfileOverview';
 import { votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { IStats } from '.';
-import { ClipboardIcon, ProfileOverviewIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import ProfileUserActivity from './ProfileUserActivity';
+import ProfileMentions from './ProfileMentions';
+import ProfileReactions from './ProfileReactions';
 
 interface Props {
 	className?: string;
@@ -50,6 +53,7 @@ const ProfileTabs = ({
 		posts: 0,
 		votes: 0
 	});
+	const { id: userId } = useUserDetailsSelector();
 
 	useEffect(() => {
 		let totalPosts = 0;
@@ -106,6 +110,36 @@ const ProfileTabs = ({
 					Posts<span className='ml-[2px]'>({totals?.posts})</span>
 				</div>
 			)
+		},
+		{
+			children: (
+				<ProfileReactions
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'Reactions',
+			label: (
+				<div className='flex items-center'>
+					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Reactions
+				</div>
+			)
+		},
+		{
+			children: (
+				<ProfileMentions
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'Mentions',
+			label: (
+				<div className='flex items-center'>
+					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Mentions
+				</div>
+			)
 		}
 	];
 	if (!votesHistoryUnavailableNetworks.includes(network)) {
@@ -124,6 +158,23 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
 					Votes<span className='ml-[2px]'>({totals?.votes})</span>
+				</div>
+			)
+		});
+	}
+	if (userId === userProfile.user_id) {
+		tabItems.splice(3, 0, {
+			children: (
+				<ProfileUserActivity
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'My Activity',
+			label: (
+				<div className='flex items-center'>
+					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
+					My Activity
 				</div>
 			)
 		});

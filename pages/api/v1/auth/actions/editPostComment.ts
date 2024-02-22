@@ -15,6 +15,8 @@ import { ICommentHistory } from '~src/types';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import { editCommentActivity } from '../../utils/create-activity';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -24,7 +26,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, sentiment } = req.body;
+	const { userId, commentId, content, postId, postType, sentiment, postAuthorUsername } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -68,7 +70,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history) ? [newHistory, ...(commentData?.history || [])] : new Array(newHistory);
-
+	let postAuthorId = 0;
+	const { data } = await getUserProfileWithUsername(postAuthorUsername);
+	if (data) {
+		postAuthorId = data?.user_id;
+	}
 	commentRef
 		.update({
 			content,
@@ -81,7 +87,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 				.update({
 					last_comment_at
 				})
-				.then(() => {});
+				.then(async () => {
+					if (!isNaN(postAuthorId)) {
+						await editCommentActivity({ commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });
+					}
+				});
 			return res.status(200).json({ message: 'Comment saved.' });
 		})
 		.catch((error) => {

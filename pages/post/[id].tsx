@@ -44,7 +44,6 @@ interface IDiscussionPostProps {
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,7 +56,6 @@ const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 				isRefreshBtnVisible={!error.includes('not found')}
 			/>
 		);
-
 	if (post)
 		return (
 			<>

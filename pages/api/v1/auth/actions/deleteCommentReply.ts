@@ -12,6 +12,8 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { isValidNetwork } from '~src/api-utils';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { deleteCommentOrReply } from '../../utils/create-activity';
+import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -21,7 +23,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { commentId, postId, postType, replyId } = req.body;
+	const { commentId, postId, postType, replyId, userId } = req.body;
 	if (!commentId || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -44,10 +46,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.update({
 			isDeleted: true
 		})
-		.then(() => {
+		.then(async () => {
 			postRef.update({
 				last_comment_at
 			});
+			await deleteCommentOrReply({ id: replyId, network, type: EUserActivityType.REPLIED, userId: userId });
+
 			return res.status(200).json({ message: 'Reply deleted.' });
 		})
 		.catch((error) => {

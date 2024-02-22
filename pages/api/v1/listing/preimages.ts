@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -85,6 +86,8 @@ export async function getPreimages(params: IGetPreimagesParams): Promise<IApiRes
 }
 
 const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);

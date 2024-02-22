@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert } from 'antd';
 import * as React from 'react';
 import getExtensionUrl from 'src/util/getExtensionUrl';
+import Alert from '~src/basic-components/Alert';
 import { Wallet } from '~src/types';
 
 interface Props {
@@ -33,7 +33,7 @@ const ExtensionNotDetected: React.FC<Props> = ({ chosenWallet }) => {
 			}
 			type='info'
 			showIcon
-			className='changeColor dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+			className='changeColor'
 		/>
 	);
 };

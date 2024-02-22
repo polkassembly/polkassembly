@@ -11,6 +11,8 @@ import { ICurrentTokenPriceStore } from './currentTokenPrice/@types';
 import { ICurvesInformationStore } from './curvesInformation/@types';
 import { ITippingStore } from './Tipping/@types';
 import { ITreasuryProposalStore } from './treasuryProposal/@types';
+import { IVoteDataStore } from './voteData/@types';
+import { IinitialConnectAddress } from './initialConnectAddress/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -35,7 +37,12 @@ const useTippingDataSelector = () => {
 const useTreasuryProposalSelector = () => {
 	return useSelector<TAppState, ITreasuryProposalStore>((state) => state.treasuryProposal);
 };
-
+const useVoteDataSelector = () => {
+	return useSelector<TAppState, IVoteDataStore>((state) => state.voteData);
+};
+const useInitialConnectAddress = () => {
+	return useSelector<TAppState, IinitialConnectAddress>((state) => state.initialConnectAddress);
+};
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -43,5 +50,7 @@ export {
 	useCurrentTokenDataSelector,
 	useCurvesInformationSelector,
 	useTippingDataSelector,
-	useTreasuryProposalSelector
+	useTreasuryProposalSelector,
+	useVoteDataSelector,
+	useInitialConnectAddress
 };

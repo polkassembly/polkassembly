@@ -78,6 +78,18 @@ export const Comment: FC<ICommentProps> = (props) => {
 			</div>
 		);
 
+	function removeQuoteCommentBackground(content: string) {
+		// Define a regex pattern to find disabled input elements
+		const pattern = /<input[^>]*?disabled[^>]*?>/g;
+		// Replace background color of disabled input elements with transparent
+		const modifiedContent = content.replace(pattern, (match) => {
+			return match.replace(/background:\s*[^;]+;/, '');
+		});
+		return modifiedContent;
+	}
+
+	const modifiedContent = removeQuoteCommentBackground(comment.content);
+
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (
@@ -128,7 +140,7 @@ export const Comment: FC<ICommentProps> = (props) => {
 					className={`rounded-md ${sentiment && sentiment !== 0 && 'mt-[-5px] min-[320px]:mt-[-2px]'}`}
 					comment={comment}
 					commentId={id}
-					content={content}
+					content={modifiedContent || content}
 					postId={postIndex}
 					proposalType={postType}
 					disableEdit={props.disableEdit}

@@ -21,6 +21,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { isDataExist } from '../../posts/on-chain-post';
 import { deleteKeys, redisDel } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IUpdatePostLinkInGroupParams {
 	currPostData: any;
@@ -279,6 +280,8 @@ export interface ILinkPostConfirmResponse {
 }
 
 const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

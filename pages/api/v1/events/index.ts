@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -12,6 +13,8 @@ import { approvalStatus } from '~src/global/statuses';
 import { NetworkEvent } from '~src/types';
 
 const handler: NextApiHandler<NetworkEvent[] | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { approval_status = approvalStatus.APPROVED } = req.body;
 
 	const network = String(req.headers['x-network']);

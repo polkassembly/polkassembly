@@ -447,7 +447,6 @@ const editReplyActivity = async (
 		}
 	}
 };
-
 const createReactionsActivity = async ({
 	commentAuthorId,
 	network,
@@ -489,10 +488,7 @@ const createReactionsActivity = async ({
 		}
 	}
 };
-
 const removeReactionActivity = async ({ network, reactionId, userId }: { network: string; reactionId: string; userId: number }) => {
-	console.log(network, reactionId, userId);
-
 	if (!network || !reactionId || !userId) {
 		console.log(messages.INVALID_PARAMS);
 	} else {

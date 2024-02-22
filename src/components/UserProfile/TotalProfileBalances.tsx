@@ -18,7 +18,6 @@ import { useApiContext } from '~src/context';
 import { CloseIcon, EqualIcon } from '~src/ui-components/CustomIcons';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IDelegateBalance } from 'pages/api/v1/delegations/total-delegate-balance';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface Props {
@@ -28,6 +27,11 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	selectedAddresses: string[];
 }
+export interface IDelegateBalance {
+	delegateBalance: string;
+	votingPower: string;
+}
+
 const ZERO_BN = new BN(0);
 
 const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme }: Props) => {

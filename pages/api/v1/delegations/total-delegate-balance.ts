@@ -11,12 +11,10 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import BN from 'bn.js';
 import messages from '~src/auth/utils/messages';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
 
 const ZERO_BN = new BN(0);
-export interface IDelegateBalance {
-	delegateBalance: string;
-	votingPower: string;
-}
+
 interface Props {
 	addresses: string[];
 }

@@ -43,6 +43,10 @@ const StyledTabs = styled(AntdTabs)`
 	&.ant-tabs-tab.ant-tabs-tab-active {
 		border-bottom: ${(props) => (props.theme == 'dark' ? '1px #4B4B4B solid' : '1px solid #e5007a')} !important;
 	}
+	.ant-tabs-ink-bar {
+		visibility: visible !important;
+		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#ffffff')} !important;
+	}
 	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
 		border-bottom: 1px solid #e1e6eb;
 	}

@@ -356,7 +356,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											))}
 										{decision && !votesRes?.[decision]?.votes?.length && (
 											<PostEmptyState
-												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 												imageStyle={{ height: 260 }}
 											/>
 										)}
@@ -384,7 +384,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											))}
 										{decision && !votesRes?.[decision]?.votes?.length && (
 											<PostEmptyState
-												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+												image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 												imageStyle={{ height: 260 }}
 											/>
 										)}

@@ -46,7 +46,7 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 	if (noPosts && posts?.length < 1)
 		return (
 			<PostEmptyState
-				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 				imageStyle={{ height: 260 }}
 				description={
 					<div className='-mt-1 px-5 py-2'>

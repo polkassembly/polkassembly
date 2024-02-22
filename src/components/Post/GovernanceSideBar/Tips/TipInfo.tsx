@@ -79,7 +79,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 	if (!tippers)
 		return (
 			<PostEmptyState
-				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 				imageStyle={{ height: 260 }}
 			/>
 		);
@@ -155,7 +155,7 @@ const TipInfo: FC<ITipInfoProps> = (props) => {
 				</div>
 			) : (
 				<PostEmptyState
-					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 					imageStyle={{ height: 260 }}
 				/>
 			)}

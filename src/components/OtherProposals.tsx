@@ -184,7 +184,7 @@ const OtherProposals: FC<IOtherProposalsProps> = ({ className, closeSidebar, cur
 			{!loading && !error && proposals && proposals.treasury.length === 0 && proposals.democracy.length === 0 && (
 				<div className='mt-36 flex items-center justify-center'>
 					<PostEmptyState
-						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 						imageStyle={{ height: 260 }}
 						description={
 							<div className='p-5'>

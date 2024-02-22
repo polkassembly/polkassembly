@@ -24,7 +24,7 @@ const PostTab: FC<IPostTabProps> = (props) => {
 			{!posts || posts.length === 0 ? (
 				<div className='flex h-full items-center justify-center'>
 					<PostEmptyState
-						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+						image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 						imageStyle={{ height: 260 }}
 					/>
 				</div>

@@ -142,7 +142,7 @@ const WhitelistMembersContainer = ({ className, membersType }: { className?: str
 		return (
 			<div className={`${className} rounded-md bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8`}>
 				<PostEmptyState
-					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+					image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 					imageStyle={{ height: 260 }}
 				/>
 			</div>

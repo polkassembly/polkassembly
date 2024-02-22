@@ -84,7 +84,7 @@ const ProposalPost: FC<IProposalPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8' }} />}
+				image={theme === 'dark' ? <EmptyStateDark style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLight style={{ transform: 'scale(0.8)' }} />}
 				imageStyle={{ height: 260 }}
 				description={
 					<div className='p-5'>

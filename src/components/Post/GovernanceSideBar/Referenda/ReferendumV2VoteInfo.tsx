@@ -217,7 +217,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								</div>
 							</div>
 						]}
-						className={`${poppins.variable} ${poppins.className} h-[172px] w-[152px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+						className={`${poppins.variable} ${poppins.className} h-172 w-152 max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 						closeIcon={<CloseIcon className='mt-2.5 text-lightBlue dark:text-icon-dark-inactive' />}
 						title={
 							<div

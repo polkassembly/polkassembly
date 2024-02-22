@@ -69,6 +69,7 @@ module.exports = {
 				abstainBlueColor: 'var(--abstainBlueColor)',
 				abstainDarkBlueColor: 'var(--abstainBlueColor)',
 				textGreyColor: 'var(--textGreyColor)',
+				highlightBg: 'var(--highlightBg)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

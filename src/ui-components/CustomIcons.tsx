@@ -27,7 +27,7 @@ import IdentitySVG from '~assets/icons/identity.svg';
 import ProfileSVG from '~assets/icons/profile.svg';
 import EmailSVG from '~assets/icons/email.svg';
 import SignalTowerSVG from '~assets/icons/signal-tower.svg';
-import EditSVG from '~assets/icons/edit.svg';
+import EditSVG from '~assets/profile/profile-edit.svg';
 import SyncSVG from '~assets/icons/sync.svg';
 import PreparePeriodSVG from '~assets/icons/prepare.svg';
 import DecisionPeriodSVG from '~assets/icons/decision.svg';
@@ -122,7 +122,7 @@ import Comments from '~assets/icons/chat-icon.svg';
 import RiotSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
-import WebSVG from '~assets/icons/web-icon.svg';
+import WebSVG from '~assets/profile/web-icon.svg';
 import ShareScreenSVG from '~assets/icons/screen-share-icon.svg';
 import PgpSVG from '~assets/icons/pgp-icon.svg';
 import RedirectSVG from '~assets/icons/redirect-icon.svg';
@@ -137,6 +137,15 @@ import VerifiedSVG from '~assets/icons/verified-tick.svg';
 import BeneficiarySVG from '~assets/icons/Beneficiary.svg';
 import BeneficiaryGreySVG from '~assets/icons/BeneficiaryGrey.svg';
 import DropdownGreyIconSVG from '~assets/icons/dropdown-grey.svg';
+import DownArrowSVG from '~assets/icons/down-arrow.svg';
+import DollarSVG from '~assets/profile/dollar.svg';
+import RemoveVoteSVG from '~assets/profile/remove-vote.svg';
+import ClipboardSVG from '~assets/profile/profile-clipboard.svg';
+import VotesSVG from '~assets/profile/profile-votes.svg';
+import ViewVoteSVG from '~assets/profile/view-votes.svg';
+import SubscanSVG from '~assets/profile/profile-subscan.svg';
+import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
+import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1027,6 +1036,64 @@ export const BeneficiaryGreyIcon = (props: Partial<CustomIconComponentProps>) =>
 export const DropdownGreyIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={DropdownGreyIconSVG}
+		{...props}
+	/>
+);
+
+export const DownArrowIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DownArrowSVG}
+		{...props}
+	/>
+);
+
+export const DollarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DollarSVG}
+		{...props}
+	/>
+);
+export const RemoveVoteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={RemoveVoteSVG}
+		{...props}
+	/>
+);
+
+export const ClipboardIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ClipboardSVG}
+		{...props}
+	/>
+);
+
+export const VotesIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VotesSVG}
+		{...props}
+	/>
+);
+export const ViewVoteIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ViewVoteSVG}
+		{...props}
+	/>
+);
+export const SubscanIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SubscanSVG}
+		{...props}
+	/>
+);
+export const ProfileOverviewIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileOverviewSVG}
+		{...props}
+	/>
+);
+export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ExpandSVG}
 		{...props}
 	/>
 );

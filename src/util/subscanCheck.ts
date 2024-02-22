@@ -5,7 +5,7 @@
 import { chainProperties } from '~src/global/networkConstants';
 
 export function isSubscanSupport(network: string) {
-	return !['xx', 'pendulum', 'amplitude', 'myriad', 'frequency', 'cere', 'equilibrium'].includes(network);
+	return !['xx', 'myriad', 'frequency', 'cere', 'equilibrium'].includes(network);
 }
 
 export function isExplorerSupport(network: string) {

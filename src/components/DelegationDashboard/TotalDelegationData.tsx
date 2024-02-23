@@ -61,7 +61,7 @@ const TotalDelegationData = () => {
 
 	return (
 		<Spin spinning={loading}>
-			<div className='mt-[32px] flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+			<div className=' flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 				{/* Total Supply */}
 				<div className='flex space-x-3 border-2 border-[#D2D8E0]'>
 					<ImageIcon

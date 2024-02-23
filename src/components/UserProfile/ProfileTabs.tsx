@@ -12,7 +12,7 @@ import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
-import { IStats } from '.';
+import { IActivitiesCounts, IStats } from '.';
 import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
@@ -32,6 +32,7 @@ interface Props {
 	statsArr: IStats[];
 	setStatsArr: (pre: IStats[]) => void;
 	onchainIdentity?: DeriveAccountRegistration | null;
+	activitiesCounts: IActivitiesCounts | null;
 }
 
 const ProfileTabs = ({
@@ -46,19 +47,14 @@ const ProfileTabs = ({
 	setProfileDetails,
 	statsArr,
 	setStatsArr,
-	onchainIdentity
+	onchainIdentity,
+	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0
 	});
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [totalMentions, setTotalMentions] = useState(0);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [totalReactions, setTotalReactions] = useState(0);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [totalActivities, setTotalActivities] = useState(0);
 	const { id: userId } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -120,7 +116,7 @@ const ProfileTabs = ({
 		{
 			children: (
 				<ProfileReactions
-					setTotalReactions={setTotalReactions}
+					count={activitiesCounts?.totalReactionsCount || 0}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -130,14 +126,14 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Reactions
-					{/* <span className='ml-[2px]'>({totalReactions})</span> */}
+					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount})</span>
 				</div>
 			)
 		},
 		{
 			children: (
 				<ProfileMentions
-					setTotalMentions={setTotalMentions}
+					count={activitiesCounts?.totalMentionsCount || 0}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -147,7 +143,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
-					{/* <span className='ml-[2px]'>({totalMentions})</span> */}
+					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
 				</div>
 			)
 		}
@@ -176,7 +172,7 @@ const ProfileTabs = ({
 		tabItems.splice(3, 0, {
 			children: (
 				<ProfileUserActivity
-					setTotalActivities={setTotalActivities}
+					count={activitiesCounts?.totalActivitiesCount || 0}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -186,7 +182,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
 					My Activity
-					{/* <span className='ml-[2px]'>({totalActivities})</span> */}
+					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
 				</div>
 			)
 		});

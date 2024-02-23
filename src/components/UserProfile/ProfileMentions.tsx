@@ -24,7 +24,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
-	setTotalMentions: (pre: number) => void;
+	count: number;
 }
 
 export enum EUserActivityType {
@@ -52,7 +52,7 @@ export interface IProfileMentions {
 	activityIn: EUserActivityIn;
 	commentId: string;
 }
-const ProfileMentions = ({ className, userProfile, setTotalMentions }: Props) => {
+const ProfileMentions = ({ className, userProfile, count }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
@@ -61,7 +61,6 @@ const ProfileMentions = ({ className, userProfile, setTotalMentions }: Props) =>
 	const [userMentions, setUserMentions] = useState<IProfileMentions[]>([]);
 	const [checkedAddressesList, setCheckedAddressesList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [page, setPage] = useState<number>(1);
-	const [count, setCount] = useState<number>(0);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const getData = async () => {
@@ -73,8 +72,6 @@ const ProfileMentions = ({ className, userProfile, setTotalMentions }: Props) =>
 		});
 		if (data) {
 			setUserMentions(data?.data);
-			setCount(data?.totalCount || 0);
-			setTotalMentions(data?.totalCount || 0);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);

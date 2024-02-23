@@ -24,7 +24,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
-	setTotalActivities: (pre: number) => void;
+	count: number;
 }
 
 export enum EUserActivityType {
@@ -55,7 +55,7 @@ export interface IUserActivityTypes {
 	commentId: string;
 }
 
-const ProfileUserActivity = ({ className, userProfile, setTotalActivities }: Props) => {
+const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
@@ -63,7 +63,6 @@ const ProfileUserActivity = ({ className, userProfile, setTotalActivities }: Pro
 	const [userActivities, setUserActivities] = useState<IUserActivityTypes[]>([]);
 	const [checkedAddressesList, setCheckedAddressesList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [page, setPage] = useState<number>(1);
-	const [count, setCount] = useState<number>(0);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const getData = async () => {
@@ -75,8 +74,6 @@ const ProfileUserActivity = ({ className, userProfile, setTotalActivities }: Pro
 		});
 		if (data) {
 			setUserActivities(data?.data);
-			setCount(data?.totalCount || 0);
-			setTotalActivities(data?.totalCount || 0);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);

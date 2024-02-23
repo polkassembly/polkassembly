@@ -60,9 +60,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		.offset((Number(page) - 1) * LISTING_LIMIT)
 		.get();
 
-	const totalCountSnapshot = await firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId).count().get();
-
-	const totalCount = totalCountSnapshot.data().count;
 	const activitiesDocs = activitiesSnapshot.docs;
 
 	const refs: any = {};
@@ -264,6 +261,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt), totalCount });
+	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt) });
 };
 export default withErrorHandling(handler);

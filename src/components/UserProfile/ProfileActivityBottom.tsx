@@ -19,7 +19,7 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 				<Link
 					href={`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}`}
 					target='_blank'
-					className='text-sm font-semibold'
+					className='text-sm font-medium'
 				>
 					#{activity?.postId} {activity?.postTitle.length > 95 ? `${activity?.postTitle?.slice(0, 95)}...` : activity?.postTitle}
 				</Link>

@@ -13,7 +13,7 @@ import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wa
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import { BrowserProvider, Contract } from 'ethers';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -297,11 +297,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
+		const gasPrice = await voteContract.standard_vote.estimateGas(referendumId, aye, lockedBalance.toString(), conviction);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		await voteContract
-			.standard_vote(referendumId, aye, lockedBalance.toString(), conviction)
+			.standard_vote(referendumId, aye, lockedBalance.toString(), conviction, {
+				gasLimit
+			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress' });
 				setLastVote({

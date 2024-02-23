@@ -38,6 +38,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
+import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
 import ProxyAccountSelectionForm from './ProxyAccountSelectionForm';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
@@ -302,6 +303,7 @@ const AddressConnectModal = ({
 		if (!address || !wallet || !accounts) return;
 		if (linkAddressNeeded && isUnlinkedAddress) {
 			handleAddressLink(address, wallet as Wallet);
+			dispatch(setConnectAddress(address));
 		} else {
 			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
@@ -317,6 +319,7 @@ const AddressConnectModal = ({
 			}
 			setOpen(false);
 			setLoading(false);
+			dispatch(setConnectAddress(address));
 		}
 	};
 
@@ -351,6 +354,7 @@ const AddressConnectModal = ({
 		}
 		const availableBalance = new BN(balanceStr);
 		setAvailableBalance(availableBalance);
+		dispatch(setInitialAvailableBalance(availableBalance));
 	};
 
 	useEffect(() => {

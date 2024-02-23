@@ -29,7 +29,7 @@ import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType'
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import classNames from 'classnames';
 import { useApiContext } from '~src/context';
-import { BrowserProvider, Contract } from 'ethers';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { IStats } from '~src/components/UserProfile';
@@ -37,6 +37,7 @@ import { DownArrowIcon, ExpandIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, V
 import { isSubscanSupport } from '~src/util/subscanCheck';
 import SelectGovType from '~src/components/UserProfile/SelectGovType';
 import { Pagination } from './Pagination';
+import { BN } from 'bn.js';
 
 interface Props {
 	className?: string;
@@ -235,8 +236,17 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 				return;
 			}
 			const contract = new Contract(contractAddress, abi, await web3.getSigner());
+
+			const gasPrice = await contract.removeVote.estimateGas(postIndex);
+			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+			// increase gas by 15%
+			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 			await contract
-				.removeVote(postIndex)
+				.removeVote(postIndex, {
+					gasLimit
+				})
 				.then((result: any) => {
 					console.log(result);
 					onSuccess();

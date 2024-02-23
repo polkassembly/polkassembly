@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
-import styled from 'styled-components';
 import HelperTooltip from './HelperTooltip';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 
@@ -43,7 +42,7 @@ const AccountSelectionForm = ({
 	className,
 	isBalanceUpdated,
 	isDisabled,
-	inputClassName,
+	inputClassName = 'rounded-[4px] px-3 py-1',
 	isSwitchButton,
 	setSwitchModalOpen,
 	withoutInfo,
@@ -88,7 +87,7 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={`${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9]' : ''}`}
+				className={`border-solid border-[#D2D8E0] dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] bg-[#f6f7f9] dark:bg-transparent' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
@@ -98,8 +97,4 @@ const AccountSelectionForm = ({
 		</article>
 	);
 };
-export default styled(AccountSelectionForm)`
-	.ant-dropdown-trigger {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
-	}
-`;
+export default AccountSelectionForm;

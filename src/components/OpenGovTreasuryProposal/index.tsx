@@ -314,7 +314,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						alt='Create Treasury Proposal icon'
 						className='-mt-[2px]'
 					/>
-					<span className='text-sm font-medium text-white'>Create Treasury Proposal</span>
+					<span className='hidden text-sm font-medium text-white sm:flex'>Create Treasury Proposal</span>
 				</div>
 			) : (
 				<div

@@ -9,6 +9,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { Card } from 'antd';
+import styled from 'styled-components';
 
 interface ITimeSplitProps {
 	className?: string;
@@ -119,4 +120,8 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 	);
 };
 
-export default TimeSplit;
+export default styled(TimeSplit)`
+	g[transform='translate(0,0)'] g:nth-child(even) {
+		display: none !important;
+	}
+`;

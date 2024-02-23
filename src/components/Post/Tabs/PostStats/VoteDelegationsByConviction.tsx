@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { FC } from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
@@ -9,10 +9,20 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import { Card } from 'antd';
+import styled from 'styled-components';
 
 const ZERO = new BN(0);
+interface IVoteDelegationProps {
+	votesByDelegation: any[];
+}
 
-const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation: any[] }) => {
+const StyledCard = styled(Card)`
+	g[transform='translate(0,0)'] g:nth-child(even) {
+		display: none !important;
+	}
+`;
+
+const VoteDelegationsByConviction: FC<IVoteDelegationProps> = ({ votesByDelegation }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 
@@ -40,7 +50,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 	});
 
 	return (
-		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
@@ -150,7 +160,7 @@ const VoteDelegationsByConviction = ({ votesByDelegation }: { votesByDelegation:
 					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
 				/>
 			</div>
-		</Card>
+		</StyledCard>
 	);
 };
 

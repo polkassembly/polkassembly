@@ -17,13 +17,17 @@ interface IImageComponentProps {
 const ImageComponent: FC<IImageComponentProps> = (props) => {
 	const { alt, className, src = '', iconClassName } = props;
 	const [isValid, setIsValid] = useState(false);
-	const regex = /\.(jpg|jpeg|png|gif|bmp|svg|tiff|ico)$/;
 
 	useEffect(() => {
-		if (!regex.test(src)) return;
 		(async () => {
-			const res = await fetch(src);
-			setIsValid(res.ok);
+			try {
+				const obj = new Image();
+				obj.src = src || '';
+				obj.onload = () => setIsValid(true);
+				obj.onerror = () => setIsValid(false);
+			} catch (err) {
+				console.log(err);
+			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -35,10 +39,10 @@ const ImageComponent: FC<IImageComponentProps> = (props) => {
 			alt={alt}
 			icon={
 				<span className={iconClassName}>
-					{/* <DefaultProfile /> */}
 					<ImageIcon
 						src='/assets/icons/dashboard-profile.svg'
 						alt='dashboard profile icon'
+						imgClassName='h-full w-full'
 					/>
 				</span>
 			}

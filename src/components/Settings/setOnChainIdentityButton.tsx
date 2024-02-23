@@ -10,7 +10,7 @@ import type { Data, Option } from '@polkadot/types';
 import type { Registration } from '@polkadot/types/interfaces';
 import { u8aToString } from '@polkadot/util';
 import { checkAddress } from '@polkadot/util-crypto';
-import { Form, Input, Modal } from 'antd';
+import { Form, Modal } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import Card from '~src/basic-components/Cards/Card';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;

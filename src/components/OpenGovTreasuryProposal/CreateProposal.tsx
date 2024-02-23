@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Alert, Spin, message } from 'antd';
+import { Spin, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
@@ -30,6 +30,7 @@ import { trackEvent } from 'analytics';
 import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -262,14 +263,14 @@ const CreateProposal = ({
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
-						className={`mt-6 h-10 rounded-[4px] text-bodyBlue dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark ${poppins.variable} ${poppins.className}`}
+						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 						showIcon
 						message={<span className='text-[13px] dark:text-blue-dark-high'>Insufficient available balance.</span>}
 					/>
 				)}
 				<Alert
 					message={<span className='text-[13px] dark:text-blue-dark-high'>Preimage {isPreimage ? 'linked' : 'created'} successfully</span>}
-					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
+					className={`mt-4 rounded-[4px] text-sm text-bodyBlue dark:text-blue-dark-high ${poppins.variable} ${poppins.className}`}
 					type='success'
 					showIcon
 				/>
@@ -356,7 +357,7 @@ const CreateProposal = ({
 				</div>
 				{showAlert && (
 					<Alert
-						className='mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='mt-6 rounded-[4px] text-bodyBlue'
 						showIcon
 						type='info'
 						message={

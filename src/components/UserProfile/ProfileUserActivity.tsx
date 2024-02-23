@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { CommentsIcon, DownArrowIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Empty, Popover, Spin } from 'antd';
+import { Checkbox, Divider, Empty, Popover, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { poppins } from 'pages/_app';
@@ -24,6 +24,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
+	setTotalActivities: (pre: number) => void;
 }
 
 export enum EUserActivityType {
@@ -54,7 +55,7 @@ export interface IUserActivityTypes {
 	commentId: string;
 }
 
-const ProfileUserActivity = ({ className, userProfile }: Props) => {
+const ProfileUserActivity = ({ className, userProfile, setTotalActivities }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
@@ -75,6 +76,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 		if (data) {
 			setUserActivities(data?.data);
 			setCount(data?.totalCount || 0);
+			setTotalActivities(data?.totalCount || 0);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -123,7 +125,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -153,7 +155,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex  flex-col gap-6'>
+				<div className='mt-2 flex flex-col pb-10'>
 					{userActivities?.length
 						? userActivities.map((activity, index) => {
 								return (
@@ -163,12 +165,12 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 												<ImageComponent
 													alt='profile img'
 													src={userProfile.image}
-													className='flex h-[40px] w-[40px] items-center justify-center'
+													className='flex h-10 w-10 items-center justify-center'
 												/>
-												<div className='flex  flex-col gap-1'>
+												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
-														<span className='text-xs  text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
+														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
 														<div className='flex gap-2'>
 															{!!activity?.mentions &&
 																activity?.mentions?.map((username, index) => (
@@ -190,7 +192,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 											</div>
 										)}
 										{activity.type === EUserActivityType.REACTED && (
-											<div className='flex  items-start gap-5'>
+											<div className='flex items-start gap-5'>
 												<span
 													className={`flex rounded-full border-[1px] border-solid p-3 ${activity.reaction == '👍' ? 'border-pink_primary bg-pink_primary' : 'border-[#FF3C5F]'} `}
 												>
@@ -204,7 +206,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 														</>
 													)}
 												</span>
-												<div className='flex  flex-col gap-1'>
+												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
@@ -228,7 +230,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 												<span className={'flex rounded-full border-[1px] border-solid border-pink_primary p-3'}>
 													<CommentsIcon className='text-pink_primary' />
 												</span>
-												<div className='flex  flex-col gap-1'>
+												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
@@ -237,6 +239,14 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 													</div>
 													<ActivityBottomContent activity={activity} />
 												</div>
+											</div>
+										)}
+										{userActivities.length - 1 !== index && (
+											<div className='-mx-6'>
+												<Divider
+													type='horizontal'
+													className='bg-[#D2D8E0B2] dark:bg-separatorDark'
+												/>
 											</div>
 										)}
 									</div>

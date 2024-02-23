@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -15,6 +14,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { checkIsProposer } from './utils/checkIsProposer';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { editReplyActivity } from '../../utils/create-activity';
+import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -24,7 +25,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, replyId } = req.body;
+	const { userId, commentId, content, postId, postType, replyId, postAuthorUsername, commentAuthorId } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -58,6 +59,12 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		network
 	);
 	if (!isAuthor && user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
+	let postAuthorId: number = 0;
+
+	const { data } = await getUserProfileWithUsername(postAuthorUsername);
+	if (data) {
+		postAuthorId = data?.user_id;
+	}
 
 	replyRef
 		.update({
@@ -65,12 +72,13 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			isDeleted: false,
 			updated_at: last_comment_at
 		})
-		.then(() => {
+		.then(async () => {
 			postRef
 				.update({
 					last_comment_at
 				})
 				.then(() => {});
+			await editReplyActivity({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, replyAuthorId: userId, replyId, userId });
 			return res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {

@@ -63,52 +63,50 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const totalCount = totalCountSnapshot.data().count;
 	const activitiesDocs = activitiesSnapshot.docs;
 
-	const refs = [];
-	const userRefs = [];
+	const refs: any = {};
+	const userRefs: any = {};
 	const data = [];
 
 	for (const activity of activitiesDocs) {
 		const activityData = activity?.data() as IUserActivity;
 		const postDocRef = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
-		refs.push(postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id)));
+		refs[activityData.post_id] = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
 		if (activityData?.comment_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)));
+			refs[activityData.comment_id] = postDocRef.collection('comments').doc(String(activityData.comment_id));
 		}
 		if (activityData.reply_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id));
+			refs[activityData.reply_id] = postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id);
 		}
 		if (activityData?.reaction_id && !activityData?.comment_id && !activityData?.reply_id) {
-			refs.push(postDocRef.collection('post_reactions').doc(String(activityData.reaction_id)));
+			refs[activityData.reaction_id] = postDocRef.collection('post_reactions').doc(String(activityData.reaction_id));
 		}
 		if (activityData?.reaction_id && activityData?.comment_id && !activityData?.reply_id) {
-			refs.push(
-				postDocRef
-					.collection('comments')
-					.doc(String(activityData.comment_id))
-					.collection('comment_reactions')
-					.doc(activityData?.reaction_id)
-			);
+			refs[activityData.reaction_id] = postDocRef
+				.collection('comments')
+				.doc(String(activityData.comment_id))
+				.collection('comment_reactions')
+				.doc(activityData?.reaction_id);
 		}
 		if (activityData?.reaction_id && activityData?.comment_id && activityData?.reply_id) {
-			refs.push(
-				postDocRef
-					.collection('comments')
-					.doc(String(activityData.comment_id))
-					.collection('replies')
-					.doc(activityData?.reply_id)
-					.collection('reply_reactions')
-					.doc(activityData?.reaction_id)
-			);
-			userRefs.push(firestore_db.collection('users').doc(String(activityData?.by)));
+			refs[activityData.reaction_id] = postDocRef
+				.collection('comments')
+				.doc(String(activityData.comment_id))
+				.collection('replies')
+				.doc(activityData?.reply_id)
+				.collection('reply_reactions')
+				.doc(activityData?.reaction_id);
 		}
+		userRefs[activityData?.by] = firestore_db.collection('users').doc(String(activityData?.by));
 	}
 	let results: any[] = [];
 	let usersResult: any[] = [];
-	if (refs.length) {
-		results = await firestore_db.getAll(...refs);
+	if (Object.keys(refs)?.length) {
+		const values: any = Object.entries(refs).map(([, value]) => value);
+		results = await firestore_db.getAll(...values);
 	}
-	if (usersResult.length) {
-		usersResult = await firestore_db.getAll(...userRefs);
+	if (Object.keys(userRefs)?.length) {
+		const values: any = Object.entries(userRefs).map(([, value]) => value);
+		usersResult = await firestore_db.getAll(...values);
 	}
 	const postReplyCommentData: any = {};
 	results.map((result) => {
@@ -149,7 +147,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					? postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate()
 					: postReplyCommentData[activityData?.reaction_id]?.created_at,
 				postId: activityData.post_id,
-				postTitle: postReplyCommentData[activityData.comment_id]?.title || noTitle,
+				postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 				postType: activityData.post_type,
 				reaction: postReplyCommentData[activityData?.reaction_id]?.reaction || null,
 				type: activityData?.type
@@ -171,7 +169,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				type: activityData?.type
 			});
 		}
-		console.log(activityData);
 	}
 
 	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt), totalCount });

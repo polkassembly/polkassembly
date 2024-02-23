@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { DownArrowIcon, ProfileReactionsIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Empty, Popover, Spin } from 'antd';
+import { Checkbox, Divider, Empty, Popover, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { poppins } from 'pages/_app';
@@ -23,6 +23,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
+	setTotalReactions: (pre: number) => void;
 }
 
 export enum EUserActivityType {
@@ -53,13 +54,13 @@ export interface IProfileReactions {
 	commentId: string;
 }
 
-const ProfileReactions = ({ className, userProfile }: Props) => {
+const ProfileReactions = ({ className, userProfile, setTotalReactions }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const { id: userId } = useUserDetailsSelector();
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
-	const [userActivities, setUserActivities] = useState<IProfileReactions[]>([]);
+	const [userReactions, setUserReactions] = useState<IProfileReactions[]>([]);
 	const [checkedAddressesList, setCheckedAddressesList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [page, setPage] = useState<number>(1);
 	const [count, setCount] = useState<number>(0);
@@ -73,9 +74,9 @@ const ProfileReactions = ({ className, userProfile }: Props) => {
 			userId: user_id
 		});
 		if (data) {
-			setUserActivities(data?.data);
+			setUserReactions(data?.data);
 			setCount(data?.totalCount || 0);
-			console.log(data);
+			setTotalReactions(data?.totalCount || 0);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -124,7 +125,7 @@ const ProfileReactions = ({ className, userProfile }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -153,9 +154,9 @@ const ProfileReactions = ({ className, userProfile }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex  flex-col gap-6'>
-					{userActivities.length
-						? userActivities.map((activity, index) => {
+				<div className='mt-2 flex flex-col pb-10'>
+					{userReactions.length
+						? userReactions.map((activity, index) => {
 								return (
 									<div key={index}>
 										{activity.type === EUserActivityType.REACTED && (
@@ -173,7 +174,7 @@ const ProfileReactions = ({ className, userProfile }: Props) => {
 														</>
 													)}
 												</span>
-												<div className='flex  flex-col gap-1'>
+												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{activity.author}</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
@@ -193,6 +194,14 @@ const ProfileReactions = ({ className, userProfile }: Props) => {
 													</div>
 													<ActivityBottomContent activity={activity} />
 												</div>
+											</div>
+										)}
+										{userReactions.length - 1 !== index && (
+											<div className='-mx-6'>
+												<Divider
+													type='horizontal'
+													className='bg-[#D2D8E0B2] dark:bg-separatorDark'
+												/>
 											</div>
 										)}
 									</div>

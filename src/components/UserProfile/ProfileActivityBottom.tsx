@@ -14,17 +14,24 @@ import { IProfileReactions } from './ProfileReactions';
 
 const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IProfileMentions | IProfileReactions }) => {
 	return (
-		<div className='flex  flex-col gap-3'>
-			<Link
-				href={`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}`}
-				target='_blank'
-				className='text-sm font-medium'
-			>
-				{activity?.postTitle}
-			</Link>
-			<div className='bg-mainBg -mt-1 items-center rounded-md border-0 border-l-[1.5px] border-solid border-pink_primary px-4 pb-0.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
+		<div className='flex flex-col gap-3 pr-6'>
+			<div className='flex justify-between max-md:flex-col'>
+				<Link
+					href={`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}`}
+					target='_blank'
+					className='text-sm font-semibold'
+				>
+					#{activity?.postId} {activity?.postTitle.length > 95 ? `${activity?.postTitle?.slice(0, 95)}...` : activity?.postTitle}
+				</Link>
+				<span className='flex flex-shrink-0 items-start gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
+					<ClockCircleOutlined />
+					{getRelativeCreatedAt(activity?.createdAt)}
+				</span>
+			</div>
+			<div className='-mt-1 w-full items-center rounded-sm border-0 border-l-[1.5px] border-solid border-pink_primary bg-[#FAFAFC] px-4 pb-0.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
 				<Markdown
 					md={activity?.content?.length > 200 ? `${activity?.content?.slice(1, 200)}...` : activity?.content}
+					className='text-lightBlue dark:text-blue-dark-medium'
 					imgHidden
 				/>
 			</div>
@@ -38,10 +45,6 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 					size='small'
 				/>
 			)}
-			<span className='flex items-center gap-1 text-xs'>
-				<ClockCircleOutlined />
-				{getRelativeCreatedAt(activity?.createdAt)}
-			</span>
 		</div>
 	);
 };

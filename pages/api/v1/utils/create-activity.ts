@@ -58,6 +58,19 @@ interface IReaction {
 	replyId?: string;
 }
 
+interface IReply {
+	userId: number;
+	commentId: string;
+	replyId: string;
+	replyAuthorId: number;
+	commentAuthorId: number;
+	network: string;
+	postId: number | string;
+	postType: ProposalType;
+	content: any;
+	postAuthorId: number;
+}
+
 const getMentionsUserIds = async (content: any) => {
 	const htmlCheck = /<[^>]+>/;
 	const regex = /\[@([^\]]+)\]/g;
@@ -319,6 +332,8 @@ const editCommentActivity = async ({ commentAuthorId, commentId, content, networ
 	} else {
 		const oldActivitiesRefs = await firestore_db
 			.collection('user_activities')
+			.where('network', '==', network)
+			.where('by', '==', userId)
 			.where('comment_id', '==', commentId)
 			.where('type', '==', EUserActivityType.MENTIONED)
 			.where('comment_author_id', '==', userId)
@@ -341,18 +356,6 @@ const editCommentActivity = async ({ commentAuthorId, commentId, content, networ
 				type: EUserActivityType.MENTIONED
 			});
 		}
-
-		payloads.push({
-			by: userId || null,
-			comment_author_id: userId || null,
-			comment_id: commentId || null,
-			network,
-			post_author_id: postAuthorId || null,
-			post_id: postId || null,
-			post_type: postType as ProposalType,
-			type: EUserActivityType.COMMENTED
-		});
-
 		if (payloads?.length) {
 			for (const payload of payloads) {
 				const activityRef = firestore_db.collection('user_activities').doc();
@@ -373,26 +376,17 @@ const editCommentActivity = async ({ commentAuthorId, commentId, content, networ
 		}
 	}
 };
-const editReplyActivity = async (
-	userId: number,
-	commentId: string,
-	replyId: string,
-	replyAuthorId: number,
-	commentAuthorId: number,
-	network: string,
-	postId: number | string,
-	postType: ProposalType,
-	content: any,
-	postAuthorId: number
-) => {
+const editReplyActivity = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, replyAuthorId, replyId, userId }: IReply) => {
 	if (isNaN(postAuthorId) || !content || !commentId || isNaN(commentAuthorId) || !postId || !network || isNaN(userId) || !replyId || isNaN(replyAuthorId)) {
 		console.log(messages.INVALID_PARAMS);
 	} else {
 		const oldActivitiesRefs = await firestore_db
 			.collection('user_activities')
+			.where('network', '==', network)
 			.where('reply_id', '==', replyId)
 			.where('type', '==', EUserActivityType.MENTIONED)
-			.where('reply_author_id', '==', replyAuthorId)
+			.where('reply_author_id', '==', userId)
+			.where('by', '==', userId)
 			.get();
 
 		const batch = firestore_db.batch();
@@ -414,19 +408,6 @@ const editReplyActivity = async (
 				type: EUserActivityType.MENTIONED
 			});
 		}
-
-		payloads.push({
-			by: userId || null,
-			comment_author_id: commentAuthorId || null,
-			comment_id: commentId || null,
-			network,
-			post_author_id: postAuthorId || null,
-			post_id: postId || null,
-			post_type: postType as ProposalType,
-			reply_author_id: replyAuthorId,
-			reply_id: replyId || null,
-			type: EUserActivityType.REPLIED
-		});
 
 		if (payloads?.length) {
 			for (const payload of payloads) {
@@ -474,10 +455,10 @@ const createReactionsActivity = async ({
 			type: EUserActivityType.REACTED
 		};
 		if (commentAuthorId && commentId) {
-			activityPayload = { ...activityPayload, commentAuthorId: commentAuthorId || null, commentId: commentId };
+			activityPayload = { ...activityPayload, comment_author_id: commentAuthorId || null, comment_id: commentId };
 		}
 		if (replyAuthorId && replyId && commentAuthorId && commentId) {
-			activityPayload = { ...activityPayload, replyAuthorId: replyAuthorId, replyId: replyId };
+			activityPayload = { ...activityPayload, reply_author_id: replyAuthorId, reply_id: replyId };
 		}
 		const ref = firestore_db.collection('user_activities').doc();
 		try {

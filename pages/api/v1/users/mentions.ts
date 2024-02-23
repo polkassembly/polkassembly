@@ -63,30 +63,32 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const totalCount = totalCountSnapshot.data().count;
 	const activitiesDocs = activitiesSnapshot.docs;
 
-	const refs = [];
-	const userRefs = [];
+	const refs: any = {};
+	const userRefs: any = {};
 	const data = [];
 
 	for (const activity of activitiesDocs) {
 		const activityData = activity?.data() as IUserActivity;
 		const postDocRef = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
-		refs.push(postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id)));
+		refs[activityData?.post_id] = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
 		if (activityData?.comment_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)));
+			refs[activityData.comment_id] = postDocRef.collection('comments').doc(String(activityData.comment_id));
 		}
 		if (activityData.reply_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id));
+			refs[activityData.reply_id] = postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id);
 		}
-		userRefs.push(firestore_db.collection('users').doc(String(activityData?.by)));
+		userRefs[activityData?.by] = firestore_db.collection('users').doc(String(activityData?.by));
 	}
 
 	let results: any[] = [];
 	let userResults: any[] = [];
-	if (results?.length) {
-		results = await firestore_db.getAll(...refs);
+	if (Object.keys(refs)?.length) {
+		const values: any = Object.entries(refs).map(([, value]) => value);
+		results = await firestore_db.getAll(...values);
 	}
-	if (userResults?.length) {
-		userResults = await firestore_db.getAll(...userRefs);
+	if (Object.keys(userRefs)?.length) {
+		const values: any = Object.entries(userRefs).map(([, value]) => value);
+		userResults = await firestore_db.getAll(...values);
 	}
 	const postReplyCommentData: any = {};
 	const usersData: any = {};

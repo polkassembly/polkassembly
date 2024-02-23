@@ -53,6 +53,12 @@ const ProfileTabs = ({
 		posts: 0,
 		votes: 0
 	});
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [totalMentions, setTotalMentions] = useState(0);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [totalReactions, setTotalReactions] = useState(0);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [totalActivities, setTotalActivities] = useState(0);
 	const { id: userId } = useUserDetailsSelector();
 
 	useEffect(() => {
@@ -114,6 +120,7 @@ const ProfileTabs = ({
 		{
 			children: (
 				<ProfileReactions
+					setTotalReactions={setTotalReactions}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -123,12 +130,14 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Reactions
+					{/* <span className='ml-[2px]'>({totalReactions})</span> */}
 				</div>
 			)
 		},
 		{
 			children: (
 				<ProfileMentions
+					setTotalMentions={setTotalMentions}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -138,6 +147,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
+					{/* <span className='ml-[2px]'>({totalMentions})</span> */}
 				</div>
 			)
 		}
@@ -166,6 +176,7 @@ const ProfileTabs = ({
 		tabItems.splice(3, 0, {
 			children: (
 				<ProfileUserActivity
+					setTotalActivities={setTotalActivities}
 					userProfile={userProfile}
 					addressWithIdentity={addressWithIdentity}
 				/>
@@ -175,6 +186,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
 					My Activity
+					{/* <span className='ml-[2px]'>({totalActivities})</span> */}
 				</div>
 			)
 		});

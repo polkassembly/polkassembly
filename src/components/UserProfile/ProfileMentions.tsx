@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { DownArrowIcon, ProfileMentionsIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Empty, Popover, Spin } from 'antd';
+import { Checkbox, Divider, Empty, Popover, Spin } from 'antd';
 import Address from '~src/ui-components/Address';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { poppins } from 'pages/_app';
@@ -24,6 +24,7 @@ interface Props {
 	theme?: string;
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
+	setTotalMentions: (pre: number) => void;
 }
 
 export enum EUserActivityType {
@@ -51,7 +52,7 @@ export interface IProfileMentions {
 	activityIn: EUserActivityIn;
 	commentId: string;
 }
-const ProfileMentions = ({ className, userProfile }: Props) => {
+const ProfileMentions = ({ className, userProfile, setTotalMentions }: Props) => {
 	const { network } = useNetworkSelector();
 	const { addresses, user_id } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
@@ -73,6 +74,7 @@ const ProfileMentions = ({ className, userProfile }: Props) => {
 		if (data) {
 			setUserMentions(data?.data);
 			setCount(data?.totalCount || 0);
+			setTotalMentions(data?.totalCount || 0);
 			setLoading(false);
 		} else if (error) {
 			console.log(error);
@@ -121,7 +123,7 @@ const ProfileMentions = ({ className, userProfile }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -151,7 +153,7 @@ const ProfileMentions = ({ className, userProfile }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='flex  flex-col gap-6'>
+				<div className='mt-2 flex flex-col pb-10'>
 					{userMentions.length
 						? userMentions.map((activity, index) => {
 								return (
@@ -163,7 +165,7 @@ const ProfileMentions = ({ className, userProfile }: Props) => {
 													src={userProfile.image}
 													className='flex h-[40px] w-[40px] items-center justify-center'
 												/>
-												<div className='flex  flex-col gap-1'>
+												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
 														<Link
 															key={activity?.by}
@@ -179,6 +181,14 @@ const ProfileMentions = ({ className, userProfile }: Props) => {
 													</div>
 													<ActivityBottomContent activity={activity} />
 												</div>
+											</div>
+										)}
+										{userMentions.length - 1 !== index && (
+											<div className='-mx-6'>
+												<Divider
+													type='horizontal'
+													className='bg-[#D2D8E0B2] dark:bg-separatorDark'
+												/>
 											</div>
 										)}
 									</div>

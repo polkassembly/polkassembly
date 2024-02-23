@@ -188,8 +188,10 @@ const EditableReplyContent = ({
 		setIsEditing(false);
 
 		const { data, error: editReplyError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editCommentReply', {
+			commentAuthorId: comment?.user_id,
 			commentId,
 			content: newContent,
+			postAuthorUsername: postAuthorUsername || '',
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			replyId,

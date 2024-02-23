@@ -65,53 +65,52 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const totalCount = totalCountSnapshot.data().count;
 	const activitiesDocs = activitiesSnapshot.docs;
 
-	const refs = [];
+	const refs: any = {};
 	const data = [];
 
 	for (const activity of activitiesDocs) {
 		const activityData = activity?.data() as IUserActivity;
+
 		const postDocRef = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
-		refs.push(postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id)));
+		refs[activityData?.post_id] = postsByTypeRef(network, activityData.post_type).doc(String(activityData?.post_id));
 		if (activityData?.comment_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)));
+			refs[activityData?.comment_id] = postDocRef.collection('comments').doc(String(activityData.comment_id));
 		}
 		if (activityData.reply_id) {
-			refs.push(postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id));
+			refs[activityData?.reply_id] = postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('replies').doc(activityData.reply_id);
 		}
-		if (activityData?.reaction_id && !activityData?.comment_id && !activityData?.reply_id) {
-			refs.push(postDocRef.collection('post_reactions').doc(String(activityData.reaction_id)));
-		}
-		if (activityData?.reaction_id && activityData?.comment_id && !activityData?.reply_id) {
-			refs.push(
-				postDocRef
+		if (activityData?.type === EUserActivityType.REACTED) {
+			if (activityData?.reaction_id?.length && !activityData?.comment_id?.length && !activityData?.reply_id?.length) {
+				refs[activityData?.reaction_id] = postDocRef.collection('post_reactions').doc(String(activityData.reaction_id));
+			}
+			if (activityData?.reaction_id?.length && activityData?.comment_id?.length && !activityData?.reply_id?.length) {
+				refs[activityData?.reaction_id] = postDocRef
 					.collection('comments')
 					.doc(String(activityData.comment_id))
 					.collection('comment_reactions')
-					.doc(activityData?.reaction_id)
-			);
-		}
-		if (activityData?.reaction_id && activityData?.comment_id && activityData?.reply_id) {
-			console.log(activityData);
-			refs.push(
-				postDocRef
+					.doc(activityData?.reaction_id);
+			}
+			if (activityData?.reaction_id?.length && activityData?.comment_id?.length && activityData?.reply_id?.length) {
+				refs[activityData?.reaction_id] = postDocRef
 					.collection('comments')
 					.doc(String(activityData.comment_id))
 					.collection('replies')
 					.doc(activityData?.reply_id)
 					.collection('reply_reactions')
-					.doc(activityData?.reaction_id)
-			);
+					.doc(activityData?.reaction_id);
+			}
 		}
 	}
 	let results: any[] = [];
-	if (results?.length) {
-		results = await firestore_db?.getAll(...refs);
+	if (Object.keys(refs)?.length) {
+		const values: any = Object.entries(refs).map(([, value]) => value);
+		results = await firestore_db?.getAll(...values);
 	}
-	const values: any = {};
+	const postReplyCommentData: any = {};
 	results.map((result) => {
 		if (result.exists) {
 			const data = result.data();
-			values[data?.id] = data;
+			postReplyCommentData[data?.id] = data;
 		}
 	});
 
@@ -121,45 +120,44 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			if (!activityData?.comment_id && !activityData.reply_id && activityData?.post_id && activityData.reaction_id && activityData?.post_author_id) {
 				data.push({
 					activityIn: EUserActivityIn.POST,
-					content: values[activityData?.post_id]?.content || '',
-					createdAt: values[activityData?.reaction_id]?.created_at?.toDate
-						? values[activityData?.reaction_id]?.created_at?.toDate()
-						: values[activityData?.reaction_id]?.created_at,
+					content: postReplyCommentData[activityData?.post_id]?.content || '',
+					createdAt: postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.reaction_id]?.created_at,
 					postId: activityData.post_id,
-					postTitle: values[activityData?.post_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 					postType: activityData.post_type,
-					reaction: values[activityData?.reaction_id].reaction,
+					reaction: postReplyCommentData[activityData?.reaction_id]?.reaction,
 					type: activityData?.type
 				});
 			}
-			if (!activityData?.reply_id && activityData.reaction_id && activityData?.comment_id && activityData.reaction_id && activityData.comment_author_id) {
+			if (!activityData?.reply_id && activityData.reaction_id && activityData?.comment_id) {
 				data.push({
 					activityIn: EUserActivityIn.COMMENT,
 					commentId: activityData?.comment_id,
-					content: values[activityData.comment_id].content || '',
-					createdAt: values[activityData?.reaction_id]?.created_at?.toDate
-						? values[activityData?.reaction_id]?.created_at?.toDate()
-						: values[activityData?.reaction_id]?.created_at,
+					content: postReplyCommentData[activityData.comment_id].content || '',
+					createdAt: postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.reaction_id]?.created_at,
 					postId: activityData.post_id,
-					postTitle: values[activityData.comment_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData.comment_id]?.title || noTitle,
 					postType: activityData.post_type,
-					reaction: values[activityData?.reaction_id]?.reaction,
+					reaction: postReplyCommentData[activityData?.reaction_id]?.reaction,
 					type: activityData?.type
 				});
 			}
-			if (activityData?.reply_id && activityData?.comment_id && activityData.reaction_id && activityData.reply_author_id) {
-				console.log(values[activityData?.reply_id]);
+			if (activityData?.reply_id && activityData?.comment_id && activityData.reaction_id) {
 				data.push({
 					activityIn: EUserActivityIn.REPLY,
 					commentId: activityData?.comment_id,
-					content: values[activityData?.reply_id]?.content || '',
-					createdAt: values[activityData?.reaction_id]?.created_at?.toDate
-						? values[activityData?.reaction_id]?.created_at?.toDate()
-						: values[activityData?.reaction_id]?.created_at,
+					content: postReplyCommentData[activityData?.reply_id]?.content || '',
+					createdAt: postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.reaction_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.reaction_id]?.created_at,
 					postId: activityData.post_id,
-					postTitle: values[activityData.post_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData.post_id]?.title || noTitle,
 					postType: activityData.post_type,
-					reaction: values[activityData?.reaction_id]?.reaction,
+					reaction: postReplyCommentData[activityData?.reaction_id]?.reaction,
 					type: activityData?.type
 				});
 			}
@@ -175,11 +173,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 				data.push({
 					activityIn: EUserActivityIn.POST,
-					content: values[activityData?.post_id]?.content,
-					createdAt: values[activityData?.post_id]?.created_at?.toDate ? values[activityData?.post_id]?.created_at?.toDate() : values[activityData?.post_id]?.created_at,
+					content: postReplyCommentData[activityData?.post_id]?.content,
+					createdAt: postReplyCommentData[activityData?.post_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.post_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.post_id]?.created_at,
 					mentions,
 					postId: activityData.post_id,
-					postTitle: values[activityData?.post_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 					postType: activityData.post_type,
 					type: activityData?.type
 				});
@@ -196,13 +196,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				data.push({
 					activityIn: EUserActivityIn.COMMENT,
 					commentId: activityData?.comment_id,
-					content: values[activityData?.comment_id]?.content || '',
-					createdAt: values[activityData?.comment_id]?.created_at?.toDate
-						? values[activityData?.comment_id]?.created_at?.toDate()
-						: values[activityData?.comment_id]?.created_at || null,
+					content: postReplyCommentData[activityData?.comment_id]?.content || '',
+					createdAt: postReplyCommentData[activityData?.comment_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.comment_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.comment_id]?.created_at || null,
 					mentions,
 					postId: activityData.post_id,
-					postTitle: values[activityData?.post_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 					postType: activityData.post_type,
 					type: activityData?.type
 				});
@@ -218,11 +218,13 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				data.push({
 					activityIn: EUserActivityIn.REPLY,
 					commentId: activityData?.comment_id,
-					content: values[activityData?.reply_id]?.content || '',
-					createdAt: values[activityData?.reply_id]?.created_at?.toDate ? values[activityData?.reply_id]?.created_at?.toDate() : values[activityData?.reply_id]?.created_at || null,
+					content: postReplyCommentData[activityData?.reply_id]?.content || '',
+					createdAt: postReplyCommentData[activityData?.reply_id]?.created_at?.toDate
+						? postReplyCommentData[activityData?.reply_id]?.created_at?.toDate()
+						: postReplyCommentData[activityData?.reply_id]?.created_at || null,
 					mentions,
 					postId: activityData.post_id,
-					postTitle: values[activityData?.post_id]?.title || noTitle,
+					postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 					postType: activityData.post_type,
 					type: activityData?.type
 				});
@@ -237,12 +239,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			data.push({
 				activityIn: EUserActivityIn.COMMENT,
 				commentId: activityData?.comment_id,
-				content: values[activityData?.comment_id]?.content || '',
-				createdAt: values[activityData?.comment_id]?.created_at?.toDate
-					? values[activityData?.comment_id]?.created_at?.toDate()
-					: values[activityData?.comment_id]?.created_at || null,
+				content: postReplyCommentData[activityData?.comment_id]?.content || '',
+				createdAt: postReplyCommentData[activityData?.comment_id]?.created_at?.toDate
+					? postReplyCommentData[activityData?.comment_id]?.created_at?.toDate()
+					: postReplyCommentData[activityData?.comment_id]?.created_at || null,
 				postId: activityData.post_id,
-				postTitle: values[activityData?.post_id]?.title || noTitle,
+				postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 				postType: activityData.post_type,
 				type: activityData?.type
 			});
@@ -250,10 +252,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			data.push({
 				activityIn: EUserActivityIn.REPLY,
 				commentId: activityData?.comment_id,
-				content: values[activityData?.reply_id]?.content || '',
-				createdAt: values[activityData?.reply_id]?.created_at?.toDate ? values[activityData?.reply_id]?.created_at?.toDate() : values[activityData?.reply_id]?.created_at || null,
+				content: postReplyCommentData[activityData?.reply_id]?.content || '',
+				createdAt: postReplyCommentData[activityData?.reply_id]?.created_at?.toDate
+					? postReplyCommentData[activityData?.reply_id]?.created_at?.toDate()
+					: postReplyCommentData[activityData?.reply_id]?.created_at || null,
 				postId: activityData.post_id,
-				postTitle: values[activityData?.post_id]?.title || noTitle,
+				postTitle: postReplyCommentData[activityData?.post_id]?.title || noTitle,
 				postType: activityData.post_type,
 				type: activityData?.type
 			});

@@ -12,6 +12,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
+import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
@@ -34,6 +35,7 @@ import { IComment } from './Comment';
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import Tooltip from '~src/basic-components/Tooltip';
+import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 
 interface Props {
 	userId: number;
@@ -666,7 +668,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 													reply.reply_source ? 'disabled-reply' : ''
 												}`}
 											>
-												<ReplyIcon className='mr-1' /> Reply
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 											</Button>
 										</Tooltip>
 									) : (
@@ -675,7 +677,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 												className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 												onClick={() => setIsReplying(!isReplying)}
 											>
-												<ReplyIcon className='mr-1' />
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
 												Reply
 											</Button>
 										)
@@ -703,7 +705,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
+								{theme === 'dark' ? (
+									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								) : (
+									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								)}
 							</Dropdown>
 						</div>
 						{isReplying && (

@@ -147,7 +147,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />
-				<span className='ml-1 '>Create Poll</span>
+				<span className='ml-1 font-normal'>Create Poll</span>
 			</CustomButton>
 
 			<Modal

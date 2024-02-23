@@ -683,20 +683,6 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 										)
 									)
 								) : null}
-								{reply.isReplyError && (
-									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<Caution className='icon-container relative top-[4px] text-2xl' />
-										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
-										<div
-											onClick={handleRetry}
-											className='retry-container relative flex w-[66px] cursor-pointer px-1'
-											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-										>
-											<IconRetry className='relative top-[3px] text-2xl' />
-											<span className='relative top-[3px] m-0 p-0'>Retry</span>
-										</div>
-									</div>
-								)}
 							</div>
 							<Dropdown
 								theme={theme}
@@ -711,6 +697,20 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
 								)}
 							</Dropdown>
+							{reply.isReplyError && (
+								<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+									<Caution className='icon-container relative top-[4px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+									<div
+										onClick={handleRetry}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+									>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+									</div>
+								</div>
+							)}
 						</div>
 						{isReplying && (
 							<Form

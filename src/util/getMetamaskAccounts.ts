@@ -19,7 +19,21 @@ const getMetamaskAccounts = async ({
 }: Props): Promise<{ accounts: InjectedAccountWithMeta[]; account: string; isTalismanEthereum: boolean } | undefined> => {
 	let isTalismanEthereum = true;
 
-	const ethereum = chosenWallet === Wallet.TALISMAN ? (window as any).talismanEth : chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).ethereum;
+	let ethereum;
+
+	switch (chosenWallet) {
+		case Wallet.TALISMAN:
+			ethereum = (window as any).talismanEth;
+			break;
+		case Wallet.SUBWALLET:
+			ethereum = (window as any).SubWallet;
+			break;
+		case Wallet.NOVAWALLET:
+			ethereum = (window as any).window.injectedWeb3;
+			break;
+		default:
+			ethereum = (window as any).ethereum;
+	}
 
 	if (!ethereum) {
 		return;

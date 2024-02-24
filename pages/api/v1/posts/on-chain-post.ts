@@ -39,6 +39,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -705,11 +706,14 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
-		if (proposalType === ProposalType.ADVISORY_COMMITTEE) {
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network) {
 			postQuery = GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE;
 		}
 
-		if (proposalType === ProposalType.TIPS || (proposalType === ProposalType.ADVISORY_COMMITTEE && strPostId.toLowerCase() !== strPostId.toUpperCase())) {
+		if (
+			proposalType === ProposalType.TIPS ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist' && strPostId.toLowerCase() !== strPostId.toUpperCase())
+		) {
 			postVariables = {
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
@@ -989,7 +993,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS || proposalType === ProposalType.ADVISORY_COMMITTEE) {
+		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {
@@ -1310,6 +1314,8 @@ export const updatePostTimeline = (post: any, postData: any) => {
 
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
 
 	// TODO: take proposalType and postId in dynamic pi route

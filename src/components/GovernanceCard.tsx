@@ -25,7 +25,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod } from '~src/types';
+import { IPeriod, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -39,7 +39,6 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import VoteIcon from '~assets/icons/vote-icon.svg';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
@@ -143,7 +142,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
-	if (ProposalType.ADVISORY_COMMITTEE === proposalType) {
+	if (ProposalType.ADVISORY_COMMITTEE === proposalType && network === 'zeitgeist') {
 		titleString =
 			title ||
 			method ||

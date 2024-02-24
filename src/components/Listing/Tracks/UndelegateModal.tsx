@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Alert, Form, Modal, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -28,6 +28,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -186,7 +187,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							disabled={loading}
 							onClick={() => setOpen(false)}
 						/>
-						,
 						<CustomButton
 							htmlType='submit'
 							key='submit'
@@ -208,7 +208,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							<Alert
 								showIcon
 								type='info'
-								className='rounded-[4px] text-[14px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='rounded-[4px] text-[14px]'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction</span>
 								}

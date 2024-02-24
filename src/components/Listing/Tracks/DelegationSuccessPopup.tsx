@@ -90,7 +90,7 @@ const DelegationSuccessPopup = ({
 			maskClosable={false}
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				<h2 className='mt-4 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
+				<h2 className='mt-4 flex flex-col items-center justify-center text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
 					<ImageIcon
 						src={'/assets/delegation-tracks/success-delegate.svg'}
 						alt='multi vote initiated icon'
@@ -167,7 +167,7 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{vote && (
-								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+								<div className='flex h-[21px] gap-[70px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
 									Vote :
 									{vote === EVoteDecisionType.AYE ? (
 										<p>
@@ -215,7 +215,7 @@ const DelegationSuccessPopup = ({
 								</div>
 							)}
 							{votedAt && (
-								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
+								<div className='flex h-[21px] gap-[14px] text-sm font-normal text-bodyBlue dark:text-blue-dark-medium'>
 									Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 								</div>
 							)}

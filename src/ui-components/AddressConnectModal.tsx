@@ -51,8 +51,7 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
-	onConfirm?: (pre?: any) => void;
-	onConfirmClick?: any;
+	onConfirm?: (pre?: any, sec?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
 	walletAlertTitle?: string;
@@ -81,8 +80,7 @@ const AddressConnectModal = ({
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
 	isBalanceUpdated,
-	isUsedInOnChainId,
-	onConfirmClick
+	isUsedInOnChainId
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
@@ -100,7 +98,6 @@ const AddressConnectModal = ({
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
-
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -110,7 +107,7 @@ const AddressConnectModal = ({
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
-	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const { resolvedTheme: theme } = useTheme();
@@ -125,6 +122,7 @@ const AddressConnectModal = ({
 	};
 
 	useEffect(() => {
+		if (!isUsedInOnChainId) return;
 		getProxies(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
@@ -313,9 +311,10 @@ const AddressConnectModal = ({
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm && onConfirm(address);
-			if (isUsedInOnChainId) {
-				onConfirmClick && onConfirmClick(address, selectedProxyAddress);
+			if (showProxyDropdown && selectedProxyAddress.length) {
+				onConfirm?.(address, selectedProxyAddress);
+			} else {
+				onConfirm?.(address);
 			}
 			setOpen(false);
 			setLoading(false);
@@ -600,14 +599,16 @@ const AddressConnectModal = ({
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
 						) : null}
-						{isUsedInOnChainId && accounts.length > 0 && proxyAddresses && proxyAddresses?.length > 0 && (
-							<div className='mt-2'>
+						{isUsedInOnChainId && accounts.length > 0 && !!proxyAddresses && proxyAddresses?.length > 0 && (
+							<div className='ml-1 mt-2'>
 								<Checkbox
 									value=''
 									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-									onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+									onChange={() => {
+										setShowProxyDropdown(!showProxyDropdown);
+									}}
 								>
-									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+									<p className='m-0 mt-1 p-0'>Create identity with proxy</p>
 								</Checkbox>
 							</div>
 						)}

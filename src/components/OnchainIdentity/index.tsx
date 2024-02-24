@@ -338,7 +338,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	}, [txFee, step]);
 
 	const handleConfirm = (address: string, proxyAddress: string) => {
-		console.log('proxy', proxyAddress);
 		setOpen(true);
 		openAddressModal ? openAddressModal?.(false) : setOpenAddressLinkedModal(false);
 		setAddress(address);
@@ -356,8 +355,8 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					walletAlertTitle='On chain identity.'
 					localStorageWalletKeyName='identityWallet'
 					localStorageAddressKeyName='identityAddress'
-					onConfirmClick={(address: string, proxyAddress: string) => handleConfirm(address, proxyAddress)}
-					isUsedInOnChainId={true}
+					onConfirm={(address: string, proxyAddress: string) => handleConfirm(address, proxyAddress)}
+					isUsedInOnChainId
 				/>
 			)}
 			<Modal

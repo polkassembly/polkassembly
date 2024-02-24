@@ -157,10 +157,16 @@ const IdentityForm = ({
 			return;
 		}
 
+		let tx = api.tx.identity.setIdentity(info);
+		let signingAddress = address;
 		setLoading(true);
+		if (proxyAddress?.length) {
+			tx = api?.tx?.proxy.proxy(address, null, api.tx.identity.setIdentity(info));
+			signingAddress = proxyAddress;
+		}
 
-		const tx = api.tx.identity.setIdentity(info);
-		const paymentInfo = await tx.paymentInfo(address);
+		const paymentInfo = await tx.paymentInfo(signingAddress);
+
 		setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 		setLoading(false);
 	};
@@ -197,7 +203,7 @@ const IdentityForm = ({
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null }
 				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
 			},
-			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && emailVal && twitterVal
+			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
 		});
 		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -254,7 +260,6 @@ const IdentityForm = ({
 				console.log('Error in unwraping identityHash');
 				return;
 			}
-
 			setIdentityHash(identityHash);
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
@@ -274,7 +279,7 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 		};
 
-		await executeTx({
+		let payload: any = {
 			address,
 			api,
 			apiReady,
@@ -284,7 +289,16 @@ const IdentityForm = ({
 			onSuccess,
 			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
 			tx
-		});
+		};
+
+		if (proxyAddress?.length) {
+			payload = {
+				...payload,
+				proxyAddress
+			};
+		}
+
+		await executeTx(payload);
 	};
 
 	return (
@@ -293,18 +307,6 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{/* {availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && !alreadyVerifiedfields?.alreadyVerified && (
-					<Alert
-						showIcon
-						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue '
-						message={
-							<span className='dark:text-blue-dark-high'>
-								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
-							</span>
-						}
-					/>
-				)} */}
 				{alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
@@ -658,7 +660,7 @@ const IdentityForm = ({
 					buttonsize='xs'
 				/>
 				<CustomButton
-					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
+					disabled={!okAll || loading}
 					onClick={handleSetIdentity}
 					loading={loading}
 					className={`rounded-[4px] ${

@@ -38,7 +38,7 @@ export enum CHANNEL {
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkSelector();
-	const { id, networkPreferences, email, email_verified } = useUserDetailsSelector();
+	const { id, networkPreferences, email, email_verified, loginAddress } = useUserDetailsSelector();
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const botsArr = Bots();
 	const handleClick = (channelName: CHANNEL) => {
@@ -53,7 +53,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					channel,
 					userId: id
 				}),
-				headers: firebaseFunctionsHeader(network),
+				headers: firebaseFunctionsHeader(network, loginAddress),
 				method: 'POST'
 			});
 

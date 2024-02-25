@@ -3,9 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { FrownOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Empty, Result } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { FC } from 'react';
 import cleanError from 'src/util/cleanError';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 
@@ -53,13 +56,14 @@ interface IPostEmptyStateProps {
 	text?: string;
 }
 export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle, text }) => {
+	const { resolvedTheme: theme } = useTheme();
 	//console.log('image=>'+image);
 	text ? text : 'No Data.';
 	return (
 		<Empty
 			className={className}
-			image={image}
-			imageStyle={imageStyle}
+			image={image ? image : theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+			imageStyle={imageStyle ? imageStyle : { height: 300 }}
 			description={
 				postCategory ? (
 					<span className='text-md text-navBlue dark:text-white'>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</span>

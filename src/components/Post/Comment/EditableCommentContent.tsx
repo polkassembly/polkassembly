@@ -726,15 +726,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							{id &&
 								(props.isSubsquareUser ? (
 									<Tooltip
-										title='Reply are disabled for imported comments.'
+										title='Reply to an imported comment.'
 										color='#E5007A'
 									>
 										<Button
 											disabled={props.disableEdit}
 											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
-												props.isSubsquareUser ? 'disabled-reply' : ''
+												!props.isSubsquareUser ? 'disabled-reply' : ''
 											} dark:bg-transparent dark:text-blue-dark-helper`}
-											onClick={props.isSubsquareUser ? () => {} : toggleReply}
+											onClick={props.isSubsquareUser ? toggleReply : toggleReply}
 										>
 											{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 										</Button>

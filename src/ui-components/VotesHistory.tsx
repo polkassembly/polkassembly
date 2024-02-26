@@ -237,14 +237,14 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 			}
 			const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
-			const gasPrice = await contract.removeVote.estimateGas(postIndex);
+			const gasPrice = await contract.removeVoteForTrack.estimateGas(postIndex, trackNum);
 			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
 
 			// increase gas by 15%
 			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 			await contract
-				.removeVote(postIndex, {
+				.removeVoteForTrack(postIndex, trackNum, {
 					gasLimit
 				})
 				.then((result: any) => {

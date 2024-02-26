@@ -32,6 +32,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IEditPostResponse {
 	content: string;
@@ -46,6 +47,8 @@ export interface IEditPostResponse {
 }
 
 const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
@@ -92,7 +95,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 					? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-					: proposalType === ProposalType.ADVISORY_COMMITTEE
+					: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
 					? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
@@ -191,7 +194,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
 				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
 				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-				: proposalType === ProposalType.ADVISORY_COMMITTEE
+				: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
 				? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 

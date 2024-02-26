@@ -4,6 +4,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { isValidNetwork } from '~src/api-utils';
 import { VoteType, voteTypes } from '~src/global/proposalType';
 import { GET_TOTAL_VOTES_FOR_PROPOSAL } from '~src/queries';
@@ -29,6 +30,8 @@ const getIsSwapStatus = (statusHistory: string[]) => {
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, voteType = VoteType.REFERENDUM } = req.query;
 
 	const network = String(req.headers['x-network']);

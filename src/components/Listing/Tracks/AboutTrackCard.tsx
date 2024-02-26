@@ -278,9 +278,9 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
-						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'LeaseAdmin', 'GeneralAdmin'].includes(trackName) && (
+						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin'].includes(trackName) && (
 							<ProposalActionButtons
-								isCreateProposal={trackName === 'root' || trackName === 'LeaseAdmin' || trackName === 'GeneralAdmin'}
+								isCreateProposal={trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin'}
 								isCancelProposal={trackName === 'ReferendumCanceller'}
 								isKillProposal={trackName === 'ReferendumKiller'}
 							/>

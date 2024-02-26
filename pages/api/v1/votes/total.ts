@@ -17,16 +17,19 @@ export interface IAllVotesType {
 }
 const getIsSwapStatus = (statusHistory: string[]) => {
 	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
-	if (index >= 0) {
-		const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
-		if (decidingIndex >= 0) {
-			const obj = statusHistory[index];
-			statusHistory.splice(index, 1);
-			statusHistory.splice(decidingIndex, 0, obj);
-			return true;
-		}
+	if (index < 0) {
+		return false;
 	}
-	return false;
+
+	const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
+	if (decidingIndex < 0) {
+		return false;
+	}
+
+	const obj = statusHistory[index];
+	statusHistory.splice(index, 1);
+	statusHistory.splice(decidingIndex, 0, obj);
+	return true;
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType | { error: string }>) {

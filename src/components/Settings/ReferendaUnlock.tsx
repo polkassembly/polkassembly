@@ -297,7 +297,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, signer);
 
-		const gasPrice = await contract.removeVote.estimateGas(vote.refIndex.toString());
+		const gasPrice = await contract.removeVoteForTrack.estimateGas(vote.refIndex.toString(), vote.trackId);
 		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
 
 		// increase gas by 15%
@@ -309,7 +309,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		console.log('Removing vote for referenda #', vote.refIndex.toString());
 
 		await contract
-			.removeVote(vote.refIndex.toString(), {
+			.removeVoteForTrack(vote.refIndex.toString(), vote.trackId, {
 				gasLimit
 			})
 			.then((result: any) => {

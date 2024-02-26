@@ -158,8 +158,12 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					height={40}
 					onClick={() => handleClick(1)}
 				>
-					<div className='flex items-center text-blue-dark-high'>
-						<span className='text-sm font-medium '>Create Any Proposal</span>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/create-proposal-icon.svg'
+							alt='create referendum icon'
+						/>
+						<span className='text-sm font-medium '>Create Proposal</span>
 					</div>
 				</CustomButton>
 			)}
@@ -170,7 +174,12 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					height={40}
 					onClick={() => handleClick(2)}
 				>
-					<div className='flex items-center text-blue-dark-high'>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/cancel-proposal-icon.svg'
+							alt='cancel referendum icon'
+							className='-mt-[2px]'
+						/>
 						<span className='text-sm font-medium '>Cancel Referendum</span>
 					</div>
 				</CustomButton>
@@ -182,7 +191,12 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					height={40}
 					onClick={() => handleClick(3)}
 				>
-					<div className='flex items-center text-blue-dark-high'>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/kill-proposal-icon.svg'
+							alt='cancel referendum icon'
+							className='-mt-[2px]'
+						/>
 						<span className='text-sm font-medium '>Kill Referendum</span>
 					</div>
 				</CustomButton>

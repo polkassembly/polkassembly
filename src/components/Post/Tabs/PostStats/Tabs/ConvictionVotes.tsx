@@ -116,19 +116,20 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 
 		const votesDistribution = allVotes?.data.reduce(
 			(acc, vote) => {
+				const balance = bnToIntBalance(new BN((Number(vote.balance) * Number(vote.lockPeriod)).toFixed()));
 				if (vote.decision === 'yes') {
 					acc.ayes.push({
-						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
+						balance: balance,
 						voter: vote.voter
 					});
 				} else if (vote.decision === 'no') {
 					acc.nays.push({
-						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
+						balance: balance,
 						voter: vote.voter
 					});
 				} else {
 					acc.abstain.push({
-						balance: bnToIntBalance(new BN(Number(vote.balance) * Number(vote.lockPeriod))),
+						balance: balance,
 						voter: vote.voter
 					});
 				}

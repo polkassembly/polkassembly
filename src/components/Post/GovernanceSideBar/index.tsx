@@ -1276,7 +1276,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<BountyChildBounties bountyId={onchainId} />
 							</>
 						)}
-						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 502 && network === 'polkadot' && <PredictionCard />}
 					</Form>
 				</div>
 			}

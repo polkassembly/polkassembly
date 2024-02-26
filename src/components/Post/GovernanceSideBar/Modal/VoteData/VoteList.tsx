@@ -210,7 +210,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						});
 					} else {
 						const votesRes = res.data;
-						console.log(votesRes);
 						let combinedVotes;
 						setVotesRes(votesRes);
 						if (votesRes && firstRef.current) {

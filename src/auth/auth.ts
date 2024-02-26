@@ -998,7 +998,7 @@ class AuthService {
 			};
 		}
 
-		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '100d' });
+		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '120s' });
 	}
 
 	public async CreatePostStart(address: string): Promise<string> {

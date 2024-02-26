@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Card, Popover } from 'antd';
 import { useTheme } from 'next-themes';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 interface IVoteDistributionProps {
 	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
@@ -18,8 +17,6 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	const totalAyeVotes = sortedAyes.reduce((acc, cur) => acc + cur.balance, 0);
 	const totalNayVotes = sortedNays.reduce((acc, cur) => acc + cur.balance, 0);
 	const totalAbstainVotes = sortedAbstain.reduce((acc, cur) => acc + cur.balance, 0);
-
-	console.log('totalAyeVotes', formatUSDWithUnits(totalNayVotes));
 
 	const colors: { [key: string]: string } = {
 		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',

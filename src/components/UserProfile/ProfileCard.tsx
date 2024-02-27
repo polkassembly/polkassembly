@@ -124,14 +124,28 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 					) : (
 						<div className='flex items-center justify-between text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-md:flex-col md:ml-[90px] md:pr-6'>{username}</div>
 					)}
-					{addressWithIdentity && (
-						<div className='md:ml-[90px]'>
-							<EvalutionSummary
-								isProfileView
-								address={addressWithIdentity}
-							/>
-						</div>
-					)}
+					<div className='flex flex-wrap justify-center gap-2'>
+						{addressWithIdentity && (
+							<div className='md:ml-[90px]'>
+								<EvalutionSummary
+									isProfileView
+									address={addressWithIdentity}
+								/>
+							</div>
+						)}
+						{isW3FDelegate && (
+							<div className='flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>
+								<Image
+									src={'/assets/profile/w3f.svg'}
+									alt=''
+									width={18}
+									height={18}
+								/>
+								Web3 Delegate
+							</div>
+						)}
+					</div>
+
 					<div>
 						{profileSince && (
 							<div className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959] md:ml-[90px]'>

@@ -495,9 +495,9 @@ const AddressConnectModal = ({
 					)}
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
+							message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
+								<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
 									<li>Add an address to the selected wallet.</li>
 								</ul>
@@ -509,7 +509,7 @@ const AddressConnectModal = ({
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
+							message={<div className='mt-1 text-[13px] font-medium text-lightBlue dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
 								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
 									{linkAddressNeeded

@@ -3,14 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { AuditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Modal, Select } from 'antd';
+import { Button, Form, Modal, Select } from 'antd';
 import { ICreatePollResponse } from 'pages/api/v1/auth/actions/createPoll';
 import React, { FC, useState } from 'react';
 import { IOptionPoll, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-
+import Input from '~src/basic-components/Input';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
@@ -143,17 +143,17 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 		<>
 			<CustomButton
 				variant='default'
-				className='m-0 border-none px-2'
+				className='m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />
-				<span className='ml-1'>Create Poll</span>
+				<span className='ml-1 font-normal'>Create Poll</span>
 			</CustomButton>
 
 			<Modal
 				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'
-				title='Create Poll'
+				title={<span className='dark:text-blue-dark-high'>Create Poll</span>}
 				open={showModal}
 				onOk={handleCreate}
 				onCancel={() => {
@@ -161,28 +161,30 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					setShowModal(false);
 				}}
 				confirmLoading={loading}
-				footer={[
-					<CustomButton
-						variant='default'
-						key='back'
-						text='Cancel'
-						buttonSize='xs'
-						disabled={loading}
-						onClick={() => {
-							form.resetFields();
-							setShowModal(false);
-						}}
-					/>,
-					<CustomButton
-						variant='primary'
-						htmlType='submit'
-						key='submit'
-						text='Create Poll'
-						buttonSize='xs'
-						disabled={loading}
-						onClick={handleCreate}
-					/>
-				]}
+				footer={
+					<div className='flex space-x-4'>
+						<CustomButton
+							variant='default'
+							key='back'
+							text='Cancel'
+							buttonsize='xs'
+							disabled={loading}
+							onClick={() => {
+								form.resetFields();
+								setShowModal(false);
+							}}
+						/>
+						<CustomButton
+							variant='primary'
+							htmlType='submit'
+							key='submit'
+							text='Create Poll'
+							buttonsize='xs'
+							disabled={loading}
+							onClick={handleCreate}
+						/>
+					</div>
+				}
 			>
 				<Form
 					form={form}
@@ -229,7 +231,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 							<>
 								{fields.map((field, index) => (
 									<Form.Item
-										label={index === 0 && 'Options'}
+										label={index === 0 && <span className='dark:text-blue-dark-high'>Options</span>}
 										required={false}
 										key={field.key}
 									>
@@ -265,7 +267,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 										type='dashed'
 										onClick={() => add()}
 										icon={<PlusOutlined />}
-										className='flex items-center'
+										className='flex items-center dark:bg-section-dark-background dark:text-blue-dark-high'
 									>
 										Add Option
 									</Button>
@@ -275,27 +277,27 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 						)}
 					</Form.List>
 
-					<div className='flex items-center justify-between'>
+					<div className='flex justify-between space-x-4'>
 						<Form.Item
 							name='days'
-							label='Days'
-							className='mx-2 w-full'
+							label={<span className='dark:text-blue-dark-high'>Days</span>}
+							className='w-full'
 						>
 							<Select>{daysOptions}</Select>
 						</Form.Item>
 
 						<Form.Item
 							name='hours'
-							label='Hours'
-							className='mx-2 w-full'
+							label={<span className='dark:text-blue-dark-high'>Hours</span>}
+							className='w-full'
 						>
 							<Select>{hoursOptions}</Select>
 						</Form.Item>
 
 						<Form.Item
 							name='minutes'
-							label='Minutes'
-							className='mx-2 w-full'
+							label={<span className='dark:text-blue-dark-high'>Minutes</span>}
+							className='w-full'
 						>
 							<Select>{minutesOptions}</Select>
 						</Form.Item>

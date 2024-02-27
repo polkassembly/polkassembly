@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType, ProfileDetailsResponse, User } from '~src/auth/types';
@@ -9,6 +10,8 @@ import getAddressesFromUserId from '~src/auth/utils/getAddressesFromUserId';
 import firebaseAdmin from '~src/services/firebaseInit';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ProfileDetailsResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const firestore = firebaseAdmin.firestore();
 	const { userId = null } = req.query;
 

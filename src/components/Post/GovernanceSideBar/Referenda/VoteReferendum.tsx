@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Alert, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Checkbox, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,8 +38,6 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -53,6 +51,12 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import Address from '~src/ui-components/Address';
+import Alert from '~src/basic-components/Alert';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -64,6 +68,7 @@ interface Props {
 	proposalType: ProposalType;
 	address: string;
 	theme?: string;
+	track_number?: number;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -115,7 +120,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, track_number }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -146,11 +151,48 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
+	const [delegatedTo, setDelegatedTo] = useState('');
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			setSelectedProxyAddress(proxyAddr[0]);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
+
+	const getData = async (address: any) => {
+		if (!address) return;
+		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: address,
+			track: track_number
+		});
+		if (data && data[0]?.delegations[0]?.to) {
+			setDelegatedTo(data[0]?.delegations[0]?.to);
+		} else {
+			setDelegatedTo('');
+		}
+	};
+
+	useEffect(() => {
+		getData(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [track_number, address]);
 
 	useEffect(() => {
 		getWallet();
@@ -339,6 +381,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setVote(value as EVoteDecisionType);
 		handleModalReset();
 	};
+
 	const handleSubmit = async () => {
 		// GAEvent for proposal voting
 		trackEvent('proposal_voting', 'voted_proposal', {
@@ -497,6 +540,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
+			proxyAddress: selectedProxyAddress,
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});
@@ -581,10 +625,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				<CustomButton
 					variant='primary'
 					fontSize='lg'
-					className='mb-3 w-[100%] p-7'
+					className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full xl:shadow-md'
 					onClick={() => setShowModal(true)}
 				>
-					{!lastVote ? 'Cast Vote Now' : 'Cast Vote Again'}
+					{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
 				</CustomButton>
 				<Modal
 					open={showModal}
@@ -752,29 +796,15 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										)} required to create a Transaction.`}
 										showIcon
 										className='mb-6'
+										type='info'
 									/>
 								)}
-								{((showMultisig || initiatorBalance.gte(totalDeposit)) && !multisig) ||
-									(isBalanceErr &&
-										!loadingStatus.isLoading &&
-										wallet &&
-										ayeVoteValue
-											.add(nayVoteValue)
-											.add(abstainVoteValue)
-											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance) && (
-											<Alert
-												type='info'
-												message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
-												showIcon
-												className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-											/>
-										))}
 								{walletErr.error === 1 && !loadingStatus.isLoading && (
 									<Alert
 										message={walletErr.message}
 										description={walletErr.description}
 										showIcon
+										type='warning'
 									/>
 								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -782,7 +812,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								)}
 								{accounts.length > 0 ? (
@@ -816,6 +845,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											showProxyDropdown={showProxyDropdown}
+											isVoting
 										/>
 									)
 								) : walletErr.message.length === 0 && !wallet && !loadingStatus.isLoading ? (
@@ -823,10 +854,61 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 										showIcon
 										type='info'
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 									/>
 								) : null}
 
+								{delegatedTo && (
+									<Alert
+										message={
+											<span className='flex items-center dark:text-blue-dark-high'>
+												This account has already delegated vote to
+												<Address
+													address={delegatedTo}
+													className='ml-2 text-sm'
+													iconSize={20}
+													displayInline
+													isTruncateUsername={true}
+													isUsedIndelegationNudge={true}
+												/>
+											</span>
+										}
+										showIcon
+										type='warning'
+										className='mt-4'
+									/>
+								)}
+								{proxyAddresses && proxyAddresses?.length > 0 && (
+									<div className='mt-2'>
+										<Checkbox
+											value=''
+											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+										>
+											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+										</Checkbox>
+									</div>
+								)}
+								{showProxyDropdown && (
+									<ProxyAccountSelectionForm
+										proxyAddresses={proxyAddresses}
+										theme={theme}
+										address={address}
+										withBalance
+										onBalanceChange={handleOnBalanceChange}
+										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										inputClassName='rounded-[4px] px-3 py-1'
+										wallet={wallet}
+										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+										setSelectedProxyAddress={setSelectedProxyAddress}
+										selectedProxyAddress={selectedProxyAddress}
+									/>
+								)}
+								{showProxyDropdown && !isProxyExistsOnWallet && (
+									<div className='mt-2 flex items-center gap-x-1'>
+										<InfoIcon />
+										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+									</div>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
@@ -859,6 +941,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -883,6 +978,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
+										wallet={wallet}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 
@@ -908,6 +1016,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										conviction={conviction}
 										setConviction={setConviction}
 										convictionOpts={convictionOpts}
+										showMultisig={showMultisig}
+										initiatorBalance={initiatorBalance.gte(totalDeposit)}
+										multisig={multisig}
+										isBalanceErr={isBalanceErr}
+										loadingStatus={loadingStatus.isLoading}
+										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
+										ayeVoteValue={ayeVoteValue
+											.add(nayVoteValue)
+											.add(abstainVoteValue)
+											.add(lockedBalance)
+											.gte(showMultisig ? multisigBalance : availableBalance)}
 									/>
 								)}
 							</>
@@ -1021,5 +1142,12 @@ export default React.memo(styled(VoteReferendum)`
 	}
 	.dark .ant-segmented-group label {
 		background-color: transparent !important;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
 	}
 `);

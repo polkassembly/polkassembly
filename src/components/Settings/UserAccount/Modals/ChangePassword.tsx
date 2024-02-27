@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Divider, Form, Input, Modal } from 'antd';
+import { Divider, Form, Modal } from 'antd';
 import ChangePasswordIcon from '~assets/icons/change-password.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -10,6 +10,7 @@ import { NotificationStatus } from '~src/types';
 import messages from '~src/util/messages';
 import * as validation from 'src/util/validation';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfirm?: () => void; onCancel: () => void }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -182,7 +183,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 								key='1'
 								variant='default'
 								onClick={onCancel}
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 							<CustomButton
@@ -192,7 +193,7 @@ const ChangePassword = ({ open, onConfirm, onCancel }: { open: boolean; onConfir
 								text='Save'
 								key='2'
 								variant='default'
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 						</div>

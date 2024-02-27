@@ -12,7 +12,7 @@ import { chainProperties } from 'src/global/networkConstants';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import getNetwork from 'src/util/getNetwork';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits, getAddress } from 'ethers';
 
 import { LoadingStatusType, NotificationStatus } from 'src/types';
 import addEthereumChain from '~src/util/addEthereumChain';
@@ -23,6 +23,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import BN from 'bn.js';
 
 export interface SecondProposalProps {
 	className?: string;
@@ -30,7 +31,7 @@ export interface SecondProposalProps {
 	seconds: number;
 }
 
-const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE || '';
 
 const currentNetwork = getNetwork();
 
@@ -47,7 +48,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 	const [address, setAddress] = useState<string>('');
 	const [modalOpen, setModalOpen] = useState(false);
 
-	let web3 = new Web3((window as any).ethereum);
+	let web3 = new BrowserProvider((window as any).ethereum);
 
 	useEffect(() => {
 		if (!accounts.length) {
@@ -118,8 +119,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			return;
 		}
 
-		const web3 = new Web3(walletConnectProvider as any);
-		const checksumAddresses = addresses.map((address: string) => web3.utils.toChecksumAddress(address));
+		const checksumAddresses = addresses.map((address: string) => getAddress(address));
 
 		if (checksumAddresses.length === 0) {
 			// setAccountsNotFound(true);
@@ -133,7 +133,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 		setAccounts(
 			checksumAddresses.map((address: string): InjectedAccountWithMeta => {
 				const account = {
-					address: web3.utils.toChecksumAddress(address),
+					address: getAddress(address),
 					meta: {
 						genesisHash: null,
 						name: 'walletConnect',
@@ -223,7 +223,7 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 
 		if (walletConnectProvider?.wc.connected) {
 			await walletConnectProvider.enable();
-			web3 = new Web3(walletConnectProvider as any);
+			web3 = new BrowserProvider(walletConnectProvider as any);
 
 			if (walletConnectProvider.wc.chainId !== chainProperties[currentNetwork].chainId) {
 				queueNotification({
@@ -235,13 +235,17 @@ const SecondProposalEth = ({ className, proposalId, seconds }: SecondProposalPro
 			}
 		}
 
-		const voteContract = new web3.eth.Contract(abi, contractAddress);
+		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
 
-		voteContract.methods
-			.second(proposalId, seconds)
-			.send({
-				from: address,
-				to: contractAddress
+		const gasPrice = await voteContract.second.estimateGas(proposalId, seconds);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
+		await voteContract
+			.second(proposalId, seconds, {
+				gasLimit
 			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: '' });

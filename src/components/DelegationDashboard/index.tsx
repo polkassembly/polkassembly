@@ -4,15 +4,20 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import DashboardTrackListing from './TracksListing';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { Skeleton } from 'antd';
-import DelegationProfile from '~src/ui-components/DelegationProfile';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { Button, Skeleton } from 'antd';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import BecomeDelegate from './BecomeDelegate';
+import TrendingDelegates from './TrendingDelegates';
+import TotalDelegationData from './TotalDelegationData';
+import DelegationTabs from './DelegationTabs';
+import { useApiContext } from '~src/context';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
 
 interface Props {
 	className?: string;
@@ -20,10 +25,6 @@ interface Props {
 
 export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
-const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
-	loading: () => <Skeleton.Avatar active />,
-	ssr: false
-});
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <Skeleton.Avatar active />,
 	ssr: false
@@ -31,67 +32,99 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
+	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 
 	useEffect(() => {
 		if (!window) return;
 		setIsMobile(window.innerWidth < 768);
-		setOpenLoginModal(!(isMobile && isLoggedOut));
 		if (!isLoggedOut) {
 			setOpenLoginModal(false);
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile, userDetails]);
+
+	const handleIdentityInfo = () => {
+		if (!api || !apiReady) return;
+
+		let unsubscribe: () => void;
+
+		const encodedAddr = userDetails.delegationDashboardAddress ? getEncodedAddress(userDetails.delegationDashboardAddress, network) || '' : '';
+
+		api.derive.accounts
+			.info(encodedAddr, (info: DeriveAccountInfo) => {
+				setIdentity(info.identity);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+
+		return () => unsubscribe && unsubscribe();
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		handleIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
-		}
-		if (!userDetails.delegationDashboardAddress) {
-			isMobile ? setOpenModal(false) : setOpenModal(true);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress, isMobile]);
 
 	return (
 		<div className={`${className} delegation-dashboard`}>
-			<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-[20px] max-lg:absolute max-lg:left-0 max-lg:top-[80px] max-lg:w-[99.3vw]'>
-				<ProfileBalances />
-			</div>
-			<h2 className=' mb-6 mt-5 text-[24px] font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation dashboard</h2>
-			<DelegationProfile
-				address={userDetails?.delegationDashboardAddress}
-				username={userDetails?.username || ''}
-				className='px-[34px] py-[24px]'
-			/>
-			<div>
-				{userDetails?.delegationDashboardAddress && userDetails?.delegationDashboardAddress?.length > 0 ? (
-					<DashboardTrackListing
-						theme={theme}
-						className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] mt-8 rounded-[14px] bg-white dark:bg-section-dark-overlay'
-						address={String(userDetails.delegationDashboardAddress)}
-					/>
-				) : (
-					<Skeleton />
-				)}
-			</div>
-			{!openLoginModal && !openSignupModal && !userDetails.loginWallet && (
-				<AddressConnectModal
-					localStorageWalletKeyName='delegationWallet'
-					localStorageAddressKeyName='delegationDashboardAddress'
-					open={openModal}
-					setOpen={setOpenModal}
-					walletAlertTitle='Delegation dashboard'
+			{isLoggedOut ? (
+				<div className='wallet-info-board mt-[-25px] flex h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20'>
+					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
+					<Button
+						onClick={() => {
+							setOpenLoginModal(true);
+						}}
+						className='border-2 border-[#3C5DCE] bg-[#407bff] text-sm font-medium text-white'
+					>
+						Connect wallet
+					</Button>
+				</div>
+			) : (
+				<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw]'>
+					<ProfileBalances />
+				</div>
+			)}
+			{(isLoggedOut || !userDetails.loginAddress) && (
+				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+			)}
+
+			{(isLoggedOut || !userDetails.loginAddress) && (
+				<>
+					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
+					<TotalDelegationData />
+					<TrendingDelegates />
+				</>
+			)}
+
+			{!isLoggedOut && userDetails.loginAddress && (
+				<DelegationTabs
+					identity={identity}
+					theme={theme}
+					isLoggedOut={isLoggedOut}
 				/>
 			)}
+
 			<LoginPopup
-				closable={false}
+				closable={true}
 				setSignupOpen={setOpenSignupModal}
 				modalOpen={openLoginModal}
 				setModalOpen={setOpenLoginModal}
@@ -114,5 +147,8 @@ export default styled(DelegationDashboardHome)`
 	.wallet-info-board {
 		margin-top: 0px;
 		background: radial-gradient(99.69% 25520% at 1.22% 0%, #42122c 0%, #a6075c 32.81%, #952863 77.08%, #e5007a 100%);
+	}
+	.delegate-button {
+		background: linear-gradient(0deg, #e5007a, #e5007a), linear-gradient(0deg, rgba(229, 0, 122, 0.6), rgba(229, 0, 122, 0.6));
 	}
 `;

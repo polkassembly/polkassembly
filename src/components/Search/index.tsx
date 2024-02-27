@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Checkbox, Input, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
+import { Checkbox, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -38,6 +38,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
+import Input from '~src/basic-components/Input';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -496,7 +497,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			onCancel={() => handleClearFilters(true)}
 			footer={false}
 			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			closeIcon={<CloseIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
@@ -562,7 +563,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							setPeoplePage({ ...peoplePage, page: 1 });
 						}}
 						value={filterBy}
-						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} max-sm:flex-wrap`}
+						className={`flex gap-[1px] ${poppins.variable} ${poppins.className} sm:flex-wrap`}
 					>
 						<Radio
 							value={finalSearchInput.length > 0 && EFilterBy.Referenda}
@@ -898,6 +899,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								postsPage={postsPage}
 								setPostsPage={setPostsPage}
 								searchInput={searchInput}
+								theme={theme}
 							/>
 						)}
 
@@ -908,6 +910,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 								peopleData={peopleResults}
 								peoplePage={peoplePage}
 								setPeoplePage={setPeoplePage}
+								theme={theme}
 							/>
 						)}
 

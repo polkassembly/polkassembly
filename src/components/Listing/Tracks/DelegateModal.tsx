@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Alert, Checkbox, Form, Modal, Slider, Spin } from 'antd';
+import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -24,11 +24,10 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { useRouter } from 'next/router';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import Balance from '~src/components/Balance';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
-import usePolkasafe from '~src/hooks/usePolkasafe';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -37,6 +36,8 @@ import { useTheme } from 'next-themes';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
+import blockToDays from '~src/util/blockToDays';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -46,17 +47,17 @@ interface Props {
 	defaultTarget?: string;
 	open?: boolean;
 	setOpen?: (pre: boolean) => void;
-	isMultisig?: boolean;
+	onConfirm?: (balance: string, delegatedTo: string, lockPeriod: number) => void;
 }
 
-const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMultisig }: Props) => {
+const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { delegationDashboardAddress } = useUserDetailsSelector();
-	const [target, setTarget] = useState<string>('');
+	const [target, setTarget] = useState<string>(defaultTarget || '');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
 	const [lock, setLockValue] = useState<number>(0);
@@ -74,10 +75,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
-	const multisigDelegationAssociatedAddress = localStorage.getItem('multisigDelegationAssociatedAddress') || '';
-	const { client, connect } = usePolkasafe(multisigDelegationAssociatedAddress);
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
+	const [days, setDays] = useState<number>(0);
 	const isTargetAddressSame =
 		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
+	const delegateButtonDisable =
+		!form.getFieldValue('targetAddress') ||
+		!delegationDashboardAddress ||
+		bnBalance.lte(ZERO_BN) ||
+		isNaN(conviction) ||
+		isTargetAddressSame ||
+		loading ||
+		availableBalance.lte(txFee.add(bnBalance));
 
 	useEffect(() => {
 		if (!network) return;
@@ -88,13 +97,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		if (defaultTarget) {
 			form.setFieldValue('targetAddress', defaultTarget);
+			setTarget(defaultTarget);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, defaultTarget]);
 
 	const handleSubstrateAddressChangeAlert = (target: string) => {
 		if (!target) return;
-		(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
+		(getEncodedAddress(target, network) || isAddress(target)) && target !== getEncodedAddress(target, network) && setAddressAlert(true);
 		setTimeout(() => {
 			setAddressAlert(false);
 		}, 5000);
@@ -117,18 +127,9 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
-		if (
-			!delegationDashboardAddress ||
-			!delegateTo ||
-			!getEncodedAddress(delegateTo, network) ||
-			isNaN(convictionVal) ||
-			!bnBalance ||
-			bnBalance.lte(ZERO_BN) ||
-			bnBalance.eq(ZERO_BN) ||
-			isTargetAddressSame
-		)
-			return;
-		if (!checkedTrack && !checkedTracksList) return;
+		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
+
+		if (!checkedTrack && !checkedTracksList.length) return;
 
 		setLoading(true);
 		const checkedArr =
@@ -151,13 +152,19 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !delegationDashboardAddress) return;
+		const res = api.consts.convictionVoting.voteLockingPeriod;
+		const num = res.toJSON();
+		const days = blockToDays(num, network);
+		setDays(days);
 		setLoading(true);
 		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
 
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>(`api/v1/delegations?address=${delegationDashboardAddress}`);
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: delegationDashboardAddress
+		});
 		if (data) {
-			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.Delegated));
+			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
 			if (network) {
 				const tracks = trackData.map((item) => {
 					// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -204,6 +211,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			status: NotificationStatus.SUCCESS
 		});
 		setOpenSuccessPopup(true);
+		setIsBalanceUpdated(true);
+		onConfirm?.(bnBalance.toString(), target, conviction);
 		setLoading(false);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
@@ -219,44 +228,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((!checkedTrack && !checkedList) || !getEncodedAddress(target, network)) return;
+		if ((!checkedTrack?.length && !checkedList?.length) || !getEncodedAddress(target, network)) return;
 		setLoading(true);
 
 		const checkedArr =
 			checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList] : [...checkedList];
 		setCheckedTrackArr(checkedArr);
+		if (checkedArr?.length === 0) return;
 
 		const txArr = checkedArr?.map((trackName) =>
 			api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString())
 		);
 		const delegateTxn = api.tx.utility.batchAll(txArr);
-
-		if (isMultisig) {
-			const delegationByMultisig = async (tx: any) => {
-				try {
-					setLoading(true);
-					await connect();
-					const { error } = await client.customTransactionAsMulti(delegationDashboardAddress, tx);
-					if (error) {
-						throw new Error(error.error);
-					}
-					queueNotification({
-						header: 'Success!',
-						message: 'Delegation will be successful once approved by other signatories.',
-						status: NotificationStatus.SUCCESS
-					});
-					setOpenSuccessPopup(true);
-					setOpen ? setOpen?.(false) : setDefaultOpen(false);
-				} catch (error) {
-					onFailed(error.message);
-				} finally {
-					setLoading(false);
-				}
-			};
-			setLoading(true);
-			await delegationByMultisig(delegateTxn);
-			return;
-		}
 
 		await executeTx({ address: delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
@@ -273,11 +256,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setAvailableBalance(balance);
 	};
 
-	useEffect(() => {
-		open && getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open]);
-
 	const handleOnchangeConviction = (value: number) => {
 		let conviction = 0;
 		let lockValue = 0;
@@ -292,7 +270,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		}
 		setConviction(conviction);
 		setLockValue(lockValue);
-		getTxFee(checkedList, conviction);
 	};
 
 	const handleCloseModal = () => {
@@ -302,6 +279,11 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 		setCheckedList([]);
 		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open, delegationDashboardAddress, api, apiReady]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -327,7 +309,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 			</Checkbox.Group>
 		</div>
 	);
-
 	return (
 		<>
 			{!open && !setOpen && (
@@ -335,7 +316,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					<CustomButton
 						className='delegation-buttons'
 						variant='default'
-						buttonSize='xs'
+						buttonsize='xs'
 						onClick={() => {
 							delegationSupportedNetworks.includes(network) ? router.push('/delegation') : setDefaultOpen(true);
 						}}
@@ -366,37 +347,18 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							text='Cancel'
 							className='rounded-[4px]'
 							variant='default'
-							buttonSize='xs'
+							buttonsize='xs'
 							onClick={handleCloseModal}
 						/>
 						<CustomButton
 							text='Delegate'
 							variant='primary'
-							className={`rounded-[4px] ${
-								(!form.getFieldValue('targetAddress') ||
-									!delegationDashboardAddress ||
-									bnBalance.lte(ZERO_BN) ||
-									isNaN(conviction) ||
-									isTargetAddressSame ||
-									loading ||
-									txFee.lte(ZERO_BN) ||
-									availableBalance.lte(txFee.add(bnBalance))) &&
-								'opacity-50'
-							}`}
-							disabled={
-								!form.getFieldValue('targetAddress') ||
-								!delegationDashboardAddress ||
-								bnBalance.lte(ZERO_BN) ||
-								isNaN(conviction) ||
-								isTargetAddressSame ||
-								loading ||
-								txFee.lte(ZERO_BN) ||
-								availableBalance.lte(txFee.add(bnBalance))
-							}
+							className={`rounded-[4px] ${delegateButtonDisable && 'opacity-50'}`}
+							disabled={delegateButtonDisable}
 							onClick={async () => {
 								await handleSubmit();
 							}}
-							buttonSize='xs'
+							buttonsize='xs'
 						/>
 					</div>
 				}
@@ -415,7 +377,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
 									<Alert
 										type='error'
-										className='mb-4 h-10 rounded-[4px] dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+										className='mb-4 h-10 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>Insufficient balance</span>}
 									/>
@@ -434,15 +396,15 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									/>
 								</div>
 								<AddressInput
-									onBlur={getTxFee}
 									name='targetAddress'
 									defaultAddress={defaultTarget || target}
-									label={'Beneficiary Address'}
-									placeholder='Add beneficiary address'
+									label={'Delegate To'}
+									placeholder='Add Delegatee Address'
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
+										getTxFee();
 									}}
 									helpText='The amount requested in the proposal will be received in this address.'
 									size='large'
@@ -452,7 +414,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									theme={theme}
 								/>
 								{target
-									? (!(getEncodedAddress(target, network) || Web3.utils.isAddress(target)) || isTargetAddressSame) && (
+									? (!(getEncodedAddress(target, network) || isAddress(target)) || isTargetAddressSame) && (
 											<span className='text-sm text-[#ff4d4f]'>
 												{isTargetAddressSame ? 'You can not delegate to the same address. Please provide a different target address' : 'Invalid address'}
 											</span>
@@ -461,9 +423,10 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 
 								{addressAlert && (
 									<Alert
-										className='mb mt-2 rounded-[4px] dark:border-[#125798] dark:bg-[#05263F]'
+										className='mb mt-2 rounded-[4px]'
 										showIcon
 										message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+										type='info'
 									/>
 								)}
 
@@ -472,12 +435,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									<span
 										onClick={() => {
 											setBnBalance(availableBalance);
-											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit)));
+											form.setFieldValue('balance', Number(formatedBalance(availableBalance.toString(), unit).replace(/,/g, '')));
 										}}
 									>
 										<Balance
 											address={delegationDashboardAddress}
 											onChange={handleOnBalanceChange}
+											isDelegating={true}
+											isBalanceUpdated={isBalanceUpdated}
 										/>
 									</span>
 								</div>
@@ -527,21 +492,20 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 									</div>
 								</div>
 								<div className='track-[0.0025em] mt-4 flex items-center justify-between rounded-md bg-[#F6F7F9] px-[17px] py-[13px] dark:bg-inactiveIconDark'>
-									<div className='flex items-center justify-center gap-[10px] text-sm text-lightBlue dark:text-blue-dark-medium'>
+									<div className='flex items-center justify-center gap-2.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 										<LockIcon />
 										<span>Locking period</span>
 									</div>
 									<div className='flex items-center justify-center text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance, locked for ${lock} enactment period`}
+										{conviction === 0 ? '0.1x voting balance, no lockup period' : `${conviction}x voting balance for duration (${Number(lock) * days} days)`}
 									</div>
 								</div>
 								<div className='mb-2 mt-6 flex items-center justify-between'>
 									<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>Selected track(s)</span>
-									{trackArr.length ? (
+									{trackArr?.length ? (
 										<Popover
-											defaultOpen={true}
 											content={content}
-											placement='topLeft'
+											placement='top'
 											zIndex={1056}
 										>
 											<Checkbox
@@ -600,7 +564,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 							<Alert
 								showIcon
 								type='info'
-								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mb-4 rounded-[4px]'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toString(), { forceUnit: unit })} will be applied to the transaction</span>
 								}
@@ -609,19 +573,19 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, isMu
 					</div>
 				</Spin>
 			</Modal>
-			<DelegationSuccessPopup
-				open={openSuccessPopup}
-				redirect={true}
-				setOpen={setOpenSuccessPopup}
-				tracks={checkedTrackArr}
-				address={target}
-				isMultisig={isMultisig}
-				isDelegate={true}
-				balance={bnBalance}
-				trackNum={trackNum}
-				conviction={conviction}
-				title={isMultisig ? 'Delegation with Polkasafe initiated' : ' Delegated Successfully'}
-			/>
+			{checkedTrack?.name && (
+				<DelegationSuccessPopup
+					open={openSuccessPopup}
+					setOpen={setOpenSuccessPopup}
+					tracks={[...checkedTrackArr.filter((track) => track !== checkedTrack?.name), checkedTrack?.name || '']}
+					address={target}
+					isDelegate={true}
+					balance={bnBalance}
+					trackNum={trackNum}
+					conviction={conviction}
+					title={'Delegated Successfully'}
+				/>
+			)}
 		</>
 	);
 };

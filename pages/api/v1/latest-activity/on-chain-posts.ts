@@ -8,13 +8,19 @@ import { isProposalTypeValid, isTrackNoValid, isValidNetwork } from '~src/api-ut
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
-import { GET_PROPOSALS_LISTING_BY_TYPE, GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES, GET_PROPOSALS_LISTING_FOR_POLYMESH } from '~src/queries';
+import {
+	GET_PROPOSALS_LISTING_BY_TYPE,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST,
+	GET_PROPOSALS_LISTING_FOR_POLYMESH
+} from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import messages from '~src/util/messages';
 import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface ILatestActivityPostsListingResponse {
 	count: number;
@@ -66,6 +72,9 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		if (network === 'polymesh') {
 			query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
 		}
+		if (network === 'zeitgeist') {
+			query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
+		}
 
 		let subsquidRes: any = {};
 		try {
@@ -105,7 +114,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 		const subsquidPosts: any[] = subsquidData?.proposals || [];
 
 		const postsPromise = subsquidPosts?.map(async (subsquidPost) => {
-			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description } = subsquidPost;
+			const { createdAt, proposer, curator, preimage, type, index, hash, method, origin, trackNumber, group, description, proposalHashBlock } = subsquidPost;
 			let otherPostProposer = '';
 			if (group?.proposals?.length) {
 				group.proposals.forEach((obj: any) => {
@@ -147,6 +156,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 						method: method || preimage?.method,
 						origin,
 						post_id: postId,
+						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 						spam_users_count:
 							data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -169,6 +179,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 				method: method || preimage?.method,
 				origin,
 				post_id: postId,
+				proposalHashBlock: proposalHashBlock || null,
 				proposer: proposer || preimage?.proposer || otherPostProposer || curator,
 				status: status,
 				title: subsquareTitle,
@@ -206,6 +217,8 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 }
 
 const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { trackNo, proposalType = ProposalType.DEMOCRACY_PROPOSALS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);

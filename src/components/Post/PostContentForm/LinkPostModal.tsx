@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, DeleteOutlined, LinkOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Form, Input, Modal, Select, Spin } from 'antd';
+import { Form, Modal, Select, Spin } from 'antd';
 import { ILinkPostConfirmResponse } from 'pages/api/v1/auth/actions/linkPostConfirm';
 import { ILinkPostRemoveResponse } from 'pages/api/v1/auth/actions/linkPostRemove';
 import { ILinkPostStartResponse } from 'pages/api/v1/auth/actions/linkPostStart';
@@ -11,6 +11,7 @@ import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { NotificationStatus } from '~src/types';
@@ -209,7 +210,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					onClick={handleRemove}
 					className='mr-auto'
 					text='Remove'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 			);
 		} else if (data) {
@@ -223,7 +224,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					onClick={handleConfirm}
 					className='bg-green_primary'
 					text='Confirm'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 			);
 		} else {
@@ -236,7 +237,7 @@ const LinkPostModal: FC<ILinkPostModalProps> = (props) => {
 					disabled={loading}
 					onClick={handleSubmit}
 					text='Link'
-					buttonSize='xs'
+					buttonsize='xs'
 				/>
 			);
 		}

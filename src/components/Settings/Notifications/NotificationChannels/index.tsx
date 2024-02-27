@@ -13,7 +13,7 @@ import BotSetupCard from './BotSetupCard';
 import TelegramInfoModal from './Modals/Telegram';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utilsFe';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';
@@ -38,8 +38,9 @@ export enum CHANNEL {
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkSelector();
-	const { id, networkPreferences, email, email_verified } = useUserDetailsSelector();
+	const { id, networkPreferences, email, email_verified, loginAddress } = useUserDetailsSelector();
 	const [active, setActive] = useState<boolean | undefined>(false);
+	const botsArr = Bots();
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
@@ -52,7 +53,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					channel,
 					userId: id
 				}),
-				headers: firebaseFunctionsHeader(network),
+				headers: firebaseFunctionsHeader(network, loginAddress),
 				method: 'POST'
 			});
 
@@ -107,7 +108,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 								<div className={`${!networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
 									<MailFilled />
 								</div>
-								{Bots.map((bot, i) => (
+								{botsArr.map((bot, i) => (
 									<div
 										className={`${!networkPreferences?.channelPreferences?.[bot.channel]?.enabled ? '[&>svg]:opacity-50' : ''}`}
 										key={i}
@@ -132,10 +133,10 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
+						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 						dashed
 					/>
-					{Bots.map((bot, i) => (
+					{botsArr.map((bot, i) => (
 						<div key={bot.title}>
 							<BotSetupCard
 								{...bot}
@@ -145,7 +146,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 								handleEnableDisabled={handleEnableDisabled}
 								handleReset={handleReset}
 							/>
-							{Bots.length - 1 > i && (
+							{botsArr.length - 1 > i && (
 								<Divider
 									className='my-[30px] border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
 									dashed
@@ -183,29 +184,31 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	);
 }
 
-const Bots = [
-	{
-		Icon: <TelegramIcon />,
-		channel: CHANNEL.TELEGRAM,
-		description: 'a Telegram chat to get Telegram notifications',
-		title: 'Telegram'
-	},
-	{
-		Icon: <DiscordIcon />,
-		channel: CHANNEL.DISCORD,
-		description: 'a Discord Channel chat to get Discord notifications',
-		title: 'Discord'
-	},
-	{
-		Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
-		channel: CHANNEL.SLACK,
-		description: '',
-		title: 'Slack'
-	},
-	{
-		Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
-		channel: CHANNEL.ELEMENT,
-		description: '',
-		title: 'Element'
-	}
-];
+const Bots = () => {
+	return [
+		{
+			Icon: <TelegramIcon />,
+			channel: CHANNEL.TELEGRAM,
+			description: 'a Telegram chat to get Telegram notifications',
+			title: 'Telegram'
+		},
+		{
+			Icon: <DiscordIcon />,
+			channel: CHANNEL.DISCORD,
+			description: 'a Discord Channel chat to get Discord notifications',
+			title: 'Discord'
+		},
+		{
+			Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			channel: CHANNEL.SLACK,
+			description: 'a Slack Channel chat to get Slack notifications',
+			title: 'Slack'
+		},
+		{
+			Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			channel: CHANNEL.ELEMENT,
+			description: '',
+			title: 'Element'
+		}
+	];
+};

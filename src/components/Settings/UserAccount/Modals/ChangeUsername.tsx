@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Divider, Form, Input, Modal } from 'antd';
+import { Divider, Form, Modal } from 'antd';
 import ChangeUserIcon from '~assets/icons/change-username.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { NotificationStatus } from '~src/types';
@@ -14,6 +14,7 @@ import { setUserDetailsState } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Input from '~src/basic-components/Input';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -102,6 +103,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 						>
 							Old Username
 						</label>
+						{/* Input Component */}
 						<Input
 							className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-disableStateDark dark:text-blue-dark-high'
 							value={username}
@@ -133,6 +135,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 								}
 							]}
 						>
+							{/* Input Component */}
 							<Input
 								disabled={loading}
 								className='p-2 text-sm leading-[21px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -150,7 +153,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 								key='1'
 								variant='default'
 								onClick={onCancel}
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 							<CustomButton
@@ -159,7 +162,7 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 								text='Save'
 								key='2'
 								variant='default'
-								buttonSize='xs'
+								buttonsize='xs'
 								className='px-[36px] py-[4px] capitalize'
 							/>
 						</div>

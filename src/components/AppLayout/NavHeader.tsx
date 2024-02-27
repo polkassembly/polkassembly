@@ -333,7 +333,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
-						{['kusama', 'polkadot'].includes(network) ? <RPCDropdown /> : null}
+						{chainProperties[network]?.rpcEndpoints && chainProperties[network]?.rpcEndpoints?.length > 0 && <RPCDropdown />}
 						{!id ? (
 							<div className='flex items-center lg:gap-x-2'>
 								<CustomButton
@@ -369,7 +369,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div className='mr-2 lg:mr-0'>
+						<div
+							className='mr-2 lg:mr-0'
+							onClick={() => {
+								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
+									userId: id || '',
+									userName: username || ''
+								});
+							}}
+						>
 							<MenuDropdown>
 								<OptionMenu className='mt-[6px] text-2xl' />
 							</MenuDropdown>

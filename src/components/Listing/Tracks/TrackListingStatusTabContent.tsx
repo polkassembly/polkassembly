@@ -8,8 +8,9 @@ import Link from 'next/link';
 import React, { FC } from 'react';
 import { poppins } from 'pages/_app';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
-import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import FilteredTags from '~src/ui-components/filteredTags';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,
@@ -44,7 +45,10 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 		return (
 			<>
 				<div className='sm:mx-3'>
-					<FilteredTags statusItem={statusItem} />
+					<FilteredTags
+						statusItem={statusItem}
+						count={count}
+					/>
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {

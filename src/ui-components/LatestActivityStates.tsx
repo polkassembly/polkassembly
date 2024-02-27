@@ -1,8 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import { Divider, Table } from 'antd';
+// import { Divider, Table } from 'antd';
+import { Divider } from 'antd';
+import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { dayjs } from 'dayjs-init';
 import React, { FC, ReactNode } from 'react';
@@ -11,10 +12,11 @@ import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 
 import Address from './Address';
 import StatusTag from './StatusTag';
-import { ErrorState, LoadingState, PostEmptyState } from './UIStates';
+import { ErrorState, PostEmptyState } from './UIStates';
 import { poppins } from 'pages/_app';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { useTheme } from 'next-themes';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const LatestActivityWrapper = ({ children }: { children: ReactNode }) => <div className='flex h-[500px] items-center justify-center overflow-y-auto'>{children}</div>;
 
@@ -49,11 +51,13 @@ interface IPopulatedLatestActivityProps {
 }
 
 export const PopulatedLatestActivity: FC<IPopulatedLatestActivityProps> = ({ columns, tableData, onClick }) => {
+	const { resolvedTheme: theme } = useTheme();
 	return (
 		<Table
 			columns={columns}
 			dataSource={tableData}
 			pagination={false}
+			theme={theme}
 			scroll={{ x: 1000, y: 650 }}
 			onRow={(rowData) => {
 				return {
@@ -145,7 +149,7 @@ export const Gov2PopulatedLatestActivityCard: FC<IGov2PopulatedLatestActivityCar
 				<div
 					key={rowData.key}
 					className={`${
-						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] dark:bg-[#161616]' : ''
+						(index + 1) % 2 !== 0 ? 'bg-[#FBFBFC] pt-[1.2px] dark:bg-[#161616]' : ''
 					} h-auto min-h-[140px] border-2  border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl ${poppins.variable} ${poppins.className}`}
 					onClick={() => onClick(rowData)}
 				>

@@ -16,7 +16,7 @@ import { ChartData, Point } from 'chart.js';
 import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
 import dynamic from 'next/dynamic';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import DiscussionIconGrey from '~assets/icons/Discussion-Unselected.svg';
 import DiscussionIconWhite from '~assets/icons/Discussion-Unselected-white.svg';
 import { useTheme } from 'next-themes';
@@ -26,6 +26,12 @@ import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/Ai
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ITrackDelegation } from 'pages/api/v1/delegations';
+import Address from '~src/ui-components/Address';
+import Link from 'next/link';
+import Alert from '~src/basic-components/Alert';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -144,6 +150,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { className, trackName } = props;
+	const [delegatedTo, setDelegatedTo] = useState('');
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, trackName));
@@ -157,6 +164,23 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	//get the track number of the track
 	const track_number = trackMetaData?.trackId;
 	const { api, apiReady } = useApiContext();
+	const { loginAddress } = useUserDetailsSelector();
+	const getData = async () => {
+		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+			address: loginAddress,
+			track: trackMetaData.trackId
+		});
+		if (data && data[0]?.delegations[0]?.to) {
+			setDelegatedTo(data[0]?.delegations[0]?.to || '');
+		}
+	};
+
+	useEffect(() => {
+		if (!loginAddress || isNaN(trackMetaData.trackId)) return;
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [trackMetaData.trackId, loginAddress]);
+
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
@@ -234,6 +258,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 		getData();
 	}, [api, apiReady, network, track_number]);
 
+	const path = window.location.pathname;
+
 	return (
 		<div className={`${className}`}>
 			<article className='flex justify-between xs:py-2 md:py-0'>
@@ -245,12 +271,12 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						title='Track Number'
 						className='cursor-pointer text-bodyBlue'
 					>
-						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em]'>(#{trackMetaData.trackId})</h4>
+						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] dark:text-blue-dark-high'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
@@ -267,6 +293,33 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</div>
 				</div>
 			</article>
+			{delegatedTo && (
+				<Alert
+					message={
+						<span className='flex items-center text-[13px]'>
+							You have delegated vote to
+							<Address
+								address={delegatedTo}
+								className='ml-2 text-xs'
+								iconSize={20}
+								displayInline
+								isTruncateUsername={false}
+								isUsedIndelegationNudge={true}
+							/>
+							<Link
+								href={`https://${network}.polkassembly.io/delegation${path}`}
+								target='_blank'
+								className='ml-2 mt-1 text-xs text-pink_primary'
+							>
+								View Details
+							</Link>
+						</span>
+					}
+					className={'mt-4 rounded-[10px] text-sm text-bodyBlue dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'}
+					type='success'
+					showIcon
+				/>
+			)}
 			<section className={`${className} mt-2 rounded-xxl bg-white drop-shadow-md dark:bg-section-dark-overlay md:p-4`}>
 				<div className='text-container flex gap-x-2 px-4 font-normal leading-6 text-bodyBlue dark:text-blue-dark-high xs:mt-2 md:mt-0'>
 					<p className='m-0 p-0 text-sm'>
@@ -407,7 +460,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
 					<div className='flex gap-x-1'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'

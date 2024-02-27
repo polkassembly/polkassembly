@@ -169,7 +169,6 @@ const FilterByStatus: React.FC<SortByDropdownProps> = ({ setStatusItem }) => {
 			<Checkbox.Group
 				value={checkedItems}
 				onChange={onChange}
-				style={{ boxShadow: '0px 2px 14px 0px rgba(0, 0, 0, 0.06)' }}
 				className={`mt-1.5 flex max-h-[200px] flex-col justify-start overflow-y-scroll px-2 py-2 tracking-[0.01em]  ${poppins.className} ${poppins.variable}`}
 			>
 				{sortByOptions.map((item, index) => (

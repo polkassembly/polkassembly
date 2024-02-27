@@ -12,6 +12,9 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
+import { deleteKeys, redisDel } from '~src/auth/redis';
+import { Role } from '~src/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface Args {
 	userId: string;
@@ -24,10 +27,13 @@ interface Args {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
-	if (!network || !['polkadot', 'kusama'].includes(network)) return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
+	if (!network || !['polkadot', 'kusama', 'picasso', 'composable'].includes(network))
+		return res.status(400).json({ message: 'Missing or invalid network name in request headers' });
 
 	const { commentId = '', postId, postType, replyId = '', reason = '' } = req.body;
 
@@ -38,6 +44,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	// check if user is a moderator
+	if (!user?.roles?.includes(Role.MODERATOR)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	//TODO: remove hard coded condition
+
+	if (user.id === 7054 && !['composable', 'picasso'].includes(network)) {
+		return res.status(403).json({ message: 'Unauthorised for networks other than Composable and Picasso' });
+	}
 
 	let ref = postsByTypeRef(network, postType).doc(String(postId));
 	if (commentId) {
@@ -57,6 +72,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		reason,
 		userId: String(user.id)
 	};
+
+	if (process.env.IS_CACHING_ALLOWED == '1') {
+		const discussionDetail = `${network}_${ProposalType.DISCUSSIONS}_postId_${postId}`;
+		const discussionListingKey = `${network}_${ProposalType.DISCUSSIONS}_page_*`;
+		const latestActivityKey = `${network}_latestActivity_OpenGov`;
+
+		await redisDel(discussionDetail);
+		await deleteKeys(discussionListingKey);
+
+		if (!commentId && !replyId) {
+			await redisDel(latestActivityKey);
+		}
+	}
+
 	res.status(200).json({ message: 'Content deleted.' });
 
 	const triggerName = 'contentDeletedByMod';

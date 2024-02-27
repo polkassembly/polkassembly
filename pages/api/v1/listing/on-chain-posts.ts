@@ -14,8 +14,10 @@ import {
 	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSALS_LISTING_BY_TYPE,
 	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
+	GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST,
 	GET_PROPOSALS_LISTING_FOR_POLYMESH,
-	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES
+	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
+	GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST
 } from '~src/queries';
 import { IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
@@ -29,6 +31,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -68,6 +71,7 @@ export interface IPostListing {
 	requestedAmount?: string;
 	proposer?: string;
 	curator?: string;
+	proposalHashBlock?: string | null;
 	parent_bounty_index?: number;
 	method?: string;
 	status?: string;
@@ -128,7 +132,7 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (data) {
 		if (Array.isArray(data?.proposer_address)) {
 			if (data.proposer_address.length > 0) {
-				proposer_address = data?.proposer_address[0];
+				proposer_address = data?.proposer_address?.[0];
 			}
 		} else if (typeof data.proposer_address === 'string') {
 			proposer_address = data.proposer_address;
@@ -141,7 +145,6 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 	if (proposer_address.startsWith('0x')) {
 		return proposer_address;
 	}
-
 	return (proposer_address && getEncodedAddress(proposer_address, network)) || proposer_address;
 }
 
@@ -256,6 +259,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			}
+			if (network === 'zeitgeist') {
+				query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST;
+			}
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query,
@@ -265,7 +271,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidPosts: any[] = subsquidData?.proposals;
 
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
+					subsquidPost;
 				let requested = BigInt(0);
 				let args = preimage?.proposedCall?.args;
 				if (args) {
@@ -360,6 +367,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							parent_bounty_index: parentBountyIndex || null,
 							post_id: postId,
 							post_reactions,
+							proposalHashBlock: proposalHashBlock || null,
 							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 							requestedAmount: requested ? requested.toString() : undefined,
 							spam_users_count:
@@ -401,6 +409,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					parent_bounty_index: parentBountyIndex || null,
 					post_id: postId,
 					post_reactions,
+					proposalHashBlock: proposalHashBlock || null,
 					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 					requestedAmount: requested ? requested.toString() : undefined,
 					status: status,
@@ -449,6 +458,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				orderBy: orderBy,
 				type_in: subsquidProposalType
 			};
+
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
@@ -460,6 +470,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 					if (strTrackStatus && strTrackStatus !== 'All' && isCustomOpenGovStatusValid(strTrackStatus)) {
 						postsVariables.status_in = getStatusesFromCustomStatus(strTrackStatus as any);
+						if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
+							postsVariables.status_in = proposalStatus;
+						}
 					}
 				}
 			} else if (strProposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
@@ -488,6 +501,9 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			}
 			if (network === AllNetworks.POLYMESH) {
 				query = GET_PROPOSALS_LISTING_FOR_POLYMESH;
+			}
+			if (network === 'zeitgeist') {
+				query = GET_PROPOSALS_LISTING_BY_TYPE_FOR_ZEITGEIST;
 			}
 			let subsquidRes: any = {};
 			try {
@@ -684,7 +700,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				posts = await Promise.all(postsPromise);
 			} else {
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber } = subsquidPost;
+					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
+						subsquidPost;
 
 					const isStatus = {
 						swap: false
@@ -798,6 +815,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								parent_bounty_index: parentBountyIndex || null,
 								post_id: postId,
 								post_reactions,
+								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: requested ? requested.toString() : undefined,
 								spam_users_count:
@@ -839,6 +857,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						parent_bounty_index: parentBountyIndex || null,
 						post_id: postId,
 						post_reactions,
+						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: requested ? requested.toString() : undefined,
 						status: status,
@@ -979,6 +998,8 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });

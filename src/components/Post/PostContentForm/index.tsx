@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -22,6 +22,8 @@ import ContentForm from '../../ContentForm';
 import AddTags from '~src/ui-components/AddTags';
 import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { ProposalType } from '~src/global/proposalType';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -34,7 +36,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const {
-		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic },
+		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic, proposalHashBlock },
 		setPostData
 	} = usePostDataContext();
 
@@ -51,7 +53,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
 			content,
-			postId: postIndex || postIndex === 0 ? postIndex : cid,
+			postId: proposalType === ProposalType.ADVISORY_COMMITTEE ? proposalHashBlock : postIndex || postIndex === 0 ? postIndex : cid,
 			proposalType,
 			tags,
 			timeline,
@@ -173,7 +175,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								loading={loading}
 								onClick={toggleEdit}
 								className='mr-2'
-								buttonSize='xs'
+								buttonsize='xs'
 							>
 								<CloseOutlined /> Cancel
 							</CustomButton>
@@ -181,7 +183,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 								variant='primary'
 								htmlType='submit'
 								loading={loading}
-								buttonSize='xs'
+								buttonsize='xs'
 							>
 								<CheckOutlined /> Submit
 							</CustomButton>

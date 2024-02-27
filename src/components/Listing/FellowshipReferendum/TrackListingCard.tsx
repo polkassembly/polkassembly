@@ -123,6 +123,7 @@ const TrackListingCard: FC<ITrackListingCardProps> = (props) => {
 					showSizeChanger={false}
 					total={posts?.[activeTab]?.data?.count || 0}
 					responsive={true}
+					theme={theme}
 				/>
 			)}
 		</div>

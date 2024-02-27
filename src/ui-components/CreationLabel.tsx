@@ -127,11 +127,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 	];
 
 	return (
-		<div className={`${className} flex w-[100%] justify-between gap-3 bg-none`}>
+		<div className={`${className} flex w-[100%] justify-between gap-1 bg-none sm:gap-3`}>
 			<div
 				className={`text-xs ${inPostHeading ? '' : 'flex'} ${isRow ? 'flex-row' : 'flex-col'} ${
 					inPostHeading && !beneficiaries?.length ? 'flex' : ''
-				} flex-wrap gap-y-3 max-sm:flex-wrap max-sm:gap-1 md:flex-row md:items-center`}
+				} gap-y-3 max-sm:gap-1 md:flex-row md:items-center`}
 			>
 				<div className={'-mr-[6px] flex w-full items-center max-md:flex-wrap min-[320px]:w-auto min-[320px]:flex-row'}>
 					<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
@@ -185,7 +185,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 				<div
 					className={`details-container ${
 						inPostHeading && beneficiaries && beneficiaries?.length > 0 ? 'mt-2' : ''
-					} flex items-center text-lightBlue dark:text-blue-dark-medium max-xs:ml-1`}
+					} flex items-center text-lightBlue dark:text-blue-dark-medium max-md:pt-1 max-xs:ml-1`}
 				>
 					{!inPostHeading && (
 						<div>
@@ -208,7 +208,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						/>
 					)}
 					{created_at && (
-						<span className={`${inPostHeading ? '' : 'mr-1'} flex items-center md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
+						<span className={`${inPostHeading ? '' : 'sm:mr-1'} flex items-center max-[450px]:text-[9px] md:pl-0 ${isRow ? 'mt-0' : 'xs:mt-2 md:mt-0 md:pl-0'}`}>
 							<ClockCircleOutlined className={`${inPostHeading ? '' : 'ml-1'} mr-1`} />
 							{relativeCreatedAt}
 						</span>

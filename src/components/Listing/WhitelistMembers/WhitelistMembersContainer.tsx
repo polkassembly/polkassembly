@@ -8,12 +8,13 @@ import _ from 'lodash';
 import { EMembersType } from 'pages/members';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
-import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
+import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 
 import WhitelistMembersListing from './WhitelistMembersListing';
 import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { useNetworkSelector } from '~src/redux/selectors';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 export type WhitelistMember = { accountId: string; rank?: number };
 

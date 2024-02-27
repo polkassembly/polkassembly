@@ -4,7 +4,7 @@
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
-import { Badge, Button, Col, Divider, Row, Space } from 'antd';
+import { Badge, Col, Divider, Row, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import { GetServerSideProps } from 'next';
@@ -48,6 +48,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -593,13 +594,14 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 
 				{accessible && (
 					<div className='event-bot-div'>
-						<Button
+						<CustomButton
+							variant='default'
 							className='pending-events-btn'
 							onClick={togglePendingEvents}
 							disabled={Boolean(sidebarEvent)}
 						>
 							{queryApprovalStatus == approvalStatus.APPROVED ? 'Show' : 'Hide'} Pending Events
-						</Button>
+						</CustomButton>
 					</div>
 				)}
 
@@ -637,6 +639,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 											onNavigate={setMiniCalSelectedDate}
 											localizer={localizer}
 											events={calendarEvents}
+											startAccessor='start_time'
+											endAccessor='end_time'
 											components={{
 												event: () => null,
 												eventWrapper: EventWrapperComponent,
@@ -702,6 +706,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 											view={selectedView}
 											events={calendarEvents}
 											popup={false}
+											startAccessor='start_time'
+											endAccessor='end_time'
 											components={{
 												event: Event,
 												eventWrapper: EventWrapperComponent,
@@ -780,12 +786,11 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								>
 									{eventApprovalStatus}
 								</Dropdown>
-								<Button
+								<CustomButton
+									variant='primary'
+									text='Save'
 									onClick={handleUpdateApproval}
-									// disabled={loadingUpdate}
-								>
-									Save
-								</Button>
+								/>
 							</div>
 						)}
 						<div className='event-sidebar-header d-flex'>

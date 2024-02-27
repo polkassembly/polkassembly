@@ -13,7 +13,8 @@ import {
 	GET_PARENT_BOUNTIES_PROPOSER_FOR_CHILD_BOUNTY,
 	GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE,
 	GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE,
-	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE
+	GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE,
+	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
@@ -38,6 +39,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -122,6 +124,7 @@ export interface IPostResponse {
 	decision?: string;
 	last_edited_at?: string | Date;
 	gov_type?: 'gov_1' | 'open_gov';
+	proposalHashBlock?: string | null;
 	tags?: string[] | [];
 	history?: IPostHistory[];
 	pips_voters?: IPIPsVoting[];
@@ -648,14 +651,17 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
-		if (proposalType === ProposalType.TIPS) {
-			if (!strPostId) {
-				throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
+		if (proposalType !== ProposalType.ADVISORY_COMMITTEE) {
+			if (proposalType === ProposalType.TIPS) {
+				if (!strPostId) {
+					throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
+				}
+			} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
+				throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
 			}
-		} else if ((isNaN(numPostId) || numPostId < 0) && proposalType !== ProposalType.ANNOUNCEMENT) {
-			throw apiErrorWithStatusCode(`The postId "${postId}" is invalid.`, 400);
+		} else if (!(strPostId || numPostId)) {
+			throw apiErrorWithStatusCode(`The Tip hash "${postId} is invalid."`, 400);
 		}
-
 		const strProposalType = String(proposalType) as ProposalType;
 		if (!isProposalTypeValid(strProposalType)) {
 			throw apiErrorWithStatusCode(`The proposal type "${proposalType}" is invalid.`, 400);
@@ -700,12 +706,21 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (proposalType === ProposalType.ANNOUNCEMENT) {
 			postQuery = GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE;
 		}
+		if (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network) {
+			postQuery = GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE;
+		}
 
-		if (proposalType === ProposalType.TIPS) {
+		if (
+			proposalType === ProposalType.TIPS ||
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist' && strPostId.toLowerCase() !== strPostId.toUpperCase())
+		) {
 			postVariables = {
 				hash_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
+			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+				postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
+			}
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		} else if (network === 'polymesh') {
@@ -715,7 +730,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				type_eq: subsquidProposalType
 			};
 		}
-
 		let subsquidRes: any = {};
 		try {
 			subsquidRes = await fetchSubsquid({
@@ -869,6 +883,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			history: [],
 			identity: postData?.identity || null,
 			last_edited_at: undefined,
+			marketMetadata: postData?.marketMetadata || null,
 			member_count: postData?.threshold?.value,
 			method: preimage?.method || proposedCall?.method || proposalArguments?.method,
 			motion_method: proposalArguments?.method,
@@ -877,6 +892,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
+			proposalHashBlock: postData?.proposalHashBlock || null,
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
 			proposer,
@@ -977,7 +993,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		// Council motions votes
-		if (proposalType === ProposalType.COUNCIL_MOTIONS) {
+		if (proposalType === ProposalType.COUNCIL_MOTIONS || (proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist')) {
 			post.motion_votes =
 				subsquidData?.votesConnection?.edges?.reduce((motion_votes: any[], edge: any) => {
 					if (edge && edge?.node) {
@@ -1298,6 +1314,8 @@ export const updatePostTimeline = (post: any, postData: any) => {
 
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
 
 	// TODO: take proposalType and postId in dynamic pi route

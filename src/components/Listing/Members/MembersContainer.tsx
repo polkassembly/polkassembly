@@ -5,9 +5,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
-import { LoadingState } from 'src/ui-components/UIStates';
 
 import MembersListing from './MembersListing';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const MembersContainer = ({ className }: { className?: string }) => {
 	const { api, apiReady } = useContext(ApiContext);

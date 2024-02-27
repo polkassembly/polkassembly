@@ -14,7 +14,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
-import PostHistoryModal from '~src/ui-components/PostHistoryModal';
+// import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
@@ -47,7 +47,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			{tags?.slice(0, maxTags).map((tag, index) => (
 				<div
 					key={index}
-					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary'
+					className='traking-2 mr-1 inline-flex cursor-pointer rounded-full border-[1px] border-solid border-navBlue px-[16px] py-[4px] text-xs text-navBlue hover:border-pink_primary hover:text-pink_primary dark:border-section-dark-container dark:text-[#C1C1C1]'
 					onClick={() => handleTagClick(tag)}
 				>
 					{tag}
@@ -55,8 +55,8 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 			))}
 			{tags.length > maxTags && (
 				<span
-					className='mr-1 cursor-pointer text-bodyBlue dark:text-blue-dark-high'
-					style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+					className='mr-1 cursor-pointer bg-[#D2D8E080] text-bodyBlue dark:bg-[#222222] dark:text-[#8B8B8B]'
+					style={{ borderRadius: '20px', padding: '4px 8px' }}
 					onClick={(e) => {
 						e.stopPropagation();
 						e.preventDefault();
@@ -98,12 +98,14 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			track_name,
 			cid,
 			history,
-			content,
+			// content,
 			summary,
-			identityId
+			identityId,
+			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
@@ -164,7 +166,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
 						?.map((v) => (v === 'referendumV2' ? 'Referenda' : v.charAt(0).toUpperCase() + v.slice(1)))
-						.join(' ')} #${onchainId}`
+						.join(' ')} ${proposalType === ProposalType.ADVISORY_COMMITTEE ? 'Motion ' : ''}${
+						onchainId !== undefined || onchainId === 0 ? `#${onchainId}` : `${hash ? `${hash.slice(0, 5)}...${hash.slice(-5)}` : ''}`
+					}`
 				) : (
 					<>
 						{(onchainId || onchainId === 0) && !(proposalType === ProposalType.TIPS) && `#${onchainId}`} {newTitle}
@@ -252,7 +256,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{history && history.length > 0 && (
+			{/* {history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -260,7 +264,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)}
+			)} */}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

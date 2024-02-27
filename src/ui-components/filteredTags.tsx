@@ -7,10 +7,11 @@ import React, { FC, useEffect, useState } from 'react';
 
 interface IFilteredTags {
 	statusItem?: any[];
+	count?: number;
 }
 
 const FilteredTags: FC<IFilteredTags> = (props) => {
-	const { statusItem } = props;
+	const { statusItem, count } = props;
 	const [tags, setTags] = useState<string[]>([]);
 	const router = useRouter();
 
@@ -32,12 +33,13 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>Tags: &nbsp;</span>
 						{tags.map((tag, index) => (
 							<div
-								className='traking-2 mr-1 h-[22px] rounded-full border-[1px] border-solid border-navBlue px-[14px] text-[10px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'
+								className='traking-2 mr-1 flex h-[22px] items-center rounded-full border-[1px] border-solid border-navBlue px-[14px] text-[10px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-white'
 								key={index}
 							>
 								{tag.charAt(0).toUpperCase() + tag.slice(1)}
 							</div>
 						))}
+						<p className='m-0 ml-1 p-0 text-xs'>({count})</p>
 					</div>
 				</div>
 			) : null}
@@ -55,6 +57,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 									{statusItem?.length > 1 && index < statusItem.length - 1 ? ', ' : ''}
 								</div>
 							))}
+							<p className='m-0 ml-1 p-0'>({count})</p>
 						</div>
 					</div>
 				</div>

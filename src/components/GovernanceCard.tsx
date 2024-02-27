@@ -25,9 +25,9 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod } from '~src/types';
+import { IPeriod, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -39,7 +39,6 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import VoteIcon from '~assets/icons/vote-icon.svg';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
@@ -95,6 +94,7 @@ interface IGovernanceProps {
 	showSimilarPost?: boolean;
 	type?: string;
 	description?: string;
+	hash?: string;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -129,7 +129,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		identityId = null,
 		truncateUsername = false,
 		showSimilarPost,
-		description
+		description,
+		hash
 	} = props;
 
 	const router = useRouter();
@@ -141,6 +142,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	let titleString = title || method || tipReason || noTitle;
 	const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 	titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
+	if (ProposalType.ADVISORY_COMMITTEE === proposalType && network === 'zeitgeist') {
+		titleString =
+			title ||
+			method ||
+			`${(getProposalTypeTitle(proposalType) || '')
+				?.split(' ')
+				?.map((v) => v.charAt(0).toUpperCase() + v.slice(1))
+				.join(' ')} Motion ${hash?.slice(0, 3)}...${hash?.slice(hash?.length - 3, hash?.length)}`;
+	}
 
 	const mainTitle = <span className={tipReason && 'tipTitle'}>{titleString}</span>;
 	const subTitle = title && tipReason && method && <h5>{title}</h5>;
@@ -279,7 +289,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					<div className='flex items-center justify-between'>
 						<div className='flex flex-grow'>
 							<span className={`flex-none text-center font-medium text-bodyBlue dark:text-white ${showSimilarPost ? 'mt-[2px] w-[76px]' : 'sm:w-[120px]'}`}>
-								#{isTip ? tip_index : onchainId}
+								{(tip_index || onchainId || hash) && `#${isTip ? tip_index : onchainId || `${hash?.slice(0, 3)}...${hash?.slice(hash?.length - 3, hash?.length)}`}`}
 							</span>
 							<OnchainCreationLabel
 								address={address || polkadotProposer}
@@ -334,7 +344,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					{showSimilarPost && content && (
 						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
+							<h1 className='desc-container shadow-0 mr-12 mt-0.5 flex max-h-[94px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
 									<Markdown
 										className='post-content'

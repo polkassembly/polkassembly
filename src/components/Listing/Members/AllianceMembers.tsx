@@ -4,9 +4,9 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { ErrorState } from 'src/ui-components/UIStates';
-import { LoadingState } from 'src/ui-components/UIStates';
 import MembersListing from './MembersListing';
 import { ApiContext } from '~src/context/ApiContext';
+import LoadingState from '~src/basic-components/Loading/LoadingState';
 
 const AllianceMembers = ({ className }: { className?: string }) => {
 	const { api, apiReady } = useContext(ApiContext);

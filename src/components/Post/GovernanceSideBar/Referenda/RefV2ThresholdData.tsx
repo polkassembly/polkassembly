@@ -14,7 +14,8 @@ import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
 import { Modal } from 'antd';
 import Curves from './Curves';
 import Loader from '~src/ui-components/Loader';
-import { useCurvesInformationSelector } from '~src/redux/selectors';
+import { useCurvesInformationSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { trackEvent } from 'analytics';
 
 interface IRefV2ThresholdDataProps {
 	canVote: boolean;
@@ -25,6 +26,7 @@ interface IRefV2ThresholdDataProps {
 const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, thresholdData, canVote }) => {
 	const [thresholdOpen, setThresholdOpen] = useState(false);
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
+	const currentUser = useUserDetailsSelector();
 	const { approval, support, approvalThreshold, supportThreshold } = useCurvesInformationSelector();
 	useEffect(() => {
 		if (thresholdOpen && isCurvesRender) {
@@ -44,6 +46,10 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 						<button
 							onClick={() => {
 								setOpen(true);
+								trackEvent('view_vote_history_clicked', 'clicked_view_vote_history', {
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
 							}}
 							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
 						>
@@ -116,7 +122,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 				open={thresholdOpen}
 				footer={[]}
 				className='md:min-w-[700px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 				title={<h2 className='text-xl font-semibold leading-[30px] tracking-[0.01em] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'>Threshold Curves</h2>}
 			>
 				<div className='relative mt-5 min-h-[250px] md:min-h-[400px]'>

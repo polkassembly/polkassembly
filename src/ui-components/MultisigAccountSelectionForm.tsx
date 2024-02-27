@@ -13,10 +13,10 @@ import { useApiContext } from '~src/context';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Loader from '~src/ui-components/Loader';
 import styled from 'styled-components';
-import { Alert } from 'antd';
 import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Alert from '~src/basic-components/Alert';
 
 const Container = styled.div`
 	display: flex;
@@ -202,6 +202,5 @@ const MultisigNotFound = () => (
 		}
 		type='info'
 		showIcon
-		className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 	/>
 );

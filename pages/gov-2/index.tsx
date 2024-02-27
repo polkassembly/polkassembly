@@ -124,7 +124,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 
-			<div className='mx-1 mt-6'>
+			<div className='mx-1 mt-2 md:mt-6'>
 				{networkSocialsData && (
 					<AboutNetwork
 						networkSocialsData={networkSocialsData?.data}

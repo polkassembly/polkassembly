@@ -305,7 +305,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 			<Form id='democracyUnlock'>
 				<div>
 					<Form.Item>
-						<h1 className='dashboard-heading'>Unlock democracy locks</h1>
+						<h1 className='dashboard-heading dark:text-separatorDark'>Unlock democracy locks</h1>
 						{accounts.length > 0 ? (
 							<AccountSelectionForm
 								title='Choose account'
@@ -316,7 +316,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 								isBalanceUpdated={isBalanceUpdated}
 							/>
 						) : (
-							<span className='text-sidebarBlue'>
+							<span className='text-sidebarBlue dark:text-separatorDark'>
 								No accounts found, Please approve request from your wallet and/or <a href='javascript:window.location.reload(true)'>refresh</a> and try again!{' '}
 							</span>
 						)}
@@ -325,15 +325,16 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 				<div>
 					<Form.Item>
 						{lockedBalance.isZero() ? (
-							<div className='text-sidebarBlue'>You currently have no democracy locks.</div>
+							<div className='text-sidebarBlue dark:text-separatorDark'>You currently have no democracy locks.</div>
 						) : (
-							<div className='text-sidebarBlue'>
-								Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
+							<div className='text-sidebarBlue dark:text-separatorDark'>
+								Your locked balance:{' '}
+								<span className=' font-medium dark:text-separatorDark'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
 								{unlocksAt === '0' ? (
-									<div className=' font-medium'>Available to be immediately unlocked.</div>
+									<div className=' font-medium dark:text-separatorDark'>Available to be immediately unlocked.</div>
 								) : (
 									<div>
-										UnlocksAt: <span className='font-medium'>{unlocksAt}</span>
+										UnlocksAt: <span className='font-medium dark:text-separatorDark'>{unlocksAt}</span>
 									</div>
 								)}{' '}
 							</div>
@@ -342,10 +343,10 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 							<>
 								<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
 									<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
-										<span className='col-span-2'>Referendums</span>
-										<span className='col-span-2'>Locked</span>
-										<span className='col-span-2'>Unlocks At</span>
-										<span className='col-span-2'></span>
+										<span className='col-span-2 dark:text-separatorDark'>Referendums</span>
+										<span className='col-span-2 dark:text-separatorDark'>Locked</span>
+										<span className='col-span-2 dark:text-separatorDark'>Unlocks At</span>
+										<span className='col-span-2 dark:text-separatorDark'></span>
 									</li>
 									<Divider className='my-1' />
 									{votes.map((vote, id) => (
@@ -355,16 +356,21 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 												className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 											>
 												<span className='col-span-2'>
-													<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+													<Link
+														className='dark:text-separatorDark'
+														href={`/referendum/${vote.refIndex.toString()}`}
+													>
+														Referendum #{vote.refIndex.toString()}
+													</Link>
 												</span>
 												{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
-													<span className='col-span-2'>
+													<span className='col-span-2 dark:text-separatorDark'>
 														{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
 														{': '}
 														{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
 													</span>
 												) : (
-													<div className='col-span-2 flex flex-col'>
+													<div className='col-span-2 flex flex-col dark:text-separatorDark'>
 														<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														{vote.voteType === EVoteDecisionType.ABSTAIN && (
@@ -372,8 +378,8 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 														)}
 													</div>
 												)}
-												<span className='col-span-2'>{unlocksAt}</span>
-												<span className='col-span-2'>
+												<span className='col-span-2 dark:text-separatorDark'>{unlocksAt}</span>
+												<span className='col-span-2 dark:text-separatorDark'>
 													{id === 0 ? (
 														canBeUnlocked ? (
 															<CustomButton

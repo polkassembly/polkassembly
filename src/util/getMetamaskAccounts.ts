@@ -29,7 +29,7 @@ const getMetamaskAccounts = async ({
 			ethereum = (window as any).SubWallet;
 			break;
 		case Wallet.NOVAWALLET:
-			ethereum = (window as any).window.injectedWeb3;
+			ethereum = (window as any).window.injectedWeb3[String(chosenWallet)];
 			break;
 		default:
 			ethereum = (window as any).ethereum;

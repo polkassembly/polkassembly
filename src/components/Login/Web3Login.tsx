@@ -42,6 +42,7 @@ import styled from 'styled-components';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import FilteredError from '~src/ui-components/FilteredError';
 
 const ZERO_BN = new BN(0);
 interface Props {
@@ -666,6 +667,16 @@ const Web3Login: FC<Props> = ({
 												</>
 											)
 										)}
+										<div>
+											{error ? (
+												<FilteredError
+													text={error}
+													type={'info'}
+												/>
+											) : (
+												<></>
+											)}
+										</div>
 									</AuthForm>
 								)}
 								{!!chosenWallet && !accounts.length && (

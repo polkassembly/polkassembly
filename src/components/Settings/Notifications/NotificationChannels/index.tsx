@@ -13,7 +13,7 @@ import BotSetupCard from './BotSetupCard';
 import TelegramInfoModal from './Modals/Telegram';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utilsFe';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';

@@ -55,7 +55,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady]);
+	}, [network, api, apiReady, addresses, addressWithIdentity]);
 
 	const handleCopyAddress = () => {
 		messageApi.open({
@@ -124,7 +124,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 					) : (
 						<div className='flex items-center justify-between text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-md:flex-col md:ml-[90px] md:pr-6'>{username}</div>
 					)}
-					<div className='flex flex-wrap justify-center gap-2'>
+					<div className='flex flex-wrap gap-2 max-sm:justify-center'>
 						{addressWithIdentity && (
 							<div className='md:ml-[90px]'>
 								<EvalutionSummary

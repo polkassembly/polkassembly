@@ -15,7 +15,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import { EAddressOtherTextType } from '~src/types';
+import { EAddressOtherTextType, IDelegate } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
@@ -28,6 +28,8 @@ import QuickView, { TippingUnavailableNetworks } from './QuickView';
 import { VerifiedIcon } from './CustomIcons';
 import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
+import { isAddress } from 'ethers';
+import { poppins } from 'pages/_app';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -70,6 +72,7 @@ interface Props {
 	inPostHeading?: boolean;
 	isProfileView?: boolean;
 	addressWithVerifiedTick?: boolean;
+	isUsedIndelegationNudge?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -105,7 +108,8 @@ const Address = (props: Props) => {
 		destroyTooltipOnHide = false,
 		inPostHeading,
 		isProfileView = false,
-		addressWithVerifiedTick = false
+		addressWithVerifiedTick = false,
+		isUsedIndelegationNudge = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -129,6 +133,8 @@ const Address = (props: Props) => {
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
 	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
+	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
+
 	const [addressPrefix, setAddressPrefix] = useState(
 		kiltName ||
 			mainDisplay ||
@@ -138,6 +144,26 @@ const Address = (props: Props) => {
 	);
 	const [addressSuffix, setAddressSuffix] = useState(extensionName || mainDisplay);
 
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, address]);
+
+	const getData = async () => {
+		if (!api || !apiReady) return;
+
+		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
+
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
+			address: address
+		});
+		if (data) {
+			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+		} else {
+			console.log(error);
+			setIsW3FDelegate(false);
+		}
+	};
 	useEffect(() => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
@@ -308,6 +334,7 @@ const Address = (props: Props) => {
 						imgUrl={imgUrl}
 						setOpenAddressChangeModal={setOpenAddressChangeModal}
 						isKiltNameExists={!!kiltName}
+						isW3FDelegate={isW3FDelegate}
 					/>
 				}
 				open={!disableTooltip ? open : false}
@@ -349,7 +376,7 @@ const Address = (props: Props) => {
 										<div
 											onClick={(e) => handleClick(e)}
 											title={mainDisplay || encodedAddr}
-											className={`flex gap-x-1 ${
+											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
 											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 										>
@@ -438,7 +465,7 @@ const Address = (props: Props) => {
 					) : (
 						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
 							{!disableHeader && (
-								<div className='flex'>
+								<div className='flex items-center'>
 									<div className='flex items-center'>
 										<Space className={'header'}>
 											<div
@@ -461,7 +488,23 @@ const Address = (props: Props) => {
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})
 							</div>
-							<div>{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}</div>
+							<div className='flex gap-1.5'>
+								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
+								{isW3FDelegate && (
+									<Tooltip
+										title='Web3 foundation member'
+										className={classNames(poppins.className, poppins.variable)}
+									>
+										<Image
+											src={'/assets/profile/w3f.svg'}
+											alt=''
+											width={24}
+											height={24}
+											className='ml-2'
+										/>
+									</Tooltip>
+								)}
+							</div>
 						</div>
 					)}
 

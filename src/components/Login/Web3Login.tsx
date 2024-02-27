@@ -15,7 +15,6 @@ import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AuthForm from 'src/ui-components/AuthForm';
-import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import getEncodedAddress from 'src/util/getEncodedAddress';
 import LoginLogo from '~assets/icons/login-logo.svg';
@@ -667,7 +666,6 @@ const Web3Login: FC<Props> = ({
 												</>
 											)
 										)}
-										<div>{error && <FilteredError text={error} />}</div>
 									</AuthForm>
 								)}
 								{!!chosenWallet && !accounts.length && (

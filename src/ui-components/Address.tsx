@@ -70,6 +70,7 @@ interface Props {
 	inPostHeading?: boolean;
 	isProfileView?: boolean;
 	addressWithVerifiedTick?: boolean;
+	isUsedIndelegationNudge?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -105,7 +106,8 @@ const Address = (props: Props) => {
 		destroyTooltipOnHide = false,
 		inPostHeading,
 		isProfileView = false,
-		addressWithVerifiedTick = false
+		addressWithVerifiedTick = false,
+		isUsedIndelegationNudge = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -349,7 +351,7 @@ const Address = (props: Props) => {
 										<div
 											onClick={(e) => handleClick(e)}
 											title={mainDisplay || encodedAddr}
-											className={`flex gap-x-1 ${
+											className={`${isUsedIndelegationNudge ? 'text-xs' : ''} flex gap-x-1 ${
 												usernameClassName ? usernameClassName : 'font-semibold text-bodyBlue dark:text-blue-dark-high'
 											} hover:text-bodyBlue dark:text-blue-dark-high ${inPostHeading ? 'text-xs' : 'text-sm'}`}
 										>

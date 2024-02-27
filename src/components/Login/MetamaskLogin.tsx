@@ -13,7 +13,6 @@ import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AuthForm from 'src/ui-components/AuthForm';
-import FilteredError from 'src/ui-components/FilteredError';
 import Loader from 'src/ui-components/Loader';
 import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import LoginLogo from '~assets/icons/login-logo.svg';
@@ -564,7 +563,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									</>
 								)
 							)}
-							<div className='mt-4'>{error ? <FilteredError text={error} /> : <></>}</div>
 						</AuthForm>
 					)}
 

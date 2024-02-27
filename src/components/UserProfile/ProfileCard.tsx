@@ -8,7 +8,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import classNames from 'classnames';
 import Address from '~src/ui-components/Address';
 import copyToClipboard from '~src/util/copyToClipboard';
-import { Tooltip, message } from 'antd';
+import { message } from 'antd';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -20,7 +20,6 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegate } from '~src/types';
 import { isAddress } from 'ethers';
-import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string;
@@ -94,20 +93,6 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									isTruncateUsername={isMobile || false}
 									passedUsername={userProfile?.username}
 								/>
-								{isW3FDelegate && (
-									<Tooltip
-										title='Web3 foundation member'
-										className={classNames(poppins.className, poppins.variable)}
-									>
-										<Image
-											src={'/assets/profile/w3f.svg'}
-											alt=''
-											width={24}
-											height={24}
-											className='ml-2'
-										/>
-									</Tooltip>
-								)}
 								<span
 									className='flex cursor-pointer items-center p-1'
 									onClick={(e) => {

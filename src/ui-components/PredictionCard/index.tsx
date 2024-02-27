@@ -84,7 +84,7 @@ const PredictionCard = () => {
 
 	useEffect(() => {
 		async function getPredictionsData() {
-			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
+			const data = await fetch('https://zeitgeist-squid-mainnet.stellate.sh', {
 				body: JSON.stringify({
 					query: `
 						query MarketDetails($marketId: Int = 415) {

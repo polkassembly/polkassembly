@@ -118,7 +118,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 		}
 	];
 	return (
-		<>
+<>
 			{isUsedInHomePage && (
 				<div className='flex items-center justify-between space-x-4'>
 					<CustomButton

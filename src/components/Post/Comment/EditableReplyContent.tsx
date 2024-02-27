@@ -12,6 +12,7 @@ import Markdown from 'src/ui-components/Markdown';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
 import ReplyIcon from '~assets/icons/reply.svg';
+import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
@@ -34,6 +35,7 @@ import { IComment } from './Comment';
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import Tooltip from '~src/basic-components/Tooltip';
+import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 
 interface Props {
 	userId: number;
@@ -645,7 +647,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							className='rounded-b-md bg-[#ebf0f5] px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 							md={content}
 						/>
-						<div className='replies-buttons-container flex flex-wrap items-center gap-1'>
+						<div className=' flex flex-wrap items-center gap-1'>
 							<CommentReactionBar
 								className='reactions mr-0'
 								commentId={commentId}
@@ -654,7 +656,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 								replyId={replyId}
 								isReactionOnReply={isReactionOnReply}
 							/>
-							<div className='reply-buttons-container item-center flex flex-wrap gap-3'>
+							<div className='item-center flex flex-wrap gap-3'>
 								{id ? (
 									reply.reply_source === 'subsquare' ? (
 										<Tooltip
@@ -666,7 +668,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 													reply.reply_source ? 'disabled-reply' : ''
 												}`}
 											>
-												<ReplyIcon className='mr-1' /> Reply
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 											</Button>
 										</Tooltip>
 									) : (
@@ -675,26 +677,12 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 												className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
 												onClick={() => setIsReplying(!isReplying)}
 											>
-												<ReplyIcon className='mr-1' />
+												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}
 												Reply
 											</Button>
 										)
 									)
 								) : null}
-								{reply.isReplyError && (
-									<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<Caution className='icon-container relative top-[4px] text-2xl' />
-										<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
-										<div
-											onClick={handleRetry}
-											className='retry-container relative flex w-[66px] cursor-pointer px-1'
-											style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
-										>
-											<IconRetry className='relative top-[3px] text-2xl' />
-											<span className='relative top-[3px] m-0 p-0'>Retry</span>
-										</div>
-									</div>
-								)}
 							</div>
 							<Dropdown
 								theme={theme}
@@ -703,8 +691,26 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
+								{theme === 'dark' ? (
+									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								) : (
+									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								)}
 							</Dropdown>
+							{reply.isReplyError && (
+								<div className='-mt-1 ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>
+									<Caution className='icon-container relative top-[4px] text-2xl' />
+									<span className='msg-container relative top-[4px] m-0 mr-2 p-0'>Reply not posted</span>
+									<div
+										onClick={handleRetry}
+										className='retry-container relative flex w-[66px] cursor-pointer px-1'
+										style={{ backgroundColor: '#FFF1F4', borderRadius: '13px' }}
+									>
+										<IconRetry className='relative top-[3px] text-2xl' />
+										<span className='relative top-[3px] m-0 p-0'>Retry</span>
+									</div>
+								</div>
+							)}
 						</div>
 						{isReplying && (
 							<Form

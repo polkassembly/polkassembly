@@ -308,10 +308,11 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							You have delegated vote to
 							<Address
 								address={delegatedTo}
-								className='ml-2 text-sm'
+								className='ml-2 text-xs'
 								iconSize={20}
 								displayInline
 								isTruncateUsername={false}
+								isUsedIndelegationNudge={true}
 							/>
 							<Link
 								href={`https://${network}.polkassembly.io/delegation${path}`}

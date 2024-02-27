@@ -143,7 +143,7 @@ const TrendingDelegates = () => {
 			>
 				{allDataSource?.map((source, index) => (
 					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-[13px] p-[8px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 						key={index}
 					>
 						<Checkbox
@@ -152,7 +152,7 @@ const TrendingDelegates = () => {
 							checked={checkAll}
 							onChange={onCheckAllChange}
 						/>
-						{source.charAt(0).toUpperCase() + source.slice(1)}
+						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
 					</div>
 				))}
 			</Checkbox.Group>
@@ -207,7 +207,7 @@ const TrendingDelegates = () => {
 			{/* <h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}> */}
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
-			<div className='flex items-center gap-4'>
+			<div className='flex items-center gap-2'>
 				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-[#D2D8E0] text-[14px] font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
 					{/* Input Component */}
 					<Input
@@ -244,7 +244,7 @@ const TrendingDelegates = () => {
 					placement='bottomRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-[#D2D8E0] p-2 dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-[#D2D8E0] dark:border-borderColorDark dark:bg-section-dark-overlay'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'

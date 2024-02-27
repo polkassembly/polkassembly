@@ -53,6 +53,9 @@ import varaLogo from '~assets/parachain-logos/vara-logo.png';
 import westendLogo from '~assets/parachain-logos/westend-logo.jpg';
 import xxcoinLogo from '~assets/parachain-logos/xxcoin-logo.png';
 import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
+import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
+import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
+import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
 
 import * as types from '../types';
 
@@ -95,6 +98,8 @@ export const network = {
 	PENDULUM: 'pendulum',
 	PIONEER: 'pioneer',
 	POLKADEX: 'polkadex',
+	POLIMEC: 'polimec',
+	PHYKEN: 'phyken',
 	ROBONOMICS: 'robonomics',
 	SNOW: 'snow',
 	SHIBUYA: 'shibuya',
@@ -112,7 +117,8 @@ export const network = {
 	WESTEND: 'westend',
 	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx',
-	ZEITGEIST: 'zeitgeist'
+	ZEITGEIST: 'zeitgeist',
+	MANDALA: 'mandala'
 };
 
 export const tokenSymbol = {
@@ -160,12 +166,15 @@ export const tokenSymbol = {
 	PICA: 'PICA',
 	ROC: 'ROC',
 	POLYX: 'POLYX',
+	PLMC: 'PLMC',
+	MQTY: 'MQTY',
 	WND: 'WND',
 	XRT: 'XRT',
 	UNIT: 'UNIT',
 	VARA: 'VARA',
 	XX: 'XX',
-	ZTG: 'ZTG'
+	ZTG: 'ZTG',
+	KPGT: 'KPGT'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -481,6 +490,58 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://pioneer.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: []
+	},
+	[network.POLIMEC]: {
+		blockTime: 12000,
+		category: 'solo',
+		chainId: 0,
+		logo: polimecLogo,
+		rpcEndpoint: 'wss://rpc.polimec.org',
+		ss58Format: 41,
+		subsquidUrl: '',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.PLMC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://polimec.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: []
+	},
+	[network.PHYKEN]: {
+		blockTime: 12000,
+		category: 'solo',
+		chainId: 0,
+		logo: phykenLogo,
+		rpcEndpoint: 'wss://rpc.polimec.org',
+		// TODO: Update rpcEndpoint
+		ss58Format: 666,
+		subsquidUrl: '',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.MQTY,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://phyken.api.subscan.io',
+		gTag: null,
+		rpcEndpoints: []
+	},
+	[network.MANDALA]: {
+		blockTime: 6000,
+		category: 'solo',
+		chainId: 0,
+		logo: mandalaLogo,
+		rpcEndpoint: 'wss://node1.mandalachain.io/',
+		ss58Format: 42,
+		subsquidUrl: '',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.KPGT,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: 'https://testnet.mandalascan.io/',
 		gTag: null,
 		rpcEndpoints: []
 	},

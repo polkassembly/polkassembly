@@ -2,8 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import React, { useState } from 'react';
+import Input from '~src/basic-components/Input';
 
 interface Props {
 	className?: string;
@@ -56,6 +57,7 @@ const TitleForm = ({ className, onChange, value = '' }: Props): JSX.Element => {
 					validateStatus={validationStatus.validateStatus}
 					help={validationStatus.errorMsg}
 				>
+					{/* Input Component */}
 					<Input
 						className='text-sm text-sidebarBlue dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 						name={'title'}

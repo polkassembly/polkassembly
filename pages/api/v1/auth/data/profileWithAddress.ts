@@ -12,6 +12,7 @@ import messages from '~src/util/messages';
 
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import dayjs from 'dayjs';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 interface IGetProfileWithAddress {
 	address?: string | string[];
 }
@@ -72,6 +73,8 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IGetProfileWithAddressResponse | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const { address } = req.query;
 
 	const { data, error, status } = await getProfileWithAddress({

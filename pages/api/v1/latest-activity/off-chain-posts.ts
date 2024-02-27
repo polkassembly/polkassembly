@@ -17,6 +17,7 @@ import messages from '~src/util/messages';
 import { ILatestActivityPostsListingResponse } from './on-chain-posts';
 import { firestore_db } from '~src/services/firebaseInit';
 import { getSpamUsersCountForPosts } from '../listing/on-chain-posts';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface IGetLatestActivityOffChainPostsParams {
 	listingLimit?: string | string[] | number;
@@ -155,6 +156,8 @@ export async function getLatestActivityOffChainPosts(params: IGetLatestActivityO
 }
 
 const handler: NextApiHandler<ILatestActivityPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { proposalType = OffChainProposalType.DISCUSSIONS, listingLimit = LISTING_LIMIT } = req.query;
 
 	const network = String(req.headers['x-network']);

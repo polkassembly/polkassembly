@@ -15,6 +15,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
+import Link from 'next/link';
+import { trackEvent } from 'analytics';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -35,7 +37,7 @@ type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggle
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id, username } = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
@@ -132,6 +134,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 
 	useEffect(() => {
 		if (showRefundDeposit?.show) {
+			trackEvent('refund_card_clicked', 'clicked_refund_card', {
+				loginAddress: loginAddress || '',
+				userId: id || '',
+				userName: username || ''
+			});
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -146,11 +153,16 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 		}
 		if (showDecisionDeposit) {
+			trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_card', {
+				loginAddress: loginAddress || '',
+				userId: id || '',
+				userName: username || ''
+			});
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => setOpenDecisionDeposit(true),
-					description: 'To be paid before completion of decision period; payable by anyone',
+					description: 'Place refundable deposit within 14 days to prevent proposal from timing out.',
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'
@@ -162,6 +174,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 
 		if (canEdit && !(tags && Array.isArray(tags) && tags.length > 0)) {
 			setRHSCards((prevCards) => {
+				trackEvent('add_tags_card_clicked', 'clicked_add_tags_card', {
+					loginAddress: loginAddress || '',
+					userId: id || '',
+					userName: username || ''
+				});
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
@@ -181,6 +198,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				if (isOnchainPost) {
+					trackEvent('link_description_card_clicked', 'clicked_link_description_card', {
+						loginAddress: loginAddress || '',
+						userId: id || '',
+						userName: username || ''
+					});
 					newCards.push({
 						clickHandler: () => setOpenLinkCta(true),
 						description: 'Please add contextual info for voters to make an informed decision',
@@ -189,6 +211,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						title: 'Link Discussion'
 					});
 					if (!content?.length) {
+						trackEvent('add_description_card_clicked', 'clicked_add_description_card', {
+							loginAddress: loginAddress || '',
+							userId: id || '',
+							userName: username || ''
+						});
 						newCards.push({
 							clickHandler: () => setLinkingAndEditingOpen(true),
 							description: 'Please add contextual info for voters to make an informed decision',
@@ -247,9 +274,9 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 									</div>
 								</div>
 								<div
-									className={`card-slide flex h-full w-full items-center justify-center gap-2 bg-rhs-card-gradient p-3 ${
+									className={`card-slide flex h-full w-full items-center justify-center bg-rhs-card-gradient ${
 										!!loading && card.tag === cardTags.REFUND_DEPOSIT && 'cursor-progress'
-									}`}
+									} ${showDecisionDeposit ? 'gap-1 p-1' : 'gap-2 p-3'}`}
 									onClick={card.clickHandler}
 								>
 									<Image
@@ -258,9 +285,32 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 										width={60}
 										height={60}
 									/>
-									<div className='content mr-14 text-white'>
+									<div className={`content ${showDecisionDeposit ? 'mr-[44px] mt-3' : 'mr-18'} text-white`}>
 										<h5 className='mb-1 text-base font-semibold tracking-wide'>{card.title}</h5>
-										<p className='mb-0 break-words text-xs leading-tight'>{card.description}</p>
+										<p className=' mb-0 break-words text-xs leading-tight'>
+											{card.description}
+											{showDecisionDeposit && (
+												<Link
+													href='https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum'
+													className='ml-1 cursor-pointer font-normal'
+													target='_blank'
+													onClick={(e) => {
+														e.stopPropagation();
+														e.preventDefault();
+														window.open('https://wiki.polkadot.network/docs/learn-guides-treasury#place-a-decision-deposit-for-the-treasury-track-referendum', '_blank');
+													}}
+												>
+													Details
+													<Image
+														src='/assets/icons/redirect.svg'
+														alt='redirection-icon'
+														width={14}
+														height={14}
+														className='-mt-0.5'
+													/>
+												</Link>
+											)}
+										</p>
 									</div>
 								</div>
 							</div>

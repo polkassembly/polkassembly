@@ -5,9 +5,10 @@ export const FIREBASE_FUNCTIONS_URL = 'https://us-central1-polkasafe-a8042.cloud
 
 const NOTIFICATION_ENGINE_API_KEY = '47c058d8-2ddc-421e-aeb5-e2aa99001949';
 
-export const firebaseFunctionsHeader = (network: string) => ({
+export const firebaseFunctionsHeader = (network: string, address?: string) => ({
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
+	'x-address': localStorage.getItem('loginAddress') || address || '',
 	'x-api-key': NOTIFICATION_ENGINE_API_KEY,
 	'x-network': network,
 	'x-source': 'polkassembly'

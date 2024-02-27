@@ -568,6 +568,7 @@ const Post: FC<IPostProps> = (props) => {
 											<Tabs
 												theme={theme}
 												type='card'
+												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
 											/>

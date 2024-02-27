@@ -45,7 +45,7 @@ const StyledTabs = styled(AntdTabs)`
 	}
 	.ant-tabs-ink-bar {
 		visibility: visible !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#ffffff')} !important;
+		background: ${(props: any) => (props.isPostTab ? (props.theme == 'dark' ? '#0D0D0D' : '#ffffff') : '')} !important;
 	}
 	.ant-tabs-tab-bg-white .ant-tabs-nav:before {
 		border-bottom: 1px solid #e1e6eb;

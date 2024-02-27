@@ -438,7 +438,7 @@ const Address = (props: Props) => {
 					) : (
 						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
 							{!disableHeader && (
-								<div className='flex'>
+								<div className='flex items-center'>
 									<div className='flex items-center'>
 										<Space className={'header'}>
 											<div

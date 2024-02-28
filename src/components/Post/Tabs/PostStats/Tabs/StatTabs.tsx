@@ -43,7 +43,7 @@ export const StatTabs = ({ items, setActiveTab, activeTab }: IStatsProps) => {
 							return (
 								<Button
 									key={item.key}
-									className='mb-5 w-40 font-medium text-blue-light-high dark:bg-section-dark-overlay dark:text-white'
+									className='mb-5 w-40 font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'
 								>
 									{item.label} <DownOutlined />
 								</Button>

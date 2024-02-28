@@ -15,9 +15,9 @@ const StyledNudge = styled.div`
 `;
 const Nudge = ({ text }: INudgeProps) => {
 	return (
-		<StyledNudge className='mb-5 flex  items-center gap-1 rounded-lg px-5 py-2'>
-			<NudgeIcon className='m-0 h-6 w-6 fill-blue-light-high dark:fill-white' />
-			<span className='text-sm font-medium text-blue-light-high dark:text-white'>{text}</span>
+		<StyledNudge className='mb-5 flex items-center gap-1 rounded-lg px-5 py-2'>
+			<NudgeIcon className='m-0 h-auto w-10 fill-blue-light-high dark:fill-white md:h-6 md:w-6' />
+			<span className='break-words text-sm font-medium text-blue-light-high dark:text-white'>{text}</span>
 		</StyledNudge>
 	);
 };

@@ -35,23 +35,10 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	};
 
 	return (
-		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white'>
-			<div className='flex flex-col items-center justify-between gap-5 md:flex-row'>
+		<Card className='mx-auto h-fit w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white md:max-h-[500px]'>
+			<div className='flex items-center justify-between gap-5'>
 				<h2 className='text-xl font-semibold'>Vote Distribution</h2>
-				<div className='flex items-center gap-5 text-xs'>
-					<div className='flex items-center gap-2'>
-						<div className='h-1.5 w-1.5 rounded-full bg-ayeGreenColor'></div>
-						<span>Aye</span>
-					</div>
-					<div className='flex items-center gap-2'>
-						<div className='h-1.5 w-1.5 rounded-full bg-nayRedColor'></div>
-						<span>Nay</span>
-					</div>
-					<div className='flex items-center gap-2'>
-						<div className='h-1.5 w-1.5 rounded-full bg-abstainBlueColor'></div>
-						<span>Abstain</span>
-					</div>
-				</div>
+				<Legend className='hidden md:flex' />
 			</div>
 			<div className='flex w-full flex-col gap-2 overflow-hidden lg:flex-row'>
 				{sortedAyes.length ? (
@@ -112,6 +99,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 					</div>
 				) : null}
 			</div>
+			<Legend className='mt-5 flex justify-center md:hidden' />
 		</Card>
 	);
 };
@@ -141,6 +129,25 @@ const GridItem = ({ size, color, votePercent, voter }: { size: number; voter: st
 		>
 			<div style={style}></div>
 		</Popover>
+	);
+};
+
+const Legend = ({ className }: { className?: string }) => {
+	return (
+		<div className={`${className} flex items-center gap-5 text-xs dark:text-[#747474]`}>
+			<div className='flex items-center gap-2'>
+				<div className='h-1.5 w-1.5 rounded-full bg-ayeGreenColor'></div>
+				<span>Aye</span>
+			</div>
+			<div className='flex items-center gap-2'>
+				<div className='h-1.5 w-1.5 rounded-full bg-nayRedColor'></div>
+				<span>Nay</span>
+			</div>
+			<div className='flex items-center gap-2'>
+				<div className='h-1.5 w-1.5 rounded-full bg-abstainBlueColor'></div>
+				<span>Abstain</span>
+			</div>
+		</div>
 	);
 };
 

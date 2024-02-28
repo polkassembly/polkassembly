@@ -48,7 +48,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 		}
 	];
 	return (
-		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TotalVotesIconDark /> : <TotalVotesIcon />} Total Votes Casted</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
@@ -83,7 +83,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 							itemDirection: 'left-to-right',
 							itemHeight: 19,
 							itemOpacity: 1,
-							itemTextColor: theme === 'dark' ? '#fff' : '#576D8B',
+							itemTextColor: theme === 'dark' ? '#747474' : '#576D8B',
 							itemWidth: 60,
 							itemsSpacing: 0,
 							justify: false,
@@ -111,7 +111,8 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
 				/>
 				<p className='absolute bottom-6 flex items-end gap-2 text-xl font-bold dark:text-white'>
-					{formatUSDWithUnits(maxValue.toString(), 1)} {isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-white'>DOT</span>}
+					{formatUSDWithUnits(maxValue.toString(), 1)}{' '}
+					{isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-lightGreyTextColor'>DOT</span>}
 				</p>
 			</div>
 		</Card>

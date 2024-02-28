@@ -50,7 +50,7 @@ const VoteDelegationsByConviction: FC<IVoteDelegationProps> = ({ votesByDelegati
 	});
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='text-xl font-semibold'>Votes for Delegated VS Solo</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
@@ -105,7 +105,7 @@ const VoteDelegationsByConviction: FC<IVoteDelegationProps> = ({ votesByDelegati
 							itemDirection: 'left-to-right',
 							itemHeight: 20,
 							itemOpacity: 0.85,
-							itemTextColor: theme === 'dark' ? '#fff' : '#576D8B',
+							itemTextColor: theme === 'dark' ? '#747474' : '#576D8B',
 							itemWidth: 100,
 							itemsSpacing: 2,
 							justify: false,

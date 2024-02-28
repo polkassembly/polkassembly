@@ -25,6 +25,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const proposalType = ProposalType.TIPS;
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {

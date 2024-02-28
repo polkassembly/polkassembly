@@ -6,17 +6,20 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import { IDelegate } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import authServiceInstance from '~src/auth/auth';
 import * as admin from 'firebase-admin';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
@@ -29,7 +32,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegate | Mes
 	const { address, username, bio, isNovaWalletDelegate, userId } = req.body;
 
 	if (!address || !username.length || !bio.length || isNaN(userId)) return res.status(400).json({ message: messages.INVALID_PARAMS });
-	if (!(getEncodedAddress(String(address), network) || Web3.utils.isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
+	if (!(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ message: 'Invalid address' });
 
 	const encodedAddress = getEncodedAddress(address, network);
 	const PADelegateDoc = firestore_db.collection('networks').doc(network).collection('pa_delegates').doc(String(userId));

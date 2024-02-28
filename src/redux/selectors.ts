@@ -12,6 +12,7 @@ import { ICurvesInformationStore } from './curvesInformation/@types';
 import { ITippingStore } from './Tipping/@types';
 import { ITreasuryProposalStore } from './treasuryProposal/@types';
 import { IVoteDataStore } from './voteData/@types';
+import { IinitialConnectAddress } from './initialConnectAddress/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -39,7 +40,9 @@ const useTreasuryProposalSelector = () => {
 const useVoteDataSelector = () => {
 	return useSelector<TAppState, IVoteDataStore>((state) => state.voteData);
 };
-
+const useInitialConnectAddress = () => {
+	return useSelector<TAppState, IinitialConnectAddress>((state) => state.initialConnectAddress);
+};
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -48,5 +51,6 @@ export {
 	useCurvesInformationSelector,
 	useTippingDataSelector,
 	useTreasuryProposalSelector,
-	useVoteDataSelector
+	useVoteDataSelector,
+	useInitialConnectAddress
 };

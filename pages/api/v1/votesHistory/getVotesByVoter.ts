@@ -16,6 +16,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { noTitle } from '~src/global/noTitle';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -69,6 +70,8 @@ const getIsSwapStatus = (statusHistory: string[]) => {
 };
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'], type, listingLimit = LISTING_LIMIT } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);

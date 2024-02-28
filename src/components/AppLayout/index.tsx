@@ -262,8 +262,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
-	// const [notificationVisible, setNotificationVisible] = useState(true);
 	const dispatch = useDispatch();
+
+	// const [notificationVisible, setNotificationVisible] = useState(true);
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
@@ -765,6 +766,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
+		// if (loginAddress) gov2Items = [gov2Items.shift(), getReferendaDropdown(), ...gov2Items];
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
@@ -826,7 +828,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						left: 0
 					}}
 					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-					// footer={<BigToggleButton />}
 				>
 					<div
 						className='flex h-full flex-col justify-between'
@@ -841,6 +842,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							onClick={handleMenuClick}
 							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
+
 						<BigToggleButton />
 					</div>
 				</Drawer>
@@ -886,7 +888,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-
 			<Footer theme={theme} />
 			<Modal
 				zIndex={100}

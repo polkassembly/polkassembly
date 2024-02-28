@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import type { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -86,6 +87,8 @@ export const getDelegationDashboardData = async (address: string, network: strin
 };
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ITrackDelegation[] | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 

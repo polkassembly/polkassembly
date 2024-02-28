@@ -76,25 +76,30 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 				title={Title}
 				open={showModal}
 				footer={[
-					<CustomButton
-						htmlType='submit'
-						key='disable'
-						className='px-7 py-5 font-semibold leading-7'
-						onClick={handleSubmit}
-						disabled={loading}
-						variant='default'
-						text='Disable'
-						fontSize='md'
-					/>,
-					<CustomButton
-						key='cancel'
-						onClick={dismissModal}
-						className='px-7 py-5 font-semibold leading-7'
-						disabled={loading}
-						variant='primary'
-						text='Cancel'
-						fontSize='md'
-					/>
+					<div
+						className='flex justify-end'
+						key='footer'
+					>
+						<CustomButton
+							htmlType='submit'
+							key='disable'
+							className='px-7 py-5 font-semibold leading-7'
+							onClick={handleSubmit}
+							disabled={loading}
+							variant='default'
+							text='Disable'
+							fontSize='md'
+						/>
+						<CustomButton
+							key='cancel'
+							onClick={dismissModal}
+							className='px-7 py-5 font-semibold leading-7'
+							disabled={loading}
+							variant='primary'
+							text='Cancel'
+							fontSize='md'
+						/>
+					</div>
 				]}
 			>
 				{currentUser.is2FAEnabled ? (

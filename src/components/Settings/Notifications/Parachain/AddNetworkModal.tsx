@@ -96,7 +96,6 @@ const AddNetworkModal = ({
 							variant='default'
 							text='Cancel'
 						/>
-						,
 						<CustomButton
 							onClick={handleConfirm}
 							key='2'

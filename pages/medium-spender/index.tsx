@@ -27,6 +27,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	console.log(query);
 	let network = getNetworkFromReqHeaders(req.headers);
 	const referer = req.headers.referer;
 

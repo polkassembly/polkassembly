@@ -10,7 +10,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, LoadingStatusType, NotificationStatus } from 'src/types';
 import { Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 
 import { chainProperties } from '../../global/networkConstants';
 import AccountSelectionForm from '../../ui-components/AccountSelectionForm';
@@ -43,7 +43,7 @@ interface Vote {
 	voteType: EVoteDecisionType | null;
 }
 
-const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE || '';
 
 const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdated, setIsBalanceUpdated }) => {
 	const { network } = useNetworkSelector();
@@ -176,11 +176,11 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 		}
 
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
 
-		const chainId = await web3.eth.net.getId();
+		const { chainId } = await web3.getNetwork();
 
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -191,16 +191,20 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const contract = new Contract(contractAddress, abi, await web3.getSigner());
+
+		const gasPrice = await contract.remove_vote.estimateGas(refIndex.toString());
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
-			.remove_vote(refIndex.toString())
-			.send({
-				from: address,
-				to: contractAddress
+		await contract
+			.remove_vote(refIndex.toString(), {
+				gasLimit
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -226,11 +230,10 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 	const handleUnlock = async () => {
 		// const web3 = new Web3(process.env.REACT_APP_WS_PROVIDER || 'wss://wss.testnet.moonbeam.network');
-		const web3 = new Web3((window as any).ethereum);
+		const web3 = new BrowserProvider((window as any).ethereum);
+		const { chainId } = await web3.getNetwork();
 
-		const chainId = await web3.eth.net.getId();
-
-		if (chainId !== chainProperties[currentNetwork].chainId) {
+		if (Number(chainId.toString()) !== chainProperties[currentNetwork].chainId) {
 			queueNotification({
 				header: 'Wrong Network!',
 				message: `Please change to ${currentNetwork} network`,
@@ -241,16 +244,20 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for confirmation' });
 
-		const contract = new web3.eth.Contract(abi, contractAddress);
+		const contract = new Contract(contractAddress, abi, await web3.getSigner());
+
+		const gasPrice = await contract.unlock.estimateGas(address);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		contract.methods
-			.unlock(address)
-			.send({
-				from: address,
-				to: contractAddress
+		await contract
+			.unlock(address, {
+				gasLimit
 			})
 			.then((result: any) => {
 				console.log(result);
@@ -298,7 +305,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 			<Form id='democracyUnlock'>
 				<div>
 					<Form.Item>
-						<h1 className='dashboard-heading'>Unlock democracy locks</h1>
+						<h1 className='dashboard-heading dark:text-separatorDark'>Unlock democracy locks</h1>
 						{accounts.length > 0 ? (
 							<AccountSelectionForm
 								title='Choose account'
@@ -309,7 +316,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 								isBalanceUpdated={isBalanceUpdated}
 							/>
 						) : (
-							<span className='text-sidebarBlue'>
+							<span className='text-sidebarBlue dark:text-separatorDark'>
 								No accounts found, Please approve request from your wallet and/or <a href='javascript:window.location.reload(true)'>refresh</a> and try again!{' '}
 							</span>
 						)}
@@ -318,15 +325,16 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 				<div>
 					<Form.Item>
 						{lockedBalance.isZero() ? (
-							<div className='text-sidebarBlue'>You currently have no democracy locks.</div>
+							<div className='text-sidebarBlue dark:text-separatorDark'>You currently have no democracy locks.</div>
 						) : (
-							<div className='text-sidebarBlue'>
-								Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
+							<div className='text-sidebarBlue dark:text-separatorDark'>
+								Your locked balance:{' '}
+								<span className=' font-medium dark:text-separatorDark'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
 								{unlocksAt === '0' ? (
-									<div className=' font-medium'>Available to be immediately unlocked.</div>
+									<div className=' font-medium dark:text-separatorDark'>Available to be immediately unlocked.</div>
 								) : (
 									<div>
-										UnlocksAt: <span className='font-medium'>{unlocksAt}</span>
+										UnlocksAt: <span className='font-medium dark:text-separatorDark'>{unlocksAt}</span>
 									</div>
 								)}{' '}
 							</div>
@@ -335,10 +343,10 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 							<>
 								<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
 									<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
-										<span className='col-span-2'>Referendums</span>
-										<span className='col-span-2'>Locked</span>
-										<span className='col-span-2'>Unlocks At</span>
-										<span className='col-span-2'></span>
+										<span className='col-span-2 dark:text-separatorDark'>Referendums</span>
+										<span className='col-span-2 dark:text-separatorDark'>Locked</span>
+										<span className='col-span-2 dark:text-separatorDark'>Unlocks At</span>
+										<span className='col-span-2 dark:text-separatorDark'></span>
 									</li>
 									<Divider className='my-1' />
 									{votes.map((vote, id) => (
@@ -348,16 +356,21 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 												className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 											>
 												<span className='col-span-2'>
-													<Link href={`/referendum/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+													<Link
+														className='dark:text-separatorDark'
+														href={`/referendum/${vote.refIndex.toString()}`}
+													>
+														Referendum #{vote.refIndex.toString()}
+													</Link>
 												</span>
 												{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
-													<span className='col-span-2'>
+													<span className='col-span-2 dark:text-separatorDark'>
 														{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
 														{': '}
 														{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
 													</span>
 												) : (
-													<div className='col-span-2 flex flex-col'>
+													<div className='col-span-2 flex flex-col dark:text-separatorDark'>
 														<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 														{vote.voteType === EVoteDecisionType.ABSTAIN && (
@@ -365,8 +378,8 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 														)}
 													</div>
 												)}
-												<span className='col-span-2'>{unlocksAt}</span>
-												<span className='col-span-2'>
+												<span className='col-span-2 dark:text-separatorDark'>{unlocksAt}</span>
+												<span className='col-span-2 dark:text-separatorDark'>
 													{id === 0 ? (
 														canBeUnlocked ? (
 															<CustomButton

@@ -37,7 +37,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	if (noPosts || posts.length === 0) {
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState description={<p>No Active Proposals</p>} />
 			</div>
 		);
 	}
@@ -46,7 +46,10 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 		return (
 			<>
 				<div className='sm:mx-3'>
-					<FilteredTags statusItem={statusItem} />
+					<FilteredTags
+						statusItem={statusItem}
+						count={count}
+					/>
 				</div>
 				<div className={`${className} proposals__list`}>
 					{posts.map((post, index) => {

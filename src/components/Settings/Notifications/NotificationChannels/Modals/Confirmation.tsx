@@ -32,24 +32,30 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 			onCancel={onCancel}
 			onConfirm={onConfirm}
 			footer={[
-				<CustomButton
-					key='1'
-					onClick={onCancel}
-					variant='default'
-					fontSize='lg'
-					height={40}
-					className='px-[36px] py-[4px] capitalize'
-					text='Cancel'
-				/>,
-				<CustomButton
-					onClick={onConfirm}
-					key='2'
-					variant='default'
-					fontSize='lg'
-					height={40}
-					className='px-[36px] py-[4px] capitalize'
-					text='Confirm'
-				/>
+				<div
+					key='footer_buttons'
+					className='flex items-center justify-end'
+				>
+					<CustomButton
+						key='1'
+						onClick={onCancel}
+						variant='default'
+						fontSize='lg'
+						height={40}
+						className='px-[36px] py-[4px] capitalize'
+						text='Cancel'
+					/>
+					,
+					<CustomButton
+						onClick={onConfirm}
+						key='2'
+						variant='primary'
+						fontSize='lg'
+						height={40}
+						className='px-[36px] py-[4px] capitalize'
+						text='Confirm'
+					/>
+				</div>
 			]}
 		>
 			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>{`Are you sure you want to disable Polkassembly bot from your ${channel} channel chat?`}</p>

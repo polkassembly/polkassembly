@@ -26,9 +26,11 @@ import ReportButton from '../ActionsBar/ReportButton';
 import { IComment } from './Comment';
 
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
+import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 import DeleteIcon from '~assets/icons/delete.svg';
 import EditIcon from '~assets/icons/edit-i.svg';
 import ReplyIcon from '~assets/icons/reply.svg';
+import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import {
 	AgainstIcon,
 	SlightlyAgainstIcon,
@@ -529,7 +531,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							}}
 						>
 							<span className='flex items-center'>
-								<EditIcon className='mr-1' />
+								<EditIcon className='mr-1 text-bodyBlue dark:text-white' />
 								<p className='m-0 -ml-[3px] p-0'>Edit</p>
 							</span>
 						</div>
@@ -734,7 +736,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 											} dark:bg-transparent dark:text-blue-dark-helper`}
 											onClick={props.isSubsquareUser ? () => {} : toggleReply}
 										>
-											<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
+											{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 										</Button>
 									</Tooltip>
 								) : (
@@ -745,7 +747,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 										} dark:bg-transparent dark:text-blue-dark-helper`}
 										onClick={props.isSubsquareUser ? () => {} : toggleReply}
 									>
-										<ReplyIcon className='mr-1 text-pink_primary dark:text-blue-dark-helper' /> Reply
+										{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 									</Button>
 								))}
 							<Dropdown
@@ -755,7 +757,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								placement='bottomRight'
 								menu={{ items }}
 							>
-								<ThreeDotsIcon className=' ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100 dark:text-blue-dark-helper' />
+								{theme === 'dark' ? (
+									<ThreeDotsIconDark className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								) : (
+									<ThreeDotsIcon className='ml-[6px] mt-[-1px] rounded-xl hover:bg-pink-100' />
+								)}
 							</Dropdown>
 							{comment.isError && (
 								<div className='ml-auto flex text-xs text-lightBlue dark:text-blue-dark-medium'>

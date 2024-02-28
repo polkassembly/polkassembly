@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Alert, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { LoadingStatusType, NotificationStatus } from 'src/types';
+import { EDecision, IVotesHistoryResponse, LoadingStatusType, NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import LoginToVote from '../LoginToVoteOrEndorse';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { EDecision, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import { chainProperties, network } from '~src/global/networkConstants';
 import { ProposalType } from '~src/global/proposalType';
 import AyeGreen from '~assets/icons/aye-green-icon.svg';
@@ -29,6 +28,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];
@@ -238,6 +238,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 						withBalance
 						onAccountChange={onAccountChange}
 						theme={theme}
+						isVoting
 					/>
 
 					<AyeNayButtons
@@ -292,7 +293,7 @@ const VoteMotion = ({ accounts, address, className, getAccounts, motionId, motio
 		<GovSidebarCard>
 			<h3 className='dashboard-heading mb-6 dark:text-white'>Cast your Vote!</h3>
 			<Alert
-				className='mb-6 dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+				className='mb-6 '
 				type='warning'
 				message={
 					<div className='flex items-center gap-x-2 dark:text-blue-dark-high'>

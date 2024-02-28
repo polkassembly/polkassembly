@@ -19,6 +19,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromFirestoreData, isDataExist } from '../../posts/on-chain-post';
 import { getUpdatedAt } from '../../posts/off-chain-post';
 import { firestore_db } from '~src/services/firebaseInit';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface ILinkPostStartResponse {
 	title: string;
@@ -34,6 +35,8 @@ export interface ILinkPostStartResponse {
 }
 
 const handler: NextApiHandler<ILinkPostStartResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

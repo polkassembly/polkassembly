@@ -9,6 +9,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import messages from '~src/util/messages';
 import { MessageType } from '~src/auth/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const getSubsquareCommentsFromFirebase = async ({ postId, network, postType }: { postId: string; network: string; postType: ProposalType }) => {
 	try {
@@ -30,6 +31,8 @@ export const getSubsquareCommentsFromFirebase = async ({ postId, network, postTy
 };
 
 const handler: NextApiHandler<Array<string> | { error: MessageType | string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, postType } = req.body;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: messages.NETWORK_VALIDATION_ERROR });

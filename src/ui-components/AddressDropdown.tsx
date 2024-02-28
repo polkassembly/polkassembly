@@ -34,6 +34,7 @@ interface Props {
 	linkAddressTextDisabled?: boolean;
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
+	showProxyDropdown?: boolean;
 }
 
 const AddressDropdown = ({
@@ -48,7 +49,8 @@ const AddressDropdown = ({
 	isMultisig,
 	linkAddressTextDisabled = false,
 	addressTextClassName,
-	isTruncateUsername = true
+	isTruncateUsername = true,
+	showProxyDropdown
 }: Props) => {
 	const [selectedAddress, setSelectedAddress] = useState(defaultAddress || '');
 	const filteredAccounts = !filterAccounts ? accounts : accounts.filter((elem) => filterAccounts.includes(elem.address));
@@ -119,8 +121,8 @@ const AddressDropdown = ({
 		<Dropdown
 			theme={theme}
 			trigger={['click']}
-			className={`${className} dark:border-separatorDark`}
-			disabled={isDisabled}
+			className={`${className} dark:border-separatorDark ${isDisabled || showProxyDropdown ? 'cursor-not-allowed opacity-70' : ''}`}
+			disabled={isDisabled || showProxyDropdown}
 			overlayClassName='z-[2000]'
 			menu={{
 				items: addressItems,

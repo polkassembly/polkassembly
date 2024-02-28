@@ -17,6 +17,7 @@ import { SwapOutlined } from '@ant-design/icons';
 import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useQuoteCommentContext } from '~src/context';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -110,6 +111,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [mdEditor, setMdEditor] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { quotedText, setQuotedText } = useQuoteCommentContext();
 
 	useEffect(() => {
 		//if value is a link with a username it it, shift caret position to the end of the text
@@ -134,6 +136,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		setMdEditor(!mdEditor);
 	}
 
+	useEffect(() => {
+		if (quotedText) {
+			ref.current?.editor?.selection.setCursorLocation(ref.current?.editor?.getBody(), 1);
+			ref.current?.editor?.focus();
+		}
+	}, [quotedText]);
+
+	const quoteBox = quotedText
+		? `<div id="quote-box" style="border-left: 2px solid #E5007A; position: relative; border-radius: 5px;">
+		<p contenteditable="false" style="width: 90%; padding: 5px 10px;  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${quotedText}
+		</p>
+		</div><br><br>`
+		: '';
+
 	return (
 		<>
 			{mdEditor ? (
@@ -144,7 +160,10 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 					theme={theme}
 				/>
 			) : (
-				<div className='relative'>
+				<div
+					className='relative'
+					id='comment-form'
+				>
 					{loading && (
 						<div className='absolute inset-0'>
 							<Skeleton.Input
@@ -180,7 +199,18 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						}}
 						className={classNames('w-full flex-1', className, { invisible: loading })}
 					>
-						<div className={`${loading && 'invisible'}`}>
+						<div className={`${loading && 'invisible'} relative`}>
+							{quoteBox && (
+								<span
+									className='absolute right-4 top-[60px] z-10 cursor-pointer md:right-[30px]'
+									onClick={() => {
+										setQuotedText('');
+										onChange('');
+									}}
+								>
+									<CloseIcon className='text-blue-light-medium dark:text-white' />
+								</span>
+							)}
 							<Editor
 								key={theme}
 								onPaste={(e) => {
@@ -194,7 +224,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 								}}
 								textareaName={name}
-								value={converter.makeHtml(value || '')}
+								value={converter.makeHtml(value || quoteBox || '')}
 								ref={ref}
 								disabled={isDisabled}
 								onEditorChange={(content) => {

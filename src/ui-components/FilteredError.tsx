@@ -7,15 +7,16 @@ import Alert from '~src/basic-components/Alert';
 interface ErrorProps {
 	text: string;
 	className?: string;
+	type?: any;
 }
 // TODO: Remove the file
-const FilteredError = ({ className, text }: ErrorProps) => {
+const FilteredError = ({ className, text, type = 'error' }: ErrorProps) => {
 	return (
 		<div className='flex place-content-center'>
 			<Alert
 				className={`${className} max-w-sm text-center`}
 				message={<span className='dark:text-blue-dark-high'>{text}</span>}
-				type='error'
+				type={type ? type : 'error'}
 			/>
 		</div>
 	);

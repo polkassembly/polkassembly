@@ -37,7 +37,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	if (noPosts || posts.length === 0) {
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState description={<p>No Active Proposals</p>} />
 			</div>
 		);
 	}

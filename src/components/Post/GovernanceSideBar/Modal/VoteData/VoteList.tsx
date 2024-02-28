@@ -30,6 +30,29 @@ import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
 import Tooltip from '~src/basic-components/Tooltip';
 
+const getFromatedData = (data: any) => {
+	const resObj: any = {
+		abstain: {
+			count: 0,
+			votes: []
+		},
+		no: {
+			count: 0,
+			votes: []
+		},
+		yes: {
+			count: 0,
+			votes: []
+		}
+	};
+	data?.map((item: any) => {
+		const votingPower = new BN(item?.balance?.value).mul(new BN(item?.lockPeriod || 1));
+		resObj[item?.decision].votes = [...((resObj[item?.decision] as any)?.votes || []), { ...item, totalVotingPower: votingPower.toString() || '0' }];
+		resObj[item?.decision].count = ((resObj[item?.decision] as any)?.count || 0) + 1;
+	});
+	return resObj;
+};
+
 // const ZERO = new BN(0);
 const ZERO = '0';
 
@@ -99,7 +122,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
 	const [combinedVotes, setCombinedVotes] = useState<any[]>([]);
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
-
 	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
@@ -195,12 +217,20 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		});
 		getReferendumV2VoteInfo().then(() => {
 			let url;
+			let payload: any;
 			if (voterAddress && isUsedInVotedModal) {
-				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${voterAddress}`;
+				url = 'api/v1/votes/history';
+				payload = {
+					listingLimit: VOTES_LISTING_LIMIT,
+					page: currentPage,
+					proposalIndex: referendumId,
+					proposalType: postType,
+					voterAddress: voterAddress
+				};
 			} else {
 				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
 			}
-			nextApiClientFetch<IVotesResponse>(url)
+			nextApiClientFetch<IVotesResponse>(url, payload)
 				.then((res) => {
 					if (res.error) {
 						console.log(res.error);
@@ -209,7 +239,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							message: ''
 						});
 					} else {
-						const votesRes = res.data;
+						const votesRes = (res.data as any)?.votes ? getFromatedData((res?.data as any)?.votes) : res?.data;
 						let combinedVotes;
 						setVotesRes(votesRes);
 						if (votesRes && firstRef.current) {

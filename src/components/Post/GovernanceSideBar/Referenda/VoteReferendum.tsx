@@ -866,6 +866,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 													address={delegatedTo}
 													className='ml-2 text-sm'
 													iconSize={20}
+													displayInline
+													isTruncateUsername={true}
+													isUsedIndelegationNudge={true}
 												/>
 											</span>
 										}

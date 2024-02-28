@@ -171,7 +171,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 							<span className='ml-2'>Social verification incomplete</span>
 						</div>
 					)}
-					<ProposalActionButtons />
+					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>
 			<div className='mx-1 mt-2 md:mt-6'>

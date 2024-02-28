@@ -80,24 +80,29 @@ const AddNetworkModal = ({
 				}}
 				onConfirm={handleConfirm}
 				footer={[
-					<CustomButton
-						key='1'
-						onClick={() => {
-							if (showSureModal) {
-								setShowSureModal(false);
-								return;
-							}
-							onCancel();
-						}}
-						variant='default'
-						text='Cancel'
-					/>,
-					<CustomButton
-						onClick={handleConfirm}
-						key='2'
-						variant='primary'
-						text='Confirm'
-					/>
+					<div
+						key='footer'
+						className='flex items-center justify-end gap-x-1'
+					>
+						<CustomButton
+							key='1'
+							onClick={() => {
+								if (showSureModal) {
+									setShowSureModal(false);
+									return;
+								}
+								onCancel();
+							}}
+							variant='default'
+							text='Cancel'
+						/>
+						<CustomButton
+							onClick={handleConfirm}
+							key='2'
+							variant='primary'
+							text='Confirm'
+						/>
+					</div>
 				]}
 			>
 				<p className='text-[16px] font-medium text-blue-light-high dark:text-blue-dark-high'>

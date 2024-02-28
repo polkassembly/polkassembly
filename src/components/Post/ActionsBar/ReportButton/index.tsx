@@ -205,7 +205,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				footer={[
 					<div
 						key='buttons'
-						className='mt-4 flex justify-end'
+						className='mt-4 flex justify-end gap-x-1'
 					>
 						<CustomButton
 							key='back'
@@ -215,7 +215,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							variant='default'
 							buttonsize='xs'
 						/>
-						,
 						<CustomButton
 							htmlType='submit'
 							key='submit'

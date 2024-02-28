@@ -64,18 +64,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 		variables
 	});
 
-	const totalCount = totalVotes['data'].flattenedConvictionVotesConnection.totalCount || 0;
+	const totalCount = totalVotes['data'].flattenedConvictionVotesConnection?.totalCount || 0;
 	const voteData: IProfileVoteHistoryRespose[] = totalVotes['data'].flattenedConvictionVotes?.map((vote: any) => {
 		const { createdAt, index: id, proposer, statusHistory, type, trackNumber } = vote.proposal;
 
-		let status = vote?.proposal.status;
+		let status = vote?.proposal?.status;
 
 		const isSwap: boolean = getIsSwapStatus(statusHistory);
 
-		if (isSwap) {
-			if (status === 'DecisionDepositPlaced') {
-				status = 'Deciding';
-			}
+		if (isSwap && status === 'DecisionDepositPlaced') {
+			status = 'Deciding';
 		}
 		return {
 			balance: vote?.balance?.value || vote?.balance?.abstain || '0',

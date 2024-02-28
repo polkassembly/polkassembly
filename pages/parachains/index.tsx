@@ -18,6 +18,8 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { Tabs } from '~src/ui-components/Tabs';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 interface Props {
 	className?: string;
@@ -53,9 +55,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Parachains = ({ className, network }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

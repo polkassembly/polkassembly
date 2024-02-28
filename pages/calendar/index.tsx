@@ -49,6 +49,8 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -221,9 +223,19 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	const [eventApprovalStatus, setEventApprovalStatus] = useState<string>(queryApprovalStatus);
 
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		if (window) {
 			const width = window.innerWidth > 0 ? window.innerWidth : screen.width;
 			setWidth(width);

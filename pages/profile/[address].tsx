@@ -5,6 +5,7 @@
 import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { getProfileWithAddress } from 'pages/api/v1/auth/data/profileWithAddress';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -14,6 +15,7 @@ import { ProfileDetails } from '~src/auth/types';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 interface IProfileProps {
 	className?: string;
@@ -59,9 +61,19 @@ const ProfileComponent = dynamic(() => import('~src/components/Profile'), {
 const Profile: FC<IProfileProps> = (props) => {
 	const { className, userProfile, network } = props;
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

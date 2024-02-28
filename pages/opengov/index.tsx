@@ -35,6 +35,8 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import { defaultNetwork } from '~src/global/defaultNetwork';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -141,9 +143,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;

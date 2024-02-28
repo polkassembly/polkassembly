@@ -15,6 +15,8 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletConnectSignup'), {
 	loading: () => <Skeleton active />,
@@ -65,9 +67,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, isDelegation }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

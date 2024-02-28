@@ -5,6 +5,7 @@
 import { WarningOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { getTwitterCallback } from 'pages/api/v1/verification/twitter-callback';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,6 +16,7 @@ import { setNetwork } from '~src/redux/network';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -55,9 +57,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const TwitterCallback = ({ error, network, twitterHandle }: { network: string; error?: null | any; twitterHandle?: string }) => {
 	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(!error);
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);

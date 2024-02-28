@@ -50,12 +50,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/all-posts?trackStatus=all&page=1'
-			}
-		};
+		if (queryNetwork) {
+			return {
+				props: {},
+				redirect: {
+					destination: `/all-posts?trackStatus=all&page=1&network=${network}`
+				}
+			};
+		} else {
+			return {
+				props: {},
+				redirect: {
+					destination: '/all-posts?trackStatus=all&page=1'
+				}
+			};
+		}
 	}
 
 	const proposalType = ProposalType.OPEN_GOV;

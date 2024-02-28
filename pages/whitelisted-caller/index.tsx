@@ -51,12 +51,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus } = query;
 	if (!trackStatus && !filterBy) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/whitelisted-caller?trackStatus=all&page=1'
-			}
-		};
+		if (queryNetwork) {
+			return {
+				props: {},
+				redirect: {
+					destination: `/whitelisted-caller?trackStatus=all&page=1&network=${network}`
+				}
+			};
+		} else {
+			return {
+				props: {},
+				redirect: {
+					destination: '/whitelisted-caller?trackStatus=all&page=1'
+				}
+			};
+		}
 	}
 
 	if (!networkTrackInfo[network][PostOrigin.WHITELISTED_CALLER]) {

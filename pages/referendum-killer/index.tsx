@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import { IReferendumV2PostsByStatus } from 'pages/root';
@@ -22,6 +23,7 @@ import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -48,12 +50,21 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/referendum-killer?trackStatus=all&page=1'
-			}
-		};
+		if (queryNetwork) {
+			return {
+				props: {},
+				redirect: {
+					destination: `/referendum-killer?trackStatus=all&page=1&network=${network}`
+				}
+			};
+		} else {
+			return {
+				props: {},
+				redirect: {
+					destination: '/referendum-killer?trackStatus=all&page=1'
+				}
+			};
+		}
 	}
 
 	if (!networkTrackInfo[network][PostOrigin.REFERENDUM_KILLER]) {
@@ -138,9 +149,19 @@ interface IReferendumKillerProps {
 const ReferendumKiller: FC<IReferendumKillerProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -17,6 +17,7 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
 // import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 
 interface Props {
@@ -69,15 +70,24 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, isDelegation }: Props) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { id } = useUserDetailsSelector();
-	const router = useRouter();
 	const [displayWeb, setDisplayWeb] = useState(2);
 	const [chosenWallet, setChosenWallet] = useState<Wallet | null>(null);
 	const [walletError, setWalletError] = useState<string | undefined>();

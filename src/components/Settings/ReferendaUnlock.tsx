@@ -297,7 +297,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, signer);
 
-		const gasPrice = await contract.removeVote.estimateGas(vote.refIndex.toString());
+		const gasPrice = await contract.removeVoteForTrack.estimateGas(vote.refIndex.toString(), vote.trackId);
 		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
 
 		// increase gas by 15%
@@ -309,7 +309,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 		console.log('Removing vote for referenda #', vote.refIndex.toString());
 
 		await contract
-			.removeVote(vote.refIndex.toString(), {
+			.removeVoteForTrack(vote.refIndex.toString(), vote.trackId, {
 				gasLimit
 			})
 			.then((result: any) => {
@@ -377,11 +377,19 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 
 		const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
+		const gasPrice = await contract.unlock.estimateGas(unlock.trackId, address);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
 		// estimate gas.
 		// https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
 		await contract
-			.unlock(unlock.trackId, address)
+			.unlock(unlock.trackId, address, {
+				gasLimit
+			})
 			.then((result: any) => {
 				console.log(result);
 				setLoadingStatus((prev) => {
@@ -446,7 +454,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 				<Form id='referendaUnlock'>
 					<div>
 						<Form.Item>
-							<h1 className='dashboard-heading'>Unlock Opengov locks</h1>
+							<h1 className='dashboard-heading dark:text-separatorDark'>Unlock Opengov locks</h1>
 							{accounts.length > 0 ? (
 								<AccountSelectionForm
 									title='Choose account'
@@ -457,7 +465,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 									isBalanceUpdated={isBalanceUpdated}
 								/>
 							) : (
-								<span className='text-sidebarBlue'>
+								<span className='text-sidebarBlue dark:text-separatorDark'>
 									No accounts found, Please approve request from your wallet and/or <a href='javascript:window.location.reload(true)'>refresh</a> and try again!{' '}
 								</span>
 							)}
@@ -466,9 +474,9 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 					<div>
 						<Form.Item>
 							{lockedBalance.isZero() ? (
-								<div className='text-sidebarBlue'>You currently have no referenda locks.</div>
+								<div className='text-sidebarBlue dark:text-separatorDark'>You currently have no referenda locks.</div>
 							) : (
-								<div className='text-sidebarBlue'>
+								<div className='text-sidebarBlue dark:text-separatorDark'>
 									Your locked balance: <span className=' font-medium'>{formatBnBalance(String(lockedBalance), { numberAfterComma: 2, withUnit: true }, network)}.</span>
 								</div>
 							)}
@@ -476,10 +484,10 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 								<>
 									<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
 										<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
-											<span className='col-span-2'>Referendums</span>
-											<span className='col-span-2'>Locked</span>
-											<span className='col-span-2'>Unlocks At</span>
-											<span className='col-span-2'></span>
+											<span className='col-span-2 dark:text-separatorDark'>Referendums</span>
+											<span className='col-span-2 dark:text-separatorDark'>Locked</span>
+											<span className='col-span-2 dark:text-separatorDark'>Unlocks At</span>
+											<span className='col-span-2 dark:text-separatorDark'></span>
 										</li>
 										<Divider className='my-1' />
 										{votes.map((vote) => (
@@ -489,24 +497,32 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 													className='grid grid-cols-6 items-center gap-x-5 py-1 md:grid-cols-8'
 												>
 													<span className='col-span-2'>
-														<Link href={`/referenda/${vote.refIndex.toString()}`}>Referendum #{vote.refIndex.toString()}</Link>
+														<Link
+															className='dark:text-separatorDark'
+															href={`/referenda/${vote.refIndex.toString()}`}
+														>
+															Referendum #{vote.refIndex.toString()}
+														</Link>
 													</span>
 													{vote.voteType === EVoteDecisionType.AYE || vote?.voteType === EVoteDecisionType.NAY ? (
-														<span className='col-span-2'>
+														<span className='col-span-2 dark:text-separatorDark'>
 															{vote.voteType === EVoteDecisionType.AYE ? 'Aye' : 'Nay'}
 															{': '}
 															{formatBnBalance(String(vote.amount), { numberAfterComma: 2, withUnit: true }, network)}
 														</span>
 													) : (
-														<div className='col-span-2 flex flex-col'>
+														<div className='col-span-2 flex flex-col dark:text-separatorDark'>
 															<span className='col-span-2'> Aye: {formatBnBalance(String(vote.ayeBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 															<span className='col-span-2'> Nay: {formatBnBalance(String(vote.nayBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
 															{vote.voteType === EVoteDecisionType.ABSTAIN && (
-																<span className='col-span-2'> Abstain: {formatBnBalance(String(vote.abstainBalance), { numberAfterComma: 2, withUnit: true }, network)}</span>
+																<span className='col-span-2 dark:text-separatorDark'>
+																	{' '}
+																	Abstain: {formatBnBalance(String(vote.abstainBalance), { numberAfterComma: 2, withUnit: true }, network)}
+																</span>
 															)}
 														</div>
 													)}
-													<span className='col-span-2'>{vote.unlocksAt}</span>
+													<span className='col-span-2 dark:text-separatorDark'>{vote.unlocksAt}</span>
 													<span className='col-span-2'>
 														<CustomButton
 															onClick={() => handleRemove(vote)}
@@ -527,11 +543,11 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 							) : null}
 							{unlocks.length ? (
 								<>
-									<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>
+									<ul className='mt-3 flex list-none flex-col text-sidebarBlue dark:text-separatorDark'>
 										<li className='grid grid-cols-6 gap-x-5 py-1 font-medium md:grid-cols-8'>
-											<span className='col-span-2'>Tracks</span>
-											<span className='col-span-2'>Locked</span>
-											<span className='col-span-2'></span>
+											<span className='col-span-2 dark:text-separatorDark'>Tracks</span>
+											<span className='col-span-2 dark:text-separatorDark'>Locked</span>
+											<span className='col-span-2 dark:text-separatorDark'></span>
 										</li>
 										<Divider className='my-1' />
 										{unlocks.map((unlock) => {
@@ -545,14 +561,14 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 													>
 														<span className='col-span-2'>
 															<Link
-																className='capitalize'
+																className='capitalize dark:text-separatorDark'
 																href={`/${name.split('_').join('-')}`}
 															>
 																{name.split('_').join(' ')}
 															</Link>
 														</span>
-														<span className='col-span-2'>{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
-														<span className='col-span-2'>
+														<span className='col-span-2 dark:text-separatorDark'>{formatBnBalance(String(amount), { numberAfterComma: 2, withUnit: true }, network)}</span>
+														<span className='col-span-2 dark:text-separatorDark'>
 															<CustomButton
 																onClick={() => handleUnlock(unlock)}
 																loading={loadingStatus?.unlock?.[unlock?.trackId?.toString()]?.isLoading}

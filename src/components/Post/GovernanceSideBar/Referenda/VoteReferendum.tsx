@@ -54,9 +54,9 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
-import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -866,6 +866,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 													address={delegatedTo}
 													className='ml-2 text-sm'
 													iconSize={20}
+													displayInline
+													isTruncateUsername={true}
+													isUsedIndelegationNudge={true}
 												/>
 											</span>
 										}

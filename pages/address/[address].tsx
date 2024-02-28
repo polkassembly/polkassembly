@@ -17,8 +17,8 @@ import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import PAProfile from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
-import { getSubdomain } from '~src/util/getSubdomain';
 import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 interface IUserProfileProps {
 	userPosts: {

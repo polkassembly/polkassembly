@@ -48,7 +48,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const WhitelistMembers = (props: { network: string }) => {
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

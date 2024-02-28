@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/big-tipper?trackStatus=all&page=1&network=${network}`
+				destination: '/big-tipper?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -138,7 +138,6 @@ interface IBigTipperProps {
 const BigTipper: FC<IBigTipperProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

@@ -33,13 +33,12 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 	const { className, posts, error, count, showSimilarPost, statusItem } = props;
 	const noPosts = count === 0 || isNaN(Number(count));
 	const { network } = useNetworkSelector();
-	console.log('hellow');
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (noPosts || posts.length === 0) {
 		return (
 			<div className={className}>
-				<PostEmptyState />
+				<PostEmptyState description={<p>No Active Proposals</p>} />
 			</div>
 		);
 	}

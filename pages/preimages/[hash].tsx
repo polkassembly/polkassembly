@@ -60,7 +60,6 @@ interface IPreImagesProps {
 const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

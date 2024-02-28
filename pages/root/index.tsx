@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/root?trackStatus=all&page=1&network=${network}`
+				destination: '/root?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -125,7 +125,6 @@ interface IRootProps {
 const Root: FC<IRootProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

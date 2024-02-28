@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/medium-spender?trackStatus=all&page=1&network=${network}`
+				destination: '/medium-spender?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -140,7 +140,6 @@ interface IMediumSpenderProps {
 const MediumSpender: FC<IMediumSpenderProps> = (props) => {
 	const { posts, error } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

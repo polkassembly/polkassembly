@@ -86,8 +86,6 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 	const dispatch = useDispatch();
 	const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
 	const [statusItem, setStatusItem] = useState([]);
-	const router = useRouter();
-	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -103,6 +101,10 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const router = useRouter();
+
+	const { network } = useNetworkSelector();
+
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts, count } = data;
@@ -110,7 +112,6 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				network: network,
 				page
 			}
 		});

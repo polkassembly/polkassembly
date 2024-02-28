@@ -68,8 +68,6 @@ const Motions: FC<IMotionsProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';
@@ -83,6 +81,8 @@ const Motions: FC<IMotionsProps> = (props) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

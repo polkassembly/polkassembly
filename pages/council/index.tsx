@@ -42,7 +42,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Members = (props: { network: string }) => {
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

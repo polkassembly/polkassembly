@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/small-spender?trackStatus=all&page=1&network=${network}`
+				destination: '/small-spender?trackStatus=all&page=1'
 			}
 		};
 	}

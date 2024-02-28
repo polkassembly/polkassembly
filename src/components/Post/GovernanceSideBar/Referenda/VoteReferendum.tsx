@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Checkbox, Form, Modal, Segmented, Select, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,8 +38,6 @@ import usePolkasafe from '~src/hooks/usePolkasafe';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
-// import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
-// import MultisigSuccessIcon from '~assets/multi-vote-initiated.svg';
 import executeTx from '~src/util/executeTx';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
@@ -57,6 +55,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -151,14 +151,33 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const [delegatedTo, setDelegatedTo] = useState('');
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			setSelectedProxyAddress(proxyAddr[0]);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const getData = async (address: any) => {
+		if (!address) return;
 		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
 			track: track_number
@@ -362,6 +381,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setVote(value as EVoteDecisionType);
 		handleModalReset();
 	};
+
 	const handleSubmit = async () => {
 		// GAEvent for proposal voting
 		trackEvent('proposal_voting', 'voted_proposal', {
@@ -520,6 +540,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
+			proxyAddress: selectedProxyAddress,
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});
@@ -824,6 +845,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											inputClassName='rounded-[4px] px-3 py-1'
 											withoutInfo={true}
 											theme={theme}
+											showProxyDropdown={showProxyDropdown}
 											isVoting
 										/>
 									)
@@ -844,6 +866,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 													address={delegatedTo}
 													className='ml-2 text-sm'
 													iconSize={20}
+													displayInline
+													isTruncateUsername={true}
+													isUsedIndelegationNudge={true}
 												/>
 											</span>
 										}
@@ -851,6 +876,38 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										type='warning'
 										className='mt-4'
 									/>
+								)}
+								{proxyAddresses && proxyAddresses?.length > 0 && (
+									<div className='mt-2'>
+										<Checkbox
+											value=''
+											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+										>
+											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+										</Checkbox>
+									</div>
+								)}
+								{showProxyDropdown && (
+									<ProxyAccountSelectionForm
+										proxyAddresses={proxyAddresses}
+										theme={theme}
+										address={address}
+										withBalance
+										onBalanceChange={handleOnBalanceChange}
+										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+										inputClassName='rounded-[4px] px-3 py-1'
+										wallet={wallet}
+										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+										setSelectedProxyAddress={setSelectedProxyAddress}
+										selectedProxyAddress={selectedProxyAddress}
+									/>
+								)}
+								{showProxyDropdown && !isProxyExistsOnWallet && (
+									<div className='mt-2 flex items-center gap-x-1'>
+										<InfoIcon />
+										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+									</div>
 								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
@@ -890,6 +947,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
@@ -924,6 +983,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										multisig={multisig}
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										wallet={wallet}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
@@ -961,6 +1022,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										isBalanceErr={isBalanceErr}
 										loadingStatus={loadingStatus.isLoading}
 										wallet={wallet}
+										isProxyExistsOnWallet={isProxyExistsOnWallet}
+										showProxyDropdown={showProxyDropdown}
 										ayeVoteValue={ayeVoteValue
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
@@ -1079,5 +1142,12 @@ export default React.memo(styled(VoteReferendum)`
 	}
 	.dark .ant-segmented-group label {
 		background-color: transparent !important;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
 	}
 `);

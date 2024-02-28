@@ -128,7 +128,6 @@ interface IFellowshipAdminProps {
 const FellowshipAdmin: FC<IFellowshipAdminProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

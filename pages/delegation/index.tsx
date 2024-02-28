@@ -18,9 +18,9 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { getSubdomain } from '~src/util/getSubdomain';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -60,6 +60,8 @@ const Delegation = (props: { network: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { asPath } = useRouter();
+	const router = useRouter();
+	const { network } = useNetworkSelector();
 
 	const handleCopylink = () => {
 		const url = `https://${props.network}.polkassembly.io${asPath.split('#')[0]}`;
@@ -68,9 +70,6 @@ const Delegation = (props: { network: string }) => {
 
 		message.success('Link copied to clipboard');
 	};
-
-	const router = useRouter();
-	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

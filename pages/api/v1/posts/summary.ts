@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isValidNetwork, isProposalTypeValid } from '~src/api-utils';
@@ -14,6 +15,8 @@ export interface IPostSummaryResponse {
 }
 
 const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = null, proposalType } = req.query;
 	if (isNaN(Number(postId))) return res.status(400).json({ message: 'Invalid post ID.' });
 

@@ -14,6 +14,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import { deleteKeys, redisDel } from '~src/auth/redis';
 import { Role } from '~src/types';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface Args {
 	userId: string;
@@ -26,6 +27,8 @@ interface Args {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

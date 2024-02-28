@@ -18,9 +18,9 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
 import { useRouter } from 'next/router';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -79,7 +79,6 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 	const { data, error, trackDetails } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

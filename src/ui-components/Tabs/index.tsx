@@ -30,7 +30,7 @@ const StyledTabs = styled(AntdTabs)`
 	.ant-tabs-tab-active {
 		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'transparent')} !important;
 		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '')} !important;
-		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+		border-bottom: ${(props) => (props.theme == 'dark' ? 'none' : 'none')} !important;
 		color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 	}
 	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {

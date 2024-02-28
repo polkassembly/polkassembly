@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/staking-admin?trackStatus=all&page=1&network=${network}`
+				destination: '/staking-admin?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -140,7 +140,6 @@ interface IStakingAdminProps {
 const StakingAdmin: FC<IStakingAdminProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

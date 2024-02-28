@@ -13,12 +13,15 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { getPostsRefAndData, updatePostLinkInGroup } from './linkPostConfirm';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface ILinkPostRemoveResponse {
 	timeline: any[];
 }
 
 const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);

@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/auction-admin?trackStatus=all&page=1&network=${network}`
+				destination: '/auction-admin?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -138,7 +138,6 @@ interface IAuctionAdminProps {
 const AuctionAdmin: FC<IAuctionAdminProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

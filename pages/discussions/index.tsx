@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
-				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}&network=${network}`,
+				destination: `/discussions?page=${page}&sortBy=${sortValues.COMMENTED}&filterBy=${filterBy}`,
 				permanent: false
 			}
 		};

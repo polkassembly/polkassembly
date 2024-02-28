@@ -22,7 +22,6 @@ import { useState } from 'react';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { getSubdomain } from '~src/util/getSubdomain';
 
@@ -73,7 +72,6 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	const { api, apiReady } = useApiContext();
 	const [isUnfinalized, setIsUnFinalized] = useState(false);
 	const { id } = router.query;
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';
@@ -100,19 +98,12 @@ const ChildBountyPost: FC<IChildBountyPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={
-					<ImageIcon
-						src='/assets/icons/empty-state-image.svg'
-						alt='empty state image icon'
-					/>
-				}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
 						<p>Usually its done within a few seconds</p>
 					</div>
 				}
-				imageStyle={{ height: 300 }}
 			/>
 		);
 	}

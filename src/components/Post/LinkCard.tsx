@@ -13,7 +13,6 @@ interface Props {
 }
 const LinkCard = ({ timeline, proposalType }: Props) => {
 	const { network } = useNetworkSelector();
-	console.log('here');
 	return (
 		<div className='mb-6 w-full rounded-md bg-white px-4 py-5 drop-shadow-md dark:bg-section-dark-overlay'>
 			{timeline?.map((item: any, index: number) => {

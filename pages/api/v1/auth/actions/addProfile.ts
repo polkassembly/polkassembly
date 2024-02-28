@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
@@ -16,6 +17,8 @@ import firebaseAdmin from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const firestore = firebaseAdmin.firestore();
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const { badges: badgesString, bio, image, title, social_links: socialLinksString, username, custom_username = false, email, password, cover_image } = req.body;

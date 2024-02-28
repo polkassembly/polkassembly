@@ -144,11 +144,10 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	}, [quotedText]);
 
 	const quoteBox = quotedText
-		? `<input disabled style="width: 96%; border: none; outline: none; background: ${
-				theme === 'dark' ? '#141416' : '#F5F6F8'
-		  }; border-left: 2px solid #E5007A; padding: 10px; position: relative; color: ${theme === 'dark' ? 'white' : 'black'}; border-radius: 5px;" value="
-	${quotedText}">
-	</input><br><br>`
+		? `<div id="quote-box" style="border-left: 2px solid #E5007A; position: relative; border-radius: 5px;">
+		<p contenteditable="false" style="width: 90%; padding: 5px 10px;  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${quotedText}
+		</p>
+		</div><br><br>`
 		: '';
 
 	return (
@@ -203,13 +202,13 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						<div className={`${loading && 'invisible'} relative`}>
 							{quoteBox && (
 								<span
-									className='absolute right-4 top-[65px] z-10 cursor-pointer bg-section-light-background dark:bg-[#141416] md:right-[30px]'
+									className='absolute right-4 top-[60px] z-10 cursor-pointer md:right-[30px]'
 									onClick={() => {
 										setQuotedText('');
 										onChange('');
 									}}
 								>
-									<CloseIcon className='dark:text-white' />
+									<CloseIcon className='text-blue-light-medium dark:text-white' />
 								</span>
 							)}
 							<Editor

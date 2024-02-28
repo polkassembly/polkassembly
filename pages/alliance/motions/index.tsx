@@ -65,8 +65,6 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';
@@ -81,6 +79,8 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const router = useRouter();
+
 	if (error) return <ErrorState errorMessage={error} />;
 
 	if (!data) return null;
@@ -89,7 +89,6 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				network: network,
 				page
 			}
 		});

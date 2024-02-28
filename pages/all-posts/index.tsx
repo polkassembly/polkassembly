@@ -22,8 +22,8 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
-import { useRouter } from 'next/router';
 import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/all-posts?trackStatus=all&page=1&network=${network}`
+				destination: '/all-posts?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -134,7 +134,6 @@ const OverviewListing: FC<IOverviewListingProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';

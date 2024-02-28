@@ -29,7 +29,7 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { addresses } = userProfile;
+	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
 		judgements: [],
@@ -39,14 +39,14 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
-		addresses: [],
+		addresses: addresses,
 		badges: [],
-		bio: '',
-		image: '',
-		social_links: [],
-		title: '',
-		user_id: 0,
-		username: ''
+		bio: bio,
+		image: image,
+		social_links: social_links,
+		title: title,
+		user_id: user_id,
+		username: username
 	});
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
@@ -175,7 +175,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 			/>
 			<ProfileCard
 				className='mx-2 max-lg:mt-[180px]'
-				userProfile={userProfile}
+				userProfile={profileDetails}
 				addressWithIdentity={addressWithIdentity}
 				onchainIdentity={onChainIdentity}
 			/>

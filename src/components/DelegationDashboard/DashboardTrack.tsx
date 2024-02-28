@@ -108,6 +108,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	}, [network]);
 
 	const getData = async () => {
+		if (!address?.length) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
@@ -206,7 +207,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 											theme={theme}
 											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
 											dataSource={rowData
-												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row.delegatedTo === address : row.delegatedTo !== address))
+												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
 												?.map((item, index) => {
 													return { ...item, index: index + 1 };
 												})}

@@ -42,7 +42,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const CouncilBoard = (props: { network: string }) => {
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/general-admin?trackStatus=all&page=1&network=${network}`
+				destination: '/general-admin?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -141,7 +141,6 @@ const GeneralAdmin: FC<IGeneralAdminProps> = (props) => {
 	const dispatch = useDispatch();
 
 	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';

@@ -57,9 +57,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const RequestResetPassword: FC<Props> = (props) => {
 	const dispatch = useDispatch();
-
-	const router = useRouter();
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

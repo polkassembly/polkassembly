@@ -9,7 +9,6 @@ import Post from 'src/components/Post/Post';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState, LoadingState, PostEmptyState } from 'src/ui-components/UIStates';
-import EmptyIcon from '~assets/icons/empty-state-image.svg';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useApiContext } from '~src/context';
 import { noTitle } from '~src/global/noTitle';
@@ -96,14 +95,12 @@ const ReferendumPost: FC<IReferendumPostProps> = (props) => {
 	if (isUnfinalized) {
 		return (
 			<PostEmptyState
-				image={<EmptyIcon />}
 				description={
 					<div className='p-5'>
 						<b className='my-4 text-xl'>Waiting for Block Confirmation</b>
 						<p>Usually its done within a few seconds</p>
 					</div>
 				}
-				imageStyle={{ height: 300 }}
 			/>
 		);
 	}

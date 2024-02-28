@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import Balance from 'src/components/Balance';
 
 import AddressDropdown from './AddressDropdown';
-import styled from 'styled-components';
 import HelperTooltip from './HelperTooltip';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 
@@ -29,6 +28,7 @@ interface Props {
 	addressTextClassName?: string;
 	isTruncateUsername?: boolean;
 	theme?: string;
+	showProxyDropdown?: boolean;
 	isVoting?: boolean;
 }
 
@@ -42,13 +42,14 @@ const AccountSelectionForm = ({
 	className,
 	isBalanceUpdated,
 	isDisabled,
-	inputClassName,
+	inputClassName = 'rounded-[4px] px-3 py-1',
 	isSwitchButton,
 	setSwitchModalOpen,
 	withoutInfo,
 	linkAddressTextDisabled = false,
 	addressTextClassName,
 	isTruncateUsername = true,
+	showProxyDropdown,
 	isVoting = false,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme
@@ -86,17 +87,14 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={inputClassName}
+				className={`border-solid border-[#D2D8E0] dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] bg-[#f6f7f9] dark:bg-transparent' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}
 				isTruncateUsername={isTruncateUsername}
+				showProxyDropdown={showProxyDropdown}
 			/>
 		</article>
 	);
 };
-export default styled(AccountSelectionForm)`
-	.ant-dropdown-trigger {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
-	}
-`;
+export default AccountSelectionForm;

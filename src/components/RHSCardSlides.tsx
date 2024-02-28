@@ -16,6 +16,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import Link from 'next/link';
+import { trackEvent } from 'analytics';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -36,7 +37,7 @@ type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggle
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id, username } = useUserDetailsSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
@@ -133,6 +134,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 
 	useEffect(() => {
 		if (showRefundDeposit?.show) {
+			trackEvent('refund_card_clicked', 'clicked_refund_card', {
+				loginAddress: loginAddress || '',
+				userId: id || '',
+				userName: username || ''
+			});
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -147,6 +153,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			});
 		}
 		if (showDecisionDeposit) {
+			trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_card', {
+				loginAddress: loginAddress || '',
+				userId: id || '',
+				userName: username || ''
+			});
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({
@@ -163,6 +174,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 
 		if (canEdit && !(tags && Array.isArray(tags) && tags.length > 0)) {
 			setRHSCards((prevCards) => {
+				trackEvent('add_tags_card_clicked', 'clicked_add_tags_card', {
+					loginAddress: loginAddress || '',
+					userId: id || '',
+					userName: username || ''
+				});
 				const newCards = [...prevCards];
 				newCards.push({
 					clickHandler: () => {
@@ -182,6 +198,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				if (isOnchainPost) {
+					trackEvent('link_description_card_clicked', 'clicked_link_description_card', {
+						loginAddress: loginAddress || '',
+						userId: id || '',
+						userName: username || ''
+					});
 					newCards.push({
 						clickHandler: () => setOpenLinkCta(true),
 						description: 'Please add contextual info for voters to make an informed decision',
@@ -190,6 +211,11 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						title: 'Link Discussion'
 					});
 					if (!content?.length) {
+						trackEvent('add_description_card_clicked', 'clicked_add_description_card', {
+							loginAddress: loginAddress || '',
+							userId: id || '',
+							userName: username || ''
+						});
 						newCards.push({
 							clickHandler: () => setLinkingAndEditingOpen(true),
 							description: 'Please add contextual info for voters to make an informed decision',

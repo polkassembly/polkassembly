@@ -57,7 +57,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (!Object.values(sortValues).includes(sortBy.toString()) || (filterBy && filterBy.length !== 0 && !Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))))) {
 		return {
 			redirect: {
-				destination: `/grants?page=${page}&sortBy=${sortValues.NEWEST}&filterBy=${filterBy}&network=${network}`,
+				destination: `/grants?page=${page}&sortBy=${sortValues.NEWEST}&filterBy=${filterBy}`,
 				permanent: false
 			}
 		};
@@ -86,8 +86,6 @@ const Grants: FC<IGrantsProps> = (props) => {
 	const dispatch = useDispatch();
 	const [openModal, setModalOpen] = useState<boolean>(false);
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';
@@ -103,6 +101,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 	}, []);
 
 	const { id } = useUserDetailsSelector();
+	const router = useRouter();
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;

@@ -76,8 +76,6 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
-	const router = useRouter();
-
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		const currentUrl = window ? window.location.href : '';
@@ -92,6 +90,8 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const router = useRouter();
+
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
 	const { posts, count } = data;
@@ -99,7 +99,6 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	const onPaginationChange = (page: number) => {
 		router.push({
 			query: {
-				network: network,
 				page
 			}
 		});

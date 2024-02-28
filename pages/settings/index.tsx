@@ -63,7 +63,7 @@ const Settings: FC<Props> = (props) => {
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
 	const handleTabClick = (key: string) => {
-		router.push(`/settings?tab=${key}&network=${network}`);
+		router.push(`/settings?tab=${key}`);
 	};
 
 	const tabItems = useMemo(

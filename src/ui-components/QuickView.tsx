@@ -24,6 +24,8 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { message } from 'antd';
 import SocialsHandle from './SocialsHandle';
+import classNames from 'classnames';
+import Image from 'next/image';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -49,6 +51,7 @@ interface Props {
 	setOpenAddressChangeModal: (pre: boolean) => void;
 	enableTipping?: boolean;
 	isKiltNameExists?: boolean;
+	isW3FDelegate?: boolean;
 }
 const QuickView = ({
 	className,
@@ -62,7 +65,8 @@ const QuickView = ({
 	setOpenTipping,
 	socials,
 	setOpenAddressChangeModal,
-	enableTipping = true
+	enableTipping = true,
+	isW3FDelegate
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
@@ -111,6 +115,19 @@ const QuickView = ({
 					<div className='mt-0 flex items-center justify-start gap-2'>
 						<span className='text-xl font-semibold tracking-wide text-bodyBlue dark:text-blue-dark-high'>{username?.length > 15 ? `${username?.slice(0, 15)}...` : username}</span>
 						<div className='flex items-center justify-center '>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled style={{ color }} />}</div>
+						{isW3FDelegate && (
+							<Tooltip
+								title='Web3 foundation member'
+								className={classNames(poppins.className, poppins.variable)}
+							>
+								<Image
+									src={'/assets/profile/w3f.svg'}
+									alt=''
+									width={24}
+									height={24}
+								/>
+							</Tooltip>
+						)}
 						<a
 							target='_blank'
 							rel='noreferrer'

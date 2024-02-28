@@ -9,6 +9,7 @@ import messages from '~src/auth/utils/messages';
 import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_AYE_NAY_TOTAL_COUNT } from '~src/queries';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 interface Props {
 	proposalType: string;
@@ -16,6 +17,8 @@ interface Props {
 }
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { proposalType, postId } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);

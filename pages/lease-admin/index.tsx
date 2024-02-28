@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/lease-admin?trackStatus=all&page=1&network=${network}`
+				destination: '/lease-admin?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -140,7 +140,6 @@ interface ILeaseAdminProps {
 const LeaseAdmin: FC<ILeaseAdminProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

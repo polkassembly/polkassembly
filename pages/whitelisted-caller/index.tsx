@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 		return {
 			props: {},
 			redirect: {
-				destination: `/whitelisted-caller?trackStatus=all&page=1&network=${network}`
+				destination: '/whitelisted-caller?trackStatus=all&page=1'
 			}
 		};
 	}
@@ -140,7 +140,6 @@ interface IWhitelistedCallerProps {
 const WhitelistedCaller: FC<IWhitelistedCallerProps> = (props) => {
 	const { posts, error } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 

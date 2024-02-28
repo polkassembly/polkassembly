@@ -63,7 +63,6 @@ interface IDiscussionPostProps {
 const DiscussionPost: FC<IDiscussionPostProps> = (props) => {
 	const { post, error, network } = props;
 	const dispatch = useDispatch();
-
 	const router = useRouter();
 
 	useEffect(() => {

@@ -29,7 +29,7 @@ import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType'
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import classNames from 'classnames';
 import { useApiContext } from '~src/context';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import queueNotification from './QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { IStats } from '~src/components/UserProfile';
@@ -37,6 +37,7 @@ import { DownArrowIcon, ExpandIcon, RemoveVoteIcon, SubscanIcon, ViewVoteIcon, V
 import { isSubscanSupport } from '~src/util/subscanCheck';
 import SelectGovType from '~src/components/UserProfile/SelectGovType';
 import { Pagination } from './Pagination';
+import { BN } from 'bn.js';
 
 interface Props {
 	className?: string;
@@ -61,7 +62,7 @@ enum EHeading {
 }
 
 const abi = require('src/moonbeamConvictionVoting.json');
-const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
 const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, totalVotes }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
@@ -221,11 +222,11 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 		if (!api || !apiReady || isNaN(trackNum)) return;
 		if (['moonbeam', 'moonbase', 'moonriver'].includes(network)) {
 			setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: true });
-			const web3 = new Web3((window as any).ethereum);
+			const web3 = new BrowserProvider((window as any).ethereum);
 
-			const chainId = await web3.eth.net.getId();
+			const { chainId } = await web3.getNetwork();
 
-			if (chainId !== chainProperties[network].chainId) {
+			if (Number(chainId.toString()) !== chainProperties[network].chainId) {
 				queueNotification({
 					header: 'Wrong Network!',
 					message: `Please change to ${network} network`,
@@ -234,12 +235,17 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 				setRemoveVoteLoading({ ids: [...(removeVoteLoading?.ids || []), postIndex], loading: false });
 				return;
 			}
-			const contract = new web3.eth.Contract(abi, contractAddress);
-			contract.methods
-				.removeVote(postIndex)
-				.send({
-					from: loginAddress,
-					to: contractAddress
+			const contract = new Contract(contractAddress, abi, await web3.getSigner());
+
+			const gasPrice = await contract.removeVoteForTrack.estimateGas(postIndex, trackNum);
+			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+			// increase gas by 15%
+			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
+
+			await contract
+				.removeVoteForTrack(postIndex, trackNum, {
+					gasLimit
 				})
 				.then((result: any) => {
 					console.log(result);

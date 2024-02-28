@@ -207,7 +207,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			label: (
 				<Link
 					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					href={`/settings?tab=account&network=${network}`}
+					href='/settings?tab=account'
 				>
 					<IconSettings className='userdropdown-icon text-2xl' />
 					<span>Settings</span>
@@ -369,7 +369,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div className='mr-2 lg:mr-0'>
+						<div
+							className='mr-2 lg:mr-0'
+							onClick={() => {
+								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
+									userId: id || '',
+									userName: username || ''
+								});
+							}}
+						>
 							<MenuDropdown>
 								<OptionMenu className='mt-[6px] text-2xl' />
 							</MenuDropdown>

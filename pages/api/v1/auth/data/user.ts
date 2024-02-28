@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType, PublicUser, User } from '~src/auth/types';
@@ -27,6 +28,8 @@ export async function getUser(userId: number): Promise<PublicUser | null> {
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<PublicUser | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const { userId = null } = req.query;
 	if (!userId || isNaN(Number(userId))) return res.status(400).json({ message: 'Invalid id.' });
 

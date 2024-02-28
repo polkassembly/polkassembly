@@ -10,8 +10,8 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/router';
 import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	let network = getNetworkFromReqHeaders(req.headers);
@@ -67,7 +67,6 @@ const TermAndCondition = (props: any) => {
 	const { network } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-
 	const router = useRouter();
 
 	useEffect(() => {

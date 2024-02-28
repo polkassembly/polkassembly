@@ -135,6 +135,8 @@ const ProxyAccountSelectionForm = ({
 							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 							disableAddressClick
 							disableTooltip
+							displayInline
+							ethIdenticonSize={20}
 						/>
 						<div
 							className='mr-[148px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'

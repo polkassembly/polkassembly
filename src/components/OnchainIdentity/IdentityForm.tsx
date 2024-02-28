@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Divider, Form, FormInstance, Spin } from 'antd';
+import { Checkbox, Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -26,6 +26,9 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
+import { poppins } from 'pages/_app';
 
 const ZERO_BN = new BN(0);
 
@@ -112,6 +115,10 @@ const IdentityForm = ({
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 	let registrarNum: number;
 
@@ -123,6 +130,20 @@ const IdentityForm = ({
 			registrarNum = 5;
 			break;
 	}
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			setSelectedProxyAddress(proxyAddr[0]);
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -350,27 +371,38 @@ const IdentityForm = ({
 						/>
 					</div>
 				</div>
-				{proxyAddress && (
-					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
-						<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
-							Your ProxyAddress{' '}
-							<HelperTooltip
-								className='ml-1'
-								text='Please note the verification cannot be transferred to another address.'
-							/>
-						</label>
-						{address && <Balance address={proxyAddress || ''} />}
+				{!!proxyAddresses && proxyAddresses?.length > 0 && (
+					<div className='mt-2'>
+						<Checkbox
+							value=''
+							className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+							onChange={() => {
+								setShowProxyDropdown(!showProxyDropdown);
+							}}
+						>
+							<p className='m-0 mb-3 mt-1 p-0'>Create identity with proxy</p>
+						</Checkbox>
 					</div>
 				)}
-				{proxyAddress && (
-					<div className='flex w-full items-end gap-2 text-sm '>
-						<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
-							<Address
-								address={proxyAddress || ''}
-								isTruncateUsername={false}
-								displayInline
-							/>
-						</div>
+				{!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && (
+					<ProxyAccountSelectionForm
+						proxyAddresses={proxyAddresses}
+						theme={theme}
+						address={address}
+						withBalance
+						// onBalanceChange={handleOnBalanceChange}
+						className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+						inputClassName='rounded-[4px] px-3 py-0.5'
+						// wallet={wallet}
+						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+						setSelectedProxyAddress={setSelectedProxyAddress}
+						selectedProxyAddress={selectedProxyAddress}
+					/>
+				)}
+				{!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet && (
+					<div className='mt-2 flex items-center gap-x-1'>
+						<InfoIcon />
+						<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
 					</div>
 				)}
 				<div className='mt-6'>

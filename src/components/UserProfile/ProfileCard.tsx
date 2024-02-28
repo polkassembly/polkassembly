@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import ImageComponent from '../ImageComponent';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -14,6 +14,12 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import EvalutionSummary from '../Post/PostSummary/EvalutionSummary';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
+import { useApiContext } from '~src/context';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { useNetworkSelector } from '~src/redux/selectors';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IDelegate } from '~src/types';
+import { isAddress } from 'ethers';
 
 interface Props {
 	className?: string;
@@ -22,9 +28,33 @@ interface Props {
 	onchainIdentity?: DeriveAccountRegistration | null;
 }
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
-	const { image, created_at: profileSince, social_links: socials, username } = userProfile;
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const { image, created_at: profileSince, social_links: socials, username, addresses } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
+
+	const getData = async () => {
+		if (!api || !apiReady) return;
+		const address = addressWithIdentity || addresses?.[0];
+
+		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
+
+		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
+			address: address
+		});
+		if (data) {
+			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+		} else {
+			console.log(error);
+			setIsW3FDelegate(false);
+		}
+	};
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, addresses, addressWithIdentity]);
 
 	const handleCopyAddress = () => {
 		messageApi.open({
@@ -79,14 +109,28 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 					) : (
 						<div className='flex items-center justify-between text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-md:flex-col md:ml-[90px] md:pr-6'>{username}</div>
 					)}
-					{addressWithIdentity && (
-						<div className='md:ml-[90px]'>
-							<EvalutionSummary
-								isProfileView
-								address={addressWithIdentity}
-							/>
-						</div>
-					)}
+					<div className='flex flex-wrap gap-2 max-sm:justify-center'>
+						{addressWithIdentity && (
+							<div className='md:ml-[90px]'>
+								<EvalutionSummary
+									isProfileView
+									address={addressWithIdentity}
+								/>
+							</div>
+						)}
+						{isW3FDelegate && (
+							<div className='flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>
+								<Image
+									src={'/assets/profile/w3f.svg'}
+									alt=''
+									width={18}
+									height={18}
+								/>
+								Web3 Delegate
+							</div>
+						)}
+					</div>
+
 					<div>
 						{profileSince && (
 							<div className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959] md:ml-[90px]'>

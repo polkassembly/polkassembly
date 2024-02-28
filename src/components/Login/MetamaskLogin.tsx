@@ -564,7 +564,16 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									</>
 								)
 							)}
-							<div className='mt-4'>{error ? <FilteredError text={error} /> : <></>}</div>
+							<div className='mt-4'>
+								{error ? (
+									<FilteredError
+										text={error}
+										type={'info'}
+									/>
+								) : (
+									<></>
+								)}
+							</div>
 						</AuthForm>
 					)}
 

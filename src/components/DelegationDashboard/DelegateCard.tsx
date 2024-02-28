@@ -8,8 +8,6 @@ import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
-import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext } from '~src/context';
@@ -18,7 +16,6 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import SocialLink from '~src/ui-components/SocialLinks';
 import { ESocialType } from '~src/auth/types';
 import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/util/formatedBalance';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -26,6 +23,10 @@ import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { socialLinks } from '../UserProfile/Socials';
 import Markdown from '~src/ui-components/Markdown';
+import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
+import W3FIcon from '~assets/profile/w3f.svg';
+import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
+import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface Props {
 	delegate: IDelegate;
@@ -112,6 +113,18 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							</div>
 						)}
 
+						{delegate?.dataSource.includes('w3f') && (
+							<div className='flex items-center space-x-3'>
+								<div className='flex items-center space-x-1'>
+									<W3FIcon />
+									<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>w3f</span>
+								</div>
+								<Divider
+									type='vertical'
+									className='bg-[#7F8FA4]'
+								/>
+							</div>
+						)}
 						{delegate?.dataSource.includes('parity') && (
 							<div className='flex items-center space-x-3'>
 								<div className='flex items-center space-x-[6px]'>
@@ -136,9 +149,14 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</div>
 				) : (
 					<>
+						{delegate?.dataSource.includes('w3f') && (
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] bg-[#272525] px-5'>
+								<W3FIcon />
+								<span className='text-xs font-normal text-white dark:text-blue-dark-high '>W3F Delegate</span>
+							</div>
+						)}
 						{delegate?.dataSource.includes('nova') && (
 							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
-								{/* <NovaWalletIcon /> */}
 								<ImageIcon
 									src='/assets/delegation-tracks/nova-wallet.svg'
 									alt='nova wallet icon'
@@ -193,7 +211,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					<Button
 						disabled={disabled}
 						onClick={handleClick}
-						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 ${!!disabled && 'opacity-50'}`}
+						className={`flex items-center space-x-[6px] border-none bg-transparent px-2 shadow-none ${!!disabled && 'opacity-50'}`}
 					>
 						<DelegatesProfileIcon />
 						<span className='text-sm font-medium text-pink_primary'>Delegate</span>
@@ -214,7 +232,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{formatedBalance(balance.toString(), unit, 2)}</span>
+							<span className='px-1 text-2xl font-semibold'>{parseBalance(balance.toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
@@ -290,7 +308,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 							<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 								<div className='flex items-center justify-center gap-1'>
-									{formatedBalance(balance.toString(), unit, 2)}
+									{parseBalance(balance.toString(), 2, false, network)}
 									<span className='mt-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 								</div>
 								<div className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>

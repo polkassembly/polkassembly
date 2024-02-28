@@ -16,6 +16,89 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
+const w3fDelegatesPolkadot = [
+	{
+		address: '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K',
+		longDescription: '',
+		name: 'ChaosDAO OpenGov',
+		shortDescription: ''
+	},
+	{
+		address: '1jPw3Qo72Ahn7Ynfg8kmYNLEPvHWHhPfPNgpJfp5bkLZdrF',
+		longDescription: '',
+		name: 'JimmyTudeski - Polkadot Resident',
+		shortDescription: ''
+	},
+	{
+		address: '15fTH34bbKGMUjF1bLmTqxPYgpg481imThwhWcQfCyktyBzL',
+		longDescription: '',
+		name: 'JimmyTudeski - Polkadot Resident',
+		shortDescription: ''
+	},
+	{
+		address: '12s6UMSSfE2bNxtYrJc6eeuZ7UxQnRpUzaAh1gPQrGNFnE8h',
+		longDescription: '',
+		name: 'Polkadotters',
+		shortDescription: ''
+	},
+	{
+		address: '153YD8ZHD9dRh82U419bSCB5SzWhbdAFzjj4NtA5pMazR2yC',
+		longDescription: '',
+		name: 'SAXEMBERG',
+		shortDescription: ''
+	},
+	{
+		address: '1ZSPR3zNg5Po3obkhXTPR95DepNBzBZ3CyomHXGHK9Uvx6w',
+		longDescription: '',
+		name: 'William',
+		shortDescription: ''
+	},
+	{
+		address: '12mP4sjCfKbDyMRAEyLpkeHeoYtS5USY4x34n9NMwQrcEyoh',
+		longDescription: '',
+		name: 'Polkaworld',
+		shortDescription: ''
+	}
+];
+const w3fDelegatesKusama = [
+	{
+		address: 'GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj',
+		longDescription: '',
+		name: 'Adam_Clay_Steeber',
+		shortDescription: ''
+	},
+	{
+		address: 'Dm4uKxZJZHJbpZpfnYPiHnbgyHWKMU1s5h6X7kqjfYv1Xkk',
+		longDescription: '',
+		name: 'PromoTeam | Web3 Uzbekistan',
+		shortDescription: ''
+	},
+	{
+		address: 'EocabFvqttEamwQKoFyQxLPnx9HWDdVDS9wwrUX1aKKbJ5g',
+		longDescription: '',
+		name: 'Alzymologist',
+		shortDescription: ''
+	},
+	{
+		address: 'FDL99LDYERjevxPnXBjNGHZv13FxCGHrqh2N5zWQXx1finf',
+		longDescription: '',
+		name: 'Georgii / Space Invader',
+		shortDescription: ''
+	},
+	{
+		address: 'HyLisujX7Cr6D7xzb6qadFdedLt8hmArB6ZVGJ6xsCUHqmx',
+		longDescription: '',
+		name: 'Ivy voter collective',
+		shortDescription: ''
+	},
+	{
+		address: 'FcjmeNzPk3vgdENm1rHeiMCxFK96beUoi2kb59FmCoZtkGF',
+		longDescription: '',
+		name: 'Staker Space',
+		shortDescription: ''
+	}
+];
+
 export const getDelegatesData = async (network: string, address?: string) => {
 	if (!network || !isOpenGovSupported(network)) return [];
 
@@ -27,6 +110,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	const parityDelegatesKusama = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 	const novaDelegates = network === 'kusama' ? novaDelegatesKusama : novaDelegatesPolkadot;
 	const parityDelegates = network === 'kusama' ? parityDelegatesKusama : parityDelegatesPolkadot;
+	const W3fDelegates = network === 'kusama' ? w3fDelegatesKusama : w3fDelegatesPolkadot;
 	if (address && !(encodedAddr || isAddress(String(address)))) return [];
 
 	const subsquidFetches: { [index: string]: any } = {};
@@ -49,6 +133,11 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	}
 	const combinedDelegates = [
 		...paDelegatesResults,
+		...W3fDelegates.map((item) => {
+			{
+				return { ...item, dataSource: 'w3f' };
+			}
+		}),
 		...novaDelegates.map((item: any) => {
 			return { ...item, dataSource: 'nova' };
 		}),
@@ -78,6 +167,12 @@ export const getDelegatesData = async (network: string, address?: string) => {
 					polkassembly: { ...(combinedDelegatesUniqueData[addr]?.polkassembly || {}), ...item }
 				};
 			}
+			if (item?.dataSource === 'w3f') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					w3f: { ...(combinedDelegatesUniqueData[addr]?.w3f || {}), ...item }
+				};
+			}
 		}
 		if (combinedDelegatesUniqueData[addr] !== undefined) {
 			if (item?.dataSource === 'nova') {
@@ -96,6 +191,12 @@ export const getDelegatesData = async (network: string, address?: string) => {
 				combinedDelegatesUniqueData[addr] = {
 					...(combinedDelegatesUniqueData[addr] || {}),
 					polkassembly: { ...(combinedDelegatesUniqueData[addr]?.polkassembly || {}), ...item }
+				};
+			}
+			if (item?.dataSource === 'w3f') {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					w3f: { ...(combinedDelegatesUniqueData[addr]?.w3f || {}), ...item }
 				};
 			}
 		}
@@ -151,6 +252,13 @@ export const getDelegatesData = async (network: string, address?: string) => {
 				username = combinedDelegatesUniqueData[address]?.nova?.name;
 			}
 			dataSource.push('nova');
+		}
+		if (combinedDelegatesUniqueData[address]?.w3f) {
+			if (combinedDelegatesUniqueData[address]?.w3f?.longDescription?.length) {
+				bio = combinedDelegatesUniqueData[address]?.w3f?.longDescription;
+				username = combinedDelegatesUniqueData[address]?.w3f?.name;
+			}
+			dataSource.push('w3f');
 		}
 		if (combinedDelegatesUniqueData[address]?.parity) {
 			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {

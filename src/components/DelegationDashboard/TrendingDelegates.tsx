@@ -197,14 +197,6 @@ const TrendingDelegates = () => {
 				</span>
 			</div>
 
-			{/* {disabled && (
-				<Alert
-					className='text-sm font-normal text-bodyBlue dark:border-separatorDark dark:bg-[#05263F]'
-					showIcon
-					message={<span className='dark:text-blue-dark-high'>You have already delegated for this track.</span>}
-				/>
-			)} */}
-			{/* <h4 className={`mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white ${disabled && 'opacity-50'}`}> */}
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
 			<div className='flex items-center gap-2'>

@@ -380,7 +380,7 @@ const IdentityForm = ({
 								setShowProxyDropdown(!showProxyDropdown);
 							}}
 						>
-							<p className='m-0 mb-3 mt-1 p-0'>Create identity with proxy</p>
+							<p className='m-0 mt-1 p-0'>Create identity with proxy</p>
 						</Checkbox>
 					</div>
 				)}
@@ -391,7 +391,7 @@ const IdentityForm = ({
 						address={address}
 						withBalance
 						// onBalanceChange={handleOnBalanceChange}
-						className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 						inputClassName='rounded-[4px] px-3 py-0.5'
 						// wallet={wallet}
 						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}

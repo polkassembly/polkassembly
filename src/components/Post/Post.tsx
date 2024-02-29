@@ -439,22 +439,23 @@ const Post: FC<IPostProps> = (props) => {
 					key: 'onChainInfo',
 					label: 'On Chain Info'
 				},
-				['polkadot', 'kusama'].includes(network) && {
-					children: (
-						<PostStats
-							postId={post?.post_id}
-							postType={proposalType}
-							tally={post?.tally}
-							statusHistory={post?.statusHistory}
-						/>
-					),
-					key: 'stats',
-					label: (
-						<div className='flex items-center gap-2'>
-							<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
-						</div>
-					)
-				}
+				['polkadot', 'kusama'].includes(network) &&
+					proposalType === ProposalType.OPEN_GOV && {
+						children: (
+							<PostStats
+								postId={post?.post_id}
+								postType={proposalType}
+								tally={post?.tally}
+								statusHistory={post?.statusHistory}
+							/>
+						),
+						key: 'stats',
+						label: (
+							<div className='flex items-center gap-2'>
+								<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
+							</div>
+						)
+					}
 			);
 		}
 

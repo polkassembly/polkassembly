@@ -331,22 +331,27 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				confirmLoading={loading}
 				onCancel={() => setShowModal(false)}
 				footer={[
-					<CustomButton
-						key='back'
-						text='Cancel'
-						buttonsize='sm'
-						variant='default'
-						onClick={() => setShowModal(false)}
-					/>,
-					<CustomButton
-						key='confirm'
-						text='Confirm'
-						htmlType='submit'
-						disabled={loading}
-						buttonsize='sm'
-						variant='primary'
-						onClick={handleSubmit}
-					/>
+					<div
+						className='flex justify-end'
+						key='footer'
+					>
+						<CustomButton
+							key='back'
+							text='Cancel'
+							buttonsize='sm'
+							variant='default'
+							onClick={() => setShowModal(false)}
+						/>
+						<CustomButton
+							key='confirm'
+							text='Confirm'
+							htmlType='submit'
+							disabled={loading}
+							buttonsize='sm'
+							variant='primary'
+							onClick={handleSubmit}
+						/>
+					</div>
 				]}
 			>
 				<Spin

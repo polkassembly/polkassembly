@@ -121,7 +121,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				/>
 				<div className='flex flex-shrink-0 flex-col'>
 					<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>VOTING POWER</span>
-					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(votingPower.toString(), 2, true, network)}</span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(votingPower.add(freeBalance).toString(), 2, true, network)}</span>
 				</div>
 				<EqualIcon className='text-4xl font-normal text-lightBlue dark:text-icon-dark-inactive' />
 				<div className='flex flex-shrink-0 flex-col'>

@@ -723,14 +723,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 			}
 			const contract = new Contract(contractAddress, abi, await web3.getSigner());
 
-			const gasPrice = await contract.removeVote.estimateGas(postIndex);
+			const gasPrice = await contract.removeVoteForTrack.estimateGas(postIndex, track_number);
 			const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
 
 			// increase gas by 15%
 			const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 			await contract
-				.removeVote(postIndex, {
+				.removeVoteForTrack(postIndex, track_number, {
 					gasLimit
 				})
 				.then((result: any) => {
@@ -1276,7 +1276,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								<BountyChildBounties bountyId={onchainId} />
 							</>
 						)}
-						{postType === ProposalType.REFERENDUM_V2 && postIndex == 385 && network === 'polkadot' && <PredictionCard />}
+						{postType === ProposalType.REFERENDUM_V2 && postIndex == 502 && network === 'polkadot' && <PredictionCard />}
 					</Form>
 				</div>
 			}

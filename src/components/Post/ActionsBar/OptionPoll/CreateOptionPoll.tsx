@@ -143,11 +143,11 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 		<>
 			<CustomButton
 				variant='default'
-				className='m-0 border-none px-2'
+				className='m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />
-				<span className='ml-1'>Create Poll</span>
+				<span className='ml-1 font-normal'>Create Poll</span>
 			</CustomButton>
 
 			<Modal
@@ -162,7 +162,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 				}}
 				confirmLoading={loading}
 				footer={
-					<div className='flex space-x-4'>
+					<div className='flex justify-end space-x-4'>
 						<CustomButton
 							variant='default'
 							key='back'

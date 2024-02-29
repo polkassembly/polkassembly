@@ -68,8 +68,10 @@ export async function getVotesHistory(params: IGetVotesHistoryParams): Promise<I
 			votes.forEach((vote) => {
 				if (vote) {
 					const currentVote = {
+						delegatedVotingPower: vote?.parentVote.delegatedVotingPower || '0',
 						isDelegated: vote?.isDelegated,
 						proposalType: vote?.proposal?.type,
+						selfVotingPower: vote?.parentVote?.selfVotingPower || '0',
 						...vote
 					} as IVoteHistory;
 					delete currentVote.parentVote;

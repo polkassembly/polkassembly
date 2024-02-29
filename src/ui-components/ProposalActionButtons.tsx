@@ -122,10 +122,10 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			{isUsedInHomePage && (
 				<div className='flex items-center justify-between space-x-4'>
 					<CustomButton
-						// htmlType='submit'
 						width={226}
 						height={32}
 						variant='primary'
+						className='w-min'
 					>
 						<OpenGovTreasuryProposal
 							theme={theme}

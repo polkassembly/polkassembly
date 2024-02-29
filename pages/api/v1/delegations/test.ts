@@ -41,8 +41,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<any | MessageTy
 	const activities: UserActivity[] = [];
 	const htmlCheck = /<[^>]+>/;
 	const regex = /\[@([^\]]+)\]/g;
-	// eslint-disable-next-line no-useless-escape
-	const htmlContentRegex = /user\/([^"\/]+)/g;
+	const htmlContentRegex = /user\/([^"/]+)/g;
 	for (const userDoc of usersDocs) {
 		const user = userDoc.data();
 		const userId = user?.id;

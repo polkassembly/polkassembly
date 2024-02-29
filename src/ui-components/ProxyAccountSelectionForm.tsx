@@ -72,6 +72,8 @@ const ProxyAccountSelectionForm = ({
 					address={proxyAddress}
 					disableAddressClick
 					disableTooltip
+					iconSize={22}
+					disableHeader
 				/>
 			)
 		};
@@ -92,7 +94,6 @@ const ProxyAccountSelectionForm = ({
 		} else if (changedWallet === 'polkasafe') {
 			setWalletType(Wallet.POLKASAFE);
 		}
-
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
@@ -138,9 +139,9 @@ const ProxyAccountSelectionForm = ({
 							className='flex flex-1 items-center'
 							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 							disableAddressClick
+							iconSize={22}
 							disableTooltip
-							displayInline
-							ethIdenticonSize={20}
+							disableHeader
 						/>
 						<div
 							className='mr-[148px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'

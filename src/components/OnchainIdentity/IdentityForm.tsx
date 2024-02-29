@@ -52,6 +52,7 @@ interface Props {
 	setAddressChangeModalOpen: () => void;
 	alreadyVerifiedfields: IVerifiedFields;
 	proxyAddress?: string;
+	wallet?: any;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -100,7 +101,8 @@ const IdentityForm = ({
 	setIsIdentityCallDone,
 	setIdentityHash,
 	setAddressChangeModalOpen,
-	proxyAddress
+	proxyAddress,
+	wallet
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -380,7 +382,7 @@ const IdentityForm = ({
 								setShowProxyDropdown(!showProxyDropdown);
 							}}
 						>
-							<p className='m-0 mt-1 p-0'>Create identity with proxy</p>
+							<p className='m-0 mt-1 p-0'>Use proxy address</p>
 						</Checkbox>
 					</div>
 				)}
@@ -390,12 +392,11 @@ const IdentityForm = ({
 						theme={theme}
 						address={address}
 						withBalance
-						// onBalanceChange={handleOnBalanceChange}
 						heading={'Proxy Address'}
 						isUsedInIdentity={true}
 						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 						inputClassName='rounded-[4px] px-3 py-0.5'
-						// wallet={wallet}
+						wallet={wallet}
 						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
 						setSelectedProxyAddress={setSelectedProxyAddress}
 						selectedProxyAddress={selectedProxyAddress}
@@ -689,7 +690,14 @@ const IdentityForm = ({
 					buttonsize='xs'
 				/>
 				<CustomButton
-					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
+					disabled={
+						!okAll ||
+						loading ||
+						(availableBalance && availableBalance.lte(totalFee)) ||
+						gasFee.lte(ZERO_BN) ||
+						handleAllowSetIdentity() ||
+						(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
+					}
 					onClick={handleSetIdentity}
 					loading={loading}
 					className={`rounded-[4px] ${
@@ -739,5 +747,12 @@ export default styled(IdentityForm)`
 	}
 	.dark input {
 		color: white !important;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
 	}
 `;

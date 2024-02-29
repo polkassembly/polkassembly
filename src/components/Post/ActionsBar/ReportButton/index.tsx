@@ -215,7 +215,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							variant='default'
 							buttonsize='xs'
 						/>
-						,
 						<CustomButton
 							htmlType='submit'
 							key='submit'

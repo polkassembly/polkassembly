@@ -356,7 +356,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					localStorageWalletKeyName='identityWallet'
 					localStorageAddressKeyName='identityAddress'
 					onConfirm={(address: string, proxyAddress: string) => handleConfirm(address, proxyAddress)}
-					isUsedInOnChainId
 				/>
 			)}
 			<Modal

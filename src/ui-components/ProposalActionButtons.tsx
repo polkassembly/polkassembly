@@ -24,7 +24,14 @@ const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTre
 	ssr: false
 });
 
-const ProposalActionButtons = () => {
+interface Props {
+	isUsedInHomePage?: boolean;
+	isCreateProposal?: boolean;
+	isCancelProposal?: boolean;
+	isKillProposal?: boolean;
+}
+
+const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -112,35 +119,88 @@ const ProposalActionButtons = () => {
 	];
 	return (
 		<>
-			<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
-				<CustomButton
-					height={32}
-					variant='primary'
-					className='w-min max-sm:p-1.5'
-				>
-					<OpenGovTreasuryProposal
-						theme={theme}
-						isUsedInReferedumComponent={true}
-					/>
-				</CustomButton>
-				<div className='-mt-1'>
-					<Dropdown
-						theme={theme}
-						overlayStyle={{ marginTop: '20px' }}
-						className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
-							theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
-						}`}
-						overlayClassName='z-[1056'
-						placement='bottomRight'
-						menu={{ items }}
-						onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
+			{isUsedInHomePage && (
+				<div className='flex items-center justify-between space-x-4'>
+					<CustomButton
+						// htmlType='submit'
+						width={226}
+						height={32}
+						variant='primary'
 					>
-						<span className='ml-1 mt-1'>
-							<ThreeDotsIcon />
-						</span>
-					</Dropdown>
+						<OpenGovTreasuryProposal
+							theme={theme}
+							isUsedInReferedumComponent={true}
+						/>
+					</CustomButton>
+					<div className='-mt-1'>
+						<Dropdown
+							theme={theme}
+							overlayStyle={{ marginTop: '20px' }}
+							className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
+								theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+							}`}
+							overlayClassName='z-[1056'
+							placement='bottomRight'
+							menu={{ items }}
+							onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
+						>
+							<span className='ml-1 mt-1'>
+								<ThreeDotsIcon />
+							</span>
+						</Dropdown>
+					</div>
 				</div>
-			</div>
+			)}
+			{isCreateProposal && (
+				<CustomButton
+					className='w-min'
+					variant='primary'
+					height={40}
+					onClick={() => handleClick(1)}
+				>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/create-proposal-icon.svg'
+							alt='create referendum icon'
+						/>
+						<span className='text-sm font-medium '>Create Proposal</span>
+					</div>
+				</CustomButton>
+			)}
+			{isCancelProposal && (
+				<CustomButton
+					className='w-min'
+					variant='primary'
+					height={40}
+					onClick={() => handleClick(2)}
+				>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/cancel-proposal-icon.svg'
+							alt='cancel referendum icon'
+							className='-mt-[2px]'
+						/>
+						<span className='text-sm font-medium '>Cancel Referendum</span>
+					</div>
+				</CustomButton>
+			)}
+			{isKillProposal && (
+				<CustomButton
+					className='w-min'
+					variant='primary'
+					height={40}
+					onClick={() => handleClick(3)}
+				>
+					<div className='flex items-center space-x-2 text-blue-dark-high'>
+						<ImageIcon
+							src='/assets/icons/kill-proposal-icon.svg'
+							alt='cancel referendum icon'
+							className='-mt-[2px]'
+						/>
+						<span className='text-sm font-medium '>Kill Referendum</span>
+					</div>
+				</CustomButton>
+			)}
 
 			<ReferendaActionModal
 				referendaModal={referendaModal}

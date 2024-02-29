@@ -15,7 +15,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import Web3 from 'web3';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { useApiContext } from '~src/context';
 import Popover from '~src/basic-components/Popover';
@@ -46,7 +45,7 @@ const TrendingDelegates = () => {
 
 	useEffect(() => {
 		if (!address) return;
-		if ((getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network)) {
+		if (getEncodedAddress(address, network) && address !== getEncodedAddress(address, network)) {
 			setAddressAlert(true);
 		}
 		setTimeout(() => {
@@ -66,7 +65,7 @@ const TrendingDelegates = () => {
 	const getData = async () => {
 		if (!api || !apiReady) return;
 
-		if (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address.length > 0) return;
+		if (!getEncodedAddress(address, network) && address.length > 0) return;
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
@@ -220,10 +219,7 @@ const TrendingDelegates = () => {
 							setAddress(address);
 						}}
 						disabled={
-							!address ||
-							!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) ||
-							address === delegationDashboardAddress ||
-							getEncodedAddress(address, network) === delegationDashboardAddress
+							!address || !getEncodedAddress(address, network) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress
 							// disabled
 						}
 					>
@@ -249,7 +245,7 @@ const TrendingDelegates = () => {
 				<label className='mt-1 text-sm font-normal text-red-500'>You cannot delegate to your own address. Please enter a different wallet address.</label>
 			)}
 
-			{!address || (!(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
+			{!address || (!getEncodedAddress(address, network) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
 			{addressAlert && (
 				<Alert
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

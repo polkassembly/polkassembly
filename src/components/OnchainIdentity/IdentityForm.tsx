@@ -116,7 +116,7 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
-	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0]);
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
@@ -391,6 +391,8 @@ const IdentityForm = ({
 						address={address}
 						withBalance
 						// onBalanceChange={handleOnBalanceChange}
+						heading={'Proxy Address'}
+						isUsedInIdentity={true}
 						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 						inputClassName='rounded-[4px] px-3 py-0.5'
 						// wallet={wallet}

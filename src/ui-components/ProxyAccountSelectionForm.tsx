@@ -31,10 +31,12 @@ interface Props {
 	inputClassName?: string;
 	setShowWalletModal?: (pre: boolean) => void;
 	showWalletModal?: boolean;
+	isUsedInIdentity?: boolean;
 	wallet?: any;
 	setIsProxyExistsOnWallet?: (pre: boolean) => void;
 	setSelectedProxyAddress?: (pre: string) => void;
 	selectedProxyAddress?: string;
+	heading?: string;
 }
 
 const ProxyAccountSelectionForm = ({
@@ -49,7 +51,9 @@ const ProxyAccountSelectionForm = ({
 	wallet,
 	setSelectedProxyAddress,
 	selectedProxyAddress,
-	setIsProxyExistsOnWallet
+	setIsProxyExistsOnWallet,
+	heading,
+	isUsedInIdentity
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -103,9 +107,9 @@ const ProxyAccountSelectionForm = ({
 
 	return (
 		<>
-			<article className='mt-2 flex w-full flex-col'>
-				<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
-					<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
+			<article className={`${isUsedInIdentity ? 'mt-3' : 'mt-2'} flex w-full flex-col`}>
+				<div className={`${isUsedInIdentity ? '-mb-[10px]' : 'mb-1'} ml-[-6px] flex items-center gap-x-2`}>
+					<h3 className={`inner-headings mb-[1px] ml-1.5 ${isUsedInIdentity ? 'dark:text-white' : 'dark:text-blue-dark-medium'}`}>{heading ? heading : 'Vote with Proxy'}</h3>
 					{address && withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
@@ -130,7 +134,7 @@ const ProxyAccountSelectionForm = ({
 				>
 					<div className='flex items-center justify-between '>
 						<Address
-							address={selectedProxyAddress || proxyAddresses[0]}
+							address={selectedProxyAddress || ''}
 							className='flex flex-1 items-center'
 							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 							disableAddressClick

@@ -28,7 +28,7 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		let message = `The referendum ${title ? `for ${title}` : ''} is now live at @polk_gov for the @${network}. \n`;
+		let message = `The referendum ${title ? `for ${title}` : ''} is now live at @polk_gov for the @${network} \n`;
 		message += `Cast your vote here: ${global.window.location.href}`;
 
 		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polkassembly')];

@@ -439,7 +439,7 @@ const Post: FC<IPostProps> = (props) => {
 					key: 'onChainInfo',
 					label: 'On Chain Info'
 				},
-				{
+				['polkadot', 'kusama'].includes(network) && {
 					children: (
 						<PostStats
 							postId={post?.post_id}

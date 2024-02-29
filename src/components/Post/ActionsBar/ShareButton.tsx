@@ -28,18 +28,12 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		const twitterParameters = [];
+		let message = `The referendum ${title ? 'for ${title}' : ''} is now live at @polk_gov for the @${network} \n`;
+		message += `Cast your vote here: ${global.window.location.href}`;
 
-		twitterParameters.push(`url=${encodeURI(global.window.location.href)}`);
-
-		if (title) {
-			twitterParameters.push(`text=${encodeURI(`[${network}] ${title}`)}`);
-		}
-
-		twitterParameters.push('via=' + encodeURI('polkassembly'));
+		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polkassembly')];
 
 		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
-
 		global.window.open(url);
 	};
 

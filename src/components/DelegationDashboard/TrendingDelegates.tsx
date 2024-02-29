@@ -36,7 +36,7 @@ const TrendingDelegates = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
-	const [checkAll, setCheckAll] = useState(false);
+	const [checkAll, setCheckAll] = useState(true);
 
 	useEffect(() => {
 		getData();
@@ -52,15 +52,22 @@ const TrendingDelegates = () => {
 			setAddressAlert(false);
 		}, 5000);
 	}, [network, address]);
+	useEffect(() => {
+		// Modify to set checkedList based on allDataSource after fetching data
+		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
+		setCheckedList(allDataSource);
+		setCheckAll(true); // Ensure check all is always true initially
+	}, [delegatesData]);
 
 	useEffect(() => {
-		if (checkedList.length > 0) {
+		// Adjusted to consider checkAll state
+		if (checkAll) {
+			setFilteredDelegates(delegatesData);
+		} else {
 			const filtered = delegatesData?.filter((delegate) => delegate?.dataSource?.some((dataSource) => checkedList.includes(dataSource)));
 			setFilteredDelegates(filtered);
-		} else {
-			setFilteredDelegates(delegatesData);
 		}
-	}, [delegatesData, checkedList]);
+	}, [delegatesData, checkedList, checkAll]);
 
 	const getData = async () => {
 		if (!api || !apiReady) return;
@@ -126,7 +133,9 @@ const TrendingDelegates = () => {
 	const onChange = (list: CheckboxValueType[]) => {
 		setCheckedList(list);
 		setCheckAll(list.length === allDataSource.length);
+		setCurrentPage(1);
 	};
+
 	const onCheckAllChange = (e: CheckboxChangeEvent) => {
 		const list = e.target.checked ? allDataSource.map((source) => source) : [];
 		setCheckedList(list);
@@ -148,7 +157,6 @@ const TrendingDelegates = () => {
 						<Checkbox
 							className='cursor-pointer text-pink_primary'
 							value={source}
-							checked={checkAll}
 							onChange={onCheckAllChange}
 						/>
 						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
@@ -257,39 +265,49 @@ const TrendingDelegates = () => {
 
 			<Spin spinning={loading}>
 				<div className='min-h-[200px]'>
-					<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
-						{[
-							...filteredDelegates.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-							...filteredDelegates
-								.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address)))
-								.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
-						]
-							.slice(startIndex, endIndex)
-							.map((delegate, index) => (
-								<DelegateCard
-									key={index}
-									delegate={delegate}
-									disabled={!delegationDashboardAddress}
-								/>
-							))}
-					</div>
-					{!showMore && delegatesData.length > 6 && (
-						<div className='mt-6 flex justify-end'>
-							<Pagination
-								theme={theme}
-								size='large'
-								defaultCurrent={1}
-								current={currentPage}
-								onChange={(page: number) => {
-									setCurrentPage(page);
-								}}
-								total={filteredDelegates.length}
-								showSizeChanger={false}
-								pageSize={itemsPerPage}
-								responsive={true}
-								hideOnSinglePage={true}
-							/>
-						</div>
+					{filteredDelegates.length < 1 ? (
+						<ImageIcon
+							src='/assets/icons/empty-state-image.svg'
+							alt='empty icon'
+							imgWrapperClassName='h-40 w-40 mx-auto mt-[60px]'
+						/>
+					) : (
+						<>
+							<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
+								{[
+									...filteredDelegates.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
+									...filteredDelegates
+										.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address)))
+										.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+								]
+									.slice(startIndex, endIndex)
+									.map((delegate, index) => (
+										<DelegateCard
+											key={index}
+											delegate={delegate}
+											disabled={!delegationDashboardAddress}
+										/>
+									))}
+							</div>
+							{!showMore && delegatesData.length > 6 && (
+								<div className='mt-6 flex justify-end'>
+									<Pagination
+										theme={theme}
+										size='large'
+										defaultCurrent={1}
+										current={currentPage}
+										onChange={(page: number) => {
+											setCurrentPage(page);
+										}}
+										total={filteredDelegates.length}
+										showSizeChanger={false}
+										pageSize={itemsPerPage}
+										responsive={true}
+										hideOnSinglePage={true}
+									/>
+								</div>
+							)}
+						</>
 					)}
 				</div>
 			</Spin>

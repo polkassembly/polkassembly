@@ -122,7 +122,9 @@ const ProxyAccountSelectionForm = ({
 				<Dropdown
 					trigger={['click']}
 					overlayClassName='z-[2000]'
-					className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+					className={`${className} ${inputClassName} ${
+						isUsedInIdentity ? 'h-10' : 'h-[48px] py-1'
+					} rounded-md border-[1px] border-solid border-gray-300 px-3  text-xs dark:border-[#3B444F] dark:border-separatorDark`}
 					menu={{
 						items: dropdownMenuItems,
 						onClick: (e: any) => {

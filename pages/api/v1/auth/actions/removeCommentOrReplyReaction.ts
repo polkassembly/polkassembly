@@ -12,7 +12,7 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { removeReactionActivity } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -59,13 +59,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		await reactionDocRef
 			.delete()
 			.then(async () => {
-				await removeReactionActivity({ network, reactionId: reactionData?.id, userId: userId });
-				return res.status(200).json({ message: 'Reaction removed.' });
+				res.status(200).json({ message: 'Reaction removed.' });
 			})
 			.catch((error) => {
 				console.error('Error removing reaction: ', error);
 				return res.status(500).json({ message: 'Error removing reaction' });
 			});
+		try {
+			await createUserActivity({ action: EActivityAction.DELETE, network, reactionId: reactionData?.id, userId: userId });
+			return;
+		} catch (err) {
+			console.log(err);
+			return;
+		}
 	} else {
 		return res.status(400).json({ message: 'No reaction found' });
 	}

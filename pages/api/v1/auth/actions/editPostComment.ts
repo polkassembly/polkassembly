@@ -15,8 +15,7 @@ import { ICommentHistory } from '~src/types';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
-import { editCommentActivity } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -26,7 +25,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, sentiment, postAuthorUsername } = req.body;
+	const { userId, commentId, content, postId, postType, sentiment } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -70,11 +69,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history) ? [newHistory, ...(commentData?.history || [])] : new Array(newHistory);
-	let postAuthorId = 0;
-	const { data } = await getUserProfileWithUsername(postAuthorUsername);
-	if (data) {
-		postAuthorId = data?.user_id;
-	}
+
 	commentRef
 		.update({
 			content,
@@ -83,22 +78,27 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			updated_at: last_comment_at
 		})
 		.then(() => {
-			postRef
-				.update({
-					last_comment_at
-				})
-				.then(async () => {
-					if (!isNaN(postAuthorId)) {
-						await editCommentActivity({ commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });
-					}
-				});
-			return res.status(200).json({ message: 'Comment saved.' });
+			postRef.update({
+				last_comment_at
+			});
+			res.status(200).json({ message: 'Comment saved.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving comment: ', error);
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
+	try {
+		const postData = (await postRef.get()).data();
+		const postAuthorId = postData?.user_id || null;
+		if (!isNaN(postAuthorId)) {
+			await createUserActivity({ action: EActivityAction.EDIT, commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

@@ -32,7 +32,7 @@ interface Props {
 	statsArr: IStats[];
 	setStatsArr: (pre: IStats[]) => void;
 	onchainIdentity?: DeriveAccountRegistration | null;
-	activitiesCounts: IActivitiesCounts | null;
+	activitiesCounts?: IActivitiesCounts | null;
 }
 
 const ProfileTabs = ({

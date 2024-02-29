@@ -14,7 +14,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { deleteCommentOrReply } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
@@ -25,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { commentId, postId, postType, trackNumber = null, userId } = req.body;
+	const { commentId, postId, postType, trackNumber = null } = req.body;
 	if (!commentId || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -58,6 +58,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			await deleteKeys(discussionListingKey);
 		}
 	}
+	const commentData = (await commentRef.get()).data();
+	const userId = commentData?.user_id || null;
 
 	await commentRef
 		.update({
@@ -67,15 +69,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			postRef.update({
 				last_comment_at
 			});
-			await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
-
-			return res.status(200).json({ message: 'Comment saved.' });
+			res.status(200).json({ message: 'Comment saved.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error deleting comment: ', error);
 			return res.status(500).json({ message: 'Error deleting comment' });
 		});
+	try {
+		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

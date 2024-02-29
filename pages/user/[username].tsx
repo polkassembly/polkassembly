@@ -70,6 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		userId: userProfile?.data?.user_id
 	});
 	const activitiesCounts = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
+	console.log(activitiesCounts);
 	const props: IUserProfileProps = {
 		activitiesCounts,
 		network,

@@ -33,7 +33,7 @@ import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFro
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { editPostMentionsActivity } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 export interface IEditPostResponse {
 	content: string;
@@ -369,7 +369,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 		try {
 			await batch.commit().then(async () => {
-				await editPostMentionsActivity({
+				await createUserActivity({
+					action: EActivityAction.EDIT,
 					content,
 					network,
 					postAuthorId: postUser?.userId as number,

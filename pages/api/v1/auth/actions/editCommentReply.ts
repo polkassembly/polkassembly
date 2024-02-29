@@ -14,8 +14,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { checkIsProposer } from './utils/checkIsProposer';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { editReplyActivity } from '../../utils/create-activity';
-import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -25,7 +24,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, replyId, postAuthorUsername, commentAuthorId } = req.body;
+	const { userId, commentId, content, postId, postType, replyId } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
@@ -59,12 +58,6 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		network
 	);
 	if (!isAuthor && user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
-	let postAuthorId: number = 0;
-
-	const { data } = await getUserProfileWithUsername(postAuthorUsername);
-	if (data) {
-		postAuthorId = data?.user_id;
-	}
 
 	replyRef
 		.update({
@@ -78,14 +71,38 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 					last_comment_at
 				})
 				.then(() => {});
-			await editReplyActivity({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, replyAuthorId: userId, replyId, userId });
-			return res.status(200).json({ message: 'Reply saved.' });
+			res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving reply: ', error);
 			return res.status(500).json({ message: 'Error saving reply' });
 		});
+	try {
+		const postData = (await postRef.get()).data();
+		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+
+		const postAuthorId = postData?.user_id || null;
+		const commentAuthorId = commentData?.user_id || null;
+
+		await createUserActivity({
+			action: EActivityAction.EDIT,
+			commentAuthorId,
+			commentId,
+			content,
+			network,
+			postAuthorId,
+			postId,
+			postType,
+			replyAuthorId: userId,
+			replyId,
+			userId
+		});
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

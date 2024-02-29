@@ -23,7 +23,7 @@ export interface IActivitiesCounts {
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
-	activitiesCounts: IActivitiesCounts | null;
+	activitiesCounts?: IActivitiesCounts | null;
 	userPosts: IUserPostsListingResponse;
 }
 export interface IStats {

@@ -11,8 +11,7 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
-import { createReactionsActivity } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -22,7 +21,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction, commentAuthorId, replyAuthorId, postAuthorUsername } = req.body;
+	const { userId, postId, commentId, reaction, postType, replyId, setReplyReaction } = req.body;
 
 	if (setReplyReaction) {
 		if (!userId || isNaN(postId) || (!commentId && !replyId) || !reaction || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
@@ -43,13 +42,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc(String(replyId)).collection('reply_reactions');
 	} else {
 		reactionsCollRef = postRef.collection('comments').doc(String(commentId)).collection('comment_reactions');
-	}
-
-	let postAuthorId: number = 0;
-
-	const { data } = await getUserProfileWithUsername(postAuthorUsername);
-	if (data) {
-		postAuthorId = data?.user_id;
 	}
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
@@ -81,28 +73,47 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
 		.then(async () => {
-			if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
-				await createReactionsActivity({
-					commentAuthorId,
-					commentId,
-					network,
-					postAuthorId,
-					postId,
-					postType,
-					reactionAuthorId: userId,
-					reactionId: reactionDoc.id,
-					replyAuthorId,
-					replyId,
-					userId
-				});
-			}
-
-			return res.status(200).json({ message: 'Reaction updated.' });
+			res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {
 			console.error('Error updating reaction: ', error);
 			return res.status(500).json({ message: 'Error updating reaction' });
 		});
+
+	try {
+		const postData = (await postRef.get()).data();
+		let replyData;
+
+		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+		if (setReplyReaction) {
+			replyData = (await postRef.collection('comments').doc(String(commentId)).collection('replies').doc(String(replyId)).get()).data();
+		}
+
+		const postAuthorId = postData?.user_id || null;
+		const commentAuthorId = commentData?.user_id || null;
+		const replyAuthorId = replyData ? replyData?.user_id : null;
+
+		if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				commentAuthorId,
+				commentId,
+				network,
+				postAuthorId,
+				postId,
+				postType,
+				reactionAuthorId: userId,
+				reactionId: reactionDoc.id,
+				replyAuthorId,
+				replyId,
+				userId
+			});
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

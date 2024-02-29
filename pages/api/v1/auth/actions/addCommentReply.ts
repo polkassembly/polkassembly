@@ -16,8 +16,7 @@ import { CommentReply } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
-import { createReplyActivity } from '../../utils/create-activity';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -31,7 +30,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, postAuthorUsername, commentAuthorId } = req.body;
+	const { userId, commentId, content, postId, postType } = req.body;
 	if (!userId || !commentId || !content || isNaN(postId) || !postType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || isContentBlacklisted(content)) return res.status(400).json({ message: messages.BLACKLISTED_CONTENT_ERROR });
@@ -49,13 +48,6 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 	const last_comment_at = new Date();
 	const newReplyRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc();
-
-	let postAuthorId: number = 0;
-
-	const { data } = await getUserProfileWithUsername(postAuthorUsername);
-	if (data) {
-		postAuthorId = data?.user_id;
-	}
 
 	const newReply: CommentReply = {
 		content,
@@ -77,20 +69,6 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 
 			const triggerName = 'newReplyAdded';
 
-			if (!isNaN(postAuthorId)) {
-				await createReplyActivity({
-					commentAuthorId,
-					commentId,
-					content,
-					network,
-					postAuthorId: postAuthorId,
-					postId,
-					postType,
-					replyAuthorId: userId,
-					replyId: newReply?.id,
-					userId
-				});
-			}
 			const args = {
 				commentId: String(commentId),
 				network,
@@ -107,8 +85,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
-
-			return res.status(200).json({
+			res.status(200).json({
 				id: newReply.id
 			});
 		})
@@ -117,6 +94,31 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 			console.error('Error saving comment: ', error);
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
+	try {
+		const postData = (await postRef.get()).data();
+		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+		const postAuthorId = postData?.user_id || null;
+		const commentAuthorId = commentData?.user_id || null;
+		if (!isNaN(postAuthorId)) {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				commentAuthorId,
+				commentId,
+				content,
+				network,
+				postAuthorId: postAuthorId,
+				postId,
+				postType,
+				replyAuthorId: userId,
+				replyId: newReply?.id,
+				userId
+			});
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

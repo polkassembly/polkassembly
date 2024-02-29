@@ -129,7 +129,6 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				network={network}
 			/>
 			<PAProfile
-				activitiesCounts={null}
 				userProfile={userProfile.data}
 				userPosts={userPosts?.data}
 			/>

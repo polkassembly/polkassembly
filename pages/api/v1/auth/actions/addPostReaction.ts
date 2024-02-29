@@ -14,8 +14,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { createReactionsActivity } from '../../utils/create-activity';
-import { getUserProfileWithUsername } from '../data/userProfileWithUsername';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -25,7 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, postId, reaction, postType, trackNumber, postAuthorUsername } = req.body;
+	const { userId, postId, reaction, postType, trackNumber } = req.body;
 	if (!userId || isNaN(postId) || !reaction) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
@@ -82,33 +81,38 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		}
 	}
 
-	let postAuthorId: number = 0;
-
-	const { data } = await getUserProfileWithUsername(postAuthorUsername);
-	if (data) {
-		postAuthorId = data?.user_id;
-	}
 	await reactionsCollRef
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
 		.then(async () => {
-			if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
-				await createReactionsActivity({
-					network,
-					postAuthorId,
-					postId,
-					postType,
-					reactionAuthorId: userId,
-					reactionId: reactionDoc.id,
-					userId
-				});
-			}
-			return res.status(200).json({ message: 'Reaction updated.' });
+			res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {
 			console.error('Error updating reaction: ', error);
 			return res.status(500).json({ message: 'Error updating reaction' });
 		});
+
+	try {
+		const postData = (await postRef.get()).data();
+		const postAuthorId = postData?.user_id;
+
+		if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				network,
+				postAuthorId,
+				postId,
+				postType,
+				reactionAuthorId: userId,
+				reactionId: reactionDoc.id,
+				userId
+			});
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

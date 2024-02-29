@@ -107,6 +107,7 @@ const Login = ({ network, setLoginOpen, setSignupOpen, setIsClosable, isModal, i
 					{displayWeb === 2 ? (
 						<Web2Login
 							theme={theme}
+							showWeb2Option={true}
 							isModal={isModal}
 							setLoginOpen={setLoginOpen}
 							isDelegation={isDelegation}

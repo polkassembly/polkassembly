@@ -422,8 +422,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 };
 
 export default styled(Profile)`
-	.ant-tabs-tab-bg-white dark:bg-section-dark-overlay .ant-tabs-tab:not(.ant-tabs-tab-active) {
-		background-color: white;
+	.ant-tabs-tab-bg-white dark:bg-section-dark-background .ant-tabs-tab:not(.ant-tabs-tab-active) {
+		background-color: transparent;
 		border-top-color: white;
 		border-left-color: white;
 		border-right-color: white;

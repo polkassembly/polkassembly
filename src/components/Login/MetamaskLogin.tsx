@@ -5,7 +5,7 @@
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Alert, Divider } from 'antd';
+import { Divider } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
@@ -39,6 +39,7 @@ import { useTheme } from 'next-themes';
 import PolkaSafeDarkIcon from '~assets/polkasafe-white-logo.svg';
 import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	chosenWallet: Wallet;
@@ -53,6 +54,7 @@ interface Props {
 interface IWalletIconProps {
 	which: Wallet;
 	className?: string;
+	isProxyAccountForm?: boolean;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -62,7 +64,7 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
+export const WalletIcon: FC<IWalletIconProps> = ({ which, className, isProxyAccountForm }) => {
 	const { resolvedTheme: theme } = useTheme();
 	switch (which) {
 		case Wallet.POLKADOT:
@@ -75,7 +77,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 					<Image
 						alt=''
 						src={SubWalletIcon}
-						className='-mt-2 h-[26px] w-[20px]'
+						className={`${isProxyAccountForm ? 'mt-0 h-[20px] w-[16px]' : '-mt-2 h-[26px] w-[20px]'}`}
 					/>
 				</span>
 			);
@@ -486,7 +488,6 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>You need at least one account in Polkadot-js extension to login.</span>}
 										description={<span className='dark:text-blue-dark-high'>Please reload this page after adding accounts.</span>}
-										className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 										type='info'
 										showIcon
 									/>
@@ -528,7 +529,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 										{isSignUp && (
 											<Alert
 												showIcon
-												className='mb-2 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+												className='mb-2'
 												type='info'
 												message={
 													<span className='dark:text-blue-dark-high'>
@@ -563,7 +564,16 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									</>
 								)
 							)}
-							<div className='mt-4'>{error ? <FilteredError text={error} /> : <></>}</div>
+							<div className='mt-4'>
+								{error ? (
+									<FilteredError
+										text={error}
+										type={'info'}
+									/>
+								) : (
+									<></>
+								)}
+							</div>
 						</AuthForm>
 					)}
 

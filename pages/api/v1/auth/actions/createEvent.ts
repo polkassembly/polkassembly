@@ -4,6 +4,7 @@
 
 import { dayjs } from 'dayjs-init';
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
@@ -14,6 +15,8 @@ import firebaseAdmin from '~src/services/firebaseInit';
 import { NetworkEvent } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const { content, end_time, event_type, location, module, network, start_time, title, url, user_id } = req.body;

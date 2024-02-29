@@ -3,21 +3,21 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
-import { PaginationProps, Spin, Table } from 'antd';
+import { PaginationProps, Spin } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
-
+import Table from '~src/basic-components/Tables/Table';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
+import { IVoteHistory, IVotesHistoryResponse } from '~src/types';
 
 interface ICouncilVotesProps {
 	address: string;

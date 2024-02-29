@@ -16,6 +16,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { noTitle } from '~src/global/noTitle';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export interface IProfileVoteHistoryRespose {
+	createdAt: Date;
 	decision: 'yes' | 'no';
 	balance: string;
 	lockPeriod: number | string;
@@ -36,6 +38,7 @@ export interface IProfileVoteHistoryRespose {
 	delegatedVotingPower?: string;
 	delegatedTo?: string;
 	voter: string;
+	extrinsicIndex: string;
 	proposal: {
 		createdAt: Date;
 		id: number | string;
@@ -43,8 +46,14 @@ export interface IProfileVoteHistoryRespose {
 		status: string;
 		title?: string;
 		description?: string;
-		statusHistory?: string[];
+		statusHistory?: any[];
+		type: string;
+		trackNumber?: number;
 	};
+}
+export interface IVotesData extends IProfileVoteHistoryRespose {
+	delegatorsCount?: number;
+	delegateCapital?: string;
 }
 
 const getIsSwapStatus = (statusHistory: string[]) => {
@@ -62,6 +71,8 @@ const getIsSwapStatus = (statusHistory: string[]) => {
 };
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { voterAddresses, page = 1, orderBy = ['proposalIndex_DESC'], type, listingLimit = LISTING_LIMIT } = req.body as unknown as Props;
 
 	const network = String(req.headers['x-network']);
@@ -94,7 +105,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const totalCount = profileVotes['data'].flattenedConvictionVotesConnection.totalCount || 0;
 
 	const voteData: IProfileVoteHistoryRespose[] = profileVotes['data'].flattenedConvictionVotes?.map((vote: any) => {
-		const { createdAt, index: id, proposer, statusHistory } = vote.proposal;
+		const { createdAt, index: id, proposer, statusHistory, type, trackNumber } = vote.proposal;
 
 		let status = vote?.proposal.status;
 
@@ -105,12 +116,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				status = 'Deciding';
 			}
 		}
-
 		return {
 			balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 			decision: vote?.decision || null,
 			delegatedTo: vote?.delegatedTo || '',
 			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
+			extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 			isDelegatedVote: vote?.isDelegated,
 			lockPeriod: Number(vote?.lockPeriod) || 0.1,
 			proposal: {
@@ -119,7 +130,10 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				id,
 				proposer,
 				status,
-				title: ''
+				statusHistory,
+				title: '',
+				trackNumber,
+				type
 			},
 			voter: vote?.voter
 		};

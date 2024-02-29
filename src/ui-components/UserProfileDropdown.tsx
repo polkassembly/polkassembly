@@ -4,9 +4,9 @@
 
 import { CheckCircleFilled } from '@ant-design/icons';
 import React from 'react';
-import DownIcon from '~assets/icons/down-arrow.svg';
 import ImageComponent from '~src/components/ImageComponent';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { DownArrowIcon } from './CustomIcons';
 
 export enum EAddressOtherTextType {
 	CONNECTED = 'Connected',
@@ -47,7 +47,7 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 						className='rounded-full border-none bg-transparent text-sm'
 					/>
 				)}
-				<DownIcon />
+				<DownArrowIcon className='text-2xl' />
 			</div>
 		</div>
 	);

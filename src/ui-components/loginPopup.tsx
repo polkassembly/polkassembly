@@ -39,7 +39,7 @@ const LoginPopup = ({ modalOpen, setModalOpen, isModal, setSignupOpen, className
 					setModalOpen && setModalOpen(false);
 				}
 			}}
-			closeIcon={isClosable ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : null}
+			closeIcon={isClosable ? <CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' /> : null}
 		>
 			<Login
 				network={network}

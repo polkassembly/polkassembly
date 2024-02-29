@@ -71,6 +71,7 @@ export default function ProfileSettings() {
 			}}
 		>
 			<Panel
+				className='pb-1'
 				header={
 					<div className='channel-header flex items-center gap-[6px] dark:bg-section-dark-overlay'>
 						<ProfileIcon />

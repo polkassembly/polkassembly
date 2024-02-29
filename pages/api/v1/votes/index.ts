@@ -12,6 +12,7 @@ import { GET_NESTED_CONVICTION_VOTES_LISTING_BY_TYPE_AND_INDEX, GET_NESTED_CONVI
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getOrderBy } from './utils/votesSorted';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IVotesResponse {
 	yes: {
@@ -30,6 +31,8 @@ export interface IVotesResponse {
 
 // expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, page = 1, voteType = VoteType.REFERENDUM, listingLimit = VOTES_LISTING_LIMIT, sortBy = votesSortValues.TIME_DESC, address } = req.query;
 
 	const network = String(req.headers['x-network']);

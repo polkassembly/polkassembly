@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Modal, Spin } from 'antd';
-import { LoadingOutlined, InfoCircleOutlined, DislikeFilled } from '@ant-design/icons';
+import { LoadingOutlined, InfoCircleOutlined, LikeFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
@@ -331,17 +331,26 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 									<div className='flex flex-col items-center justify-center '>
 										<p className='m-0 flex flex-col p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 											<p className='font-semibold leading-5'>Vote</p>
-											<DislikeFilled
+											<LikeFilled
 												className='text-xl leading-6'
-												style={{ color: '#F53C3C' }}
+												style={{ color: '#2ED47A' }}
 											/>
 										</p>
 									</div>
 								</article>
 							</div>
-							<p className='m-0 p-0 text-sm font-normal leading-[18px] text-sidebarBlue dark:text-white'>
+							<p className='m-0 p-0 text-sm font-normal leading-4 text-sidebarBlue dark:text-white'>
 								The vote will be calculated by multiplying <span className='text-pink_primary'>11.27 KSM (amount)*4 (conviction)</span> to get the final vote.
 							</p>
+							<div
+								className='mb-1'
+								style={{ borderTop: '1.5px dashed #D2D8E0' }}
+							>
+								<p className='m-0 mt-5 p-0 text-sm font-normal leading-4 text-sidebarBlue dark:text-blue-dark-high'>
+									<span className='font-semibold'>NOTE: </span>
+									Tokens get locked only if a referendum passes here
+								</p>
+							</div>
 						</section>
 					</Modal>
 				</Spin>

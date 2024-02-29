@@ -13,7 +13,7 @@ import BotSetupCard from './BotSetupCard';
 import TelegramInfoModal from './Modals/Telegram';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
-import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utils';
+import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utilsFe';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';
@@ -38,9 +38,9 @@ export enum CHANNEL {
 export default function NotificationChannels({ handleEnableDisabled, handleReset }: Props) {
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkSelector();
-	const { id, networkPreferences, email, email_verified, username } = useUserDetailsSelector();
+	const { id, networkPreferences, email, email_verified, loginAddress } = useUserDetailsSelector();
 	const [active, setActive] = useState<boolean | undefined>(false);
-	const botsArr = Bots(username || '');
+	const botsArr = Bots();
 	const handleClick = (channelName: CHANNEL) => {
 		setShowModal(channelName);
 	};
@@ -53,7 +53,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					channel,
 					userId: id
 				}),
-				headers: firebaseFunctionsHeader(network),
+				headers: firebaseFunctionsHeader(network, loginAddress),
 				method: 'POST'
 			});
 
@@ -184,7 +184,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	);
 }
 
-const Bots = (username: string) => {
+const Bots = () => {
 	return [
 		{
 			Icon: <TelegramIcon />,
@@ -201,7 +201,7 @@ const Bots = (username: string) => {
 		{
 			Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
 			channel: CHANNEL.SLACK,
-			description: `${username === '_vaibhav_singhvi_' || username === 'hlw_vmk_' ? 'a Slack Channel chat to get Slack notifications' : ''}`,
+			description: 'a Slack Channel chat to get Slack notifications',
 			title: 'Slack'
 		},
 		{

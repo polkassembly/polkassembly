@@ -51,7 +51,6 @@ interface Props {
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
 	alreadyVerifiedfields: IVerifiedFields;
-	proxyAddress?: string;
 	wallet?: any;
 }
 interface ValueState {
@@ -101,7 +100,6 @@ const IdentityForm = ({
 	setIsIdentityCallDone,
 	setIdentityHash,
 	setAddressChangeModalOpen,
-	proxyAddress,
 	wallet
 }: Props) => {
 	const { network } = useNetworkSelector();
@@ -183,9 +181,9 @@ const IdentityForm = ({
 		let tx = api.tx.identity.setIdentity(info);
 		let signingAddress = address;
 		setLoading(true);
-		if (proxyAddress?.length) {
+		if (selectedProxyAddress?.length) {
 			tx = api?.tx?.proxy.proxy(address, null, api.tx.identity.setIdentity(info));
-			signingAddress = proxyAddress;
+			signingAddress = selectedProxyAddress;
 		}
 
 		const paymentInfo = await tx.paymentInfo(signingAddress);
@@ -314,10 +312,10 @@ const IdentityForm = ({
 			tx
 		};
 
-		if (proxyAddress?.length) {
+		if (selectedProxyAddress?.length) {
 			payload = {
 				...payload,
-				proxyAddress
+				proxyAddress: selectedProxyAddress || ''
 			};
 		}
 
@@ -701,7 +699,13 @@ const IdentityForm = ({
 					onClick={handleSetIdentity}
 					loading={loading}
 					className={`rounded-[4px] ${
-						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
+						(!okAll ||
+							loading ||
+							gasFee.lte(ZERO_BN) ||
+							(availableBalance && availableBalance.lte(totalFee)) ||
+							handleAllowSetIdentity() ||
+							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&
+						'opacity-50'
 					}`}
 					text='Set Identity'
 					variant='primary'

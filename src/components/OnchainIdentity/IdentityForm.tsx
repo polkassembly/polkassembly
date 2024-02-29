@@ -748,4 +748,11 @@ export default styled(IdentityForm)`
 	.dark input {
 		color: white !important;
 	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
+	}
 `;

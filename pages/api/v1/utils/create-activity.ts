@@ -40,7 +40,21 @@ const getMentionsUserIds = async (content: any) => {
 	const regex = /\[@([^\]]+)\]/g;
 	const htmlContentRegex = /user\/([^"\\/]+)/g;
 
-	const matches = [...(content?.match(htmlCheck) ? content.matchAll(htmlContentRegex) : content.matchAll(regex))].map((item) => item[1]);
+	function extractUserPaths(input: any, regex: any) {
+		const safeInput = input.slice(0, 1000);
+
+		const matches = [];
+
+		let match;
+		while ((match = regex.exec(safeInput)) !== null) {
+			// Extracted value is in the first capturing group
+			matches.push(match[1]);
+		}
+
+		return matches;
+	}
+
+	const matches = [...(content?.match(htmlCheck) ? extractUserPaths(content, htmlContentRegex) : extractUserPaths(content, regex))].map((item) => item[1]);
 	if (matches.length) {
 		const usernameToId: any = {};
 		const idToUsername: any = {};

@@ -120,7 +120,7 @@ const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction, isUsedIn
 						axis: {
 							domain: {
 								line: {
-									stroke: '#D2D8E0',
+									stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
 									strokeWidth: 1
 								}
 							},
@@ -135,7 +135,7 @@ const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction, isUsedIn
 						},
 						grid: {
 							line: {
-								stroke: '#D2D8E0',
+								stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
 								strokeDasharray: '2 2',
 								strokeWidth: 1
 							}

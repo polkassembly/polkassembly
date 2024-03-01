@@ -122,7 +122,7 @@ const VoteDelegationsByConviction: FC<IVoteDelegationProps> = ({ votesByDelegati
 						axis: {
 							domain: {
 								line: {
-									stroke: '#D2D8E0',
+									stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
 									strokeWidth: 1
 								}
 							},
@@ -137,7 +137,7 @@ const VoteDelegationsByConviction: FC<IVoteDelegationProps> = ({ votesByDelegati
 						},
 						grid: {
 							line: {
-								stroke: '#D2D8E0',
+								stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
 								strokeDasharray: '2 2',
 								strokeWidth: 1
 							}

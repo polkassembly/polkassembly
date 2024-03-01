@@ -384,7 +384,7 @@ const IdentityForm = ({
 						</Checkbox>
 					</div>
 				)}
-				{!!proxyAddresses && !!proxyAddresses?.length  && showProxyDropdown && (
+				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
 					<ProxyAccountSelectionForm
 						proxyAddresses={proxyAddresses}
 						theme={theme}

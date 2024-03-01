@@ -367,23 +367,22 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				batch.set(tagRef, newTag, { merge: true });
 			}
 		});
-		try {
-			await batch.commit().then(async () => {
-				await createUserActivity({
-					action: EActivityAction.EDIT,
-					content,
-					network,
-					postAuthorId: postUser?.userId as number,
-					postId: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
-					postType: proposalType,
-					userId: postUser?.userId as number
-				});
-			});
-		} catch (err) {
-			console.log(err);
-		}
 	}
-	return;
+	try {
+		await createUserActivity({
+			action: EActivityAction.EDIT,
+			content,
+			network,
+			postAuthorId: postUser?.userId as number,
+			postId: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
+			postType: proposalType,
+			userId: postUser?.userId as number
+		});
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

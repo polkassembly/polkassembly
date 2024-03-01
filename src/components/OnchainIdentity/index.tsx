@@ -100,6 +100,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const [currentWallet, setCurrentWallet] = useState<any>();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -110,6 +111,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		const injectedWindow = window as Window & InjectedWindow;
 
 		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
+		setCurrentWallet(chosenWallet);
 
 		if (!wallet) {
 			setLoading({ ...loading, isLoading: false });
@@ -455,6 +457,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							txFee={txFee}
 							name={name}
 							form={form}
+							wallet={currentWallet}
 							onChangeName={setName}
 							socials={socials}
 							onChangeSocials={setSocials}

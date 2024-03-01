@@ -5,6 +5,8 @@
 import React, { FC } from 'react';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import { useTheme } from 'next-themes';
+import { chainProperties } from 'src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { ResponsivePie } from '@nivo/pie';
 import { Card } from 'antd';
 import TotalVotesIcon from '~assets/icons/analytics/total-votes.svg';
@@ -16,10 +18,12 @@ interface ITotalVotesProps {
 	nayValue?: number;
 	abstainValue?: number;
 	isCurrencyValue?: boolean;
+	isUsedInAccounts?: boolean;
 }
 
-const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue }) => {
+const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 
 	const maxValue = Math.max(Number(ayeValue), Number(nayValue), Number(abstainValue));
 
@@ -108,11 +112,11 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 							}
 						}
 					}}
-					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
+					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'users' : chainProperties[network]?.tokenSymbol}`}
 				/>
 				<p className='absolute bottom-6 flex items-end gap-2 text-xl font-bold dark:text-white'>
 					{formatUSDWithUnits(maxValue.toString(), 1)}{' '}
-					{isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-lightGreyTextColor'>DOT</span>}
+					{isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-lightGreyTextColor'>{chainProperties[network]?.tokenSymbol}</span>}
 				</p>
 			</div>
 		</Card>

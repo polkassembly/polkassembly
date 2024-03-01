@@ -108,24 +108,35 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 						ayeValue={totalVotesCount.ayes}
 						nayValue={totalVotesCount.nays}
 						abstainValue={totalVotesCount.abstain}
+						isUsedInAccounts={true}
 					/>
 					<VotesDelegationCard
 						delegatedValue={delegatedVotesCount}
 						soloValue={soloVotesCount}
+						isUsedInAccounts={true}
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
 						totalIssuance={totalIssuance}
 					/>
 				</div>
-				<TimeSplit votesByTimeSplit={votesByTimeSplit} />
+				<TimeSplit
+					votesByTimeSplit={votesByTimeSplit}
+					isUsedInAccounts={true}
+				/>
 				<Divider
 					dashed
 					className='my-2 border-[#D2D8E0]'
 				/>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
-					<VoteConvictions votesByConviction={votesByConviction} />
-					<VoteDelegationsByConviction votesByDelegation={votesByDelegation} />
+					<VoteConvictions
+						votesByConviction={votesByConviction}
+						isUsedInAccounts={true}
+					/>
+					<VoteDelegationsByConviction
+						votesByDelegation={votesByDelegation}
+						isUsedInAccounts={true}
+					/>
 				</div>
 			</div>
 		</>

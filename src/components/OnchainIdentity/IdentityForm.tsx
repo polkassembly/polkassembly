@@ -384,7 +384,7 @@ const IdentityForm = ({
 						</Checkbox>
 					</div>
 				)}
-				{!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && (
+				{!!proxyAddresses && !!proxyAddresses?.length  && showProxyDropdown && (
 					<ProxyAccountSelectionForm
 						proxyAddresses={proxyAddresses}
 						theme={theme}
@@ -400,7 +400,7 @@ const IdentityForm = ({
 						selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
 					/>
 				)}
-				{!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet && (
+				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
 					<div className='mt-2 flex items-center gap-x-1'>
 						<InfoIcon />
 						<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>

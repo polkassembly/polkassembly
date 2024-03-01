@@ -5,6 +5,8 @@
 import React, { FC } from 'react';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { ResponsivePie } from '@nivo/pie';
+import { chainProperties } from 'src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Card } from 'antd';
 import DelegatedIcon from '~assets/icons/analytics/delegated.svg';
@@ -19,6 +21,8 @@ interface IVoteDelegationProps {
 
 const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloValue, className, isCurrencyValue }) => {
 	const { resolvedTheme: theme } = useTheme();
+
+	const { network } = useNetworkSelector();
 
 	const maxValue = Math.max(Number(delegatedValue), Number(soloValue));
 
@@ -107,7 +111,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 				/>
 				<p className='absolute bottom-6 flex items-end gap-2 text-lg font-bold dark:text-white'>
 					{formatUSDWithUnits(maxValue.toString(), 1)}{' '}
-					{isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-lightGreyTextColor'>DOT</span>}
+					{isCurrencyValue && <span className='mb-0.5 text-sm font-normal text-blue-light-medium dark:text-lightGreyTextColor'>{chainProperties[network]?.tokenSymbol}</span>}
 				</p>
 			</div>
 		</Card>

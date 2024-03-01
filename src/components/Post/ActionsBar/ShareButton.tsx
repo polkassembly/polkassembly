@@ -4,10 +4,12 @@
 
 import { ShareAltOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { NetworkSocials } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IShareButtonProps {
 	postId: number | string;
@@ -18,6 +20,32 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 	const { postId, proposalType, title } = props;
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
+	const [socialsData, setSocialsData] = useState<NetworkSocials>({
+		block_explorer: '',
+		description: '',
+		discord: '',
+		github: '',
+		homepage: '',
+		reddit: '',
+		telegram: '',
+		twitter: '',
+		youtube: ''
+	});
+
+	const getSocials = async () => {
+		const { data, error } = await nextApiClientFetch<NetworkSocials>('/api/v1/network-socials', {
+			network
+		});
+		if (data) {
+			setSocialsData(data);
+		}
+		console.log(error);
+	};
+
+	useEffect(() => {
+		getSocials();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	const share = () => {
 		// GAEvent for post sharing
@@ -28,7 +56,9 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		let message = `The referendum ${title ? `for ${title}` : ''} is now live for @${network} \n`;
+		const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
+
+		let message = `The referendum ${title ? `for ${title}` : ''} is now live for @${twitterHandle} \n`;
 		message += `Cast your vote here: ${global.window.location.href}`;
 
 		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polk_gov')];

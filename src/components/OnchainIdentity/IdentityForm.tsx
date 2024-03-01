@@ -480,7 +480,7 @@ const IdentityForm = ({
 						/>
 					</label>
 
-					{/* <div className='flex items-center mt-4'>
+					{/* <div className='flex items-center '>
 					<span className='flex gap-2 w-[150px] items-center mb-6'>
 						<WebIcon className='bg-[#edeff3] rounded-full text-2xl p-2.5'/>
 						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>

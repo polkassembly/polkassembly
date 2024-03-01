@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
 import formatBnBalance from 'src/util/formatBnBalance';
+import { chainProperties } from 'src/global/networkConstants';
 import { Card } from 'antd';
 import styled from 'styled-components';
 
@@ -15,11 +16,12 @@ interface ITimeSplitProps {
 	className?: string;
 	votesByTimeSplit: any[];
 	axisLabel?: string;
+	isUsedInAccounts?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit }) => {
+const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 
@@ -70,7 +72,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 								<span className='text-xs font-semibold'>Days: {point.data.xFormatted}</span>
 								<span className='text-xs font-semibold'>
 									{axisLabel ? `${axisLabel}: ` : 'votes: '}
-									{formatUSDWithUnits(point.data.yFormatted.toString(), 1)}
+									{formatUSDWithUnits(point.data.yFormatted.toString(), 1)} {isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}
 								</span>
 							</div>
 						);

@@ -18,9 +18,10 @@ interface ITotalVotesProps {
 	nayValue?: number;
 	abstainValue?: number;
 	isCurrencyValue?: boolean;
+	isUsedInAccounts?: boolean;
 }
 
-const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue }) => {
+const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, abstainValue, isCurrencyValue, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 
@@ -111,7 +112,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 							}
 						}
 					}}
-					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
+					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'users' : chainProperties[network]?.tokenSymbol}`}
 				/>
 				<p className='absolute bottom-6 flex items-end gap-2 text-xl font-bold dark:text-white'>
 					{formatUSDWithUnits(maxValue.toString(), 1)}{' '}

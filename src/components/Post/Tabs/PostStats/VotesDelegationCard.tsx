@@ -17,9 +17,10 @@ interface IVoteDelegationProps {
 	soloValue: number;
 	className?: string;
 	isCurrencyValue?: boolean;
+	isUsedInAccounts?: boolean;
 }
 
-const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloValue, className, isCurrencyValue }) => {
+const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloValue, className, isCurrencyValue, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const { network } = useNetworkSelector();
@@ -107,7 +108,7 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 							}
 						}
 					}}
-					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
+					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'users' : chainProperties[network]?.tokenSymbol}`}
 				/>
 				<p className='absolute bottom-6 flex items-end gap-2 text-lg font-bold dark:text-white'>
 					{formatUSDWithUnits(maxValue.toString(), 1)}{' '}

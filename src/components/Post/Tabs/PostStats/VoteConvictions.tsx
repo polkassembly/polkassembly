@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import BN from 'bn.js';
 import { ResponsiveBar } from '@nivo/bar';
 import { useTheme } from 'next-themes';
+import { chainProperties } from 'src/global/networkConstants';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
@@ -15,6 +16,7 @@ const ZERO = new BN(0);
 
 interface IVoteConvictionProps {
 	votesByConviction: any[];
+	isUsedInAccounts?: boolean;
 }
 
 const StyledCard = styled(Card)`
@@ -23,7 +25,7 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction }) => {
+const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction, isUsedInAccounts }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 
@@ -154,7 +156,7 @@ const VoteConvictions: FC<IVoteConvictionProps> = ({ votesByConviction }) => {
 						}
 					}}
 					ariaLabel='Nivo bar chart demo'
-					valueFormat={(value) => formatUSDWithUnits(value.toString(), 1)}
+					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
 					barAriaLabel={(e) => e.id + ': ' + e.formattedValue + ' in conviction: ' + e.indexValue}
 				/>
 			</div>

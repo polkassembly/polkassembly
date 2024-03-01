@@ -86,10 +86,13 @@ const Menu = styled(AntdMenu)`
 	}
 
 	.ant-menu-item-selected {
-		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
-		.ant-menu-title-content {
+		.ant-menu-title-content > span {
 			color: var(--pink_primary) !important;
 		}
+		.ant-menu-item-icon {
+			color: var(--pink_primary) !important;
+		}
+		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
 	}
 `;
 

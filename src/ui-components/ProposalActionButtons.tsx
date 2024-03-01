@@ -120,10 +120,10 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	return (
 		<>
 			{isUsedInHomePage && (
-				<div className='flex items-center justify-between space-x-4'>
+				<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
 					<CustomButton
 						// htmlType='submit'
-						width={226}
+						className='w-min max-sm:p-1.5'
 						height={32}
 						variant='primary'
 					>

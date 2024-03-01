@@ -82,6 +82,11 @@ const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
 	ssr: false
 });
 
+const PostStats = dynamic(() => import('./Tabs/PostStats'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
 interface IPostProps {
 	className?: string;
 	post: IPostResponse;
@@ -433,7 +438,24 @@ const Post: FC<IPostProps> = (props) => {
 					),
 					key: 'onChainInfo',
 					label: 'On Chain Info'
-				}
+				},
+				['polkadot', 'kusama'].includes(network) &&
+					proposalType === ProposalType.OPEN_GOV && {
+						children: (
+							<PostStats
+								postId={post?.post_id}
+								postType={proposalType}
+								tally={post?.tally}
+								statusHistory={post?.statusHistory}
+							/>
+						),
+						key: 'stats',
+						label: (
+							<div className='flex items-center gap-2'>
+								<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
+							</div>
+						)
+					}
 			);
 		}
 
@@ -551,6 +573,7 @@ const Post: FC<IPostProps> = (props) => {
 											<Tabs
 												theme={theme}
 												type='card'
+												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
 											/>

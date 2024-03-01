@@ -116,7 +116,7 @@ const IdentityForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
-	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0]);
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
@@ -136,7 +136,7 @@ const IdentityForm = ({
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
-			setSelectedProxyAddress(proxyAddr[0]);
+			setSelectedProxyAddress('');
 		}
 	};
 
@@ -181,7 +181,7 @@ const IdentityForm = ({
 		let tx = api.tx.identity.setIdentity(info);
 		let signingAddress = address;
 		setLoading(true);
-		if (selectedProxyAddress?.length) {
+		if (selectedProxyAddress?.length && showProxyDropdown) {
 			tx = api?.tx?.proxy.proxy(address, null, api.tx.identity.setIdentity(info));
 			signingAddress = selectedProxyAddress;
 		}
@@ -312,7 +312,7 @@ const IdentityForm = ({
 			tx
 		};
 
-		if (selectedProxyAddress?.length) {
+		if (selectedProxyAddress?.length && showProxyDropdown) {
 			payload = {
 				...payload,
 				proxyAddress: selectedProxyAddress || ''
@@ -397,7 +397,7 @@ const IdentityForm = ({
 						wallet={wallet}
 						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
 						setSelectedProxyAddress={setSelectedProxyAddress}
-						selectedProxyAddress={selectedProxyAddress}
+						selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
 					/>
 				)}
 				{!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet && (

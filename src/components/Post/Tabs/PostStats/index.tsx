@@ -199,8 +199,8 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					totalVotesCount={totalVotesCount}
 				/>
 			),
-			key: 'account',
-			label: 'Account'
+			key: 'accounts',
+			label: 'Accounts'
 		}
 	];
 

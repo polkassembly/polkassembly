@@ -19,14 +19,16 @@ export const StatTabs = ({ items, setActiveTab, activeTab }: IStatsProps) => {
 					title=''
 					trigger='hover'
 					placement='bottom'
-					overlayClassName='dark:bg-section-dark-overlay dark:text-white w-40'
+					overlayClassName='dark:bg-section-dark-overlay dark:text-white w-fit text-left'
 					content={
 						<div>
 							{items &&
 								items.map((item: any) => {
 									return (
 										<div
-											className='cursor-pointer p-1 text-sm font-medium text-blue-light-high hover:scale-105 hover:opacity-80 dark:text-white'
+											className={`cursor-pointer p-1 text-sm font-medium  hover:scale-105 hover:text-pink_primary dark:hover:text-pink_primary  ${
+												item.key === activeTab ? 'text-pink_primary' : 'text-blue-light-high dark:text-white'
+											}`}
 											key={item.key}
 											onClick={() => setActiveTab(item.key)}
 										>
@@ -43,7 +45,7 @@ export const StatTabs = ({ items, setActiveTab, activeTab }: IStatsProps) => {
 							return (
 								<Button
 									key={item.key}
-									className='mb-5 w-40 font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'
+									className='mb-5 w-fit text-left  font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'
 								>
 									{item.label} <DownOutlined />
 								</Button>

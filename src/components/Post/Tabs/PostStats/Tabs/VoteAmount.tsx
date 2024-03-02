@@ -100,22 +100,12 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 				const voteBalance = new BN(vote.balance);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
-				if (timeSplit == 0) {
-					acc[0] = acc[0] ? new BN(acc[0]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? new BN(acc[7]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? new BN(acc[10]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? new BN(acc[14]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? new BN(acc[20]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? new BN(acc[24]).add(voteBalance) : ZERO;
-				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? new BN(acc[28]).add(voteBalance) : ZERO;
-				} else {
-					acc[timeSplit] = acc[timeSplit] ? new BN(acc[timeSplit]).add(voteBalance) : ZERO;
+				for (let i = 0; i <= 28; i++) {
+					if (timeSplit === i) {
+						acc[i] = acc[i] ? new BN(acc[i]).add(voteBalance) : ZERO;
+					} else {
+						acc[i] = acc[i] || ZERO;
+					}
 				}
 				return acc;
 			},

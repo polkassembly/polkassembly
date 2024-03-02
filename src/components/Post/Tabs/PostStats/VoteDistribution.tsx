@@ -105,6 +105,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 								<GridItem
 									key={index}
 									color={colors.aye}
+									voteType='Aye'
 									voter={item.voter}
 									votePercent={(item.balance / ayeVotes.totalBalance) * 100}
 									balance={item.balance}
@@ -124,6 +125,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 								<GridItem
 									key={index}
 									color={colors.nay}
+									voteType='Nay'
 									voter={item.voter}
 									balance={item.balance}
 									votePercent={(item.balance / nayVotes.totalBalance) * 100}
@@ -144,6 +146,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 									key={index}
 									color={colors.abstain}
 									voter={item.voter}
+									voteType='Abstain'
 									balance={item.balance}
 									votePercent={(item.balance / abstainVotes.totalBalance) * 100}
 								/>
@@ -157,7 +160,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	);
 };
 
-const GridItem = ({ color, votePercent, voter, balance }: { balance: number; voter: string; color: string; votePercent: number }) => {
+const GridItem = ({ color, votePercent, voter, balance, voteType }: { balance: number; voter: string; color: string; votePercent: number; voteType: string }) => {
 	const { network } = useNetworkSelector();
 	const style = {
 		backgroundColor: color,
@@ -180,7 +183,9 @@ const GridItem = ({ color, votePercent, voter, balance }: { balance: number; vot
 					<span>
 						{formatUSDWithUnits(balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}
 					</span>
-					<span>{votePercent.toFixed(2) + '%'}</span>
+					<span>
+						{votePercent.toFixed(2) + '%'} of {voteType}
+					</span>
 				</div>
 			}
 		>

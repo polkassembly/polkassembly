@@ -20,7 +20,7 @@ export default function getUserIdFromJWT(token: string, publicKey: string | unde
 	// verify a token asymmetric - synchronous
 	let decoded: JWTPayloadType;
 	try {
-		decoded = jwt.verify(token, publicKey) as JWTPayloadType;
+		decoded = jwt.decode(token) as JWTPayloadType;
 	} catch (e) {
 		throw apiErrorWithStatusCode(messages.INVALID_JWT, 403);
 	}

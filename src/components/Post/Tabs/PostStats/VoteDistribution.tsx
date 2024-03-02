@@ -75,12 +75,6 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 		setAbstainVotes({ count: sortedAbstain.length, percent: abstainPercent, totalBalance: totalAbstainBal, votes: sortedAbstain });
 	}, [votesDistribution]);
 
-	console.log(nayVotes);
-
-	console.log('ayeVotes', ayeVotes);
-	console.log('nayVotes', nayVotes);
-	console.log('abstainVotes', abstainVotes);
-
 	const colors: { [key: string]: string } = {
 		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
 		aye: theme === 'dark' ? '#64A057' : '#2ED47A',

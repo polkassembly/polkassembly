@@ -18,9 +18,9 @@ interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
 	totalVotesCount: any;
 	activeIssuance: BN;
-	totalIssuance: BN;
+	support: BN;
 }
-const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: IVotesAccountProps) => {
+const Accounts = ({ allVotes, support, totalVotesCount, activeIssuance }: IVotesAccountProps) => {
 	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [soloVotesCount, setSoloVotesCount] = useState<number>(0);
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
@@ -107,7 +107,7 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
-						totalIssuance={totalIssuance}
+						support={support}
 					/>
 				</div>
 				<TimeSplit

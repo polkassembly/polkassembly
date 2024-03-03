@@ -20,11 +20,11 @@ import Nudge from './Nudge';
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
 	activeIssuance: BN;
-	totalIssuance: BN;
+	support: BN;
 }
 
 const ZERO = new BN(0);
-const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountProps) => {
+const VoteAmount = ({ allVotes, support, activeIssuance }: IVotesAmountProps) => {
 	const { network } = useNetworkSelector();
 
 	const [tallyData, setTallyData] = useState({
@@ -167,7 +167,7 @@ const VoteAmount = ({ allVotes, totalIssuance, activeIssuance }: IVotesAmountPro
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
-						totalIssuance={totalIssuance}
+						support={support}
 					/>
 				</div>
 				<VoteDistribution votesDistribution={votesDistribution} />

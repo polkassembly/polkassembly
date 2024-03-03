@@ -21,11 +21,11 @@ interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
 	tallyData: any;
 	activeIssuance: BN;
-	totalIssuance: BN;
+	support: BN;
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }: IConvictionVotesProps) => {
+const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -154,7 +154,7 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
-						totalIssuance={totalIssuance}
+						support={support}
 					/>
 				</div>
 				<VoteDistribution votesDistribution={votesDistribution} />

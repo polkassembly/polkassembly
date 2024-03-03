@@ -14,12 +14,12 @@ import TurnoutIcon from '~assets/icons/analytics/turnout.svg';
 import TurnoutDarkIcon from '~assets/icons/analytics/turnout-dark.svg';
 
 interface IVotesTurnoutProps {
+	support: BN;
 	activeIssuance: BN;
-	totalIssuance: BN;
 	className?: string;
 }
 
-const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuance, className }) => {
+const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ support, activeIssuance, className }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -27,7 +27,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const turnoutPercentage = (bnToIntBalance(activeIssuance) / bnToIntBalance(totalIssuance)) * 100;
+	const turnoutPercentage = bnToIntBalance(activeIssuance) ? (bnToIntBalance(support) / bnToIntBalance(activeIssuance)) * 100 : 100;
 
 	const turnoutColor = '#796EEC';
 	const issuanceColor = '#B6B0FB';
@@ -37,13 +37,13 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 			color: turnoutColor,
 			id: 'turnout',
 			label: 'Turnout',
-			value: bnToIntBalance(activeIssuance)
+			value: bnToIntBalance(support)
 		},
 		{
 			color: issuanceColor,
 			id: 'issuance',
 			label: 'Issuance',
-			value: bnToIntBalance(new BN(totalIssuance).sub(new BN(activeIssuance)))
+			value: bnToIntBalance(new BN(activeIssuance).sub(new BN(support)))
 		}
 	];
 	return (

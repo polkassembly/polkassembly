@@ -90,6 +90,9 @@ const ReferendaActionModal = ({
 	const { id: userId } = useUserDetailsSelector();
 	const [postId, setPostId] = useState(0);
 	const [selectedTrack, setSelectedTrack] = useState('');
+	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
+	const [preimageHash, setPreimageHash] = useState<string>('');
+	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
@@ -125,6 +128,10 @@ const ReferendaActionModal = ({
 		localStorage.removeItem('treasuryProposalProposerAddress');
 		localStorage.removeItem('treasuryProposalProposerWallet');
 		localStorage.removeItem('treasuryProposalData');
+		setIsPreimage(null);
+		setPreimageLength(0);
+		setPreimageHash('');
+		setSelectedTrack('');
 		writeProposalForm.resetFields();
 		setSteps({ percent: 0, step: 0 });
 		setOpenModal(false);
@@ -269,6 +276,12 @@ const ReferendaActionModal = ({
 									afterProposalCreated={handleCreateDiscussion}
 									selectedTrack={selectedTrack}
 									setSelectedTrack={setSelectedTrack}
+									isPreimage={isPreimage}
+									setIsPreimage={setIsPreimage}
+									preimageHash={preimageHash}
+									setPreimageHash={setPreimageHash}
+									preimageLength={preimageLength}
+									setPreimageLength={setPreimageLength}
 								/>
 							)}
 							{referendaModal === 2 && (

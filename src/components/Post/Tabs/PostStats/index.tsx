@@ -17,6 +17,7 @@ import { StatTabs } from './Tabs/StatTabs';
 import ConvictionVotes from './Tabs/ConvictionVotes';
 import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
+import { Skeleton } from 'antd';
 
 interface IPostStatsProps {
 	postId: string;
@@ -45,7 +46,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
 	const [activeIssuance, setActiveIssuance] = useState<any>(0);
-	const [totalIssuance, setTotalIssuance] = useState<any>(0);
+	const [support, setSupport] = useState<BN | undefined>(ZERO);
 	const voteType = getVotingTypeFromProposalType(postType);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
@@ -90,7 +91,6 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				const totalIssuance = await api.query.balances.totalIssuance();
 				const inactiveIssuance = await api.query.balances.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
-				setTotalIssuance(totalIssuance);
 			}
 		})();
 
@@ -120,7 +120,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				nays: new BN(tally?.nays || 0, 'hex')
 			});
 		}
-	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -140,6 +140,17 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					} else {
 						const votesRes = res.data;
 						setAllVotes(votesRes);
+
+						const support = votesRes?.data.reduce((acc, vote) => {
+							if (!acc) acc = ZERO;
+
+							if (vote.decision === 'yes' || vote.decision !== 'no') {
+								acc = acc.add(new BN(vote.balance));
+							}
+							return acc;
+						}, new BN(0));
+
+						setSupport(support);
 
 						setLoadingStatus({
 							isLoading: false,
@@ -170,7 +181,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		{
 			children: (
 				<ConvictionVotes
-					totalIssuance={totalIssuance}
+					support={support || ZERO}
 					activeIssuance={activeIssuance}
 					tallyData={tallyData}
 					allVotes={allVotes}
@@ -182,9 +193,9 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		{
 			children: (
 				<VoteAmount
-					totalIssuance={totalIssuance}
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
+					support={support || ZERO}
 				/>
 			),
 			key: 'vote-amount',
@@ -193,18 +204,18 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		{
 			children: (
 				<Accounts
-					totalIssuance={totalIssuance}
+					support={support || ZERO}
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
 					totalVotesCount={totalVotesCount}
 				/>
 			),
-			key: 'account',
-			label: 'Account'
+			key: 'accounts',
+			label: 'Accounts'
 		}
 	];
 
-	return (
+	return activeIssuance && tally ? (
 		<>
 			<StatTabs
 				items={tabItems}
@@ -217,6 +228,8 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				}
 			})}
 		</>
+	) : (
+		<Skeleton active />
 	);
 };
 

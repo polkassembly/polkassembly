@@ -578,7 +578,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									}
 								/>
 							)}
-							{(window as any)?.walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
+							{(window as any)?.walletExtension?.isNovaWallet && (
 								<WalletButton
 									disabled={!apiReady}
 									className={`${wallet === Wallet.NOVAWALLET ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}

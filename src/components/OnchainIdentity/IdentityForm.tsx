@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Divider, Form, FormInstance, Spin } from 'antd';
+import { Checkbox, Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -26,6 +26,9 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import InfoIcon from '~assets/icons/red-info-alert.svg';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
+import { poppins } from 'pages/_app';
 
 const ZERO_BN = new BN(0);
 
@@ -48,6 +51,7 @@ interface Props {
 	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
 	alreadyVerifiedfields: IVerifiedFields;
+	wallet?: any;
 }
 interface ValueState {
 	info: Record<string, unknown>;
@@ -95,7 +99,8 @@ const IdentityForm = ({
 	closeModal,
 	setIsIdentityCallDone,
 	setIdentityHash,
-	setAddressChangeModalOpen
+	setAddressChangeModalOpen,
+	wallet
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -110,6 +115,10 @@ const IdentityForm = ({
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
+	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
+	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
+	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
 	let registrarNum: number;
 
@@ -121,6 +130,20 @@ const IdentityForm = ({
 			registrarNum = 5;
 			break;
 	}
+
+	const getProxies = async (address: any) => {
+		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		if (proxies) {
+			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
+			setProxyAddresses(proxyAddr);
+			setSelectedProxyAddress('');
+		}
+	};
+
+	useEffect(() => {
+		getProxies(address);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address]);
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -155,10 +178,16 @@ const IdentityForm = ({
 			return;
 		}
 
+		let tx = api.tx.identity.setIdentity(info);
+		let signingAddress = address;
 		setLoading(true);
+		if (selectedProxyAddress?.length && showProxyDropdown) {
+			tx = api?.tx?.proxy.proxy(address, null, api.tx.identity.setIdentity(info));
+			signingAddress = selectedProxyAddress;
+		}
 
-		const tx = api.tx.identity.setIdentity(info);
-		const paymentInfo = await tx.paymentInfo(address);
+		const paymentInfo = await tx.paymentInfo(signingAddress);
+
 		setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 		setLoading(false);
 	};
@@ -195,7 +224,7 @@ const IdentityForm = ({
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null }
 				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
 			},
-			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && emailVal && twitterVal
+			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
 		});
 		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -252,7 +281,6 @@ const IdentityForm = ({
 				console.log('Error in unwraping identityHash');
 				return;
 			}
-
 			setIdentityHash(identityHash);
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
@@ -272,7 +300,7 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 		};
 
-		await executeTx({
+		let payload: any = {
 			address,
 			api,
 			apiReady,
@@ -282,7 +310,16 @@ const IdentityForm = ({
 			onSuccess,
 			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
 			tx
-		});
+		};
+
+		if (selectedProxyAddress?.length && showProxyDropdown) {
+			payload = {
+				...payload,
+				proxyAddress: selectedProxyAddress || ''
+			};
+		}
+
+		await executeTx(payload);
 	};
 
 	return (
@@ -291,18 +328,6 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{/* {availableBalance?.gte(ZERO_BN) && availableBalance.lte(totalFee) && !alreadyVerifiedfields?.alreadyVerified && (
-					<Alert
-						showIcon
-						type='error'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue '
-						message={
-							<span className='dark:text-blue-dark-high'>
-								Minimum Balance of {formatedBalance(totalFee.toString(), unit, 2)} {unit} is required to proceed
-							</span>
-						}
-					/>
-				)} */}
 				{alreadyVerifiedfields?.alreadyVerified && (
 					<Alert
 						showIcon
@@ -334,18 +359,53 @@ const IdentityForm = ({
 							displayInline
 						/>
 						<CustomButton
-							text='Change'
+							text='Change Wallet'
 							onClick={() => {
 								setAddressChangeModalOpen();
 								closeModal(true);
 							}}
-							width={80}
-							className='text-xs'
-							height={26}
+							width={91}
+							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+							height={21}
 							variant='primary'
 						/>
 					</div>
 				</div>
+				{!!proxyAddresses && proxyAddresses?.length > 0 && (
+					<div className='mt-2'>
+						<Checkbox
+							value=''
+							className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+							onChange={() => {
+								setShowProxyDropdown(!showProxyDropdown);
+							}}
+						>
+							<p className='m-0 mt-1 p-0'>Use proxy address</p>
+						</Checkbox>
+					</div>
+				)}
+				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
+					<ProxyAccountSelectionForm
+						proxyAddresses={proxyAddresses}
+						theme={theme}
+						address={address}
+						withBalance
+						heading={'Proxy Address'}
+						isUsedInIdentity={true}
+						className={`${poppins.variable} ${poppins.className} mt-2 rounded-[4px] px-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
+						inputClassName='rounded-[4px] px-3 py-0.5'
+						wallet={wallet}
+						setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
+						setSelectedProxyAddress={setSelectedProxyAddress}
+						selectedProxyAddress={selectedProxyAddress?.length ? selectedProxyAddress : proxyAddresses?.[0]}
+					/>
+				)}
+				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && !isProxyExistsOnWallet && (
+					<div className='mt-2 flex items-center gap-x-1'>
+						<InfoIcon />
+						<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
+					</div>
+				)}
 				<div className='mt-6'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Display Name <span className='text-[#FF3C5F]'>*</span>
@@ -628,11 +688,24 @@ const IdentityForm = ({
 					buttonsize='xs'
 				/>
 				<CustomButton
-					disabled={!okAll || loading || (availableBalance && availableBalance.lte(totalFee)) || gasFee.lte(ZERO_BN) || handleAllowSetIdentity()}
+					disabled={
+						!okAll ||
+						loading ||
+						(availableBalance && availableBalance.lte(totalFee)) ||
+						gasFee.lte(ZERO_BN) ||
+						handleAllowSetIdentity() ||
+						(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
+					}
 					onClick={handleSetIdentity}
 					loading={loading}
 					className={`rounded-[4px] ${
-						(!okAll || loading || gasFee.lte(ZERO_BN) || (availableBalance && availableBalance.lte(totalFee)) || handleAllowSetIdentity()) && 'opacity-50'
+						(!okAll ||
+							loading ||
+							gasFee.lte(ZERO_BN) ||
+							(availableBalance && availableBalance.lte(totalFee)) ||
+							handleAllowSetIdentity() ||
+							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&
+						'opacity-50'
 					}`}
 					text='Set Identity'
 					variant='primary'
@@ -678,5 +751,15 @@ export default styled(IdentityForm)`
 	}
 	.dark input {
 		color: white !important;
+	}
+	.ant-checkbox .ant-checkbox-inner {
+		background-color: transparent !important;
+	}
+	.ant-checkbox-checked .ant-checkbox-inner {
+		background-color: #e5007a !important;
+		border-color: #e5007a !important;
+	}
+	.change-wallet-button {
+		font-size: 10px !important;
 	}
 `;

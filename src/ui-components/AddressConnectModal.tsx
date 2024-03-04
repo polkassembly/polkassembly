@@ -48,7 +48,7 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
-	onConfirm?: (pre?: any) => void;
+	onConfirm?: (pre?: any, sec?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
 	walletAlertTitle?: string;
@@ -93,7 +93,6 @@ const AddressConnectModal = ({
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
-
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -287,7 +286,7 @@ const AddressConnectModal = ({
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm && onConfirm(address);
+			onConfirm?.(address);
 			setOpen(false);
 			setLoading(false);
 			dispatch(setConnectAddress(address));
@@ -495,9 +494,9 @@ const AddressConnectModal = ({
 					)}
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
+							message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
+								<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
 									<li>Add an address to the selected wallet.</li>
 								</ul>
@@ -509,7 +508,7 @@ const AddressConnectModal = ({
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
+							message={<div className='mt-1 text-[13px] font-medium text-lightBlue dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
 								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
 									{linkAddressNeeded
@@ -559,6 +558,7 @@ const AddressConnectModal = ({
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
+									inputClassName='rounded-[4px] px-3 py-1'
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

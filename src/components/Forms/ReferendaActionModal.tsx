@@ -14,12 +14,11 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { ISteps } from '../OpenGovTreasuryProposal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import styled from 'styled-components';
-import { EKillOrCancel } from './enum';
 import TreasuryProposalSuccessPopup from '~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus, PostOrigin, EReferendumType } from '~src/types';
+import { NotificationStatus, PostOrigin, EReferendumType, EKillOrCancel } from '~src/types';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false

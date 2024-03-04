@@ -106,7 +106,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, identity }: Props) => {
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<DelegationProfile
-						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
+						className='rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						profileDetails={profileDetails}
 						setIsModalOpen={setIsModalOpen}
 						userBio={userBio}

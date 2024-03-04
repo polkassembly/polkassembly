@@ -187,23 +187,28 @@ const EditProposalStatus = ({ canEdit, className, proposalId, startTime }: Props
 				title={'Set Deadline Date'}
 				centered
 				footer={[
-					<CustomButton
-						text='Close'
-						key='close'
-						onClick={() => setModalOpen(false)}
-						height={40}
-						variant='default'
-					/>,
-					<CustomButton
-						text='Save'
-						key='submit'
-						onClick={handleSave}
-						loading={loading}
-						disabled={loading}
-						height={40}
-						variant='primary'
-						className='transition-colors duration-300'
-					/>
+					<div
+						className='flex justify-end'
+						key='footer'
+					>
+						<CustomButton
+							text='Close'
+							key='close'
+							onClick={() => setModalOpen(false)}
+							height={40}
+							variant='default'
+						/>
+						<CustomButton
+							text='Save'
+							key='submit'
+							onClick={handleSave}
+							loading={loading}
+							disabled={loading}
+							height={40}
+							variant='primary'
+							className='transition-colors duration-300'
+						/>
+					</div>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>

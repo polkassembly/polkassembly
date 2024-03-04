@@ -12,6 +12,7 @@ import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import TurnoutIcon from '~assets/icons/analytics/turnout.svg';
 import TurnoutDarkIcon from '~assets/icons/analytics/turnout-dark.svg';
+import styled from 'styled-components';
 
 interface IVotesTurnoutProps {
 	support: BN;
@@ -115,4 +116,20 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ support, activeIssuance, cla
 	);
 };
 
-export default VotesTurnoutCard;
+export default styled(VotesTurnoutCard)`
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+`;

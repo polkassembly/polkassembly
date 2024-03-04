@@ -127,4 +127,19 @@ export default styled(TimeSplit)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
 		display: none !important;
 	}
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
 `;

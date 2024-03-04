@@ -359,14 +359,14 @@ const IdentityForm = ({
 							displayInline
 						/>
 						<CustomButton
-							text='Change'
+							text='Change Wallet'
 							onClick={() => {
 								setAddressChangeModalOpen();
 								closeModal(true);
 							}}
-							width={80}
-							className='text-xs'
-							height={26}
+							width={91}
+							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+							height={21}
 							variant='primary'
 						/>
 					</div>
@@ -758,5 +758,8 @@ export default styled(IdentityForm)`
 	.ant-checkbox-checked .ant-checkbox-inner {
 		background-color: #e5007a !important;
 		border-color: #e5007a !important;
+	}
+	.change-wallet-button {
+		font-size: 10px !important;
 	}
 `;

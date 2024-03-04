@@ -26,7 +26,7 @@ interface Props {
 	theme?: string;
 	withBalance?: boolean;
 	address?: string;
-	onBalanceChange?: (balance: string) => void;
+	// onBalanceChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	inputClassName?: string;
 	setShowWalletModal?: (pre: boolean) => void;
@@ -41,7 +41,7 @@ interface Props {
 
 const ProxyAccountSelectionForm = ({
 	isBalanceUpdated,
-	onBalanceChange,
+	// onBalanceChange,
 	withBalance,
 	address,
 	proxyAddresses,
@@ -114,7 +114,7 @@ const ProxyAccountSelectionForm = ({
 					{address && withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
-							onChange={onBalanceChange}
+							// onChange={onBalanceChange}
 							isBalanceUpdated={isBalanceUpdated}
 						/>
 					)}

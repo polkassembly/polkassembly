@@ -893,7 +893,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										theme={theme}
 										address={address}
 										withBalance
-										onBalanceChange={handleOnBalanceChange}
+										// onBalanceChange={handleOnBalanceChange}
 										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}

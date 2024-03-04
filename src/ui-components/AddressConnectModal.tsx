@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { Alert, Divider, Form, Modal, Spin } from 'antd';
+import { Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
 import { ApiContext } from '~src/context/ApiContext';
@@ -17,7 +17,6 @@ import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { InjectedTypeWithCouncilBoolean } from './AddressDropdown';
-import CloseIcon from '~assets/icons/close.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from './QueueNotification';
 import cleanError from '~src/util/cleanError';
@@ -38,6 +37,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
+import { CloseIcon } from './CustomIcons';
+import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -46,14 +48,15 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
-	onConfirm?: (pre?: any) => void;
+	onConfirm?: (pre?: any, sec?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
-	walletAlertTitle: string;
+	walletAlertTitle?: string;
 	accountAlertTitle?: string;
 	accountSelectionFormTitle?: string;
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
+	isUsedInDelegationModal?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -87,11 +90,9 @@ const AddressConnectModal = ({
 	const [wallet, setWallet] = useState<Wallet>(loginWallet as Wallet);
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const [multisig, setMultisig] = useState<string>('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(ZERO_BN);
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
-
 	const substrate_address = getSubstrateAddress(loginAddress);
 	const substrate_addresses = (addresses || []).map((address) => getSubstrateAddress(address));
 	const [isMetamaskWallet, setIsMetamaskWallet] = useState<boolean>(false);
@@ -275,6 +276,7 @@ const AddressConnectModal = ({
 		if (!address || !wallet || !accounts) return;
 		if (linkAddressNeeded && isUnlinkedAddress) {
 			handleAddressLink(address, wallet as Wallet);
+			dispatch(setConnectAddress(address));
 		} else {
 			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
@@ -284,9 +286,10 @@ const AddressConnectModal = ({
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm && onConfirm(address);
+			onConfirm?.(address);
 			setOpen(false);
 			setLoading(false);
+			dispatch(setConnectAddress(address));
 		}
 	};
 
@@ -321,6 +324,7 @@ const AddressConnectModal = ({
 		}
 		const availableBalance = new BN(balanceStr);
 		setAvailableBalance(availableBalance);
+		dispatch(setInitialAvailableBalance(availableBalance));
 	};
 
 	useEffect(() => {
@@ -421,7 +425,7 @@ const AddressConnectModal = ({
 			}
 			closable={closable}
 			onCancel={() => setOpen(false)}
-			closeIcon={<CloseIcon />}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin
 				spinning={loading}
@@ -490,21 +494,21 @@ const AddressConnectModal = ({
 					)}
 					{!!Object.keys(availableWallets || {})?.length && !accounts.length && !!wallet && !loading && (
 						<Alert
-							message={<span className='dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
+							message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>For using {walletAlertTitle}:</span>}
 							description={
-								<ul className='mt-[-5px] text-sm dark:text-blue-dark-high'>
+								<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
 									<li>Give access to Polkassembly on your selected wallet.</li>
 									<li>Add an address to the selected wallet.</li>
 								</ul>
 							}
 							showIcon
-							className='mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='mt-4'
 							type='info'
 						/>
 					)}
 					{Object.keys(availableWallets || {}).length === 0 && !loading && (
 						<Alert
-							message={<div className='mt-1 text-[13px] font-medium dark:text-blue-dark-high'>{accountAlertTitle}</div>}
+							message={<div className='mt-1 text-[13px] font-medium text-lightBlue dark:text-blue-dark-high'>{accountAlertTitle}</div>}
 							description={
 								<div className='-mt-1 pb-1 text-xs text-lightBlue dark:text-blue-dark-high'>
 									{linkAddressNeeded
@@ -514,7 +518,7 @@ const AddressConnectModal = ({
 							}
 							type='info'
 							showIcon
-							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+							className='changeColor text-md mt-6 rounded-[4px] text-bodyBlue'
 						/>
 					)}
 					<Form
@@ -554,12 +558,13 @@ const AddressConnectModal = ({
 									onAccountChange={(address) => setAddress(address)}
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
+									inputClassName='rounded-[4px] px-3 py-1'
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (
 							<Alert
 								type='info'
-								className='mt-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mt-4 rounded-[4px]'
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 							/>
@@ -568,7 +573,7 @@ const AddressConnectModal = ({
 				</div>
 				{isProposalCreation && availableBalance.lte(submissionDeposite.add(baseDeposit)) && (
 					<Alert
-						className='mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='mt-6 rounded-[4px]'
 						type='info'
 						showIcon
 						message={

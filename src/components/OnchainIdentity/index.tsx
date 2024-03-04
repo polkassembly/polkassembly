@@ -17,6 +17,7 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
+import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import { SetIdentityIcon } from '~src/ui-components/CustomIcons';
 import { ILoading, Wallet } from '~src/types';
@@ -26,6 +27,7 @@ import { APPNAME } from '~src/global/appName';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -98,7 +100,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const [currentWallet, setCurrentWallet] = useState<any>();
 	const router = useRouter();
+	const { resolvedTheme: theme } = useTheme();
 
 	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
 		if (!api || !apiReady) return;
@@ -107,6 +111,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		const injectedWindow = window as Window & InjectedWindow;
 
 		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
+		setCurrentWallet(chosenWallet);
 
 		if (!wallet) {
 			setLoading({ ...loading, isLoading: false });
@@ -420,7 +425,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
 							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
-								<IdentityProgressIcon />
+								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>
 								In Progress
 							</span>
 						)}
@@ -452,6 +457,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							txFee={txFee}
 							name={name}
 							form={form}
+							wallet={currentWallet}
 							onChangeName={setName}
 							socials={socials}
 							onChangeSocials={setSocials}

@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin, Alert } from 'antd';
+import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -13,7 +13,7 @@ import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wa
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
-import Web3 from 'web3';
+import { BrowserProvider, Contract, formatUnits } from 'ethers';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import WalletButton from '~src/components/WalletButton';
 import { useApiContext, usePostDataContext } from '~src/context';
@@ -38,6 +38,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -51,7 +52,7 @@ interface Props {
 
 const abi = require('../../../../moonbeamAbi.json');
 
-const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE;
+const contractAddress = process.env.NEXT_PUBLIC_DEMOCRACY_PRECOMPILE || '';
 
 const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote }: Props) => {
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -275,11 +276,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		if (walletConnectProvider?.wc.connected) {
 			await walletConnectProvider.enable();
-			web3 = new Web3(walletConnectProvider as any);
+			web3 = new BrowserProvider(walletConnectProvider as any);
 			chainId = walletConnectProvider.wc.chainId;
 		} else {
-			web3 = new Web3(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
-			chainId = await web3.eth.net.getId();
+			web3 = new BrowserProvider(wallet === Wallet.TALISMAN ? (window as any).talismanEth : (window as any).ethereum);
+			const { chainId: id } = await web3.getNetwork();
+			chainId = Number(id.toString());
 		}
 
 		if (chainId !== chainProperties[network].chainId) {
@@ -293,16 +295,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 		setLoadingStatus({ isLoading: true, message: 'Awaiting block confirmation' });
 
-		const voteContract = new web3.eth.Contract(abi, contractAddress);
+		const voteContract = new Contract(contractAddress, abi, await web3.getSigner());
+
+		const gasPrice = await voteContract.standard_vote.estimateGas(referendumId, aye, lockedBalance.toString(), conviction);
+		const estimatedGasPriceInWei = new BN(formatUnits(gasPrice, 'wei'));
+
+		// increase gas by 15%
+		const gasLimit = estimatedGasPriceInWei.div(new BN(100)).mul(new BN(15)).add(estimatedGasPriceInWei).toString();
 
 		// estimate gas.
 		//https://docs.moonbeam.network/builders/interact/eth-libraries/deploy-contract/#interacting-with-the-contract-send-methods
 
-		voteContract.methods
-			.standard_vote(referendumId, aye, lockedBalance.toString(), conviction)
-			.send({
-				from: address,
-				to: contractAddress
+		await voteContract
+			.standard_vote(referendumId, aye, lockedBalance.toString(), conviction, {
+				gasLimit
 			})
 			.then(() => {
 				setLoadingStatus({ isLoading: false, message: 'Transaction is in progress' });
@@ -379,7 +385,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			<CustomButton
 				variant='primary'
 				fontSize='lg'
-				className='mx-auto mb-8 w-full rounded-xxl p-7 font-semibold lg:w-[480px] xl:w-full'
+				className='mx-auto mb-8 w-full rounded-xxl p-[26px] font-semibold lg:w-[480px] xl:w-full'
 				onClick={() => setShowModal(true)}
 			>
 				{!lastVote ? 'Cast Your Vote' : 'Cast Vote Again'}
@@ -443,7 +449,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Please use Ethereum account via Talisman wallet.</span>}
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 						{isBalanceErr && !loadingStatus.isLoading && wallet && (
@@ -451,7 +456,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								type='info'
 								message={<span className='dark:text-blue-dark-high'>Insufficient balance.</span>}
 								showIcon
-								className='mb-4 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								className='mb-4 rounded-[4px]'
 							/>
 						)}
 						{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
@@ -459,7 +464,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 								showIcon
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						)}
 
@@ -476,13 +480,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
 								theme={theme}
+								isVoting
 							/>
 						) : !wallet ? (
 							<Alert
 								message={<span className='dark:text-blue-dark-high'>Please select a wallet.</span>}
 								showIcon
 								type='info'
-								className='dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 							/>
 						) : null}
 						<h3 className='inner-headings mb-[2px] mt-6 dark:text-blue-dark-medium'>Choose your vote</h3>

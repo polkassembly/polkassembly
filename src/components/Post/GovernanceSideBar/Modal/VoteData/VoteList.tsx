@@ -16,7 +16,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import styled from 'styled-components';
 import VoterRow from './VoterRow';
-import ExpandIcon from '~assets/icons/expand-small-icon.svg';
+import ExpandIcon from '~assets/icons/expand-small-icon2.svg';
 // import ChartIcon from '~assets/chart-icon.svg';
 // import ThresholdGraph from './ThresholdGraph';
 import DelegationVotersList from './DelegateVoteList';
@@ -29,6 +29,29 @@ import { useTheme } from 'next-themes';
 import { CloseIcon, VoteDataIcon } from '~src/ui-components/CustomIcons';
 import { ApiPromise } from '@polkadot/api';
 import Tooltip from '~src/basic-components/Tooltip';
+
+const getFromatedData = (data: any) => {
+	const resObj: any = {
+		abstain: {
+			count: 0,
+			votes: []
+		},
+		no: {
+			count: 0,
+			votes: []
+		},
+		yes: {
+			count: 0,
+			votes: []
+		}
+	};
+	data?.map((item: any) => {
+		const votingPower = new BN(item?.balance?.value).mul(new BN(item?.lockPeriod || 1));
+		resObj[item?.decision].votes = [...((resObj[item?.decision] as any)?.votes || []), { ...item, totalVotingPower: votingPower.toString() || '0' }];
+		resObj[item?.decision].count = ((resObj[item?.decision] as any)?.count || 0) + 1;
+	});
+	return resObj;
+};
 
 // const ZERO = new BN(0);
 const ZERO = '0';
@@ -99,7 +122,6 @@ const VotersList: FC<IVotersListProps> = (props) => {
 	const [votesRes, setVotesRes] = useState<IVotesResponse>();
 	const [combinedVotes, setCombinedVotes] = useState<any[]>([]);
 	const [sortBy, setSortBy] = useState<string>(votesSortValues.TIME_DESC);
-
 	const [delegationVoteModal, setDelegationVoteModal] = useState<{ isOpen: boolean; voter: string | null }>({ isOpen: false, voter: null });
 	const [activeKey, setActiveKey] = useState<any>(null);
 	const [orderBy, setOrderBy] = useState<{ [key: string]: boolean }>(sortedCheck);
@@ -195,12 +217,20 @@ const VotersList: FC<IVotersListProps> = (props) => {
 		});
 		getReferendumV2VoteInfo().then(() => {
 			let url;
+			let payload: any;
 			if (voterAddress && isUsedInVotedModal) {
-				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}&address=${voterAddress}`;
+				url = 'api/v1/votes/history';
+				payload = {
+					listingLimit: VOTES_LISTING_LIMIT,
+					page: currentPage,
+					proposalIndex: referendumId,
+					proposalType: postType,
+					voterAddress: voterAddress
+				};
 			} else {
 				url = `api/v1/votes?listingLimit=${VOTES_LISTING_LIMIT}&postId=${referendumId}&voteType=${voteType}&page=${currentPage}&sortBy=${sortBy}`;
 			}
-			nextApiClientFetch<IVotesResponse>(url)
+			nextApiClientFetch<IVotesResponse>(url, payload)
 				.then((res) => {
 					if (res.error) {
 						console.log(res.error);
@@ -209,7 +239,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							message: ''
 						});
 					} else {
-						const votesRes = res.data;
+						const votesRes = (res.data as any)?.votes ? getFromatedData((res?.data as any)?.votes) : res?.data;
 						let combinedVotes;
 						setVotesRes(votesRes);
 						if (votesRes && firstRef.current) {
@@ -275,14 +305,14 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								</div>
 							)}
 							<VoteContainer className='px-0 text-xs text-sidebarBlue'>
-								<div className='mb-2 flex w-min items-center px-2 text-xs font-semibold'>
+								<div className='mb-2 flex w-full items-center px-2 text-xs font-semibold sm:w-min'>
 									{!isUsedInVotedModal ? (
-										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Voter</div>
+										<div className={`w-[160px] text-sm font-medium text-lightBlue dark:text-white sm:w-[190px]  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Voter</div>
 									) : (
-										<div className={`w-[190px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'w-[220px]' : ''}`}>Vote</div>
+										<div className={`min[640px]:w-[190px] w-[160px] text-sm font-medium text-lightBlue dark:text-white  ${decision === 'abstain' ? 'sm:w-[220px]' : ''}`}>Vote</div>
 									)}
 									<div
-										className={`flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white ${decision === 'abstain' ? 'w-[160px]' : ''}`}
+										className={`hidden w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-white sm:flex ${decision === 'abstain' ? 'w-[160px]' : ''}`}
 										onClick={() => {
 											handleSortByClick({
 												key: orderBy.balanceIsAsc ? votesSortValues.BALANCE_ASC : votesSortValues.BALANCE_DESC
@@ -295,7 +325,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 									{network !== AllNetworks.COLLECTIVES && decision !== 'abstain' ? (
 										<div
-											className={'flex w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high'}
+											className={'hidden w-[110px] cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high sm:flex'}
 											onClick={() => {
 												handleSortByClick({
 													key: orderBy.convictionIsAsc ? votesSortValues.CONVICTION_ASC : votesSortValues.CONVICTION_DESC
@@ -308,7 +338,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										</div>
 									) : null}
 
-									<div className='flex w-[120px] items-center gap-1 text-lightBlue dark:text-blue-dark-high'>
+									<div className='flex w-[120px] items-center justify-between space-x-1 text-lightBlue dark:text-blue-dark-high'>
 										<span
 											className='flex cursor-pointer'
 											onClick={() => {
@@ -321,7 +351,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 											Voting Power
 											{!isUsedInVotedModal && <ExpandIcon className={orderBy.votingIsAsc ? 'rotate-180' : ''} />}
 										</span>
-										<span>
+										<span className='mr-3'>
 											<Tooltip
 												color='#E5007A'
 												title='Vote Power for delegated votes is the self vote power + delegated vote power.'
@@ -332,7 +362,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 									</div>
 								</div>
 								{!isUsedInVotedModal ? (
-									<div className='max-h-[360px] w-min'>
+									<div className='max-h-[360px] w-full sm:w-min'>
 										{votesRes &&
 											decision &&
 											!!votesRes[decision]?.votes?.length &&
@@ -355,7 +385,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 										{decision && !votesRes?.[decision]?.votes?.length && <PostEmptyState />}
 									</div>
 								) : (
-									<div className='max-h-[360px] w-min'>
+									<div className='max-h-[360px] w-full sm:w-min'>
 										{combinedVotes &&
 											!!combinedVotes.length &&
 											combinedVotes.map((voteData: any, index: number) => (
@@ -381,8 +411,8 @@ const VotersList: FC<IVotersListProps> = (props) => {
 							</VoteContainer>
 						</div>
 						{!isUsedInVotedModal && (
-							<div className='z-10 flex justify-between bg-white pt-6 dark:bg-section-dark-overlay max-sm:flex-col-reverse max-sm:gap-2 sm:items-center '>
-								<p className='m-0 mb-2 text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
+							<div className='z-10 mb-2 flex flex-col items-center bg-white pt-4 dark:bg-section-dark-overlay sm:items-center '>
+								<p className='m-0 mb-2 text-center text-xs text-bodyBlue dark:text-blue-dark-high'>d: Delegation s: Split sa: Split Abstain</p>
 								<Pagination
 									theme={theme}
 									size='small'

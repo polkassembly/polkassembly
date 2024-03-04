@@ -39,6 +39,14 @@ interface Props {
 	className?: string;
 	addresses: string[];
 }
+export const votesUnlockUnavailableNetworks = [
+	AllNetworks.MOONBASE,
+	AllNetworks.MOONRIVER,
+	AllNetworks.POLYMESH,
+	AllNetworks.COLLECTIVES,
+	AllNetworks.WESTENDCOLLECTIVES,
+	AllNetworks.MOONBEAM
+];
 
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {
@@ -62,6 +70,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const dispatch = useDispatch();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [totalUnlockableBalance, setTotalUnlockableBalance] = useState<BN>(ZERO_BN);
+	const [unlockedBalance, setUnlockedBalance] = useState<BN>(ZERO_BN);
 	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>(addresses[0]);
@@ -174,6 +183,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			}
 		});
 		setTotalUnlockableBalance(balance);
+		setUnlockedBalance(balance);
 	};
 
 	const handleLockUnlockData = async (data: IUnlockTokenskData[] | null, currentBlockNumber: BN) => {
@@ -332,15 +342,15 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	}, [address, api, apiReady, isReferesh]);
 	return (
 		<>
-			<div className={`boder-solid flex items-start justify-start ${className}`}>
+			<div className={`flex items-start justify-start ${className}`}>
 				<Button
 					loading={loadingStatus.isLoading}
 					onClick={() => setOpen(true)}
 					className={`text-sm ${
 						totalUnlockableBalance.eq(ZERO_BN)
-							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:border-blue-dark-high dark:bg-blue-light-high dark:text-blue-dark-high'
+							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
 							: 'border-pink_primary bg-[#fdedf7] text-pink_primary dark:bg-pink-dark-primary'
-					} h-[32px] rounded-[8px]`}
+					} h-[32px] w-full rounded-[8px]`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
 						? 'Unlock Your Tokens'
@@ -393,12 +403,12 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 dark:border-[#3B444F] dark:border-separatorDark'>
 							<CustomButton
 								variant='primary'
-								icon={<WhiteUnlockIcon />}
+								icon={<WhiteUnlockIcon className='mr-1' />}
 								className={`{ totalUnlockableBalance.eq(ZERO_BN) &&
 									'opacity-50' } mt-4
-								w-[100%]`}
+								flex w-[100%] items-center tracking-wide`}
 								height={40}
-								fontSize='xs'
+								fontSize='sm'
 								onClick={() => handleUnlock()}
 								disabled={totalUnlockableBalance.eq(ZERO_BN)}
 								text='Unlock Tokens'
@@ -423,7 +433,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				open={openSuccessState}
 				setOpen={setOpenSuccessState}
 				lockedBalance={lockedBalance}
-				totalUnlockableBalance={totalUnlockableBalance}
+				unlockedBalance={unlockedBalance}
 			/>
 		</>
 	);

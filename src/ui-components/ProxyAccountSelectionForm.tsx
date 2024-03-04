@@ -146,7 +146,7 @@ const ProxyAccountSelectionForm = ({
 							disableHeader
 						/>
 						<div
-							className='mr-[154px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
+							className='mr-[154px] flex h-[18px] items-center justify-center gap-x-1 whitespace-nowrap rounded-[10px] px-3'
 							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
 						>
 							<NetworkIcon />

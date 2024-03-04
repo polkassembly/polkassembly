@@ -36,8 +36,8 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ support, activeIssuance, cla
 	const chartData = [
 		{
 			color: turnoutColor,
-			id: 'turnout',
-			label: 'Turnout',
+			id: 'support',
+			label: 'Support',
 			value: bnToIntBalance(support)
 		},
 		{
@@ -49,7 +49,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ support, activeIssuance, cla
 	];
 	return (
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} Turnout Percentage</h2>
+			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} Support Percentage</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}

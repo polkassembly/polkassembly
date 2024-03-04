@@ -91,7 +91,7 @@ const Accounts = ({ allVotes, support, totalVotesCount, activeIssuance }: IVotes
 
 	return (
 		<>
-			<Nudge text='Accounts is the number of unique addresses casting a vote' />
+			<Nudge text='Accounts are the number of unique addresses casting a vote' />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard

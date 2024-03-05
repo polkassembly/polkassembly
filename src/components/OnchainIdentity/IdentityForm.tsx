@@ -659,7 +659,7 @@ const IdentityForm = ({
 										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Registrar fees{' '}
 											<HelperTooltip
-												text='Costs of development & maintenance are funded by the treasury.'
+												text='Fee charged for on chain verification by registrar.'
 												className='ml-1'
 											/>
 										</span>

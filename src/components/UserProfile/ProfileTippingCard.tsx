@@ -25,6 +25,8 @@ import dynamic from 'next/dynamic';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -276,6 +278,7 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 					) : (
 						<Empty
 							className='mt-4'
+							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
 							description={<div className='text-lightBlue dark:text-blue-dark-high'>No tip Found</div>}
 						/>
 					)}

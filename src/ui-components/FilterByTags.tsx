@@ -171,7 +171,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable} dark:text-white`}
 						>
 							<TrendingIcon />
-							<span className='text-xs tracking-wide text-[#667589] dark:text-white'>{tag.name}</span>
+							<span className='text-xs tracking-wide text-separatorDark dark:text-white'>{tag.name}</span>
 						</div>
 					))}
 				</div>

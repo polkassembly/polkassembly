@@ -262,9 +262,9 @@ const CreatePost = ({ className, proposalType }: Props) => {
 							htmlType='submit'
 							disabled={!currentUser.id || formDisabled || loading}
 							className='mt-10'
-							fontSize='lg'
-							width={215}
-							height={50}
+							fontSize='md'
+							width={150}
+							height={40}
 							variant='primary'
 						/>
 					</Form.Item>

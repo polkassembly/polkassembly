@@ -134,7 +134,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		}
 
 		setMdEditor(!mdEditor);
+		localStorage.setItem('editorPreference', mdEditor ? 'fancy' : 'markdown');
 	}
+	const getEditorPreference = () => {
+		const preference = localStorage.getItem('editorPreference');
+		if (preference === 'fancy') {
+			setMdEditor(false);
+		} else {
+			setMdEditor(true);
+		}
+	};
+
+	useEffect(() => {
+		getEditorPreference();
+	}, []);
 
 	useEffect(() => {
 		if (quotedText) {

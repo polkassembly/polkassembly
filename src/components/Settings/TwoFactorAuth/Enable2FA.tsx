@@ -252,12 +252,15 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 			>
 				<span className='flex items-center text-[16px] font-medium md:whitespace-nowrap'>
 					<span className='hidden min-[450px]:inline'>Enable Two Factor Authentication </span>
-					<span className='min-[450px]:hidden'>Enable 2FA</span>
+					<div className='flex flex-col'>
+						<span className='min-[450px]:hidden'>Enable 2FA </span>
+						<span className='min-[450px]:hidden'>(Two Factor Authentication) </span>
+					</div>
 					<span className='mt-2 hidden md:inline'>
 						<KeyboardDownIcon />
 					</span>
 				</span>
-				<p className='mt-2 hidden flex-1 text-[14px] md:block'>
+				<p className='mt-2 hidden flex-1 text-[14px] md:mt-[10px] md:block'>
 					Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.
 				</p>
 			</div>

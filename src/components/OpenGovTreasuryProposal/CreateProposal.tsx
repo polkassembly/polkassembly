@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Spin, message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
 import Address from '~src/ui-components/Address';
@@ -14,13 +14,13 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { IBeneficiary, NotificationStatus } from '~src/types';
+import { IBeneficiary, NetworkEvent, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { CreatePostResponseType } from '~src/auth/types';
+import { ChallengeMessage, CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -29,6 +29,8 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
 import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
+import AddTreasuryProposalDeadlineModal from '~src/ui-components/AddTreasuryProposalDeadlineModal';
+import dayjs from 'dayjs';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 
@@ -53,6 +55,10 @@ interface Props {
 	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
+	showDeadlineCard: boolean;
+	deadlineDate: Date;
+	postId: number;
+	setDeadlineDate: (pre: Date | null) => void;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -77,6 +83,10 @@ const CreateProposal = ({
 	setPostId,
 	availableBalance,
 	discussionLink,
+	showDeadlineCard,
+	deadlineDate,
+	postId,
+	setDeadlineDate,
 	isDiscussionLinked
 }: Props) => {
 	const { network } = useNetworkSelector();
@@ -91,6 +101,58 @@ const CreateProposal = ({
 	const { id: userId } = useUserDetailsSelector();
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const currentUser = useUserDetailsSelector();
+	const [openAddDeadlineModal, setOpenAddDeadlineModal] = useState<boolean>(false);
+	const [isUpdate, setIsUpdate] = useState<boolean>(false);
+	const [status, setStatus] = useState<string>('in_progress');
+
+	const getProposalStatus = useCallback(async () => {
+		if (!postId) return;
+		const { data, error } = await nextApiClientFetch<NetworkEvent>('api/v1/events/getEventByPostId', {
+			post_id: Number(postId)
+		});
+
+		if (error) {
+			console.log('error fetching proposal status', error);
+		}
+
+		if (data) {
+			if (data.end_time) {
+				setIsUpdate(true);
+				setDeadlineDate((data.end_time as any)?.toDate() || null);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postId]);
+
+	useEffect(() => {
+		getProposalStatus();
+	}, [getProposalStatus]);
+
+	const handleDeadlineSave = async (post_id: number) => {
+		const errorsFound: string[] = [];
+
+		if (Object.prototype.toString.call(deadlineDate) !== '[object Date]') {
+			errorsFound.push('deadlineDate');
+		}
+
+		if (errorsFound.length > 0 || isNaN(post_id)) {
+			return;
+		}
+
+		if (!isUpdate) {
+			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/createProposalTracker', {
+				deadline: dayjs(deadlineDate).toDate(),
+				onchain_proposal_id: Number(post_id),
+				start_time: dayjs(deadlineDate).toDate(),
+				status
+			});
+			if (error) {
+				console.log(error, 'error');
+			} else {
+				console.log(data?.message, 'Success');
+			}
+		}
+	};
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -221,6 +283,7 @@ const CreateProposal = ({
 
 			const onSuccess = async () => {
 				handleSaveTreasuryProposal(post_id);
+				handleDeadlineSave(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);
 				localStorage.removeItem('treasuryProposalProposerAddress');
@@ -276,6 +339,8 @@ const CreateProposal = ({
 				/>
 				<MissingInfoAlert
 					theme={theme}
+					setOpenAddDeadlineModal={setOpenAddDeadlineModal}
+					showDeadlineCard={showDeadlineCard}
 					isDiscussionLinked={isDiscussionLinked}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
@@ -326,7 +391,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<CopyIcon className='text-base text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 						<span className='flex'>
@@ -350,7 +415,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<CopyIcon className='text-base text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 					</div>
@@ -405,6 +470,14 @@ const CreateProposal = ({
 					/>
 				</div>
 			</div>
+			<AddTreasuryProposalDeadlineModal
+				open={openAddDeadlineModal}
+				setOpen={setOpenAddDeadlineModal}
+				setDeadlineDate={setDeadlineDate}
+				theme={theme}
+				status={status}
+				setStatus={setStatus}
+			/>
 		</Spin>
 	);
 };

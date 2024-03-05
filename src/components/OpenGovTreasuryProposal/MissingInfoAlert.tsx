@@ -12,12 +12,14 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Alert from '~src/basic-components/Alert';
 
 interface Props {
+	showDeadlineCard: boolean;
 	isDiscussionLinked: boolean;
 	className?: string;
 	theme: string;
+	setOpenAddDeadlineModal: (pre: boolean) => void;
 }
-const TOTAL_STEPS_WITH_IDENTITY_CHECK = 4;
-const TOTAL_STEPS_WITHOUT_IDENTITY_CHECK = 2;
+const TOTAL_STEPS_WITH_IDENTITY_CHECK = 5;
+const TOTAL_STEPS_WITHOUT_IDENTITY_CHECK = 3;
 
 const CanNotChange = () => {
 	return (
@@ -56,7 +58,7 @@ const IdentityList = ({ aleredySet, title }: { aleredySet: boolean; title: strin
 		</li>
 	);
 };
-const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
+const MissingInfoAlert = ({ className, isDiscussionLinked, theme, setOpenAddDeadlineModal, showDeadlineCard }: Props) => {
 	const { network } = useNetworkSelector();
 	const { showIdentityInfoCardForBeneficiary, showIdentityInfoCardForProposer, showMultisigInfoCard } = useTreasuryProposalSelector();
 	const [showWarnings, setShowWarning] = useState<boolean>(true);
@@ -64,6 +66,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 	const leftAction =
 		(onchainIdentitySupportedNetwork.includes(network) ? (showIdentityInfoCardForProposer ? 1 : 0) + (showIdentityInfoCardForBeneficiary ? 1 : 0) : 0) +
 		(showMultisigInfoCard ? 1 : 0) +
+		(showDeadlineCard ? 1 : 0) +
 		(isDiscussionLinked ? 0 : 1);
 	const TOTAL_ACTIONS = onchainIdentitySupportedNetwork.includes(network) ? TOTAL_STEPS_WITH_IDENTITY_CHECK : TOTAL_STEPS_WITHOUT_IDENTITY_CHECK;
 	return (
@@ -108,7 +111,24 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 											</div>
 										</li>
 									)}
-
+									{showDeadlineCard && (
+										<li>
+											Deadline not added.
+											<span
+												className='cursor-pointer text-pink_primary'
+												onClick={() => setOpenAddDeadlineModal(true)}
+											>
+												<Image
+													width={14}
+													height={14}
+													src='/assets/icons/add-deadline.svg'
+													alt='polkasafe'
+													className='mx-1'
+												/>
+												Add Deadline
+											</span>
+										</li>
+									)}
 									{onchainIdentitySupportedNetwork.includes(network) && showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet={false}
@@ -138,6 +158,7 @@ const MissingInfoAlert = ({ className, isDiscussionLinked, theme }: Props) => {
 								<ul className='flex flex-col gap-1 text-bodyBlue dark:text-blue-dark-high'>
 									{!showMultisigInfoCard && <li>Beneficiary Address is multisig.</li>}
 									{isDiscussionLinked && <li>Discussion post was created to gather feedback before proposal creation.</li>}
+									{!showDeadlineCard && <li>Deadline already added.</li>}
 									{onchainIdentitySupportedNetwork.includes(network) && !showIdentityInfoCardForProposer && (
 										<IdentityList
 											aleredySet

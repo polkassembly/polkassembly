@@ -103,7 +103,6 @@ export interface EBeneficiaryAddressesAction {
 		newState?: IBeneficiary[];
 	};
 }
-
 const beneficiaryAddressesReducer = (state: IBeneficiary[], action: EBeneficiaryAddressesAction) => {
 	switch (action.type) {
 		case EBeneficiaryAddressesActionType.UPDATE_ADDRESS:
@@ -175,6 +174,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const [deadlineDate, setDeadlineDate] = useState<Date | null>(null);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -462,6 +462,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							setTags={setTags}
 							setContent={setContent}
 							setTitle={setTitle}
+							theme={theme}
+							setDeadlineDate={setDeadlineDate}
 						/>
 					)}
 
@@ -510,6 +512,10 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
 							isDiscussionLinked={isDiscussionLinked}
+							showDeadlineCard={!deadlineDate}
+							deadlineDate={deadlineDate}
+							postId={postId}
+							setDeadlineDate={setDeadlineDate}
 						/>
 					)}
 				</div>

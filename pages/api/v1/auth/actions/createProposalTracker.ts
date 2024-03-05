@@ -8,6 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import authServiceInstance from '~src/auth/auth';
 import { ChallengeMessage, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import messages from '~src/auth/utils/messages';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ChallengeMessage | MessageType>) {
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
@@ -15,15 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const body = JSON.parse(req.body);
+	const { onchain_proposal_id, status, deadline, start_time } = req.body;
 
-	const { onchain_proposal_id, status, deadline, start_time } = body;
-
-	if (!body || !onchain_proposal_id || !status || !deadline || start_time) return res.status(400).json({ message: 'Missing parameters in request body' });
+	if (isNaN(onchain_proposal_id) || !status || !deadline || !start_time) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
+	if (!token) {
+		return res.status(400).json({ message: messages.INVALID_JWT });
+	}
 
 	await authServiceInstance.ProposalTrackerCreate(onchain_proposal_id, status, deadline, token, network, start_time);
 
-	return { message: 'Status set successfully' };
+	return res.json({ message: 'Status set successfully' });
 }

@@ -471,7 +471,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								)}
 							</div>
 						</Form>
-						{!!existentialDeposit && (
+						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) && !!existentialDeposit && (
 							<div className='mt-4 flex items-center gap-4 text-sm'>
 								<span className='font-medium tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 									Existential Deposit

@@ -1005,8 +1005,8 @@ class AuthService {
 			};
 		}
 
-		// TODO: change to 1 hour for prod
-		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '60s' });
+		// valid for 1 day
+		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '86400s' });
 	}
 
 	public async getRefreshToken({ user_id, login_address, login_wallet }: { user_id: number; login_address?: string; login_wallet?: Wallet }): Promise<string> {

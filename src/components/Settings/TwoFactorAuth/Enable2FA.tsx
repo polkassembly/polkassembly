@@ -250,10 +250,16 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 				onClick={handleModalOpen}
 				className='flex cursor-pointer items-start text-pink_primary dark:border-[#3B444F] dark:text-blue-dark-high'
 			>
-				<span className='flex items-center whitespace-nowrap text-[16px] font-medium'>
-					Enable Two Factor Authentication <KeyboardDownIcon />
+				<span className='flex items-center text-[16px] font-medium md:whitespace-nowrap'>
+					<span className='hidden min-[450px]:inline'>Enable Two Factor Authentication </span>
+					<span className='min-[450px]:hidden'>Enable 2FA</span>
+					<span className='mt-2 hidden md:inline'>
+						<KeyboardDownIcon />
+					</span>
 				</span>
-				<p className='mt-[2px] flex-1 text-[14px]'>Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.</p>
+				<p className='mt-2 hidden flex-1 text-[14px] md:block'>
+					Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.
+				</p>
 			</div>
 		</Form>
 	);

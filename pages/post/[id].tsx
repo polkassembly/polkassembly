@@ -10,7 +10,6 @@ import { useDispatch } from 'react-redux';
 import { PostCategory } from 'src/global/post_categories';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import { ErrorState } from 'src/ui-components/UIStates';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import Post from '~src/components/Post/Post';

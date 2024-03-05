@@ -96,7 +96,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		const postData = (await postRef.get()).data();
 		const postAuthorId = postData?.user_id;
 
-		if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
+		if (!isNaN(postAuthorId) && !isNaN(userId)) {
 			await createUserActivity({
 				action: EActivityAction.CREATE,
 				network,

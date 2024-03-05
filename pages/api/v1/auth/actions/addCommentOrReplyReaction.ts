@@ -93,7 +93,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		const commentAuthorId = commentData?.user_id || null;
 		const replyAuthorId = replyData ? replyData?.user_id : null;
 
-		if (!isNaN(postAuthorId) && postId && !isNaN(userId)) {
+		if (!isNaN(postAuthorId) && !isNaN(userId)) {
 			await createUserActivity({
 				action: EActivityAction.CREATE,
 				commentAuthorId,

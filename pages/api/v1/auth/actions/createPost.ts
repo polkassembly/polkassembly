@@ -109,22 +109,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 		.set(newPost)
 		.then(async () => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
-			if (tags && Array.isArray(tags) && tags.length > 0) {
-				batch.commit();
-			}
-			try {
-				await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
-				return;
-			} catch (err) {
-				console.log(err);
-				return;
-			}
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving post: ', error);
 			return res.status(500).json({ message: 'Error saving post' });
 		});
+	if (tags && Array.isArray(tags) && tags.length > 0) {
+		await batch.commit();
+	}
+	try {
+		await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

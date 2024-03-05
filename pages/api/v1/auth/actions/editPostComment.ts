@@ -69,25 +69,22 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	};
 
 	const history = commentData?.history && Array.isArray(commentData?.history) ? [newHistory, ...(commentData?.history || [])] : new Array(newHistory);
-
-	commentRef
-		.update({
+	try {
+		await commentRef.update({
 			content,
 			history,
 			sentiment,
 			updated_at: last_comment_at
-		})
-		.then(() => {
-			postRef.update({
-				last_comment_at
-			});
-			res.status(200).json({ message: 'Comment saved.' });
-		})
-		.catch((error) => {
-			// The document probably doesn't exist.
-			console.error('Error saving comment: ', error);
-			return res.status(500).json({ message: 'Error saving comment' });
 		});
+		await postRef.update({
+			last_comment_at
+		});
+		res.status(200).json({ message: 'Comment saved.' });
+	} catch (error) {
+		// The document probably doesn't exist.
+		console.error('Error saving comment: ', error);
+		return res.status(500).json({ message: 'Error saving comment' });
+	}
 	try {
 		const postData = (await postRef.get()).data();
 		const postAuthorId = postData?.user_id || null;

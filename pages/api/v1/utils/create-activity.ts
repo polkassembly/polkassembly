@@ -36,6 +36,7 @@ interface Props {
 }
 
 const getMentionsUserIds = async (content: any) => {
+	if (content.split('user').length > 1000) return [];
 	const htmlCheck = /<[^>]+>/;
 	const regex = /\[@([^\]]+)\]/g;
 	// eslint-disable-next-line no-useless-escape

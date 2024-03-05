@@ -7,6 +7,9 @@ import BN from 'bn.js';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import { ApiContext } from 'src/context/ApiContext';
 import { usePostDataContext } from '~src/context';
+import { useFetch } from 'src/hooks';
+import { chainProperties } from '~src/global/networkConstants';
+import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IVotesCount, LoadingStatusType } from 'src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -23,12 +26,13 @@ interface IPostStatsProps {
 	postId: string;
 	postType: ProposalType;
 	tally?: any;
+	proposalId?: number;
 	statusHistory?: any;
 }
 
 const ZERO = new BN(0);
 
-const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally }: IPostStatsProps) => {
+const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
 
@@ -50,6 +54,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 	const voteType = getVotingTypeFromProposalType(postType);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
+	const [turnout, setTurnout] = useState<BN | null>(null);
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -69,8 +74,17 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		}
 	};
 
-	const getReferendumV2VoteInfo = useCallback(async () => {
+	const { data: voteInfoData, error: voteInfoError } = useFetch<any>(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
+		body: JSON.stringify({
+			referendum_index: proposalId
+		}),
+		headers: subscanApiHeaders,
+		method: 'POST'
+	});
+
+	const getVoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
+
 		let newAPI: ApiPromise = api;
 		const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
 
@@ -129,7 +143,10 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		});
 
 		(async () => {
-			await nextApiClientFetch<IAllVotesType>(`api/v1/votes/total?postId=${postId}&voteType=${voteType}`)
+			await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
+				postId: postId,
+				voteType: voteType
+			})
 				.then((res) => {
 					if (res.error) {
 						console.log(res.error);
@@ -167,15 +184,28 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				});
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [getReferendumV2VoteInfo, postId, voteType]);
+	}, [postId, voteType]);
 
 	useEffect(() => {
 		handleAyeNayCount();
 		(async () => {
-			await getReferendumV2VoteInfo();
+			await getVoteInfo();
 		})();
+
+		if (!voteInfoError && voteInfoData && voteInfoData.data && voteInfoData.data.info) {
+			const info = voteInfoData.data.info;
+
+			if (!tally) {
+				setTallyData({
+					abstain: new BN(info.abstain_amount),
+					ayes: new BN(info.aye_amount),
+					nays: new BN(info.nay_amount)
+				});
+			}
+			postType === ProposalType.REFERENDUMS && setTurnout(new BN(info.turnout));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
+	}, [postIndex, voteInfoData, voteInfoError]);
 
 	const tabItems: any[] = [
 		{
@@ -185,6 +215,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					activeIssuance={activeIssuance}
 					tallyData={tallyData}
 					allVotes={allVotes}
+					turnout={turnout ? new BN(turnout) : null}
 				/>
 			),
 			key: 'conviction-votes',
@@ -196,6 +227,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
 					support={support || ZERO}
+					turnout={turnout ? new BN(turnout) : null}
 				/>
 			),
 			key: 'vote-amount',
@@ -205,6 +237,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 			children: (
 				<Accounts
 					support={support || ZERO}
+					turnout={turnout ? new BN(turnout) : null}
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
 					totalVotesCount={totalVotesCount}
@@ -215,7 +248,7 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		}
 	];
 
-	return activeIssuance && tally ? (
+	return activeIssuance ? (
 		<>
 			<StatTabs
 				items={tabItems}

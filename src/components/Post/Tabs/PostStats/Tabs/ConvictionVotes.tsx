@@ -22,10 +22,11 @@ interface IConvictionVotesProps {
 	tallyData: any;
 	activeIssuance: BN;
 	support: BN;
+	turnout: BN | null;
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
+const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -49,7 +50,7 @@ const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConv
 		const votesByConviction = allVotes?.data.reduce(
 			(acc, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(Number(vote.balance) * Number(vote.lockPeriod)) : new BN(vote.balance).mul(new BN(vote.lockPeriod));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				if (!acc[conviction]) {
 					acc[conviction] = {
 						abstain: ZERO,
@@ -66,7 +67,7 @@ const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConv
 		const votesByDelegation = allVotes?.data.reduce(
 			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(Number(vote.balance) * Number(vote.lockPeriod)) : new BN(vote.balance).mul(new BN(vote.lockPeriod));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {
@@ -106,7 +107,7 @@ const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConv
 
 		const votesDistribution = allVotes?.data.reduce(
 			(acc, vote) => {
-				const balance = bnToIntBalance(new BN((Number(vote.balance) * Number(vote.lockPeriod)).toFixed()));
+				const balance = bnToIntBalance(new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1')));
 				if (vote.decision === 'yes') {
 					acc.ayes.push({
 						balance: balance,
@@ -155,6 +156,7 @@ const ConvictionVotes = ({ allVotes, tallyData, support, activeIssuance }: IConv
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
 						support={support}
+						turnout={turnout}
 					/>
 				</div>
 				<VoteDistribution votesDistribution={votesDistribution} />

@@ -62,12 +62,14 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		h1 {
 			font-size: 1.5rem;
 			margin-bottom: 2rem;
+			overflow-y: hidden !important;
 		}
 
 		h2 {
 			font-size: 1.3rem;
 			margin: 2rem 0 1rem 0;
 			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			overflow-y: hidden !important;
 		}
 
 		h3,
@@ -75,6 +77,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			font-size: 1.2rem;
 			margin-bottom: 0.8rem;
 			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			overflow-y: hidden !important;
 		}
 
 		ul,
@@ -193,14 +196,6 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		&:hover {
 			color: pink_primary !important;
 		}
-	}
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		overflow-y: hidden;
 	}
 `;
 

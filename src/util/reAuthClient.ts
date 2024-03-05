@@ -8,6 +8,8 @@ import { IAuthResponse, IRefreshTokenPayload, JWTPayloadType } from '~src/auth/t
 import { getLocalStorageToken, storeLocalStorageToken } from '~src/services/auth.service';
 import getCookieValueByName from './getCookieValueByName';
 import getNetwork from './getNetwork';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { store } from '~src/redux/store';
 
 export default async function reAuthClient() {
 	try {
@@ -20,7 +22,7 @@ export default async function reAuthClient() {
 
 		// access token is invalid, now if valid refresh_token is available, try to re-auth
 		const refresh_token = getCookieValueByName('refresh_token');
-		const { exp: refreshTokenExp = null } = decodeToken<IRefreshTokenPayload>(refresh_token) || {};
+		const { exp: refreshTokenExp = null, login_address: refreshTokenLoginAddress, login_wallet: refreshTokenLoginWallet } = decodeToken<IRefreshTokenPayload>(refresh_token) || {};
 
 		// if valid refresh_token
 		if (refresh_token && refreshTokenExp && dayjs().isBefore(dayjs.unix(refreshTokenExp))) {
@@ -38,8 +40,40 @@ export default async function reAuthClient() {
 			const { token } = ((await newAccessTokenRes.json()) || {}) as IAuthResponse;
 
 			if (token) {
-				//TODO: also replace redux details
+				const {
+					addresses = [],
+					default_address = '',
+					roles = {
+						allowedRoles: [],
+						currentRole: []
+					},
+					sub: id,
+					username = '',
+					email = '',
+					email_verified = false,
+					web3signup = false,
+					is2FAEnabled = false,
+					login_address = '',
+					login_wallet = ''
+				} = decodeToken<JWTPayloadType>(token) || ({} as JWTPayloadType);
+
 				storeLocalStorageToken(token);
+				store.dispatch(
+					setUserDetailsState({
+						addresses,
+						allowed_roles: roles.allowedRoles,
+						defaultAddress: default_address,
+						email,
+						email_verified,
+						id: Number(id),
+						is2FAEnabled,
+						loginAddress: login_address || refreshTokenLoginAddress || '',
+						loginWallet: login_wallet || refreshTokenLoginWallet || '',
+						username,
+						web3signup
+					})
+				);
+
 				return token;
 			}
 		}

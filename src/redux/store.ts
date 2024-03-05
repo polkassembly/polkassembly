@@ -146,3 +146,5 @@ export type TAppState = ReturnType<TAppStore['getState']>;
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, TAppState, unknown, Action>;
 
 export const wrapper = createWrapper<TAppStore>(makeStore);
+
+export const store = makeStore();

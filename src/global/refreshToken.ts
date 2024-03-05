@@ -4,7 +4,7 @@
 
 import { CookieSerializeOptions } from 'cookie';
 
-const REFRESH_TOKEN_LIFE_IN_SECONDS = 60 * 60 * 24 * 7 * 3; // 3 weeks
+const REFRESH_TOKEN_LIFE_IN_SECONDS = 60 * 60 * 24 * 7 * 4; // 4 weeks
 
 const REFRESH_TOKEN_COOKIE_OPTIONS: CookieSerializeOptions = {
 	httpOnly: false,

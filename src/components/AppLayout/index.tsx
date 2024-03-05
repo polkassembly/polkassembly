@@ -290,7 +290,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	// }, [router.asPath]);
 
 	useEffect(() => {
-		if (!window || !(window as any).ethereum || !(window as any).ethereum.on) return;
+		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
 		(window as any).ethereum.on('accountsChanged', () => {
 			window.location.reload();
 		});

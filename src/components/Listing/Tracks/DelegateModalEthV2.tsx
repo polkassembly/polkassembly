@@ -84,7 +84,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	}, [accounts.length, walletConnectProvider]);
 
 	const getAccounts = async () => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			return;

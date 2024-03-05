@@ -26,20 +26,20 @@ interface Props {
 	theme?: string;
 	withBalance?: boolean;
 	address?: string;
-	onBalanceChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	inputClassName?: string;
 	setShowWalletModal?: (pre: boolean) => void;
 	showWalletModal?: boolean;
+	isUsedInIdentity?: boolean;
 	wallet?: any;
 	setIsProxyExistsOnWallet?: (pre: boolean) => void;
 	setSelectedProxyAddress?: (pre: string) => void;
 	selectedProxyAddress?: string;
+	heading?: string;
 }
 
 const ProxyAccountSelectionForm = ({
 	isBalanceUpdated,
-	onBalanceChange,
 	withBalance,
 	address,
 	proxyAddresses,
@@ -49,7 +49,9 @@ const ProxyAccountSelectionForm = ({
 	wallet,
 	setSelectedProxyAddress,
 	selectedProxyAddress,
-	setIsProxyExistsOnWallet
+	setIsProxyExistsOnWallet,
+	heading,
+	isUsedInIdentity
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -68,6 +70,8 @@ const ProxyAccountSelectionForm = ({
 					address={proxyAddress}
 					disableAddressClick
 					disableTooltip
+					iconSize={22}
+					disableHeader
 				/>
 			)
 		};
@@ -88,7 +92,6 @@ const ProxyAccountSelectionForm = ({
 		} else if (changedWallet === 'polkasafe') {
 			setWalletType(Wallet.POLKASAFE);
 		}
-
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
@@ -103,13 +106,12 @@ const ProxyAccountSelectionForm = ({
 
 	return (
 		<>
-			<article className='mt-2 flex w-full flex-col'>
-				<div className='mb-1 ml-[-6px] flex items-center gap-x-2'>
-					<h3 className='inner-headings mb-[1px] ml-1.5 dark:text-blue-dark-medium'>Vote with Proxy</h3>
+			<article className={`${isUsedInIdentity ? 'mt-3' : 'mt-2'} flex w-full flex-col`}>
+				<div className={`${isUsedInIdentity ? '-mb-[10px]' : 'mb-1'} ml-[-6px] flex items-center gap-x-2`}>
+					<h3 className={`inner-headings mb-[1px] ml-1.5 ${isUsedInIdentity ? 'dark:text-white' : 'dark:text-blue-dark-medium'}`}>{heading ? heading : 'Vote with Proxy'}</h3>
 					{address && withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
-							onChange={onBalanceChange}
 							isBalanceUpdated={isBalanceUpdated}
 						/>
 					)}
@@ -117,7 +119,9 @@ const ProxyAccountSelectionForm = ({
 				<Dropdown
 					trigger={['click']}
 					overlayClassName='z-[2000]'
-					className={`${className} ${inputClassName} h-[48px] rounded-md border-[1px] border-solid border-gray-300 px-3 py-1 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+					className={`${className} ${inputClassName} ${
+						isUsedInIdentity ? 'h-10' : 'h-[48px] py-1'
+					} rounded-md border-[1px] border-solid border-gray-300 px-3  text-xs dark:border-[#3B444F] dark:border-separatorDark`}
 					menu={{
 						items: dropdownMenuItems,
 						onClick: (e: any) => {
@@ -130,14 +134,16 @@ const ProxyAccountSelectionForm = ({
 				>
 					<div className='flex items-center justify-between '>
 						<Address
-							address={selectedProxyAddress || proxyAddresses[0]}
+							address={selectedProxyAddress || ''}
 							className='flex flex-1 items-center'
 							addressClassName='text-lightBlue text-xs dark:text-blue-dark-medium'
 							disableAddressClick
+							iconSize={22}
 							disableTooltip
+							disableHeader
 						/>
 						<div
-							className='mr-[100px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
+							className='mr-[154px] flex h-[18px] items-center justify-center gap-x-1 whitespace-nowrap rounded-[10px] px-3'
 							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
 						>
 							<NetworkIcon />

@@ -33,8 +33,8 @@ const ResetConfirmation = ({ open, onConfirm, onCancel, channel }: { open: boole
 			onConfirm={onConfirm}
 			footer={[
 				<div
-					className='flex justify-end'
 					key='footer'
+					className='flex items-center justify-end gap-x-1'
 				>
 					<CustomButton
 						key='1'
@@ -43,7 +43,6 @@ const ResetConfirmation = ({ open, onConfirm, onCancel, channel }: { open: boole
 						text='Cancel'
 						buttonsize='xs'
 					/>
-					,
 					<CustomButton
 						onClick={onConfirm}
 						key='2'

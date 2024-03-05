@@ -104,7 +104,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
+export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,

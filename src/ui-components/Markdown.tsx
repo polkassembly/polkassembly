@@ -194,6 +194,14 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			color: pink_primary !important;
 		}
 	}
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		overflow-y: hidden;
+	}
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

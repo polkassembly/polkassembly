@@ -32,12 +32,10 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 	const chartData = [
 		{
 			color: '#4064FF',
-			data: [
-				...[0, 7, 10, 14, 20, 24, 28].map((x) => ({
-					x: x.toString(),
-					y: bnToIntBalance(votesByTimeSplit[x] || ZERO) || votesByTimeSplit[x] || 0
-				}))
-			],
+			data: Array.from({ length: 29 }, (_, i) => ({
+				x: i.toString(),
+				y: bnToIntBalance(votesByTimeSplit[i] || ZERO) || votesByTimeSplit[i] || 0
+			})),
 			id: 'votes'
 		}
 	];
@@ -66,10 +64,13 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 					axisLeft={{
 						format: (value) => formatUSDWithUnits(value, 1)
 					}}
+					axisBottom={{
+						tickValues: Array.from({ length: 29 }, (_, i) => (i % 7 === 0 ? i : null)).filter((value) => value !== null)
+					}}
 					tooltip={({ point }) => {
 						return (
 							<div className={`flex gap-2 rounded-md bg-white capitalize dark:bg-[#1E2126] ${theme === 'dark' ? 'text-white' : 'text-[#576D8B]'} p-2 text-[11px] shadow-md`}>
-								<span className='text-xs font-semibold'>Days: {point.data.xFormatted}</span>
+								<span className='text-xs font-semibold'>Day: {point.data.xFormatted}</span>
 								<span className='text-xs font-semibold'>
 									{axisLabel ? `${axisLabel}: ` : 'votes: '}
 									{formatUSDWithUnits(point.data.yFormatted.toString(), 1)} {isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}
@@ -125,5 +126,20 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 export default styled(TimeSplit)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
 		display: none !important;
+	}
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
 	}
 `;

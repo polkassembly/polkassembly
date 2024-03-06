@@ -12,14 +12,15 @@ import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import TurnoutIcon from '~assets/icons/analytics/turnout.svg';
 import TurnoutDarkIcon from '~assets/icons/analytics/turnout-dark.svg';
+import styled from 'styled-components';
 
 interface IVotesTurnoutProps {
+	support: BN;
 	activeIssuance: BN;
-	totalIssuance: BN;
 	className?: string;
 }
 
-const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuance, className }) => {
+const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ support, activeIssuance, className }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -27,7 +28,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const turnoutPercentage = (bnToIntBalance(activeIssuance) / bnToIntBalance(totalIssuance)) * 100;
+	const turnoutPercentage = bnToIntBalance(activeIssuance) ? (bnToIntBalance(support) / bnToIntBalance(activeIssuance)) * 100 : 100;
 
 	const turnoutColor = '#796EEC';
 	const issuanceColor = '#B6B0FB';
@@ -35,20 +36,20 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 	const chartData = [
 		{
 			color: turnoutColor,
-			id: 'turnout',
-			label: 'Turnout',
-			value: bnToIntBalance(activeIssuance)
+			id: 'support',
+			label: 'Support',
+			value: bnToIntBalance(support)
 		},
 		{
 			color: issuanceColor,
 			id: 'issuance',
 			label: 'Issuance',
-			value: bnToIntBalance(new BN(totalIssuance).sub(new BN(activeIssuance)))
+			value: bnToIntBalance(new BN(activeIssuance).sub(new BN(support)))
 		}
 	];
 	return (
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
-			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} Turnout Percentage</h2>
+			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} Support Percentage</h2>
 			<div className={`${className} relative -mt-4 flex h-[180px] items-center justify-center gap-x-2 lg:-mt-7`}>
 				<ResponsivePie
 					data={chartData}
@@ -115,4 +116,20 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ activeIssuance, totalIssuanc
 	);
 };
 
-export default VotesTurnoutCard;
+export default styled(VotesTurnoutCard)`
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+`;

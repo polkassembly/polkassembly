@@ -41,10 +41,6 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 		}
 		console.log(error);
 	};
-	useEffect(() => {
-		getSocials();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	useEffect(() => {
 		getSocials();

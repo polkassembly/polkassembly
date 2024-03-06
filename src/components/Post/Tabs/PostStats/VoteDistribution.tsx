@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from 'src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
 
 interface IVoteDistributionProps {
 	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
@@ -172,8 +173,20 @@ const GridItem = ({ color, votePercent, voter, balance, voteType }: { balance: n
 			overlayClassName='dark:bg-section-dark-overlay dark:text-white'
 			overlayStyle={{ padding: '0px' }}
 			content={
-				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high hover:scale-105 hover:opacity-80 dark:text-white'>
-					<span>{voter.length < 10 ? voter : `${voter.slice(0, 5)}...${voter.slice(-3)}`}</span>
+				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high dark:text-white'>
+					{voter === 'Others' ? (
+						voter
+					) : (
+						<span className='hover:scale-105 hover:opacity-80'>
+							<Address
+								address={voter}
+								displayInline
+								isTruncateUsername={false}
+								disableTooltip
+								iconSize={18}
+							/>
+						</span>
+					)}
 					<span>
 						{formatUSDWithUnits(balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}
 					</span>

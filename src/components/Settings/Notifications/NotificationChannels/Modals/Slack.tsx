@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy-pink.svg';
 import { CHANNEL } from '..';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 type Props = {
 	icon: any;
@@ -50,16 +51,20 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 			<div className=''>
 				<ol>
 					<li className='list-inside leading-[40px] dark:text-white'>
-						Click this invite link <br />
-						<span className='bg-bg-secondary border-text_secondary mx-2 rounded-md border border-solid p-1 text-pink_primary'>
-							<a
-								href='https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot'
-								target='_blank'
-								rel='noreferrer'
-							>
-								https://premiurly.slack.com/apps/A059VBVGL59-polkassembly-bot
-							</a>
-						</span>
+						Click this to get invite link <br />
+						<a
+							target='_blank'
+							href='https://slack.com/oauth/v2/authorize?client_id=1965962071360.5335403564179&scope=channels:join,channels:read,chat:write,commands,im:write&user_scope='
+							rel='noreferrer'
+						>
+							<ImageIcon
+								alt='Add to Slack'
+								// height={40}
+								// width={139}
+								src='https://platform.slack-edge.com/img/add_to_slack.png'
+								// srcSet='https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x'
+							/>
+						</a>
 					</li>
 					<li className='list-inside leading-[40px] dark:text-white'>
 						Send this command to the chat with the bot:

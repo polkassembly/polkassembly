@@ -37,12 +37,11 @@ interface Props {
 
 const getMentionsUserIds = async (content: any) => {
 	if (content.split('user/').length > 1000) return [];
-	const htmlCheck = /<[^>]+>/;
-	const regex = /\[@([^\]]+)\]/g;
+	const regex = /user\/([\w-]+)/g;
 	// eslint-disable-next-line no-useless-escape
 	const htmlContentRegex = /user\/([^"\/]+)/g;
 
-	const matches = [...(content?.match(htmlCheck) ? content.matchAll(htmlContentRegex) : content.matchAll(regex))].map((item) => item[1]);
+	const matches = [...(content?.includes('<p') ? content.matchAll(htmlContentRegex) : content.matchAll(regex))].map((item) => item[1]);
 	if (matches.length) {
 		const usernameToId: any = {};
 		const idToUsername: any = {};

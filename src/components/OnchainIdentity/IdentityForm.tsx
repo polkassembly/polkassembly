@@ -129,6 +129,9 @@ const IdentityForm = ({
 		case 'kusama':
 			registrarNum = 5;
 			break;
+		case 'polkadex':
+			registrarNum = 4;
+			break;
 	}
 
 	const getProxies = async (address: any) => {

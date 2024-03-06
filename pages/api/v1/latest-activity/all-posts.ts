@@ -144,11 +144,16 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			}
 			let subsquidRes: any = {};
 			try {
+				// TODO: remove
+				console.time('getLatestActivityAllPosts_7');
+
 				subsquidRes = await fetchSubsquid({
 					network,
 					query,
 					variables
 				});
+
+				console.timeEnd('getLatestActivityAllPosts_7');
 			} catch (error) {
 				const data = await fetchLatestSubsquare(network);
 				if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
@@ -412,6 +417,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 			count: onChainPostsCount + offChainPostsCount,
 			posts: deDupedAllPosts.slice(0, numListingLimit)
 		};
+
 		return {
 			data: JSON.parse(JSON.stringify(data)),
 			error: null,

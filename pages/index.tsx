@@ -177,7 +177,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		}
 	}
 
+	// TODO: remove
+
+	console.time('getServerSideProps_1');
+
 	const responseArr = await Promise.all(Object.values(fetches));
+
+	console.timeEnd('getServerSideProps_1');
+
 	const props: IHomeProps = {
 		latestPosts: {},
 		network,

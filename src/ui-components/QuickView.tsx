@@ -26,6 +26,7 @@ import { message } from 'antd';
 import SocialsHandle from './SocialsHandle';
 import classNames from 'classnames';
 import Image from 'next/image';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -76,6 +77,7 @@ const QuickView = ({
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
+	const substrateAddress = getEncodedAddress(address, network);
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
 		messageApi.open({
@@ -95,6 +97,7 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
+	console.log('substrateAddress', substrateAddress);
 
 	return (
 		<div
@@ -160,7 +163,7 @@ const QuickView = ({
 									className='flex cursor-pointer items-center'
 									onClick={(e) => {
 										e.preventDefault();
-										copyToClipboard(address);
+										if (substrateAddress) copyToClipboard(substrateAddress);
 										success();
 									}}
 								>

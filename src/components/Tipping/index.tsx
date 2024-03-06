@@ -273,6 +273,8 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		setOpen(true);
 	};
 
+	console.log(availableBalance, tipAmount);
+
 	return (
 		<div
 			onClick={(e) => {
@@ -319,14 +321,6 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 					spinning={loadingStatus.isLoading}
 					tip={loadingStatus.message}
 				>
-					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
-						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue'
-							showIcon
-							type='error'
-							message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}
-						/>
-					) : null}
 					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 						{address && (
@@ -453,6 +447,15 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 									<span className='mt-[-24px] text-sm text-red-500'>Invalid Balance</span>
 								) : null}
 
+								{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
+									<Alert
+										className='mt-6 rounded-[4px] text-bodyBlue'
+										showIcon
+										type='error'
+										message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}
+									/>
+								) : null}
+
 								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
 									<div className='mt-12'>
 										{/* Input component */}
@@ -468,7 +471,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								)}
 							</div>
 						</Form>
-						{!!existentialDeposit && (
+						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) && !!existentialDeposit && (
 							<div className='mt-4 flex items-center gap-4 text-sm'>
 								<span className='font-medium tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 									Existential Deposit

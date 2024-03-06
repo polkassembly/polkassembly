@@ -147,6 +147,12 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				// TODO: remove
 				console.time('getLatestActivityAllPosts_7');
 
+				console.log('fetchSubsquid called with: ', {
+					network,
+					query,
+					variables
+				});
+
 				subsquidRes = await fetchSubsquid({
 					network,
 					query,

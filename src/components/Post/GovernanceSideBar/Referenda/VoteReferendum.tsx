@@ -47,8 +47,7 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import ImageIcon from '~src/ui-components/ImageIcon';
-
+import Image from 'next/image';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -1048,14 +1047,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					abstainVoteValue={voteValues.abstainVoteValue}
 					icon={
 						multisig ? (
-							<ImageIcon
+							<Image
 								src='/assets/multi-vote-initiated.svg'
 								alt='multi vote initiated icon'
+								width={220}
+								height={220}
 							/>
 						) : (
-							<ImageIcon
+							<Image
 								src='/assets/delegation-tracks/success-delegate.svg'
 								alt='success delegate icon'
+								width={220}
+								height={220}
 							/>
 						)
 					}

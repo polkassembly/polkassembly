@@ -200,7 +200,7 @@ const getUserDropDown = (
 				menu={{ items: dropdownMenuItems }}
 				trigger={['click']}
 				className='profile-dropdown'
-				overlayClassName='z-[1056]'
+				overlayClassName='z-[101]'
 			>
 				{children}
 			</Dropdown>
@@ -802,7 +802,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
+					className={'sidebar fixed bottom-0 left-0 z-[101] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu

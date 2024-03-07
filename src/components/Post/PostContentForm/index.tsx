@@ -160,7 +160,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 						</>
 					</Form.Item>
 				)}
-				<h5 className='text-color mt-8 text-sm font-normal'>Tags</h5>
+				<h5 className='text-color mt-8 text-sm font-normal dark:text-separatorDark'>Tags</h5>
 				<AddTags
 					tags={tags}
 					setTags={setTags}
@@ -172,7 +172,6 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 							<CustomButton
 								variant='default'
 								htmlType='button'
-								loading={loading}
 								onClick={toggleEdit}
 								className='mr-2'
 								buttonsize='xs'

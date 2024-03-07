@@ -526,10 +526,10 @@ color: var(--lightBlue) !important;
   }
 }  
 .ant-modal-root .ant-modal-mask{
-z-index: 1050 !important;
+z-index: 105 !important;
 }
 .ant-modal-root .ant-modal-wrap{
-  z-index: 1052 !important;
+  z-index: 105 !important;
 }
 
 @media (max-width: 767px) {

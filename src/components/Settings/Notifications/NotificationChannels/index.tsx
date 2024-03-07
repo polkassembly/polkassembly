@@ -177,7 +177,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					open={showModal === CHANNEL.SLACK}
 					getVerifyToken={getVerifyToken}
 					onClose={() => setShowModal(null)}
-					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.SLACK]?.verification_token || ''}
 				/>
 			</Panel>
 		</Collapse>

@@ -71,6 +71,11 @@ body {
 	font-size: 14px;
 	line-height: 1.5;
 }
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
+}
 th, td {
 	border: 1px solid #243A57;
 	padding: 0.5rem;
@@ -86,6 +91,11 @@ body {
 	font-family: "Poppins", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
+}
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
 }
 th, td {
 	border: 1px solid #243A57;
@@ -134,7 +144,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		}
 
 		setMdEditor(!mdEditor);
+		localStorage.setItem('editorPreference', mdEditor ? 'fancy' : 'markdown');
 	}
+	const getEditorPreference = () => {
+		const preference = localStorage.getItem('editorPreference');
+		if (preference === 'fancy') {
+			setMdEditor(false);
+		} else {
+			setMdEditor(true);
+		}
+	};
+
+	useEffect(() => {
+		getEditorPreference();
+	}, []);
 
 	useEffect(() => {
 		if (quotedText) {

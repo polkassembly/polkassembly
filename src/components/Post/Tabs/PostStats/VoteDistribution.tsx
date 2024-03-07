@@ -1,37 +1,85 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+import React, { useEffect, useState } from 'react';
 import { Card, Popover } from 'antd';
 import { useTheme } from 'next-themes';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { chainProperties } from 'src/global/networkConstants';
+import { useNetworkSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
 
 interface IVoteDistributionProps {
 	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
 }
+
+interface IVoteType {
+	count: number;
+	totalBalance: any;
+	percent: number;
+	votes: any[];
+}
 const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	const { resolvedTheme: theme } = useTheme();
 
-	const sortedAyes = votesDistribution.ayes.sort((a, b) => b.balance - a.balance);
-	const sortedNays = votesDistribution.nays.sort((a, b) => b.balance - a.balance);
-	const sortedAbstain = votesDistribution.abstain.sort((a, b) => b.balance - a.balance);
+	const [ayeVotes, setAyeVotes] = useState<IVoteType>({
+		count: 0,
+		percent: 0,
+		totalBalance: 0,
+		votes: []
+	});
+	const [nayVotes, setNayVotes] = useState<IVoteType>({
+		count: 0,
+		percent: 0,
+		totalBalance: 0,
+		votes: []
+	});
+	const [abstainVotes, setAbstainVotes] = useState<IVoteType>({
+		count: 0,
+		percent: 0,
+		totalBalance: 0,
+		votes: []
+	});
 
-	const totalAyeVotes = sortedAyes.reduce((acc, cur) => acc + cur.balance, 0);
-	const totalNayVotes = sortedNays.reduce((acc, cur) => acc + cur.balance, 0);
-	const totalAbstainVotes = sortedAbstain.reduce((acc, cur) => acc + cur.balance, 0);
+	useEffect(() => {
+		const totalAyeBal = votesDistribution?.ayes.reduce((acc, cur) => acc + cur.balance, 0);
+		const totalNayBal = votesDistribution?.nays.reduce((acc, cur) => acc + cur.balance, 0);
+		const totalAbstainBal = votesDistribution?.abstain.reduce((acc, cur) => acc + cur.balance, 0);
+
+		const sortedAyes = votesDistribution.ayes.filter((item) => item.balance >= totalAyeBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const smallAyesBalance = votesDistribution.ayes.filter((item) => item.balance < totalAyeBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
+		if (smallAyesBalance > 0) {
+			sortedAyes.push({ balance: smallAyesBalance, voter: 'Others' });
+		}
+
+		const sortedNays = votesDistribution.nays.filter((item) => item.balance >= totalNayBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const smallNaysBalance = votesDistribution.nays.filter((item) => item.balance < totalNayBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
+		if (smallNaysBalance > 0) {
+			sortedNays.push({ balance: smallNaysBalance, voter: 'Others' });
+		}
+
+		const sortedAbstain = votesDistribution.abstain.filter((item) => item.balance >= totalAbstainBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const smallAbstainBalance = votesDistribution.abstain.filter((item) => item.balance < totalAbstainBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
+		if (smallAbstainBalance > 0) {
+			sortedAbstain.push({ balance: smallAbstainBalance, voter: 'Others' });
+		}
+
+		const totalVotesBalance = totalAyeBal + totalNayBal + totalAbstainBal;
+
+		const ayePercent = Math.round((totalAyeBal / totalVotesBalance) * 100);
+		const nayPercent = Math.round((totalNayBal / totalVotesBalance) * 100);
+		const abstainPercent = Math.round((totalAbstainBal / totalVotesBalance) * 100);
+
+		setAyeVotes({ count: sortedAyes.length, percent: ayePercent, totalBalance: totalAyeBal, votes: sortedAyes });
+		setNayVotes({ count: sortedNays.length, percent: nayPercent, totalBalance: totalNayBal, votes: sortedNays });
+		setAbstainVotes({ count: sortedAbstain.length, percent: abstainPercent, totalBalance: totalAbstainBal, votes: sortedAbstain });
+	}, [votesDistribution]);
 
 	const colors: { [key: string]: string } = {
 		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
 		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
 		nay: theme === 'dark' ? '#BD2020' : '#E84865'
-	};
-
-	const gridStyle = {
-		display: 'grid',
-		gridAutoColumns: 'auto',
-		gridAutoFlow: 'dense',
-		gridAutoRows: 'auto',
-		gridGap: '5px',
-		gridTemplateColumns: 'repeat(auto-fit, minmax(10px, 1fr))',
-		gridTemplateRows: 'repeat(auto-fit, minmax(10px, 1fr))' // Add this line to wrap items to the next line
 	};
 
 	return (
@@ -40,59 +88,62 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 				<h2 className='text-xl font-semibold'>Vote Distribution</h2>
 				<Legend className='hidden md:flex' />
 			</div>
-			<div className='flex w-full flex-col gap-2 overflow-hidden lg:flex-row'>
-				{sortedAyes.length ? (
+			<div className='flex h-[200px] w-full justify-center gap-1.5'>
+				{ayeVotes.percent ? (
 					<div
-						className='h-fit w-full min-w-[40%]'
-						style={gridStyle}
+						className='flex h-full gap-1.5'
+						style={{ width: `calc(${ayeVotes.percent}% - ${ayeVotes.count * 4}px)` }}
 					>
-						{sortedAyes.map((item, index) => {
+						{ayeVotes?.votes.map((item, index) => {
 							// Calculate width based on balance prop
 							return (
 								<GridItem
 									key={index}
 									color={colors.aye}
+									voteType='Aye'
 									voter={item.voter}
-									votePercent={(item.balance / totalAyeVotes) * 100}
-									size={item.balance / 1.0e3}
+									votePercent={(item.balance / ayeVotes.totalBalance) * 100}
+									balance={item.balance}
 								/>
 							);
 						})}
 					</div>
 				) : null}
-				{sortedNays.length ? (
+				{nayVotes.percent ? (
 					<div
-						className='h-fit w-full min-w-[20%]'
-						style={gridStyle}
+						className='flex h-full gap-1.5'
+						style={{ width: `calc(${nayVotes.percent}% - ${nayVotes.count * 4}px)` }}
 					>
-						{sortedNays.map((item, index) => {
+						{nayVotes?.votes.map((item, index) => {
 							// Calculate width based on balance prop
 							return (
 								<GridItem
 									key={index}
 									color={colors.nay}
+									voteType='Nay'
 									voter={item.voter}
-									size={item.balance / 1.0e3}
-									votePercent={(item.balance / totalNayVotes) * 100}
+									balance={item.balance}
+									votePercent={(item.balance / nayVotes.totalBalance) * 100}
 								/>
 							);
 						})}
 					</div>
 				) : null}
-				{sortedAbstain.length ? (
+				{abstainVotes.percent ? (
 					<div
-						className='h-fit'
-						style={gridStyle}
+						className='flex h-full gap-1.5'
+						style={{ width: `calc(${abstainVotes.percent}% - ${abstainVotes.count * 4}px)` }}
 					>
-						{sortedAbstain.map((item, index) => {
+						{abstainVotes?.votes.map((item, index) => {
 							// Calculate width based on balance prop
 							return (
 								<GridItem
 									key={index}
 									color={colors.abstain}
 									voter={item.voter}
-									size={item.balance / 1.0e3}
-									votePercent={(item.balance / totalAbstainVotes) * 100}
+									voteType='Abstain'
+									balance={item.balance}
+									votePercent={(item.balance / abstainVotes.totalBalance) * 100}
 								/>
 							);
 						})}
@@ -104,13 +155,14 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	);
 };
 
-const GridItem = ({ size, color, votePercent, voter }: { size: number; voter: string; color: string; votePercent: number }) => {
+const GridItem = ({ color, votePercent, voter, balance, voteType }: { balance: number; voter: string; color: string; votePercent: number; voteType: string }) => {
+	const { network } = useNetworkSelector();
 	const style = {
 		backgroundColor: color,
-		border: `2px solid ${color}`,
+		border: `1px solid ${color}`,
 		borderRadius: '5px',
-		gridColumn: `span ${size / 1000}`,
-		gridRow: 'span 5'
+		height: '100%',
+		width: `${votePercent}%`
 	};
 
 	return (
@@ -121,9 +173,26 @@ const GridItem = ({ size, color, votePercent, voter }: { size: number; voter: st
 			overlayClassName='dark:bg-section-dark-overlay dark:text-white'
 			overlayStyle={{ padding: '0px' }}
 			content={
-				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high hover:scale-105 hover:opacity-80 dark:text-white'>
-					<span>{`${voter.slice(0, 5)}...${voter.slice(-3)}`}</span>
-					<span>{votePercent.toFixed(2) + '%'}</span>
+				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high dark:text-white'>
+					{voter === 'Others' ? (
+						voter
+					) : (
+						<span className='hover:scale-105 hover:opacity-80'>
+							<Address
+								address={voter}
+								displayInline
+								isTruncateUsername={false}
+								disableTooltip
+								iconSize={18}
+							/>
+						</span>
+					)}
+					<span>
+						{formatUSDWithUnits(balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}
+					</span>
+					<span>
+						{votePercent.toFixed(2) + '%'} of {voteType}
+					</span>
 				</div>
 			}
 		>

@@ -408,6 +408,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 																			className='m-0 border-none p-0 text-grey_primary'
 																			text='Link'
 																			height={40}
+																			buttonsize='xs'
 																		/>
 																	</div>
 																</>
@@ -462,9 +463,10 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 								key='got-it'
 								icon={<CheckOutlined />}
 								variant='primary'
-								className='m-0 border-none  px-7 py-4 text-grey_primary'
+								className='m-0 border-none text-grey_primary'
 								text='Got it!'
 								height={40}
+								buttonsize='sm'
 							/>
 						) : null,
 						<CustomButton
@@ -472,6 +474,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 							text='Cancel'
 							variant='default'
 							key='cancel'
+							buttonsize='sm'
 						/>
 					]}
 				</div>

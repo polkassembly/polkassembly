@@ -35,7 +35,7 @@ const getIsSwapStatus = (statusHistory: string[]) => {
 async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType | { error: string }>) {
 	storeApiKeyUsage(req);
 
-	const { postId = 0, voteType = VoteType.REFERENDUM } = req.query;
+	const { postId = 0, voteType = VoteType.REFERENDUM } = req.body;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {

@@ -86,10 +86,13 @@ const Menu = styled(AntdMenu)`
 	}
 
 	.ant-menu-item-selected {
-		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
-		.ant-menu-title-content {
+		.ant-menu-title-content > span {
 			color: var(--pink_primary) !important;
 		}
+		.ant-menu-item-icon {
+			color: var(--pink_primary) !important;
+		}
+		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
 	}
 `;
 
@@ -104,7 +107,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
+export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,
@@ -290,7 +293,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	// }, [router.asPath]);
 
 	useEffect(() => {
-		if (!window || !(window as any).ethereum || !(window as any).ethereum.on) return;
+		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
 		(window as any).ethereum.on('accountsChanged', () => {
 			window.location.reload();
 		});

@@ -4,6 +4,8 @@
 
 import { redisDel, redisGet, redisSet } from '~src/auth/redis';
 
+const EXPIRY_IN_SECONDS = 1800;
+
 export async function getCache(key: string) {
 	const redisData = await redisGet(key);
 	if (redisData) {
@@ -19,9 +21,9 @@ export async function getCache(key: string) {
 	return undefined;
 }
 
-export function setCache(key: string, value: any, tte: number = 1800) {
+export function setCache(key: string, value: any) {
 	const t = new Date();
-	t.setSeconds(t.getSeconds() + tte);
+	t.setSeconds(t.getSeconds() + EXPIRY_IN_SECONDS);
 	redisSet(
 		key,
 		JSON.stringify({

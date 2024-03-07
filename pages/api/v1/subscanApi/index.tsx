@@ -16,10 +16,11 @@ export const SUBSCAN_API_HEADERS = {
 	'X-API-Key': SUBSCAN_API_KEY
 };
 
-export const getSubscanData = async (url: string, body?: any, headers?: any, method?: string) => {
+export const getSubscanData = async (url: string, network: string, body?: any, headers?: any, method?: string) => {
 	try {
+		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
 		const data = await (
-			await fetch(url, {
+			await fetch(`https://${network}.api.subscan.io/${filteredUrl}`, {
 				body: body ? JSON.stringify(body) : '',
 				headers: headers || SUBSCAN_API_HEADERS,
 				method: method || 'POST'
@@ -35,7 +36,7 @@ export const getSubscanData = async (url: string, body?: any, headers?: any, met
 const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { keys, url, body, method, headers, cacheEnabled = true, hardReload = false, expiry } = req.body;
+	const { url, body, method, headers, cacheEnabled = true, hardReload = false } = req.body;
 
 	const network = String(req.headers['x-network']);
 	if (!url) {
@@ -45,7 +46,11 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return res.status(400).json({ data: null, error: 'Invalid network in request header' });
 	}
 
-	const redisKey = generateKey({ ...keys });
+	if (body && (typeof body !== 'object' || Array.isArray(body))) {
+		return res.status(400).json({ data: null, error: 'Invalid Body params passed' });
+	}
+
+	const redisKey = generateKey({ keyType: 'subscan', network, url });
 
 	if (cacheEnabled && getCache(redisKey) !== undefined && !hardReload) {
 		const redisData = await getCache(redisKey);
@@ -53,11 +58,10 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return;
 	}
 
-	const data = await getSubscanData(url, body, headers, method);
-
-	if (cacheEnabled) setCache(redisKey, data.data, expiry);
+	const data = await getSubscanData(url, network, body, headers, method);
 
 	if (data.message === 'Success') {
+		if (cacheEnabled) setCache(redisKey, data.data);
 		res.status(200).json(data.data);
 	} else {
 		res.status(400).json(data.message);

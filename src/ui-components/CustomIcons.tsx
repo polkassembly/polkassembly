@@ -147,6 +147,11 @@ import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
+import MailFilled from '~assets/icons/email-notification.svg';
+import SlackIconSVG from '~assets/icons/slack.svg';
+import ElementIconSVG from '~assets/icons/element.svg';
+import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
+import DiscordIconSVG from '~assets/icons/discord-notification.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1101,6 +1106,36 @@ export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
 export const OnChainIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={OnChainIdentitySVG}
+		{...props}
+	/>
+);
+export const MailFilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={MailFilled}
+		{...props}
+	/>
+);
+export const SlackIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SlackIconSVG}
+		{...props}
+	/>
+);
+export const TelegramFilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={TelegramIconSVG}
+		{...props}
+	/>
+);
+export const ElementIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ElementIconSVG}
+		{...props}
+	/>
+);
+export const DiscordFilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DiscordIconSVG}
 		{...props}
 	/>
 );

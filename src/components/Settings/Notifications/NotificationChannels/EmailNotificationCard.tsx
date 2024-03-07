@@ -6,6 +6,7 @@ import MailFilled from '~assets/icons/email-notification.svg';
 import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
+import { shortenString } from '~src/util/shortenString';
 type Props = {
 	verifiedEmail: string;
 	handleEnableDisabled: any;
@@ -47,7 +48,12 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 				)}
 			</h3>
 			<div className='ml-5'>
-				<h3 className='m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
+				<h3 className='token-desktop-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+					{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}
+				</h3>
+				<h3 className='token-mobile-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+					{verifiedEmail ? shortenString(verifiedEmail) : 'Please add your email on account page.'}
+				</h3>
 			</div>
 			<DisabledConfirmation
 				open={showModal}

@@ -8,6 +8,7 @@ import CopyIcon from '~assets/icons/content-copy-pink.svg';
 import { CHANNEL } from '..';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { shortenString } from '~src/util/shortenString';
 
 type Props = {
 	icon: any;
@@ -71,9 +72,15 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 						<br />
 						<span
 							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
-							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+							className='token-desktop-container bg-bg-secondary border-text_secondary cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
 							/polkassembly-add {'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px]' />
+						</span>
+						<span
+							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
+							className='token-mobile-container bg-bg-secondary border-text_secondary hidden cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+						>
+							{shortenString('/polkassembly-add <username> <verificationToken>')} <CopyIcon className='relative top-[6px]' />
 						</span>
 						<div className='mt-4 flex justify-end'>
 							<CustomButton
@@ -87,11 +94,18 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							<>
 								<br />
 								<span className='dark:text-white'>Verification Token: </span>
+								<br />
 								<span
 									onClick={() => handleCopyClicked(token)}
-									className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+									className='token-desktop-container bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 								>
-									{token} <CopyIcon className='relative top-[6px]' />
+									{token} <CopyIcon className='relative top-[6px] text-lightBlue dark:text-icon-dark-inactive' />
+								</span>
+								<span
+									onClick={() => handleCopyClicked(token)}
+									className='token-mobile-container bg-bg-secondary border-text_secondary cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
+								>
+									{shortenString(token)} <CopyIcon className='relative top-[6px] text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</>
 						)}

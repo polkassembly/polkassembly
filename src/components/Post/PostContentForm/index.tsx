@@ -75,7 +75,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		if (data) {
 			queueNotification({
 				header: 'Success!',
-				message: 'Your post was edited',
+				message: 'Your post is now edited',
 				status: NotificationStatus.SUCCESS
 			});
 

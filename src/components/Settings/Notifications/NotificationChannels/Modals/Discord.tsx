@@ -8,6 +8,7 @@ import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { shortenString } from '~src/util/shortenString';
 
 type Props = {
 	icon: any;
@@ -95,9 +96,15 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 									<span>Verification Token: </span>
 									<span
 										onClick={() => handleCopyClicked(token)}
-										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
+										className='token-desktop-container bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 									>
 										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {token}
+									</span>
+									<span
+										onClick={() => handleCopyClicked(token)}
+										className='token-mobile-container bg-bg-secondary border-text_secondary cursor-pointer items-center justify-center rounded-md border border-solid px-1 pb-1 text-pink_primary dark:text-blue-dark-helper'
+									>
+										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {shortenString(token)}
 									</span>
 								</div>
 							</>

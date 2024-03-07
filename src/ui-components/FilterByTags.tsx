@@ -219,7 +219,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				</div>
 			) : (
 				<div
-					className={`flex items-center justify-center text-xs ${openFilter ? 'text-pink_primary' : 'text-[#667589]'} ${
+					className={`flex items-center justify-center text-xs ${openFilter ? 'text-pink_primary' : ''} ${
 						disabled ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
 					} max-sm:text-[10px]`}
 				>

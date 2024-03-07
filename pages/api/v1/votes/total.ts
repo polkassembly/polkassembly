@@ -80,7 +80,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 			createdAt: vote?.createdAt,
 			decision: vote?.decision || null,
 			delegatedTo: vote?.delegatedTo || '',
-			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
+			delegatedVotingPower: vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : '0',
 			extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 			isDelegatedVote: vote?.isDelegated,
 			lockPeriod: Number(vote?.lockPeriod) || 0.1,
@@ -95,6 +95,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 				trackNumber,
 				type
 			},
+			selfVotingPower: vote?.parentVote?.selfVotingPower || '0',
 			voter: vote?.voter
 		};
 	});

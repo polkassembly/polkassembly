@@ -7119,9 +7119,9 @@ jiti@^1.17.2:
   integrity sha512-QAdOptna2NYiSSpv0O/BwoHBSmz4YhpzJHyi+fnMRTXFjp7B8i/YG5Z8IfusxB1ufjcD2Sre1F3R+nX3fvy7gg==
 
 jose@^4.10.4:
-  version "4.14.1"
-  resolved "https://registry.yarnpkg.com/jose/-/jose-4.14.1.tgz#74f12a621ea2ef850bf0dd8405e2ee4041aea934"
-  integrity sha512-SgjXLpP7jhQkUNKL6RpowoR/IF4QKE+WjLDMpNnh2vmhiFs67NftrNpvFtgbwpvRdtueFliahYYWz9E+XZZQlg==
+  version "4.15.5"
+  resolved "https://registry.yarnpkg.com/jose/-/jose-4.15.5.tgz#6475d0f467ecd3c630a1b5dadd2735a7288df706"
+  integrity sha512-jc7BFxgKPKi94uOvEmzlSWFFe2+vASyXaKUpdQKatWAESU2MWjDfFf0fdfc83CDKcA5QecabZeNLyfhe3yKNkg==
 
 js-sha3@0.8.0:
   version "0.8.0"

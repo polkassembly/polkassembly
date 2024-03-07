@@ -107,7 +107,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	await postDocRef
 		.set(newPost)
-		.then(async () => {
+		.then(() => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
 		})
 		.catch((error) => {

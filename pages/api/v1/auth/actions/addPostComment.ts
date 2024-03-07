@@ -17,6 +17,7 @@ import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -81,7 +82,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	await newCommentRef
 		.set(newComment)
 		.then(async () => {
-			postRef.update({
+			await postRef.update({
 				last_comment_at
 			});
 			const triggerName = 'newCommentAdded';
@@ -110,10 +111,10 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
 	try {
-		const postData = (await postRef.get()).data();
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 		const postAuthorId = postData?.user_id || null;
 
-		if (!isNaN(postAuthorId)) {
+		if (typeof postAuthorId == 'number') {
 			await createUserActivity({ action: EActivityAction.CREATE, commentAuthorId: userId, commentId: newComment.id, content, network, postAuthorId, postId, postType, userId });
 		}
 		return;

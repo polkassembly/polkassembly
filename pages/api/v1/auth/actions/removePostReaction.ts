@@ -60,7 +60,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	if (!userReactionsSnapshot.empty) {
 		const reactionDocRef = userReactionsSnapshot.docs[0].ref;
-		const reactionData = (await reactionDocRef.get()).data();
+		const reactionData: any = (await reactionDocRef.get()).data();
 		await reactionDocRef
 			.delete()
 			.then(async () => {

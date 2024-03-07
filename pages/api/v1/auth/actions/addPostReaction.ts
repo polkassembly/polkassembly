@@ -15,6 +15,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -84,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await reactionsCollRef
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
-		.then(async () => {
+		.then(() => {
 			res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {
@@ -93,10 +94,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		});
 
 	try {
-		const postData = (await postRef.get()).data();
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 		const postAuthorId = postData?.user_id;
 
-		if (!isNaN(postAuthorId) && !isNaN(userId)) {
+		if (typeof postAuthorId == 'number' && typeof userId == 'number') {
 			await createUserActivity({
 				action: EActivityAction.CREATE,
 				network,

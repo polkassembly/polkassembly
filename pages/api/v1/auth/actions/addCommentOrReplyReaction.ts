@@ -12,7 +12,18 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IComment } from '~src/components/Post/Comment/Comment';
 
+export interface IDocumentReply {
+	content: string;
+	id: string;
+	user_id: number;
+	username: string;
+}
+export interface IDocumentPost {
+	content: string;
+	user_id: number;
+}
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
 
@@ -72,7 +83,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	await reactionsCollRef
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
-		.then(async () => {
+		.then(() => {
 			res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {
@@ -81,25 +92,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		});
 
 	try {
-		const postData = (await postRef.get()).data();
-		let replyData;
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		let replyData: IDocumentPost | null = null;
 
-		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+		const commentData: IComment = (await postRef.collection('comments').doc(String(commentId)).get()).data() as IComment;
 		if (setReplyReaction) {
-			replyData = (await postRef.collection('comments').doc(String(commentId)).collection('replies').doc(String(replyId)).get()).data();
+			replyData = (await postRef.collection('comments').doc(String(commentId)).collection('replies').doc(String(replyId)).get()).data() as IDocumentReply;
 		}
 
 		const postAuthorId = postData?.user_id || null;
 		const commentAuthorId = commentData?.user_id || null;
 		const replyAuthorId = replyData ? replyData?.user_id : null;
 
-		if (!isNaN(postAuthorId) && !isNaN(userId)) {
+		if (typeof postAuthorId == 'number' && typeof userId == 'number' && typeof commentAuthorId == 'number') {
 			await createUserActivity({
 				action: EActivityAction.CREATE,
-				commentAuthorId,
+				commentAuthorId: commentAuthorId,
 				commentId,
 				network,
-				postAuthorId,
+				postAuthorId: postAuthorId,
 				postId,
 				postType,
 				reactionAuthorId: userId,

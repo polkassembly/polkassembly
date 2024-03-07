@@ -16,6 +16,7 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -86,9 +87,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(500).json({ message: 'Error saving comment' });
 	}
 	try {
-		const postData = (await postRef.get()).data();
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 		const postAuthorId = postData?.user_id || null;
-		if (!isNaN(postAuthorId)) {
+		if (typeof postAuthorId == 'number') {
 			await createUserActivity({ action: EActivityAction.EDIT, commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });
 		}
 		return;

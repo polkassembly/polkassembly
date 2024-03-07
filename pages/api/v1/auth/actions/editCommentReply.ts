@@ -66,7 +66,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			updated_at: last_comment_at
 		})
 		.then(async () => {
-			postRef
+			await postRef
 				.update({
 					last_comment_at
 				})

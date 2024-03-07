@@ -17,6 +17,8 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
+import { IComment } from '~src/components/Post/Comment/Comment';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -63,7 +65,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 	await newReplyRef
 		.set(newReply)
 		.then(async () => {
-			postRef.update({
+			await postRef.update({
 				last_comment_at
 			});
 
@@ -95,14 +97,14 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
 	try {
-		const postData = (await postRef.get()).data();
-		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		const commentData: IComment = (await postRef.collection('comments').doc(String(commentId)).get()).data() as IComment;
 		const postAuthorId = postData?.user_id || null;
 		const commentAuthorId = commentData?.user_id || null;
-		if (!isNaN(postAuthorId)) {
+		if (typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
 			await createUserActivity({
 				action: EActivityAction.CREATE,
-				commentAuthorId,
+				commentAuthorId: commentAuthorId,
 				commentId,
 				content,
 				network,

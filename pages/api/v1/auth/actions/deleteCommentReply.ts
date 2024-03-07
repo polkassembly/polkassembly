@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			isDeleted: true
 		})
 		.then(async () => {
-			postRef.update({
+			await postRef.update({
 				last_comment_at
 			});
 			res.status(200).json({ message: 'Reply deleted.' });

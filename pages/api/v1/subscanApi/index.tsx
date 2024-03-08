@@ -36,7 +36,7 @@ export const getSubscanData = async (url: string, network: string, body?: any, h
 const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { url, body, method, headers, cacheEnabled = true, hardReload = false } = req.body;
+	const { url, body, method, headers, hardReload = false } = req.body;
 
 	const network = String(req.headers['x-network']);
 	if (!url) {
@@ -51,6 +51,8 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 	}
 
 	const redisKey = generateKey({ keyType: 'subscan', network, url });
+
+	const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;
 
 	if (cacheEnabled && getCache(redisKey) !== undefined && !hardReload) {
 		const redisData = await getCache(redisKey);

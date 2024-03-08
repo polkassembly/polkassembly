@@ -158,7 +158,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 						});
 					} else {
 						const votesRes = res.data;
-						if (votesRes?.data.length === 0) {
+						if (votesRes?.totalCount === 0) {
 							setNoVotes(true);
 						}
 						setAllVotes(votesRes);

@@ -97,7 +97,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		};
 		fetches = { ...fetches, ...onChainFetches };
 	}
-	if (chainProperties[network]?.subsquidUrl && ![AllNetworks.COLLECTIVES, AllNetworks.POLIMEC, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.POLYMESH].includes(network)) {
+	if (
+		chainProperties[network]?.subsquidUrl &&
+		![AllNetworks.COLLECTIVES, AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.POLYMESH].includes(network)
+	) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -155,7 +158,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 		fetches = { ...fetches, ...onChainFetches };
 	}
-	if (chainProperties[network]?.subsquidUrl && network === AllNetworks.POLIMEC) {
+	if (chainProperties[network]?.subsquidUrl && [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)) {
 		const onChainFetches = {
 			council_motions: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,

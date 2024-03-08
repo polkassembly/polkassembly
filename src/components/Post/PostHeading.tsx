@@ -22,6 +22,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
+import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -98,14 +99,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			track_name,
 			cid,
 			history,
-			// content,
+			content,
 			summary,
 			identityId,
 			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
@@ -256,7 +256,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{/* {history && history.length > 0 && (
+			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -264,7 +264,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)} */}
+			)}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

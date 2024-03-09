@@ -10,7 +10,7 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import UserAvatar from 'src/ui-components/UserAvatar';
 import styled from 'styled-components';
 import { ChangeResponseType } from '~src/auth/types';
-import { usePostDataContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import CommentSentimentModal from '~src/ui-components/CommentSentimentModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ContentForm from '../ContentForm';
@@ -18,6 +18,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { IComment } from './Comment/Comment';
 import { getSubsquidLikeProposalType } from '~src/global/proposalType';
+import { v4 } from 'uuid';
 import SadDizzyIcon from '~assets/overall-sentiment/pink-against.svg';
 import SadIcon from '~assets/overall-sentiment/pink-slightly-against.svg';
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
@@ -59,6 +60,7 @@ const commentKey = () => `comment:${global.window.location.href}`;
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
+	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -191,6 +193,32 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		setQuotedText('');
 		global.window.localStorage.removeItem(commentKey());
 		postIndex && createSubscription(postIndex);
+		const commentId = v4();
+		const comment = {
+			comment_reactions: {
+				'👍': {
+					count: 0,
+					usernames: []
+				},
+				'👎': {
+					count: 0,
+					usernames: []
+				}
+			},
+			content,
+			created_at: new Date(),
+			history: [],
+			id: commentId || '',
+			isError: false,
+			profile: picture || '',
+			proposer: loginAddress,
+			replies: [],
+			sentiment: isSentimentPost ? sentiment : 0,
+			updated_at: new Date(),
+			user_id: id as any,
+			username: username || ''
+		};
+		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -203,41 +231,60 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			if (error || !data) {
 				console.error('API call failed:', error);
 				setError(error || 'No data returned from the saving comment query');
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for (const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment: IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.isError = true;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
+				});
 				queueNotification({
 					header: 'Failed!',
 					message: error,
 					status: NotificationStatus.ERROR
 				});
 			} else if (data) {
-				const comment = {
-					comment_reactions: {
-						'👍': {
-							count: 0,
-							usernames: []
-						},
-						'👎': {
-							count: 0,
-							usernames: []
-						}
-					},
-					content,
-					created_at: new Date(),
-					history: [],
-					id: data?.id || '',
-					isError: false,
-					profile: picture || '',
-					proposer: loginAddress,
-					replies: [],
-					sentiment: isSentimentPost ? sentiment : 0,
-					updated_at: new Date(),
-					user_id: id as any,
-					username: username || ''
-				};
-				setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
 				queueNotification({
 					header: 'Success!',
 					message: 'Comment created successfully.',
 					status: NotificationStatus.SUCCESS
+				});
+				setComments((prev) => {
+					const comments: any = Object.assign({}, prev);
+					for (const key of Object.keys(comments)) {
+						let flag = false;
+						if (prev?.[key]) {
+							comments[key] = prev?.[key]?.map((comment: IComment) => {
+								const newComment = comment;
+								if (comment.id === commentId) {
+									newComment.id = data.id;
+									flag = true;
+								}
+								return {
+									...newComment
+								};
+							});
+						}
+						if (flag) {
+							break;
+						}
+					}
+					return comments;
 				});
 				comment.id = data.id || '';
 			}

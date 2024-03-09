@@ -140,6 +140,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		setDelegatedBalance(delegatedBalance);
 		setSoloBalance(allBalances.sub(delegatedBalance));
 		setVotesDistribution(votesDistribution);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allVotes]);
 
 	return (

@@ -42,6 +42,7 @@ import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -440,7 +441,7 @@ const Post: FC<IPostProps> = (props) => {
 					key: 'onChainInfo',
 					label: 'On Chain Info'
 				},
-				AnalyticsSupportedNetworks.includes(network) &&
+				(AnalyticsSupportedNetworks.includes(network) || !isOpenGovSupported(network)) &&
 					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
 						children: (
 							<PostStats

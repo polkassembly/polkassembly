@@ -457,7 +457,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
-						: network === AllNetworks.POLIMEC
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,

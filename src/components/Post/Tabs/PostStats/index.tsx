@@ -21,6 +21,7 @@ import ConvictionVotes from './Tabs/ConvictionVotes';
 import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
 import { Skeleton } from 'antd';
+import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 
 interface IPostStatsProps {
 	postId: string;
@@ -45,6 +46,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		ayes: ZERO,
 		nays: ZERO
 	});
+	const [noVotes, setNoVotes] = useState<boolean>(false);
 
 	const [totalVotesCount, setTotalVotesCount] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
@@ -156,6 +158,9 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 						});
 					} else {
 						const votesRes = res.data;
+						if (votesRes?.totalCount === 0) {
+							setNoVotes(true);
+						}
 						setAllVotes(votesRes);
 
 						const support = votesRes?.data.reduce((acc, vote) => {
@@ -249,18 +254,25 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 	];
 
 	return activeIssuance ? (
-		<>
-			<StatTabs
-				items={tabItems}
-				setActiveTab={setActiveTab}
-				activeTab={activeTab}
-			/>
-			{tabItems.map((item) => {
-				if (item.key === activeTab) {
-					return item.children;
-				}
-			})}
-		</>
+		noVotes ? (
+			<div className='flex flex-col items-center justify-center gap-5 p-10'>
+				<NoVotesIcon />
+				<p className='text-sm'>No votes have been casted yet</p>
+			</div>
+		) : (
+			<>
+				<StatTabs
+					items={tabItems}
+					setActiveTab={setActiveTab}
+					activeTab={activeTab}
+				/>
+				{tabItems.map((item) => {
+					if (item.key === activeTab) {
+						return item.children;
+					}
+				})}
+			</>
+		)
 	) : (
 		<Skeleton active />
 	);

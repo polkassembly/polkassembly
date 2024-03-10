@@ -39,7 +39,7 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 		if (data) {
 			setSocialsData(data);
 		}
-		console.log(error);
+		if (error) console.log(error);
 	};
 
 	useEffect(() => {

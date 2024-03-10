@@ -39,6 +39,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		th,
 		td {
 			border: 1px solid;
+			border-color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 			padding: 0.5rem;
 		}
 
@@ -57,6 +58,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 0 0 0.5rem 0;
 			color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+			border: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 		}
 
 		h1 {

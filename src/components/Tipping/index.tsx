@@ -273,8 +273,6 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 		setOpen(true);
 	};
 
-	console.log(availableBalance, tipAmount);
-
 	return (
 		<div
 			onClick={(e) => {

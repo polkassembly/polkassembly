@@ -201,7 +201,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark'
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
-						title='Select Gif'
+						title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
 						footer={null}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -213,6 +213,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
 								setIsModalVisible(false);
 							}}
+							theme={theme}
 						/>
 					</Modal>
 

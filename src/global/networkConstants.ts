@@ -508,7 +508,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '50',
-		externalLinks: 'https://polimec.api.subscan.io',
+		externalLinks: 'https://explorer.polimec.org/polimec',
 		gTag: null,
 		rpcEndpoints: []
 	},

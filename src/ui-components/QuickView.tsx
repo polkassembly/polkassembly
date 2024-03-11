@@ -97,7 +97,6 @@ const QuickView = ({
 		}
 		setOpen(false);
 	};
-	console.log('substrateAddress', substrateAddress);
 
 	return (
 		<div
@@ -163,7 +162,7 @@ const QuickView = ({
 									className='flex cursor-pointer items-center'
 									onClick={(e) => {
 										e.preventDefault();
-										if (substrateAddress) copyToClipboard(substrateAddress);
+										copyToClipboard(substrateAddress || address);
 										success();
 									}}
 								>

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 
@@ -42,6 +41,7 @@ import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,

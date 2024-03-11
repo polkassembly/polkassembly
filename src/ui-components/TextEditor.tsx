@@ -6,7 +6,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
-import { Modal, Skeleton } from 'antd';
+import { Modal } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useQuoteCommentContext } from '~src/context';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -189,7 +190,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 				>
 					{loading && (
 						<div className='absolute inset-0'>
-							<Skeleton.Input
+							<SkeletonInput
 								block={true}
 								active={true}
 								style={{ height: `${height || 300}px` }}

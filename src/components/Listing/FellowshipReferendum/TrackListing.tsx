@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import { IFellowshipReferendumPostsByTrackName } from 'pages/member-referenda';
 import React, { FC, useState } from 'react';
 import TrackListingCard from 'src/components/Listing/FellowshipReferendum/TrackListingCard';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/FellowshipReferendum/AboutTrackCard'), {
 	loading: () => <Skeleton active />,

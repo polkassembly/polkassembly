@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, FloatButton, List, Skeleton } from 'antd';
+import { Button, FloatButton, List } from 'antd';
 import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -23,10 +23,11 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
-		<Skeleton.Button
+		<SkeletonButton
 			className='w-[100%]'
 			active
 		/>

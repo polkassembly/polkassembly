@@ -153,6 +153,7 @@ import ElementIconSVG from '~assets/icons/element.svg';
 import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
 import DiscordIconSVG from '~assets/icons/discord-notification.svg';
 import TipIconSVG from '~assets/icons/tip-title.svg';
+import InfoIconSVG from '~assets/info.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1143,6 +1144,12 @@ export const DiscordFilledIcon = (props: Partial<CustomIconComponentProps>) => (
 export const TipIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={TipIconSVG}
+		{...props}
+	/>
+);
+export const InfoIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={InfoIconSVG}
 		{...props}
 	/>
 );

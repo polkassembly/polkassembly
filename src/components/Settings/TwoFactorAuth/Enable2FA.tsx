@@ -205,7 +205,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 										onClick={() => handleCopyClicked(tfaResponse.base32_secret)}
 										className='border-text_secondary cursor-pointer rounded-md border border-solid p-1 px-2 text-sm text-pink_primary'
 									>
-										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' />
+										<CopyIcon className='relative text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 										{tfaResponse.base32_secret}
 									</span>
 								)}

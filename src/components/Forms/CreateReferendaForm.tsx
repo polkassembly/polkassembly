@@ -123,6 +123,7 @@ export default function CreateReferendaForm({
 }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
+	const availableBalanceBN = new BN(availableBalance);
 	const { loginWallet } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -507,7 +508,7 @@ export default function CreateReferendaForm({
 				)}
 				{isPreimage === false && (
 					<div>
-						{availableBalance.lte(submissionDeposite) && (
+						{availableBalanceBN.lte(submissionDeposite) && (
 							<Alert
 								className='my-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								type='info'

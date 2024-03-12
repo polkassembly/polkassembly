@@ -15,7 +15,7 @@ const SkeletonButton: FC<Props> = (props) => {
 	return (
 		<AntdSkeleton.Button
 			{...props}
-			className={`${className}`}
+			className={`${className} w-min rounded bg-[#E6E6E6] text-white dark:bg-[#5959599E]`}
 		/>
 	);
 };

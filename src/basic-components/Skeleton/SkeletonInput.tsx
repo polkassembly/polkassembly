@@ -15,7 +15,7 @@ const SkeletonInput: FC<Props> = (props) => {
 	return (
 		<AntdSkeleton.Input
 			{...props}
-			className={`${className}`}
+			className={`${className} h-[22px] w-min flex-1 rounded-[4px] bg-[#E6E6E6] text-white dark:bg-[#5959599E]`}
 		/>
 	);
 };

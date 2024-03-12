@@ -15,7 +15,7 @@ const SkeletonAvatar: FC<Props> = (props) => {
 	return (
 		<AntdSkeleton.Avatar
 			{...props}
-			className={`${className}`}
+			className={`${className} w-min rounded-full bg-[#E6E6E6] dark:bg-[#5959599E]`}
 		/>
 	);
 };

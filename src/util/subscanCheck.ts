@@ -27,7 +27,7 @@ export const getBlockLink = (network: string) => {
 	} else if (isPolkaholicSupport(network)) {
 		url += `/block/${network}/`;
 	} else if (isExplorerSupport(network)) {
-		url += '/blocks/';
+		url += ['polimec', 'rolimec'].includes(network) ? '/block/' : '/blocks/';
 	} else if (isCereSupport(network)) {
 		url += '/block?blockNumber=';
 	} else {

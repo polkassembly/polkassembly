@@ -39,6 +39,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		th,
 		td {
 			border: 1px solid;
+			border-color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 			padding: 0.5rem;
 		}
 
@@ -57,17 +58,22 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 0 0 0.5rem 0;
 			color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+			border: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 		}
 
 		h1 {
 			font-size: 1.5rem;
 			margin-bottom: 2rem;
+			display: table;
+			vertical-align: center;
 		}
 
 		h2 {
 			font-size: 1.3rem;
 			margin: 2rem 0 1rem 0;
 			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			display: table;
+			vertical-align: center;
 		}
 
 		h3,
@@ -75,6 +81,8 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			font-size: 1.2rem;
 			margin-bottom: 0.8rem;
 			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			display: table;
+			vertical-align: center;
 		}
 
 		ul,

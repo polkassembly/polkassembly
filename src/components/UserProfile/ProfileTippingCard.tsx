@@ -275,8 +275,8 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 						))
 					) : (
 						<Empty
-							className='mt-4'
-							description={<div className='text-lightBlue dark:text-blue-dark-high'>No tip Found</div>}
+							className=''
+							description={<p className='m-0 p-0 text-lightBlue dark:text-blue-dark-high'>No tip Found</p>}
 						/>
 					)}
 				</div>

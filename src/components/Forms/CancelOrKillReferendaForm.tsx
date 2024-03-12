@@ -157,7 +157,7 @@ export default function CancelOrKillReferendaForm({
 			indicator={<LoadingOutlined />}
 		>
 			<div className='w-full'>
-				{availableBalance.lte(submissionDeposite) && (
+				{new BN(availableBalance || '0').lte(submissionDeposite) && (
 					<Alert
 						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
@@ -273,7 +273,7 @@ export default function CancelOrKillReferendaForm({
 								buttonsize='sm'
 								onClick={handleSubmit}
 								className='w-min'
-								disabled={availableBalance.lte(submissionDeposite)}
+								disabled={new BN(availableBalance || '0').lte(submissionDeposite)}
 							>
 								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} Referendum
 							</CustomButton>

@@ -129,6 +129,9 @@ const IdentityForm = ({
 		case 'kusama':
 			registrarNum = 5;
 			break;
+		case 'polkadex':
+			registrarNum = 4;
+			break;
 	}
 
 	const getProxies = async (address: any) => {
@@ -659,7 +662,7 @@ const IdentityForm = ({
 										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Registrar fees{' '}
 											<HelperTooltip
-												text='Costs of development & maintenance are funded by the treasury.'
+												text='Fee charged for on chain verification by registrar.'
 												className='ml-1'
 											/>
 										</span>

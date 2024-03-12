@@ -21,11 +21,12 @@ interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
 	tallyData: any;
 	activeIssuance: BN;
-	totalIssuance: BN;
+	support: BN;
+	turnout: BN | null;
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }: IConvictionVotesProps) => {
+const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -49,7 +50,7 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 		const votesByConviction = allVotes?.data.reduce(
 			(acc, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(Number(vote.balance) * Number(vote.lockPeriod)) : new BN(vote.balance).mul(new BN(vote.lockPeriod));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				if (!acc[conviction]) {
 					acc[conviction] = {
 						abstain: ZERO,
@@ -66,7 +67,7 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 		const votesByDelegation = allVotes?.data.reduce(
 			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(Number(vote.balance) * Number(vote.lockPeriod)) : new BN(vote.balance).mul(new BN(vote.lockPeriod));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {
@@ -87,22 +88,12 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 				const convictionBalance = new BN(vote.balance).mul(new BN(vote.lockPeriod));
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
-				if (timeSplit == 0) {
-					acc[0] = acc[0] ? new BN(acc[0]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? new BN(acc[7]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? new BN(acc[10]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? new BN(acc[14]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? new BN(acc[20]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? new BN(acc[24]).add(convictionBalance) : ZERO;
-				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? new BN(acc[28]).add(convictionBalance) : ZERO;
-				} else {
-					acc[timeSplit] = acc[timeSplit] ? new BN(acc[timeSplit]).add(convictionBalance) : ZERO;
+				for (let i = 0; i <= 28; i++) {
+					if (timeSplit === i) {
+						acc[i] = acc[i] ? new BN(acc[i]).add(convictionBalance) : ZERO;
+					} else {
+						acc[i] = acc[i] || ZERO;
+					}
 				}
 				return acc;
 			},
@@ -116,21 +107,26 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 
 		const votesDistribution = allVotes?.data.reduce(
 			(acc, vote) => {
-				const balance = bnToIntBalance(new BN((Number(vote.balance) * Number(vote.lockPeriod)).toFixed()));
+				const balance = bnToIntBalance(new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1')));
+				const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
+
 				if (vote.decision === 'yes') {
 					acc.ayes.push({
 						balance: balance,
-						voter: vote.voter
+						voter: vote.voter,
+						votingPower: votingPower
 					});
 				} else if (vote.decision === 'no') {
 					acc.nays.push({
 						balance: balance,
-						voter: vote.voter
+						voter: vote.voter,
+						votingPower: votingPower
 					});
 				} else {
 					acc.abstain.push({
 						balance: balance,
-						voter: vote.voter
+						voter: vote.voter,
+						votingPower: votingPower
 					});
 				}
 				return acc;
@@ -164,7 +160,8 @@ const ConvictionVotes = ({ allVotes, tallyData, totalIssuance, activeIssuance }:
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
-						totalIssuance={totalIssuance}
+						support={support}
+						turnout={turnout}
 					/>
 				</div>
 				<VoteDistribution votesDistribution={votesDistribution} />

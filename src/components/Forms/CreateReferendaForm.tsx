@@ -33,6 +33,10 @@ import { LoadingOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
+import { inputToBn } from '~src/util/inputToBn';
+import { ApiPromise } from '@polkadot/api';
+import { Bytes } from '@polkadot/types';
+import { Proposal } from '@polkadot/types/interfaces';
 
 // Testing adding a new commit
 interface ParamField {
@@ -141,6 +145,8 @@ export default function CreateReferendaForm({
 	const currentBlock = useCurrentBlock();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [form] = Form.useForm();
+	const maxSpendArr: { track: string; maxSpend: number }[] = [];
+	const [fundingAmount, setFundingAmount] = useState<BN>(ZERO_BN);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -197,6 +203,154 @@ export default function CreateReferendaForm({
 				onFailed,
 				onSuccess,
 				tx: mainTx
+			});
+		} catch (error) {
+			setLoadingStatus({ isLoading: false, message: '' });
+			console.log(':( transaction failed');
+			console.error('ERROR:', error);
+			queueNotification({
+				header: 'Failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
+	const getExistPreimageDataFromPolkadot = async (preimageHash: string) => {
+		if (!api || !apiReady) return;
+
+		const lengthObj = await api?.query?.preimage?.statusFor(preimageHash);
+
+		const length = JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len || 0;
+		checkPreimageHash(length, preimageHash);
+		setPreimageLength(length);
+		form.setFieldValue('preimage_length', length);
+
+		const preimageRaw: any = await api?.query?.preimage?.preimageFor([preimageHash, length]);
+		const preimage = preimageRaw.unwrapOr(null);
+		if (!preimage) {
+			console.log('Error in unwraping preimage');
+			return;
+		}
+
+		const constructProposal = function (api: ApiPromise, bytes: Bytes): Proposal | undefined {
+			let proposal: Proposal | undefined;
+
+			try {
+				proposal = api.registry.createType('Proposal', bytes.toU8a(true));
+			} catch (error) {
+				console.log(error);
+			}
+
+			return proposal;
+		};
+
+		try {
+			const proposal = constructProposal(api, preimage);
+			if (proposal) {
+				const params = proposal?.meta ? proposal?.meta.args.filter(({ type }): boolean => type.toString() !== 'Origin').map(({ name }) => name.toString()) : [];
+
+				const values = proposal?.args;
+				const preImageArguments =
+					proposal?.args &&
+					params &&
+					params.map((name, index) => {
+						return {
+							name,
+							value: values?.[index]?.toString()
+						};
+					});
+				if (preImageArguments && proposal.section === 'treasury' && proposal?.method === 'spend') {
+					const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
+
+					setFundingAmount(balance);
+					setSteps({ percent: 100, step: 1 });
+				} else {
+					setPreimageLength(0);
+					queueNotification({
+						header: 'Incorrect Preimage Added!',
+						message: 'Please enter a preimage for a treasury related track.',
+						status: NotificationStatus.ERROR
+					});
+				}
+			} else {
+				queueNotification({
+					header: 'Failed!',
+					message: `Incorrect preimage for ${network} network.`,
+					status: NotificationStatus.ERROR
+				});
+			}
+		} catch (error) {
+			queueNotification({
+				header: 'Failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
+	const handleExistingPreimageSubmit = async () => {
+		if (!methodCall) return;
+		if (!api || !apiReady) {
+			return;
+		}
+		if (!loginWallet) {
+			return;
+		}
+		await setSigner(api, loginWallet);
+
+		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		try {
+			const handleSelectTrack = (fundingAmount: BN) => {
+				let selectedTrack = '';
+
+				for (const i in maxSpendArr) {
+					const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
+					if (maxSpend.gte(fundingAmount)) {
+						selectedTrack = maxSpendArr[i].track;
+						break;
+					}
+				}
+
+				return selectedTrack;
+			};
+			const proposalTx = api.tx.referenda.submit(
+				handleSelectTrack(fundingAmount),
+				{ Lookup: { hash: preimageHash, len: preimageLength } },
+				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+			);
+			const post_id = Number(await api.query.referenda.referendumCount());
+
+			const onSuccess = async () => {
+				afterProposalCreated(post_id);
+				queueNotification({
+					header: 'Success!',
+					message: `Proposal #${post_id} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+				setLoadingStatus({ isLoading: false, message: '' });
+				handleClose();
+				setOpenSuccess(true);
+			};
+
+			const onFailed = (message: string) => {
+				setLoadingStatus({ isLoading: false, message: '' });
+				queueNotification({
+					header: 'Failed!',
+					message,
+					status: NotificationStatus.ERROR
+				});
+			};
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+				onFailed,
+				onSuccess,
+				tx: proposalTx
 			});
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -348,15 +502,13 @@ export default function CreateReferendaForm({
 			if (data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash) {
 				if (!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount) {
 					console.log('fetching data from polkadotjs');
-					// getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
+					getExistPreimageDataFromPolkadot(preimageHash);
 				} else {
 					console.log('fetching data from subsquid');
 					form.setFieldValue('preimage_length', data?.length);
 
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
-
-					//select track
 
 					setSteps({ percent: 100, step: 1 });
 				}
@@ -758,7 +910,7 @@ export default function CreateReferendaForm({
 						variant='primary'
 						htmlType='submit'
 						buttonsize='sm'
-						onClick={handleSubmit}
+						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
 						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
 						disabled={!methodCall || !selectedTrack}
 					>

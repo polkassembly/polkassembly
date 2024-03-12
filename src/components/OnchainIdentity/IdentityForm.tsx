@@ -325,6 +325,45 @@ const IdentityForm = ({
 		await executeTx(payload);
 	};
 
+	const handleRequestJudgement = async () => {
+		if (!alreadyVerifiedfields.alreadyVerified && alreadyVerifiedfields.isIdentitySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
+			if (!api || !apiReady) return;
+			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+
+			const onSuccess = async () => {
+				handleLocalStorageSave({ setIdentity: true });
+				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
+				setStartLoading({ isLoading: false, message: 'Success!' });
+			};
+			const onFailed = (error: string) => {
+				queueNotification({
+					header: 'failed!',
+					message: error || 'Transaction failed!',
+					status: NotificationStatus.ERROR
+				});
+				setStartLoading({ isLoading: false, message: error || 'Failed' });
+			};
+
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'failed.',
+				network,
+				onFailed,
+				onSuccess,
+				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+				tx: requestedJudgementTx
+			});
+			// GAEvent for request judgement button clicked
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+		}
+	};
+
 	return (
 		<div className={className}>
 			<Form
@@ -336,7 +375,26 @@ const IdentityForm = ({
 						showIcon
 						type='info'
 						className='h-10 rounded-[4px] text-sm text-bodyBlue'
-						message={<span className='dark:text-blue-dark-high'>Your identity has already been set. Please edit a field to proceed.</span>}
+						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
+					/>
+				)}
+				{handleAllowSetIdentity() && (
+					<Alert
+						className='mb-6'
+						type='warning'
+						showIcon
+						message={
+							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
+								This account has already set social verification. Kindly{' '}
+								<span
+									className='font-semibold text-pink_primary'
+									onClick={() => handleRequestJudgement()}
+								>
+									Request Judgement
+								</span>{' '}
+								to complete the process
+							</p>
+						}
 					/>
 				)}
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -606,6 +664,19 @@ const IdentityForm = ({
 				</div> */}
 				</div>
 			</Form>
+			<span className='flex items-center gap-x-2 text-sm font-semibold'>
+				<span className='text-lightBlue dark:text-blue-dark-medium '>
+					Bond
+					<HelperTooltip
+						className='mx-1'
+						text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
+					/>
+					:
+				</span>
+				<span className='rounded-2xl bg-[#edeff3] px-4 py-1 font-medium text-bodyBlue dark:text-blue-dark-high'>
+					{formatedBalance(bondFee.toString(), unit)} {unit}
+				</span>
+			</span>
 			{(!gasFee.eq(ZERO_BN) || loading) && (
 				<Spin spinning={loading}>
 					<Alert
@@ -690,30 +761,40 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				<CustomButton
-					disabled={
-						!okAll ||
-						loading ||
-						(availableBalance && availableBalance.lte(totalFee)) ||
-						gasFee.lte(ZERO_BN) ||
-						handleAllowSetIdentity() ||
-						(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
-					}
-					onClick={handleSetIdentity}
-					loading={loading}
-					className={`rounded-[4px] ${
-						(!okAll ||
+				{handleAllowSetIdentity() ? (
+					<CustomButton
+						onClick={handleRequestJudgement}
+						loading={loading}
+						className='rounded-[4px]'
+						text='Request Judgement'
+						variant='primary'
+						width={186}
+					/>
+				) : (
+					<CustomButton
+						disabled={
+							!okAll ||
 							loading ||
-							gasFee.lte(ZERO_BN) ||
 							(availableBalance && availableBalance.lte(totalFee)) ||
-							handleAllowSetIdentity() ||
-							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&
-						'opacity-50'
-					}`}
-					text='Set Identity'
-					variant='primary'
-					buttonsize='xs'
-				/>
+							gasFee.lte(ZERO_BN) ||
+							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
+						}
+						onClick={handleSetIdentity}
+						loading={loading}
+						className={`rounded-[4px] ${
+							(!okAll ||
+								loading ||
+								gasFee.lte(ZERO_BN) ||
+								(availableBalance && availableBalance.lte(totalFee)) ||
+								handleAllowSetIdentity() ||
+								(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&
+							'opacity-50'
+						}`}
+						text='Set Identity'
+						variant='primary'
+						buttonsize='xs'
+					/>
+				)}
 			</div>
 			<SuccessState
 				open={open}

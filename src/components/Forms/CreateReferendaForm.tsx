@@ -266,12 +266,7 @@ export default function CreateReferendaForm({
 					setFundingAmount(balance);
 					setSteps({ percent: 100, step: 1 });
 				} else {
-					setPreimageLength(0);
-					queueNotification({
-						header: 'Incorrect Preimage Added!',
-						message: 'Please enter a preimage for a treasury related track.',
-						status: NotificationStatus.ERROR
-					});
+					setSelectedTrack(proposal.section);
 				}
 			} else {
 				queueNotification({
@@ -315,7 +310,7 @@ export default function CreateReferendaForm({
 				return selectedTrack;
 			};
 			const proposalTx = api.tx.referenda.submit(
-				handleSelectTrack(fundingAmount),
+				fundingAmount === ZERO_BN ? selectedTrack : handleSelectTrack(fundingAmount),
 				{ Lookup: { hash: preimageHash, len: preimageLength } },
 				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
 			);
@@ -499,19 +494,11 @@ export default function CreateReferendaForm({
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 
 		if (data && !data?.message) {
-			if (data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash) {
-				if (!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount) {
-					console.log('fetching data from polkadotjs');
-					getExistPreimageDataFromPolkadot(preimageHash);
-				} else {
-					console.log('fetching data from subsquid');
-					form.setFieldValue('preimage_length', data?.length);
-
-					setPreimageLength(data.length);
-					form.setFieldValue('preimage_length', data.length);
-
-					setSteps({ percent: 100, step: 1 });
-				}
+			if (data.hash === preimageHash) {
+				getExistPreimageDataFromPolkadot(preimageHash);
+				setPreimageLength(data.length);
+				form.setFieldValue('preimage_length', data?.length);
+				setSteps({ percent: 100, step: 1 });
 			} else {
 				setPreimageLength(0);
 				form.setFieldValue('preimage_length', 0);

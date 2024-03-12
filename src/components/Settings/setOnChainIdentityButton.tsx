@@ -417,8 +417,8 @@ const SetOnChainIdentityButton = ({
 				centered
 				footer={[
 					<div
-						className='flex justify-end'
 						key='footer'
+						className='flex items-center justify-end gap-x-1'
 					>
 						<CustomButton
 							key='close'

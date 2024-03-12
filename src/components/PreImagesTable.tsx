@@ -158,7 +158,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			width: 300,
 			render: (hash, obj) => (
 				<div className='flex space-x-[6px]'>
-					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}............${hash.substring(hash.length - 6)}`}</span>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 6)}...${hash.substring(hash.length - 6)}`}</span>
 					<Tooltip title='Copy'>
 						<span
 							className='mt-[2px] cursor-pointer'

@@ -372,7 +372,7 @@ export default function CreateReferendaForm({
 			indicator={<LoadingOutlined />}
 		>
 			<section className='w-full'>
-				{availableBalance.lte(submissionDeposite) && (
+				{new BN(availableBalance || '0').lte(submissionDeposite) && (
 					<Alert
 						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'

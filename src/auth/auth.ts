@@ -28,6 +28,7 @@ import {
 	HashedPassword,
 	IAddressProxyForEntry,
 	IAuthResponse,
+	IRefreshTokenPayload,
 	IUserPreference,
 	JWTPayloadType,
 	NotificationSettings,
@@ -43,6 +44,7 @@ import nameBlacklist from './utils/nameBlacklist';
 import { verifyMetamaskSignature } from './utils/verifyMetamaskSignature';
 import verifyUserPassword from './utils/verifyUserPassword';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
+import { REFRESH_TOKEN_LIFE_IN_SECONDS } from '~src/global/refreshToken';
 
 process.env.JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY && process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
 process.env.JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY && process.env.JWT_PUBLIC_KEY.replace(/\\n/gm, '\n');
@@ -50,6 +52,9 @@ process.env.JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY && process.env.JWT_PUBLI
 const privateKey = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
 const jwtPublicKey = process.env.NODE_ENV === 'test' ? process.env.JWT_PUBLIC_KEY_TEST : process.env.JWT_PUBLIC_KEY?.replace(/\\n/gm, '\n');
 const passphrase = process.env.NODE_ENV === 'test' ? process.env.JWT_KEY_PASSPHRASE_TEST : process.env.JWT_KEY_PASSPHRASE;
+
+const refreshTokenPrivateKey = process.env.REFRESH_TOKEN_PRIVATE_KEY?.replace(/\\n/gm, '\n');
+const refreshTokenPassphrase = process.env.REFRESH_TOKEN_PASSPHRASE;
 
 export const ONE_DAY = 24 * 60 * 60; // (expressed in seconds)
 export const FIVE_MIN = 5 * 60; // (expressed in seconds)
@@ -243,6 +248,7 @@ class AuthService {
 
 		return {
 			isTFAEnabled,
+			refresh_token: await this.getRefreshToken({ user_id: user.id }),
 			token: await this.getSignedToken(user)
 		};
 	}
@@ -353,6 +359,7 @@ class AuthService {
 
 		return {
 			isTFAEnabled,
+			refresh_token: await this.getRefreshToken({ login_address: address, login_wallet: wallet, user_id: user.id }),
 			token: await this.getSignedToken({
 				...user,
 				login_address: address,
@@ -998,7 +1005,27 @@ class AuthService {
 			};
 		}
 
-		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '100d' });
+		// valid for 1 day
+		return jwt.sign(tokenContent, { key: privateKey, passphrase }, { algorithm: 'RS256', expiresIn: '86400s' });
+	}
+
+	public async getRefreshToken({ user_id, login_address, login_wallet }: { user_id: number; login_address?: string; login_wallet?: Wallet }): Promise<string> {
+		if (!refreshTokenPrivateKey) {
+			throw apiErrorWithStatusCode('REFRESH_TOKEN_PRIVATE_KEY not set. Aborting.', 403);
+		}
+
+		if (!refreshTokenPassphrase) {
+			throw apiErrorWithStatusCode('REFRESH_TOKEN_PASSPHRASE not set. Aborting.', 403);
+		}
+
+		const tokenContent: IRefreshTokenPayload = {
+			iat: Math.floor(Date.now() / 1000),
+			id: user_id,
+			login_address,
+			login_wallet
+		};
+
+		return jwt.sign(tokenContent, { key: refreshTokenPrivateKey, passphrase: refreshTokenPassphrase }, { algorithm: 'RS256', expiresIn: `${REFRESH_TOKEN_LIFE_IN_SECONDS}s` });
 	}
 
 	public async CreatePostStart(address: string): Promise<string> {

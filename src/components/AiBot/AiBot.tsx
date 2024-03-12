@@ -22,6 +22,7 @@ import { useTheme } from 'next-themes';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -94,13 +95,16 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 
 	const data = [
 		{
+			component: <ProposalActionButtons isUsedInFAB={true} />
+		},
+		{
 			component: (
 				<div
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
-					<CreateDiscussionIcon className='ml-[-53px] mt-[5px] cursor-pointer' />
-					<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<CreateDiscussionIcon className='ml-[-50px] mt-[5px] cursor-pointer' />
+					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			)
 		},
@@ -125,8 +129,8 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					className='ml-[-34px] text-lightBlue hover:text-bodyBlue dark:text-blue-dark-medium'
 				>
 					<div className='flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle transition delay-150  duration-300 hover:bg-[#e5007a12]'>
-						<CautionIcon className='ml-[-105px] mt-[5px] cursor-pointer' />
-						<p className='mb-3 ml-4 mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>Report An Issue</p>
+						<CautionIcon className='ml-[-108px] mt-[5px] cursor-pointer' />
+						<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>Report An Issue</p>
 					</div>
 				</a>
 			)
@@ -150,7 +154,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				>
 					{/* <GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' /> */}
 					<ImageIcon
-						imgWrapperClassName='ml-[-149px] mt-[5px] cursor-pointer'
+						imgWrapperClassName='ml-[-151px] mt-[5px] cursor-pointer'
 						src='/assets/icons/grill-chat-icon.svg'
 						alt='grill chat icon'
 					/>

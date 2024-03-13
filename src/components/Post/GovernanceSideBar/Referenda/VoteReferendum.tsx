@@ -194,6 +194,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [track_number, address]);
 
 	useEffect(() => {
+		if (showProxyDropdown === false) {
+			setSelectedProxyAddress('');
+		}
+	}, [showProxyDropdown]);
+
+	useEffect(() => {
 		getWallet();
 		if (!api || !apiReady) return;
 		if (loginWallet) {
@@ -539,7 +545,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
-			proxyAddress: showProxyDropdown && selectedProxyAddress ? selectedProxyAddress : '',
+			proxyAddress: selectedProxyAddress,
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});

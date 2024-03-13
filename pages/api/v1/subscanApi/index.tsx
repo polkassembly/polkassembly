@@ -17,7 +17,7 @@ export const SUBSCAN_API_HEADERS = {
 };
 
 const validateURL = (url: string) => {
-	if (url.includes('.') || url.includes('//')) return false;
+	if (url.includes('../') || url.includes('//')) return false;
 	return true;
 };
 

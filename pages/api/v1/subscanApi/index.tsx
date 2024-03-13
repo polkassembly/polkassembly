@@ -23,16 +23,18 @@ const validateURL = (url: string) => {
 
 export const getSubscanData = async (url: string, network: string, body?: any, method?: string) => {
 	try {
-		// const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
-		const data = await (
-			await fetch(`https://${network}.api.subscan.io/${url}`, {
-				body: body && JSON.stringify(body),
-				headers: SUBSCAN_API_HEADERS,
-				method: method || 'POST'
-			})
-		).json();
+		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
+		if (!filteredUrl.includes('.') && !filteredUrl.includes('//')) {
+			const data = await (
+				await fetch(`https://${network}.api.subscan.io/${filteredUrl}`, {
+					body: body && JSON.stringify(body),
+					headers: SUBSCAN_API_HEADERS,
+					method: method || 'POST'
+				})
+			).json();
 
-		return data;
+			return data;
+		}
 	} catch (error) {
 		return error;
 	}

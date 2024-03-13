@@ -20,6 +20,7 @@ import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
+import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
 import ProposalDisplay from './Proposals';
@@ -1274,6 +1275,11 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
 								<BountyChildBounties bountyId={onchainId} />
+							</>
+						)}
+						{proposalType === ProposalType.CHILD_BOUNTIES && (
+							<>
+								<ChildBounties bountyId={onchainId} />
 							</>
 						)}
 						{postType === ProposalType.REFERENDUM_V2 && postIndex == 502 && network === 'polkadot' && <PredictionCard />}

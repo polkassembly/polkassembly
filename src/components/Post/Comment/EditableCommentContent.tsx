@@ -95,7 +95,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const currentContent = useRef<string>(content);
 
 	const {
-		postData: { postType, postIndex, track_number, username: postAuthorUsername }
+		postData: { postType, postIndex, track_number }
 	} = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -198,7 +198,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		const { data, error: editPostCommentError } = await nextApiClientFetch<MessageType>('api/v1/auth/actions/editPostComment', {
 			commentId,
 			content: newContent,
-			postAuthorUsername: postAuthorUsername || '',
 			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props.postId,
 			postType: comment.post_type || props.proposalType,
 			sentiment: sentiment,
@@ -236,7 +235,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		const { data, error: addCommentError } = await nextApiClientFetch<IAddCommentReplyResponse>('api/v1/auth/actions/addPostComment', {
 			commentId: commentId,
 			content: comment.content,
-			postAuthorUsername: postAuthorUsername || '',
 			postId: props.postId,
 			postType: props.proposalType,
 			trackNumber: track_number,
@@ -345,7 +343,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				commentAuthorId: comment?.user_id,
 				commentId: commentId,
 				content: replyContent,
-				postAuthorUsername,
 				postId: comment.post_index || postIndex,
 				postType: comment.post_type || postType,
 				trackNumber: track_number,
@@ -726,7 +723,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								commentId={commentId}
 								comment_reactions={comment.comment_reactions}
 								importedReactions={props.isSubsquareUser}
-								commentAuthorId={comment?.user_id}
 							/>
 							{id && (
 								<Button

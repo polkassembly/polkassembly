@@ -107,17 +107,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	await postDocRef
 		.set(newPost)
-		.then(() => {
+		.then(async () => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
+			if (tags && Array.isArray(tags) && tags.length > 0) {
+				await batch.commit();
+			}
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving post: ', error);
 			return res.status(500).json({ message: 'Error saving post' });
 		});
-	if (tags && Array.isArray(tags) && tags.length > 0) {
-		await batch.commit();
-	}
 	try {
 		await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
 		return;

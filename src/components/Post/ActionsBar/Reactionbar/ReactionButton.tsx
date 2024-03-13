@@ -46,12 +46,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 	importedReactions = false,
 	isReactionButtonInPost,
 	replyId,
-	isReactionOnReply,
-	commentAuthorId,
-	replyAuthorId
+	isReactionOnReply
 }) => {
 	const {
-		postData: { postIndex, postType, track_number, username: postAuthorUsername }
+		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
 	const { id, username } = useUserDetailsSelector();
 
@@ -133,13 +131,10 @@ const ReactionButton: FC<IReactionButtonProps> = ({
 			setReactions(newReactions);
 			const actionName = `${reacted ? 'remove' : 'add'}${commentId ? 'CommentOrReply' : 'Post'}Reaction`;
 			const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/auth/actions/${actionName}`, {
-				commentAuthorId: commentAuthorId || null,
 				commentId: commentId,
-				postAuthorUsername: postAuthorUsername || null,
 				postId: postIndex,
 				postType,
 				reaction,
-				replyAuthorId: replyAuthorId || null,
 				replyId: replyId || null,
 				setReplyReaction: isReactionOnReply ? true : false,
 				trackNumber: track_number,

@@ -35,13 +35,15 @@ interface IUserActivity {
 	reaction_author_id?: number;
 	type: EUserActivityType;
 }
-
+interface IReference {
+	[key: string]: any;
+}
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { userId = 5807, page = 1 } = req.body as Props;
+	const { userId, page = 1 } = req.body as Props;
 	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
 	const activitiesSnapshot = await firestore_db
 		.collection('user_activities')
@@ -54,8 +56,8 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 	const activitiesDocs = activitiesSnapshot.docs;
 
-	const refs: any = {};
-	const userRefs: any = {};
+	const refs: IReference = {};
+	const userRefs: IReference = {};
 	const data = [];
 
 	for (const activity of activitiesDocs) {

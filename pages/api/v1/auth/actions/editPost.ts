@@ -367,6 +367,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				batch.set(tagRef, newTag, { merge: true });
 			}
 		});
+		await batch.commit();
 	}
 	try {
 		await createUserActivity({

@@ -530,19 +530,34 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		};
 		if (!voteTx) return;
 
-		await executeTx({
-			address,
-			api,
-			apiReady,
-			errorMessageFallback: 'Transaction failed.',
-			network,
-			onFailed,
-			onSuccess,
-			params: network === 'equilibrium' ? { nonce: -1 } : {},
-			proxyAddress: selectedProxyAddress,
-			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
-			tx: voteTx
-		});
+		if (showProxyDropdown) {
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onFailed,
+				onSuccess,
+				params: network === 'equilibrium' ? { nonce: -1 } : {},
+				proxyAddress: selectedProxyAddress,
+				setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
+				tx: voteTx
+			});
+		} else {
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onFailed,
+				onSuccess,
+				params: network === 'equilibrium' ? { nonce: -1 } : {},
+				setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
+				tx: voteTx
+			});
+		}
 	};
 	const ayeNayVotesArr = [
 		{

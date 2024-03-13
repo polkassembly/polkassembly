@@ -10,7 +10,8 @@ export async function getCache(key: string) {
 	const redisData = await redisGet(key);
 	if (redisData) {
 		const props = JSON.parse(redisData);
-		if (new Date().getTime() > props.expiry.getTime()) {
+		const expiry = new Date(props.expiry);
+		if (new Date().getTime() > expiry.getTime()) {
 			redisDel(key);
 			return null;
 		}

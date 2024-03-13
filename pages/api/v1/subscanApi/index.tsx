@@ -8,7 +8,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { getCache, setCache } from '~src/api-utils/subscanCachedData';
 import { generateKey } from '~src/util/getRedisKeys';
 
-export const SUBSCAN_API_KEY = '74d1845ab15f4b889a64dfef074ef222';
+export const SUBSCAN_API_KEY = process.env.NEXT_PUBLIC_SUBSCAN_API_KEY || '';
 
 export const SUBSCAN_API_HEADERS = {
 	Accept: 'application/json',
@@ -16,13 +16,18 @@ export const SUBSCAN_API_HEADERS = {
 	'X-API-Key': SUBSCAN_API_KEY
 };
 
-export const getSubscanData = async (url: string, network: string, body?: any, headers?: any, method?: string) => {
+const validateURL = (url: string) => {
+	if (url.includes('.') || url.includes('//')) return false;
+	return true;
+};
+
+export const getSubscanData = async (url: string, network: string, body?: any, method?: string) => {
 	try {
 		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
 		const data = await (
 			await fetch(`https://${network}.api.subscan.io/${filteredUrl}`, {
-				body: body ? JSON.stringify(body) : '',
-				headers: headers || SUBSCAN_API_HEADERS,
+				body: body && JSON.stringify(body),
+				headers: SUBSCAN_API_HEADERS,
 				method: method || 'POST'
 			})
 		).json();
@@ -36,11 +41,11 @@ export const getSubscanData = async (url: string, network: string, body?: any, h
 const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { url, body, method, headers, hardReload = false } = req.body;
+	const { url, body, method } = req.body;
 
 	const network = String(req.headers['x-network']);
-	if (!url) {
-		return res.status(400).json({ data: null, error: 'Invalid params' });
+	if (!url || !validateURL(url)) {
+		return res.status(400).json({ data: null, error: 'Invalid URL passed' });
 	}
 	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ data: null, error: 'Invalid network in request header' });
@@ -54,13 +59,14 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 
 	const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;
 
-	if (cacheEnabled && getCache(redisKey) !== undefined && !hardReload) {
-		const redisData = await getCache(redisKey);
+	const redisData = await getCache(redisKey);
+
+	if (redisData) {
 		res.status(200).json(redisData.data);
 		return;
 	}
 
-	const data = await getSubscanData(url, network, body, headers, method);
+	const data = await getSubscanData(url, network, body, method);
 
 	if (data.message === 'Success') {
 		if (cacheEnabled) setCache(redisKey, data.data);

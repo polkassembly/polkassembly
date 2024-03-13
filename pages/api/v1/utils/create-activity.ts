@@ -34,26 +34,21 @@ interface Args {
 	action: EActivityAction;
 	type?: EUserActivityType;
 }
-enum UserActivityType {
-	REACTED = 'REACTED',
-	COMMENTED = 'COMMENTED',
-	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
-}
+
 interface UserActivity {
 	by: number;
 	comment_author_id?: number;
 	comment_id?: string;
 	network: string;
 	post_author_id: number;
-	post_id: number;
+	post_id: number | string;
 	post_type: ProposalType;
 	reply_author_id?: number;
 	reply_id?: string;
 	mentions?: number[];
 	reaction_id?: string;
 	reaction_author_id?: number;
-	type: UserActivityType;
+	type: EUserActivityType;
 }
 
 interface IReply {
@@ -264,6 +259,49 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	}
 };
 
+const createCommentMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, userId }: IComment) => {
+	const payloads = [];
+
+	const mentions = await getMentionsUserIds(content);
+
+	if (mentions?.length) {
+		payloads.push({
+			by: userId || null,
+			comment_author_id: commentAuthorId || null,
+			comment_id: commentId || null,
+			mentions: mentions || [],
+			network,
+			post_author_id: postAuthorId,
+			post_id: postId || null,
+			post_type: postType as ProposalType,
+			type: EUserActivityType.MENTIONED
+		});
+	}
+	payloads.push({
+		by: userId || null,
+		comment_author_id: userId || null,
+		comment_id: commentId || null,
+		network,
+		post_author_id: postAuthorId || null,
+		post_id: postId || null,
+		post_type: postType as ProposalType,
+		type: EUserActivityType.COMMENTED
+	});
+	try {
+		const batch = firestore_db.batch();
+		if (payloads?.length) {
+			for (const payload of payloads) {
+				const activityRef = firestore_db.collection('user_activities').doc();
+				batch.set(activityRef, payload, { merge: true });
+			}
+		}
+		await batch.commit();
+		console.log('Success');
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const editCommentMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, userId }: IComment) => {
 	const oldActivitiesRefs = await firestore_db
 		.collection('user_activities')
@@ -304,49 +342,6 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 	}
 
 	try {
-		await batch.commit();
-		console.log('Success');
-	} catch (err) {
-		console.log(err);
-	}
-};
-
-const createCommentMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, userId }: IComment) => {
-	const payloads = [];
-
-	const mentions = await getMentionsUserIds(content);
-
-	if (mentions?.length) {
-		payloads.push({
-			by: userId || null,
-			comment_author_id: commentAuthorId || null,
-			comment_id: commentId || null,
-			mentions: mentions || [],
-			network,
-			post_author_id: postAuthorId,
-			post_id: postId || null,
-			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
-		});
-	}
-	payloads.push({
-		by: userId || null,
-		comment_author_id: userId || null,
-		comment_id: commentId || null,
-		network,
-		post_author_id: postAuthorId || null,
-		post_id: postId || null,
-		post_type: postType as ProposalType,
-		type: EUserActivityType.COMMENTED
-	});
-	try {
-		const batch = firestore_db.batch();
-		if (payloads?.length) {
-			for (const payload of payloads) {
-				const activityRef = firestore_db.collection('user_activities').doc();
-				batch.set(activityRef, payload, { merge: true });
-			}
-		}
 		await batch.commit();
 		console.log('Success');
 	} catch (err) {
@@ -469,66 +464,72 @@ const createUserActivity = async ({
 	replyId,
 	action
 }: Args) => {
-	if (reactionId && reactionAuthorId && userId && !isNaN(userId)) {
-		if (action === EActivityAction.CREATE) {
-			let activityPayload: any = {
-				by: userId || null,
-				network,
-				post_author_id: postAuthorId || null,
-				post_id: postId || null,
-				post_type: postType as ProposalType,
-				reaction_author_id: reactionAuthorId || null,
-				reaction_id: reactionId || null,
-				type: EUserActivityType.REACTED
-			};
-			if (commentAuthorId && commentId) {
-				activityPayload = { ...activityPayload, comment_author_id: commentAuthorId || null, comment_id: commentId };
+	if (reactionId && typeof reactionAuthorId == 'number') {
+		if (reactionId && reactionAuthorId && userId && !isNaN(userId)) {
+			switch (action) {
+				case EActivityAction.CREATE:
 			}
-			if (replyAuthorId && replyId && commentAuthorId && commentId) {
-				activityPayload = { ...activityPayload, reply_author_id: replyAuthorId, reply_id: replyId };
+			if (action === EActivityAction.CREATE) {
+				let activityPayload: UserActivity = {
+					by: userId,
+					network,
+					post_author_id: postAuthorId as number,
+					post_id: postId as string | number,
+					post_type: postType as ProposalType,
+					reaction_author_id: reactionAuthorId as number,
+					reaction_id: reactionId as string,
+					type: EUserActivityType.REACTED
+				};
+				if (commentAuthorId && commentId && typeof commentAuthorId == 'number') {
+					activityPayload = { ...activityPayload, comment_author_id: commentAuthorId, comment_id: commentId };
+				}
+				if (replyAuthorId && replyId && commentAuthorId && commentId) {
+					activityPayload = { ...activityPayload, reply_author_id: replyAuthorId, reply_id: replyId };
+				}
+				createReactions(activityPayload);
+			} else if (action === EActivityAction.DELETE) {
+				deleteReactions(network, userId, reactionId);
 			}
-			createReactions(activityPayload);
-		} else if (action === EActivityAction.DELETE) {
-			deleteReactions(network, userId, reactionId);
 		}
-	}
-	if (!commentId && !replyId && content && postId && postAuthorId && !isNaN(postAuthorId) && !reactionId) {
-		if (action === EActivityAction.CREATE) {
-			postMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
-		} else if (action === EActivityAction.EDIT) {
-			editPostMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
+	} else {
+		if (!commentId && !replyId && content && postId && postAuthorId && !isNaN(postAuthorId) && !reactionId) {
+			if (action === EActivityAction.CREATE) {
+				postMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
+			} else if (action === EActivityAction.EDIT) {
+				editPostMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
+			}
 		}
-	}
-	if (commentId && !replyId && postId && content && userId && !isNaN(userId) && !reactionId && typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
-		if (action === EActivityAction.CREATE) {
-			createCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
-		} else if (action === EActivityAction.EDIT) {
-			editCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
-		} else if (action === EActivityAction.DELETE) {
-			await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+		if (commentId && !replyId && postId && content && userId && !isNaN(userId) && !reactionId && typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
+			if (action === EActivityAction.CREATE) {
+				createCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+			} else if (action === EActivityAction.EDIT) {
+				editCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+			} else if (action === EActivityAction.DELETE) {
+				await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+			}
 		}
-	}
-	if (
-		commentId &&
-		replyId &&
-		postId &&
-		content &&
-		!reactionId &&
-		typeof postAuthorId == 'number' &&
-		typeof commentAuthorId == 'number' &&
-		typeof reactionAuthorId == 'number' &&
-		typeof replyAuthorId == 'number' &&
-		typeof userId == 'number'
-	) {
-		if (action === EActivityAction.CREATE) {
-			createReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
-		} else if (action === EActivityAction?.EDIT) {
-			editReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+		if (
+			commentId &&
+			replyId &&
+			postId &&
+			content &&
+			!reactionId &&
+			typeof postAuthorId == 'number' &&
+			typeof commentAuthorId == 'number' &&
+			typeof reactionAuthorId == 'number' &&
+			typeof replyAuthorId == 'number' &&
+			typeof userId == 'number'
+		) {
+			if (action === EActivityAction.CREATE) {
+				createReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+			} else if (action === EActivityAction?.EDIT) {
+				editReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+			}
 		}
-	}
-	if (replyId && !content && !reactionId && !postId && !commentId && userId && !isNaN(userId) && !reactionId) {
-		if (action === EActivityAction.DELETE) {
-			await deleteCommentOrReply({ id: replyId, network, type: EUserActivityType.REPLIED, userId: userId });
+		if (replyId && !content && !reactionId && !postId && !commentId && userId && !isNaN(userId) && !reactionId) {
+			if (action === EActivityAction.DELETE) {
+				await deleteCommentOrReply({ id: replyId, network, type: EUserActivityType.REPLIED, userId: userId });
+			}
 		}
 	}
 };

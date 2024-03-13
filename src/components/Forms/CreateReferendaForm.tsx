@@ -33,10 +33,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
-import { inputToBn } from '~src/util/inputToBn';
-import { ApiPromise } from '@polkadot/api';
-import { Bytes } from '@polkadot/types';
-import { Proposal } from '@polkadot/types/interfaces';
 
 // Testing adding a new commit
 interface ParamField {
@@ -144,9 +140,6 @@ export default function CreateReferendaForm({
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const currentBlock = useCurrentBlock();
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
-	const [form] = Form.useForm();
-	const maxSpendArr: { track: string; maxSpend: number }[] = [];
-	const [fundingAmount, setFundingAmount] = useState<BN>(ZERO_BN);
 
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -216,76 +209,7 @@ export default function CreateReferendaForm({
 		}
 	};
 
-	const getExistPreimageDataFromPolkadot = async (preimageHash: string) => {
-		if (!api || !apiReady) return;
-
-		const lengthObj = await api?.query?.preimage?.statusFor(preimageHash);
-
-		const length = JSON.parse(JSON.stringify(lengthObj))?.unrequested?.len || 0;
-		checkPreimageHash(length, preimageHash);
-		setPreimageLength(length);
-		form.setFieldValue('preimage_length', length);
-
-		const preimageRaw: any = await api?.query?.preimage?.preimageFor([preimageHash, length]);
-		const preimage = preimageRaw.unwrapOr(null);
-		if (!preimage) {
-			console.log('Error in unwraping preimage');
-			return;
-		}
-
-		const constructProposal = function (api: ApiPromise, bytes: Bytes): Proposal | undefined {
-			let proposal: Proposal | undefined;
-
-			try {
-				proposal = api.registry.createType('Proposal', bytes.toU8a(true));
-			} catch (error) {
-				console.log(error);
-			}
-
-			return proposal;
-		};
-
-		try {
-			const proposal = constructProposal(api, preimage);
-			if (proposal) {
-				const params = proposal?.meta ? proposal?.meta.args.filter(({ type }): boolean => type.toString() !== 'Origin').map(({ name }) => name.toString()) : [];
-
-				const values = proposal?.args;
-				const preImageArguments =
-					proposal?.args &&
-					params &&
-					params.map((name, index) => {
-						return {
-							name,
-							value: values?.[index]?.toString()
-						};
-					});
-				if (preImageArguments && proposal.section === 'treasury' && proposal?.method === 'spend') {
-					const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
-
-					setFundingAmount(balance);
-					setSteps({ percent: 100, step: 1 });
-				} else {
-					setSelectedTrack(proposal.section);
-				}
-			} else {
-				queueNotification({
-					header: 'Failed!',
-					message: `Incorrect preimage for ${network} network.`,
-					status: NotificationStatus.ERROR
-				});
-			}
-		} catch (error) {
-			queueNotification({
-				header: 'Failed!',
-				message: error.message,
-				status: NotificationStatus.ERROR
-			});
-		}
-	};
-
 	const handleExistingPreimageSubmit = async () => {
-		if (!methodCall) return;
 		if (!api || !apiReady) {
 			return;
 		}
@@ -296,21 +220,8 @@ export default function CreateReferendaForm({
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
-			const handleSelectTrack = (fundingAmount: BN) => {
-				let selectedTrack = '';
-
-				for (const i in maxSpendArr) {
-					const [maxSpend] = inputToBn(String(maxSpendArr[i].maxSpend), network, false);
-					if (maxSpend.gte(fundingAmount)) {
-						selectedTrack = maxSpendArr[i].track;
-						break;
-					}
-				}
-
-				return selectedTrack;
-			};
 			const proposalTx = api.tx.referenda.submit(
-				fundingAmount === ZERO_BN ? selectedTrack : handleSelectTrack(fundingAmount),
+				selectedTrack,
 				{ Lookup: { hash: preimageHash, len: preimageLength } },
 				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
 			);
@@ -495,14 +406,12 @@ export default function CreateReferendaForm({
 
 		if (data && !data?.message) {
 			if (data.hash === preimageHash) {
-				getExistPreimageDataFromPolkadot(preimageHash);
+				console.log(preimageHash);
+				console.log(data.length);
 				setPreimageLength(data.length);
-				form.setFieldValue('preimage_length', data?.length);
 				setSteps({ percent: 100, step: 1 });
 			} else {
 				setPreimageLength(0);
-				form.setFieldValue('preimage_length', 0);
-
 				queueNotification({
 					header: 'Incorrect Preimage Added!',
 					message: 'Please enter a preimage for a treasury related track.',
@@ -632,16 +541,33 @@ export default function CreateReferendaForm({
 						</div>
 						<div className='mt-6'>
 							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
-							<Form.Item name='preimage_length'>
-								<Input
-									name='preimage_length'
-									className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									onChange={(e) => {
-										setPreimageLength(Number(e.target.value));
-									}}
-									disabled
-								/>
-							</Form.Item>
+							<Input
+								name='preimage_length'
+								className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								value={preimageLength || 0}
+								disabled
+							/>
+						</div>
+						<div className='mt-4'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+								Select Track{' '}
+								<span>
+									<HelperTooltip
+										text='Track selection is done based on the amount requested.'
+										className='ml-1'
+									/>
+								</span>
+							</label>
+							<SelectTracks
+								tracksArr={trackArr}
+								onTrackChange={(track) => {
+									setSelectedTrack(track);
+									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+									// getPreimageTxFee();
+									// setSteps({ percent: 100, step: 1 });
+								}}
+								selectedTrack={selectedTrack}
+							/>
 						</div>
 					</>
 				)}
@@ -899,7 +825,7 @@ export default function CreateReferendaForm({
 						buttonsize='sm'
 						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
 						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={!methodCall || !selectedTrack}
+						disabled={(!methodCall || !selectedTrack) && Boolean(!isPreimage)}
 					>
 						Create Referendum
 					</CustomButton>

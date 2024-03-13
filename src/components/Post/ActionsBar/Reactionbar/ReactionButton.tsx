@@ -27,8 +27,6 @@ export interface IReactionButtonProps {
 	isReactionButtonInPost?: boolean;
 	replyId?: string;
 	isReactionOnReply?: boolean;
-	commentAuthorId?: number;
-	replyAuthorId?: number;
 }
 
 type IReaction = '👍' | '👎';

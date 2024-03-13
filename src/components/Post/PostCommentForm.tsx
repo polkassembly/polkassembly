@@ -64,7 +64,7 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
-		postData: { postIndex, postType, track_number, username: postAuthorUsername }
+		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
 	const [content, setContent] = useState(global.window.localStorage.getItem(commentKey()) || '');
 	const [form] = Form.useForm();
@@ -222,7 +222,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
-				postAuthorUsername: postAuthorUsername || '',
 				postId: postIndex,
 				postType: postType,
 				sentiment: isSentimentPost ? sentiment : 0,

@@ -406,8 +406,6 @@ export default function CreateReferendaForm({
 
 		if (data && !data?.message) {
 			if (data.hash === preimageHash) {
-				console.log(preimageHash);
-				console.log(data.length);
 				setPreimageLength(data.length);
 				setSteps({ percent: 100, step: 1 });
 			} else {

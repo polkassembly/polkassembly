@@ -113,7 +113,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 									}}
 								>
 									{contextHolder}
-									<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+									<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</div>
 						)}

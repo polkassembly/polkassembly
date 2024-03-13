@@ -22,7 +22,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
-import TipIcon from '~assets/icons/tip-title.svg';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
 import { useDispatch } from 'react-redux';
@@ -36,7 +35,7 @@ import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, TipIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 
@@ -283,7 +282,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 			<Modal
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
-						<TipIcon className='mr-[6px]' />
+						<TipIcon className='mr-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						Give a Tip
 					</div>
 				}

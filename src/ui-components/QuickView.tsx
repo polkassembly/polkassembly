@@ -16,8 +16,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
-import CopyIcon from '~assets/icons/content_copy_small.svg';
-import { VerifiedIcon } from './CustomIcons';
+import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -167,7 +166,7 @@ const QuickView = ({
 									}}
 								>
 									{contextHolder}
-									<CopyIcon />
+									<CopyIcon className='-ml-[6px] scale-[70%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</div>
 						)}

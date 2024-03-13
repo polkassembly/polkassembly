@@ -194,12 +194,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	}, [track_number, address]);
 
 	useEffect(() => {
-		if (showProxyDropdown === false) {
-			setSelectedProxyAddress('');
-		}
-	}, [showProxyDropdown]);
-
-	useEffect(() => {
 		getWallet();
 		if (!api || !apiReady) return;
 		if (loginWallet) {
@@ -887,7 +881,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+											onChange={() => {
+												setShowProxyDropdown(!showProxyDropdown);
+												if (!showProxyDropdown === false) {
+													setSelectedProxyAddress('');
+												}
+											}}
 										>
 											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
 										</Checkbox>

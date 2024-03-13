@@ -1,14 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Spin } from 'antd';
 import { Pagination } from '~src/ui-components/Pagination';
 import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
 import React, { FC, useEffect, useState } from 'react';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { LoadingOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -24,7 +22,6 @@ interface IChildBountiesProps {
 
 const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	const { bountyId, requestedAmount } = props;
-	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalAmount, setTotalAmount] = useState('');
 	const [disbursedAmount, setDisbursedAmount] = useState('');
@@ -38,14 +35,9 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	};
 
 	useEffect(() => {
-		setLoading(true);
 		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=32`)
 			.then((res) => {
-				console.log(bountyId);
-				console.log(requestedAmount);
 				const data = res.data;
-				setLoading(false);
-				console.log(data);
 
 				const totalReward = data?.child_bounties.reduce((accumulator, currentValue) => {
 					return accumulator + BigInt(currentValue.reward);
@@ -61,7 +53,6 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 					setDisbursedAmount(formatedBalance(totalAwardedReward?.toString(), unit) + ' ' + unit);
 				}
 
-				console.log(totalReward?.toString());
 				if (totalReward) {
 					setTotalAmount(formatedBalance(totalReward?.toString(), unit) + ' ' + unit);
 				}
@@ -73,161 +64,109 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			})
 			.catch((err) => {
 				console.log(err);
-				setLoading(false);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, bountyId]);
 
-	console.log(requestedAmount, totalAmount, disbursedAmount, remainingAmount);
 	const data = [
 		{
-			color: 'hsl(6, 70%, 50%)',
+			color: '#FFC302',
 			id: 'disbursed',
 			label: 'Disbursed',
-			value: disbursedAmount
+			value: parseFloat(disbursedAmount)
 		},
 		{
-			color: 'hsl(122, 70%, 50%)',
+			color: '#F1F1EF',
 			id: 'remaining',
 			label: 'Remaining',
-			value: remainingAmount
+			value: parseFloat(remainingAmount)
 		},
 		{
-			color: 'hsl(156, 70%, 50%)',
+			color: '#FF8E11',
 			id: 'requested',
 			label: 'Requested',
-			value: requestedAmount
+			value: parseFloat(requestedAmount)
 		}
 	];
 
 	return (
-		<GovSidebarCard className='min-h-[200px]'>
-			<Spin
+		<GovSidebarCard className='overflow-y-hidden xl:max-h-[336px]'>
+			{/* <Spin
 				indicator={<LoadingOutlined />}
 				spinning={loading}
-			></Spin>
+			></Spin> */}
 			<div className='flex'>
-				<h4 className='dashboard-heading mb-6 text-sidebarBlue dark:text-white'>Bounty Amount</h4>
-				<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-separatorDark'>
+				<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
+				<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
 					Total: <span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{totalAmount}</span>
 				</p>
 			</div>
-			<ResponsivePie
-				data={data}
-				margin={{ bottom: 80, left: 80, right: 80, top: 40 }}
-				innerRadius={0.8}
-				cornerRadius={3}
-				activeOuterRadiusOffset={8}
-				borderWidth={1}
-				borderColor={{
-					from: 'color',
-					modifiers: [['darker', 0.2]]
-				}}
-				arcLinkLabelsSkipAngle={10}
-				arcLinkLabelsTextColor='#333333'
-				arcLinkLabelsThickness={2}
-				arcLinkLabelsColor={{ from: 'color' }}
-				arcLabelsSkipAngle={10}
-				arcLabelsTextColor={{
-					from: 'color',
-					modifiers: [['darker', 2]]
-				}}
-				defs={[
-					{
-						background: 'inherit',
-						color: 'rgba(255, 255, 255, 0.3)',
-						id: 'dots',
-						padding: 1,
-						size: 4,
-						stagger: true,
-						type: 'patternDots'
-					},
-					{
-						background: 'inherit',
-						color: 'rgba(255, 255, 255, 0.3)',
-						id: 'lines',
-						lineWidth: 6,
-						rotation: -45,
-						spacing: 10,
-						type: 'patternLines'
-					}
-				]}
-				fill={[
-					{
-						id: 'dots',
-						match: {
-							id: 'ruby'
-						}
-					},
-					{
-						id: 'dots',
-						match: {
-							id: 'c'
-						}
-					},
-					{
-						id: 'dots',
-						match: {
-							id: 'go'
-						}
-					},
-					{
-						id: 'dots',
-						match: {
-							id: 'python'
-						}
-					},
-					{
-						id: 'lines',
-						match: {
-							id: 'scala'
-						}
-					},
-					{
-						id: 'lines',
-						match: {
-							id: 'lisp'
-						}
-					},
-					{
-						id: 'lines',
-						match: {
-							id: 'elixir'
-						}
-					},
-					{
-						id: 'lines',
-						match: {
-							id: 'javascript'
-						}
-					}
-				]}
-				legends={[
-					{
-						anchor: 'bottom',
-						direction: 'row',
-						effects: [
-							{
-								on: 'hover',
-								style: {
-									itemTextColor: '#000'
+			<div className='-mt-3 h-[286px] '>
+				<ResponsivePie
+					data={data}
+					margin={{ bottom: 80, left: 80, right: 80, top: 40 }}
+					innerRadius={0.7}
+					cornerRadius={0}
+					activeOuterRadiusOffset={8}
+					borderWidth={1}
+					borderColor={{
+						from: 'color',
+						modifiers: [['darker', 0.2]]
+					}}
+					enableArcLabels={false}
+					enableArcLinkLabels={false}
+					colors={({ data }) => data.color}
+					arcLinkLabelsSkipAngle={10}
+					arcLinkLabelsTextColor='#333333'
+					arcLinkLabelsThickness={2}
+					arcLinkLabelsColor={{ from: 'color' }}
+					arcLabelsSkipAngle={10}
+					arcLabelsTextColor={{
+						from: 'color',
+						modifiers: [['darker', 2]]
+					}}
+					legends={[
+						{
+							anchor: 'bottom',
+							direction: 'row',
+							effects: [
+								{
+									on: 'hover',
+									style: {
+										itemTextColor: '#fff'
+									}
 								}
+							],
+							itemDirection: 'left-to-right',
+							itemHeight: 18,
+							itemOpacity: 1,
+							itemTextColor: '#999',
+							itemWidth: 100,
+							itemsSpacing: 0,
+							justify: false,
+							symbolShape: 'circle',
+							symbolSize: 18,
+							translateX: 7,
+							translateY: 50
+						}
+					]}
+					theme={{
+						legends: {
+							text: {
+								fontSize: 12
 							}
-						],
-						itemDirection: 'left-to-right',
-						itemHeight: 18,
-						itemOpacity: 1,
-						itemTextColor: '#999',
-						itemWidth: 100,
-						itemsSpacing: 0,
-						justify: false,
-						symbolShape: 'circle',
-						symbolSize: 18,
-						translateX: 0,
-						translateY: 56
-					}
-				]}
-			/>
+						},
+						tooltip: {
+							container: {
+								background: theme === 'dark' ? '#1E2126' : '#fff',
+								color: theme === 'dark' ? '#fff' : '#576D8B',
+								fontSize: 11,
+								textTransform: 'capitalize'
+							}
+						}
+					}}
+				/>
+			</div>
 
 			<PaginationContainer className='mt-4 flex items-center justify-end'>
 				<Pagination

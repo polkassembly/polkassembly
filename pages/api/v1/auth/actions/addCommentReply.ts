@@ -16,6 +16,7 @@ import { CommentReply } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { firestore_db } from '~src/services/firebaseInit';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -46,6 +47,14 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 	const last_comment_at = new Date();
+	const batch = firestore_db.batch();
+
+	const commentRef = postRef.collection('comments').doc(String(commentId));
+
+	const commentDoc = {
+		id: String(commentId)
+	};
+
 	const newReplyRef = postRef.collection('comments').doc(String(commentId)).collection('replies').doc();
 
 	const newReply: CommentReply = {
@@ -59,41 +68,45 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 		username: user.username
 	};
 
-	await newReplyRef
-		.set(newReply)
-		.then(() => {
-			postRef.update({
-				last_comment_at
-			});
+	batch.set(commentRef, commentDoc, { merge: true });
+	batch.set(newReplyRef, newReply);
 
-			const triggerName = 'newReplyAdded';
+	try {
+		await batch.commit();
+	} catch (error) {
+		// The document probably doesn't exist.
+		console.error('Error saving comment: ', error);
+		return res.status(500).json({ message: 'Error saving comment' });
+	}
 
-			const args = {
-				commentId: String(commentId),
-				network,
-				postId: String(postId),
-				postType: strProposalType,
-				replyId: newReplyRef.id
-			};
+	res.status(200).json({
+		id: newReply.id
+	});
 
-			fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
-				body: JSON.stringify({
-					args,
-					trigger: triggerName
-				}),
-				headers: firebaseFunctionsHeader(network),
-				method: 'POST'
-			});
+	await postRef.update({
+		last_comment_at
+	});
 
-			return res.status(200).json({
-				id: newReply.id
-			});
-		})
-		.catch((error) => {
-			// The document probably doesn't exist.
-			console.error('Error saving comment: ', error);
-			return res.status(500).json({ message: 'Error saving comment' });
-		});
+	const triggerName = 'newReplyAdded';
+
+	const args = {
+		commentId: String(commentId),
+		network,
+		postId: String(postId),
+		postType: strProposalType,
+		replyId: newReplyRef.id
+	};
+
+	fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {
+		body: JSON.stringify({
+			args,
+			trigger: triggerName
+		}),
+		headers: firebaseFunctionsHeader(network),
+		method: 'POST'
+	});
+
+	return;
 };
 
 export default withErrorHandling(handler);

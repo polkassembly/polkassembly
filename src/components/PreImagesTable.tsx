@@ -26,6 +26,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import copyToClipboard from '~src/util/copyToClipboard';
 import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
+import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -157,8 +158,8 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 			key: 'hash',
 			width: 300,
 			render: (hash, obj) => (
-				<div className='flex space-x-[6px]'>
-					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 8)}............${hash.substring(hash.length - 6)}`}</span>
+				<div className='flex items-center space-x-[6px]'>
+					<span className='font-medium text-sidebarBlue dark:text-white'>{`${hash.substring(0, 6)}...${hash.substring(hash.length - 6)}`}</span>
 					<Tooltip title='Copy'>
 						<span
 							className='mt-[2px] cursor-pointer'
@@ -169,12 +170,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							}}
 						>
 							{contextHolder}
-							<ImageIcon
-								src='assets/icons/content_copy_small.svg'
-								alt='copy icon'
-								imgClassName='w-4 h-4'
-								imgWrapperClassName=' flex cursor-pointer justify-center text-sm text-grey_border'
-							/>
+							<CopyIcon className='scale-75 text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						</span>
 					</Tooltip>
 					<Tooltip title='Subscan'>
@@ -182,12 +178,7 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 							className='cursor-pointer'
 							onClick={() => window.open(`https://${network}.subscan.io/extrinsic/${obj?.statusHistory?.extrinsicIndex}`, '_blank')}
 						>
-							<ImageIcon
-								src='/assets/icons/subscan-link.svg'
-								alt='subscan link icon'
-								imgClassName='w-4 h-4'
-								imgWrapperClassName='mt-[2px] flex cursor-pointer justify-center text-sm text-grey_border'
-							/>
+							<SubscanIcon className='-ml-0.5 scale-[65%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						</span>
 					</Tooltip>
 				</div>

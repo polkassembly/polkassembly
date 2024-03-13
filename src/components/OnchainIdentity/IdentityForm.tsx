@@ -129,6 +129,9 @@ const IdentityForm = ({
 		case 'kusama':
 			registrarNum = 5;
 			break;
+		case 'polkadex':
+			registrarNum = 4;
+			break;
 	}
 
 	const getProxies = async (address: any) => {
@@ -359,14 +362,14 @@ const IdentityForm = ({
 							displayInline
 						/>
 						<CustomButton
-							text='Change'
+							text='Change Wallet'
 							onClick={() => {
 								setAddressChangeModalOpen();
 								closeModal(true);
 							}}
-							width={80}
-							className='text-xs'
-							height={26}
+							width={91}
+							className='change-wallet-button mr-1 flex items-center justify-center text-[10px]'
+							height={21}
 							variant='primary'
 						/>
 					</div>
@@ -659,7 +662,7 @@ const IdentityForm = ({
 										<span className='text-lightBlue dark:text-blue-dark-medium'>
 											Registrar fees{' '}
 											<HelperTooltip
-												text='Costs of development & maintenance are funded by the treasury.'
+												text='Fee charged for on chain verification by registrar.'
 												className='ml-1'
 											/>
 										</span>
@@ -758,5 +761,8 @@ export default styled(IdentityForm)`
 	.ant-checkbox-checked .ant-checkbox-inner {
 		background-color: #e5007a !important;
 		border-color: #e5007a !important;
+	}
+	.change-wallet-button {
+		font-size: 10px !important;
 	}
 `;

@@ -570,7 +570,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
 								filterBy === EFilterBy.Referenda && finalSearchInput.length > 0
 									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
-									: 'text-[#667589]'
+									: 'text-separatorDark'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							Referenda {finalSearchInput.length > 0 && `(${onchainPostResults?.total || 0})`}
@@ -580,7 +580,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
 								filterBy === EFilterBy.People && finalSearchInput.length > 0
 									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
-									: 'text-[#667589]'
+									: 'text-separatorDark'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							People {finalSearchInput.length > 0 && `(${peoplePage.totalPeople || 0})`}
@@ -590,14 +590,14 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							className={`rounded-[24px] py-1.5 text-xs font-medium ${
 								filterBy === EFilterBy.Discussions && finalSearchInput.length > 0
 									? 'bg-[#FEF2F8] text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
-									: 'text-[#667589]'
+									: 'text-separatorDark'
 							} ${finalSearchInput.length === 0 && 'text-[#B5BFCC]'} max-sm:text-[10px]`}
 						>
 							Discussions {finalSearchInput.length > 0 && `(${offchainPostResults?.total || 0})`}
 						</Radio>
 					</Radio.Group>
 					{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && (
-						<div className='flex gap-3.5 text-xs font-medium tracking-[0.02em] text-[#667589] max-md:gap-1.5 max-md:px-0'>
+						<div className='flex gap-3.5 text-xs font-medium tracking-[0.02em] text-separatorDark max-md:gap-1.5 max-md:px-0'>
 							{isSuperSearch && (
 								<NetworkDropdown
 									setSidedrawer={() => {}}
@@ -624,7 +624,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 											<Radio
 												value={EDateFilter.Today}
 												className={`py-1.5 text-xs font-normal ${
-													dateFilter === EDateFilter.Today ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+													dateFilter === EDateFilter.Today ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 												}`}
 											>
 												Today
@@ -632,7 +632,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 											<Radio
 												value={EDateFilter.Last_7_days}
 												className={`py-1.5 text-xs font-normal ${
-													dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+													dateFilter === EDateFilter.Last_7_days ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 												}`}
 											>
 												Last 7 days
@@ -640,7 +640,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 											<Radio
 												value={EDateFilter.Last_30_days}
 												className={`py-1.5 text-xs font-normal ${
-													dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+													dateFilter === EDateFilter.Last_30_days ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 												}`}
 											>
 												Last 30 days
@@ -648,14 +648,14 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 											<Radio
 												value={EDateFilter.Last_3_months}
 												className={`py-1.5 text-xs font-normal ${
-													dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+													dateFilter === EDateFilter.Last_3_months ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 												}`}
 											>
 												Last 3 months
 											</Radio>
 											<Radio
 												value={null}
-												className={`py-1.5 text-xs font-normal ${!dateFilter ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'}`}
+												className={`py-1.5 text-xs font-normal ${!dateFilter ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'}`}
 											>
 												All time
 											</Radio>
@@ -710,7 +710,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																key={track}
 																value={track}
 																className={`ml-0 py-1.5 text-xs font-normal ${
-																	selectedGov1Tracks.includes(track) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+																	selectedGov1Tracks.includes(track) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 																}`}
 															>
 																<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
@@ -735,7 +735,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																	key={track?.name}
 																	value={track?.trackId}
 																	className={`ml-0 py-1.5 text-xs font-normal ${
-																		selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+																		selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 																	}`}
 																>
 																	<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
@@ -777,7 +777,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 													key={topic}
 													value={topic}
 													className={`ml-0 py-1.5 text-xs font-normal ${
-														selectedTopics.includes(topic) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-[#667589]'
+														selectedTopics.includes(topic) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 													}`}
 												>
 													<div className='mt-[2px]'>{topic}</div>
@@ -878,7 +878,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						{finalSearchInput.length > 0 && (
 							<span
 								className={`${
-									!isFilter ? 'cursor-default text-[#667589]' : 'cursor-pointer text-pink_primary'
+									!isFilter ? 'cursor-default text-separatorDark' : 'cursor-pointer text-pink_primary'
 								} flex items-center max-sm:border-[1px] max-sm:border-solid max-sm:border-pink_primary max-sm:p-1`}
 								onClick={() => handleClearFilters()}
 							>

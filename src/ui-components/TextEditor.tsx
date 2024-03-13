@@ -420,7 +420,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										editor.ui.registry.addIcon('custom-icon', gifSVGData);
 										editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 									},
-									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
+									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image  media emoticons',
 									xss_sanitization: true,
 									textpattern_patterns: [
 										{ start: '*', end: '*', format: 'italic' },

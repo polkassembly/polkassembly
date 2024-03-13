@@ -356,11 +356,11 @@ const Web2Login: FC<Props> = ({
 
 export default styled(Web2Login)`
 	.ant-input {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? 'transparent' : '')} !important;
 	}
 	.ant-input::placeholder {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '')} !important;
 	}
 	@media (max-width: 365px) and (min-width: 319px) {
 		.web3-login-container {

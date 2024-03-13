@@ -485,7 +485,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 
 export default styled(ReferendaV2Messages)`
 	.ant-modal .ant-modal-header {
-		background-color: ${({ theme }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
+		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
 	}
 `;
 

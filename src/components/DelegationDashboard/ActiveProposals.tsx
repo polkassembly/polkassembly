@@ -96,10 +96,10 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 };
 export default styled(ActiveProposals)`
 	.ant-pagination .ant-pagination-item a {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination .ant-pagination-prev button,
 	.ant-pagination .ant-pagination-next button {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 `;

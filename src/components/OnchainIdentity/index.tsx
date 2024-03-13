@@ -218,7 +218,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			const bnRegisterarFee = new BN(registerarFee?.[(registerarFee?.length || 1) - 1].fee || ZERO_BN);
 			const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
 			setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
-			setPerSocialBondFee(bondFee);
+			setPerSocialBondFee(bondFee as any);
 			setLoading({ ...loading, isLoading: false });
 		})();
 		const address = localStorage.getItem('identityAddress');
@@ -236,7 +236,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 		(async () => {
 			try {
-				const identityHash = await api?.query?.identity?.identityOf(encoded_addr).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+				const identityHash = await api?.query?.identity?.identityOf(encoded_addr).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
 				if (!identityHash) {
 					console.log('Error in unwrapping identity hash');
 					return;

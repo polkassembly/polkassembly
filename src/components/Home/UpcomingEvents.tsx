@@ -35,35 +35,35 @@ interface Props {
 }
 const Calendar = styled(StyledCalendar)`
 	.ant-picker-panel {
-		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	th {
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#000')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#000')} !important;
 	}
 	.ant-picker-cell {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 	}
 	.ant-select-selector {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-select-item {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-radio-button-wrapper {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-select-dropdown {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
 	}
 	.ant-select-selection-item {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
 	}
 `;
 
@@ -426,7 +426,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				className='mb-4 rounded-xl border border-solid border-gray-300 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
-				theme={theme}
+				theme={theme as String}
 			/>
 		</Spin>
 	);

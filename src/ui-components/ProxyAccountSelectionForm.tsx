@@ -198,10 +198,10 @@ const ProxyAccountSelectionForm = ({
 
 export default styled(ProxyAccountSelectionForm)`
 	.ant-dropdown-trigger {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+		border: ${(props: any) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 	}
 	.ant-modal-content {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+		border: ${(props: any) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 		padding: 0 !important;
 		padding-bottom: 8px !important;
 	}

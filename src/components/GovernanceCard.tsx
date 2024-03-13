@@ -494,7 +494,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
-										theme={theme}
+										theme={theme as String}
 										className='sm:mx-1 sm:mt-0'
 										topic={topic}
 									/>
@@ -544,7 +544,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<TopicTag
 									className='xs:mx-1'
 									topic={topic}
-									theme={theme}
+									theme={theme as String}
 								/>
 							</div>
 						)}

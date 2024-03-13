@@ -110,7 +110,7 @@ const OnchainCreationLabel = ({ address, username, truncateUsername, className }
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={profileAddress}
-					paUsername={username}
+					paUsername={username as any}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>

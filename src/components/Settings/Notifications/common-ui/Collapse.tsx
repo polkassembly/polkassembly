@@ -20,16 +20,16 @@ export const Collapse = styled(AntDCollapse)`
 	}
 
 	.ant-collapse-content-box {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 	}
 
 	.ant-collapse-item {
-		border-bottom: 1px solid ${(props) => (props.theme === 'dark' ? '#90909060' : 'none')} !important;
+		border-bottom: 1px solid ${(props: any) => (props.theme === 'dark' ? '#90909060' : 'none')} !important;
 	}
 
 	.ant-collapse .ant-collapse-content {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
-		border-top: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-top: ${(props: any) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 
 	@media (max-width: 768px) {

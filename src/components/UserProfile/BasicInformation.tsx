@@ -360,14 +360,14 @@ export default styled(BasicInformation)`
 		// color: #7788a0 !important;
 	}
 	.ant-input {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1D2632')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#1D2632')} !important;
 	}
 	input::placeholder {
 		font-weight: 300 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
 	}
 `;

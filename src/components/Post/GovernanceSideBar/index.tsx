@@ -1052,12 +1052,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<div className='overflow-y-hidden'>
 														<VoteReferendum
 															address={address}
-															lastVote={lastVote}
+															lastVote={lastVote as any}
 															setLastVote={setLastVote}
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
-															track_number={trackNumber}
+															track_number={trackNumber as any}
 														/>
 
 														{RenderLastVote}
@@ -1115,12 +1115,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														) : (
 															<VoteReferendum
 																address={address}
-																lastVote={lastVote}
+																lastVote={lastVote as any}
 																setLastVote={setLastVote}
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
-																track_number={trackNumber}
+																track_number={trackNumber as any}
 															/>
 														)}
 														{RenderLastVote}

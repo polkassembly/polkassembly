@@ -333,6 +333,7 @@ const Post: FC<IPostProps> = (props) => {
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
 						requestedAmount={requestedAmount}
+						bountyIndex={post.parent_bounty_index}
 					/>
 				</StickyBox>
 

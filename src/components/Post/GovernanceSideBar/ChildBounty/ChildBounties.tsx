@@ -16,12 +16,12 @@ import { ResponsivePie } from '@nivo/pie';
 // import { Donut } from '@ant-design/charts';
 
 interface IChildBountiesProps {
-	bountyId?: number | string | null;
 	requestedAmount?: any;
+	bountyIndex?: any;
 }
 
 const ChildBounties: FC<IChildBountiesProps> = (props) => {
-	const { bountyId, requestedAmount } = props;
+	const { requestedAmount, bountyIndex } = props;
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalAmount, setTotalAmount] = useState('');
 	const [disbursedAmount, setDisbursedAmount] = useState('');
@@ -35,10 +35,10 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	};
 
 	useEffect(() => {
-		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=32`)
+		nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?page=${currentPage}&listingLimit=${VOTES_LISTING_LIMIT}&postId=${bountyIndex}`)
 			.then((res) => {
 				const data = res.data;
-
+				console.log(bountyIndex);
 				const totalReward = data?.child_bounties.reduce((accumulator, currentValue) => {
 					return accumulator + BigInt(currentValue.reward);
 				}, BigInt(0));
@@ -66,7 +66,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				console.log(err);
 			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, bountyId]);
+	}, [currentPage, bountyIndex]);
 
 	const data = [
 		{

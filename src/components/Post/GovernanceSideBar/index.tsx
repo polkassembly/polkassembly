@@ -90,6 +90,7 @@ interface IGovernanceSidebarProps {
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
 	requestedAmount?: any;
+	bountyIndex?: any;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -130,7 +131,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, requestedAmount } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, requestedAmount, bountyIndex } = props;
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	const { network } = useNetworkSelector();
@@ -1281,8 +1282,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
 								<ChildBounties
-									bountyId={onchainId}
 									requestedAmount={requestedAmount}
+									bountyIndex={bountyIndex}
 								/>
 							</>
 						)}

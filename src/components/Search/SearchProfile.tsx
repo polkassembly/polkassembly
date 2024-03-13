@@ -101,7 +101,7 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 								}}
 							>
 								{contextHolder}
-								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</div>
 					)}

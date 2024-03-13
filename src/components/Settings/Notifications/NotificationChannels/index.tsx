@@ -6,8 +6,6 @@ import { Divider } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import NotificationChannelsIcon from '~assets/icons/notification-channel-svg.svg';
-import SlackIcon from '~assets/icons/slack.svg';
-import ElementIcon from '~assets/icons/element.svg';
 import EmailNotificationCard from './EmailNotificationCard';
 import BotSetupCard from './BotSetupCard';
 import TelegramInfoModal from './Modals/Telegram';
@@ -17,11 +15,9 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '../utilsFe';
 import DiscordInfoModal from './Modals/Discord';
 import SlackInfoModal from './Modals/Slack';
 import { Collapse } from '../common-ui/Collapse';
-import MailFilled from '~assets/icons/email-notification.svg';
-import TelegramIcon from '~assets/icons/telegram-notification.svg';
-import DiscordIcon from '~assets/icons/discord-notification.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import { DiscordFilledIcon, ElementIcon, MailFilledIcon, SlackIcon, TelegramFilledIcon } from '~src/ui-components/CustomIcons';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any; handleReset: any };
@@ -106,7 +102,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						{!!active && (
 							<div className='hidden items-center gap-4 md:flex'>
 								<div className={`${!networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.enabled ? '[&>svg]:opacity-50' : ''}`}>
-									<MailFilled />
+									<MailFilledIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 								</div>
 								{botsArr.map((bot, i) => (
 									<div
@@ -156,7 +152,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					))}
 				</div>
 				<TelegramInfoModal
-					icon={<TelegramIcon />}
+					icon={<TelegramFilledIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />}
 					title='How to add Bot to Telegram'
 					open={showModal === CHANNEL.TELEGRAM}
 					getVerifyToken={getVerifyToken}
@@ -164,7 +160,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.TELEGRAM]?.verification_token || ''}
 				/>
 				<DiscordInfoModal
-					icon={<DiscordIcon />}
+					icon={<DiscordFilledIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />}
 					title='How to add Bot to Discord'
 					open={showModal === CHANNEL.DISCORD}
 					getVerifyToken={getVerifyToken}
@@ -172,12 +168,12 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
 				/>
 				<SlackInfoModal
-					icon={<SlackIcon />}
+					icon={<SlackIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />}
 					title='How to add Bot to Slack'
 					open={showModal === CHANNEL.SLACK}
 					getVerifyToken={getVerifyToken}
 					onClose={() => setShowModal(null)}
-					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.DISCORD]?.verification_token || ''}
+					generatedToken={networkPreferences?.channelPreferences?.[CHANNEL.SLACK]?.verification_token || ''}
 				/>
 			</Panel>
 		</Collapse>
@@ -187,25 +183,35 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 const Bots = () => {
 	return [
 		{
-			Icon: <TelegramIcon />,
+			Icon: <TelegramFilledIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />,
 			channel: CHANNEL.TELEGRAM,
 			description: 'a Telegram chat to get Telegram notifications',
 			title: 'Telegram'
 		},
 		{
-			Icon: <DiscordIcon />,
+			Icon: <DiscordFilledIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />,
 			channel: CHANNEL.DISCORD,
 			description: 'a Discord Channel chat to get Discord notifications',
 			title: 'Discord'
 		},
 		{
-			Icon: <SlackIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			Icon: (
+				<SlackIcon
+					className='text-2xl text-lightBlue dark:text-icon-dark-inactive'
+					style={{ marginTop: 4, transform: 'scale(0.9)' }}
+				/>
+			),
 			channel: CHANNEL.SLACK,
 			description: 'a Slack Channel chat to get Slack notifications',
 			title: 'Slack'
 		},
 		{
-			Icon: <ElementIcon style={{ marginTop: 4, transform: 'scale(0.9)' }} />,
+			Icon: (
+				<ElementIcon
+					className='text-2xl text-lightBlue dark:text-icon-dark-inactive'
+					style={{ marginTop: 4, transform: 'scale(0.9)' }}
+				/>
+			),
 			channel: CHANNEL.ELEMENT,
 			description: '',
 			title: 'Element'

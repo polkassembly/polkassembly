@@ -578,6 +578,20 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 									}
 								/>
 							)}
+							{(window as any)?.walletExtension?.isNovaWallet && (
+								<WalletButton
+									disabled={!apiReady}
+									className={`${wallet === Wallet.NOVAWALLET ? 'h-[48px] w-[64px] border  border-solid border-pink_primary' : 'h-[48px] w-[64px]'}`}
+									onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
+									name='Nova Wallet'
+									icon={
+										<WalletIcon
+											which={Wallet.NOVAWALLET}
+											className='h-6 w-6'
+										/>
+									}
+								/>
+							)}
 						</div>
 						{!isTalismanEthereum && (
 							<Alert

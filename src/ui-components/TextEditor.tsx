@@ -71,6 +71,11 @@ body {
 	font-size: 14px;
 	line-height: 1.5;
 }
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
+}
 th, td {
 	border: 1px solid #243A57;
 	padding: 0.5rem;
@@ -86,6 +91,11 @@ body {
 	font-family: "Poppins", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
+}
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
 }
 th, td {
 	border: 1px solid #243A57;
@@ -134,7 +144,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		}
 
 		setMdEditor(!mdEditor);
+		localStorage.setItem('editorPreference', mdEditor ? 'fancy' : 'markdown');
 	}
+	const getEditorPreference = () => {
+		const preference = localStorage.getItem('editorPreference');
+		if (preference === 'fancy') {
+			setMdEditor(false);
+		} else {
+			setMdEditor(true);
+		}
+	};
+
+	useEffect(() => {
+		getEditorPreference();
+	}, []);
 
 	useEffect(() => {
 		if (quotedText) {
@@ -178,7 +201,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark'
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
-						title='Select Gif'
+						title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
 						footer={null}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -190,6 +213,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
 								setIsModalVisible(false);
 							}}
+							theme={theme}
 						/>
 					</Modal>
 
@@ -396,7 +420,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										editor.ui.registry.addIcon('custom-icon', gifSVGData);
 										editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 									},
-									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
+									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image  media emoticons',
 									xss_sanitization: true,
 									textpattern_patterns: [
 										{ start: '*', end: '*', format: 'italic' },

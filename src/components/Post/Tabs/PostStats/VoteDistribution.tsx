@@ -8,6 +8,7 @@ import { useTheme } from 'next-themes';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from 'src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
 
 interface IVoteDistributionProps {
 	votesDistribution: { ayes: any[]; nays: any[]; abstain: any[] };
@@ -46,19 +47,25 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 		const totalNayBal = votesDistribution?.nays.reduce((acc, cur) => acc + cur.balance, 0);
 		const totalAbstainBal = votesDistribution?.abstain.reduce((acc, cur) => acc + cur.balance, 0);
 
-		const sortedAyes = votesDistribution.ayes.filter((item) => item.balance >= totalAyeBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const sortedAyes = votesDistribution.ayes
+			.filter((item) => item.balance >= totalAyeBal * 0.03)
+			.sort((a, b) => (a.votingPower && b.votingPower ? b.votingPower - a.votingPower : b.balance - a.balance));
 		const smallAyesBalance = votesDistribution.ayes.filter((item) => item.balance < totalAyeBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
 		if (smallAyesBalance > 0) {
 			sortedAyes.push({ balance: smallAyesBalance, voter: 'Others' });
 		}
 
-		const sortedNays = votesDistribution.nays.filter((item) => item.balance >= totalNayBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const sortedNays = votesDistribution.nays
+			.filter((item) => item.balance >= totalNayBal * 0.03)
+			.sort((a, b) => (a.votingPower && b.votingPower ? b.votingPower - a.votingPower : b.balance - a.balance));
 		const smallNaysBalance = votesDistribution.nays.filter((item) => item.balance < totalNayBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
 		if (smallNaysBalance > 0) {
 			sortedNays.push({ balance: smallNaysBalance, voter: 'Others' });
 		}
 
-		const sortedAbstain = votesDistribution.abstain.filter((item) => item.balance >= totalAbstainBal * 0.03).sort((a, b) => b.balance - a.balance);
+		const sortedAbstain = votesDistribution.abstain
+			.filter((item) => item.balance >= totalAbstainBal * 0.03)
+			.sort((a, b) => (a.votingPower && b.votingPower ? b.votingPower - a.votingPower : b.balance - a.balance));
 		const smallAbstainBalance = votesDistribution.abstain.filter((item) => item.balance < totalAbstainBal * 0.03).reduce((acc, cur) => acc + cur.balance, 0);
 		if (smallAbstainBalance > 0) {
 			sortedAbstain.push({ balance: smallAbstainBalance, voter: 'Others' });
@@ -103,6 +110,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 									voter={item.voter}
 									votePercent={(item.balance / ayeVotes.totalBalance) * 100}
 									balance={item.balance}
+									votingPower={item.votingPower}
 								/>
 							);
 						})}
@@ -123,6 +131,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 									voter={item.voter}
 									balance={item.balance}
 									votePercent={(item.balance / nayVotes.totalBalance) * 100}
+									votingPower={item.votingPower}
 								/>
 							);
 						})}
@@ -143,6 +152,7 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 									voteType='Abstain'
 									balance={item.balance}
 									votePercent={(item.balance / abstainVotes.totalBalance) * 100}
+									votingPower={item.votingPower}
 								/>
 							);
 						})}
@@ -154,7 +164,21 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 	);
 };
 
-const GridItem = ({ color, votePercent, voter, balance, voteType }: { balance: number; voter: string; color: string; votePercent: number; voteType: string }) => {
+const GridItem = ({
+	color,
+	votePercent,
+	voter,
+	balance,
+	voteType,
+	votingPower
+}: {
+	balance: number;
+	voter: string;
+	color: string;
+	votePercent: number;
+	voteType: string;
+	votingPower: number;
+}) => {
 	const { network } = useNetworkSelector();
 	const style = {
 		backgroundColor: color,
@@ -172,10 +196,22 @@ const GridItem = ({ color, votePercent, voter, balance, voteType }: { balance: n
 			overlayClassName='dark:bg-section-dark-overlay dark:text-white'
 			overlayStyle={{ padding: '0px' }}
 			content={
-				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high hover:scale-105 hover:opacity-80 dark:text-white'>
-					<span>{voter.length < 10 ? voter : `${voter.slice(0, 5)}...${voter.slice(-3)}`}</span>
+				<div className='flex cursor-pointer flex-col items-center p-0 text-xs font-medium text-blue-light-high dark:text-white'>
+					{voter === 'Others' ? (
+						voter
+					) : (
+						<span className='hover:scale-105 hover:opacity-80'>
+							<Address
+								address={voter}
+								displayInline
+								isTruncateUsername={false}
+								disableTooltip
+								iconSize={18}
+							/>
+						</span>
+					)}
 					<span>
-						{formatUSDWithUnits(balance.toString(), 1)} {chainProperties[network]?.tokenSymbol}
+						{formatUSDWithUnits(votingPower ? votingPower.toString() : balance.toString(), 2)} {chainProperties[network]?.tokenSymbol}
 					</span>
 					<span>
 						{votePercent.toFixed(2) + '%'} of {voteType}

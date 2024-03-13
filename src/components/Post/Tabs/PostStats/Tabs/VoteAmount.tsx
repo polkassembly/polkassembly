@@ -21,10 +21,11 @@ interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
 	activeIssuance: BN;
 	support: BN;
+	turnout: BN | null;
 }
 
 const ZERO = new BN(0);
-const VoteAmount = ({ allVotes, support, activeIssuance }: IVotesAmountProps) => {
+const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmountProps) => {
 	const { network } = useNetworkSelector();
 
 	const [tallyData, setTallyData] = useState({
@@ -168,6 +169,7 @@ const VoteAmount = ({ allVotes, support, activeIssuance }: IVotesAmountProps) =>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
 						support={support}
+						turnout={turnout}
 					/>
 				</div>
 				<VoteDistribution votesDistribution={votesDistribution} />

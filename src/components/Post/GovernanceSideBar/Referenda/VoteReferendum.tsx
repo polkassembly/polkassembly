@@ -166,10 +166,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
-			setSelectedProxyAddress(proxyAddr[0]);
 			if (!showProxyDropdown) {
 				setSelectedProxyAddress('');
+				return;
 			}
+			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
 
@@ -541,7 +542,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
-			...(selectedProxyAddress !== '' && { proxyAddress: selectedProxyAddress }),
+			proxyAddress: selectedProxyAddress,
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});

@@ -72,10 +72,11 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 
 interface IPostHeadingProps {
 	className?: string;
+	setRequestedAmount?: any;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className } = props;
+	const { className, setRequestedAmount } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -144,6 +145,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
+	setRequestedAmount(formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network));
 
 	return (
 		<div className={className}>

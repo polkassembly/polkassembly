@@ -883,7 +883,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
 											onChange={() => {
 												setShowProxyDropdown(!showProxyDropdown);
-												if (!showProxyDropdown === false) {
+												if (!showProxyDropdown) {
 													setSelectedProxyAddress('');
 												}
 											}}

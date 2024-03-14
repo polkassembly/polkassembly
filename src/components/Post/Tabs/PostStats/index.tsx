@@ -22,8 +22,6 @@ import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
 import { Skeleton } from 'antd';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
-import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
 
 interface IPostStatsProps {
 	postId: string;
@@ -144,28 +142,15 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) return;
 
 		(async () => {
-			const res = await fetchSubsquid({
-				network,
-				query: GET_TOTAL_CONVICTION_VOTES_COUNT,
-				variables: {
-					index_eq: postId,
-					type_eq: 'Referendum'
-				}
+			const { data, error } = await nextApiClientFetch<{
+				data: VoteInfo;
+				totalCount: Number;
+			}>('/api/v1/votes/getTotalVotesForOtherNetworks', {
+				postId: postId
 			});
-			const totalCount = res?.data?.convictionVotesConnection?.totalCount;
 
-			if (totalCount) {
-				const res = await fetchSubsquid({
-					network,
-					query: GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL,
-					variables: {
-						index_eq: postId,
-						limit: totalCount,
-						type_eq: 'Referendum'
-					}
-				});
-
-				if (res && res.data && res.data.convictionVotes && Array.isArray(res.data.convictionVotes)) {
+			if (data) {
+				if (data && data?.data && data?.data && Array.isArray(data?.data)) {
 					const voteInfo: VoteInfo = {
 						aye_amount: ZERO,
 						aye_without_conviction: ZERO,
@@ -175,7 +160,8 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 						turnout: ZERO,
 						voteThreshold: ''
 					};
-					res.data.convictionVotes.forEach((vote: any) => {
+
+					data?.data?.forEach((vote: any) => {
 						if (vote) {
 							const { balance, lockPeriod, decision } = vote;
 							if (decision === 'yes') {
@@ -202,6 +188,8 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 						nays: voteInfo.nay_amount
 					});
 				}
+			} else if (error) {
+				console.log(error);
 			}
 		})();
 	}, [network, postId]);

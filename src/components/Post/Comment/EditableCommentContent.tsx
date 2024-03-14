@@ -482,8 +482,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			commentId,
 			postId: comment.post_index || comment.post_index === 0 ? comment.post_index : props.postId,
 			postType: comment.post_type || props.proposalType,
-			trackNumber: track_number,
-			userId: id
+			trackNumber: track_number
 		});
 
 		if (deleteCommentError || !data) {

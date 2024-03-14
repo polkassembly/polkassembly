@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Divider, Form, Skeleton } from 'antd';
+import { Divider, Form } from 'antd';
 import dynamic from 'next/dynamic';
 // import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -26,6 +26,7 @@ import LoginLogoDark from '~assets/icons/login-logo-dark.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (

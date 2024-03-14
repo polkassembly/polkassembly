@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
@@ -10,6 +9,7 @@ import React, { FC } from 'react';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import { ErrorState, PostEmptyState } from 'src/ui-components/UIStates';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const GovernanceCard = dynamic(() => import('~src/components/GovernanceCard'), {
 	loading: () => <Skeleton active />,

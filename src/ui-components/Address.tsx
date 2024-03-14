@@ -19,7 +19,7 @@ import { EAddressOtherTextType, IDelegate } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
-import { Skeleton, Space } from 'antd';
+import { Space } from 'antd';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -30,6 +30,7 @@ import Tooltip from '~src/basic-components/Tooltip';
 import Image from 'next/image';
 import { isAddress } from 'ethers';
 import { poppins } from 'pages/_app';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -37,7 +38,7 @@ const Tipping = dynamic(() => import('~src/components/Tipping'), {
 
 const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
 	loading: () => (
-		<Skeleton.Avatar
+		<SkeletonAvatar
 			active
 			size='large'
 			shape='circle'

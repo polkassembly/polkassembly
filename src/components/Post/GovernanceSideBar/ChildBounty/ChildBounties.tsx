@@ -53,16 +53,16 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
 
 			if (!totalAwardedReward.isZero()) {
-				setDisbursedAmount(formatedBalance(totalAwardedReward.toString(), unit) + ' ' + unit);
+				setDisbursedAmount(formatedBalance(totalAwardedReward.toString(), unit));
 			}
 
 			if (!totalReward.isZero()) {
-				setTotalAmount(formatedBalance(totalReward.toString(), unit) + ' ' + unit);
+				setTotalAmount(formatedBalance(totalReward.toString(), unit));
 			}
 
 			if (!totalAwardedReward.isZero() && !totalReward.isZero()) {
 				const remaining = totalReward.sub(totalAwardedReward);
-				setRemainingAmount(formatedBalance(remaining.toString(), unit) + ' ' + unit);
+				setRemainingAmount(formatedBalance(remaining.toString(), unit));
 			}
 		}
 	};
@@ -77,19 +77,19 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			color: '#FFC302',
 			id: 'disbursed',
 			label: 'Disbursed',
-			value: parseFloat(disbursedAmount.replace('DOT', '').replace(/,/g, ''))
+			value: parseFloat(disbursedAmount.replace(/,/g, ''))
 		},
 		{
 			color: '#F1F1EF',
 			id: 'remaining',
 			label: 'Remaining',
-			value: parseFloat(remainingAmount.replace('DOT', '').replace(/,/g, ''))
+			value: parseFloat(remainingAmount.replace(/,/g, ''))
 		},
 		{
 			color: '#FF8E11',
 			id: 'requested',
 			label: 'Requested',
-			value: parseFloat(requestedAmount.replace('DOT', '').replace(/,/g, ''))
+			value: parseFloat(requestedAmount.replace(/,/g, ''))
 		}
 	];
 

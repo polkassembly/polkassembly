@@ -326,7 +326,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 						<span className='flex'>
@@ -350,7 +350,7 @@ const CreateProposal = ({
 								}}
 							>
 								{contextHolder}
-								<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+								<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 							</span>
 						</span>
 					</div>

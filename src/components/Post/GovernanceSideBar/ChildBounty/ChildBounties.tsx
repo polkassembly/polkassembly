@@ -14,7 +14,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ResponsivePie } from '@nivo/pie';
 import { BN } from 'bn.js';
-// import { Donut } from '@ant-design/charts';
 
 interface IChildBountiesProps {
 	requestedAmount?: any;

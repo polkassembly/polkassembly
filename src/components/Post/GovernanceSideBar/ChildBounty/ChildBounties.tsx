@@ -165,6 +165,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 							}
 						}
 					}}
+					valueFormat={(value) => `${value} ${unit}`}
 				/>
 			</div>
 

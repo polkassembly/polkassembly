@@ -69,7 +69,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 							onClick={() => handleCopyClicked('/add <username> <verificationToken>')}
 							className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 						>
-							<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
+							<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' /> {'<username>'} {'<verificationToken>'}
 						</span>
 						<div className='mt-4 flex justify-end'>
 							<CustomButton
@@ -88,7 +88,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 										onClick={() => handleCopyClicked(username as string)}
 										className='bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 									>
-										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {username}
+										<CopyIcon className='relative text-2xl text-lightBlue dark:text-icon-dark-inactive' /> {username}
 									</span>
 								</div>
 
@@ -98,7 +98,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 										onClick={() => handleCopyClicked(token)}
 										className='token-desktop-container bg-bg-secondary border-text_secondary mx-2 cursor-pointer rounded-md border border-solid p-1 text-pink_primary dark:text-blue-dark-helper'
 									>
-										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {token}
+										<CopyIcon className='relative text-2xl text-lightBlue dark:text-icon-dark-inactive' /> {token}
 									</span>
 									<span
 										onClick={() => handleCopyClicked(token)}

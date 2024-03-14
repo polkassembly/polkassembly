@@ -54,7 +54,9 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	}, [clearTags, isSearch]);
 
 	useEffect(() => {
-		allTags.length === 0 && getData();
+		if (!allTags.length) {
+			getData();
+		}
 		!isSearch && setTags(defaultTags);
 		defaultTags.length > 0 && setDisplayTags(defaultTags);
 		// eslint-disable-next-line react-hooks/exhaustive-deps

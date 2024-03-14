@@ -8,7 +8,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import BecomeDelegate from './BecomeDelegate';
 import TotalDelegationData from './TotalDelegationData';
 import TrendingDelegates from './TrendingDelegates';
-import { Skeleton, TabsProps } from 'antd';
+import { TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -17,6 +17,7 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { useApiContext } from '~src/context';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface Props {
 	className?: string;

@@ -74,7 +74,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
 							className='token-desktop-container bg-bg-secondary border-text_secondary cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
-							/polkassembly-add {'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px]' />
+							/polkassembly-add {'<username>'} {'<verificationToken>'} <CopyIcon className='relative top-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						</span>
 						<span
 							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}

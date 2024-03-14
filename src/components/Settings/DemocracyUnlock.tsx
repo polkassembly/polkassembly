@@ -339,6 +339,7 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 								)}{' '}
 							</div>
 						)}
+
 						{votes.length ? (
 							<>
 								<ul className='mt-3 flex list-none flex-col text-sidebarBlue'>

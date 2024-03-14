@@ -90,6 +90,9 @@ const ReferendaActionModal = ({
 	const { id: userId } = useUserDetailsSelector();
 	const [postId, setPostId] = useState(0);
 	const [selectedTrack, setSelectedTrack] = useState('');
+	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
+	const [preimageHash, setPreimageHash] = useState<string>('');
+	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
@@ -125,6 +128,10 @@ const ReferendaActionModal = ({
 		localStorage.removeItem('treasuryProposalProposerAddress');
 		localStorage.removeItem('treasuryProposalProposerWallet');
 		localStorage.removeItem('treasuryProposalData');
+		setIsPreimage(null);
+		setPreimageLength(0);
+		setPreimageHash('');
+		setSelectedTrack('');
 		writeProposalForm.resetFields();
 		setSteps({ percent: 0, step: 0 });
 		setOpenModal(false);
@@ -180,13 +187,13 @@ const ReferendaActionModal = ({
 				closable={false}
 				title={
 					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
-						Exit Treasury Proposal Creation
+						Exit Proposal Creation
 					</div>
 				}
 			>
 				<div className='mt-6 px-6'>
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
-						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
+						Your proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
@@ -269,6 +276,12 @@ const ReferendaActionModal = ({
 									afterProposalCreated={handleCreateDiscussion}
 									selectedTrack={selectedTrack}
 									setSelectedTrack={setSelectedTrack}
+									isPreimage={isPreimage}
+									setIsPreimage={setIsPreimage}
+									preimageHash={preimageHash}
+									setPreimageHash={setPreimageHash}
+									preimageLength={preimageLength}
+									setPreimageLength={setPreimageLength}
 								/>
 							)}
 							{referendaModal === 2 && (

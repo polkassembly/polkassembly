@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect, useState } from 'react';
@@ -41,6 +40,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -97,7 +97,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 		};
 		fetches = { ...fetches, ...onChainFetches };
 	}
-	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && network !== AllNetworks.POLYMESH) {
+	if (
+		chainProperties[network]?.subsquidUrl &&
+		![AllNetworks.COLLECTIVES, AllNetworks.POLIMEC, AllNetworks.ROLIMEC, AllNetworks.WESTENDCOLLECTIVES, AllNetworks.POLYMESH].includes(network)
+	) {
 		const onChainFetches = {
 			bounties: getLatestActivityOnChainPosts({
 				listingLimit: LATEST_POSTS_LIMIT,
@@ -155,7 +158,32 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 		fetches = { ...fetches, ...onChainFetches };
 	}
+	if (chainProperties[network]?.subsquidUrl && [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)) {
+		const onChainFetches = {
+			council_motions: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.COUNCIL_MOTIONS
+			}),
+			democracy_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.DEMOCRACY_PROPOSALS
+			}),
+			referendums: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.REFERENDUMS
+			}),
+			treasury_proposals: getLatestActivityOnChainPosts({
+				listingLimit: LATEST_POSTS_LIMIT,
+				network,
+				proposalType: ProposalType.TREASURY_PROPOSALS
+			})
+		};
 
+		fetches = { ...fetches, ...onChainFetches };
+	}
 	if (isGrantsSupported(network)) {
 		(fetches as any)['grants'] = getLatestActivityOffChainPosts({
 			listingLimit: LATEST_POSTS_LIMIT,
@@ -299,10 +327,12 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					</div>
 				</div>
 			</main>
-			<OnChainIdentity
-				open={openContinuingModal}
-				setOpen={setOpenContinuingModal}
-			/>
+			{onchainIdentitySupportedNetwork.includes(network) && (
+				<OnChainIdentity
+					open={openContinuingModal}
+					setOpen={setOpenContinuingModal}
+				/>
+			)}
 		</>
 	);
 };

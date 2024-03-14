@@ -457,6 +457,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -500,7 +502,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			])
 		];
 	}
-
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
 			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),

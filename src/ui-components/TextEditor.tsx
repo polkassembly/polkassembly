@@ -6,7 +6,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
-import { Modal, Skeleton } from 'antd';
+import { Modal } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useQuoteCommentContext } from '~src/context';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -189,7 +190,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 				>
 					{loading && (
 						<div className='absolute inset-0'>
-							<Skeleton.Input
+							<SkeletonInput
 								block={true}
 								active={true}
 								style={{ height: `${height || 300}px` }}
@@ -201,7 +202,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark'
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
-						title='Select Gif'
+						title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
 						footer={null}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -213,6 +214,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
 								setIsModalVisible(false);
 							}}
+							theme={theme}
 						/>
 					</Modal>
 
@@ -419,7 +421,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										editor.ui.registry.addIcon('custom-icon', gifSVGData);
 										editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 									},
-									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
+									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image  media emoticons',
 									xss_sanitization: true,
 									textpattern_patterns: [
 										{ start: '*', end: '*', format: 'italic' },

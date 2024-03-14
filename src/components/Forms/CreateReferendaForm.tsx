@@ -18,7 +18,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus, PostOrigin } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
-import { BN, BN_HUNDRED, BN_ONE } from '@polkadot/util';
+import { BN, BN_HUNDRED, BN_ONE, isHex } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SelectTracks from '../OpenGovTreasuryProposal/SelectTracks';
@@ -30,6 +30,9 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { setSigner } from '~src/util/create-referenda/setSigner';
 import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import { LoadingOutlined } from '@ant-design/icons';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IPreimageData } from 'pages/api/v1/preimages/latest';
+import _ from 'lodash';
 
 // Testing adding a new commit
 interface ParamField {
@@ -97,7 +100,13 @@ export default function CreateReferendaForm({
 	handleClose,
 	afterProposalCreated,
 	selectedTrack,
-	setSelectedTrack
+	setSelectedTrack,
+	isPreimage,
+	setIsPreimage,
+	preimageHash,
+	setPreimageHash,
+	preimageLength,
+	setPreimageLength
 }: {
 	setSteps: (pre: ISteps) => void;
 	setOpenSuccess: (pre: boolean) => void;
@@ -105,9 +114,16 @@ export default function CreateReferendaForm({
 	afterProposalCreated: (postId: number) => Promise<void>;
 	selectedTrack: string;
 	setSelectedTrack: React.Dispatch<React.SetStateAction<string>>;
+	isPreimage: boolean | null;
+	setIsPreimage: (pre: boolean) => void;
+	preimageHash: string;
+	setPreimageHash: (pre: string) => void;
+	preimageLength: number | null;
+	setPreimageLength: (pre: number | null) => void;
 }) {
 	const { api, apiReady } = useApiContext();
 	const { address, availableBalance } = useInitialConnectAddress();
+	const availableBalanceBN = new BN(availableBalance);
 	const { loginWallet } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -180,6 +196,67 @@ export default function CreateReferendaForm({
 				onFailed,
 				onSuccess,
 				tx: mainTx
+			});
+		} catch (error) {
+			setLoadingStatus({ isLoading: false, message: '' });
+			console.log(':( transaction failed');
+			console.error('ERROR:', error);
+			queueNotification({
+				header: 'Failed!',
+				message: error.message,
+				status: NotificationStatus.ERROR
+			});
+		}
+	};
+
+	const handleExistingPreimageSubmit = async () => {
+		if (!api || !apiReady) {
+			return;
+		}
+		if (!loginWallet) {
+			return;
+		}
+		await setSigner(api, loginWallet);
+
+		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
+		try {
+			const proposalTx = api.tx.referenda.submit(
+				selectedTrack,
+				{ Lookup: { hash: preimageHash, len: preimageLength } },
+				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+			);
+			const post_id = Number(await api.query.referenda.referendumCount());
+
+			const onSuccess = async () => {
+				afterProposalCreated(post_id);
+				queueNotification({
+					header: 'Success!',
+					message: `Proposal #${post_id} successful.`,
+					status: NotificationStatus.SUCCESS
+				});
+				setLoadingStatus({ isLoading: false, message: '' });
+				handleClose();
+				setOpenSuccess(true);
+			};
+
+			const onFailed = (message: string) => {
+				setLoadingStatus({ isLoading: false, message: '' });
+				queueNotification({
+					header: 'Failed!',
+					message,
+					status: NotificationStatus.ERROR
+				});
+			};
+			await executeTx({
+				address,
+				api,
+				apiReady,
+				errorMessageFallback: 'Transaction failed.',
+				network,
+				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+				onFailed,
+				onSuccess,
+				tx: proposalTx
 			});
 		} catch (error) {
 			setLoadingStatus({ isLoading: false, message: '' });
@@ -321,6 +398,46 @@ export default function CreateReferendaForm({
 		});
 	}
 
+	const existPreimageData = async (preimageHash: string) => {
+		setPreimageLength(0);
+		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
+		setLoadingStatus({ isLoading: true, message: '' });
+		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
+
+		if (data && !data?.message) {
+			if (data.hash === preimageHash) {
+				setPreimageLength(data.length);
+				setSteps({ percent: 100, step: 1 });
+			} else {
+				setPreimageLength(0);
+				queueNotification({
+					header: 'Incorrect Preimage Added!',
+					message: 'Please enter a preimage for a treasury related track.',
+					status: NotificationStatus.ERROR
+				});
+			}
+		} else if (error || data?.message) {
+			console.log('fetching data from polkadotjs');
+		}
+		setLoadingStatus({ isLoading: false, message: '' });
+	};
+	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
+		if (!preimageHash || preimageLength === null) return false;
+		return !isHex(preimageHash, 256) || !preimageLength || preimageLength === 0;
+	};
+
+	const invalidPreimageHash = useCallback(() => checkPreimageHash(preimageLength, preimageHash), [preimageHash, preimageLength]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
+
+	const handlePreimageHash = (preimageHash: string) => {
+		if (!preimageHash || preimageHash.length === 0) return;
+		setSteps({ percent: 60, step: 1 });
+		debounceExistPreimageFn(preimageHash);
+		setPreimageHash(preimageHash);
+	};
+
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
 		try {
@@ -372,139 +489,223 @@ export default function CreateReferendaForm({
 			indicator={<LoadingOutlined />}
 		>
 			<section className='w-full'>
-				{new BN(availableBalance || '0').lte(submissionDeposite) && (
-					<Alert
-						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-						type='info'
-						showIcon
-						message={
-							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
-							</span>
-						}
-						description={
-							<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
-								<li className='mt-0 flex w-full justify-between'>
-									<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
-									<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
-									</span>
-								</li>
-							</div>
-						}
-					/>
-				)}
-				{loadingStatus.isLoading && (
-					<div className='flex flex-col items-center justify-center'>
-						{/* <Loader /> */}
-						{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
-					</div>
-				)}
-				<div className='flex items-center gap-x-2'>
-					<div className='mt-2 w-full'>
-						<label className='input-label dark:text-blue-dark-medium'>Pallet</label>
-						<Dropdown
-							theme={theme}
-							overlayClassName='z-[1056]'
-							trigger={['click']}
-							menu={{
-								items: palletRPCs,
-								onClick: (e: any) => onPalletCallableParamChange(e, 'palletRpc')
-							}}
-							className={'border border-white'}
+				<div className='my-5 flex flex-col'>
+					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Do you have an existing preimage? </label>
+					<Radio.Group
+						onChange={(e) => {
+							setIsPreimage(e.target.value);
+							// onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);
+							setSteps({ percent: 20, step: 1 });
+						}}
+						size='small'
+						className='mt-1.5'
+						value={isPreimage}
+					>
+						<Radio
+							value={true}
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 						>
-							<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
-								<span className='flex items-center gap-x-2'>{palletRpc || <span className='text-text_secondary'>Pallet</span>}</span>
-								<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
-							</div>
-						</Dropdown>
-					</div>
-					{palletRpc && (
-						<div className='mt-2 w-full'>
-							<label className='input-label dark:text-blue-dark-medium'>Method</label>
-							<Dropdown
-								theme={theme}
-								trigger={['click']}
-								menu={{
-									items: callables,
-									onClick: (e: any) => onPalletCallableParamChange(e, 'callable')
-								}}
-							>
-								<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
-									<span className='flex items-center gap-x-2'>{callable || <span className='text-text_secondary'>Method</span>}</span>
-									<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
-								</div>
-							</Dropdown>
-						</div>
-					)}
+							Yes
+						</Radio>
+						<Radio
+							value={false}
+							className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
+						>
+							No
+						</Radio>
+					</Radio.Group>
 				</div>
-				{paramFields?.map((paramField, ind) => {
-					return (
-						<div
-							key={ind}
-							className='mt-2'
-						>
-							<label className='input-label dark:text-blue-dark-medium'>
-								{paramField.name}
-								{paramField.optional ? ' (optional)' : ''}
+				{isPreimage && (
+					<>
+						<div className='preimage mt-6'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+								Preimage Hash{' '}
+								<span>
+									<HelperTooltip
+										text='A unique hash is generate for your preimage and it is used to populate proposal details.'
+										className='ml-1'
+									/>
+								</span>
 							</label>
-							{['i8', 'i16', 'i32', 'i64', 'i128', 'u8', 'u16', 'u32', 'u64', 'u128', 'u256'].includes(
-								paramField.raw.info === TypeDefInfo.Compact && paramField.raw.sub ? (paramField.raw.sub as any)?.type : paramField.raw.type
-							) && ['Amount', 'Balance', 'BalanceOf'].includes(paramField.typeName) ? (
-								<BalanceInput
-									theme={theme}
-									onChange={(balance) => onParamChange(balance.toString(), { ind, paramField })}
-								/>
-							) : ['AccountId', 'Address', 'LookupSource', 'MultiAddress'].includes(paramField.type) ? (
-								<AddressInput
-									theme={theme}
-									onChange={(address) => onParamChange(address, { ind, paramField })}
-									placeholder={paramField.type}
-									className='!mt-0'
-								/>
-							) : (
+							<Form.Item name='preimage_hash'>
 								<Input
-									placeholder={paramField.type}
-									type='text'
-									className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									value={inputParams[ind]?.value || ''}
-									onChange={(event) => onParamChange(event.target.value, { ind, paramField })}
+									name='preimage_hash'
+									className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									value={preimageHash}
+									onChange={(e) => handlePreimageHash(e.target.value)}
 								/>
+							</Form.Item>
+							{invalidPreimageHash() && !loadingStatus.isLoading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
+						</div>
+						<div className='mt-6'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
+							<Input
+								name='preimage_length'
+								className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+								value={preimageLength || 0}
+								disabled
+							/>
+						</div>
+						<div className='mt-4'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+								Select Track{' '}
+								<span>
+									<HelperTooltip
+										text='Track selection is done based on the amount requested.'
+										className='ml-1'
+									/>
+								</span>
+							</label>
+							<SelectTracks
+								tracksArr={trackArr}
+								onTrackChange={(track) => {
+									setSelectedTrack(track);
+									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+									// getPreimageTxFee();
+									// setSteps({ percent: 100, step: 1 });
+								}}
+								selectedTrack={selectedTrack}
+							/>
+						</div>
+					</>
+				)}
+				{isPreimage === false && (
+					<div>
+						{availableBalanceBN.lte(submissionDeposite) && (
+							<Alert
+								className='my-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								type='info'
+								showIcon
+								message={
+									<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+										Please maintain minimum {formatedBalance(String(submissionDeposite.toString()), unit)} {unit} balance for these transactions:
+									</span>
+								}
+								description={
+									<div className='-mt-1 mr-[18px] flex flex-col gap-1 text-xs dark:text-blue-dark-high'>
+										<li className='mt-0 flex w-full justify-between'>
+											<div className='mr-1 text-lightBlue dark:text-blue-dark-medium'>Proposal Submission</div>
+											<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+												{formatedBalance(String(submissionDeposite.toString()), unit)} {unit}
+											</span>
+										</li>
+									</div>
+								}
+							/>
+						)}
+						{loadingStatus.isLoading && (
+							<div className='flex flex-col items-center justify-center'>
+								{/* <Loader /> */}
+								{loadingStatus.isLoading && <span className='text-pink_primary dark:text-pink-dark-primary'>{loadingStatus.message}</span>}
+							</div>
+						)}
+						<div className='flex items-center gap-x-2'>
+							<div className='w-full'>
+								<label className='input-label dark:text-blue-dark-medium'>Pallet</label>
+								<Dropdown
+									theme={theme}
+									overlayClassName='z-[1056]'
+									trigger={['click']}
+									menu={{
+										items: palletRPCs,
+										onClick: (e: any) => onPalletCallableParamChange(e, 'palletRpc')
+									}}
+									className={'border border-white'}
+								>
+									<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
+										<span className='flex items-center gap-x-2'>{palletRpc || <span className='text-lightBlue dark:text-blue-dark-medium'>Pallet</span>}</span>
+										<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
+									</div>
+								</Dropdown>
+							</div>
+							{palletRpc && (
+								<div className='w-full'>
+									<label className='input-label dark:text-blue-dark-medium'>Method</label>
+									<Dropdown
+										theme={theme}
+										trigger={['click']}
+										menu={{
+											items: callables,
+											onClick: (e: any) => onPalletCallableParamChange(e, 'callable')
+										}}
+									>
+										<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
+											<span className='flex items-center gap-x-2'>{callable || <span className='text-lightBlue dark:text-blue-dark-medium'>Method</span>}</span>
+											<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
+										</div>
+									</Dropdown>
+								</div>
 							)}
 						</div>
-					);
-				})}
-				<div className='mt-6'>
-					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
-						Select Track{' '}
-						<span>
-							<HelperTooltip
-								text='Track selection is done based on the amount requested.'
-								className='ml-1'
+						{paramFields?.map((paramField, ind) => {
+							return (
+								<div
+									key={ind}
+									className=''
+								>
+									<label className='input-label dark:text-blue-dark-medium'>
+										{paramField.name}
+										{paramField.optional ? ' (optional)' : ''}
+									</label>
+									{['i8', 'i16', 'i32', 'i64', 'i128', 'u8', 'u16', 'u32', 'u64', 'u128', 'u256'].includes(
+										paramField.raw.info === TypeDefInfo.Compact && paramField.raw.sub ? (paramField.raw.sub as any)?.type : paramField.raw.type
+									) && ['Amount', 'Balance', 'BalanceOf'].includes(paramField.typeName) ? (
+										<BalanceInput
+											theme={theme}
+											onChange={(balance) => onParamChange(balance.toString(), { ind, paramField })}
+										/>
+									) : ['AccountId', 'Address', 'LookupSource', 'MultiAddress'].includes(paramField.type) ? (
+										<AddressInput
+											theme={theme}
+											onChange={(address) => onParamChange(address, { ind, paramField })}
+											placeholder={paramField.type}
+											className='!mt-0'
+										/>
+									) : (
+										<Input
+											placeholder={paramField.type}
+											type='text'
+											className='rounded-md px-4 py-3 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											value={inputParams[ind]?.value || ''}
+											onChange={(event) => onParamChange(event.target.value, { ind, paramField })}
+										/>
+									)}
+								</div>
+							);
+						})}
+						<div className='mt-4'>
+							<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+								Select Track{' '}
+								<span>
+									<HelperTooltip
+										text='Track selection is done based on the amount requested.'
+										className='ml-1'
+									/>
+								</span>
+							</label>
+							<SelectTracks
+								tracksArr={trackArr}
+								onTrackChange={(track) => {
+									setSelectedTrack(track);
+									// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+									// getPreimageTxFee();
+									// setSteps({ percent: 100, step: 1 });
+								}}
+								selectedTrack={selectedTrack}
 							/>
-						</span>
-					</label>
-					<SelectTracks
-						tracksArr={trackArr}
-						onTrackChange={(track) => {
-							setSelectedTrack(track);
-							// onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
-							// getPreimageTxFee();
-							// setSteps({ percent: 100, step: 1 });
-						}}
-						selectedTrack={selectedTrack}
-					/>
-				</div>
+						</div>
+					</div>
+				)}
 
-				{/* {isPreimage !== null && ( */}
-				<div
-					className='mt-6 flex cursor-pointer items-center gap-2'
-					onClick={() => setOpenAdvanced(!openAdvanced)}
-				>
-					<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
-					<DownArrow className='down-icon' />
-				</div>
-				{/* )} */}
+				{isPreimage !== null && (
+					<div
+						className='mt-6 flex cursor-pointer items-center gap-2'
+						onClick={() => setOpenAdvanced(!openAdvanced)}
+					>
+						<span className='text-sm font-medium text-pink_primary'>Advanced Details</span>
+						<DownArrow className='down-icon' />
+					</div>
+				)}
 				{openAdvanced && (
 					<div className='preimage mt-3 flex flex-col'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
@@ -620,9 +821,9 @@ export default function CreateReferendaForm({
 						variant='primary'
 						htmlType='submit'
 						buttonsize='sm'
-						onClick={handleSubmit}
+						onClick={isPreimage ? handleExistingPreimageSubmit : handleSubmit}
 						className={`w-min ${!methodCall || !selectedTrack ? 'opacity-60' : ''}`}
-						disabled={!methodCall || !selectedTrack}
+						disabled={(!methodCall || !selectedTrack) && Boolean(!isPreimage)}
 					>
 						Create Referendum
 					</CustomButton>

@@ -392,7 +392,7 @@ const IdentityForm = ({
 							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
 								This account has already set social verification. Kindly{' '}
 								<span
-									className='font-semibold text-pink_primary'
+									className='cursor-pointer font-semibold text-pink_primary'
 									onClick={() => handleRequestJudgement()}
 								>
 									Request Judgement

@@ -293,7 +293,7 @@ const VoterRow: FC<IVoterRow> = ({
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
-			theme={theme as String}
+			theme={theme as any}
 			// isSmallScreen={isSmallScreen}
 		>
 			<StyledCollapse.Panel

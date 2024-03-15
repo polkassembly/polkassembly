@@ -78,7 +78,7 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 			<DashboardTrackListing
 				posts={posts}
 				trackDetails={trackDetails}
-				theme={theme as string}
+				theme={theme as any}
 				totalCount={count}
 			/>
 		</>

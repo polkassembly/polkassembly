@@ -286,7 +286,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 
 	return (
 		<StyledTextArea
-			theme={props.theme as String}
+			theme={props.theme as any}
 			className='container'
 		>
 			<ReactMde

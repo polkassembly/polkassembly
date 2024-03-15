@@ -221,7 +221,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
-				theme={theme as String}
+				theme={theme as any}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

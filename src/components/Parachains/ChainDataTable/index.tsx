@@ -279,7 +279,7 @@ const ChainDataTable = ({ chain, data }: Props) => {
 			<>
 				<div className='hidden lg:block'>
 					<Table
-						theme={theme as String}
+						theme={theme as any}
 						columns={columns}
 						dataSource={tableData}
 						pagination={false}

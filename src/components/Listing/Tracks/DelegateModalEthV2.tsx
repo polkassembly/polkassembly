@@ -84,7 +84,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	}, [accounts.length, walletConnectProvider]);
 
 	const getAccounts = async () => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			return;
@@ -332,8 +332,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<div
-						className='flex justify-end'
 						key='footer'
+						className='flex items-center justify-end gap-x-2'
 					>
 						<CustomButton
 							key='back'

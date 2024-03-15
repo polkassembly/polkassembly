@@ -65,7 +65,7 @@ const MetamaskSignup: FC<Props> = ({ onWalletUpdate, chosenWallet, isModal, setS
 	};
 
 	const getAccounts = async (): Promise<undefined> => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			return;

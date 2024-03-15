@@ -324,7 +324,7 @@ const AddressConnectModal = ({
 		}
 		const availableBalance = new BN(balanceStr);
 		setAvailableBalance(availableBalance);
-		dispatch(setInitialAvailableBalance(availableBalance));
+		dispatch(setInitialAvailableBalance(availableBalance.toString() || '0'));
 	};
 
 	useEffect(() => {

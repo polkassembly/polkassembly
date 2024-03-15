@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Row, Skeleton } from 'antd';
+import { Divider, Row } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import dynamic from 'next/dynamic';
@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import AccountIcon from '~assets/icons/account-icon.svg';
 import { Collapse } from '../Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const { Panel } = Collapse;
 
@@ -69,7 +70,7 @@ const Account: FC<Props> = ({ className }) => {
 		<Collapse
 			size='large'
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
-			theme={theme}
+			theme={theme as String}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive || false);

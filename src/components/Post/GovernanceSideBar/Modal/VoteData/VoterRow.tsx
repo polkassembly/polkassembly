@@ -16,7 +16,7 @@ import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
@@ -38,6 +38,7 @@ import {
 	setDelegatorLoadingFalse,
 	setDelegatorLoadingTrue
 } from '~src/redux/voteData';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface IVoterRow {
 	className?: string;
@@ -55,7 +56,7 @@ interface IVoterRow {
 }
 
 const StyledCollapse = styled(Collapse)`
-	background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+	background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 	.ant-collapse-item {
 		border-bottom: none;
 	}
@@ -292,7 +293,7 @@ const VoterRow: FC<IVoterRow> = ({
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
-			theme={theme}
+			theme={theme as String}
 			// isSmallScreen={isSmallScreen}
 		>
 			<StyledCollapse.Panel
@@ -400,7 +401,7 @@ const VoterRow: FC<IVoterRow> = ({
 										))}
 									</div>
 									{delegatorLoading ? (
-										<Skeleton.Button active />
+										<SkeletonButton active />
 									) : (
 										delegatedData?.delegator > 10 && (
 											<p

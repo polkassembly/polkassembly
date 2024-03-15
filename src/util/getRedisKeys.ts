@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 type KeyArgs = {
+	url?: string;
 	network?: string;
 	govType?: string;
 	subsquidProposalType?: string;
@@ -30,9 +31,10 @@ export function generateKey({
 	proposalType,
 	postId,
 	voterAddress,
-	keyType
+	keyType,
+	url
 }: KeyArgs): string {
-	return [network, govType, subsquidProposalType, proposalType, keyType, postId, trackId, trackStatus, subStatus, page, sortBy, filterBy, voterAddress]
+	return [network, govType, subsquidProposalType, proposalType, keyType, postId, trackId, trackStatus, subStatus, page, sortBy, filterBy, voterAddress, url]
 		.filter((value) => value !== undefined && value !== null)
 		.join('_');
 }

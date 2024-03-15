@@ -94,7 +94,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
-			theme={theme}
+			theme={theme as String}
 		>
 			<Panel
 				header={
@@ -144,7 +144,6 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									variant='default'
 									className='px-8 py-5 font-semibold'
 								/>
-								,
 								<CustomButton
 									htmlType='submit'
 									key='delete'

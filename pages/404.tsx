@@ -34,7 +34,7 @@ const NotFound = () => {
 					/>
 				</div>
 			}
-			title="Uh oh, it seems this route doesn't exist."
+			title={<p className='m-0 p-0 text-black dark:text-white'>Uh oh, it seems this route does not exist.</p>}
 			extra={
 				<Link
 					href='/'

@@ -6,13 +6,14 @@ import ActiveProposalsIcon from '~assets/icons/active-proposals.svg';
 import ExpandIcon from '~assets/icons/expand.svg';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import dynamic from 'next/dynamic';
-import { Empty, Skeleton } from 'antd';
+import { Empty } from 'antd';
 import { ETrackDelegationStatus } from '~src/types';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface Props {
 	className?: string;
@@ -96,10 +97,10 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 };
 export default styled(ActiveProposals)`
 	.ant-pagination .ant-pagination-item a {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination .ant-pagination-prev button,
 	.ant-pagination .ant-pagination-next button {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 `;

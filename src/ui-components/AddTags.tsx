@@ -42,8 +42,9 @@ const AddTags = ({ tags, setTags, className, disabled, onChange }: Props) => {
 	useEffect(() => {
 		inputValue.length >= 20 ? setCharLimitReached(true) : setCharLimitReached(false);
 
-		allTags.length === 0 && getData();
-
+		if (!allTags?.length) {
+			getData();
+		}
 		handleFilterResults(allTags, setFilteredTags, tags, inputValue);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [inputValue, tags]);

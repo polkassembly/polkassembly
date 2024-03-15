@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Skeleton, Spin, message } from 'antd';
+import { Button, Spin, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -15,14 +15,15 @@ import SocialsHandle from './SocialsHandle';
 import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
-	loading: () => <Skeleton.Avatar active />,
+	loading: () => <SkeletonAvatar active />,
 	ssr: false
 });
 
 const BecomeDelegateModal = dynamic(() => import('src/ui-components/BecomeDelegateModal'), {
-	loading: () => <Skeleton.Avatar active />,
+	loading: () => <SkeletonAvatar active />,
 	ssr: false
 });
 
@@ -113,7 +114,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 									}}
 								>
 									{contextHolder}
-									<CopyIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+									<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</div>
 						)}

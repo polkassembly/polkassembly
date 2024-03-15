@@ -80,16 +80,19 @@ const { Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const Menu = styled(AntdMenu)`
 	.ant-menu-sub.ant-menu-inline {
-		background: ${(props) => {
+		background: ${(props: any) => {
 			return props.theme === 'dark' ? '#0D0D0D' : '#fff';
 		}} !important;
 	}
 
 	.ant-menu-item-selected {
-		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
-		.ant-menu-title-content {
+		.ant-menu-title-content > span {
 			color: var(--pink_primary) !important;
 		}
+		.ant-menu-item-icon {
+			color: var(--pink_primary) !important;
+		}
+		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
 	}
 `;
 
@@ -104,7 +107,7 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
+export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
 const getUserDropDown = (
 	handleSetIdentityClick: any,
@@ -193,7 +196,7 @@ const getUserDropDown = (
 		const { resolvedTheme: theme } = useTheme();
 		return (
 			<Dropdown
-				theme={theme}
+				theme={theme as String}
 				menu={{ items: dropdownMenuItems }}
 				trigger={['click']}
 				className='profile-dropdown'
@@ -290,7 +293,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	// }, [router.asPath]);
 
 	useEffect(() => {
-		if (!window || !(window as any).ethereum || !(window as any).ethereum.on) return;
+		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
 		(window as any).ethereum.on('accountsChanged', () => {
 			window.location.reload();
 		});
@@ -454,6 +457,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -497,7 +502,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			])
 		];
 	}
-
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
 			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -777,7 +781,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<Layout className={className}>
 			<NavHeader
-				theme={theme}
+				theme={theme as String}
 				sidedrawer={sidedrawer}
 				setSidedrawer={setSidedrawer}
 				previousRoute={previousRoute}
@@ -803,7 +807,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu
-							theme={theme}
+							theme={theme as String}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							items={sidebarItems}
@@ -834,7 +838,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					>
 						<Menu
-							theme={theme}
+							theme={theme as String}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
@@ -888,7 +892,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-			<Footer theme={theme} />
+			<Footer theme={theme as String} />
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}
@@ -1049,7 +1053,7 @@ export default styled(AppLayout)`
 	}
 
 	.ant-menu-inline-collapsed-noicon {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {

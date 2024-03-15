@@ -26,7 +26,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		margin-bottom: 0;
 		overflow-wrap: break-word;
 		max-width: 100%;
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 
 		* {
 			max-width: 100% !important;
@@ -39,6 +39,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		th,
 		td {
 			border: 1px solid;
+			border-color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 			padding: 0.5rem;
 		}
 
@@ -55,37 +56,44 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-			color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
-			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+			color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+			font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
+			border: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 		}
 
 		h1 {
 			font-size: 1.5rem;
 			margin-bottom: 2rem;
+			display: table;
+			vertical-align: center;
 		}
 
 		h2 {
 			font-size: 1.3rem;
 			margin: 2rem 0 1rem 0;
-			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			font-weight: ${(props: any) => (props.theme == 'dark' ? '400' : '500')} !important;
+			display: table;
+			vertical-align: center;
 		}
 
 		h3,
 		h4 {
 			font-size: 1.2rem;
 			margin-bottom: 0.8rem;
-			font-weight: ${(props) => (props.theme == 'dark' ? '400' : '500')} !important;
+			font-weight: ${(props: any) => (props.theme == 'dark' ? '400' : '500')} !important;
+			display: table;
+			vertical-align: center;
 		}
 
 		ul,
 		ol {
 			padding-left: 2rem;
-			font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+			font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
 
 			li {
 				padding-left: 0.8rem;
 				margin-bottom: 1.2rem;
-				font-weight: ${(props) => (props.theme == 'dark' ? '300' : '500')} !important;
+				font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
 			}
 
 			li > input {
@@ -94,11 +102,11 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		a {
-			color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
+			color: ${(props: any) => (props.theme == 'dark' ? '#FF60B5' : '#e5007a')} !important;
 
 			&:hover {
 				text-decoration: none;
-				color: ${(props) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
+				color: ${(props: any) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
 			}
 		}
 
@@ -124,7 +132,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		pre {
-			background-color: ${(props) => (props.theme === 'dark' ? '#2c2f32' : '#ebf0f5')} !important;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#2c2f32' : '#ebf0f5')} !important;
 			overflow: auto;
 			border-radius: 0.3rem;
 		}
@@ -141,8 +149,8 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 			padding-left: 4px;
 			padding-right: 4px;
-			background-color: ${(props) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
-			color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
+			color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 		}
 	}
 
@@ -179,7 +187,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 	&.mde-autocomplete-content {
 		margin-top: 4px !important;
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : ' var(--bodyBlue)')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : ' var(--bodyBlue)')} !important;
 		font-weight: 700;
 
 		mark {
@@ -213,7 +221,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
-				theme={theme}
+				theme={theme as String}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

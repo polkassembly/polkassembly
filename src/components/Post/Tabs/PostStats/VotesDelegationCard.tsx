@@ -11,6 +11,7 @@ import { useTheme } from 'next-themes';
 import { Card } from 'antd';
 import DelegatedIcon from '~assets/icons/analytics/delegated.svg';
 import DelegatedIconDark from '~assets/icons/analytics/delegated-dark.svg';
+import styled from 'styled-components';
 
 interface IVoteDelegationProps {
 	delegatedValue: number;
@@ -119,4 +120,20 @@ const VotesDelegationCard: FC<IVoteDelegationProps> = ({ delegatedValue, soloVal
 	);
 };
 
-export default VotesDelegationCard;
+export default styled(VotesDelegationCard)`
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+`;

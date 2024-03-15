@@ -247,7 +247,6 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = form.getFieldValue('twitter').trim();
-
 		return (
 			displayNameVal === alreadyVerifiedfields?.displayName &&
 			twitterVal === alreadyVerifiedfields?.twitter &&
@@ -273,9 +272,15 @@ const IdentityForm = ({
 			userName: currentUser?.username || ''
 		});
 		if (!api || !apiReady || !okAll) return;
-		const identityTx = api.tx?.identity?.setIdentity(info);
+		let tx;
+		let identityTx;
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
-		const tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity()) {
+			tx = requestedJudgementTx;
+		} else {
+			identityTx = api.tx?.identity?.setIdentity(info);
+			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+		}
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
@@ -378,7 +383,7 @@ const IdentityForm = ({
 						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
 					/>
 				)}
-				{handleAllowSetIdentity() && (
+				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -761,7 +766,7 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{handleAllowSetIdentity() ? (
+				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity() ? (
 					<CustomButton
 						onClick={handleRequestJudgement}
 						loading={loading}
@@ -777,6 +782,7 @@ const IdentityForm = ({
 							loading ||
 							(availableBalance && availableBalance.lte(totalFee)) ||
 							gasFee.lte(ZERO_BN) ||
+							handleAllowSetIdentity() ||
 							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
 						}
 						onClick={handleSetIdentity}

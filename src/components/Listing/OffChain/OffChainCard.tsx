@@ -139,7 +139,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
-										theme={theme as String}
+										theme={theme as any}
 										className='sm:mx-2 sm:mt-0'
 										topic={topic}
 									/>
@@ -164,7 +164,7 @@ const DiscussionCard: FC<IDiscussionProps> = (props) => {
 					{topic && (
 						<div className='flex justify-start'>
 							<TopicTag
-								theme={theme as String}
+								theme={theme as any}
 								className='xs:mx-2 xs:my-0.5'
 								topic={topic}
 							/>

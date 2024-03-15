@@ -426,7 +426,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				className='mb-4 rounded-xl border border-solid border-gray-300 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
-				theme={theme as String}
+				theme={theme as any}
 			/>
 		</Spin>
 	);

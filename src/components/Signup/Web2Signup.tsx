@@ -169,7 +169,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			</div>
 			<Container
 				className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md dark:bg-section-dark-overlay ${className}`}
-				theme={theme as String}
+				theme={theme as any}
 			>
 				<div className='-mt-1 flex grid-cols-2 gap-x-5 px-8'>
 					<div

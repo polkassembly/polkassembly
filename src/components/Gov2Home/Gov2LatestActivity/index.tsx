@@ -151,7 +151,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 	return (
 		<Container
 			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
-			theme={theme as String}
+			theme={theme as any}
 		>
 			<div className='flex items-center justify-between pl-1 pr-4'>
 				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>

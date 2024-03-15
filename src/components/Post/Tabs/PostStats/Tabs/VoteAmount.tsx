@@ -148,6 +148,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmount
 		setTallyData(tallyData);
 		setSoloBalance(allBalances.sub(delegatedBalance));
 		setVotesDistribution(votesDistribution);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allVotes]);
 
 	return (

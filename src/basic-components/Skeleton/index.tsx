@@ -12,10 +12,10 @@ interface Props extends SkeletonProps {
 
 const StyledSkeleton = styled(({ ...rest }) => <AntdSkeleton {...rest} />)`
 	.ant-skeleton-content > .ant-skeleton-paragraph > li {
-		background-color: ${(props) => (props.theme === 'dark' ? '#5959599E' : '#E6E6E6')};
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#5959599E' : '#E6E6E6')};
 	}
 	.ant-skeleton-content > .ant-skeleton-title {
-		background-color: ${(props) => (props.theme === 'dark' ? '#5959599E' : '#E6E6E6')};
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#5959599E' : '#E6E6E6')};
 	}
 `;
 

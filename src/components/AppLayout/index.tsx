@@ -196,7 +196,7 @@ const getUserDropDown = (
 		const { resolvedTheme: theme } = useTheme();
 		return (
 			<Dropdown
-				theme={theme as String}
+				theme={theme as any}
 				menu={{ items: dropdownMenuItems }}
 				trigger={['click']}
 				className='profile-dropdown'
@@ -781,7 +781,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<Layout className={className}>
 			<NavHeader
-				theme={theme as String}
+				theme={theme as any}
 				sidedrawer={sidedrawer}
 				setSidedrawer={setSidedrawer}
 				previousRoute={previousRoute}
@@ -807,7 +807,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu
-							theme={theme as String}
+							theme={theme as any}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							items={sidebarItems}
@@ -838,7 +838,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					>
 						<Menu
-							theme={theme as String}
+							theme={theme as any}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
@@ -892,7 +892,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-			<Footer theme={theme as String} />
+			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

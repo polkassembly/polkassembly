@@ -634,7 +634,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 										indicator={<></>}
 									>
 										<StyledCalendar
-											theme={theme as string}
+											theme={theme as any}
 											className='events-calendar-mini dark:bg-section-dark-overlay'
 											date={miniCalSelectedDate}
 											onNavigate={setMiniCalSelectedDate}
@@ -700,7 +700,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<Spin spinning={categoriesLoading}>
 									{!categoriesLoading ? ( // this is needed to render (+3 more) without changing views
 										<StyledCalendar
-											theme={theme as String}
+											theme={theme as any}
 											className={`events-calendar ${small || width < 768 ? 'small' : ''}`}
 											localizer={localizer}
 											date={selectedDate}

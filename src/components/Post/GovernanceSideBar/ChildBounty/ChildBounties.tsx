@@ -23,9 +23,9 @@ interface IChildBountiesProps {
 const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	const { requestedAmount, bountyIndex } = props;
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [totalAmount, setTotalAmount] = useState('');
-	const [disbursedAmount, setDisbursedAmount] = useState('');
-	const [remainingAmount, setRemainingAmount] = useState('');
+	const [totalAmount, setTotalAmount] = useState<any>('');
+	const [amountDisbursed, setAmountDisbursed] = useState<any>('');
+	const [remainingAmount, setRemainingAmount] = useState<any>('');
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -53,16 +53,16 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
 
 			if (!totalAwardedReward.isZero()) {
-				setDisbursedAmount(formatedBalance(totalAwardedReward.toString(), unit));
+				setAmountDisbursed(totalAwardedReward);
 			}
 
 			if (!totalReward.isZero()) {
-				setTotalAmount(formatedBalance(totalReward.toString(), unit));
+				setTotalAmount(totalReward);
 			}
 
 			if (!totalAwardedReward.isZero() && !totalReward.isZero()) {
 				const remaining = totalReward.sub(totalAwardedReward);
-				setRemainingAmount(formatedBalance(remaining.toString(), unit));
+				setRemainingAmount(remaining);
 			}
 		}
 	};
@@ -77,13 +77,13 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			color: '#FFC302',
 			id: 'disbursed',
 			label: 'Disbursed',
-			value: parseFloat(disbursedAmount.replace(/,/g, ''))
+			value: parseFloat(formatedBalance(amountDisbursed.toString(), unit).replace(/,/g, ''))
 		},
 		{
 			color: '#F1F1EF',
 			id: 'remaining',
 			label: 'Remaining',
-			value: parseFloat(remainingAmount.replace(/,/g, ''))
+			value: parseFloat(formatedBalance(remainingAmount.toString(), unit).replace(/,/g, ''))
 		},
 		{
 			color: '#FF8E11',
@@ -98,7 +98,10 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			<div className='flex'>
 				<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
 				<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
-					Total: <span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{totalAmount}</span>
+					Total:{' '}
+					<span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>
+						{formatedBalance(totalAmount.toString(), unit)} {unit}
+					</span>
 				</p>
 			</div>
 			<div className='-mt-3 h-[286px] '>

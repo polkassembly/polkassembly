@@ -138,7 +138,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	}
 
 	const getFacetFileters = (filterBy?: EFilterBy) => {
-		const postTypeFilter = [[`index:-${finalSearchInput}`]];
+		const postTypeFilter = [[`id:-${finalSearchInput}`]];
 		if (filterBy === EFilterBy.Referenda) {
 			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`], [`post_type:-${ProposalType.GRANTS}`]);
 			if (selectedGov1Tracks.length > 0) {
@@ -266,7 +266,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			.then(({ hits, nbHits }) => {
 				setPeoplePage({ ...peoplePage, totalPeople: nbHits });
 				setPeopleResults(filterByIndex(hits));
-				getDefaultAddress(filterByIndex(hits));
+				getDefaultAddress(hits);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -338,10 +338,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				highlightPreTag: '<mark>',
 				highlightPostTag: '</mark>',
 				page: 0,
-				restrictSearchableAttributes: ['title', 'parsed_content']
+				restrictSearchableAttributes: ['id', 'title', 'parsed_content']
 			})
 			.catch((error) => console.log('Posts autocomplete fetch error: ', error));
-		console.log(postResults, 'postResults');
 
 		const userResults = await userIndex
 			.search(queryStr, {
@@ -352,8 +351,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']
 			})
 			.catch((error) => console.log('Users autocomplete fetch error: ', error));
-
-		setAutoCompleteResults({ posts: postResults?.hits || [], users: userResults?.hits || [] });
+		setAutoCompleteResults({ posts: filterByIndex(postResults?.hits as any[]) || [], users: userResults?.hits || [] });
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -450,6 +448,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			const bMatchedWordsLength = getMatchedWordsLength(b);
 			return aMatchedWordsLength - bMatchedWordsLength;
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoCompleteResults]);
 
 	const dedupedSortedAutoCompleteResults = useMemo(() => {

@@ -633,7 +633,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 										indicator={<></>}
 									>
 										<StyledCalendar
-											theme={theme as String}
+											theme={theme as string}
 											className='events-calendar-mini dark:bg-section-dark-overlay'
 											date={miniCalSelectedDate}
 											onNavigate={setMiniCalSelectedDate}

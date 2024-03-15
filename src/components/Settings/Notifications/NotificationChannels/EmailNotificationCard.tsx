@@ -52,7 +52,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}
 				</h3>
 				<h3 className='token-mobile-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
-					{verifiedEmail ? shortenString(verifiedEmail) : 'Please add your email on account page.'}
+					{verifiedEmail ? shortenString(verifiedEmail, 10) : 'Please add your email on account page.'}
 				</h3>
 			</div>
 			<DisabledConfirmation

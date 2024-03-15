@@ -80,7 +80,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 							onClick={() => handleCopyClicked('/polkassembly-add <username> <verificationToken>')}
 							className='token-mobile-container bg-bg-secondary border-text_secondary hidden cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 						>
-							{shortenString('/polkassembly-add <username> <verificationToken>')} <CopyIcon className='relative top-[6px]' />
+							{shortenString('/polkassembly-add <username> <verificationToken>', 10)} <CopyIcon className='relative top-[6px]' />
 						</span>
 						<div className='mt-4 flex justify-end'>
 							<CustomButton
@@ -105,7 +105,7 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 									onClick={() => handleCopyClicked(token)}
 									className='token-mobile-container bg-bg-secondary border-text_secondary cursor-pointer rounded-md border border-solid p-1 text-pink_primary'
 								>
-									{shortenString(token)} <CopyIcon className='relative top-[6px] text-lightBlue dark:text-icon-dark-inactive' />
+									{shortenString(token, 10)} <CopyIcon className='relative top-[6px] text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</>
 						)}

@@ -104,7 +104,7 @@ const DiscordInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = 
 										onClick={() => handleCopyClicked(token)}
 										className='token-mobile-container bg-bg-secondary border-text_secondary cursor-pointer items-center justify-center rounded-md border border-solid px-1 pb-1 text-pink_primary dark:text-blue-dark-helper'
 									>
-										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {shortenString(token)}
+										<CopyIcon className='relative text-lightBlue dark:text-icon-dark-inactive' /> {shortenString(token, 10)}
 									</span>
 								</div>
 							</>

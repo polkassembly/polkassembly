@@ -678,7 +678,7 @@ const IdentityForm = ({
 					/>
 					:
 				</span>
-				<span className='rounded-2xl bg-[#edeff3] px-4 py-1 font-medium text-bodyBlue dark:text-blue-dark-high'>
+				<span className='rounded-2xl bg-[#edeff3] px-4 py-1 font-medium text-bodyBlue dark:text-bodyBlue'>
 					{formatedBalance(bondFee.toString(), unit)} {unit}
 				</span>
 			</span>

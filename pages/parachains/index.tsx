@@ -110,7 +110,7 @@ const Parachains = ({ className, network }: Props) => {
 					>
 						<ParachainInfoCard
 							projects={polkadotProjects}
-							theme={theme as any}
+							theme={theme as String}
 							network='polkadot'
 						/>
 					</Col>
@@ -120,7 +120,7 @@ const Parachains = ({ className, network }: Props) => {
 					>
 						<ParachainInfoCard
 							projects={kusamaProjects}
-							theme={theme as any}
+							theme={theme as String}
 							network='kusama'
 						/>
 					</Col>
@@ -129,7 +129,7 @@ const Parachains = ({ className, network }: Props) => {
 				<div className={`${className} h-[650px] rounded-xxl bg-white p-2 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}>
 					<h2 className=' mb-3 mt-2 text-xl font-medium leading-8 text-blue-light-high dark:text-blue-dark-high sm:mt-0 md:mb-6 md:mt-6'>Projects</h2>
 					<Tabs
-						theme={theme as any}
+						theme={theme as String}
 						type='card'
 						className='ant-tabs-tab-bg-white font-medium text-blue-light-high dark:bg-section-dark-overlay dark:font-normal dark:text-blue-dark-high'
 						items={tabItems}

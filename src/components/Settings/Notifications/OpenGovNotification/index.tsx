@@ -138,7 +138,7 @@ export default function OpenGovNotification({ onSetNotification, userNotificatio
 		<Collapse
 			size='large'
 			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
-			theme={theme as any}
+			theme={theme as String}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);

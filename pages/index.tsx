@@ -300,7 +300,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (
 					<div className='mx-1 mt-8'>
-						<TreasuryOverview theme={theme as any} />
+						<TreasuryOverview theme={theme as String} />
 					</div>
 				)}
 				<div className='mx-1 mt-8'>

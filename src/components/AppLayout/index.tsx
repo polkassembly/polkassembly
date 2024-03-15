@@ -892,7 +892,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-			<Footer theme={theme as any} />
+			<Footer theme={theme as String} />
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

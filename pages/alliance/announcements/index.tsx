@@ -104,7 +104,7 @@ const Announcements = (props: IAnnouncementProps) => {
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}
 								responsive={true}
-								theme={theme as any}
+								theme={theme as String}
 							/>
 						)}
 					</div>

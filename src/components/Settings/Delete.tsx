@@ -94,7 +94,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
-			theme={theme as any}
+			theme={theme as String}
 		>
 			<Panel
 				header={

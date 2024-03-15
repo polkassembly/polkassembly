@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 
@@ -42,6 +41,7 @@ import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -127,9 +127,7 @@ const Post: FC<IPostProps> = (props) => {
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
-		if (isOffchainPost) {
-			setCanEdit(post.user_id === id);
-		}
+		setCanEdit(post.user_id === id);
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
@@ -161,7 +159,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	}, [addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+	}, [addresses, id, isEditing, loginAddress, post, proposalType]);
 
 	useEffect(() => {
 		if (!post) return;

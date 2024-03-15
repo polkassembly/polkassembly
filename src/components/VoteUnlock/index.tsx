@@ -1,9 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
-
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
@@ -13,7 +11,6 @@ import userProfileBalances from '~src/util/userProfieBalances';
 import BN from 'bn.js';
 import { BN_MAX_INTEGER, formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';
-
 import { ApiPromise } from '@polkadot/api';
 import blockToTime from '~src/util/blockToTime';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -27,7 +24,6 @@ import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import LockVotesList from './LockVotesList';
 import VoteUnlockSuccessState from './VoteUnlockSuccessState';
 import { network as AllNetworks } from '~src/global/networkConstants';
-
 import UnlockBoxIcon from '~assets/icons/unlock-box.svg';
 import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
 import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
@@ -35,9 +31,12 @@ import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+
 interface Props {
 	className?: string;
 	addresses: string[];
+	isReferendaPage?: boolean;
+	referendumIndex?: number;
 }
 export const votesUnlockUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -47,20 +46,17 @@ export const votesUnlockUnavailableNetworks = [
 	AllNetworks.WESTENDCOLLECTIVES,
 	AllNetworks.MOONBEAM
 ];
-
 const ZERO_BN = new BN(0);
 export const handlePrevData = (data: IUnlockTokenskData[]) => {
 	const newData = data.map((item) => {
 		const endBlock = item ? new BN(item?.endBlock || '0') : ZERO_BN;
 		const refId = item ? new BN(item?.refId || '0') : ZERO_BN;
-
 		const total = item ? new BN(item?.total || '0') : ZERO_BN;
-
 		return { ...item, endBlock, refId, total };
 	});
 	return newData;
 };
-const VoteUnlock = ({ className, addresses }: Props) => {
+const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: Props) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, loginWallet } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -78,7 +74,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 	const [openChangeAddressModal, setOpenChangeAddressModal] = useState<boolean>(false);
 	const [openSuccessState, setOpenSuccessState] = useState<boolean>(false);
 	const [isReferesh, setIsReferesh] = useState<boolean>(false);
-
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -86,55 +81,42 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			unit
 		});
 		if (!api || !apiReady || !loginAddress || !loginWallet) return;
-
 		(async () => {
 			const data = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 			setAddress(data?.account || '');
 		})();
 	}, [network, loginAddress, loginWallet, unit, api, apiReady]);
-
 	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referendas: [BN, any][]): IUnlockTokenskData[] => {
 		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
-
 		const lockPeriod = api?.consts?.convictionVoting?.voteLockingPeriod as BN;
 		const locks: IUnlockTokenskData[] = [];
-
 		for (let i = 0, voteCount = votes.length; i < voteCount; i++) {
 			const [track, , casting] = votes[i];
-
 			for (let i = 0, castCount = casting.votes.length; i < castCount; i++) {
 				const [refId, accountVote] = casting.votes[i];
 				const referendaInfo = referendas.find(([id]) => Number(id) === Number(refId));
-
 				if (referendaInfo) {
 					const [, tally] = referendaInfo;
-
 					let totalBalance: BN | undefined;
 					let endBlock: BN | undefined;
 					let conviction = 0;
 					let locked = 'None';
-
 					if (accountVote.isStandard) {
 						const { balance, vote } = accountVote.asStandard;
-
 						totalBalance = balance;
-
 						if ((tally.isApproved && vote.isAye) || (tally.isRejected && vote.isNay)) {
 							conviction = vote.conviction.index;
 							locked = vote.conviction.type;
 						}
 					} else if (accountVote.isSplitAbstain) {
 						const { abstain, aye, nay } = accountVote.asSplitAbstain;
-
 						totalBalance = aye.add(nay).add(abstain);
 					} else if (accountVote.isSplit) {
 						const { aye, nay } = accountVote.asSplit;
-
 						totalBalance = aye.add(nay);
 					} else {
 						console.error(`Unable to handle ${accountVote.type}`);
 					}
-
 					if (tally.isOngoing) {
 						endBlock = BN_MAX_INTEGER;
 					} else if (tally.isKilled) {
@@ -146,37 +128,30 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					} else {
 						console.error(`Unable to handle ${tally.type}`);
 					}
-
 					if (totalBalance && endBlock) {
 						locks.push({ endBlock, locked, refId, total: totalBalance, track });
 					}
 				}
 			}
 		}
-
 		return locks;
 	};
-
 	const getUnlocks = (address: string, locks?: any[]): [address: string, track: BN][] | undefined => {
 		if (locks) {
 			return locks.map((track) => [address, track[0]]);
 		}
 	};
-
 	const getReferendaParams = (votes?: [track: BN, refIds: BN[], casting: any][]): BN[] | undefined => {
 		if (votes && votes?.length) {
 			const refIds = votes.reduce<BN[]>((all, [, refIds]) => all.concat(refIds), []);
-
 			if (refIds.length) {
 				return refIds;
 			}
 		}
 	};
-
 	const handleSetUnlockableBalance = (totalUnlockableData: IUnlockTokenskData[]) => {
 		if (!api || !apiReady) return;
 		let balance: BN = ZERO_BN;
-
 		totalUnlockableData.map((unlock) => {
 			if (unlock.total.gte(balance)) {
 				balance = unlock.total;
@@ -185,7 +160,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		setTotalUnlockableBalance(balance);
 		setUnlockedBalance(balance);
 	};
-
 	const handleLockUnlockData = async (data: IUnlockTokenskData[] | null, currentBlockNumber: BN) => {
 		if (!data) return;
 		const locksData = data
@@ -194,9 +168,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				return { ...unlock, endBlock: unlock.endBlock.sub(currentBlockNumber) };
 			})
 			?.sort((a, b) => Number(a.endBlock.toString()) - Number(b.endBlock.toString()));
-
 		const UnlockableData = data?.filter((unlock) => unlock.endBlock.lte(currentBlockNumber));
-
 		handleSetUnlockableBalance(UnlockableData);
 		dispatch(
 			setUserUnlockTokensData({
@@ -217,7 +189,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			})
 		);
 	};
-
 	const getLockData = async (address: string) => {
 		if (!api || !apiReady) return;
 		setTotalUnlockableBalance(ZERO_BN);
@@ -232,7 +203,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				}
 			})
 		);
-
 		const lockClasses = await api?.query?.convictionVoting?.classLocksFor(address)?.then((e) => e.toHuman());
 		const unlocks = getUnlocks(address, lockClasses as unknown as BN[])?.filter((param) => !!param);
 		const votes = unlocks ? await api?.query?.convictionVoting?.votingFor?.multi(unlocks as any[]) : null;
@@ -242,9 +212,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 						if (!vote.isCasting) {
 							return null;
 						}
-
 						const casting = vote.asCasting;
-
 						return [unlocks?.[index][1], casting.votes.map(([refId]) => refId), casting];
 					})
 					.filter((vote) => !!vote)
@@ -258,7 +226,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					})
 					.filter((ref) => !!ref)
 			: null;
-
 		const data = customizeReferenda ? getAllLockData(api, customizeVotes as any[], customizeReferenda as [BN, any][]) : null;
 		const currentBlockNumber = await api.derive.chain.bestNumber();
 		await handleLockUnlockData(data, currentBlockNumber);
@@ -267,24 +234,19 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 
 	const getClearReferendaTx = (api: ApiPromise, address: string, ids: [BN, BN][]): SubmittableExtrinsic<'promise'> | null => {
 		if (!api || !apiReady || !ids.length) return null;
-
 		const variables = ids.map(([track, refId]) => api.tx.convictionVoting.removeVote(track as any, refId as any));
-
 		ids
 			.reduce((all: BN[], [track]) => {
 				if (!all.find((id) => Number(id) === Number(track))) {
 					all.push(track);
 				}
-
 				return all;
 			}, [])
 			.forEach((track): void => {
 				variables.push(api.tx?.convictionVoting?.unlock(track as any, address));
 			});
-
 		return api.tx.utility.batch(variables);
 	};
-
 	const onSuccess = () => {
 		queueNotification({
 			header: 'Success!',
@@ -297,7 +259,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		setLoadingStatus({ isLoading: false, message: 'Success!' });
 		setOpen(false);
 	};
-
 	const onFailed = (message: string) => {
 		queueNotification({
 			header: 'Failed!',
@@ -306,10 +267,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		});
 		setLoadingStatus({ isLoading: false, message: 'Failed!' });
 	};
-
 	const handleUnlock = async () => {
 		if (!api || !apiReady) return;
-
 		const ids = totalUnlockableData.map(({ track, refId }): [track: BN, refId: BN] => [track, refId]);
 		const txVariable = {
 			ids,
@@ -317,7 +276,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		};
 		if (!txVariable.referendaUnlockTx) return;
 		setLoadingStatus({ isLoading: true, message: 'Awaiting Confirmation' });
-
 		await executeTx({
 			address,
 			api,
@@ -330,7 +288,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 			tx: txVariable.referendaUnlockTx
 		});
 	};
-
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		(async () => {
@@ -340,6 +297,9 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 		getLockData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, isReferesh]);
+	if (isReferendaPage && !totalUnlockableData.filter((unlock) => unlock.refId.toString() == String(referendumIndex))?.length) {
+		return null;
+	}
 	return (
 		<>
 			<div className={`flex items-start justify-start ${className}`}>
@@ -348,12 +308,18 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 					onClick={() => setOpen(true)}
 					className={`text-sm ${
 						totalUnlockableBalance.eq(ZERO_BN)
-							? 'border-[#407BFF] bg-[#f1f6ff] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
-							: 'border-pink_primary bg-[#fdedf7] text-pink_primary dark:bg-pink-dark-primary'
-					} h-[32px] w-full rounded-[8px]`}
+							? 'border-[#407BFF] bg-[#F1F6FF] text-[#407BFF] dark:bg-infoAlertBgDark dark:text-white'
+							: `${
+									isReferendaPage
+										? 'border-pink_primary bg-pink_primary text-white dark:text-white'
+										: 'border-pink_primary bg-[#FDEDF7] text-pink_primary dark:bg-pink-dark-primary'
+							  }`
+					} w-full rounded-[8px] ${isReferendaPage ? 'h-10 font-semibold' : 'h-8 '}`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
-						? 'Unlock Your Tokens'
+						? isReferendaPage
+							? 'Clear expired referenda locks'
+							: 'Unlock Your Tokens'
 						: handlePrevData(totalLockData).length
 						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
 						: 'No Unlocks Available'}
@@ -394,7 +360,6 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 							text='Change'
 						/>
 					</div>
-
 					<LockVotesList
 						lockedBalance={lockedBalance}
 						totalUnlockableBalance={totalUnlockableBalance}
@@ -405,8 +370,8 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 								variant='primary'
 								icon={<WhiteUnlockIcon className='mr-1' />}
 								className={`{ totalUnlockableBalance.eq(ZERO_BN) &&
-									'opacity-50' } mt-4
-								flex w-[100%] items-center tracking-wide`}
+                  'opacity-50' } mt-4
+                flex w-[100%] items-center tracking-wide`}
 								height={40}
 								fontSize='sm'
 								onClick={() => handleUnlock()}
@@ -422,7 +387,7 @@ const VoteUnlock = ({ className, addresses }: Props) => {
 				setOpen={setOpenChangeAddressModal}
 				localStorageAddressKeyName='unlockAddress'
 				localStorageWalletKeyName='unlockWallet'
-				walletAlertTitle='Unlock Your Tokens'
+				walletAlertTitle={isReferendaPage ? 'Clear expired referenda locks' : 'Unlock Your Tokens'}
 				linkAddressNeeded={false}
 				onConfirm={(address: string) => {
 					setAddress(address);

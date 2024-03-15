@@ -9,7 +9,6 @@ import { RightOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 import { GetTracksColumns, handleTracksIcon } from './Coloumn';
-import { Skeleton } from 'antd';
 import Table from '~src/basic-components/Tables/Table';
 import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
@@ -23,6 +22,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Skeleton from '~src/basic-components/Skeleton';
 interface Props {
 	className?: string;
 	posts: any[];

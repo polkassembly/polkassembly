@@ -16,7 +16,7 @@ import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
 import dayjs from 'dayjs';
 import { parseBalance } from './utils/parseBalaceToReadable';
@@ -38,6 +38,7 @@ import {
 	setDelegatorLoadingFalse,
 	setDelegatorLoadingTrue
 } from '~src/redux/voteData';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface IVoterRow {
 	className?: string;
@@ -400,7 +401,7 @@ const VoterRow: FC<IVoterRow> = ({
 										))}
 									</div>
 									{delegatorLoading ? (
-										<Skeleton.Button active />
+										<SkeletonButton active />
 									) : (
 										delegatedData?.delegator > 10 && (
 											<p

@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-posts';
@@ -27,6 +26,7 @@ import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,

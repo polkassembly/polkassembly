@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Skeleton, Space } from 'antd';
+import { Divider, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -45,6 +45,7 @@ import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
 import { delegationSupportedNetworks } from '../DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,

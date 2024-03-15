@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
-import { MenuProps, Skeleton } from 'antd';
+import { MenuProps } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
@@ -13,10 +13,11 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
-		<Skeleton.Button
+		<SkeletonButton
 			className='w-[100%]'
 			active
 		/>

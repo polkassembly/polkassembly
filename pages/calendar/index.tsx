@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
+import { Checkbox, MenuProps, Spin } from 'antd';
 import { Badge, Col, Divider, Row, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
@@ -49,6 +49,7 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface ICalendarViewProps {
 	className?: string;

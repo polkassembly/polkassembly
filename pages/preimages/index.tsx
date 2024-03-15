@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Pagination as AntdPagination } from '~src/ui-components/Pagination';
-import { Input, Skeleton } from 'antd';
+import { Input } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -20,6 +20,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,

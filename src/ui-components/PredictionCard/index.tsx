@@ -6,9 +6,8 @@ import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import InfoIcon from '~assets/info.svg';
-
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { InfoIcon } from '../CustomIcons';
 
 const Container = styled.div`
 	border-radius: 14px;
@@ -142,7 +141,7 @@ const PredictionCard = () => {
 						color='#243A57'
 						title='Will this proposal pass or fail?'
 					>
-						<InfoIcon className='text-xl text-bodyBlue' />
+						<InfoIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 					</Tooltip>
 				</h1>
 				<a

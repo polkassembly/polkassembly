@@ -9,8 +9,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
+import { CloseIcon, OnChainIdentityIcon } from '~src/ui-components/CustomIcons';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
@@ -416,11 +415,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
-							<span className='text-2xl'>
-								<SetIdentityIcon />
-							</span>
+							<SetIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
-							<OnChainIdentityIcon />
+							<OnChainIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (

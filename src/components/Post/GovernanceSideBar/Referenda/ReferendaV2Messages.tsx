@@ -419,7 +419,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</div>
 					</article>
 					<article className='flex gap-x-[23px]'>
-						<div className='h-[300px] w-[4.5px] overflow-hidden rounded-full bg-[#FCE5F2] md:h-[250px]'>
+						<div className='h-[300px] w-[4.5px] overflow-hidden rounded-full bg-[#FCE5F2] md:h-[310px]'>
 							<div
 								style={{
 									height: `${decidingStatusBlock ? (Math.min(decision.periodPercent, 100) / 100) * 300 : 0}px`
@@ -443,8 +443,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>Voting Period</h4>
 							<ul className='px-5 text-sm leading-[21px] tracking-[0.01em]'>
 								<li>A referendum will be in voting till the decision period is completed or the proposal is passed.</li>
-								<li>For a referendum to pass, the support and approval should be greater than the threshold for the track for the confirmation period.</li>
-								<li>If the referendum does not pass during the decision period, it is considered as failed.</li>
+								<li>For a referendum to enter confirmation, the support and approval should be greater than the threshold for the track.</li>
+								<li>
+									Once the proposal enters confirmation, its support and approval should remain greater than the threshold for the duration of the confirmation period for it to
+									pass.
+								</li>
+								<li>If the referendum does not enter confirmation during the decision period, it is considered as failed.</li>
 							</ul>
 						</div>
 					</article>

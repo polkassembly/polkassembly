@@ -56,7 +56,7 @@ interface IVoterRow {
 }
 
 const StyledCollapse = styled(Collapse)`
-	background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+	background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 	.ant-collapse-item {
 		border-bottom: none;
 	}
@@ -293,7 +293,7 @@ const VoterRow: FC<IVoterRow> = ({
 			}}
 			activeKey={currentKey === index ? 1 : 0}
 			onChange={() => setActiveKey(currentKey === index ? null : index)}
-			theme={theme}
+			theme={theme as String}
 			// isSmallScreen={isSmallScreen}
 		>
 			<StyledCollapse.Panel

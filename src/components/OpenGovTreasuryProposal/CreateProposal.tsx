@@ -275,7 +275,7 @@ const CreateProposal = ({
 					showIcon
 				/>
 				<MissingInfoAlert
-					theme={theme}
+					theme={theme as String}
 					isDiscussionLinked={isDiscussionLinked}
 				/>
 				<div className='mt-4 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>

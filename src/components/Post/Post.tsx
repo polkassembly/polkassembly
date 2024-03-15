@@ -322,7 +322,7 @@ const Post: FC<IPostProps> = (props) => {
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
-						startTime={post.created_at}
+						startTime={post.created_at as any}
 						post={post}
 						tally={post?.tally}
 						trackName={trackName}

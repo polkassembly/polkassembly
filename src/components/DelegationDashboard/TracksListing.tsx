@@ -246,19 +246,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 };
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
 		font-size: 14px !important;
-		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
+		font-weight: ${(props: any) => (props.theme === 'dark' ? '500' : '600')} !important;
 		line-height: 21px !important;
 		white-space: nowrap !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.column .ant-table-thead > tr > th:nth-child(1) {
 		text-align: center !important;
 	}
 	.ant-table-cell {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
 	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {

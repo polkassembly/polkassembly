@@ -172,7 +172,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	return (
 		<>
 			<div className={`${className} mt-4`}>
-				<OnchainInfoWrapper theme={theme}>
+				<OnchainInfoWrapper theme={theme as String}>
 					<h5 className='mb-5 text-base font-bold'>Metadata</h5>
 					<ul className='flex list-none flex-col gap-y-2'>
 						{submitted_amount && (

@@ -101,7 +101,7 @@ export const AllianceMotions: FC<IMotionsProps> = (props) => {
 								hideOnSinglePage={true}
 								onChange={onPaginationChange}
 								responsive={true}
-								theme={theme}
+								theme={theme as string}
 							/>
 						)}
 					</div>

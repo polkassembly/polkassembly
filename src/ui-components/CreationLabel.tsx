@@ -150,7 +150,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								<TopicTag
 									topic={topic}
 									className={topic}
-									theme={theme}
+									theme={theme as String}
 								/>
 							</div>
 						)}

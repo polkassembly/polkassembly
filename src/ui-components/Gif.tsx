@@ -163,13 +163,13 @@ export default styled(Gif)`
 		margin: 0 !important;
 	}
 	.ant-input {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'light' ? '#0D0D0D' : '#fff')} !important;
-		border-color: ${(props) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '#0D0D0D' : '#fff')} !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
 	}
 	.ant-input-search-button {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'light' ? '' : '#fff')} !important;
-		border-color: ${(props) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '' : '#fff')} !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
 	}
 `;

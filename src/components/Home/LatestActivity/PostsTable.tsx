@@ -68,7 +68,7 @@ const PostsTable: FC<IPostsTableProps> = ({ posts, error, columns, type, count }
 			created_at: created_at,
 			description: post?.description || '',
 			hash: isTip ? hash?.substring(0, 4) : hash,
-			key: id,
+			key: `${id}_${post?.type}`,
 			post_id: id,
 			proposalHashBlock: post?.proposalHashBlock || null,
 			proposer: proposer,

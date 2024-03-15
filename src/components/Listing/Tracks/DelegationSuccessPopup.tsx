@@ -8,7 +8,7 @@ import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import UndelegateCloseIcon from '~assets/icons/white-close.svg';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
-
+import Image from 'next/image';
 import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -21,7 +21,6 @@ import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -89,14 +88,18 @@ const DelegationSuccessPopup = ({
 			footer={false}
 			maskClosable={false}
 		>
-			<div className='-mt-[132px] flex flex-col items-center justify-center'>
-				<h2 className='mt-4 flex flex-col items-center justify-center text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
-					<ImageIcon
+			<div className='-mt-[112px] flex flex-col items-center justify-center'>
+				<div className='flex flex-col items-center justify-center'>
+					<Image
 						src={'/assets/delegation-tracks/success-delegate.svg'}
 						alt='multi vote initiated icon'
+						width={220}
+						height={220}
 					/>
-					{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
-				</h2>
+					<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
+						{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
+					</h2>
+				</div>
 				{isDelegate && (
 					<div className='flex flex-col items-center justify-center gap-[14px]'>
 						{balance && (

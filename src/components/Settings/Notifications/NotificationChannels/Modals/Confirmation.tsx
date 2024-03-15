@@ -45,7 +45,6 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 						className='px-[36px] py-[4px] capitalize'
 						text='Cancel'
 					/>
-					,
 					<CustomButton
 						onClick={onConfirm}
 						key='2'

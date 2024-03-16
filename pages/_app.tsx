@@ -49,13 +49,13 @@ const workSans = Work_Sans({
 
 const GlobalStyle = createGlobalStyle`
   ::-webkit-scrollbar-track {
-    background: ${(props) => (props.theme === 'dark' ? '#1D1D1D' : '#f1f1f1')};
+    background: ${(props: any) => (props.theme === 'dark' ? '#1D1D1D' : '#f1f1f1')};
   }
   ::-webkit-scrollbar-thumb {
-    background: ${(props) => (props.theme === 'dark' ? '#3B444F' : '#888')};
+    background: ${(props: any) => (props.theme === 'dark' ? '#3B444F' : '#888')};
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: ${(props) => (props.theme === 'dark' ? '#555' : '#555')};
+    background: ${(props: any) => (props.theme === 'dark' ? '#555' : '#555')};
   }
 `;
 

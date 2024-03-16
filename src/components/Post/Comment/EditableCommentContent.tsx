@@ -58,7 +58,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import Tooltip from '~src/basic-components/Tooltip';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -547,7 +546,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						copyLink();
 					}}
 				>
-					<CopyIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' /> Copy link
+					<CopyIcon className='mr-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> Copy link
 				</div>
 			)
 		},
@@ -723,33 +722,15 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 								comment_reactions={comment.comment_reactions}
 								importedReactions={props.isSubsquareUser}
 							/>
-							{id &&
-								(props.isSubsquareUser ? (
-									<Tooltip
-										title='Reply are disabled for imported comments.'
-										color='#E5007A'
-									>
-										<Button
-											disabled={props.disableEdit}
-											className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
-												props.isSubsquareUser ? 'disabled-reply' : ''
-											} dark:bg-transparent dark:text-blue-dark-helper`}
-											onClick={props.isSubsquareUser ? () => {} : toggleReply}
-										>
-											{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
-										</Button>
-									</Tooltip>
-								) : (
-									<Button
-										disabled={props.disableEdit}
-										className={`mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none ${
-											props.isSubsquareUser ? 'disabled-reply' : ''
-										} dark:bg-transparent dark:text-blue-dark-helper`}
-										onClick={props.isSubsquareUser ? () => {} : toggleReply}
-									>
-										{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
-									</Button>
-								))}
+							{id && (
+								<Button
+									disabled={props.disableEdit}
+									className={'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
+								>
+									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+								</Button>
+							)}
 							<Dropdown
 								theme={theme}
 								className={`${poppins.variable} ${poppins.className} dropdown flex cursor-pointer`}

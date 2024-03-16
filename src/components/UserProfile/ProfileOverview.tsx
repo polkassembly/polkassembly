@@ -202,7 +202,7 @@ const ProfileOverview = ({
 							<ProfileTippingCard
 								userProfile={userProfile}
 								selectedAddresses={selectedAddresses}
-								addressWithIdentity={addressWithIdentity}
+								addressWithIdentity={addressWithIdentity as any}
 								theme={theme}
 							/>
 						)}

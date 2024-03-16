@@ -712,7 +712,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		if (
 			proposalType === ProposalType.TIPS ||
-			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist' && strPostId.toLowerCase() !== strPostId.toUpperCase())
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network && strPostId.toLowerCase() !== strPostId.toUpperCase())
 		) {
 			postVariables = {
 				hash_eq: strPostId,

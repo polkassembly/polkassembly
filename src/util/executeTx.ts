@@ -25,7 +25,7 @@ const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, pa
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
 
 	extrinsic
-		.signAndSend(proxyAddress ?? address, params, async ({ status, events, txHash }: any) => {
+		.signAndSend(proxyAddress || address, params, async ({ status, events, txHash }: any) => {
 			if (status.isInvalid) {
 				console.log('Transaction invalid');
 				setStatus?.('Transaction invalid');

@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
-import { MenuProps, Skeleton } from 'antd';
+import { MenuProps } from 'antd';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import ReferendaActionModal from '~src/components/Forms/ReferendaActionModal';
 import styled from 'styled-components';
@@ -13,10 +13,11 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
-		<Skeleton.Button
+		<SkeletonButton
 			className='w-[100%]'
 			active
 		/>
@@ -29,9 +30,10 @@ interface Props {
 	isCreateProposal?: boolean;
 	isCancelProposal?: boolean;
 	isKillProposal?: boolean;
+	isUsedInFAB?: boolean;
 }
 
-const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal }: Props) => {
+const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isCancelProposal, isKillProposal, isUsedInFAB }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
@@ -200,6 +202,19 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 						<span className='text-sm font-medium '>Kill Referendum</span>
 					</div>
 				</CustomButton>
+			)}
+			{isUsedInFAB && (
+				<div
+					className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+					onClick={() => handleClick(1)}
+				>
+					<ImageIcon
+						src='/assets/icons/create-proposals-fab.svg'
+						alt='Create proposal icon'
+						imgWrapperClassName=''
+					/>
+					<span className=' text-sm font-medium leading-5 tracking-[1.25%] '>Create Proposal</span>
+				</div>
 			)}
 
 			<ReferendaActionModal

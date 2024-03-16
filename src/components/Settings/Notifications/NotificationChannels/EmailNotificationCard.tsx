@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import MailFilled from '~assets/icons/email-notification.svg';
 import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
+import { MailFilledIcon } from '~src/ui-components/CustomIcons';
 type Props = {
 	verifiedEmail: string;
 	handleEnableDisabled: any;
@@ -21,9 +21,9 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 
 	return (
 		<div className='mb-2 flex flex-col'>
-			<h3 className='m-0 flex items-center gap-1 gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
-				<span>
-					<MailFilled /> Email Notifications{' '}
+			<h3 className='m-0 flex items-center gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
+				<span className='flex '>
+					<MailFilledIcon className='mt-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> <p className='m-0 ml-1 mr-1 p-0'>Email Notifications</p>
 					{!verified && (
 						<span className='rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[red] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>
 							{' '}
@@ -46,7 +46,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					</span>
 				)}
 			</h3>
-			<div className='ml-5'>
+			<div className='ml-7'>
 				<h3 className='m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
 			</div>
 			<DisabledConfirmation

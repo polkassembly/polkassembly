@@ -13,7 +13,6 @@ import AyeNayButtons from 'src/ui-components/AyeNayButtons';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import styled from 'styled-components';
-import InfoIcon from '~assets/info.svg';
 import { MessageType } from '~src/auth/types';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
@@ -23,6 +22,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import { InfoIcon } from '~src/ui-components/CustomIcons';
 
 interface IGeneralSignalsProps {
 	className?: string;
@@ -199,7 +199,7 @@ const GeneralSignals: FC<IGeneralSignalsProps> = ({ className, endBlock, pollId,
 						title='This represents the off-chain votes of Polkassembly users including council members'
 						color='#E5007A'
 					>
-						<InfoIcon />
+						<InfoIcon className='scale-90 text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 					</Tooltip>
 				</h3>
 

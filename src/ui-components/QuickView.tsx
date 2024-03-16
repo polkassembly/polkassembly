@@ -16,8 +16,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import JudgementIcon from '~assets/icons/judgement-icon.svg';
 import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
-import CopyIcon from '~assets/icons/content_copy_small.svg';
-import { VerifiedIcon } from './CustomIcons';
+import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
 import { setReceiver } from '~src/redux/Tipping';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -26,6 +25,7 @@ import { message } from 'antd';
 import SocialsHandle from './SocialsHandle';
 import classNames from 'classnames';
 import Image from 'next/image';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -76,6 +76,7 @@ const QuickView = ({
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
+	const substrateAddress = getEncodedAddress(address, network);
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const success = () => {
 		messageApi.open({
@@ -160,12 +161,12 @@ const QuickView = ({
 									className='flex cursor-pointer items-center'
 									onClick={(e) => {
 										e.preventDefault();
-										copyToClipboard(address);
+										copyToClipboard(substrateAddress || address);
 										success();
 									}}
 								>
 									{contextHolder}
-									<CopyIcon />
+									<CopyIcon className='-ml-[6px] scale-[70%] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 								</span>
 							</div>
 						)}

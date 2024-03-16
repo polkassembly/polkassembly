@@ -5,11 +5,11 @@
 import { chainProperties } from '~src/global/networkConstants';
 
 export function isSubscanSupport(network: string) {
-	return !['xx', 'myriad', 'frequency', 'cere', 'equilibrium'].includes(network);
+	return !['xx', 'myriad', 'frequency', 'cere', 'equilibrium', 'polimec', 'rolimec'].includes(network);
 }
 
 export function isExplorerSupport(network: string) {
-	return ['xx', 'myriad'].includes(network);
+	return ['xx', 'myriad', 'polimec'].includes(network);
 }
 
 export function isPolkaholicSupport(network: string) {
@@ -27,7 +27,7 @@ export const getBlockLink = (network: string) => {
 	} else if (isPolkaholicSupport(network)) {
 		url += `/block/${network}/`;
 	} else if (isExplorerSupport(network)) {
-		url += '/blocks/';
+		url += ['polimec', 'rolimec'].includes(network) ? '/block/' : '/blocks/';
 	} else if (isCereSupport(network)) {
 		url += '/block?blockNumber=';
 	} else {

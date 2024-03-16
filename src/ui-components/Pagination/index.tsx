@@ -7,19 +7,19 @@ import styled from 'styled-components';
 
 const StyledPagination = styled(AntdPagination)`
 	a {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
 	}
 	.ant-pagination-item-active {
-		background-color: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	.anticon-right {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 	.anticon-left {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 	.ant-pagination-item-ellipsis {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 `;
 

@@ -328,7 +328,7 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
   }
 }`;
 
-export const GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType = Bounty, $index_eq: Int!=11) {
+export const GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType = Bounty, $index_eq: Int!) {
 proposals(where:{index_eq:$index_eq, type_eq:$type_eq }){
   reward
   index

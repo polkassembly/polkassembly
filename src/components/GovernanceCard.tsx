@@ -43,12 +43,17 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'), {
+	loading: () => <SkeletonButton active />,
+	ssr: false
+});
+const TrackListingChildBountyChart = dynamic(() => import('~src/ui-components/TrackListingChildBountyChart'), {
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
@@ -96,6 +101,8 @@ interface IGovernanceProps {
 	type?: string;
 	description?: string;
 	hash?: string;
+	childBountyAmount?: any;
+	parentBounty?: number;
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -131,7 +138,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		truncateUsername = false,
 		showSimilarPost,
 		description,
-		hash
+		hash,
+		childBountyAmount,
+		parentBounty
 	} = props;
 
 	const router = useRouter();
@@ -183,6 +192,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
 	const convertRemainingTime = (preiodEndsAt: any) => {
 		const diffMilliseconds = preiodEndsAt.diff();
@@ -328,6 +338,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
+							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+								<p className='mb-0 ml-auto mr-[34px] mt-2 text-bodyBlue dark:text-white'>
+									{formatedBalance(childBountyAmount.toString(), network)} {unit}
+								</p>
+							)}
 						</div>
 						{requestedAmount && (
 							<div className='flex items-center justify-center'>
@@ -510,6 +525,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
+							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+								<>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<TrackListingChildBountyChart
+										childBountyAmount={childBountyAmount}
+										parentBounty={parentBounty}
+									/>
+								</>
+							)}
 						</div>
 
 						{!!end && !!currentBlock && (
@@ -598,6 +625,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</>
 							)}
+							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+								<div className='ml-3'>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<TrackListingChildBountyChart
+										childBountyAmount={childBountyAmount}
+										parentBounty={parentBounty}
+									/>
+								</div>
+							)}
 							{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 								<div className='flex items-center'>
 									<Divider
@@ -657,10 +696,17 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
 							{status && (
-								<StatusTag
-									theme={theme}
-									status={status}
-								/>
+								<div className='flex items-center gap-x-2'>
+									{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+										<p className='m-0 p-0 text-bodyBlue dark:text-white'>
+											{formatedBalance(childBountyAmount.toString(), network)} {unit}
+										</p>
+									)}
+									<StatusTag
+										theme={theme}
+										status={status}
+									/>
+								</div>
 							)}
 							{tags && tags.length > 0 && (
 								<div className='flex'>

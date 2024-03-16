@@ -60,6 +60,7 @@ const Listing: FC<IListingProps> = (props) => {
 	return (
 		<div className={`${className} proposals__list`}>
 			{posts.map((post, index) => {
+				console.log(post);
 				const {
 					cid,
 					curator,
@@ -113,6 +114,8 @@ const Listing: FC<IListingProps> = (props) => {
 									votesData={votesData}
 									identityId={identity || null}
 									hash={hash}
+									childBountyAmount={post?.parent_bounty_requested_amount}
+									parentBounty={post?.parent_bounty_index}
 								/>
 							</Link>
 						}

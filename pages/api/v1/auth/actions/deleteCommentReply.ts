@@ -12,6 +12,8 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { isValidNetwork } from '~src/api-utils';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -40,21 +42,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	if (!replyDoc.exists) return res.status(404).json({ message: 'Reply not found' });
 	if (replyDoc.data()?.user_id !== user.id) return res.status(403).json({ message: messages.UNAUTHORISED });
 
+	const replyData = (await replyRef.get()).data();
+	const userId = replyData?.user_id || null;
+
 	await replyRef
 		.update({
 			isDeleted: true
 		})
-		.then(() => {
-			postRef.update({
+		.then(async () => {
+			await postRef.update({
 				last_comment_at
 			});
-			return res.status(200).json({ message: 'Reply deleted.' });
+			res.status(200).json({ message: 'Reply deleted.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error deleting reply: ', error);
 			return res.status(500).json({ message: 'Error deleting reply' });
 		});
+	try {
+		await createUserActivity({ action: EActivityAction.DELETE, network, replyId: replyId, type: EUserActivityType.REPLIED, userId: userId });
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -15,6 +14,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { checkIsProposer } from './utils/checkIsProposer';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -65,19 +65,44 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			isDeleted: false,
 			updated_at: last_comment_at
 		})
-		.then(() => {
-			postRef
+		.then(async () => {
+			await postRef
 				.update({
 					last_comment_at
 				})
 				.then(() => {});
-			return res.status(200).json({ message: 'Reply saved.' });
+			res.status(200).json({ message: 'Reply saved.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving reply: ', error);
 			return res.status(500).json({ message: 'Error saving reply' });
 		});
+	try {
+		const postData = (await postRef.get()).data();
+		const commentData = (await postRef.collection('comments').doc(String(commentId)).get()).data();
+
+		const postAuthorId = postData?.user_id || null;
+		const commentAuthorId = commentData?.user_id || null;
+
+		await createUserActivity({
+			action: EActivityAction.EDIT,
+			commentAuthorId,
+			commentId,
+			content,
+			network,
+			postAuthorId,
+			postId,
+			postType,
+			replyAuthorId: userId,
+			replyId,
+			userId
+		});
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

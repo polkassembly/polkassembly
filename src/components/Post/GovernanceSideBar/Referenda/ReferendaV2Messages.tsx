@@ -393,6 +393,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 											strokeColor='#E5007A'
 											trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 											size='small'
+											showInfo={false}
 										/>
 									</div>
 									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>

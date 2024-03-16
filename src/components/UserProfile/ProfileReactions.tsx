@@ -117,12 +117,12 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 	return (
 		<Spin
 			spinning={loading}
-			className='min-h-[280px] '
+			className='min-h-[280px]'
 		>
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pb-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -151,7 +151,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 						)}
 					</div>
 				</div>
-				<div className='mt-2 flex flex-col pb-10'>
+				<div className='mt-2 flex flex-col pb-6'>
 					{userReactions.length
 						? userReactions.map((activity, index) => {
 								return (

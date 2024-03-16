@@ -48,7 +48,7 @@ const StatusTag = ({ className, content, status, colorInverted, type }: Props) =
 	);
 };
 
-export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
+export default styled(StatusTag).attrs(({ status, theme }: any) => ({
 	className: status,
 	content: status,
 	theme
@@ -64,8 +64,8 @@ export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
 
 	&.${gov2ReferendumStatus.DECIDING}, &.${gov2ReferendumStatus.DECISION_DEPOSIT_PLACED}, &.${bountyStatus.ACTIVE}, &.${bountyStatus.EXTENDED}, &.${tipStatus.CLOSING} {
 		color: #fff;
-		border: ${(props) => (props.theme === 'dark' ? '2px solid #D05704' : '2px solid #FF6700')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#D05704' : '#FF6700')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #D05704' : '2px solid #FF6700')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#D05704' : '#FF6700')} !important;
 
 		&.inverted {
 			color: #ca5cdd;
@@ -84,8 +84,8 @@ export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
 		&.${tipStatus.OPENED},
 		&.${childBountyStatus.ADDED} {
 		color: #fff;
-		border: ${(props) => (props.theme === 'dark' ? '2px solid #3866CE' : '2px solid #407AFC')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#3866CE' : '#407AFC')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #3866CE' : '2px solid #407AFC')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#3866CE' : '#407AFC')} !important;
 
 		&.inverted {
 			color: #6495ed;
@@ -106,8 +106,8 @@ export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
 		&.${childBountyStatus.CANCELED},
 		&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
-		border: ${(props) => (props.theme === 'dark' ? '2px solid #BD2020' : '2px solid #FF0000 ')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#BD2020' : '#FF0000 ')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #BD2020' : '2px solid #FF0000 ')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#BD2020' : '#FF0000 ')} !important;
 
 		&.inverted {
 			color: #ff0000;
@@ -136,8 +136,8 @@ export default styled(StatusTag).attrs(({ status, theme }: Props) => ({
 		&.${bountyStatus.AWARDED},
 		&.${announcementStatus.Announced} {
 		color: #fff;
-		border: ${(props) => (props.theme === 'dark' ? '2px solid #478F37' : '2px solid #5BC044')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#478F37' : '#5BC044')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #478F37' : '2px solid #5BC044')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#478F37' : '#5BC044')} !important;
 
 		&.inverted {
 			color: #5bc044;

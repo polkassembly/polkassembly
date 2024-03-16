@@ -127,9 +127,7 @@ const Post: FC<IPostProps> = (props) => {
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
-		if (isOffchainPost) {
-			setCanEdit(post.user_id === id);
-		}
+		setCanEdit(post.user_id === id);
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
@@ -161,7 +159,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	}, [addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+	}, [addresses, id, isEditing, loginAddress, post, proposalType]);
 
 	useEffect(() => {
 		if (!post) return;
@@ -324,7 +322,7 @@ const Post: FC<IPostProps> = (props) => {
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
-						startTime={post.created_at}
+						startTime={post.created_at as any}
 						post={post}
 						tally={post?.tally}
 						trackName={trackName}

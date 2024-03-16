@@ -149,6 +149,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				);
 			}
 
+			if (!isAuthor) {
+				isAuthor = !isNaN(postDoc?.data?.()?.user_id) && Number(postDoc?.data?.()?.user_id) === user.id;
+			}
+
 			if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
 				const latestActivitykey = `${network}_latestActivity_OpenGov`;
 				const trackListingKey = `${network}_${subsquidProposalType}_trackId_${postRes.data?.proposals?.[0].trackNumber}_*`;
@@ -288,7 +292,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		tags: tags || [],
 		title,
 		topic_id: topicId || getTopicFromType(proposalType).id,
-		user_id: postUser?.userId || user.id,
+		user_id: user.id ?? postUser?.userId,
 		username: postUser?.username || user.username
 	};
 

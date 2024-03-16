@@ -114,7 +114,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			setProgressBarStatus('exception');
-		}, 10000);
+		}, 15000);
 		return () => clearTimeout(timer);
 	}, []);
 

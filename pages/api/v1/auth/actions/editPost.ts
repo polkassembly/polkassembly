@@ -33,6 +33,7 @@ import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFro
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
 
 export interface IEditPostResponse {
 	content: string;
@@ -146,6 +147,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 					userAddresses.map((a) => a.address),
 					network
 				);
+			}
+
+			if (!isAuthor) {
+				isAuthor = !isNaN(postDoc?.data?.()?.user_id) && Number(postDoc?.data?.()?.user_id) === user.id;
 			}
 
 			if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
@@ -287,7 +292,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		tags: tags || [],
 		title,
 		topic_id: topicId || getTopicFromType(proposalType).id,
-		user_id: postUser?.userId || user.id,
+		user_id: user.id ?? postUser?.userId,
 		username: postUser?.username || user.username
 	};
 
@@ -368,7 +373,21 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 		await batch.commit();
 	}
-	return;
+	try {
+		await createUserActivity({
+			action: EActivityAction.EDIT,
+			content,
+			network,
+			postAuthorId: postUser?.userId as number,
+			postId: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
+			postType: proposalType,
+			userId: postUser?.userId as number
+		});
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

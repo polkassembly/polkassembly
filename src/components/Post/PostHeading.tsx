@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import { dayjs } from 'dayjs-init';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -22,12 +22,14 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
 		<div className='flex gap-x-6'>
-			<Skeleton.Avatar active />
-			<Skeleton.Input active />
+			<SkeletonAvatar active />
+			<SkeletonInput active />
 		</div>
 	),
 	ssr: false

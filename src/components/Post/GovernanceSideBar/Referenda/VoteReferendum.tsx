@@ -165,6 +165,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
+			if (!showProxyDropdown) {
+				setSelectedProxyAddress('');
+				return;
+			}
 			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
@@ -528,7 +532,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			});
 		};
 		if (!voteTx) return;
-
 		await executeTx({
 			address,
 			api,
@@ -880,7 +883,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+											onChange={(value) => {
+												setShowProxyDropdown(value?.target?.checked);
+											}}
 										>
 											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
 										</Checkbox>

@@ -146,6 +146,9 @@ import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
+import MyActivitySVG from '~assets/profile/myactivity.svg';
+import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
+import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
 import OnChainIdentitySVG from '~assets/icons/onchain-identity.svg';
 import MailFilled from '~assets/icons/email-notification.svg';
 import SlackIconSVG from '~assets/icons/slack.svg';
@@ -1105,6 +1108,27 @@ export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
 		{...props}
 	/>
 );
+export const MyActivityIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={MyActivitySVG}
+		{...props}
+	/>
+);
+
+export const ProfileMentionsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileMentionsSVG}
+		{...props}
+	/>
+);
+
+export const ProfileReactionsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ProfileReactionsSVG}
+		{...props}
+	/>
+);
+
 export const OnChainIdentityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={OnChainIdentitySVG}

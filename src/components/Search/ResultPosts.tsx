@@ -201,18 +201,18 @@ export default styled(ResultPosts)`
 		overflow: hidden !important;
 	}
 	.ant-pagination .ant-pagination-item a {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination .ant-pagination-prev button,
 	.ant-pagination .ant-pagination-next button {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination-item-active a {
 		color: #e5007a !important;
 	}
 	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
 	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 		opacity: 0.5;
 	}
 `;

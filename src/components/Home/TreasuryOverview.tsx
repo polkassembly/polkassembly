@@ -658,7 +658,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 export default styled(TreasuryOverview)`
 	.ant-progress-text {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
 		font-size: 12px !important;
 	}
 	.ant-progress-outer {

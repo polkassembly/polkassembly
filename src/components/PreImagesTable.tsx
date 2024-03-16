@@ -320,9 +320,9 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 export default styled(React.memo(PreImagesTable))`
 	.ant-table-wrapper .ant-table-thead > tr > th,
 	.ant-table-wrapper .ant-table-thead > tr > td {
-		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	.ant-table-row .ant-table-row-level-0 {
-		background: ${(props) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
 	}
 `;

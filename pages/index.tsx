@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FC, useEffect, useState } from 'react';
@@ -41,6 +40,7 @@ import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
@@ -300,7 +300,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (
 					<div className='mx-1 mt-8'>
-						<TreasuryOverview theme={theme} />
+						<TreasuryOverview theme={theme as any} />
 					</div>
 				)}
 				<div className='mx-1 mt-8'>

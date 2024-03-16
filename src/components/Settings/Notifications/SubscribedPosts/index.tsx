@@ -84,7 +84,7 @@ export default function SubscribedPosts({ onSetNotification, dispatch, options, 
 		<Collapse
 			size='large'
 			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
-			theme={theme}
+			theme={theme as any}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);

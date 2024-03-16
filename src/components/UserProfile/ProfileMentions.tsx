@@ -3,12 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { DownArrowIcon, ProfileMentionsIcon } from '~src/ui-components/CustomIcons';
+import { ProfileMentionsIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Divider, Empty, Popover, Spin } from 'antd';
-import Address from '~src/ui-components/Address';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { poppins } from 'pages/_app';
+import { Divider, Empty, Spin } from 'antd';
 import ImageComponent from '../ImageComponent';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -57,9 +54,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 	const { addresses, user_id } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [userMentions, setUserMentions] = useState<IProfileMentions[]>([]);
-	const [checkedAddressesList, setCheckedAddressesList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [page, setPage] = useState<number>(1);
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -83,35 +78,6 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, page, user_id]);
 
-	const content = (
-		<div className='flex flex-col'>
-			<Checkbox.Group
-				className='flex max-h-48 flex-col overflow-y-auto'
-				onChange={(list) => setCheckedAddressesList(list)}
-				value={checkedAddressesList}
-			>
-				{addresses?.map((address, index) => (
-					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-						key={index}
-					>
-						<Checkbox
-							className='text-pink_primary'
-							value={address}
-						/>
-						<Address
-							address={address}
-							isTruncateUsername={false}
-							displayInline
-							disableAddressClick
-							disableTooltip
-						/>
-					</div>
-				))}
-			</Checkbox.Group>
-		</div>
-	);
-
 	return (
 		<Spin
 			spinning={loading}
@@ -128,26 +94,6 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 						<ProfileMentionsIcon className='text-2xl text-lightBlue dark:text-[#9e9e9e]' />
 						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Mentions</div>
 						<span className='text-sm font-normal'>({count})</span>
-					</div>
-					<div className='flex gap-4'>
-						{addresses.length > 1 && (
-							<div>
-								<Popover
-									destroyTooltipOnHide
-									zIndex={1056}
-									content={content}
-									placement='bottom'
-									onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
-								>
-									<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-										Select Addresses
-										<span className='flex items-center'>
-											<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
-										</span>
-									</div>
-								</Popover>
-							</div>
-						)}
 					</div>
 				</div>
 				<div className='mt-2 flex flex-col pb-10'>
@@ -193,18 +139,20 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 						  })
 						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
 				</div>
-				<Pagination
-					theme={theme}
-					defaultCurrent={1}
-					pageSize={LISTING_LIMIT}
-					total={count}
-					showSizeChanger={false}
-					hideOnSinglePage={true}
-					onChange={(page: number) => {
-						setPage(page);
-					}}
-					responsive={true}
-				/>
+				{!!userMentions?.length && (
+					<Pagination
+						theme={theme}
+						defaultCurrent={1}
+						pageSize={LISTING_LIMIT}
+						total={count}
+						showSizeChanger={false}
+						hideOnSinglePage={true}
+						onChange={(page: number) => {
+							setPage(page);
+						}}
+						responsive={true}
+					/>
+				)}
 			</div>
 		</Spin>
 	);

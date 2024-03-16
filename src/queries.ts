@@ -327,6 +327,14 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     status
   }
 }`;
+
+export const GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType = Bounty, $index_eq: Int!=11) {
+proposals(where:{index_eq:$index_eq, type_eq:$type_eq }){
+  reward
+  index
+}
+}`;
+
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer

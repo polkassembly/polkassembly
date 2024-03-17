@@ -94,7 +94,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 	];
 
 	return (
-		<GovSidebarCard className='overflow-y-hidden xl:max-h-[336px]'>
+		<GovSidebarCard className='overflow-y-hidden xl:max-h-[330px]'>
 			<div className='flex'>
 				<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
 				<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
@@ -136,7 +136,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 								{
 									on: 'hover',
 									style: {
-										itemTextColor: '#fff'
+										itemTextColor: `${theme === 'dark' ? '#fff' : '#485F7D'}`
 									}
 								}
 							],
@@ -148,7 +148,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 							itemsSpacing: 0,
 							justify: false,
 							symbolShape: 'circle',
-							symbolSize: 18,
+							symbolSize: 12,
 							translateX: 7,
 							translateY: 50
 						}
@@ -156,14 +156,17 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 					theme={{
 						legends: {
 							text: {
+								color: '#485F7D',
 								fontSize: 12
 							}
 						},
 						tooltip: {
 							container: {
-								background: theme === 'dark' ? '#1E2126' : '#fff',
-								color: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 11,
+								background: theme === 'dark' ? '#282a2d' : '#363636',
+								borderRadius: '6px',
+								color: theme === 'dark' ? '#fff' : '#fff',
+								fontSize: 14,
+								padding: '8px 16px',
 								textTransform: 'capitalize'
 							}
 						}

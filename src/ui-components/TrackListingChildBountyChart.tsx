@@ -51,13 +51,13 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 		{
 			color: '#FFC302',
 			id: 'disbursed',
-			label: 'Disbursed',
+			label: 'Amount Disbursed',
 			value: parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
 		},
 		{
 			color: '#F1F1EF',
 			id: 'remaining',
-			label: 'Remaining',
+			label: 'Amount Remaining',
 			value:
 				parseFloat(formatedBalance(childBountyAmount.toString(), network).replace(/,/g, '')) - parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
 		}
@@ -68,7 +68,7 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 			<ResponsivePie
 				data={childBountyData}
 				margin={{ bottom: 80, left: 80, right: 80, top: 40 }}
-				innerRadius={0.8}
+				innerRadius={0.7}
 				cornerRadius={0}
 				activeOuterRadiusOffset={0}
 				borderWidth={1}
@@ -96,9 +96,11 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 					},
 					tooltip: {
 						container: {
-							background: theme === 'dark' ? '#1E2126' : '#fff',
-							color: theme === 'dark' ? '#fff' : '#576D8B',
-							fontSize: 11,
+							background: theme === 'dark' ? '#282a2d' : '#363636',
+							borderRadius: '6px',
+							color: theme === 'dark' ? '#fff' : '#fff',
+							fontSize: 14,
+							padding: '8px 16px',
 							textTransform: 'capitalize'
 						}
 					}

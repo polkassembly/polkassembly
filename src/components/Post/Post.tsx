@@ -42,6 +42,7 @@ import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
+import RadiatingCircle from '~src/ui-components/RadiatingCircle';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -452,7 +453,11 @@ const Post: FC<IPostProps> = (props) => {
 						key: 'stats',
 						label: (
 							<div className='flex items-center gap-2'>
-								<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
+								<RadiatingCircle
+									title='New Feature'
+									content='You can now view all governance stats about a referendum in a single interface!'
+								/>
+								Stats
 							</div>
 						)
 					}

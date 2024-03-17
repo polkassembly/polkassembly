@@ -715,9 +715,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
 						/>
 
-						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>
+						<div className='flex flex-row flex-wrap items-center bg-white dark:bg-section-dark-overlay'>
 							<CommentReactionBar
-								className='reactions mr-0'
+								className='reactions ml-1 mr-0'
 								commentId={commentId}
 								comment_reactions={comment.comment_reactions}
 								importedReactions={props.isSubsquareUser}
@@ -725,7 +725,9 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							{id && (
 								<Button
 									disabled={props.disableEdit}
-									className={'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+									className={
+										'reaction-button mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'
+									}
 									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
 								>
 									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply

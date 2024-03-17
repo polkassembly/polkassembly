@@ -31,9 +31,9 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 	return (
 		<ANTDButton
 			{...props}
-			className={`${`h-[${height ? height : '40'}px]`} flex items-center justify-center gap-0 border-[1px] shadow-none ${shape === 'circle' ? 'rounded-full' : 'rounded-md'} ${
-				fontSize ? `text-${fontSize}` : 'text-sm'
-			} font-medium ${
+			className={`${`h-[${height ? height : '40'}px]`} flex cursor-pointer items-center justify-center gap-0 border-[1px] shadow-none ${
+				shape === 'circle' ? 'rounded-full' : 'rounded-md'
+			} ${fontSize ? `text-${fontSize}` : 'text-sm'} font-medium ${
 				!customColor
 					? `${
 							variant === 'primary'

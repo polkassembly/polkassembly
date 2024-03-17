@@ -172,7 +172,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	return (
 		<>
 			<button
-				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
+				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} reaction-button flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
 				onClick={() => setShowModal(true)}
 			>
 				{isDeleteModal ? (

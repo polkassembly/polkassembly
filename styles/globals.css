@@ -846,3 +846,11 @@ z-index: 1050 !important;
 .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
 }
+
+.reaction-button {
+  transition: transform 0.2s ease-in-out;
+}
+
+.reaction-button:hover {
+  transform: scale(1.1);
+}

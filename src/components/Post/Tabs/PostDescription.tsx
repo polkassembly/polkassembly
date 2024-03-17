@@ -112,7 +112,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 					{canEdit && (
 						<CustomButton
 							variant='default'
-							className='border-none px-1.5 dark:text-blue-dark-helper'
+							className='reaction-button border-none px-1.5 dark:text-blue-dark-helper'
 							onClick={() => {
 								toggleEdit();
 								trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {

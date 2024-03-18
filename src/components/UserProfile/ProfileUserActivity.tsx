@@ -209,12 +209,12 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
 														{activity.reaction == '👍' ? (
 															<span className='flex items-center gap-2 text-pink_primary'>
-																<LikeOutlined className='text-base' /> Aye
+																<LikeOutlined className='text-base' /> Liked
 															</span>
 														) : (
 															<span className='flex items-center gap-2 text-[#FF3C5F]'>
 																<DislikeFilled className='mt-0.5 text-base' />
-																Nay
+																Disliked
 															</span>
 														)}
 													</div>
@@ -251,18 +251,20 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 						  })
 						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
 				</div>
-				<Pagination
-					theme={theme}
-					defaultCurrent={1}
-					pageSize={LISTING_LIMIT}
-					total={count}
-					showSizeChanger={false}
-					hideOnSinglePage={true}
-					onChange={(page: number) => {
-						setPage(page);
-					}}
-					responsive={true}
-				/>
+				{!!userActivities?.length && (
+					<Pagination
+						theme={theme}
+						defaultCurrent={1}
+						pageSize={LISTING_LIMIT}
+						total={count}
+						showSizeChanger={false}
+						hideOnSinglePage={true}
+						onChange={(page: number) => {
+							setPage(page);
+						}}
+						responsive={true}
+					/>
+				)}
 			</div>
 		</Spin>
 	);

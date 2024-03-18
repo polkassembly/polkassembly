@@ -41,7 +41,8 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { userId, page = 1 } = req.body as Props;
+	const { userId, page } = req.body as Props;
+
 	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
 	const activitiesSnapshot = await firestore_db
 		.collection('user_activities')
@@ -76,16 +77,16 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				.collection('comments')
 				.doc(String(activityData.comment_id))
 				.collection('comment_reactions')
-				.doc(activityData?.reaction_id);
+				.doc(String(activityData?.reaction_id));
 		}
 		if (activityData?.reaction_id && activityData?.comment_id && activityData?.reply_id) {
 			refs[activityData.reaction_id] = postDocRef
 				.collection('comments')
 				.doc(String(activityData.comment_id))
 				.collection('replies')
-				.doc(activityData?.reply_id)
+				.doc(String(activityData?.reply_id))
 				.collection('reply_reactions')
-				.doc(activityData?.reaction_id);
+				.doc(String(activityData?.reaction_id));
 		}
 		userRefs[activityData?.by] = firestore_db.collection('users').doc(String(activityData?.by));
 	}

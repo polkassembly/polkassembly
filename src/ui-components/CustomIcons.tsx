@@ -146,6 +146,7 @@ import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
+import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
 import ProfileMentionsSVG from '~assets/profile/profile-mentions.svg';
 import ProfileReactionsSVG from '~assets/profile/profile-reactions.svg';
@@ -1108,6 +1109,14 @@ export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
 		{...props}
 	/>
 );
+
+export const EqualIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={EqualSVG}
+		{...props}
+	/>
+);
+
 export const MyActivityIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={MyActivitySVG}

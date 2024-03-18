@@ -25,7 +25,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IPostHistory, IPostTag, Post } from '~src/types';
+import { EActivityAction, IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -33,7 +33,7 @@ import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFro
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
 
 export interface IEditPostResponse {
 	content: string;
@@ -144,8 +144,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if (!isAuthor) {
 				isAuthor = await checkIsProposer(
 					proposerAddress,
-					userAddresses.map((a) => a.address),
-					network
+					userAddresses.map((a) => a.address)
 				);
 			}
 
@@ -167,8 +166,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		} else {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address),
-				network
+				userAddresses.map((a) => a.address)
 			); // true
 		}
 		if (process.env.IS_CACHING_ALLOWED == '1') {
@@ -244,8 +242,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		if (!isAuthor) {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address),
-				network
+				userAddresses.map((a) => a.address)
 			);
 		}
 

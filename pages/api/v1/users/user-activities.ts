@@ -12,11 +12,11 @@ import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { getUserProfileWithUserId } from '../auth/data/userProfileWithUsername';
-import { EUserActivityIn, EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
 
 interface Props {
 	userId: number;
@@ -55,6 +55,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const activitiesSnapshot = await firestore_db
 		.collection('user_activities')
 		.where('network', '==', network)
+		.where('is_deleted', '==', false)
 		.where('by', '==', userId)
 		.limit(LISTING_LIMIT)
 		.offset((Number(page) - 1) * LISTING_LIMIT)

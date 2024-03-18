@@ -12,7 +12,8 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);

@@ -610,4 +610,4 @@ export enum EKillOrCancel {
 	CANCEL = 'cancel'
 }
 
-export type StatusType = 'active' | 'success' | 'exception' | 'normal';
+export type ProgressStatusType = 'active' | 'success' | 'exception' | 'normal';

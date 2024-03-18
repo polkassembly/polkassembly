@@ -12,7 +12,7 @@ import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
-import { IPeriod, StatusType } from '~src/types';
+import { IPeriod, ProgressStatusType } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
@@ -70,7 +70,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const [minEnactment, setMinEnactment] = useState<IPeriod>(getDefaultPeriod());
 	const [spend, setSpend] = useState<IPeriod>(getDefaultPeriod());
 	const [open, setOpen] = useState(false);
-	const [progressBarStatus, setProgressBarStatus] = useState<StatusType>('active');
+	const [progressBarStatus, setProgressBarStatus] = useState<ProgressStatusType>('active');
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed', 'ExecutionFailed'].includes(status);

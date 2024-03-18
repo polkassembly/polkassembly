@@ -105,6 +105,7 @@ const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedComme
 		let snapshot = firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId);
 		let mentionsDocs = firestore_db.collection('user_activities').where('network', '==', network).where('type', '==', EUserActivityType.MENTIONED);
 		let reactionDocs = firestore_db.collection('user_activities').where('network', '==', network).where('type', '==', EUserActivityType.REACTED);
+
 		if (type === EUserActivityType.COMMENTED) {
 			snapshot = snapshot.where('comment_id', '==', id).where('type', '==', EUserActivityType.COMMENTED);
 			mentionsDocs = mentionsDocs.where('comment_id', '==', id).where('comment_author_id', '==', userId);
@@ -442,7 +443,7 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 	}
 	if (!oldActivitiesRefs.empty) {
 		oldActivitiesRefs.forEach((activity) => {
-			batch.delete(activity.ref);
+			batch.update(activity.ref, { is_deleted: true });
 		});
 	}
 	try {
@@ -468,11 +469,8 @@ const createUserActivity = async ({
 	replyId,
 	action
 }: Args) => {
-	if (reactionId && typeof reactionAuthorId == 'number') {
-		if (reactionId && reactionAuthorId && userId && !isNaN(userId)) {
-			switch (action) {
-				case EActivityAction.CREATE:
-			}
+	if (reactionId) {
+		if (reactionId && userId && !isNaN(userId)) {
 			if (action === EActivityAction.CREATE) {
 				let activityPayload: UserActivity = {
 					by: userId,
@@ -504,37 +502,64 @@ const createUserActivity = async ({
 				editPostMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
 			}
 		}
-		if (commentId && !replyId && postId && content && userId && !isNaN(userId) && !reactionId && typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
+		if (commentId && !replyId && userId && !isNaN(userId) && !reactionId) {
 			if (action === EActivityAction.CREATE) {
-				createCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+				createCommentMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId: postId as string | number,
+					postType: postType as ProposalType,
+					userId
+				});
 			} else if (action === EActivityAction.EDIT) {
-				editCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+				editCommentMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId: postId as string | number,
+					postType: postType as ProposalType,
+					userId
+				});
 			} else if (action === EActivityAction.DELETE) {
 				await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
 			}
 		}
-		if (
-			commentId &&
-			replyId &&
-			postId &&
-			content &&
-			!reactionId &&
-			typeof postAuthorId == 'number' &&
-			typeof commentAuthorId == 'number' &&
-			typeof reactionAuthorId == 'number' &&
-			typeof replyAuthorId == 'number' &&
-			typeof userId == 'number'
-		) {
+		if (replyId && postId && content && !reactionId) {
 			if (action === EActivityAction.CREATE) {
-				createReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+				createReplyMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId as string,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId,
+					postType: postType as ProposalType,
+					replyAuthorId: replyAuthorId as number,
+					replyId,
+					userId: userId as number
+				});
 			} else if (action === EActivityAction?.EDIT) {
-				editReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+				editReplyMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId as string,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId,
+					postType: postType as ProposalType,
+					replyAuthorId: replyAuthorId as number,
+					replyId,
+					userId: userId as number
+				});
 			}
 		}
-		if (replyId && !content && !reactionId && !postId && !commentId && userId && !isNaN(userId) && !reactionId) {
-			if (action === EActivityAction.DELETE) {
-				await deleteCommentOrReply({ id: replyId, network, type: EUserActivityType.REPLIED, userId: userId });
-			}
+		if (action === EActivityAction.DELETE) {
+			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
 		}
 	}
 };

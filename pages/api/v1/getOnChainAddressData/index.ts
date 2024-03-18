@@ -16,28 +16,21 @@ export const SUBSCAN_API_HEADERS = {
 	'X-API-Key': SUBSCAN_API_KEY
 };
 
-export const getOnChainAddressDetails = async (address: string | string[] | undefined, network: string | string[] | undefined) => {
+export const getOnChainAddressDetails = async (address: string | string[] | undefined) => {
 	try {
-		// const data = await (
-		// 	await fetch(`https://${network}.api.subscan.io/api/v2/scan/search`, {
-		// 		body: JSON.stringify({
-		// 			key: address,
-		// 			row: 1
-		// 		}),
-		// 		headers: SUBSCAN_API_HEADERS,
-		// 		method: 'POST'
-		// 	})
-		// ).json();
-
-		const data = nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {
+		const { data, error } = await nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {
 			body: {
 				key: address,
 				row: 1
 			},
 			url: '/api/v2/scan/search'
 		});
-
-		return data;
+		if (error || !data) {
+			console.log('error fetching events : ', error);
+		}
+		if (data) {
+			return data;
+		}
 	} catch (error) {
 		return error;
 	}
@@ -56,7 +49,7 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return res.status(400).json({ data: null, error: 'Invalid network in request header' });
 	}
 
-	const data = await getOnChainAddressDetails(address, network);
+	const data = await getOnChainAddressDetails(address);
 
 	if (data.message === 'Success') {
 		res.status(200).json(data.data);

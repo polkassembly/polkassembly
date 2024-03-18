@@ -106,7 +106,7 @@ const LinkingAndEditing: FC<ILinkingAndEditingProps> = (props) => {
 				if (data) {
 					queueNotification({
 						header: 'Success!',
-						message: 'Your post was edited',
+						message: 'Your post is now edited',
 						status: NotificationStatus.SUCCESS
 					});
 					const { content, proposer, title, topic, last_edited_at, summary } = data;

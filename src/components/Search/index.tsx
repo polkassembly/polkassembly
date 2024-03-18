@@ -1010,4 +1010,11 @@ export default styled(NewSearch)`
 	.supersearch:hover {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}
+	.ant-radio-wrapper .ant-radio-inner {
+		background-color: transparent !important;
+	}
+
+	.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+		background-color: #e5007a !important;
+	}
 `;

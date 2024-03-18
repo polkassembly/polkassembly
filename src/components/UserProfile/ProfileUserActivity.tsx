@@ -19,6 +19,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
+
 interface Props {
 	className?: string;
 	theme?: string;

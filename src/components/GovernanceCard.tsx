@@ -339,7 +339,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
 							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
-								<p className='mb-0 ml-auto mr-[34px] mt-2 text-bodyBlue dark:text-white'>
+								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>
 									{formatedBalance(childBountyAmount.toString(), network)} {unit}
 								</p>
 							)}

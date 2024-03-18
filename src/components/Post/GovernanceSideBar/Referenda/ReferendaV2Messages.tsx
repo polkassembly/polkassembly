@@ -302,7 +302,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
 							</p>
-							{isDisbursalPeriodCardVisible && spend.period ? (
+							{isDisbursalPeriodCardVisible && !!spend?.period ? (
 								<>
 									<div className='mt-[20px]'>
 										<ProgressBar

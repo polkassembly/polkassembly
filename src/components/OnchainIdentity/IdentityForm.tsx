@@ -266,11 +266,19 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async () => {
-		// GAEvent for set identity button clicked
-		trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
-			userId: currentUser?.id || '',
-			userName: currentUser?.username || ''
-		});
+		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity()) {
+			// GAEvent for request judgement button clicked
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+		} else {
+			// GAEvent for set identity button clicked
+			trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+		}
 		if (!api || !apiReady || !okAll) return;
 		let tx;
 		let identityTx;
@@ -330,45 +338,6 @@ const IdentityForm = ({
 		await executeTx(payload);
 	};
 
-	const handleRequestJudgement = async () => {
-		if (!alreadyVerifiedfields.alreadyVerified && alreadyVerifiedfields.isIdentitySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
-			if (!api || !apiReady) return;
-			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
-
-			const onSuccess = async () => {
-				handleLocalStorageSave({ setIdentity: true });
-				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
-				setStartLoading({ isLoading: false, message: 'Success!' });
-			};
-			const onFailed = (error: string) => {
-				queueNotification({
-					header: 'failed!',
-					message: error || 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setStartLoading({ isLoading: false, message: error || 'Failed' });
-			};
-
-			await executeTx({
-				address,
-				api,
-				apiReady,
-				errorMessageFallback: 'failed.',
-				network,
-				onFailed,
-				onSuccess,
-				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
-				tx: requestedJudgementTx
-			});
-			// GAEvent for request judgement button clicked
-			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
-				userId: currentUser?.id || '',
-				userName: currentUser?.username || ''
-			});
-		}
-	};
-
 	return (
 		<div className={className}>
 			<Form
@@ -393,7 +362,7 @@ const IdentityForm = ({
 								This account has already set social verification. Kindly{' '}
 								<span
 									className='cursor-pointer font-semibold text-pink_primary'
-									onClick={() => handleRequestJudgement()}
+									onClick={() => handleSetIdentity()}
 								>
 									Request Judgement
 								</span>{' '}
@@ -768,7 +737,7 @@ const IdentityForm = ({
 				/>
 				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity() ? (
 					<CustomButton
-						onClick={handleRequestJudgement}
+						onClick={handleSetIdentity}
 						loading={loading}
 						className='rounded-[4px]'
 						text='Request Judgement'

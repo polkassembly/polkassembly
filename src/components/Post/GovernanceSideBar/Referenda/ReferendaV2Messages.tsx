@@ -23,6 +23,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import Tooltip from '~src/basic-components/Tooltip';
+import Loader from '~src/ui-components/Loader';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -310,7 +311,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
 							</p>
-							{isDisbursalPeriodCardVisible && (
+							{isDisbursalPeriodCardVisible && !!spend?.period ? (
 								<>
 									<div className='mt-[20px]'>
 										<ProgressBar
@@ -322,7 +323,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 											showInfo={false}
 										/>
 									</div>
-									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
+									<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 										<>
 											<div className='flex gap-1'>
 												<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
@@ -333,12 +334,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 													<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
 												</Tooltip>
 											</div>
+
 											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 												{periodStartAt(spend.period, spend.periodPercent)}/{spend.period}
 											</span>
 										</>
 									</p>
 								</>
+							) : (
+								<Loader className='mt-2' />
 							)}
 							<ConfirmationAttemptsRow timeline={timeline || []} />
 						</GovSidebarCard>

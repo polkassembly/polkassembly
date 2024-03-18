@@ -981,18 +981,18 @@ export default styled(NewSearch)`
 		border: 1px solid var(--pink_primary);
 		height: 38px !important;
 		color: red !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 	.ant-input {
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	input::placeholder {
 		font-weight: 400 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item {
 		padding: 0px 18px !important;
@@ -1009,5 +1009,12 @@ export default styled(NewSearch)`
 	}
 	.supersearch:hover {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
+	.ant-radio-wrapper .ant-radio-inner {
+		background-color: transparent !important;
+	}
+
+	.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+		background-color: #e5007a !important;
 	}
 `;

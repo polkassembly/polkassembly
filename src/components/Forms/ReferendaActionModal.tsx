@@ -151,7 +151,7 @@ const ReferendaActionModal = ({
 			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}
-					setOpen={setOpenAddressLinkedModal}
+					setOpen={setOpenAddressLinkedModal as any}
 					isProposalCreation
 					closable
 					linkAddressNeeded

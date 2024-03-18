@@ -16,6 +16,7 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
+import { usePostDataContext } from '~src/context';
 
 interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
@@ -39,6 +40,9 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		ayes: [],
 		nays: []
 	});
+	const {
+		postData: { created_at: createdAt }
+	} = usePostDataContext();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -83,7 +87,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
 				const convictionBalance = new BN(vote.balance).mul(new BN(vote.lockPeriod));
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
@@ -140,6 +144,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		setDelegatedBalance(delegatedBalance);
 		setSoloBalance(allBalances.sub(delegatedBalance));
 		setVotesDistribution(votesDistribution);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allVotes]);
 
 	return (

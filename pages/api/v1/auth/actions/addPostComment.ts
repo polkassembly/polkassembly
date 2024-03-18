@@ -16,6 +16,8 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -26,8 +28,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 	const network = String(req.headers['x-network']);
-	// res.status(500).json({ message: 'Invalid' });
-	// return;
+
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { userId, content, postId, postType, sentiment, trackNumber = null } = req.body;
@@ -80,11 +81,10 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 
 	await newCommentRef
 		.set(newComment)
-		.then(() => {
-			postRef.update({
+		.then(async () => {
+			await postRef.update({
 				last_comment_at
 			});
-
 			const triggerName = 'newCommentAdded';
 
 			const args = {
@@ -102,8 +102,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 				headers: firebaseFunctionsHeader(network),
 				method: 'POST'
 			});
-
-			return res.status(200).json({
+			res.status(200).json({
 				id: newComment.id
 			});
 		})
@@ -111,6 +110,18 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			console.error('Error saving comment: ', error);
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
+	try {
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		const postAuthorId = postData?.user_id || null;
+
+		if (typeof postAuthorId == 'number') {
+			await createUserActivity({ action: EActivityAction.CREATE, commentAuthorId: userId, commentId: newComment.id, content, network, postAuthorId, postId, postType, userId });
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

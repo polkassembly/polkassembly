@@ -8,14 +8,6 @@ import { isValidNetwork } from '~src/api-utils';
 import { SubscanAPIResponseType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
-export const SUBSCAN_API_KEY = '74d1845ab15f4b889a64dfef074ef222';
-
-export const SUBSCAN_API_HEADERS = {
-	Accept: 'application/json',
-	'Content-Type': 'application/json',
-	'X-API-Key': SUBSCAN_API_KEY
-};
-
 export const getOnChainAddressDetails = async (address: string | string[] | undefined) => {
 	try {
 		const { data, error } = await nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {

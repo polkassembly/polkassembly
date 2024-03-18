@@ -518,6 +518,10 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via Polimec Foundation',
 				key: 'wss://rpc.polimec.org'
+			},
+			{
+				label: 'via Amforc',
+				key: ' wss://polimec.rpc.amforc.com'
 			}
 		]
 	},

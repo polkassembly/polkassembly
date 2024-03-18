@@ -11,9 +11,9 @@ import messages from '~src/auth/utils/messages';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EUserActivityIn, EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
 
 interface Props {
 	userId: number;
@@ -50,6 +50,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		.where('network', '==', network)
 		.where('mentions', 'array-contains', userId)
 		.where('type', '==', EUserActivityType.MENTIONED)
+		.where('is_deleted', '==', false)
 		.limit(LISTING_LIMIT)
 		.offset((Number(page) - 1) * LISTING_LIMIT)
 		.get();

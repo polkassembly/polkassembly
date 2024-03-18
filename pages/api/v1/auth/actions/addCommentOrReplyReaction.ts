@@ -11,8 +11,9 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
 import { IComment } from '~src/components/Post/Comment/Comment';
+import { EActivityAction } from '~src/types';
 
 export interface IDocumentReply {
 	content: string;

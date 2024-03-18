@@ -3,15 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import messages from '~src/auth/utils/messages';
-import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
-export enum EActivityAction {
-	CREATE = 'CREATE',
-	EDIT = 'EDIT',
-	DELETE = 'DELETE'
-}
 interface IDeletedCommentReply {
 	id: string;
 	type: EUserActivityType;
@@ -49,6 +44,7 @@ interface UserActivity {
 	reaction_id?: string;
 	reaction_author_id?: number;
 	type: EUserActivityType;
+	is_deleted: boolean;
 }
 
 interface IReply {
@@ -126,17 +122,17 @@ const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedComme
 
 			if (!commentOrReplyrefs.empty) {
 				commentOrReplyrefs.forEach((commentOrReplyref) => {
-					batch.delete(commentOrReplyref.ref);
+					batch.update(commentOrReplyref?.ref, { is_deleted: true });
 				});
 			}
 			if (!mentionRefs.empty) {
 				mentionRefs.forEach((mentionRef) => {
-					batch.delete(mentionRef.ref);
+					batch.update(mentionRef?.ref, { is_deleted: true });
 				});
 			}
 			if (!reactionRefs.empty) {
 				commentOrReplyrefs.forEach((reactionRef) => {
-					batch.delete(reactionRef.ref);
+					batch.update(reactionRef?.ref, { is_deleted: true });
 				});
 			}
 			await batch.commit();
@@ -170,7 +166,7 @@ const deleteReactions = async (network: string, userId: number, reactionId: stri
 
 	if (!refs.empty) {
 		refs.forEach((ref) => {
-			batch.delete(ref.ref);
+			batch.update(ref.ref, { is_deleted: true });
 		});
 	}
 	try {
@@ -191,6 +187,7 @@ const postMentions = async (content: string, userId: number | null, network: str
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -222,6 +219,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -242,7 +240,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 
 	if (!toBeDeletedDocs.empty) {
 		toBeDeletedDocs.forEach((doc) => {
-			batch.delete(doc.ref);
+			batch.update(doc.ref, { is_deleted: true });
 		});
 	}
 	if (payloads?.length) {
@@ -269,6 +267,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -281,6 +280,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 		by: userId || null,
 		comment_author_id: userId || null,
 		comment_id: commentId || null,
+		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
@@ -321,6 +321,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId || null,
@@ -337,7 +338,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 	}
 	if (!oldActivitiesRefs.empty) {
 		oldActivitiesRefs.forEach((activity) => {
-			batch.delete(activity.ref);
+			batch.update(activity.ref, { is_deleted: true });
 		});
 	}
 
@@ -361,6 +362,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -376,6 +378,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		by: userId || null,
 		comment_author_id: commentAuthorId || null,
 		comment_id: commentId || null,
+		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
@@ -419,6 +422,7 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId || null,
@@ -472,6 +476,7 @@ const createUserActivity = async ({
 			if (action === EActivityAction.CREATE) {
 				let activityPayload: UserActivity = {
 					by: userId,
+					is_deleted: false,
 					network,
 					post_author_id: postAuthorId as number,
 					post_id: postId as string | number,

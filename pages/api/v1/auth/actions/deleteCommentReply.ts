@@ -12,8 +12,8 @@ import messages from '~src/auth/utils/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { isValidNetwork } from '~src/api-utils';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
-import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);

@@ -127,7 +127,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 	};
 
 	const getAccounts = async (): Promise<undefined> => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			setExtensionNotFound(true);

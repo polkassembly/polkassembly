@@ -604,3 +604,10 @@ export interface IGetVotesHistoryParams {
 	proposalType?: ProposalType | string | string[];
 	proposalIndex?: string | string[] | number;
 }
+
+export enum EKillOrCancel {
+	KILL = 'kill',
+	CANCEL = 'cancel'
+}
+
+export type ProgressStatusType = 'active' | 'success' | 'exception' | 'normal';

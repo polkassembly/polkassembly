@@ -30,6 +30,7 @@ interface Props {
 }
 
 export interface IProfileVoteHistoryRespose {
+	createdAt: Date;
 	decision: 'yes' | 'no';
 	balance: string;
 	lockPeriod: number | string;
@@ -49,6 +50,7 @@ export interface IProfileVoteHistoryRespose {
 		type: string;
 		trackNumber?: number;
 	};
+	selfVotingPower?: string;
 }
 export interface IVotesData extends IProfileVoteHistoryRespose {
 	delegatorsCount?: number;

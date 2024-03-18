@@ -47,8 +47,7 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import ImageIcon from '~src/ui-components/ImageIcon';
-
+import Image from 'next/image';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -153,13 +152,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
-	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
-
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
 	const [delegatedTo, setDelegatedTo] = useState('');
+	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 
 	const getProxies = async (address: any) => {
@@ -167,6 +165,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
+			if (!showProxyDropdown) {
+				setSelectedProxyAddress('');
+				return;
+			}
 			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
@@ -530,7 +532,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			});
 		};
 		if (!voteTx) return;
-
 		await executeTx({
 			address,
 			api,
@@ -882,7 +883,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+											onChange={(value) => {
+												setShowProxyDropdown(value?.target?.checked);
+											}}
 										>
 											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
 										</Checkbox>
@@ -894,7 +897,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										theme={theme}
 										address={address}
 										withBalance
-										onBalanceChange={handleOnBalanceChange}
 										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}
@@ -1050,14 +1052,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					abstainVoteValue={voteValues.abstainVoteValue}
 					icon={
 						multisig ? (
-							<ImageIcon
+							<Image
 								src='/assets/multi-vote-initiated.svg'
 								alt='multi vote initiated icon'
+								width={220}
+								height={220}
 							/>
 						) : (
-							<ImageIcon
+							<Image
 								src='/assets/delegation-tracks/success-delegate.svg'
 								alt='success delegate icon'
+								width={220}
+								height={220}
 							/>
 						)
 					}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Col, Row, Skeleton } from 'antd';
+import { Col, Row } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +15,7 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletConnectSignup'), {
 	loading: () => <Skeleton active />,

@@ -208,7 +208,7 @@ const ReferendaUnlock: FC<IReferendaUnlockProps> = ({ className, isBalanceUpdate
 	};
 
 	const getAccounts = async () => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			return;

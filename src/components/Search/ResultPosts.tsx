@@ -39,7 +39,6 @@ interface Props {
 }
 const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
-	console.log(theme);
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -82,7 +81,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 									)}
 									<div className='flex items-center gap-2 text-xs text-lightBlue dark:text-blue-dark-medium md:hidden'>
 										<Divider
-											style={{ border: '1px solid var(--lightBlue)' }}
+											style={{ border: '1px solid var(--separatorDark)' }}
 											type='vertical'
 										/>
 										<ClockCircleOutlined className='-mr-1' />
@@ -110,7 +109,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 											<span>{post?.comments_count || 0}</span>
 										</div>
 										<Divider
-											style={{ border: '1px solid var(--lightBlue)' }}
+											style={{ border: '1px solid var(--separatorDark)' }}
 											type='vertical'
 										/>
 									</div>
@@ -130,7 +129,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 												</span>
 											)}
 											<Divider
-												style={{ border: '1px solid var(--lightBlue)' }}
+												style={{ border: '1px solid var(--separatorDark)' }}
 												type='vertical'
 											/>
 										</div>
@@ -139,7 +138,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<ClockCircleOutlined className='-mr-1' />
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 										<Divider
-											style={{ border: '1px solid var(--lightBlue)' }}
+											style={{ border: '1px solid var(--separatorDark)' }}
 											type='vertical'
 										/>
 									</div>
@@ -150,7 +149,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 												topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
-												style={{ border: '1px solid var(--lightBlue)' }}
+												style={{ border: '1px solid var(--separatorDark)' }}
 												type='vertical'
 											/>
 										</div>
@@ -186,6 +185,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 					hideOnSinglePage={true}
 					onChange={(page: number) => setPostsPage(page)}
 					responsive={true}
+					theme={theme}
 				/>
 			</div>
 		</>
@@ -200,18 +200,18 @@ export default styled(ResultPosts)`
 		overflow: hidden !important;
 	}
 	.ant-pagination .ant-pagination-item a {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination .ant-pagination-prev button,
 	.ant-pagination .ant-pagination-next button {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination-item-active a {
 		color: #e5007a !important;
 	}
 	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
 	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 		opacity: 0.5;
 	}
 `;

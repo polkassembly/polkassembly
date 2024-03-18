@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { dayjs } from 'dayjs-init';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 
@@ -41,6 +40,8 @@ import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
+import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -78,6 +79,11 @@ const ClaimPayoutModal = dynamic(() => import('./ClaimPayoutModal'), {
 });
 
 const PostOnChainInfo = dynamic(() => import('./Tabs/PostOnChainInfo'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const PostStats = dynamic(() => import('./Tabs/PostStats'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -121,9 +127,7 @@ const Post: FC<IPostProps> = (props) => {
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 
-		if (isOffchainPost) {
-			setCanEdit(post.user_id === id);
-		}
+		setCanEdit(post.user_id === id);
 
 		let isProposer = proposer && addresses?.includes(getSubstrateAddress(proposer) || proposer);
 		const network = getNetwork();
@@ -155,7 +159,7 @@ const Post: FC<IPostProps> = (props) => {
 				setCanEdit(true);
 			}
 		})();
-	}, [addresses, id, isEditing, isOffchainPost, loginAddress, post, proposalType]);
+	}, [addresses, id, isEditing, loginAddress, post, proposalType]);
 
 	useEffect(() => {
 		if (!post) return;
@@ -318,7 +322,7 @@ const Post: FC<IPostProps> = (props) => {
 						onchainId={onchainId}
 						status={postStatus}
 						canEdit={canEdit}
-						startTime={post.created_at}
+						startTime={post.created_at as any}
 						post={post}
 						tally={post?.tally}
 						trackName={trackName}
@@ -433,7 +437,25 @@ const Post: FC<IPostProps> = (props) => {
 					),
 					key: 'onChainInfo',
 					label: 'On Chain Info'
-				}
+				},
+				AnalyticsSupportedNetworks.includes(network) &&
+					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
+						children: (
+							<PostStats
+								postId={post?.post_id}
+								postType={proposalType}
+								tally={post?.tally}
+								proposalId={onchainId as number}
+								statusHistory={post?.statusHistory}
+							/>
+						),
+						key: 'stats',
+						label: (
+							<div className='flex items-center gap-2'>
+								<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
+							</div>
+						)
+					}
 			);
 		}
 
@@ -551,6 +573,7 @@ const Post: FC<IPostProps> = (props) => {
 											<Tabs
 												theme={theme}
 												type='card'
+												isPostTab={true}
 												className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 												items={tabItems}
 											/>

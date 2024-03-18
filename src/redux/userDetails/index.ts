@@ -6,6 +6,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { deleteLocalStorageToken } from '~src/services/auth.service';
+import deleteCookie from '~src/util/deleteCookie';
 
 const initialState: IUserDetailsStore = {
 	addresses: [],
@@ -44,6 +45,7 @@ export const userDetailsStore = createSlice({
 	name: 'userDetails',
 	reducers: {
 		setLogout: (state) => {
+			deleteCookie('refresh_token');
 			deleteLocalStorageToken();
 			localStorage.removeItem('delegationWallet');
 			localStorage.removeItem('loginWallet');

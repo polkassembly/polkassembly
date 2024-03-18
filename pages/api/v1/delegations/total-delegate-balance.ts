@@ -12,6 +12,8 @@ import BN from 'bn.js';
 import messages from '~src/auth/utils/messages';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { IDelegation } from '~src/types';
 
 const ZERO_BN = new BN(0);
 
@@ -19,6 +21,8 @@ interface Props {
 	addresses: string[];
 }
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalance | MessageType>) {
+	storeApiKeyUsage(req);
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
@@ -35,19 +39,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 				type_eq: isOpenGovSupported(network) ? 'OpenGov' : 'Democracy'
 			}
 		});
+
 		let totalDelegateBalance = ZERO_BN;
 		let votingPower = ZERO_BN;
-		data['data']?.votingDelegations.map((item: any) => {
+
+		data['data']?.votingDelegations?.map((item: IDelegation) => {
 			const bnBalance = new BN(item?.balance);
 			const bnLockedPeriod = new BN(item?.lockPeriod || 0);
 			totalDelegateBalance = totalDelegateBalance.add(bnBalance);
 			votingPower = item?.lockPeriod ? votingPower.add(bnBalance.mul(bnLockedPeriod)) : votingPower.add(bnBalance);
 		});
+
 		const delegationStats: IDelegateBalance = {
 			delegateBalance: totalDelegateBalance.toString(),
 			votingPower: votingPower.toString()
 		};
-		return res.status(200).json(delegationStats as any);
+
+		return res.status(200).json(delegationStats);
 	} catch (error) {
 		return res.status(500).json({ message: error });
 	}

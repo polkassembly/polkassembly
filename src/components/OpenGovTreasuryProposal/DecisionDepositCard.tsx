@@ -76,7 +76,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 	};
 
 	const getMetamaskAccounts = async (): Promise<InjectedAccount[]> => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 		if (!ethereum) return [];
 
 		let addresses = await ethereum.request({ method: 'eth_requestAccounts' });

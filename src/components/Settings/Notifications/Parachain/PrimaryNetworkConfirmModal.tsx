@@ -33,8 +33,8 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 			onConfirm={onConfirm}
 			footer={[
 				<div
-					className='flex justify-end'
 					key='footer'
+					className='flex items-center justify-end gap-x-1'
 				>
 					<CustomButton
 						key='1'
@@ -42,7 +42,6 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 						variant='default'
 						text='Cancel'
 					/>
-					,
 					<CustomButton
 						onClick={onConfirm}
 						key='2'

@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
 import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { NotificationStatus, PostOrigin } from '~src/types';
+import { EKillOrCancel, NotificationStatus, PostOrigin } from '~src/types';
 import Markdown from '~src/ui-components/Markdown';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
@@ -17,7 +17,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { setSigner } from '~src/util/create-referenda/setSigner';
 import { createPreImage } from '~src/util/create-referenda/createPreImage';
-import { EKillOrCancel } from './enum';
+
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ISteps } from '../OpenGovTreasuryProposal';
@@ -157,7 +157,7 @@ export default function CancelOrKillReferendaForm({
 			indicator={<LoadingOutlined />}
 		>
 			<div className='w-full'>
-				{availableBalance.lte(submissionDeposite) && (
+				{new BN(availableBalance || '0').lte(submissionDeposite) && (
 					<Alert
 						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
@@ -273,7 +273,7 @@ export default function CancelOrKillReferendaForm({
 								buttonsize='sm'
 								onClick={handleSubmit}
 								className='w-min'
-								disabled={availableBalance.lte(submissionDeposite)}
+								disabled={new BN(availableBalance || '0').lte(submissionDeposite)}
 							>
 								{type === EKillOrCancel.CANCEL ? 'Cancel' : 'Kill'} Referendum
 							</CustomButton>

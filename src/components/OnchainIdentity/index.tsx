@@ -9,8 +9,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import TotalAmountBreakdown from './TotalAmountBreakdown';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import OnChainIdentityIcon from '~assets/icons/onchain-identity.svg';
+import { CloseIcon, OnChainIdentityIcon } from '~src/ui-components/CustomIcons';
 import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
@@ -100,6 +99,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		legalName: '',
 		twitter: ''
 	});
+	const [currentWallet, setCurrentWallet] = useState<any>();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -110,6 +110,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		const injectedWindow = window as Window & InjectedWindow;
 
 		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
+		setCurrentWallet(chosenWallet);
 
 		if (!wallet) {
 			setLoading({ ...loading, isLoading: false });
@@ -216,7 +217,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			const bnRegisterarFee = new BN(registerarFee?.[(registerarFee?.length || 1) - 1].fee || ZERO_BN);
 			const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
 			setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
-			setPerSocialBondFee(bondFee);
+			setPerSocialBondFee(bondFee as any);
 			setLoading({ ...loading, isLoading: false });
 		})();
 		const address = localStorage.getItem('identityAddress');
@@ -234,7 +235,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 		(async () => {
 			try {
-				const identityHash = await api?.query?.identity?.identityOf(encoded_addr).then((res) => res.unwrapOr(null)?.info.hash.toHex());
+				const identityHash = await api?.query?.identity?.identityOf(encoded_addr).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
 				if (!identityHash) {
 					console.log('Error in unwrapping identity hash');
 					return;
@@ -414,11 +415,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				title={
 					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
-							<span className='text-2xl'>
-								<SetIdentityIcon />
-							</span>
+							<SetIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
-							<OnChainIdentityIcon />
+							<OnChainIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
 						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
@@ -455,6 +454,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							txFee={txFee}
 							name={name}
 							form={form}
+							wallet={currentWallet}
 							onChangeName={setName}
 							socials={socials}
 							onChangeSocials={setSocials}

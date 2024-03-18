@@ -25,9 +25,9 @@ export default function getUserIdFromJWT(token: string, publicKey: string | unde
 		throw apiErrorWithStatusCode(messages.INVALID_JWT, 403);
 	}
 
-	if (!decoded.sub) {
+	if (!String(decoded.id)) {
 		throw apiErrorWithStatusCode(messages.INVALID_USER_ID_IN_JWT, 403);
 	}
 
-	return Number(decoded.sub);
+	return Number(decoded.id);
 }

@@ -7,11 +7,12 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { EUserActivityIn, IUserActivityTypes } from './ProfileUserActivity';
+import { IUserActivityTypes } from './ProfileUserActivity';
 import Link from 'next/link';
 import { IProfileMentions } from './ProfileMentions';
 import { IProfileReactions } from './ProfileReactions';
 import Image from 'next/image';
+import { EUserActivityIn } from '~src/types';
 
 const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IProfileMentions | IProfileReactions }) => {
 	return (

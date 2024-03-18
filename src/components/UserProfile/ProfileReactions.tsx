@@ -14,6 +14,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
 
 interface Props {
 	className?: string;
@@ -21,19 +22,6 @@ interface Props {
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 	count: number;
-}
-
-export enum EUserActivityType {
-	REACTED = 'REACTED',
-	COMMENTED = 'COMMENTED',
-	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
-}
-
-export enum EUserActivityIn {
-	POST = 'POST',
-	COMMENT = 'COMMENT',
-	REPLY = 'REPLY'
 }
 
 type IReaction = '👍' | '👎';

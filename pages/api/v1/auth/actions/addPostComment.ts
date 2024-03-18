@@ -11,12 +11,12 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { PostComment } from '~src/types';
+import { EActivityAction, PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
 
 export interface IAddPostCommentResponse {

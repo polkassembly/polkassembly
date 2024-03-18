@@ -245,3 +245,8 @@ export interface IDelegationProfileType {
 	username: string;
 	bio: string;
 }
+
+export interface SubscanAPIResponseType {
+	url?: number;
+	body?: any;
+}

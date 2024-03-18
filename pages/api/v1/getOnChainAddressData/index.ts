@@ -5,6 +5,8 @@ import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import { SubscanAPIResponseType } from '~src/auth/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export const SUBSCAN_API_KEY = '74d1845ab15f4b889a64dfef074ef222';
 
@@ -16,16 +18,24 @@ export const SUBSCAN_API_HEADERS = {
 
 export const getOnChainAddressDetails = async (address: string | string[] | undefined, network: string | string[] | undefined) => {
 	try {
-		const data = await (
-			await fetch(`https://${network}.api.subscan.io/api/v2/scan/search`, {
-				body: JSON.stringify({
-					key: address,
-					row: 1
-				}),
-				headers: SUBSCAN_API_HEADERS,
-				method: 'POST'
-			})
-		).json();
+		// const data = await (
+		// 	await fetch(`https://${network}.api.subscan.io/api/v2/scan/search`, {
+		// 		body: JSON.stringify({
+		// 			key: address,
+		// 			row: 1
+		// 		}),
+		// 		headers: SUBSCAN_API_HEADERS,
+		// 		method: 'POST'
+		// 	})
+		// ).json();
+
+		const data = nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {
+			body: {
+				key: address,
+				row: 1
+			},
+			url: '/api/v2/scan/search'
+		});
 
 		return data;
 	} catch (error) {

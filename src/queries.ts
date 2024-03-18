@@ -2318,19 +2318,6 @@ query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int
     }
     createdAt
     createdAtBlock
-    proposal {
-      description
-      createdAt
-      index
-      proposer
-      status
-      type
-      trackNumber
-      statusHistory {
-        id
-        status
-      }
-    }
     proposalIndex
     delegatedTo
     isDelegated

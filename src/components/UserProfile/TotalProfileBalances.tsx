@@ -15,8 +15,10 @@ import styled from 'styled-components';
 import userProfileBalances from '~src/util/userProfieBalances';
 import BN from 'bn.js';
 import { useApiContext } from '~src/context';
-import { formatBalance } from '@polkadot/util';
-import { formatedBalance } from '~src/util/formatedBalance';
+import { CloseIcon, EqualIcon } from '~src/ui-components/CustomIcons';
+import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface Props {
 	className?: string;
@@ -25,49 +27,72 @@ interface Props {
 	userProfile: ProfileDetailsResponse;
 	selectedAddresses: string[];
 }
+export interface IDelegateBalance {
+	delegateBalance: string;
+	votingPower: string;
+}
+
 const ZERO_BN = new BN(0);
 
 const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { id } = useUserDetailsSelector();
-	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [totalLockedBalance, setTotalLockedBalance] = useState<BN>(ZERO_BN);
+	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
+	const [delegatBalance, setDelegateBalance] = useState<BN>(ZERO_BN);
+	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
 
-	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: unit
+	const getData = async () => {
+		if (!selectedAddresses.length) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: selectedAddresses
 		});
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+		if (data) {
+			const bnBalance = new BN(data.delegateBalance);
+			const bnVotingPower = new BN(data?.votingPower);
+			setDelegateBalance(bnBalance);
+			setVotingPower(bnVotingPower);
+		} else if (error) {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
 		setTotalLockedBalance(ZERO_BN);
 		setTransferableBalance(ZERO_BN);
+		setFreeBalance(ZERO_BN);
+		if (!api || !apiReady || !network || !selectedAddresses.length) return;
 		(async () => {
 			const promises = selectedAddresses.map(async (address) => {
 				const balances = await userProfileBalances({ address, api, apiReady, network });
-				return { locked: balances.lockedBalance, transferable: balances.transferableBalance };
+				return { free: balances.freeBalance, locked: balances.lockedBalance, transferable: balances.transferableBalance };
 			});
 			let locked = ZERO_BN;
 			let transferable = ZERO_BN;
 			const resolves = await Promise.allSettled(promises);
 
+			let free = ZERO_BN;
 			resolves.map((item) => {
 				if (item.status === 'fulfilled') {
 					locked = item?.value?.locked.add(locked);
 					transferable = item?.value?.transferable.add(transferable);
+					free = item?.value?.free.add(free);
 				}
 			});
-			setTotalLockedBalance(locked);
 			setTransferableBalance(transferable);
+			setTotalLockedBalance(locked);
+			setFreeBalance(free);
 		})();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, selectedAddresses, userProfile]);
+	}, [api, apiReady, selectedAddresses, userProfile, network]);
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedAddresses]);
 	return (
 		<div
 			className={classNames(
@@ -86,27 +111,21 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				Balance
 			</span>
 			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && <VoteUnlock addresses={selectedAddresses} />}
-			{/* <div className='my-0 flex items-center gap-2 rounded-xl bg-[#D2D8E0] px-4 py-3 text-xs dark:bg-section-dark-garyBackground dark:bg-separatorDark max-md:gap-0.5 max-md:px-2'>
+			<div className='my-0 flex items-center gap-2 overflow-x-auto rounded-xl bg-[#D2D8E0] px-4 py-3 text-xs dark:bg-[#191919] max-md:gap-0.5 max-md:px-2'>
 				<Image
 					src={'/assets/profile/green-votes.svg'}
-					height={22}
-					width={22}
+					height={34}
+					width={34}
 					alt=''
-					className='rounded-sm bg-white max-md:hidden'
+					className='rounded-[4px] bg-white p-0.5 dark:bg-section-dark-container max-md:hidden'
 				/>
-				<div className='flex flex-col'>
-					<span className='text-lightBlue dark:text-blue-dark-medium'>VOTING POWER</span>
-					<span className='text-base font-medium text-bodyBlue dark:text-blue-dark-high'>90 DOT</span>
+				<div className='flex flex-shrink-0 flex-col'>
+					<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>VOTING POWER</span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(votingPower.add(freeBalance).toString(), 2, true, network)}</span>
 				</div>
-				<Image
-					src='/assets/profile/equal.svg'
-					alt=''
-					width={32}
-					height={32}
-					className='darkmode-icons'
-				/>
-				<div className='flex flex-col'>
-					<span className='flex items-center gap-1 text-lightBlue dark:text-blue-dark-medium'>
+				<EqualIcon className='text-4xl font-normal text-lightBlue dark:text-icon-dark-inactive' />
+				<div className='flex flex-shrink-0 flex-col'>
+					<span className='flex items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium '>
 						<Image
 							className='h-4 w-4 rounded-full object-contain'
 							src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
@@ -116,13 +135,13 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						/>
 						BALANCE
 					</span>
-					<span className='text-base font-medium text-bodyBlue dark:text-blue-dark-high'>90 DOT</span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(freeBalance.toString(), 2, true, network)}</span>
 				</div>
 				<div className='flex items-center'>
-					<CloseIcon className='mx-2 text-xl' />
+					<CloseIcon className='mx-2 text-xl dark:text-icon-dark-inactive' />
 				</div>
-				<div className='flex flex-col'>
-					<span className='flex items-center gap-1 text-lightBlue dark:text-blue-dark-medium'>
+				<div className='flex flex-shrink-0 flex-col'>
+					<span className='flex items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 						<Image
 							src='/assets/icons/delegate-profile.svg'
 							alt=''
@@ -131,10 +150,10 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						/>
 						DELEGATED
 					</span>
-					<span className='text-base font-medium text-bodyBlue dark:text-blue-dark-high'>90 DOT</span>
+					<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'> {parseBalance(delegatBalance.toString(), 2, true, network)}</span>
 				</div>
-			</div> */}
-			<div className=' text-light flex flex-col gap-4 text-sm font-normal tracking-wide dark:text-blue-dark-medium'>
+			</div>
+			<div className=' text-light flex flex-col gap-4 text-sm font-normal tracking-wide dark:text-blue-dark-medium '>
 				<span className='flex justify-between'>
 					<span className='flex gap-2'>
 						<CheckCircleFilled
@@ -143,9 +162,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						/>
 						Transferrable
 					</span>
-					<span>
-						{formatedBalance(transferableBalance.toString(), unit, 2)} {unit}
-					</span>
+					<span className='font-medium'>{parseBalance(transferableBalance.toString(), 2, true, network)}</span>
 				</span>
 				<Divider
 					type='horizontal'
@@ -156,9 +173,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 						<LockIcon />
 						Locked
 					</span>
-					<span>
-						{formatedBalance(totalLockedBalance.toString(), unit, 2)} {unit}
-					</span>
+					<span className='font-medium'>{parseBalance(totalLockedBalance.toString(), 2, true, network)}</span>
 				</span>
 			</div>
 		</div>

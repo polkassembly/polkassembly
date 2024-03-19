@@ -41,7 +41,7 @@ const HighlightMenu = ({ markdownRef }: IHiglightMenuProps) => {
 					const markdownRect = markdown.getBoundingClientRect();
 					setMenuPosition({
 						left: rect.left - markdownRect.left + rect.width / 2 - 30,
-						top: rect.top - markdownRect.top + 120
+						top: rect.top - markdownRect.top + 160
 					});
 				}
 

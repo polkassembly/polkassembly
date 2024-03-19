@@ -11,10 +11,10 @@ import messages from '~src/auth/utils/messages';
 import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EUserActivityIn, EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Filter } from 'firebase-admin/firestore';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
 interface Props {
 	userId: number;
 	page: number;
@@ -49,6 +49,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		.where('network', '==', network)
 		.where('type', '==', EUserActivityType.REACTED)
 		.where(Filter.or(Filter.where('comment_author_id', '==', userId), Filter.where('post_author_id', '==', userId), Filter.where('reply_author_id', '==', userId)))
+		.where('is_deleted', '==', false)
 		.limit(LISTING_LIMIT)
 		.offset((Number(page) - 1) * LISTING_LIMIT)
 		.get();

@@ -14,7 +14,8 @@ import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { checkIsProposer } from './utils/checkIsProposer';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction } from '~src/types';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -54,8 +55,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map((doc) => doc.data());
 	const isAuthor = await checkIsProposer(
 		replyUserAddress?.[0]?.address,
-		userAddress.map((a) => a.address),
-		network
+		userAddress.map((a) => a.address)
 	);
 	if (!isAuthor && user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
 

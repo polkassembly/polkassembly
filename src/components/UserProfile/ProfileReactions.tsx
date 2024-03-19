@@ -14,6 +14,9 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 interface Props {
 	className?: string;
@@ -21,19 +24,6 @@ interface Props {
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 	count: number;
-}
-
-export enum EUserActivityType {
-	REACTED = 'REACTED',
-	COMMENTED = 'COMMENTED',
-	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
-}
-
-export enum EUserActivityIn {
-	POST = 'POST',
-	COMMENT = 'COMMENT',
-	REPLY = 'REPLY'
 }
 
 type IReaction = '👍' | '👎';
@@ -150,7 +140,14 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 									</div>
 								);
 						  })
-						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
+						: !loading && (
+								<Empty
+									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+									imageStyle={{ height: 300 }}
+									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No reactions found</p>}
+									className='my-6 dark:text-[#9e9e9e]'
+								/>
+						  )}
 				</div>
 				{!!userReactions?.length && (
 					<Pagination

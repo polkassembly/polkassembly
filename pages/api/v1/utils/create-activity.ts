@@ -3,15 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import messages from '~src/auth/utils/messages';
-import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
-export enum EActivityAction {
-	CREATE = 'CREATE',
-	EDIT = 'EDIT',
-	DELETE = 'DELETE'
-}
 interface IDeletedCommentReply {
 	id: string;
 	type: EUserActivityType;
@@ -49,6 +44,7 @@ interface UserActivity {
 	reaction_id?: string;
 	reaction_author_id?: number;
 	type: EUserActivityType;
+	is_deleted: boolean;
 }
 
 interface IReply {
@@ -109,6 +105,7 @@ const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedComme
 		let snapshot = firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId);
 		let mentionsDocs = firestore_db.collection('user_activities').where('network', '==', network).where('type', '==', EUserActivityType.MENTIONED);
 		let reactionDocs = firestore_db.collection('user_activities').where('network', '==', network).where('type', '==', EUserActivityType.REACTED);
+
 		if (type === EUserActivityType.COMMENTED) {
 			snapshot = snapshot.where('comment_id', '==', id).where('type', '==', EUserActivityType.COMMENTED);
 			mentionsDocs = mentionsDocs.where('comment_id', '==', id).where('comment_author_id', '==', userId);
@@ -126,17 +123,17 @@ const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedComme
 
 			if (!commentOrReplyrefs.empty) {
 				commentOrReplyrefs.forEach((commentOrReplyref) => {
-					batch.delete(commentOrReplyref.ref);
+					batch.update(commentOrReplyref?.ref, { is_deleted: true });
 				});
 			}
 			if (!mentionRefs.empty) {
 				mentionRefs.forEach((mentionRef) => {
-					batch.delete(mentionRef.ref);
+					batch.update(mentionRef?.ref, { is_deleted: true });
 				});
 			}
 			if (!reactionRefs.empty) {
 				commentOrReplyrefs.forEach((reactionRef) => {
-					batch.delete(reactionRef.ref);
+					batch.update(reactionRef?.ref, { is_deleted: true });
 				});
 			}
 			await batch.commit();
@@ -170,7 +167,7 @@ const deleteReactions = async (network: string, userId: number, reactionId: stri
 
 	if (!refs.empty) {
 		refs.forEach((ref) => {
-			batch.delete(ref.ref);
+			batch.update(ref.ref, { is_deleted: true });
 		});
 	}
 	try {
@@ -191,6 +188,7 @@ const postMentions = async (content: string, userId: number | null, network: str
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -222,6 +220,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -242,7 +241,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 
 	if (!toBeDeletedDocs.empty) {
 		toBeDeletedDocs.forEach((doc) => {
-			batch.delete(doc.ref);
+			batch.update(doc.ref, { is_deleted: true });
 		});
 	}
 	if (payloads?.length) {
@@ -269,6 +268,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -281,6 +281,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 		by: userId || null,
 		comment_author_id: userId || null,
 		comment_id: commentId || null,
+		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
@@ -321,6 +322,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId || null,
@@ -337,7 +339,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 	}
 	if (!oldActivitiesRefs.empty) {
 		oldActivitiesRefs.forEach((activity) => {
-			batch.delete(activity.ref);
+			batch.update(activity.ref, { is_deleted: true });
 		});
 	}
 
@@ -361,6 +363,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
@@ -376,6 +379,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		by: userId || null,
 		comment_author_id: commentAuthorId || null,
 		comment_id: commentId || null,
+		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
@@ -419,6 +423,7 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId || null,
@@ -438,7 +443,7 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 	}
 	if (!oldActivitiesRefs.empty) {
 		oldActivitiesRefs.forEach((activity) => {
-			batch.delete(activity.ref);
+			batch.update(activity.ref, { is_deleted: true });
 		});
 	}
 	try {
@@ -464,14 +469,12 @@ const createUserActivity = async ({
 	replyId,
 	action
 }: Args) => {
-	if (reactionId && typeof reactionAuthorId == 'number') {
-		if (reactionId && reactionAuthorId && userId && !isNaN(userId)) {
-			switch (action) {
-				case EActivityAction.CREATE:
-			}
+	if (reactionId) {
+		if (reactionId && userId && !isNaN(userId)) {
 			if (action === EActivityAction.CREATE) {
 				let activityPayload: UserActivity = {
 					by: userId,
+					is_deleted: false,
 					network,
 					post_author_id: postAuthorId as number,
 					post_id: postId as string | number,
@@ -499,37 +502,64 @@ const createUserActivity = async ({
 				editPostMentions(content, userId || null, network, postAuthorId, postId, postType as ProposalType);
 			}
 		}
-		if (commentId && !replyId && postId && content && userId && !isNaN(userId) && !reactionId && typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
+		if (commentId && !replyId && userId && !isNaN(userId) && !reactionId) {
 			if (action === EActivityAction.CREATE) {
-				createCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+				createCommentMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId: postId as string | number,
+					postType: postType as ProposalType,
+					userId
+				});
 			} else if (action === EActivityAction.EDIT) {
-				editCommentMentions({ commentAuthorId: commentAuthorId, commentId: commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, userId });
+				editCommentMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId: postId as string | number,
+					postType: postType as ProposalType,
+					userId
+				});
 			} else if (action === EActivityAction.DELETE) {
 				await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
 			}
 		}
-		if (
-			commentId &&
-			replyId &&
-			postId &&
-			content &&
-			!reactionId &&
-			typeof postAuthorId == 'number' &&
-			typeof commentAuthorId == 'number' &&
-			typeof reactionAuthorId == 'number' &&
-			typeof replyAuthorId == 'number' &&
-			typeof userId == 'number'
-		) {
+		if (replyId && postId && content && !reactionId) {
 			if (action === EActivityAction.CREATE) {
-				createReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+				createReplyMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId as string,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId,
+					postType: postType as ProposalType,
+					replyAuthorId: replyAuthorId as number,
+					replyId,
+					userId: userId as number
+				});
 			} else if (action === EActivityAction?.EDIT) {
-				editReplyMentions({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType: postType as ProposalType, replyAuthorId, replyId, userId });
+				editReplyMentions({
+					commentAuthorId: commentAuthorId as number,
+					commentId: commentId as string,
+					content,
+					network,
+					postAuthorId: postAuthorId as number,
+					postId,
+					postType: postType as ProposalType,
+					replyAuthorId: replyAuthorId as number,
+					replyId,
+					userId: userId as number
+				});
 			}
 		}
-		if (replyId && !content && !reactionId && !postId && !commentId && userId && !isNaN(userId) && !reactionId) {
-			if (action === EActivityAction.DELETE) {
-				await deleteCommentOrReply({ id: replyId, network, type: EUserActivityType.REPLIED, userId: userId });
-			}
+		if (action === EActivityAction.DELETE) {
+			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
 		}
 	}
 };

@@ -8,9 +8,9 @@ import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Filter } from 'firebase-admin/firestore';
+import { EUserActivityType } from '~src/types';
 
 interface Props {
 	userId: number | null;
@@ -20,13 +20,20 @@ interface Props {
 export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 	if (userId === null || isNaN(userId) || typeof userId !== 'number') return { data: null, error: messages.INVALID_PARAMS };
 	try {
-		const totalActivitiesSnapshot = await firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId).count().get();
+		const totalActivitiesSnapshot = await firestore_db
+			.collection('user_activities')
+			.where('network', '==', network)
+			.where('by', '==', userId)
+			.where('is_deleted', '==', false)
+			.count()
+			.get();
 
 		const totalReactionsSnapshot = await firestore_db
 			.collection('user_activities')
 			.where('network', '==', network)
 			.where('type', '==', EUserActivityType.REACTED)
 			.where(Filter.or(Filter.where('comment_author_id', '==', userId), Filter.where('post_author_id', '==', userId), Filter.where('reply_author_id', '==', userId)))
+			.where('is_deleted', '==', false)
 			.count()
 			.get();
 
@@ -35,6 +42,7 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 			.where('network', '==', network)
 			.where('mentions', 'array-contains', userId)
 			.where('type', '==', EUserActivityType.MENTIONED)
+			.where('is_deleted', '==', false)
 			.count()
 			.get();
 

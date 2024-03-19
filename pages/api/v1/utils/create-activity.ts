@@ -6,12 +6,15 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EActivityAction, EUserActivityType } from '~src/types';
+import changeProfileScore from './changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface IDeletedCommentReply {
 	id: string;
 	type: EUserActivityType;
 	network: string;
 	userId: number;
+	postId?: number | string;
 }
 interface Args {
 	userId?: number;
@@ -98,8 +101,8 @@ const getMentionsUserIds = async (content: string) => {
 	}
 };
 
-const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedCommentReply) => {
-	if (!network || isNaN(userId) || !id || !type) {
+const deleteCommentOrReply = async ({ id, type, network, userId, postId }: IDeletedCommentReply) => {
+	if (!network || isNaN(userId) || !id || !type || postId === undefined || postId === null) {
 		console.log(messages.INVALID_PARAMS);
 	} else {
 		let snapshot = firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId);
@@ -137,6 +140,28 @@ const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedComme
 				});
 			}
 			await batch.commit();
+
+			if (type === EUserActivityType.COMMENTED) {
+				// if deleting comment on this post and user has no more comments, subtract from reputation score
+				const isOnlyComment = (
+					await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.COMMENTED).where('by', '==', userId).where('post_id', '==', postId).get()
+				).empty;
+				if (isOnlyComment) {
+					//user has no more comments
+					await changeProfileScore(userId, -REPUTATION_SCORES.comment.value);
+				}
+			}
+
+			if (type === EUserActivityType.REPLIED) {
+				// if deleting reply and user has no more replies on this post, subtract from reputation score
+				const isOnlyReply = (
+					await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.REPLIED).where('by', '==', userId).where('post_id', '==', postId).get()
+				).empty;
+				if (isOnlyReply) {
+					//user has no more replies
+					await changeProfileScore(userId, -REPUTATION_SCORES.reply.value);
+				}
+			}
 			console.log('Success');
 		} catch (err) {
 			console.log(err);
@@ -148,6 +173,7 @@ const createReactions = async (activityPayload: UserActivity) => {
 	const ref = firestore_db.collection('user_activities').doc();
 	try {
 		await ref.set(activityPayload, { merge: true });
+		await changeProfileScore(activityPayload.by, REPUTATION_SCORES.reaction.value);
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -172,6 +198,9 @@ const deleteReactions = async (network: string, userId: number, reactionId: stri
 	}
 	try {
 		await batch.commit();
+		if (!refs.empty) {
+			await changeProfileScore(userId, -REPUTATION_SCORES.reaction.value);
+		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -297,6 +326,15 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 			}
 		}
 		await batch.commit();
+		if (userId) {
+			// check if this is user's first comment on post
+			const isFirstComment = (
+				await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.COMMENTED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
+			).empty;
+			if (isFirstComment) {
+				await changeProfileScore(userId, REPUTATION_SCORES.comment.value);
+			}
+		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -398,6 +436,15 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 	}
 	try {
 		await batch.commit();
+		if (userId) {
+			// check if this is user's first reply on post
+			const isFirstReply = (
+				await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.REPLIED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
+			).empty;
+			if (isFirstReply) {
+				await changeProfileScore(userId, REPUTATION_SCORES.reply.value);
+			}
+		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -526,7 +573,7 @@ const createUserActivity = async ({
 					userId
 				});
 			} else if (action === EActivityAction.DELETE) {
-				await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+				await deleteCommentOrReply({ id: commentId, network, postId, type: EUserActivityType.COMMENTED, userId: userId });
 			}
 		}
 		if (replyId && postId && content && !reactionId) {
@@ -559,7 +606,7 @@ const createUserActivity = async ({
 			}
 		}
 		if (action === EActivityAction.DELETE) {
-			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
+			await deleteCommentOrReply({ id: replyId as string, network, postId, type: EUserActivityType.REPLIED, userId: userId as number });
 		}
 	}
 };

@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Form, Modal, Select, Spin } from 'antd';
+
+import { Form, Modal, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -38,6 +39,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { CloseIcon, TipIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import Select from '~src/basic-components/Select';
 
 const ZERO_BN = new BN(0);
 

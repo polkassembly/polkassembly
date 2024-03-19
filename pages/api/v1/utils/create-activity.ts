@@ -265,6 +265,8 @@ const editPostMentions = async (content: string, userId: number | null, network:
 		});
 	}
 
+	// TODO: @KanishkaRajputd please add payload for post edited here
+
 	const snapshot = firestore_db.collection('user_activities');
 	const toBeDeletedDocs = await snapshot
 		.where('network', '==', network)
@@ -287,6 +289,18 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	}
 	try {
 		await batch.commit();
+
+		// if (userId) {
+		// //TODO: if user is editing this post for the first time then add reputation score
+		// const isFirstEdit = (
+		// await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.EDITED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
+		// ).empty;
+
+		// if (isFirstEdit) {
+		// await changeProfileScore(userId, REPUTATION_SCORES.add_context.value);
+		// }
+		// }
+
 		console.log('Success');
 	} catch (err) {
 		console.log(err);

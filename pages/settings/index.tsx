@@ -59,7 +59,6 @@ const Settings: FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (router.isReady) {
-			const id = '5886';
 			if (!id) {
 				router.push('/login');
 			}

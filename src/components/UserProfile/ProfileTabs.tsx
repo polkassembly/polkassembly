@@ -18,6 +18,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
+import Subscriptions from './Subscriptions';
 
 interface Props {
 	className?: string;
@@ -143,6 +144,17 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
+					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
+				</div>
+			)
+		},
+		{
+			children: <Subscriptions />,
+			key: 'Subscriptions',
+			label: (
+				<div className='flex items-center'>
+					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Subscriptions
 					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
 				</div>
 			)

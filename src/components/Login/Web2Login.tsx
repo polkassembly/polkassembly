@@ -27,6 +27,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTheme } from 'next-themes';
 
 const WalletButtons = dynamic(() => import('./WalletButtons'), {
 	loading: () => (
@@ -76,11 +77,11 @@ const Web2Login: FC<Props> = ({
 	setSignupOpen,
 	isDelegation,
 	setWithPolkasafe,
-	theme,
 	showWeb2Option,
 	setShowWalletModal
 }) => {
 	const { username } = validation;
+	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const currentUser = useUserDetailsSelector();

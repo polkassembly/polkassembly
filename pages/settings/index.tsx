@@ -95,7 +95,18 @@ const Settings: FC<Props> = (props) => {
 				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
 					{!id ? (
-						<p className='text-white'>Please Login Again</p>
+						<p className='m-0 mt-6 p-0 text-bodyBlue dark:text-white'>
+							Please login to change settings{' '}
+							<span
+								onClick={() => {
+									router.push('/login');
+								}}
+								className='cursor-pointer text-pink_primary'
+							>
+								Login
+							</span>
+							.
+						</p>
 					) : (
 						<Tabs
 							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'

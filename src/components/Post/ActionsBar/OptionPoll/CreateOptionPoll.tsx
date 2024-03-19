@@ -9,6 +9,7 @@ import React, { FC, useState } from 'react';
 import { IOptionPoll, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
+import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import { usePostDataContext } from '~src/context';
@@ -19,6 +20,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface ICreatePollProps {
 	postId: number | string;
 	proposalType: ProposalType;
+	className?: string;
 }
 
 const daysOptions: React.ReactElement[] = [];
@@ -59,7 +61,7 @@ for (let i = 0; i < 59; i++) {
 }
 
 const CreatePoll: FC<ICreatePollProps> = (props) => {
-	const { postId, proposalType } = props;
+	const { postId, proposalType, className } = props;
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState(false);
 	const [form] = Form.useForm();
@@ -140,7 +142,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 	};
 
 	return (
-		<>
+		<section className={`${className}`}>
 			<CustomButton
 				variant='default'
 				className='m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
@@ -151,8 +153,8 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 			</CustomButton>
 
 			<Modal
-				className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
-				wrapClassName='dark:bg-modalOverlayDark'
+				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+				wrapClassName='dark:bg-modalOverlayDark z-[105]'
 				title={<span className='dark:text-blue-dark-high'>Create Poll</span>}
 				open={showModal}
 				onOk={handleCreate}
@@ -304,8 +306,15 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 					</div>
 				</Form>
 			</Modal>
-		</>
+		</section>
 	);
 };
 
-export default CreatePoll;
+export default styled(CreatePoll)`
+	.ant-modal-root .ant-modal-mask {
+		z-index: 105 !important;
+	}
+	.ant-modal-root .ant-modal-wrap {
+		z-index: 105 !important;
+	}
+`;

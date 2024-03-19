@@ -7,10 +7,12 @@ import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ClockCircleOutlined } from '@ant-design/icons';
-import { EUserActivityIn, IUserActivityTypes } from './ProfileUserActivity';
+import { IUserActivityTypes } from './ProfileUserActivity';
 import Link from 'next/link';
 import { IProfileMentions } from './ProfileMentions';
 import { IProfileReactions } from './ProfileReactions';
+import Image from 'next/image';
+import { EUserActivityIn } from '~src/types';
 
 const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IProfileMentions | IProfileReactions }) => {
 	return (
@@ -19,11 +21,17 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 				<Link
 					href={`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}`}
 					target='_blank'
-					className='text-sm font-medium'
+					className='flex items-center gap-1 text-sm font-medium'
 				>
 					#{activity?.postId} {activity?.postTitle.length > 95 ? `${activity?.postTitle?.slice(0, 95)}...` : activity?.postTitle}
+					<Image
+						src='/assets/icons/redirect.svg'
+						alt=''
+						height={16}
+						width={16}
+					/>
 				</Link>
-				<span className='flex flex-shrink-0 items-start gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
+				<span className='flex flex-shrink-0 items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
 					<ClockCircleOutlined />
 					{getRelativeCreatedAt(activity?.createdAt)}
 				</span>
@@ -37,9 +45,10 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 			</div>
 			{[EUserActivityIn.COMMENT, EUserActivityIn.REPLY].includes(activity?.activityIn) && (
 				<CustomButton
-					width={150}
-					height={30}
+					width={120}
+					height={28}
 					variant='default'
+					className='text-xs font-semibold'
 					onClick={() => window.open(`/${getSinglePostLinkFromProposalType(activity?.postType)}/${activity?.postId}#${activity?.commentId}`, '_blank')}
 					text={EUserActivityIn.COMMENT === activity.activityIn ? 'View Comment' : 'View Reply'}
 					size='small'

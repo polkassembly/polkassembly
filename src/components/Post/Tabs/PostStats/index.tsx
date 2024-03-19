@@ -29,11 +29,12 @@ interface IPostStatsProps {
 	tally?: any;
 	proposalId?: number;
 	statusHistory?: any;
+	proposalCreatedAt: string;
 }
 
 const ZERO = new BN(0);
 
-const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally }: IPostStatsProps) => {
+const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally, proposalCreatedAt }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useContext(ApiContext);
 
@@ -47,6 +48,9 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		nays: ZERO
 	});
 	const [noVotes, setNoVotes] = useState<boolean>(false);
+
+	const elapsedTime = Math.floor((new Date().getTime() - new Date(proposalCreatedAt).getTime()) / (1000 * 60 * 60 * 24));
+	const resolvedElapsedTime = elapsedTime > 28 ? 28 : elapsedTime;
 
 	const [totalVotesCount, setTotalVotesCount] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
@@ -221,6 +225,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 					tallyData={tallyData}
 					allVotes={allVotes}
 					turnout={turnout ? new BN(turnout) : null}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
 			key: 'conviction-votes',
@@ -233,6 +238,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 					allVotes={allVotes}
 					support={support || ZERO}
 					turnout={turnout ? new BN(turnout) : null}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
 			key: 'vote-amount',
@@ -246,6 +252,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
 					totalVotesCount={totalVotesCount}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
 			key: 'accounts',

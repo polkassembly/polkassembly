@@ -11,17 +11,19 @@ import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from 'src/global/networkConstants';
 import { Card } from 'antd';
 import styled from 'styled-components';
+import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 
 interface ITimeSplitProps {
 	className?: string;
 	votesByTimeSplit: any[];
 	axisLabel?: string;
 	isUsedInAccounts?: boolean;
+	elapsedPeriod: number;
 }
 
 const ZERO = new BN(0);
 
-const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit, isUsedInAccounts }) => {
+const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit, isUsedInAccounts, elapsedPeriod }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 
@@ -32,13 +34,22 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 	const chartData = [
 		{
 			color: '#4064FF',
-			data: Array.from({ length: 29 }, (_, i) => ({
+			data: Array.from({ length: elapsedPeriod + 1 }, (_, i) => ({
 				x: i.toString(),
 				y: bnToIntBalance(votesByTimeSplit[i] || ZERO) || votesByTimeSplit[i] || 0
 			})),
 			id: 'votes'
 		}
 	];
+
+	if (elapsedPeriod < 1) {
+		return (
+			<div className='flex flex-col items-center justify-center gap-5 p-10'>
+				<NoVotesIcon />
+				<p className='text-sm'>No votes have been casted yet</p>
+			</div>
+		);
+	}
 
 	return (
 		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
@@ -65,7 +76,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 						format: (value) => formatUSDWithUnits(value, 1)
 					}}
 					axisBottom={{
-						tickValues: Array.from({ length: 29 }, (_, i) => (i % 7 === 0 ? i : null)).filter((value) => value !== null)
+						tickValues: elapsedPeriod >= 14 ? Array.from({ length: elapsedPeriod + 1 }, (_, i) => (i % 7 === 0 ? i : null)).filter((value) => value !== null) : undefined
 					}}
 					tooltip={({ point }) => {
 						return (

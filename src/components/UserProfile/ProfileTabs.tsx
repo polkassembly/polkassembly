@@ -18,6 +18,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -37,7 +38,6 @@ interface Props {
 
 const ProfileTabs = ({
 	className,
-	theme,
 	userProfile,
 	addressWithIdentity,
 	selectedAddresses,
@@ -56,6 +56,7 @@ const ProfileTabs = ({
 		votes: 0
 	});
 	const { id: userId } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		let totalPosts = 0;

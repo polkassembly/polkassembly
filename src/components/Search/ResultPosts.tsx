@@ -146,7 +146,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<div className='flex items-center'>
 											<TopicTag
 												className='ml-1'
-												topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
+												topic={getTopicNameFromTopicId((post?.topic || post?.topic_id || post?.topic?.id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
 												style={{ border: '1px solid var(--separatorDark)' }}

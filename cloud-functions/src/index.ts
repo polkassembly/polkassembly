@@ -65,6 +65,7 @@ exports.onPostWritten = functions.region('europe-west1').firestore.document('net
 	if (post?.subscribers) delete post?.subscribers;
 	if (post?.author_id) delete post?.author_id;
 	if (post?.content) delete post?.content;
+	if (post?.summary) delete post?.summary;
 
 	postRecord = postType === 'ReferendumV2' ? { ...postRecord, track_number: subsquidData?.trackNumber } : postRecord;
 

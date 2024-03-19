@@ -227,6 +227,8 @@ const postMentions = async (content: string, userId: number | null, network: str
 		});
 	}
 
+	// TODO: @KanishkaRajputd please add a discussion post created payload here
+
 	if (payloads?.length) {
 		for (const payload of payloads) {
 			const activityRef = snapshot.doc();
@@ -235,6 +237,10 @@ const postMentions = async (content: string, userId: number | null, network: str
 	}
 	try {
 		await batch.commit();
+
+		if (userId) {
+			await changeProfileScore(userId, REPUTATION_SCORES.create_discussion.value);
+		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);

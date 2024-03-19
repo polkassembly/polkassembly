@@ -67,7 +67,7 @@ const REPUTATION_SCORES = {
 	link_multiple_wallet_addresses: {
 		value: 0.5
 	},
-	add_profile_description: {
+	add_profile_title: {
 		value: 0.5
 	},
 	add_profile_tags: {

@@ -91,7 +91,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
 								<Markdown
 									imgHidden
-									md={post?.content?.slice(0, 250) + ' .....'}
+									md={post?.parsed_content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>
 								<div className='my-2 flex flex-shrink-0 flex-wrap gap-1 max-sm:mt-2'>

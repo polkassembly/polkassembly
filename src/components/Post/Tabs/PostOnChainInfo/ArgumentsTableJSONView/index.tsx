@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import * as React from 'react';
-import ReactJson from 'react-json-view';
+import ReactJson from '@microlink/react-json-view';
 import Address from 'src/ui-components/Address';
 import styled from 'styled-components';
 import ArgumentsTable from './ArgumentsTable';

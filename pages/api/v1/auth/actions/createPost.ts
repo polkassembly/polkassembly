@@ -16,10 +16,10 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IPostTag, Post } from '~src/types';
+import { EActivityAction, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);

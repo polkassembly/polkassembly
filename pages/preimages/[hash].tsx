@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { IPreimageData, getLatestPreimage } from 'pages/api/v1/preimages/latest';
 import React, { FC, useEffect } from 'react';
@@ -41,6 +42,7 @@ interface IPreImagesProps {
 const PreImages: FC<IPreImagesProps> = (props) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -65,7 +67,10 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 
 			<div className='rounded-xxl bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>
 				<div>
-					<PreImagesTable preimages={[data]} />
+					<PreImagesTable
+						preimages={[data]}
+						theme={theme}
+					/>
 				</div>
 			</div>
 		</>

@@ -11,11 +11,11 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
-import { ICommentHistory } from '~src/types';
+import { EActivityAction, ICommentHistory } from '~src/types';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import createUserActivity, { EActivityAction } from '../../utils/create-activity';
+import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -58,8 +58,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map((doc) => doc.data());
 	const isAuthor = await checkIsProposer(
 		commentAddress?.[0]?.address,
-		userAddress.map((a) => a.address),
-		network
+		userAddress.map((a) => a.address)
 	);
 	if (!isAuthor && user.id !== commentData?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
 

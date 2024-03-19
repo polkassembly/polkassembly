@@ -4,13 +4,7 @@
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
-import Root from '~assets/icons/root-open-gov.svg';
-import Tips from '~assets/icons/tips.svg';
-import Tipper from '~assets/icons/small-tipper.svg';
-import Stacking from '~assets/icons/stacking-admin.svg';
-import Auction from '~assets/icons/action-admin.svg';
-import Referendum from '~assets/icons/referendum-canceller.svg';
-import Fellowship from '~assets/icons/fellowship-admin.svg';
+import { AuctionAdminSVGIcon, FellowshipIcon, ReferandumCancellorIcon, RootIcon, StackingAdminIcon, TipsIcon } from '~src/ui-components/CustomIcons';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 const options = [
@@ -233,79 +227,79 @@ export const postOriginMapper = (origin: string) => {
 export const iconMapper = (origin: string) => {
 	switch (origin) {
 		case PostOrigin.AUCTION_ADMIN: {
-			return Auction;
+			return AuctionAdminSVGIcon;
 		}
 		case PostOrigin.BIG_SPENDER: {
-			return Tipper;
+			return TipsIcon;
 		}
 		case PostOrigin.BIG_TIPPER: {
-			return Tipper;
+			return TipsIcon;
 		}
 		case PostOrigin.CANDIDATES: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.EXPERTS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.FELLOWS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.FELLOWSHIP_ADMIN: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.GENERAL_ADMIN: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.GRAND_MASTERS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.LEASE_ADMIN: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.MASTERS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.MEDIUM_SPENDER: {
-			return Tipper;
+			return TipsIcon;
 		}
 		case PostOrigin.MEMBERS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.PROFICIENTS: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.REFERENDUM_CANCELLER: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.REFERENDUM_KILLER: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.ROOT: {
-			return Root;
+			return RootIcon;
 		}
 		case PostOrigin.SENIOR_EXPERTS: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.SENIOR_FELLOWS: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 		case PostOrigin.SENIOR_MASTERS: {
-			return Referendum;
+			return ReferandumCancellorIcon;
 		}
 		case PostOrigin.SMALL_SPENDER: {
-			return Tipper;
+			return TipsIcon;
 		}
 		case PostOrigin.SMALL_TIPPER: {
-			return Tipper;
+			return TipsIcon;
 		}
 		case PostOrigin.STAKING_ADMIN: {
-			return Stacking;
+			return StackingAdminIcon;
 		}
 		case PostOrigin.TREASURER: {
-			return Tips;
+			return TipsIcon;
 		}
 		case PostOrigin.WHITELISTED_CALLER: {
-			return Fellowship;
+			return FellowshipIcon;
 		}
 	}
 };

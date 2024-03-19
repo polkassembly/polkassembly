@@ -60,7 +60,6 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 				trackName = key;
 			}
 		}
-		console.log(post);
 		return (
 			<>
 				<SEOHead

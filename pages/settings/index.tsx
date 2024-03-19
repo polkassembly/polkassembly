@@ -59,9 +59,6 @@ const Settings: FC<Props> = (props) => {
 
 	useEffect(() => {
 		if (router.isReady) {
-			if (!id) {
-				router.push('/login');
-			}
 			if (!tabItems.map((t) => t.key).includes(tab)) {
 				router.replace('/settings?tab=account');
 				setSearchQuery('account');
@@ -97,14 +94,18 @@ const Settings: FC<Props> = (props) => {
 			<Col className='h-full w-full'>
 				<div className='mt-6 w-full rounded-md bg-white p-8 shadow-md dark:bg-section-dark-overlay'>
 					<h3 className='text-xl font-semibold leading-7 tracking-wide text-sidebarBlue dark:text-white'>Settings</h3>
-					<Tabs
-						className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
-						type='card'
-						defaultActiveKey={tab || 'account'}
-						onTabClick={handleTabClick}
-						items={tabItems}
-						theme={theme}
-					/>
+					{!id ? (
+						<p className='text-white'>Please Login Again</p>
+					) : (
+						<Tabs
+							className='ant-tabs-tab-bg-white font-medium text-sidebarBlue'
+							type='card'
+							defaultActiveKey={tab || 'account'}
+							onTabClick={handleTabClick}
+							items={tabItems}
+							theme={theme}
+						/>
+					)}
 				</div>
 			</Col>
 		</>

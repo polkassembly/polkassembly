@@ -4,7 +4,6 @@
 import { Col } from 'antd';
 import { GetServerSideProps } from 'next';
 import React, { FC, useEffect, useMemo, useState } from 'react';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
@@ -22,6 +21,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
+import Subscriptions from '~src/components/Subscription/Subscriptions';
 
 interface Props {
 	network: string;
@@ -52,7 +52,8 @@ const Settings: FC<Props> = (props) => {
 		() => [
 			{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
 			{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
-			{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' }
+			{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' },
+			{ children: <Subscriptions />, key: 'subscription', label: 'Subscription' }
 		],
 		[network]
 	);

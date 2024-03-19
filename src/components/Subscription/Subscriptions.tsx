@@ -22,11 +22,7 @@ const Subscriptions = () => {
 	console.log('DATA', userData);
 
 	return (
-		<div
-			className={
-				'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
-			}
-		>
+		<div className={''}>
 			<div>Hello world</div>
 		</div>
 	);

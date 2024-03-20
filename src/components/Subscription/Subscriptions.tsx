@@ -9,28 +9,58 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+// import { Dropdown, Menu } from 'antd';
+import { ProposalType } from '~src/global/proposalType';
+import { getLabel } from '../UserProfile/ProfilePosts';
 
 interface IUserData {
-	subscribedPosts?: Post[];
+	[key: string]: Post[];
 }
+
+// const capitalizeFirstLetter = (string: String) => {
+// return string
+//.split('_')
+// .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+// .join(' ');
+// };
 
 const Subscriptions = () => {
 	const [userData, setUserData] = useState<IUserData>({});
-
-	const fetchSubscriptions = async () => {
-		const { data, error } = await nextApiClientFetch('/api/v1/users/user-subscriptions', { proposalType: 'referendums_v2' });
-
-		if (data) {
-			setUserData(data);
-		}
-		if (error) console.log(error);
-	};
+	// const [selectedProposalType, setSelectedProposalType] = useState<string>('referendums_v2');
+	const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
 	useEffect(() => {
+		const fetchSubscriptions = async () => {
+			const proposalTypes = Object.values(ProposalType);
+			const userDataTemp: IUserData = {};
+
+			for (const proposalType of proposalTypes) {
+				const { data, error } = await nextApiClientFetch('/api/v1/users/user-subscriptions', { proposalType });
+				if (data && Array.isArray(data.subscribedPosts) && data.subscribedPosts.length > 0) {
+					userDataTemp[proposalType] = data.subscribedPosts;
+				}
+				if (error) console.log(error);
+			}
+
+			setUserData(userDataTemp);
+			const firstKey = Object.keys(userDataTemp)[0];
+			if (firstKey) {
+				setSelectedFilter(firstKey);
+			}
+		};
+
 		fetchSubscriptions();
 	}, []);
-	console.log('DATA', userData);
+
+	// const proposalTypeItems = Object.entries(userData).map(([proposalType]) => ({
+	// key: proposalType,
+	// label: capitalizeFirstLetter(proposalType)
+	// // onClick: () => setSelectedProposalType(proposalType)
+	// }));
+
+	const displayedPosts = selectedFilter ? userData[selectedFilter] : [];
+	console.log('userData', userData);
+	console.log('selectedFilter', selectedFilter);
 
 	return (
 		<div className={''}>
@@ -38,25 +68,40 @@ const Subscriptions = () => {
 				This is a place to keep track of Subscribed posts.
 			</p>
 			<div className='mt-2 flex flex-col pb-6'>
-				<p className='text-xl font-medium'>Posts</p>
-				{userData.subscribedPosts &&
-					userData.subscribedPosts.map((post) => {
-						const createdAt = post?.created_at?._seconds;
-						const createdAtDate = createdAt ? new Date(createdAt * 1000) : null;
-						return (
-							<div
-								className='my-3 flex'
-								key={post.id}
-							>
-								<div className='w-[10%] font-semibold'>#{post.id}</div>
-								<div className='flex w-[90%] space-x-1'>
+				<div className='flex items-center justify-between'>
+					<p className='text-xl font-medium'>Posts</p>
+					{/* <Dropdown
+						overlay={<Menu items={proposalTypeItems} />}
+						placement='bottomRight'
+					>
+						<a onClick={(e) => e.preventDefault()}>Select Proposal Type</a>
+					</Dropdown> */}
+				</div>
+				<div className='flex flex-shrink-0 gap-2'>
+					{Object.entries(userData).map(([key, value]) => (
+						<div
+							key={key}
+							onClick={() => setSelectedFilter(key)}
+							className={`cursor-pointer rounded-[8px] border-[1px] border-solid px-3 py-1.5 text-xs font-normal capitalize tracking-wide ${
+								selectedFilter === key ? 'bg-blue-500 text-white' : 'text-bodyBlue dark:text-blue-dark-high'
+							}`}
+						>
+							{getLabel(key)} ({value.length})
+						</div>
+					))}
+				</div>
+				{displayedPosts &&
+					displayedPosts.map((post) => (
+						<div
+							className='mt-6 flex w-full items-center'
+							key={post.id}
+						>
+							<div className='w-[10%] font-semibold'>#{post.id}</div>
+							<div className='flex w-[90%] justify-between space-x-1'>
+								<div className='flex space-x-1'>
 									<span>{post.title}</span>
-									<span>
-										<Link
-											href={`/referenda/${post?.id}`}
-											target='_blank'
-											className='flex items-center gap-1 text-sm font-medium'
-										>
+									<span className='-mt-[1px]'>
+										<Link href={`/referenda/${post.id}`}>
 											<Image
 												src='/assets/icons/redirect.svg'
 												alt=''
@@ -66,15 +111,15 @@ const Subscriptions = () => {
 										</Link>
 									</span>
 								</div>
-								{post?.created_at && (
-									<span className='flex flex-shrink-0 items-center gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<ClockCircleOutlined />
-										{getRelativeCreatedAt(createdAtDate!)}
+								{post.created_at && (
+									<span>
+										<ClockCircleOutlined className='mr-1' />
+										{getRelativeCreatedAt(new Date(post.created_at._seconds * 1000))}
 									</span>
 								)}
 							</div>
-						);
-					})}
+						</div>
+					))}
 			</div>
 		</div>
 	);

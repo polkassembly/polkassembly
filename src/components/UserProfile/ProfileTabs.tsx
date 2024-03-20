@@ -7,7 +7,7 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import { Tabs } from '~src/ui-components/Tabs';
 import ProfileOverview from './ProfileOverview';
 import { votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
@@ -51,6 +51,7 @@ const ProfileTabs = ({
 	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0
@@ -72,6 +73,7 @@ const ProfileTabs = ({
 			votes: totalVotes
 		});
 	}, [statsArr, userProfile]);
+
 	const tabItems = [
 		{
 			children: (
@@ -120,12 +122,11 @@ const ProfileTabs = ({
 					addressWithIdentity={addressWithIdentity}
 				/>
 			),
-			key: 'My Activity',
+			key: userId === userProfile.user_id ? 'My Activity' : 'Activity',
 			label: (
 				<div className='flex items-center'>
 					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					My Activity
-					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
+					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
 				</div>
 			)
 		},

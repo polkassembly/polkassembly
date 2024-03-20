@@ -7,7 +7,7 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import { Tabs } from '~src/ui-components/Tabs';
 import ProfileOverview from './ProfileOverview';
 import { votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
@@ -55,7 +55,6 @@ const ProfileTabs = ({
 		posts: 0,
 		votes: 0
 	});
-	const { id: userId } = useUserDetailsSelector();
 
 	useEffect(() => {
 		let totalPosts = 0;
@@ -115,6 +114,23 @@ const ProfileTabs = ({
 		},
 		{
 			children: (
+				<ProfileUserActivity
+					count={activitiesCounts?.totalActivitiesCount || 0}
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'My Activity',
+			label: (
+				<div className='flex items-center'>
+					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
+					My Activity
+					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
+				</div>
+			)
+		},
+		{
+			children: (
 				<ProfileReactions
 					count={activitiesCounts?.totalReactionsCount || 0}
 					userProfile={userProfile}
@@ -164,25 +180,6 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
 					Votes<span className='ml-[2px]'>({totals?.votes})</span>
-				</div>
-			)
-		});
-	}
-	if (userId === userProfile.user_id) {
-		tabItems.splice(3, 0, {
-			children: (
-				<ProfileUserActivity
-					count={activitiesCounts?.totalActivitiesCount || 0}
-					userProfile={userProfile}
-					addressWithIdentity={addressWithIdentity}
-				/>
-			),
-			key: 'My Activity',
-			label: (
-				<div className='flex items-center'>
-					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					My Activity
-					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
 				</div>
 			)
 		});

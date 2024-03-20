@@ -3,12 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { CommentsIcon, DownArrowIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
+import { CommentsIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Checkbox, Divider, Empty, Popover, Spin } from 'antd';
-import Address from '~src/ui-components/Address';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { poppins } from 'pages/_app';
+import { Divider, Empty, Spin } from 'antd';
 import ImageComponent from '../ImageComponent';
 import { DislikeFilled, LikeOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -51,9 +48,7 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	const { addresses, user_id: profileUserId, username } = userProfile;
 	const { id: userId } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
-	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [userActivities, setUserActivities] = useState<IUserActivityTypes[]>([]);
-	const [checkedAddressesList, setCheckedAddressesList] = useState<CheckboxValueType[]>(addresses as CheckboxValueType[]);
 	const [page, setPage] = useState<number>(1);
 	const [loading, setLoading] = useState<boolean>(false);
 
@@ -77,44 +72,15 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, page, profileUserId]);
 
-	const content = (
-		<div className='flex flex-col'>
-			<Checkbox.Group
-				className='flex max-h-48 flex-col overflow-y-auto'
-				onChange={(list) => setCheckedAddressesList(list)}
-				value={checkedAddressesList}
-			>
-				{addresses?.map((address, index) => (
-					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-3 p-2 text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-						key={index}
-					>
-						<Checkbox
-							className='text-pink_primary'
-							value={address}
-						/>
-						<Address
-							address={address}
-							isTruncateUsername={false}
-							displayInline
-							disableAddressClick
-							disableTooltip
-						/>
-					</div>
-				))}
-			</Checkbox.Group>
-		</div>
-	);
-
 	return (
 		<Spin
 			spinning={loading}
-			className=''
+			className='min-h-[280px]'
 		>
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -122,26 +88,6 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 						<MyActivityIcon className='text-xl text-lightBlue dark:text-[#9e9e9e]' />
 						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>My Activity</div>
 						<span className='text-sm font-normal'>({count})</span>
-					</div>
-					<div className='flex gap-4'>
-						{addresses.length > 1 && (
-							<div>
-								<Popover
-									destroyTooltipOnHide
-									zIndex={1056}
-									content={content}
-									placement='bottom'
-									onOpenChange={() => setAddressDropdownExpand(!addressDropdownExpand)}
-								>
-									<div className='flex h-10 w-[180px] items-center justify-between rounded-md border-[1px] border-solid border-[#DCDFE3] px-3 py-2 text-sm font-medium capitalize text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
-										Select Addresses
-										<span className='flex items-center'>
-											<DownArrowIcon className={`cursor-pointer text-2xl ${addressDropdownExpand && 'pink-color rotate-180'}`} />
-										</span>
-									</div>
-								</Popover>
-							</div>
-						)}
 					</div>
 				</div>
 				<div className='mt-2 flex flex-col pb-10'>

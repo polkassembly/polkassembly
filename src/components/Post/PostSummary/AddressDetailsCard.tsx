@@ -14,6 +14,7 @@ import { MinusCircleFilled } from '@ant-design/icons';
 import MultisigIcon from '~assets/icons/multisig-address.svg';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 import Address from '~src/ui-components/Address';
+import { shortenString } from '~src/util/shortenString';
 interface Props {
 	address: string;
 	showAddress?: boolean;
@@ -72,10 +73,16 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 						Multisig Account
 					</>
 				) : (
-					<>
-						<SingleSignatoryAlertIcon />
-						Single signatory account
-					</>
+					<div>
+						<div className='token-desktop-container flex items-center gap-x-1'>
+							<SingleSignatoryAlertIcon />
+							<p className='m-0 p-0'>Single signatory account</p>
+						</div>
+						<div className='token-mobile-container block'>
+							{/* <SingleSignatoryAlertIcon /> */}
+							{shortenString('SingleSignatory', 4)} acc
+						</div>
+					</div>
 				)}
 			</span>
 			<span
@@ -89,10 +96,13 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 						Verified
 					</>
 				) : (
-					<>
-						{isBad ? <MinusCircleFilled style={{ color }} /> : <NonVerifiedAlertIcon />}
-						Non Verified
-					</>
+					<div>
+						<div className='token-desktop-container flex items-center gap-x-1'>
+							{isBad ? <MinusCircleFilled style={{ color }} /> : <NonVerifiedAlertIcon />}
+							<p className='m-0 p-0'>Non Verified</p>
+						</div>
+						<div className='token-mobile-container block'>{shortenString('Not Verified', 3)}</div>
+					</div>
 				)}
 			</span>
 		</div>

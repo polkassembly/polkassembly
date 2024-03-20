@@ -546,7 +546,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 						copyLink();
 					}}
 				>
-					<CopyIcon className='mr-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> Copy link
+					<CopyIcon
+						className='-ml-2 text-2xl'
+						style={{ transform: 'scale(0.6)' }}
+					/>{' '}
+					Copy link
 				</div>
 			)
 		},

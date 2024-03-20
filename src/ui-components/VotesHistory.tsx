@@ -38,6 +38,8 @@ import { isSubscanSupport } from '~src/util/subscanCheck';
 import SelectGovType from '~src/components/UserProfile/SelectGovType';
 import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 interface Props {
 	className?: string;
@@ -475,7 +477,15 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 						</div>
 					</div>
 				) : (
-					<div className='mt-16'>{votesData && <Empty description={<div className='text-lightBlue dark:text-blue-dark-high'>No vote found</div>} />}</div>
+					<div className='mt-16'>
+						{votesData && (
+							<Empty
+								image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+								imageStyle={{ height: 300 }}
+								description={<div className='text-lightBlue dark:text-blue-dark-high'>No vote found</div>}
+							/>
+						)}
+					</div>
 				)}
 			</Spin>
 			<VoteHistoryExpandModal

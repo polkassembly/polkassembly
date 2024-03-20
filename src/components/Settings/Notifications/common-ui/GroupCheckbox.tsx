@@ -35,7 +35,14 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 		<div className={classname}>
 			{!!title && (
 				<div className='mb-[16px] flex items-center gap-[8px] text-blue-light-high dark:text-blue-dark-high'>
-					{title && Icon ? <Icon /> : <Tips className='h-[20px] w-[20px]' />}
+					{title ? (
+						<Icon
+							className='m-0 p-0 text-xl'
+							style={{ transform: 'scale(0.8)' }}
+						/>
+					) : (
+						<Tips className='h-[20px] w-[20px]' />
+					)}
 
 					<h3 className='mb-[1px] text-[14px] font-semibold leading-[21px] tracking-wide'>{title}</h3>
 					<Toggler

@@ -91,7 +91,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
 								<Markdown
 									imgHidden
-									md={post?.content?.slice(0, 250) + ' .....'}
+									md={post?.parsed_content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>
 								<div className='my-2 flex flex-shrink-0 flex-wrap gap-1 max-sm:mt-2'>
@@ -146,7 +146,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<div className='flex items-center'>
 											<TopicTag
 												className='ml-1'
-												topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
+												topic={getTopicNameFromTopicId((post?.topic || post?.topic_id || post?.topic?.id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
 												style={{ border: '1px solid var(--separatorDark)' }}

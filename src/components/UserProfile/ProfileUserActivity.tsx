@@ -12,7 +12,7 @@ import { poppins } from 'pages/_app';
 import ImageComponent from '../ImageComponent';
 import { DislikeFilled, LikeOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ProposalType } from '~src/global/proposalType';
 import Link from 'next/link';
 import { Pagination } from '~src/ui-components/Pagination';
@@ -20,6 +20,8 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 interface Props {
 	className?: string;
@@ -46,7 +48,8 @@ export interface IUserActivityTypes {
 
 const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	const { network } = useNetworkSelector();
-	const { addresses, user_id } = userProfile;
+	const { addresses, user_id: profileUserId, username } = userProfile;
+	const { id: userId } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [addressDropdownExpand, setAddressDropdownExpand] = useState(false);
 	const [userActivities, setUserActivities] = useState<IUserActivityTypes[]>([]);
@@ -55,11 +58,11 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const getData = async () => {
-		if (isNaN(user_id)) return;
+		if (isNaN(profileUserId)) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<{ data: IUserActivityTypes[]; totalCount: number }>('/api/v1/users/user-activities', {
 			page: page,
-			userId: user_id
+			userId: profileUserId
 		});
 		if (data) {
 			setUserActivities(data?.data);
@@ -72,7 +75,7 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, page, user_id]);
+	}, [network, page, profileUserId]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -155,7 +158,7 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 												/>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
 														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mentioned</span>
 														<div className='flex gap-2'>
 															{!!activity?.mentions &&
@@ -194,7 +197,7 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 												</span>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>reacted</span>
 														{activity.reaction == '👍' ? (
 															<span className='flex items-center gap-2 text-pink_primary'>
@@ -218,7 +221,7 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 												</span>
 												<div className='flex w-full flex-col gap-1'>
 													<div className='flex items-center gap-2'>
-														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>You</span>
+														<span className='text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{profileUserId !== userId ? username : 'You'}</span>
 														<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 															added a {activity?.type === EUserActivityType.COMMENTED ? 'comment' : 'reply'} on
 														</span>
@@ -238,7 +241,14 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 									</div>
 								);
 						  })
-						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
+						: !loading && (
+								<Empty
+									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+									imageStyle={{ height: 300 }}
+									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No current activities</p>}
+									className='my-6 dark:text-[#9e9e9e]'
+								/>
+						  )}
 				</div>
 				{!!userActivities?.length && (
 					<Pagination

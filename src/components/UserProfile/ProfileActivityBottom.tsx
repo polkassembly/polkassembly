@@ -38,7 +38,7 @@ const ActivityBottomContent = ({ activity }: { activity: IUserActivityTypes | IP
 			</div>
 			<div className='-mt-1 w-full items-center rounded-sm border-0 border-l-[1.5px] border-solid border-pink_primary bg-[#FAFAFC] px-4 pb-0.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
 				<Markdown
-					md={activity?.content?.length > 200 ? `${activity?.content?.slice(1, 200)}...` : activity?.content}
+					md={activity?.content?.length > 200 ? `${activity?.content?.slice(0, 200)}...` : activity?.content}
 					className='text-lightBlue dark:text-blue-dark-medium'
 					imgHidden
 				/>

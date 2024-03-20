@@ -56,7 +56,6 @@ const ProfileTabs = ({
 		posts: 0,
 		votes: 0
 	});
-	const { id: userId } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {

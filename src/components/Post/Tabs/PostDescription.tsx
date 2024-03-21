@@ -44,12 +44,11 @@ interface IPostDescriptionProps {
 	isEditing: boolean;
 	isOnchainPost: boolean;
 	toggleEdit: () => void;
-	TrackerButtonComp: JSX.Element;
 	Sidebar: ({ className }: { className?: string | undefined }) => JSX.Element;
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar } = props;
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
@@ -144,7 +143,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 							postId={postIndex}
 						/>
 					)}
-					{TrackerButtonComp}
 					<ShareButton
 						title={title}
 						postId={postIndex}

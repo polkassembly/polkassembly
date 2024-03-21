@@ -17,7 +17,6 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
-import TrackerButton from './ActionsBar/TrackerButton';
 import EditablePostContent from './EditablePostContent';
 import PostHeading from './PostHeading';
 import getNetwork from '~src/util/getNetwork';
@@ -350,16 +349,15 @@ const Post: FC<IPostProps> = (props) => {
 		);
 	};
 
-	const TrackerButtonComp = (
-		<>
-			{id && !isNaN(Number(onchainId)) && isOnchainPost && !isEditing && (
-				<TrackerButton
-					onchainId={onchainId}
-					proposalType={proposalType}
-				/>
-			)}
-		</>
-	);
+	// const TrackerButtonComp = (
+	// {id && !isNaN(Number(onchainId)) && isOnchainPost && !isEditing && (
+	// <TrackerButton
+	// onchainId={onchainId}
+	// proposalType={proposalType}
+	// />
+	// )}
+	// </>
+	// );
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{
@@ -471,7 +469,6 @@ const Post: FC<IPostProps> = (props) => {
 					canEdit={canEdit}
 					toggleEdit={toggleEdit}
 					isOnchainPost={isOnchainPost}
-					TrackerButtonComp={TrackerButtonComp}
 					Sidebar={() => <Sidebar />}
 				/>
 			),

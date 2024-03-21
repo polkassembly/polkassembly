@@ -8,7 +8,6 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Notifications from '~src/components/Settings/Notifications';
 import UserAccount from '~src/components/Settings/UserAccount';
 import SEOHead from '~src/global/SEOHead';
-import Tracker from '~src/components/Tracker/Tracker';
 import { useRouter } from 'next/router';
 import { PageLink } from '~src/global/post_categories';
 import BackToListingView from '~src/ui-components/BackToListingView';
@@ -52,7 +51,6 @@ const Settings: FC<Props> = (props) => {
 		() => [
 			{ children: <UserAccount network={network} />, key: 'account', label: 'Account' },
 			{ children: AVAILABLE_NETWORK.includes(network) ? <Notifications network={network} /> : <NotificationUpgradingState />, key: 'notifications', label: 'Notifications' },
-			{ children: <Tracker network={network} />, key: 'tracker', label: 'Tracker' },
 			{ children: <Subscriptions />, key: 'subscription', label: 'Subscription' }
 		],
 		[network]

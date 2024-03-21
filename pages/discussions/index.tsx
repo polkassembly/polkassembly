@@ -23,6 +23,11 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import dynamic from 'next/dynamic';
+
+const Gov1TreasuryProposal = dynamic(() => import('~src/components/Gov1TreasuryProposal'), {
+	ssr: false
+});
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -123,6 +128,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 				>
 					+ Add Post
 				</button>
+				<Gov1TreasuryProposal />
 			</div>
 
 			{/* Intro and Create Post Button */}

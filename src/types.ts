@@ -630,3 +630,9 @@ export enum EActivityAction {
 	EDIT = 'EDIT',
 	DELETE = 'DELETE'
 }
+
+export enum ESteps {
+	Write_Proposal = 'Write a Proposal',
+	Create_Preimage = 'Create Preimage',
+	Create_Proposal = 'Create Proposal'
+}

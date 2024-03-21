@@ -370,7 +370,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			action: '10 Downing Street',
 			profileScore: '1000',
 			rank: 32,
-			user: 'Mike',
+			user: 'vaibhav',
 			userSince: '10'
 		}
 	];

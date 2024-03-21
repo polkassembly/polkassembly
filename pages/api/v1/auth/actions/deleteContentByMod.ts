@@ -15,6 +15,8 @@ import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components
 import { deleteKeys, redisDel } from '~src/auth/redis';
 import { Role } from '~src/types';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import changeProfileScore from '../../utils/changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface Args {
 	userId: string;
@@ -87,6 +89,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	}
 
 	res.status(200).json({ message: 'Content deleted.' });
+
+	// if content is deleted by mod, reduce the user's reputation
+	// get comment or reply author's uid
+	const { user_id = null } = (await ref.get()).data() as { user_id: number };
+
+	if (user_id !== null && !isNaN(user_id)) {
+		await changeProfileScore(user_id, REPUTATION_SCORES.post_reported.value);
+	}
 
 	const triggerName = 'contentDeletedByMod';
 	await fetch(`${FIREBASE_FUNCTIONS_URL}/notify`, {

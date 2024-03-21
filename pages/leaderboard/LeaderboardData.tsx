@@ -1,13 +1,17 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useRouter } from 'next/router';
+import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
+import ImageComponent from '~src/components/ImageComponent';
 
 interface Props {
 	className: string;
@@ -16,12 +20,37 @@ interface Props {
 }
 
 const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
+	const [currentPage, setCurrentPage] = useState(1);
+	const [tableData, setTableData] = useState<any>();
+	const router = useRouter();
+
+	const getLeaderboardData = async () => {
+		console.log('hi there');
+		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { page: currentPage });
+		if (!data || error) {
+			console.log(error);
+		}
+		if (data) {
+			console.log(data?.data);
+			setTableData(data?.data);
+		}
+	};
+	useEffect(() => {
+		router.isReady && getLeaderboardData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage, router.isReady]);
+	console.log(tableData);
+
+	const handleTableChange = (pagination: any) => {
+		setCurrentPage(pagination.current);
+	};
+
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
 			fixed: 'left',
 			key: 'rank',
-			render: (rank) => <p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{rank}</p>,
+			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
 			title: 'Rank',
 			width: 15
 		},
@@ -33,7 +62,18 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
 			},
-			render: (user) => <p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{user}</p>,
+			render: (user, userImage) => (
+				<div className='flex items-center gap-x-2'>
+					<ImageComponent
+						src={userImage || ''}
+						alt='User Picture'
+						className='flex h-[36px] w-[36px] items-center justify-center '
+						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
+					/>
+					{/* <p className='text-red'>{userImage}</p> */}
+					<p className='m-0 ml-0.5 p-0 text-sm text-bodyBlue dark:text-white'>{user}</p>
+				</div>
+			),
 			title: 'User',
 			width: 250
 		},
@@ -127,259 +167,23 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 		}
 	];
 
-	const dataSource = [
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Vaibhav',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'Mike',
-			userSince: '10'
-		},
-		{
-			action: '10 Downing Street',
-			profileScore: '1000',
-			rank: 32,
-			user: 'vaibhav',
-			userSince: '10'
-		}
-	];
+	const dataSource = tableData?.map((item: any, index: number) => ({
+		key: item?.user_id, // It's important to have a unique key for each row
+		profileScore: item?.profile_score,
+		rank: index < 9 ? `0${index + 1}` : index + 1, // Assuming rank starts at 1 and increments
+		user: item?.username,
+		userImage: item?.image,
+		userSince: item?.created_at._seconds // Format the date as needed
+		// Other fields you might want to include...
+	}));
+
 	return (
 		<Table
 			columns={columns}
 			className={`${className} w-full overflow-x-auto`}
 			dataSource={dataSource}
 			pagination={{ pageSize: 10 }}
+			onChange={handleTableChange}
 			theme={theme}
 		></Table>
 	);

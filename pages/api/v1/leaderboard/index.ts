@@ -54,7 +54,6 @@ export const getLeaderboard = async ({ page }: { page: number }) => {
 
 const handler: NextApiHandler<LeaderboardResponse | MessageType> = async (req, res) => {
 	const { page = 1 } = req.body;
-
 	if (isNaN(page)) {
 		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
 	}
@@ -65,7 +64,8 @@ const handler: NextApiHandler<LeaderboardResponse | MessageType> = async (req, r
 
 	if (error || !data) {
 		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
-	} else {
+	}
+	if (data) {
 		return res.status(status).json(data);
 	}
 };

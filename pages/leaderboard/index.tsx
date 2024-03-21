@@ -1,19 +1,43 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+// import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import LeaderBoardTable from './LeaderBoardTable';
+import { GetServerSideProps } from 'next';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
-const Leaderboard = () => {
-	const { network } = useNetworkSelector();
+interface Props {
+	className?: string;
+	network: string;
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	return { props: { network } };
+};
+
+const Leaderboard = ({ network }: Props) => {
+	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-
 	return (
 		<section>
 			<div

@@ -5,13 +5,15 @@ import React, { useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	theme?: string;
 	className?: string;
 }
 
-const LeaderBoardTable = ({ className, theme }: Props) => {
+const LeaderBoardTable = ({ className }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 
 	return (

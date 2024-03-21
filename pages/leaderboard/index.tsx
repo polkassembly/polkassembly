@@ -1,236 +1,92 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
-// import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import StarIcon from '~assets/icons/StarIcon.svg';
-import InfoIcon from '~assets/info.svg';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import LeaderBoardTable from './LeaderBoardTable';
 import { GetServerSideProps } from 'next';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { useRouter } from 'next/router';
+import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import RankCard from './RankCard';
 
 interface Props {
 	className?: string;
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
-
-	const networkRedirect = checkRouteNetworkWithRedirect(network);
-	if (networkRedirect) return networkRedirect;
-
-	return { props: { network } };
-};
-
 const Leaderboard = ({ network }: Props) => {
 	const dispatch = useDispatch();
-	useEffect(() => {
-		dispatch(setNetwork(network));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	// const { network } = useNetworkSelector();
+	const [leaderboardData, setLeaderboardData] = useState<any>([]);
+	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
+
+	useEffect(() => {
+		const fetchAndSetNetwork = async () => {
+			dispatch(setNetwork(network));
+
+			if (router.isReady) {
+				const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { page: 1 });
+				if (data) {
+					setLeaderboardData(data?.data.slice(0, 3));
+				}
+				if (error) {
+					console.log(error);
+				}
+			}
+		};
+
+		fetchAndSetNetwork();
+	}, [dispatch, network, router.isReady]);
+
 	return (
 		<section>
 			<div
 				className='h-[122px] w-full rounded-[20px] py-6'
-				style={{
-					background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))'
-				}}
+				style={{ background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))' }}
 			>
-				<div>
-					<TrophyIcon className='absolute right-[764px] top-[12px] z-10' />
-					<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
-					<p className='m-0 flex items-center justify-center p-0 text-sm text-white '>Find your rank in {network} ecosystem</p>
-				</div>
+				<TrophyIcon className='absolute right-[764px] top-[56px] z-10' />
+				<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
+				<p className='m-0 flex items-center justify-center p-0 text-sm text-white'>Find your rank in {network} ecosystem</p>
 			</div>
-
 			<div className='mt-8 flex w-full items-center justify-center'>
-				<div
-					style={{ backgroundImage: "url('/assets/SecondPlace.svg')" }}
-					className='relative h-[197px] w-[396px] bg-cover bg-center bg-no-repeat'
-				>
-					<div className='ml-2 h-[197px] w-[396px]'>
-						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
-						<div
-							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-							style={{ border: '0.9px solid #9EA1A7' }}
-						>
-							<StarIcon />
-							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-							<InfoIcon style={{ transform: 'scale(0.8)' }} />
-						</div>
-						<div className='mx-auto mt-6 flex w-[336px] items-center'>
-							<p className='m-0 p-0'>Vaibhav Gr8</p>
-							<div className='ml-auto flex'>
-								{theme === 'dark' ? (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkDark.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								) : (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkLight.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								)}
-							</div>
-						</div>
-						<div className='divider-container mx-auto mt-6 w-[336px] ' />
-					</div>
-				</div>
-				<div
-					style={{ backgroundImage: "url('/assets/FirstPlace.svg')" }}
-					className='relative h-[217px] w-[456px] bg-cover bg-center bg-no-repeat'
-				>
-					<div className='ml-2 h-[217px] w-[456px]'>
-						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 01</p>
-						<div
-							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-							style={{ border: '0.9px solid #9EA1A7' }}
-						>
-							<StarIcon />
-							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-							<InfoIcon style={{ transform: 'scale(0.8)' }} />
-						</div>
-						<div className='mx-auto mt-6 flex w-[396px] items-center'>
-							<p className='m-0 p-0'>Vaibhav Gr8</p>
-							<div className='ml-auto flex'>
-								{theme === 'dark' ? (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkDark.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								) : (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkLight.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								)}
-							</div>
-						</div>
-						<div className='divider-container mx-auto mt-6 w-[396px] ' />
-					</div>
-				</div>
-				<div
-					style={{ backgroundImage: "url('/assets/ThirdPlace.svg')" }}
-					className='relative h-[197px] w-[396px] bg-cover bg-center bg-no-repeat'
-				>
-					<div className='ml-2 h-[197px] w-[396px]'>
-						<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 02</p>
-						<div
-							className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-							style={{ border: '0.9px solid #9EA1A7' }}
-						>
-							<StarIcon />
-							<p className='m-0 p-0 text-sm text-[#534930]'>1000</p>
-							<InfoIcon style={{ transform: 'scale(0.8)' }} />
-						</div>
-						<div className='mx-auto mt-6 flex w-[336px] items-center'>
-							<p className='m-0 p-0'>Vaibhav Gr8</p>
-							<div className='ml-auto flex'>
-								{theme === 'dark' ? (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkDark.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								) : (
-									<div className='flex items-center justify-start'>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/delegateLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
-											alt='delegation-icon'
-											className='icon-container mr-4'
-										/>
-										<ImageIcon
-											src='/assets/icons/auctionIcons/BookmarkLight.svg'
-											alt='delegation-icon'
-											className='icon-container'
-										/>
-									</div>
-								)}
-							</div>
-						</div>
-						<div className='divider-container mx-auto mt-6 w-[336px] ' />
-					</div>
-				</div>
+				{leaderboardData[1] && (
+					<RankCard
+						key={2}
+						place={2}
+						data={leaderboardData[1]}
+						theme={theme}
+						strokeWidth='336px'
+						type='secondary'
+					/>
+				)}
+
+				{leaderboardData[0] && (
+					<RankCard
+						key={1}
+						place={1}
+						data={leaderboardData[0]}
+						theme={theme}
+						strokeWidth='86px'
+						type='primary'
+					/>
+				)}
+
+				{leaderboardData[2] && (
+					<RankCard
+						key={3}
+						place={3}
+						data={leaderboardData[2]}
+						theme={theme}
+						strokeWidth='336px'
+						type='secondary'
+					/>
+				)}
 			</div>
 
 			<LeaderBoardTable
@@ -239,6 +95,14 @@ const Leaderboard = ({ network }: Props) => {
 			/>
 		</section>
 	);
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+	const network = getNetworkFromReqHeaders(req.headers);
+	const networkRedirect = checkRouteNetworkWithRedirect(network);
+	if (networkRedirect) return networkRedirect;
+
+	return { props: { network } };
 };
 
 export default Leaderboard;

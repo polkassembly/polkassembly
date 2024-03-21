@@ -12,38 +12,61 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useRouter } from 'next/router';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import ImageComponent from '~src/components/ImageComponent';
+import dayjs from 'dayjs';
 
 interface Props {
 	className: string;
-	theme?: string;
+	theme?: any;
 	searchedUsername?: string;
 }
 
 const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tableData, setTableData] = useState<any>();
+	const [totalData, setTotalData] = useState<number>(0);
 	const router = useRouter();
 
 	const getLeaderboardData = async () => {
-		console.log('hi there');
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { page: currentPage });
 		if (!data || error) {
 			console.log(error);
 		}
 		if (data) {
-			console.log(data?.data);
 			setTableData(data?.data);
+			setTotalData(data?.count);
 		}
 	};
 	useEffect(() => {
 		router.isReady && getLeaderboardData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady]);
-	console.log(tableData);
+	console.log(tableData, totalData);
 
 	const handleTableChange = (pagination: any) => {
 		setCurrentPage(pagination.current);
 	};
+
+	function getDaySuffix(day: any) {
+		if (day > 3 && day < 21) return 'th';
+		switch (day % 10) {
+			case 1:
+				return 'st';
+			case 2:
+				return 'nd';
+			case 3:
+				return 'rd';
+			default:
+				return 'th';
+		}
+	}
+
+	function formatTimestamp(seconds: number) {
+		const date = dayjs.unix(seconds);
+		const day = date.date();
+		const month = date.format('MMM');
+		const year = date.format('YY');
+		return `${day}${getDaySuffix(day)} ${month}' ${year}`;
+	}
 
 	const columns: ColumnsType<any> = [
 		{
@@ -70,7 +93,6 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 					/>
-					{/* <p className='text-red'>{userImage}</p> */}
 					<p className='m-0 ml-0.5 p-0 text-sm text-bodyBlue dark:text-white'>{user}</p>
 				</div>
 			),
@@ -128,17 +150,17 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 							<ImageIcon
 								src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
 								alt='delegation-icon'
-								className='icon-container mr-4'
+								className='icon-container mr-4 cursor-pointer'
 							/>
 							<ImageIcon
 								src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
 								alt='delegation-icon'
-								className='icon-container mr-4'
+								className='icon-container mr-4 cursor-pointer'
 							/>
 							<ImageIcon
 								src='/assets/icons/auctionIcons/BookmarkDark.svg'
 								alt='delegation-icon'
-								className='icon-container'
+								className='icon-container cursor-pointer'
 							/>
 						</div>
 					) : (
@@ -146,17 +168,17 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 							<ImageIcon
 								src='/assets/icons/auctionIcons/delegateLightIcon.svg'
 								alt='delegation-icon'
-								className='icon-container mr-4'
+								className='icon-container mr-4 cursor-pointer'
 							/>
 							<ImageIcon
 								src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
 								alt='delegation-icon'
-								className='icon-container mr-4'
+								className='icon-container mr-4 cursor-pointer'
 							/>
 							<ImageIcon
 								src='/assets/icons/auctionIcons/BookmarkLight.svg'
 								alt='delegation-icon'
-								className='icon-container'
+								className='icon-container cursor-pointer'
 							/>
 						</div>
 					)}
@@ -168,13 +190,12 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 	];
 
 	const dataSource = tableData?.map((item: any, index: number) => ({
-		key: item?.user_id, // It's important to have a unique key for each row
+		key: item?.user_id,
 		profileScore: item?.profile_score,
-		rank: index < 9 ? `0${index + 1}` : index + 1, // Assuming rank starts at 1 and increments
+		rank: index < 9 ? `0${index + 1}` : index + 1,
 		user: item?.username,
 		userImage: item?.image,
-		userSince: item?.created_at._seconds // Format the date as needed
-		// Other fields you might want to include...
+		userSince: formatTimestamp(item?.created_at._seconds)
 	}));
 
 	return (
@@ -182,7 +203,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			columns={columns}
 			className={`${className} w-full overflow-x-auto`}
 			dataSource={dataSource}
-			pagination={{ pageSize: 10 }}
+			pagination={{ pageSize: 10, total: totalData }}
 			onChange={handleTableChange}
 			theme={theme}
 		></Table>
@@ -191,7 +212,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 
 export default styled(LeaderboardData)`
 	.ant-table-thead > tr > th {
-		color: ${(props) => (props.theme === 'dark' ? '#9E9E9E' : '#485f7d')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#485f7d')} !important;
 		font-size: 14px !important;
 		font-style: normal;
 		font-weight: 500;
@@ -204,5 +225,11 @@ export default styled(LeaderboardData)`
 	.ant-table-wrapper .ant-table-pagination-right {
 		justify-content: center !important;
 		margin-top: 36px !important;
+	}
+	.ant-pagination .ant-pagination-options {
+		display: none !important;
+	}
+	.ant-table-wrapper .ant-table-pagination.ant-pagination {
+		justify-content: center !important;
 	}
 `;

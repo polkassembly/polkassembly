@@ -865,3 +865,7 @@ z-index: 105 !important;
 .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
 }
+
+.ant-input {
+  background-color: transparent !important;
+}

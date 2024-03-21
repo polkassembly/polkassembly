@@ -13,11 +13,10 @@ interface RankCardProps {
 	place: number;
 	data: any;
 	theme: string | undefined;
-	strokeWidth: string;
 	type: string;
 }
 
-const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, type }) => {
+const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type }) => {
 	const placeImageMap: Record<number, string> = {
 		1: '/assets/FirstPlace.svg',
 		2: '/assets/SecondPlace.svg',
@@ -62,9 +61,9 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, ty
 	return (
 		<div
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
-			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[390px]'} relative bg-cover bg-center bg-no-repeat`}
+			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat`}
 		>
-			<div className={`${type === 'primary' ? 'ml-10 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[390px]'}`}>
+			<div className={`${type === 'primary' ? 'ml-10 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<div
 					className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
@@ -74,7 +73,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, ty
 					<p className='m-0 p-0 text-sm text-[#534930]'>{data?.profile_score}</p>
 					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
-				<div className={`mx-auto mt-6 flex w-[${strokeWidth}] items-center`}>
+				<div className={'mx-auto mt-6 flex items-center'}>
 					<div className='flex items-center gap-x-2'>
 						<ImageComponent
 							src={data?.image || ''}
@@ -82,6 +81,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, ty
 							className='flex h-[36px] w-[36px] items-center justify-center '
 							iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 						/>
+
 						<NameLabel
 							usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] text-base font-semibold text-bodyBlue dark:text-white'
 							// defaultAddress={proposer}
@@ -108,8 +108,8 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, ty
 						/>
 					</div>
 				</div>
-				<div className={`divider-container mx-auto mt-6 w-[${strokeWidth}]`} />
-				<div className={`mx-auto ${type === 'primary' ? 'mt-3' : 'mt-1'} flex w-[${strokeWidth}] items-center`}>
+				<div className={'divider-container mx-auto mt-4'} />
+				<div className={`mx-auto ${type === 'primary' ? 'mt-4' : 'mt-3'} flex  items-center`}>
 					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-white'>User Since: </p>
 					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue'>
 						<ImageIcon

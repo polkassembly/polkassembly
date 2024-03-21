@@ -61,7 +61,6 @@ const Leaderboard = ({ network }: Props) => {
 						place={2}
 						data={leaderboardData[1]}
 						theme={theme}
-						strokeWidth='336px'
 						type='secondary'
 					/>
 				)}
@@ -72,7 +71,6 @@ const Leaderboard = ({ network }: Props) => {
 						place={1}
 						data={leaderboardData[0]}
 						theme={theme}
-						strokeWidth='86px'
 						type='primary'
 					/>
 				)}
@@ -83,7 +81,6 @@ const Leaderboard = ({ network }: Props) => {
 						place={3}
 						data={leaderboardData[2]}
 						theme={theme}
-						strokeWidth='336px'
 						type='secondary'
 					/>
 				)}

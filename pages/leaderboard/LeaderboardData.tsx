@@ -14,6 +14,7 @@ import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import ImageComponent from '~src/components/ImageComponent';
 import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className: string;
@@ -21,7 +22,8 @@ interface Props {
 	searchedUsername?: string;
 }
 
-const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
+const LeaderboardData = ({ className, searchedUsername }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
@@ -240,5 +242,8 @@ export default styled(LeaderboardData)`
 	}
 	.ant-table-wrapper .ant-table-pagination.ant-pagination {
 		justify-content: center !important;
+	}
+	.ant-input {
+		background-color: transparent !important;
 	}
 `;

@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import ImageComponent from '~src/components/ImageComponent';
 import dayjs from 'dayjs';
+import NameLabel from '~src/ui-components/NameLabel';
 
 interface Props {
 	className: string;
@@ -93,7 +94,15 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 					/>
-					<p className='m-0 ml-0.5 p-0 text-sm text-bodyBlue dark:text-white'>{user}</p>
+					{/* <p className='m-0 ml-0.5 p-0 text-sm text-bodyBlue dark:text-white'>{user}</p> */}
+					<NameLabel
+						usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] text-sm text-bodyBlue dark:text-white'
+						// defaultAddress={proposer}
+						username={user}
+						usernameMaxLength={15}
+						truncateUsername={false}
+						isUsedInLeadership={true}
+					/>
 				</div>
 			),
 			title: 'User',

@@ -7,6 +7,7 @@ import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
 import dayjs from 'dayjs';
 import ImageComponent from '~src/components/ImageComponent';
+import NameLabel from '~src/ui-components/NameLabel';
 
 interface RankCardProps {
 	place: number;
@@ -81,7 +82,13 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, strokeWidth, ty
 							className='flex h-[36px] w-[36px] items-center justify-center '
 							iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 						/>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>{data?.username}</p>
+						<NameLabel
+							usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] text-base font-semibold text-bodyBlue dark:text-white'
+							// defaultAddress={proposer}
+							username={data?.username}
+							usernameMaxLength={15}
+							truncateUsername={false}
+						/>
 					</div>
 					<div className='ml-auto flex'>
 						<ImageIcon

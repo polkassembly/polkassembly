@@ -8,7 +8,7 @@ import { Tabs } from '~src/ui-components/Tabs';
 import BecomeDelegate from './BecomeDelegate';
 import TotalDelegationData from './TotalDelegationData';
 import TrendingDelegates from './TrendingDelegates';
-import { Skeleton, TabsProps } from 'antd';
+import { TabsProps } from 'antd';
 import DelegationProfile from '~src/ui-components/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -17,6 +17,8 @@ import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWi
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { useApiContext } from '~src/context';
+import Skeleton from '~src/basic-components/Skeleton';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -25,7 +27,7 @@ interface Props {
 	identity: DeriveAccountRegistration | null;
 }
 
-const DelegationTabs = ({ className, theme, isLoggedOut, identity }: Props) => {
+const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = userProfile;
@@ -38,6 +40,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, identity }: Props) => {
 		username: ''
 	});
 	const [userBio, setUserBio] = useState<string>('');
+	const { resolvedTheme: theme } = useTheme();
 
 	const getData = async () => {
 		try {
@@ -106,7 +109,7 @@ const DelegationTabs = ({ className, theme, isLoggedOut, identity }: Props) => {
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<DelegationProfile
-						className='mt-8 rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
+						className='rounded-xxl bg-white px-6 py-5 drop-shadow-md dark:bg-section-dark-overlay'
 						profileDetails={profileDetails}
 						setIsModalOpen={setIsModalOpen}
 						userBio={userBio}

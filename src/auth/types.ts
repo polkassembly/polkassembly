@@ -179,11 +179,20 @@ export interface JWTPayloadType {
 	exp?: number;
 }
 
+export interface IRefreshTokenPayload {
+	iat: number;
+	id: number;
+	exp?: number;
+	login_address?: string;
+	login_wallet?: Wallet;
+}
+
 export interface IAuthResponse {
 	token?: string;
 	user_id?: number;
 	isTFAEnabled?: boolean;
 	tfa_token?: string;
+	refresh_token?: string;
 }
 
 export interface AuthObjectType extends TokenType {
@@ -235,4 +244,9 @@ export interface IDelegationProfileType {
 	user_id: number;
 	username: string;
 	bio: string;
+}
+
+export interface SubscanAPIResponseType {
+	url?: number;
+	body?: any;
 }

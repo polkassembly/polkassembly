@@ -326,7 +326,11 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div className={`${className} grid ${!['polymesh', 'polymesh-test'].includes(network) && 'grid-rows-2'} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}>
+		<div
+			className={`${className} grid ${
+				!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
+			} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}
+		>
 			{/* Available */}
 			<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 				<div className='w-full flex-col gap-x-0 lg:flex'>
@@ -401,7 +405,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			</div>
 
 			{/* CurrentPrice */}
-			{network !== 'moonbase' && (
+			{!['moonbase', 'polimec', 'rolimec'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
@@ -485,7 +489,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			)}
 
 			{/* Next Burn */}
-			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh'].includes(network) && (
+			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
@@ -654,7 +658,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 
 export default styled(TreasuryOverview)`
 	.ant-progress-text {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
 		font-size: 12px !important;
 	}
 	.ant-progress-outer {

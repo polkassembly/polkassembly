@@ -20,12 +20,14 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 		<div>
 			<CustomButton
 				variant='primary'
-				text='Cast Vote'
+				fontSize='lg'
 				onClick={() => {
 					setModalOpen(!modalOpen);
 				}}
-				className='mb-3 w-[100%]'
-			/>
+				className='mx-auto mb-8 w-full rounded-xxl p-[26px] font-semibold lg:w-[480px] xl:w-full'
+			>
+				Cast Vote
+			</CustomButton>
 			<ReferendaLoginPrompts
 				theme={theme}
 				modalOpen={modalOpen}

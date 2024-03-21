@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, DislikeOutlined, LikeOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
@@ -25,7 +25,7 @@ import getQueryToTrack from '~src/util/getQueryToTrack';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { getStatusBlock } from '~src/util/getStatusBlock';
-import { IPeriod } from '~src/types';
+import { IPeriod, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -39,17 +39,17 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import VoteIcon from '~assets/icons/vote-icon.svg';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
-	loading: () => <Skeleton.Button active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'), {
-	loading: () => <Skeleton.Button active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 
@@ -495,7 +495,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 									/>
 									<TopicTag
-										theme={theme}
+										theme={theme as any}
 										className='sm:mx-1 sm:mt-0'
 										topic={topic}
 									/>
@@ -545,7 +545,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<TopicTag
 									className='xs:mx-1'
 									topic={topic}
-									theme={theme}
+									theme={theme as any}
 								/>
 							</div>
 						)}

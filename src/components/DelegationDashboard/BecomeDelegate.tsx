@@ -39,14 +39,14 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 		<div>
 			{isBecomedelegateVisible ? (
 				<>
-					<div className='rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
+					<div className='mb-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 						<div className='flex items-center justify-between'>
 							<span className='text-xl font-semibold'>How to Delegate on Polkassembly</span>
 							<div className='flex items-center space-x-5'>
 								<Button
 									onClick={showModal}
-									disabled={!currentUser.id}
-									className={'border-pink_primary bg-pink_primary font-medium text-white dark:text-black'}
+									disabled={!currentUser.id || !currentUser.loginAddress}
+									className={`border-pink_primary bg-pink_primary font-medium text-white dark:text-black ${(!currentUser.id || !currentUser.loginAddress) && 'opacity-50'}`}
 								>
 									{!currentUser.id ? <Tooltip title='Please Login to continue'>Become a Delegate</Tooltip> : 'Become a Delegate'}
 								</Button>
@@ -107,12 +107,12 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 							className='border-none dark:bg-infoAlertBgDark'
 						/>
 						<BecomeDelegateModal
-							isModalOpen={isModalOpen}
-							setIsModalOpen={setIsModalOpen}
+							isModalOpen={isModalOpen as boolean}
+							setIsModalOpen={setIsModalOpen as any}
 							className=''
-							profileDetails={profileDetails}
-							userBio={userBio}
-							setUserBio={setUserBio}
+							profileDetails={profileDetails as any}
+							userBio={userBio as any}
+							setUserBio={setUserBio as any}
 							onchainUsername={onchainUsername}
 						/>
 					</div>

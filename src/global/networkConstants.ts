@@ -100,6 +100,7 @@ export const network = {
 	POLKADEX: 'polkadex',
 	POLIMEC: 'polimec',
 	PHYKEN: 'phyken',
+	ROLIMEC: 'rolimec',
 	ROBONOMICS: 'robonomics',
 	SNOW: 'snow',
 	SHIBUYA: 'shibuya',
@@ -167,6 +168,7 @@ export const tokenSymbol = {
 	ROC: 'ROC',
 	POLYX: 'POLYX',
 	PLMC: 'PLMC',
+	RLMC: 'RLMC',
 	MQTY: 'MQTY',
 	WND: 'WND',
 	XRT: 'XRT',
@@ -495,18 +497,48 @@ export const chainProperties: types.ChainPropType = {
 	},
 	[network.POLIMEC]: {
 		blockTime: 12000,
-		category: 'solo',
+		category: 'polkadot',
 		chainId: 0,
 		logo: polimecLogo,
 		rpcEndpoint: 'wss://rpc.polimec.org',
 		ss58Format: 41,
-		subsquidUrl: '',
+		subsquidUrl: 'https://squid.subsquid.io/polimec-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.PLMC,
 		treasuryProposalBondPercent: '5%',
 		treasuryProposalMinBond: '1',
 		treasuryProposalMaxBond: '50',
-		externalLinks: 'https://polimec.api.subscan.io',
+		externalLinks: 'https://explorer.polimec.org/polimec',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Helikon',
+				key: 'wss://rpc.helikon.io/polimec'
+			},
+			{
+				label: 'via Polimec Foundation',
+				key: 'wss://rpc.polimec.org'
+			},
+			{
+				label: 'via Amforc',
+				key: ' wss://polimec.rpc.amforc.com'
+			}
+		]
+	},
+	[network.ROLIMEC]: {
+		blockTime: 12000,
+		category: 'test',
+		chainId: 0,
+		logo: polimecLogo,
+		rpcEndpoint: 'wss://rpc.rolimec.org/',
+		ss58Format: 41,
+		subsquidUrl: 'https://squid.subsquid.io/rolimec-polkassembly/graphql',
+		tokenDecimals: 10,
+		tokenSymbol: tokenSymbol.RLMC,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '50',
+		externalLinks: '',
 		gTag: null,
 		rpcEndpoints: []
 	},

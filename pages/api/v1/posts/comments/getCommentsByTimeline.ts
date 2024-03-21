@@ -14,6 +14,7 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { ITimelineData } from '~src/context/PostDataContext';
 import { ESentiments } from '~src/types';
 import { getSubSquareComments } from './subsquare-comments';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface ITimelineComments {
 	comments: {
@@ -52,6 +53,19 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 			if (subsquareComments.length > 0) {
 				const key = `${lastTimeline.index}_${lastTimeline.type}`;
 				allTimelineComments[key] = [...(allTimelineComments?.[key] || []), ...subsquareComments];
+				Object.keys(allTimelineComments).forEach((key) => {
+					allTimelineComments[key].forEach((comment: any, index: any) => {
+						const matchingSubsquareComment = subsquareComments.find((subsquareComment) => subsquareComment.id === comment.id);
+						if (matchingSubsquareComment) {
+							allTimelineComments[key][index].content = matchingSubsquareComment.content;
+							allTimelineComments[key][index].comment_source = matchingSubsquareComment.comment_source;
+							allTimelineComments[key][index].created_at = matchingSubsquareComment.created_at;
+							allTimelineComments[key][index].user_id = matchingSubsquareComment.user_id;
+							allTimelineComments[key][index].proposer = matchingSubsquareComment.proposer;
+							allTimelineComments[key][index].username = 'SubsquareUser';
+						}
+					});
+				});
 			}
 		} catch (e) {
 			console.log('error in fetching subsquare comments', e);
@@ -103,6 +117,8 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 };
 
 const handler: NextApiHandler<ITimelineComments | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postTimeline } = req.body;
 	const network = String(req.headers['x-network']);
 

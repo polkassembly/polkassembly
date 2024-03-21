@@ -23,6 +23,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import Markdown from '~src/ui-components/Markdown';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'), {
 	loading: () => <Skeleton active />,
@@ -30,12 +31,12 @@ const ArgumentsTableJSONView = dynamic(() => import('./ArgumentsTableJSONView'),
 });
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
-	loading: () => <Skeleton.Button active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 
 const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
-	loading: () => <Skeleton.Button active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 
@@ -171,7 +172,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	return (
 		<>
 			<div className={`${className} mt-4`}>
-				<OnchainInfoWrapper theme={theme}>
+				<OnchainInfoWrapper theme={theme as any}>
 					<h5 className='mb-5 text-base font-bold'>Metadata</h5>
 					<ul className='flex list-none flex-col gap-y-2'>
 						{submitted_amount && (

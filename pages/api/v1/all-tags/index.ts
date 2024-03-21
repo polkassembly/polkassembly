@@ -3,12 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IPostTag } from '~src/types';
 
 const handler: NextApiHandler<IPostTag[] | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const tagsSnapshots = await firestore_db.collection('tags').orderBy('last_used_at', 'desc').get();
 	const tags = tagsSnapshots?.docs?.map((tag) => {
 		const data = tag.data();

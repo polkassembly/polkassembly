@@ -112,7 +112,7 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 		</Modal>
 	);
 };
-export default styled(CommentSentimentModal).attrs(({ sentiment }: Props) => ({
+export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 	className: sentiment
 }))`
 	.padding .ant-modal-content {

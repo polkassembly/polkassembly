@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Form, Modal, Select, Divider } from 'antd';
+import { Form, Modal, Divider } from 'antd';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
 
@@ -25,6 +25,8 @@ import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/C
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Input from '~src/basic-components/Input';
+import Select from '~src/basic-components/Select';
+import SelectOption from '~src/basic-components/Select/SelectOption';
 
 const { Panel } = Collapse;
 
@@ -85,7 +87,6 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 			</div>
 		</div>
 	);
-	const { Option } = Select;
 	return (
 		<Collapse
 			size='large'
@@ -94,7 +95,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
-			theme={theme}
+			theme={theme as any}
 		>
 			<Panel
 				header={
@@ -144,7 +145,6 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									variant='default'
 									className='px-8 py-5 font-semibold'
 								/>
-								,
 								<CustomButton
 									htmlType='submit'
 									key='delete'
@@ -191,17 +191,17 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 									size='large'
 									placeholder='Select a reason'
 									className='select-reason rounded-md border-grey_border dark:text-white'
-									popupClassName='z-[1060] dark:border-0 dark:border-none dark:bg-section-dark-background'
+									popupClassName='z-[1060]'
 								>
-									<Option value='I use another platform for my governance needs'>I use another platform for my governance needs</Option>
-									<Option value='I do not hold any DOT and would not be using Polkassembly anymore'>I do not hold any DOT and would not be using Polkassembly.</Option>
-									<Option value='I have a duplicate account'>I have a duplicate account</Option>
-									<Option
+									<SelectOption value='I use another platform for my governance needs'>I use another platform for my governance needs</SelectOption>
+									<SelectOption value='I do not hold any DOT and would not be using Polkassembly anymore'>I do not hold any DOT and would not be using Polkassembly.</SelectOption>
+									<SelectOption value='I have a duplicate account'>I have a duplicate account</SelectOption>
+									<SelectOption
 										htmlFor='other'
 										value='other'
 									>
 										Other
-									</Option>
+									</SelectOption>
 								</Select>
 							</Form.Item>
 							{isOther ? (
@@ -265,7 +265,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 };
 
 export default styled(Delete)`
-	.ant-select-item-option-content {
+	.ant-select-item-SelectOption-content {
 		white-space: unset !important;
 		background-color: red !important;
 	}

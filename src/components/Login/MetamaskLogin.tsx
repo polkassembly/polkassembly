@@ -54,6 +54,7 @@ interface Props {
 interface IWalletIconProps {
 	which: Wallet;
 	className?: string;
+	isProxyAccountForm?: boolean;
 }
 
 const initAuthResponse: IAuthResponse = {
@@ -63,7 +64,7 @@ const initAuthResponse: IAuthResponse = {
 	user_id: 0
 };
 
-export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
+export const WalletIcon: FC<IWalletIconProps> = ({ which, className, isProxyAccountForm }) => {
 	const { resolvedTheme: theme } = useTheme();
 	switch (which) {
 		case Wallet.POLKADOT:
@@ -76,7 +77,7 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className }) => {
 					<Image
 						alt=''
 						src={SubWalletIcon}
-						className='-mt-2 h-[26px] w-[20px]'
+						className={`${isProxyAccountForm ? 'mt-0 h-[20px] w-[16px]' : '-mt-2 h-[26px] w-[20px]'}`}
 					/>
 				</span>
 			);
@@ -126,7 +127,7 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 	};
 
 	const getAccounts = async (): Promise<undefined> => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			setExtensionNotFound(true);
@@ -563,7 +564,16 @@ const MetamaskLogin: FC<Props> = ({ chosenWallet, isModal, setLoginOpen, setSign
 									</>
 								)
 							)}
-							<div className='mt-4'>{error ? <FilteredError text={error} /> : <></>}</div>
+							<div className='mt-4'>
+								{error ? (
+									<FilteredError
+										text={error}
+										type={'info'}
+									/>
+								) : (
+									<></>
+								)}
+							</div>
 						</AuthForm>
 					)}
 

@@ -39,6 +39,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -711,7 +712,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		if (
 			proposalType === ProposalType.TIPS ||
-			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === 'zeitgeist' && strPostId.toLowerCase() !== strPostId.toUpperCase())
+			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network && strPostId.toLowerCase() !== strPostId.toUpperCase())
 		) {
 			postVariables = {
 				hash_eq: strPostId,
@@ -1313,6 +1314,8 @@ export const updatePostTimeline = (post: any, postData: any) => {
 
 // expects optional proposalType and postId of proposal
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
 
 	// TODO: take proposalType and postId in dynamic pi route

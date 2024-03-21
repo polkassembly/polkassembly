@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -32,6 +32,8 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
 import Link from 'next/link';
 import Alert from '~src/basic-components/Alert';
+import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -277,6 +279,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
 						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin'].includes(trackName) && (
+							<ProposalActionButtons
+								isCreateProposal={trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin'}
+								isCancelProposal={trackName === 'ReferendumCanceller'}
+								isKillProposal={trackName === 'ReferendumKiller'}
+							/>
+						)}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'
@@ -300,13 +309,16 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							You have delegated vote to
 							<Address
 								address={delegatedTo}
-								className='ml-2 text-sm'
+								className='ml-2 text-xs'
 								iconSize={20}
+								displayInline
+								isTruncateUsername={false}
+								isUsedIndelegationNudge={true}
 							/>
 							<Link
 								href={`https://${network}.polkassembly.io/delegation${path}`}
 								target='_blank'
-								className='ml-2 text-xs text-pink_primary'
+								className='ml-2 mt-1 text-xs text-pink_primary'
 							>
 								View Details
 							</Link>

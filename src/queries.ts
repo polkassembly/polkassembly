@@ -327,6 +327,14 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     status
   }
 }`;
+
+export const GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType = Bounty, $index_eq: Int!) {
+proposals(where:{index_eq:$index_eq, type_eq:$type_eq }){
+  reward
+  index
+}
+}`;
+
 export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES_FOR_ZEITGEIST = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
   proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
@@ -2290,3 +2298,61 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
   }
 }
 `;
+
+export const TOTAL_DELEGATE_BALANCE = `query DelegateBalance ($type_eq:DelegationType!= OpenGov, $to_in: [String!]){
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq, to_in: $to_in}) {
+    to
+    balance
+    lockPeriod
+     }
+}`;
+export const GET_TOTAL_VOTES_FOR_PROPOSAL = `
+query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int  ) {
+  flattenedConvictionVotes(where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}, orderBy: voter_DESC) {
+    type
+    voter
+    lockPeriod
+    decision
+    balance {
+      ... on StandardVoteBalance {
+        value
+      }
+      ... on SplitVoteBalance {
+        aye
+        nay
+        abstain
+      }
+    }
+    createdAt
+    createdAtBlock
+    proposalIndex
+    delegatedTo
+    isDelegated
+    parentVote {
+      extrinsicIndex
+      selfVotingPower
+      type
+      voter
+      lockPeriod
+      delegatedVotingPower
+      delegatedVotes(where: {removedAtBlock_isNull: true}) {
+        voter
+        balance {
+          ... on StandardVoteBalance {
+            value
+          }
+          ... on SplitVoteBalance {
+            aye
+            nay
+            abstain
+          }
+        }
+        lockPeriod
+        votingPower
+      }
+    }
+  }
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}) {
+    totalCount
+  }
+}`;

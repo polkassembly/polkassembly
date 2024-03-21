@@ -11,7 +11,7 @@ import SelectTracks from './SelectTracks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useApiContext } from '~src/context';
 import AddressInput from '~src/ui-components/AddressInput';
-import Web3 from 'web3';
+import { isAddress } from 'ethers';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import styled from 'styled-components';
 import DownArrow from '~assets/icons/down-icon.svg';
@@ -47,7 +47,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 
@@ -84,7 +83,7 @@ interface Props {
 	isUpdatedAvailableBalance: boolean;
 }
 
-interface IAdvancedDetails {
+export interface IAdvancedDetails {
 	afterNoOfBlocks: BN | null;
 	atBlockNo: BN | null;
 }
@@ -188,11 +187,7 @@ const CreatePreimage = ({
 		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
-				}
+				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -413,11 +408,7 @@ const CreatePreimage = ({
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA].includes(network)) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
-				}
+				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -712,7 +703,7 @@ const CreatePreimage = ({
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddresses: beneficiaryAddresses }, Boolean(isPreimage));
 		setSteps({ percent: fundingAmount.gt(ZERO_BN) && address?.length > 0 ? 100 : 60, step: 1 });
 		if (address.length > 0) {
-			(getEncodedAddress(address, network) || Web3.utils.isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
+			(getEncodedAddress(address, network) || isAddress(address)) && address !== getEncodedAddress(address, network) && setAddressAlert(true);
 		}
 		setTimeout(() => {
 			setAddressAlert(false);
@@ -971,7 +962,7 @@ const CreatePreimage = ({
 											/>
 
 											{beneficiary.address
-												? !(getEncodedAddress(beneficiary.address, network) || Web3.utils.isAddress(beneficiary.address)) && (
+												? !(getEncodedAddress(beneficiary.address, network) || isAddress(beneficiary.address)) && (
 														<span className='-mt-6 text-sm text-[#ff4d4f]'>Invalid Address</span>
 												  )
 												: null}

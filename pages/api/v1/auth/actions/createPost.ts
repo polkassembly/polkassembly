@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isOffChainProposalTypeValid, isValidNetwork } from '~src/api-utils';
@@ -15,11 +16,14 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IPostTag, Post } from '~src/types';
+import { EActivityAction, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
+import createUserActivity from '../../utils/create-activity';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
@@ -103,18 +107,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	await postDocRef
 		.set(newPost)
-		.then(() => {
+		.then(async () => {
 			res.status(200).json({ message: 'Post saved.', post_id: newID });
 			if (tags && Array.isArray(tags) && tags.length > 0) {
-				batch.commit();
+				await batch.commit();
 			}
-			return;
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error saving post: ', error);
 			return res.status(500).json({ message: 'Error saving post' });
 		});
+	try {
+		await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

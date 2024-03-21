@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { Button, Skeleton } from 'antd';
+import { Button } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import BecomeDelegate from './BecomeDelegate';
@@ -18,6 +18,7 @@ import DelegationTabs from './DelegationTabs';
 import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 
 interface Props {
 	className?: string;
@@ -26,7 +27,7 @@ interface Props {
 export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
-	loading: () => <Skeleton.Avatar active />,
+	loading: () => <SkeletonAvatar active />,
 	ssr: false
 });
 
@@ -103,9 +104,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					<ProfileBalances />
 				</div>
 			)}
-			{isLoggedOut && <h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>}
+			{(isLoggedOut || !userDetails.loginAddress) && (
+				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+			)}
 
-			{isLoggedOut && (
+			{(isLoggedOut || !userDetails.loginAddress) && (
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData />

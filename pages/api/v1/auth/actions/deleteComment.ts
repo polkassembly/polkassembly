@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
@@ -13,8 +14,12 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
@@ -53,22 +58,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			await deleteKeys(discussionListingKey);
 		}
 	}
+	const commentData = (await commentRef.get()).data();
+	const userId = commentData?.user_id || null;
 
 	await commentRef
 		.update({
 			isDeleted: true
 		})
-		.then(() => {
-			postRef.update({
+		.then(async () => {
+			await postRef.update({
 				last_comment_at
 			});
-			return res.status(200).json({ message: 'Comment saved.' });
+			res.status(200).json({ message: 'Comment saved.' });
 		})
 		.catch((error) => {
 			// The document probably doesn't exist.
 			console.error('Error deleting comment: ', error);
 			return res.status(500).json({ message: 'Error deleting comment' });
 		});
+	try {
+		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

@@ -28,18 +28,23 @@ const ImportPrimaryNetworkSettingModal = ({
 			onCancel={onCancel}
 			onConfirm={onConfirm}
 			footer={[
-				<CustomButton
-					key='1'
-					onClick={onCancel}
-					variant='default'
-					text='Cancel'
-				/>,
-				<CustomButton
-					onClick={onConfirm}
-					key='2'
-					variant='primary'
-					text='Confirm'
-				/>
+				<div
+					key='footer'
+					className='flex items-center justify-end gap-x-1'
+				>
+					<CustomButton
+						key='1'
+						onClick={onCancel}
+						variant='default'
+						text='Cancel'
+					/>
+					<CustomButton
+						onClick={onConfirm}
+						key='2'
+						variant='primary'
+						text='Confirm'
+					/>
+				</div>
 			]}
 		>
 			<div className='mb-6 flex flex-wrap items-center gap-[10px]'>

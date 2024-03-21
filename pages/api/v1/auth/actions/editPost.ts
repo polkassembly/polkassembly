@@ -25,13 +25,15 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IPostHistory, IPostTag, Post } from '~src/types';
+import { EActivityAction, IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { getTopicFromType, getTopicNameFromTopicId } from '~src/util/getTopicFromType';
 import { checkIsProposer } from './utils/checkIsProposer';
 import { getUserWithAddress } from '../data/userProfileWithUsername';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity from '../../utils/create-activity';
 
 export interface IEditPostResponse {
 	content: string;
@@ -46,6 +48,8 @@ export interface IEditPostResponse {
 }
 
 const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
 	const network = String(req.headers['x-network']);
@@ -140,9 +144,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if (!isAuthor) {
 				isAuthor = await checkIsProposer(
 					proposerAddress,
-					userAddresses.map((a) => a.address),
-					network
+					userAddresses.map((a) => a.address)
 				);
+			}
+
+			if (!isAuthor) {
+				isAuthor = !isNaN(postDoc?.data?.()?.user_id) && Number(postDoc?.data?.()?.user_id) === user.id;
 			}
 
 			if (proposalType == ProposalType.REFERENDUM_V2 && process.env.IS_CACHING_ALLOWED == '1') {
@@ -159,8 +166,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		} else {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address),
-				network
+				userAddresses.map((a) => a.address)
 			); // true
 		}
 		if (process.env.IS_CACHING_ALLOWED == '1') {
@@ -236,8 +242,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		if (!isAuthor) {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address),
-				network
+				userAddresses.map((a) => a.address)
 			);
 		}
 
@@ -284,7 +289,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		tags: tags || [],
 		title,
 		topic_id: topicId || getTopicFromType(proposalType).id,
-		user_id: postUser?.userId || user.id,
+		user_id: user.id ?? postUser?.userId,
 		username: postUser?.username || user.username
 	};
 
@@ -365,7 +370,21 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		});
 		await batch.commit();
 	}
-	return;
+	try {
+		await createUserActivity({
+			action: EActivityAction.EDIT,
+			content,
+			network,
+			postAuthorId: postUser?.userId as number,
+			postId: [ProposalType.ANNOUNCEMENT, ProposalType.TIPS, ProposalType.ADVISORY_COMMITTEE].includes(proposalType) ? postId : Number(postId),
+			postType: proposalType,
+			userId: postUser?.userId as number
+		});
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

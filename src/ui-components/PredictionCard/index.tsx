@@ -6,9 +6,8 @@ import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import InfoIcon from '~assets/info.svg';
-
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { InfoIcon } from '../CustomIcons';
 
 const Container = styled.div`
 	border-radius: 14px;
@@ -84,10 +83,10 @@ const PredictionCard = () => {
 
 	useEffect(() => {
 		async function getPredictionsData() {
-			const data = await fetch('https://processor.rpc-0.zeitgeist.pm/graphql', {
+			const data = await fetch('https://zeitgeist-squid-mainnet.stellate.sh', {
 				body: JSON.stringify({
 					query: `
-						query MarketDetails($marketId: Int = 350) {
+						query MarketDetails($marketId: Int = 415) {
 							markets(where: {marketId_eq: $marketId}) {
 								period {
 									end
@@ -142,14 +141,14 @@ const PredictionCard = () => {
 						color='#243A57'
 						title='Will this proposal pass or fail?'
 					>
-						<InfoIcon className='text-xl text-bodyBlue' />
+						<InfoIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 					</Tooltip>
 				</h1>
 				<a
 					className='font-mediums inline-block rounded-2xl border border-solid border-[#F02A4E] bg-white/40 px-3 py-1 text-xs text-[#F02A4E]'
-					href='https://app.zeitgeist.pm/markets/350'
+					href='https://app.zeitgeist.pm/markets/415'
 					target='_blank'
-					rel='noreferrer'
+					rel='noreferrer noopener'
 					onClick={() =>
 						trackEvent('prediction_button_clicked', 'clicked_post_prediction_button', {
 							userId: currentUser?.id || '',

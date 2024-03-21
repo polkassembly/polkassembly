@@ -11,6 +11,7 @@ import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidPropo
 import { sortValues } from '~src/global/sortOptions';
 import {
 	GET_ALLIANCE_ANNOUNCEMENTS,
+	GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY,
 	GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES,
 	GET_PROPOSALS_LISTING_BY_TYPE,
 	GET_PROPOSALS_LISTING_BY_TYPE_FOR_COLLECTIVES,
@@ -31,6 +32,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -72,6 +74,7 @@ export interface IPostListing {
 	curator?: string;
 	proposalHashBlock?: string | null;
 	parent_bounty_index?: number;
+	parent_bounty_requested_amount: string;
 	method?: string;
 	status?: string;
 	status_history: {
@@ -272,6 +275,20 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
 					subsquidPost;
+
+				let parentBountyRequestedAmount = '0';
+
+				if (parentBountyIndex) {
+					const variables = {
+						index_eq: parentBountyIndex
+					};
+					const parentBountyRequestedAmountData = await fetchSubsquid({
+						network,
+						query: GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY,
+						variables
+					});
+					parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
+				}
 				let requested = BigInt(0);
 				let args = preimage?.proposedCall?.args;
 				if (args) {
@@ -364,6 +381,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
 							method: preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
+							parent_bounty_requested_amount: parentBountyRequestedAmount,
 							post_id: postId,
 							post_reactions,
 							proposalHashBlock: proposalHashBlock || null,
@@ -406,6 +424,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					identity,
 					method: preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
+					parent_bounty_requested_amount: parentBountyRequestedAmount,
 					post_id: postId,
 					post_reactions,
 					proposalHashBlock: proposalHashBlock || null,
@@ -702,6 +721,20 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
 						subsquidPost;
 
+					let parentBountyRequestedAmount = '0';
+
+					if (parentBountyIndex) {
+						const variables = {
+							index_eq: parentBountyIndex
+						};
+						const parentBountyRequestedAmountData = await fetchSubsquid({
+							network,
+							query: GET_PARENT_BOUNTY_REQUESTED_AMOUNT_FOR_CHILD_BOUNTY,
+							variables
+						});
+						parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
+					}
+
 					const isStatus = {
 						swap: false
 					};
@@ -812,6 +845,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
 								method: preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
+								parent_bounty_requested_amount: parentBountyRequestedAmount,
 								post_id: postId,
 								post_reactions,
 								proposalHashBlock: proposalHashBlock || null,
@@ -854,6 +888,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						identity,
 						method: preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
+						parent_bounty_requested_amount: parentBountyRequestedAmount,
 						post_id: postId,
 						post_reactions,
 						proposalHashBlock: proposalHashBlock || null,
@@ -997,6 +1032,8 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 
 // expects optional proposalType, page and listingLimit
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });

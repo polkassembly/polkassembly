@@ -6,7 +6,7 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
-import { Modal, Skeleton } from 'antd';
+import { Modal } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
@@ -18,6 +18,7 @@ import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useQuoteCommentContext } from '~src/context';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -71,6 +72,11 @@ body {
 	font-size: 14px;
 	line-height: 1.5;
 }
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
+}
 th, td {
 	border: 1px solid #243A57;
 	padding: 0.5rem;
@@ -86,6 +92,11 @@ body {
 	font-family: "Poppins", sans-serif;
 	font-size: 14px;
 	line-height: 1.5;
+}
+a {
+    color: #FF60B5 !important;
+    text-decoration: none !important;
+	background: none !important;
 }
 th, td {
 	border: 1px solid #243A57;
@@ -134,7 +145,20 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 		}
 
 		setMdEditor(!mdEditor);
+		localStorage.setItem('editorPreference', mdEditor ? 'fancy' : 'markdown');
 	}
+	const getEditorPreference = () => {
+		const preference = localStorage.getItem('editorPreference');
+		if (preference === 'fancy') {
+			setMdEditor(false);
+		} else {
+			setMdEditor(true);
+		}
+	};
+
+	useEffect(() => {
+		getEditorPreference();
+	}, []);
 
 	useEffect(() => {
 		if (quotedText) {
@@ -144,11 +168,10 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 	}, [quotedText]);
 
 	const quoteBox = quotedText
-		? `<input disabled style="width: 96%; border: none; outline: none; background: ${
-				theme === 'dark' ? '#141416' : '#F5F6F8'
-		  }; border-left: 2px solid #E5007A; padding: 10px; position: relative; color: ${theme === 'dark' ? 'white' : 'black'}; border-radius: 5px;" value="
-	${quotedText}">
-	</input><br><br>`
+		? `<div id="quote-box" style="border-left: 2px solid #E5007A; position: relative; border-radius: 5px;">
+		<p contenteditable="false" style="width: 90%; padding: 5px 10px;  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${quotedText}
+		</p>
+		</div><br><br>`
 		: '';
 
 	return (
@@ -167,7 +190,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 				>
 					{loading && (
 						<div className='absolute inset-0'>
-							<Skeleton.Input
+							<SkeletonInput
 								block={true}
 								active={true}
 								style={{ height: `${height || 300}px` }}
@@ -179,7 +202,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						wrapClassName='dark:bg-modalOverlayDark'
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
-						title='Select Gif'
+						title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
 						footer={null}
 						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
@@ -191,6 +214,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
 								setIsModalVisible(false);
 							}}
+							theme={theme}
 						/>
 					</Modal>
 
@@ -203,13 +227,13 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						<div className={`${loading && 'invisible'} relative`}>
 							{quoteBox && (
 								<span
-									className='absolute right-4 top-[65px] z-10 cursor-pointer bg-section-light-background dark:bg-[#141416] md:right-[30px]'
+									className='absolute right-4 top-[60px] z-10 cursor-pointer md:right-[30px]'
 									onClick={() => {
 										setQuotedText('');
 										onChange('');
 									}}
 								>
-									<CloseIcon className='dark:text-white' />
+									<CloseIcon className='text-blue-light-medium dark:text-white' />
 								</span>
 							)}
 							<Editor
@@ -397,7 +421,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										editor.ui.registry.addIcon('custom-icon', gifSVGData);
 										editor.ui.registry.addButton('customButton', { icon: 'custom-icon', onAction: () => setIsModalVisible(true) });
 									},
-									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image emoticons',
+									toolbar: 'undo redo preview | ' + 'bold italic backcolor | ' + 'bullist numlist table customButton | ' + 'removeformat link image  media emoticons',
 									xss_sanitization: true,
 									textpattern_patterns: [
 										{ start: '*', end: '*', format: 'italic' },

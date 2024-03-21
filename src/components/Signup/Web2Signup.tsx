@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Divider, Form, Modal, Skeleton } from 'antd';
+import { Divider, Form, Modal } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -27,6 +27,7 @@ import { IconSignup } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (
@@ -42,7 +43,7 @@ const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'
 
 const Container = styled.article`
 	.changeColor .ant-alert-message {
-		color: ${(props) => (props.theme === 'dark' ? '#1677ff' : '#243a57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#1677ff' : '#243a57')} !important;
 	}
 `;
 interface Props {
@@ -168,7 +169,7 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 			</div>
 			<Container
 				className={`flex flex-col gap-y-6 rounded-md bg-white py-8 shadow-md dark:bg-section-dark-overlay ${className}`}
-				theme={theme}
+				theme={theme as any}
 			>
 				<div className='-mt-1 flex grid-cols-2 gap-x-5 px-8'>
 					<div
@@ -422,10 +423,10 @@ const Web2Signup: FC<Props> = ({ className, walletError, onWalletSelect, isModal
 
 export default styled(Web2Signup)`
 	.ant-input {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? 'transparent' : '')} !important;
 	}
 	.ant-input::placeholder {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '')} !important;
 	}
 `;

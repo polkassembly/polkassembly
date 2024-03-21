@@ -7,7 +7,6 @@ import { PaginationProps, Spin } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { IVoteHistory, IVotesHistoryResponse } from 'pages/api/v1/votes/history';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
@@ -18,6 +17,7 @@ import Table from '~src/basic-components/Tables/Table';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
+import { IVoteHistory, IVotesHistoryResponse } from '~src/types';
 
 interface ICouncilVotesProps {
 	address: string;
@@ -106,7 +106,6 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const onChange: PaginationProps['onChange'] = (page) => {
 		setCurrentPage(page);
 	};
-	console.log(votesHistory);
 	return (
 		<div className={`${className}`}>
 			{error ? <ErrorState errorMessage={error} /> : null}

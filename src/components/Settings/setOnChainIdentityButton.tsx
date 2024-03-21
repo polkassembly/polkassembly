@@ -416,21 +416,26 @@ const SetOnChainIdentityButton = ({
 				open={modalOpen}
 				centered
 				footer={[
-					<CustomButton
-						key='close'
-						onClick={() => setModalOpen(false)}
-						variant='primary'
-						text='Close'
-						buttonsize='xs'
-					/>,
-					<CustomButton
-						key='submit'
-						disabled={!okAll}
-						onClick={handleSignAndSubmit}
-						variant='primary'
-						text='Set Identity'
-						height={40}
-					/>
+					<div
+						key='footer'
+						className='flex items-center justify-end gap-x-1'
+					>
+						<CustomButton
+							key='close'
+							onClick={() => setModalOpen(false)}
+							variant='primary'
+							text='Close'
+							buttonsize='xs'
+						/>
+						<CustomButton
+							key='submit'
+							disabled={!okAll}
+							onClick={handleSignAndSubmit}
+							variant='primary'
+							text='Set Identity'
+							height={40}
+						/>
+					</div>
 				]}
 				onCancel={() => setModalOpen(false)}
 			>

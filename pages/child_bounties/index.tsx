@@ -121,7 +121,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 					<div className='mt-6 flex justify-end'>
 						{!!count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
-								theme={theme}
+								theme={theme as any}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

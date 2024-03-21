@@ -65,12 +65,13 @@ export default function ProfileSettings() {
 			size='large'
 			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 			expandIconPosition='end'
-			theme={theme}
+			theme={theme as any}
 			expandIcon={({ isActive }) => {
 				return isActive ? <CollapseIcon /> : <ExpandIcon />;
 			}}
 		>
 			<Panel
+				className='pb-1'
 				header={
 					<div className='channel-header flex items-center gap-[6px] dark:bg-section-dark-overlay'>
 						<ProfileIcon />

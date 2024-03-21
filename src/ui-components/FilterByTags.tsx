@@ -54,7 +54,9 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 	}, [clearTags, isSearch]);
 
 	useEffect(() => {
-		allTags.length === 0 && getData();
+		if (!allTags.length) {
+			getData();
+		}
 		!isSearch && setTags(defaultTags);
 		defaultTags.length > 0 && setDisplayTags(defaultTags);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,7 +173,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 							className={`flex cursor-pointer items-center gap-2 py-1 text-xs ${poppins.className} ${poppins.variable} dark:text-white`}
 						>
 							<TrendingIcon />
-							<span className='text-xs tracking-wide text-[#667589] dark:text-white'>{tag.name}</span>
+							<span className='text-xs tracking-wide text-separatorDark dark:text-white'>{tag.name}</span>
 						</div>
 					))}
 				</div>
@@ -219,7 +221,7 @@ const FilterByTags = ({ className, isSearch = false, setSelectedTags, disabled, 
 				</div>
 			) : (
 				<div
-					className={`flex items-center justify-center text-xs ${openFilter ? 'text-pink_primary' : 'text-[#667589]'} ${
+					className={`flex items-center justify-center text-xs ${openFilter ? 'text-pink_primary' : ''} ${
 						disabled ? 'cursor-not-allowed text-[#B5BFCC]' : 'cursor-pointer'
 					} max-sm:text-[10px]`}
 				>

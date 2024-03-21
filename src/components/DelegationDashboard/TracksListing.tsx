@@ -20,6 +20,7 @@ import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 interface Props {
 	className?: string;
@@ -102,7 +103,7 @@ const DashboardTrackListing = ({ className }: Props) => {
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !delegationDashboardAddress) return;
 
 		setLoading(true);
 
@@ -116,9 +117,11 @@ const DashboardTrackListing = ({ className }: Props) => {
 				return {
 					active_proposals: track?.active_proposals_count,
 					delegated_by: track?.status?.includes(ETrackDelegationStatus.RECEIVED_DELEGATION)
-						? track?.delegations.filter((row: IDelegation) => row?.to === delegationDashboardAddress)
+						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) === getEncodedAddress(delegationDashboardAddress, network))
 						: null, //rece
-					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED) ? track?.delegations.filter((row: IDelegation) => row?.to !== delegationDashboardAddress) : null,
+					delegated_to: track?.status?.includes(ETrackDelegationStatus.DELEGATED)
+						? track?.delegations.filter((row: IDelegation) => getEncodedAddress(row?.to, network) !== getEncodedAddress(delegationDashboardAddress, network))
+						: null,
 					description: trackData[1]?.description,
 					index: index + 1,
 					status: track?.status,
@@ -243,19 +246,19 @@ const DashboardTrackListing = ({ className }: Props) => {
 };
 export default styled(DashboardTrackListing)`
 	.column .ant-table-thead > tr > th {
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#485F7D')} !important;
 		font-size: 14px !important;
-		font-weight: ${(props) => (props.theme === 'dark' ? '500' : '600')} !important;
+		font-weight: ${(props: any) => (props.theme === 'dark' ? '500' : '600')} !important;
 		line-height: 21px !important;
 		white-space: nowrap !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.column .ant-table-thead > tr > th:nth-child(1) {
 		text-align: center !important;
 	}
 	.ant-table-cell {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
-		border-bottom: ${(props) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'dark' ? '1px solid #4B4B4B' : '')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
 	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Form, Modal, Select } from 'antd';
+import { Form, Modal } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -18,6 +18,7 @@ import { deleteContentByMod } from '~src/util/deleteContentByMod';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
+import Select from '~src/basic-components/Select';
 
 interface IReportButtonProps {
 	type: string;
@@ -205,7 +206,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 				footer={[
 					<div
 						key='buttons'
-						className='mt-4 flex justify-end'
+						className='mt-4 flex justify-end gap-x-1'
 					>
 						<CustomButton
 							key='back'
@@ -215,7 +216,6 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 							variant='default'
 							buttonsize='xs'
 						/>
-						,
 						<CustomButton
 							htmlType='submit'
 							key='submit'
@@ -257,7 +257,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						className='dark:'
 					>
 						<Select
-							popupClassName='z-[9999] dark:bg-section-dark-overlay'
+							popupClassName='z-[9999]'
 							defaultValue={"It's suspicious or spam"}
 							options={reasons.map((reason) => {
 								return {

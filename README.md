@@ -4,6 +4,7 @@ The place to discuss and vote on Kusama and Polkadot governance.
 
 Polkassembly is a platform for anyone to discover and participate in Polkadot and Kusama governance. You can browse proposals made on chain, discuss with the community and vote directly from the website using a browser extension. Proposal authors are the only one able to edit the proposal post and description. You don't have to, but adding an email may help to recover your account, also you can get notifications for discussions of interest or when a new proposal appears on-chain.
 
+
 ---
 
 This repo hosts 

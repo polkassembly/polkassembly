@@ -32,18 +32,23 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 			onCancel={onCancel}
 			onConfirm={onConfirm}
 			footer={[
-				<CustomButton
-					key='1'
-					onClick={onCancel}
-					variant='default'
-					text='Cancel'
-				/>,
-				<CustomButton
-					onClick={onConfirm}
-					key='2'
-					variant='primary'
-					text='Confirm'
-				/>
+				<div
+					key='footer'
+					className='flex items-center justify-end gap-x-1'
+				>
+					<CustomButton
+						key='1'
+						onClick={onCancel}
+						variant='default'
+						text='Cancel'
+					/>
+					<CustomButton
+						onClick={onConfirm}
+						key='2'
+						variant='primary'
+						text='Confirm'
+					/>
+				</div>
 			]}
 		>
 			<p className='m-0 my-6 text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>

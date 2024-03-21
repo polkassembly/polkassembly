@@ -12,6 +12,7 @@ import { votesSortValues } from '~src/global/sortOptions';
 import { getOrderBy } from './utils/votesSorted';
 import { voteTypes } from '~src/global/proposalType';
 import { GET_NESTED_DELEGATED_CONVICTION_VOTES_LISTING_BY_VOTE_ID } from '~src/queries';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 export interface IVotesResponse {
 	count: number;
@@ -20,6 +21,8 @@ export interface IVotesResponse {
 
 // expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IVotesResponse | { error: string }>) {
+	storeApiKeyUsage(req);
+
 	const { postId = 0, page = 1, listingLimit = VOTES_LISTING_LIMIT, decision, type, voter, sortBy = votesSortValues.VOTING_POWER_DESC } = req.query;
 
 	const network = String(req.headers['x-network']);

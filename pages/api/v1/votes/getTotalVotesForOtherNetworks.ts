@@ -9,6 +9,7 @@ import { isValidNetwork } from '~src/api-utils';
 import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { IProfileVoteHistoryRespose } from '../votesHistory/getVotesByVoter';
+import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
 
 export interface IAllVotesType {
 	data: IProfileVoteHistoryRespose[];
@@ -30,11 +31,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 
 	const numPostId = Number(postId);
 	if (isNaN(numPostId) || numPostId < 0) {
-		return res.status(400).json({ error: `The postId "${postId}" is invalid.` });
+		return res.status(400).json({ error: `The postId "${numPostId}" is invalid.` });
 	}
 	let variables: any = {
 		index_eq: postId,
-		type_eq: 'Referendum'
+		type_eq: getSubsquidProposalType(ProposalType.REFERENDUMS)
 	};
 
 	const subsquidRes = await fetchSubsquid({

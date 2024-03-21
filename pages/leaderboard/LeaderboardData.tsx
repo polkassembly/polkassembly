@@ -15,6 +15,7 @@ import ImageComponent from '~src/components/ImageComponent';
 import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useTheme } from 'next-themes';
+import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 
 interface Props {
 	className: string;
@@ -27,6 +28,8 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
+	const [open, setOpen] = useState<boolean>(false);
+
 	const router = useRouter();
 
 	const getLeaderboardData = async () => {
@@ -43,7 +46,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 		router.isReady && getLeaderboardData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady]);
-	console.log(tableData, totalData);
 
 	const handleTableChange = (pagination: any) => {
 		setCurrentPage(pagination.current);
@@ -158,11 +160,17 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 				<div className=''>
 					{theme === 'dark' ? (
 						<div className='flex items-center justify-start'>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
-								alt='delegation-icon'
-								className='icon-container mr-4 cursor-pointer'
-							/>
+							<div
+								onClick={() => {
+									setOpen(true);
+								}}
+							>
+								<ImageIcon
+									src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
+									alt='delegation-icon'
+									className='icon-container mr-4 cursor-pointer'
+								/>
+							</div>
 							<ImageIcon
 								src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
 								alt='delegation-icon'
@@ -193,6 +201,12 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 							/>
 						</div>
 					)}
+					<DelegateModal
+						// trackNum={trackDetails?.trackId}
+						// defaultTarget={address}
+						open={open}
+						setOpen={setOpen}
+					/>
 				</div>
 			),
 			title: 'Auction',
@@ -210,14 +224,16 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	}));
 
 	return (
-		<Table
-			columns={columns}
-			className={`${className} w-full overflow-x-auto`}
-			dataSource={dataSource}
-			pagination={{ pageSize: 10, total: totalData }}
-			onChange={handleTableChange}
-			theme={theme}
-		></Table>
+		<div>
+			<Table
+				columns={columns}
+				className={`${className} w-full overflow-x-auto`}
+				dataSource={dataSource}
+				pagination={{ pageSize: 10, total: totalData }}
+				onChange={handleTableChange}
+				theme={theme}
+			></Table>
+		</div>
 	);
 };
 

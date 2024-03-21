@@ -34,7 +34,6 @@ const LeaderBoardTable = ({ className }: Props) => {
 						/>
 					</div>
 				</div>
-				<h1 className='text-black'>{theme}</h1>
 				<LeaderboardData
 					className='mt-4'
 					theme={theme}

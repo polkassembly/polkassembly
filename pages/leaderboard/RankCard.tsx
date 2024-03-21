@@ -63,7 +63,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type }) => {
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
 			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat`}
 		>
-			<div className={`${type === 'primary' ? 'ml-10 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
+			<div className={`${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<div
 					className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'

@@ -630,3 +630,11 @@ export enum EActivityAction {
 	EDIT = 'EDIT',
 	DELETE = 'DELETE'
 }
+
+export enum EActivityFilter {
+	ALL = 'ALL',
+	COMMENTS = 'COMMENTED',
+	REPLIES = 'REPLIED',
+	REACTS = 'REACTED',
+	MENTIONS = 'MENTIONED'
+}

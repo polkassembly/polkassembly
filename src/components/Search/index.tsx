@@ -230,7 +230,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		return [...matchArr, ...unmatchArr];
 	};
 	const getResultData = async () => {
-		if (finalSearchInput.length <= 2 || !userIndex || !postIndex) {
+		if ((finalSearchInput.length <= 2 && isNaN(Number(finalSearchInput))) || !userIndex || !postIndex) {
 			setLoading(false);
 			return;
 		}
@@ -285,7 +285,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		(isSuperSearch ? selectedNetworks.length > 0 : false)
 			? setIsFilter(true)
 			: setIsFilter(false);
-		if (finalSearchInput.length > 2 && !searchInputErr.err) {
+		if ((finalSearchInput.length > 2 || !isNaN(Number(finalSearchInput))) && !searchInputErr.err) {
 			setLoading(true);
 			getResultData();
 		}
@@ -422,7 +422,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		if (loading) return;
 		setJustStart(false);
 		setAutoCompleteResults(initAutocompleteResults);
-		if (searchInput?.trim().length > 2) {
+		if (searchInput?.trim().length > 2 || !isNaN(Number(searchInput))) {
 			//GAEvent for user search
 			trackEvent('search_query_added', 'user_search_queries', {
 				searchInput: `${searchInput} keyword searched`,
@@ -432,7 +432,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });
-		} else if (searchInput?.trim().length <= 2) {
+		} else if (searchInput?.trim().length <= 2 && isNaN(Number(searchInput))) {
 			setOnchainPostResults(null);
 			setOffchainPostResults(null);
 			setPeopleResults([]);
@@ -897,7 +897,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 						)}
 					</div>
 				)}
-				{(finalSearchInput.length > 2 || searchInputErr.err) && (
+				{(finalSearchInput.length > 2 || searchInputErr.err || !isNaN(Number(finalSearchInput))) && (
 					<div className={`${loading && 'hidden'} z-10`}>
 						{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && !searchInputErr.err && (onchainPostResults || offchainPostResults) && (
 							<ResultPosts
@@ -924,9 +924,9 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							/>
 						)}
 
-						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults) && (
+						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults || !isNaN(Number(finalSearchInput))) && (
 							<SearchErrorsCard
-								isSearchErr={searchInput?.trim().length <= 2 && searchInputErr.clicked ? true : searchInputErr?.err}
+								isSearchErr={(searchInput?.trim().length <= 2 || isNaN(Number(finalSearchInput))) && searchInputErr.clicked ? true : searchInputErr?.err}
 								filterBy={filterBy}
 								setFilterBy={setFilterBy}
 								setOpenModal={setOpenModal}

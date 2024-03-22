@@ -132,7 +132,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				<div className='flex flex-wrap items-center gap-x-1'>
 					{id && !isEditing && (
 						<ReportButton
-							className={'flex items-center border-none p-0 text-pink_primary shadow-none dark:text-blue-dark-helper'}
+							className={'flex items-center border-none p-0 shadow-none dark:text-blue-dark-helper'}
 							proposalType={postType}
 							type='post'
 							postId={`${postIndex}`}

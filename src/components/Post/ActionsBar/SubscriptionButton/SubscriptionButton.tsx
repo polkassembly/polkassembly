@@ -2,19 +2,19 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { BookFilled, BookOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
 import queueNotification from 'src/ui-components/QueueNotification';
 import cleanError from 'src/util/cleanError';
-
 import { ChangeResponseType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import SubscribeOutlined from '~assets/icons/reactions/SubscribedIcon.svg';
+import SubscribeFilled from '~assets/icons/reactions/SubscribedFilled.svg';
 
 interface ISubscriptionButtonProps {
 	postId: number | string;
@@ -103,8 +103,10 @@ const SubscriptionButton: FC<ISubscriptionButtonProps> = (props) => {
 			onClick={handleSubscribe}
 			className={`shadow-0 border-none bg-transparent px-0 font-normal disabled:opacity-[0.5] dark:text-blue-dark-helper ${subscribed && id ? ' negative' : ''}`}
 		>
-			{subscribed && id ? <BookFilled /> : <BookOutlined />}
-			{subscribed && id ? 'Unsubscribe' : 'Subscribe'}
+			<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-1'>
+				<span className='mr-1 mt-[3px]'>{subscribed && id ? <SubscribeFilled /> : <SubscribeOutlined />}</span>
+				<span className='font-medium text-lightBlue'>{subscribed && id ? 'Unsubscribe' : 'Subscribe'}</span>
+			</span>
 		</CustomButton>
 	);
 

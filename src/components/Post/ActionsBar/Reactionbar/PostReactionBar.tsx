@@ -7,8 +7,7 @@
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useState } from 'react';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-
-import ReactionButton from './ReactionButton';
+import ReactionButtonNew from './ReactionButtonNew';
 
 interface IPostReactionBarProps {
 	className?: string;
@@ -28,7 +27,7 @@ const PostReactionBar: FC<IPostReactionBarProps> = ({ className, post_reactions 
 			{Object.keys(post_reactions).map((reaction) => {
 				return (
 					<div key={reaction}>
-						<ReactionButton
+						<ReactionButtonNew
 							reaction={reaction}
 							reactions={reactions}
 							reactionsDisabled={reactionsDisabled}

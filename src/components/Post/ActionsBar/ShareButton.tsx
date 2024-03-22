@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ShareAltOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import React, { FC, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -10,6 +9,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { NetworkSocials } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
 
 interface IShareButtonProps {
 	postId: number | string;
@@ -74,7 +74,10 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 				variant='default'
 				className='m-0 border-none bg-transparent px-1 py-2 font-normal shadow-none disabled:opacity-[0.5] dark:text-blue-dark-helper '
 			>
-				<ShareAltOutlined /> Share
+				<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-1'>
+					<ShareIcon />
+					<span className='ml-1 font-medium text-lightBlue'>Share</span>
+				</span>
 			</CustomButton>
 		</>
 	);

@@ -1,13 +1,15 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
 import dayjs from 'dayjs';
 import ImageComponent from '~src/components/ImageComponent';
 import NameLabel from '~src/ui-components/NameLabel';
+import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface RankCardProps {
 	place: number;
@@ -18,6 +20,19 @@ interface RankCardProps {
 }
 
 const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className }) => {
+	const [open, setOpen] = useState<boolean>(false);
+	const [address, setAddress] = useState<string>('');
+
+	const getUserProfile = async (username: string) => {
+		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+		if (!data || error) {
+			console.log(error);
+		}
+		if (data) {
+			setAddress(data?.addresses[0]);
+		}
+	};
+
 	const placeImageMap: Record<number, string> = {
 		1: '/assets/FirstPlace.svg',
 		2: '/assets/SecondPlace.svg',
@@ -92,11 +107,18 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 						/>
 					</div>
 					<div className='ml-auto flex'>
-						<ImageIcon
-							src={iconSources.delegate}
-							alt='delegation-icon'
-							className='icon-container mr-4'
-						/>
+						<div
+							onClick={() => {
+								getUserProfile(data?.username);
+								setOpen(true);
+							}}
+						>
+							<ImageIcon
+								src={iconSources.delegate}
+								alt='delegation-icon'
+								className='icon-container mr-4'
+							/>
+						</div>
 						<ImageIcon
 							src={iconSources.monetization}
 							alt='monetization-icon'
@@ -122,6 +144,14 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 					</span>
 				</div>
 			</div>
+			{address && (
+				<DelegateModal
+					// trackNum={trackDetails?.trackId}
+					defaultTarget={address}
+					open={open}
+					setOpen={setOpen}
+				/>
+			)}
 		</div>
 	);
 };

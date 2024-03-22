@@ -25,6 +25,7 @@ interface Props {
 const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState(1);
+	const [address, setAddress] = useState<string>('');
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
 	const [open, setOpen] = useState<boolean>(false);
@@ -45,6 +46,16 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 		router.isReady && getLeaderboardData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady]);
+
+	const getUserProfile = async (username: string) => {
+		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+		if (!data || error) {
+			console.log(error);
+		}
+		if (data) {
+			setAddress(data?.addresses[0]);
+		}
+	};
 
 	const handleTableChange = (pagination: any) => {
 		setCurrentPage(pagination.current);
@@ -82,7 +93,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			width: 15
 		},
 		{
-			className: theme,
 			dataIndex: 'user',
 			filteredValue: [searchedUsername || ''],
 			fixed: 'left',
@@ -156,56 +166,29 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			dataIndex: 'auction',
 			fixed: 'left',
 			key: 'auction',
-			render: () => (
-				<div className=''>
-					{theme === 'dark' ? (
-						<div className='flex items-center justify-start'>
-							<div
-								onClick={() => {
-									setOpen(true);
-								}}
-							>
-								<ImageIcon
-									src='/assets/icons/auctionIcons/delegateDarkIcon.svg'
-									alt='delegation-icon'
-									className='icon-container mr-4 cursor-pointer'
-								/>
-							</div>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/monetizationDarkIcon.svg'
-								alt='delegation-icon'
-								className='icon-container mr-4 cursor-pointer'
-							/>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/BookmarkDark.svg'
-								alt='delegation-icon'
-								className='icon-container cursor-pointer'
-							/>
-						</div>
-					) : (
-						<div className='flex items-center justify-start'>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/delegateLightIcon.svg'
-								alt='delegation-icon'
-								className='icon-container mr-4 cursor-pointer'
-							/>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/monetizationLightIcon.svg'
-								alt='delegation-icon'
-								className='icon-container mr-4 cursor-pointer'
-							/>
-							<ImageIcon
-								src='/assets/icons/auctionIcons/BookmarkLight.svg'
-								alt='delegation-icon'
-								className='icon-container cursor-pointer'
-							/>
-						</div>
-					)}
-					<DelegateModal
-						// trackNum={trackDetails?.trackId}
-						// defaultTarget={address}
-						open={open}
-						setOpen={setOpen}
+			render: (text, record) => (
+				<div className='flex items-center justify-start'>
+					<div
+						onClick={() => {
+							getUserProfile(record.user);
+							setOpen(true);
+						}}
+					>
+						<ImageIcon
+							src={theme === 'dark' ? '/assets/icons/auctionIcons/delegateDarkIcon.svg' : '/assets/icons/auctionIcons/delegateLightIcon.svg'}
+							alt='delegation-icon'
+							className='icon-container mr-4 cursor-pointer'
+						/>
+					</div>
+					<ImageIcon
+						src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
+						alt='monetization-icon'
+						className='icon-container mr-4 cursor-pointer'
+					/>
+					<ImageIcon
+						src={theme === 'dark' ? '/assets/icons/auctionIcons/BookmarkDark.svg' : '/assets/icons/auctionIcons/BookmarkLight.svg'}
+						alt='bookmark-icon'
+						className='icon-container cursor-pointer'
 					/>
 				</div>
 			),
@@ -224,10 +207,18 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	}));
 
 	return (
-		<div>
+		<div className={theme}>
+			{address && (
+				<DelegateModal
+					// trackNum={trackDetails?.trackId}
+					defaultTarget={address}
+					open={open}
+					setOpen={setOpen}
+				/>
+			)}
 			<Table
 				columns={columns}
-				className={`${className} ${theme} w-full overflow-x-auto`}
+				className={`${className} w-full overflow-x-auto`}
 				dataSource={dataSource}
 				pagination={{ pageSize: 10, total: totalData }}
 				onChange={handleTableChange}
@@ -239,12 +230,14 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 
 export default styled(LeaderboardData)`
 	.ant-table-thead > tr > th {
-		color: #485f7d !important;
 		font-size: 14px !important;
 		font-style: normal;
 		font-weight: 500;
 		line-height: 16px;
 		letter-spacing: 0.21px;
+	}
+	.delegation-modal .ant-modal-root .ant-modal-mask {
+		z-index: 1 !important;
 	}
 	.dark .ant-table-thead > tr > th {
 		color: #9e9e9e !important;

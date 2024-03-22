@@ -14,18 +14,16 @@ import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import ImageComponent from '~src/components/ImageComponent';
 import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
-// import { useTheme } from 'next-themes';
+import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 
 interface Props {
 	className: string;
-	theme?: any;
 	searchedUsername?: string;
 }
 
-const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
-	// const { resolvedTheme: theme } = useTheme();
-	console.log(theme);
+const LeaderboardData = ({ className, searchedUsername }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
@@ -84,6 +82,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 			width: 15
 		},
 		{
+			className: theme,
 			dataIndex: 'user',
 			filteredValue: [searchedUsername || ''],
 			fixed: 'left',
@@ -228,7 +227,7 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 		<div>
 			<Table
 				columns={columns}
-				className={`${className} w-full overflow-x-auto`}
+				className={`${className} ${theme} w-full overflow-x-auto`}
 				dataSource={dataSource}
 				pagination={{ pageSize: 10, total: totalData }}
 				onChange={handleTableChange}
@@ -240,12 +239,15 @@ const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
 
 export default styled(LeaderboardData)`
 	.ant-table-thead > tr > th {
-		color: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#485f7d')} !important;
+		color: #485f7d !important;
 		font-size: 14px !important;
 		font-style: normal;
 		font-weight: 500;
 		line-height: 16px;
 		letter-spacing: 0.21px;
+	}
+	.dark .ant-table-thead > tr > th {
+		color: #9e9e9e !important;
 	}
 	.ant-table-tbody > tr {
 		heigth: 56px !important;

@@ -18,10 +18,10 @@ const LeaderBoardTable = ({ className }: Props) => {
 
 	return (
 		<section className={`${className}`}>
-			<div className='rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
-				<div className='flex items-center'>
+			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
+				<div className='table-header items-center'>
 					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
-					<div className='ml-auto flex'>
+					<div className='search-box flex'>
 						<Input.Search
 							placeholder='enter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
@@ -53,5 +53,22 @@ export default styled(LeaderBoardTable)`
 	.ant-input-search .ant-input-search-button {
 		height: 42px !important;
 		width: 40px !important;
+	}
+	.table-header {
+		display: flex !important;
+	}
+	.search-box {
+		margin-left: auto !important;
+	}
+	@media (max-width: 767px) and (min-width: 319px) {
+		.leaderboard-table-mobile {
+			margin-top: -124px !important;
+		}
+		.table-header {
+			display: inline !important;
+		}
+		.search-box {
+			margin-left: -16px !important;
+		}
 	}
 `;

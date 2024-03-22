@@ -14,13 +14,14 @@ import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import RankCard from './RankCard';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
 	network: string;
 }
 
-const Leaderboard = ({ network }: Props) => {
+const Leaderboard = ({ network, className }: Props) => {
 	const dispatch = useDispatch();
 	const [leaderboardData, setLeaderboardData] = useState<any>([]);
 	const router = useRouter();
@@ -45,7 +46,7 @@ const Leaderboard = ({ network }: Props) => {
 	}, [dispatch, network, router.isReady]);
 
 	return (
-		<section>
+		<section className={`${className}`}>
 			<div
 				className='h-[122px] w-full rounded-[20px] py-6'
 				style={{ background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))' }}
@@ -54,7 +55,7 @@ const Leaderboard = ({ network }: Props) => {
 				<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
 				<p className='m-0 flex items-center justify-center p-0 text-sm text-white'>Find your rank in {network} ecosystem</p>
 			</div>
-			<div className='mt-8 flex w-full items-center justify-center'>
+			<div className='rank-cards-desktop mt-8 flex w-full items-center justify-center'>
 				{leaderboardData[1] && (
 					<RankCard
 						key={2}
@@ -85,6 +86,39 @@ const Leaderboard = ({ network }: Props) => {
 					/>
 				)}
 			</div>
+			<div className='rank-cards-mobile hidden w-full items-center justify-center'>
+				{leaderboardData[0] && (
+					<RankCard
+						key={1}
+						place={1}
+						data={leaderboardData[0]}
+						theme={theme}
+						type='primary'
+						className='primary-rank-card'
+					/>
+				)}
+				{leaderboardData[1] && (
+					<RankCard
+						key={2}
+						place={2}
+						data={leaderboardData[1]}
+						theme={theme}
+						type='secondary'
+						className='secondary-rank-card'
+					/>
+				)}
+
+				{leaderboardData[2] && (
+					<RankCard
+						key={3}
+						place={3}
+						data={leaderboardData[2]}
+						theme={theme}
+						type='secondary'
+						className='secondary-rank-card'
+					/>
+				)}
+			</div>
 
 			<LeaderBoardTable
 				theme={theme}
@@ -102,4 +136,25 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props: { network } };
 };
 
-export default Leaderboard;
+export default styled(Leaderboard)`
+	@media (max-width: 767px) and (min-width: 319px) {
+		.rank-cards-mobile {
+			display: inline-block !important;
+			transform: scale(0.7) !important;
+			margin: 0 auto !important;
+			margin-left: -20px !important;
+			margin-top: -80px !important;
+		}
+		.secondary-rank-card {
+			transform: scale(1.15) !important;
+			margin-bottom: 40px !important;
+		}
+		.primary-rank-card {
+			margin-left: -36px !important;
+			margin-bottom: 24px !important;
+		}
+		.rank-cards-desktop {
+			display: none !important;
+		}
+	}
+`;

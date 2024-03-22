@@ -11,7 +11,7 @@ import { useFetch } from 'src/hooks';
 import { chainProperties } from '~src/global/networkConstants';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { IVotesCount, LoadingStatusType } from 'src/types';
+import { IVotesCount, LoadingStatusType, VoteInfo } from 'src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ApiPromise } from '@polkadot/api';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
@@ -137,6 +137,62 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 			});
 		}
 	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally]);
+
+	useEffect(() => {
+		if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) return;
+
+		(async () => {
+			const { data, error } = await nextApiClientFetch<{
+				data: VoteInfo;
+				totalCount: Number;
+			}>('/api/v1/votes/getTotalVotesForOtherNetworks', {
+				postId: postId
+			});
+
+			if (data) {
+				if (data && data?.data && data?.data && Array.isArray(data?.data)) {
+					const voteInfo: VoteInfo = {
+						aye_amount: ZERO,
+						aye_without_conviction: ZERO,
+						isPassing: null,
+						nay_amount: ZERO,
+						nay_without_conviction: ZERO,
+						turnout: ZERO,
+						voteThreshold: ''
+					};
+
+					data?.data?.forEach((vote: any) => {
+						if (vote) {
+							const { balance, lockPeriod, decision } = vote;
+							if (decision === 'yes') {
+								voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							} else {
+								voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							}
+						}
+					});
+					setTurnout(voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction));
+					setTallyData({
+						abstain: ZERO,
+						ayes: voteInfo.aye_amount,
+						nays: voteInfo.nay_amount
+					});
+				}
+			} else if (error) {
+				console.log(error);
+			}
+		})();
+	}, [network, postId]);
 
 	useEffect(() => {
 		setLoadingStatus({

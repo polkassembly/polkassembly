@@ -266,7 +266,7 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async () => {
-		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity()) {
+		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity()) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -283,7 +283,7 @@ const IdentityForm = ({
 		let tx;
 		let identityTx;
 		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
-		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity()) {
+		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity()) {
 			tx = requestedJudgementTx;
 		} else {
 			identityTx = api.tx?.identity?.setIdentity(info);
@@ -352,7 +352,7 @@ const IdentityForm = ({
 						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
 					/>
 				)}
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && (
+				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -735,7 +735,7 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.legalName && handleAllowSetIdentity() ? (
+				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity() ? (
 					<CustomButton
 						onClick={handleSetIdentity}
 						loading={loading}

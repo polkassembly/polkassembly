@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
-import { resetGov1TreasuryProposal, updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
+import { updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import { useTheme } from 'next-themes';
 import BN from 'bn.js';
@@ -39,9 +39,10 @@ interface Props {
 	setStep: (pre: number) => void;
 	setOpenAddressLinkedModal: (pre: boolean) => void;
 	setOpen: (pre: boolean) => void;
+	setOpenSuccessModal: (pre: boolean) => void;
 }
 const ZERO_BN = new BN(0);
-const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props) => {
+const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -52,8 +53,6 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 	const {
 		beneficiary,
 		proposer,
-		proposalBond,
-		minBond,
 		fundingAmount,
 		title,
 		content,
@@ -64,13 +63,18 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 		showIdentityInfoCardForBeneficiary,
 		showMultisigInfoCard
 	} = gov1proposalData;
+
+	const [{ minBond, proposalBond }, setTreasuryData] = useState<{ proposalBond: string | null; minBond: string | null }>({
+		minBond: '',
+		proposalBond: ''
+	});
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const unit = chainProperties[network]?.tokenSymbol;
+	const unit = network ? chainProperties[network]?.tokenSymbol : null;
 
 	const getGasFee = async () => {
-		if (!api || !apiReady || !beneficiary || fundingAmount == '0' || !proposer) return;
+		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || fundingAmount == '0' || !proposer) return;
 		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
 		const gasFee = await tx.paymentInfo(proposer);
 		setGasFee(new BN(gasFee.partialFee || '0'));
@@ -95,7 +99,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 	const checkBeneficiaryIdentity = async (address: string) => {
 		if (!api || !apiReady || !address) return;
 
-		await api.derive.accounts.info(address, (info: DeriveAccountInfo) => {
+		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
 			if (!info?.identity?.display) {
 				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: true }));
 			} else {
@@ -106,9 +110,9 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 
 	const handleBeneficiaryChange = async (address: string) => {
 		const encodedAddr = getEncodedAddress(address, network) || '';
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, beneficiary: encodedAddr || '' }));
-		await checkBeneficiaryIdentity(encodedAddr);
-		await checkBeneficiaryMultisig(encodedAddr);
+		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, beneficiary: encodedAddr || address }));
+		await checkBeneficiaryIdentity(encodedAddr || address);
+		await checkBeneficiaryMultisig(encodedAddr || address);
 	};
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
@@ -131,7 +135,6 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 			});
 			console.error(apiError);
 		}
-		dispatch(resetGov1TreasuryProposal());
 		setOpen(false);
 	};
 
@@ -141,16 +144,21 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
-		const post_id = Number(await api.query.treasury.proposalCount());
+		const postId = Number(await api.query.treasury.proposalCount());
 
 		const onSuccess = () => {
-			handleSaveTreasuryProposal(post_id);
+			handleSaveTreasuryProposal(postId);
 			queueNotification({
 				header: 'Success!',
 				message: 'Proposal Created Successfully!',
 				status: NotificationStatus.SUCCESS
 			});
+
+			dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposalIndex: postId }));
+
 			setLoading({ isLoading: true, message: 'Proposal Creation Succcess!' });
+			setOpen(false);
+			setOpenSuccessModal(true);
 		};
 		const onFailed = () => {
 			queueNotification({
@@ -177,8 +185,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];
 		if (networkChainProperties) {
-			const { treasuryProposalBondPercent, treasuryProposalMaxBond, treasuryProposalMinBond } = networkChainProperties;
-			dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, maxBond: treasuryProposalMaxBond, minBond: treasuryProposalMinBond, proposalBond: treasuryProposalBondPercent }));
+			const { treasuryProposalBondPercent, treasuryProposalMinBond } = networkChainProperties;
+			setTreasuryData({ minBond: treasuryProposalMinBond, proposalBond: treasuryProposalBondPercent });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -275,7 +283,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 							)}
 						</div>
 
-						{/* beneficary address */}
+						{/* beneficiary address */}
 						<div>
 							<div className=' flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
@@ -288,6 +296,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 							</div>
 							<div className='flex w-full items-end gap-2 text-sm '>
 								<AddressInput
+									skipFormatCheck
 									className='-mt-6 w-full'
 									defaultAddress={beneficiary}
 									name='beneficiary'
@@ -363,7 +372,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 						</div>
 
 						{/* Proposal Bond */}
-						{proposalBond ? (
+						{proposalBond?.length ? (
 							<div>
 								<label className='mb-0.5 flex items-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
 									Proposal Bond
@@ -381,7 +390,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 						) : null}
 
 						{/* Minimum Bond */}
-						{minBond ? (
+						{minBond?.length ? (
 							<div>
 								<label className=' mb-0.5 flex items-center text-sm text-bodyBlue dark:text-blue-dark-medium'>
 									Minimum Bond
@@ -407,7 +416,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 						className='mt-6 rounded-[4px]'
 						message={
 							<span className='text-[13px] dark:text-blue-dark-high'>
-								An approximate fees of {formatedBalance(gasFee.toString(), unit, 2)} {unit} will be applied to the transaction
+								An approximate fees of {formatedBalance(gasFee.toString(), unit as string, 2)} {unit} will be applied to the transaction
 							</span>
 						}
 					/>
@@ -419,8 +428,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen }: Props
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || availableBalance.lte(gasFee) || loading?.isLoading) && 'opacity-50'} `}
-						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || availableBalance.lte(gasFee) || loading.isLoading}
+						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading) && 'opacity-50'} `}
+						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading.isLoading}
 					/>
 				</div>
 			</div>

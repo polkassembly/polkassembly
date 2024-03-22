@@ -15,9 +15,7 @@ const initialState: IGov1TreasuryProposalStore = {
 	isDiscussionLinked: null,
 	isIdentityCardLoading: false,
 	isMultisigCardLoading: false,
-	maxbond: '0',
-	minBond: '0',
-	proposalBond: 0,
+	proposalIndex: null,
 	proposer: '',
 	secondStepPercentage: 0,
 	showIdentityInfoCardForBeneficiary: false,
@@ -45,14 +43,12 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.discussionId = null;
 			state.fundingAmount = '0';
 			state.isDiscussionLinked = null;
-			state.minBond = '0';
-			state.proposalBond = 0;
-			state.maxbond = '0';
 			state.proposer = '';
 			state.tags = [];
 			state.firstStepPercentage = 0;
 			state.secondStepPercentage = 0;
 			state.isIdentityCardLoading = false;
+			state.proposalIndex = null;
 			state.isMultisigCardLoading = false;
 			state.showIdentityInfoCardForBeneficiary = false;
 			state.showIdentityInfoCardForProposer = false;
@@ -66,12 +62,10 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.discussionId = action?.payload?.discussionId;
 			state.fundingAmount = action?.payload?.fundingAmount;
 			state.isDiscussionLinked = action?.payload?.isDiscussionLinked;
-			state.minBond = action?.payload?.minBond;
-			state.maxbond = action?.payload?.maxbond;
-			state.proposalBond = action?.payload?.proposalBond;
 			state.proposer = action?.payload?.proposer;
 			state.tags = action?.payload?.tags;
 			state.title = action?.payload?.title;
+			state.proposalIndex = action?.payload?.proposalIndex;
 			state.firstStepPercentage = action.payload.firstStepPercentage;
 			state.secondStepPercentage = action.payload.secondStepPercentage;
 			state.isIdentityCardLoading = action.payload.isIdentityCardLoading;

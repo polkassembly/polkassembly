@@ -11,9 +11,6 @@ export interface IGov1TreasuryProposalStore {
 	tags: string[];
 	proposer: string;
 	beneficiary: string;
-	minBond: string;
-	maxbond: string;
-	proposalBond: number;
 	fundingAmount: string;
 	firstStepPercentage: number;
 	secondStepPercentage: number;
@@ -22,4 +19,5 @@ export interface IGov1TreasuryProposalStore {
 	showMultisigInfoCard: boolean;
 	isIdentityCardLoading: boolean;
 	isMultisigCardLoading: boolean;
+	proposalIndex: null | number;
 }

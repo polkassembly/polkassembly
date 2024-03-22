@@ -9,7 +9,7 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import { ESteps } from '~src/types';
 import styled from 'styled-components';
 import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -21,11 +21,14 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import CreateProposal from './CreateProposal';
 import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import Gov1TreasuryProposalSuccess from './Gov1TreasuryProposalSuccess';
+import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
 
 interface Props {
 	className?: string;
+	isUsedInTreasuryPage?: boolean;
 }
-const Gov1TreasuryProposal = ({ className }: Props) => {
+const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -37,6 +40,7 @@ const Gov1TreasuryProposal = ({ className }: Props) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState(false);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
+	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	const checkProposerIdentity = async (address: string) => {
 		if (!api || !apiReady) return;
@@ -81,17 +85,40 @@ const Gov1TreasuryProposal = ({ className }: Props) => {
 		if (content?.length) {
 			firstStepPercentage += 50;
 		}
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, firstStepPercentage, proposer: loginAddress, secondStepPercentage }));
+		dispatch(
+			updateGov1TreasuryProposal({
+				...gov1proposalData,
+				firstStepPercentage,
+				proposer: loginAddress,
+				secondStepPercentage,
+				showIdentityInfoCardForBeneficiary: false,
+				showIdentityInfoCardForProposer: false,
+				showMultisigInfoCard: false
+			})
+		);
+
+		checkProposerIdentity(proposer || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<div>
 			<CustomButton
-				variant='primary'
-				text='Create Treasury Proposal'
+				variant={isUsedInTreasuryPage ? 'primary' : 'text'}
 				onClick={handleClick}
-			/>
+				className={`${
+					isUsedInTreasuryPage
+						? 'flex gap-1'
+						: 'ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-center gap-2 rounded-[8px] border-none bg-none align-middle text-[35px] text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
+				}`}
+			>
+				{isUsedInTreasuryPage ? (
+					<CreateProposalWhiteIcon className='mr-2' />
+				) : (
+					<CreatePropoosalIcon className={`${isUsedInTreasuryPage ? 'scale-200' : 'ml-[-31px] cursor-pointer'} text-3xl`} />
+				)}
+				<div className={isUsedInTreasuryPage ? 'ml-0' : 'ml-2.5'}>Create Treasury Proposal</div>
+			</CustomButton>
 			{openAddressLinkedModal && (
 				<AddressConnectModal
 					open={openAddressLinkedModal}
@@ -155,9 +182,18 @@ const Gov1TreasuryProposal = ({ className }: Props) => {
 						setStep={setStep}
 						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 						setOpen={setOpen}
+						setOpenSuccessModal={setOpenSuccessModal}
 					/>
 				)}
 			</Modal>
+
+			{/* proposal success modal */}
+			<Gov1TreasuryProposalSuccess
+				open={openSuccessModal}
+				setOpen={setOpenSuccessModal}
+				setStep={setStep}
+			/>
+
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}

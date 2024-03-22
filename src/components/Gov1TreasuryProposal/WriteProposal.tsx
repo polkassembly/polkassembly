@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Alert, Form, Input, Radio, Spin } from 'antd';
-import React, { useCallback, useState } from 'react';
+import { Form, Input, Radio, Spin } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
 import Markdown from '~src/ui-components/Markdown';
@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import _ from 'lodash';
 import classNames from 'classnames';
+import Alert from '~src/basic-components/Alert';
 
 interface Props {
 	className?: string;
@@ -63,8 +64,8 @@ const WriteProposal = ({ setStep, className }: Props) => {
 				message: 'Unable to fetch data for this discussion number.',
 				status: NotificationStatus.ERROR
 			});
+			setLoading(false);
 		}
-		setLoading(false);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +75,11 @@ const WriteProposal = ({ setStep, className }: Props) => {
 		populateDiscussionPostDataFn(link);
 	};
 
+	useEffect(() => {
+		getDiscussionPostData(discussionLink);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [discussionLink]);
+
 	return (
 		<>
 			<Spin spinning={loading}>
@@ -81,7 +87,12 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>Have you initiated a discussion post for your proposal already? </label>
 					<Radio.Group
 						disabled={loading}
-						onChange={(e) => handleOnchange({ isDiscussionLinked: e.target.value })}
+						onChange={(e) => {
+							handleOnchange({ content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
+							form.setFieldValue('content', '');
+							form.setFieldValue('title', '');
+							form.setFieldValue('tags', []);
+						}}
 						size='small'
 						className='mt-1.5'
 						value={isDiscussionLinked}

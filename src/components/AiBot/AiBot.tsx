@@ -24,8 +24,19 @@ import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
+	loading: () => (
+		<SkeletonButton
+			className='w-[100%]'
+			active
+		/>
+	),
+	ssr: false
+});
+
+const Gov1TreasuryProposal = dynamic(() => import('../Gov1TreasuryProposal'), {
 	loading: () => (
 		<SkeletonButton
 			className='w-[100%]'
@@ -141,6 +152,12 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	if (treasuryProposalCreationAllowedNetwork.includes(network)) {
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal theme={theme} />
+		});
+	}
+
+	if (!isOpenGovSupported(network)) {
+		data.splice(0, 0, {
+			component: <Gov1TreasuryProposal />
 		});
 	}
 

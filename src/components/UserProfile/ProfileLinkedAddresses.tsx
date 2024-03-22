@@ -116,7 +116,6 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			<Checkbox.Group
 				className='flex flex-col gap-2'
 				onChange={(list) => {
-					console.log(list, 'lis');
 					setSelectedAddresses(list as any);
 				}}
 				value={selectedAddresses.map((address) => getEncodedAddress(address, network)) as CheckboxValueType[]}

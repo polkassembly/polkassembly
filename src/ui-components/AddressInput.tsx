@@ -178,6 +178,6 @@ const AddressInput = ({
 
 export default styled(AddressInput)`
 	.ant-input::placeholder {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '')} !important;
 	}
 `;

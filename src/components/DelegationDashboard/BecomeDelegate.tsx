@@ -107,12 +107,12 @@ const BecomeDelegate = ({ isModalOpen, setIsModalOpen, profileDetails, userBio, 
 							className='border-none dark:bg-infoAlertBgDark'
 						/>
 						<BecomeDelegateModal
-							isModalOpen={isModalOpen}
-							setIsModalOpen={setIsModalOpen}
+							isModalOpen={isModalOpen as boolean}
+							setIsModalOpen={setIsModalOpen as any}
 							className=''
-							profileDetails={profileDetails}
-							userBio={userBio}
-							setUserBio={setUserBio}
+							profileDetails={profileDetails as any}
+							userBio={userBio as any}
+							setUserBio={setUserBio as any}
 							onchainUsername={onchainUsername}
 						/>
 					</div>

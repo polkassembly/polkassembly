@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Checkbox, MenuProps, Skeleton, Spin } from 'antd';
+import { Checkbox, MenuProps, Spin } from 'antd';
 import { Badge, Col, Divider, Row, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
@@ -49,6 +49,7 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface ICalendarViewProps {
 	className?: string;
@@ -59,62 +60,62 @@ interface ICalendarViewProps {
 
 const StyledCalendar: any = styled(Calendar)`
 	.events-calendar-mini {
-		border: 2px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#e8e8e8')} !important;
+		border: 2px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#e8e8e8')} !important;
 		.rbc-month-view {
-			background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+			background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 			border: none !important;
 		}
 		/* .rbc-month-row {
-			background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+			background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		} */
 		.rbc-header,
 		.rbc-day-bg {
-			background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+			background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		}
 		.rbc-day-bg {
 			border-left: none !important;
 		}
 		.rbc-off-range > button {
-			color: ${(props) => (props.theme === 'dark' ? '#9090990' : '#E8E8E8')} !important;
+			color: ${(props: any) => (props.theme === 'dark' ? '#9090990' : '#E8E8E8')} !important;
 		}
 		.rbc-month-row {
-			background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+			background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 			.rbc-day-bg.rbc-today {
 				border: 1px solid #e6007a;
-				background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+				background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 			}
 			.rbc-day-bg {
-				border-left: 1px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
+				border-left: 1px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
 			}
-			border-top: 1px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
+			border-top: 1px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
 		}
 	}
 	.rbc-month-view {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
+		background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
 		border: none !important;
 	}
 	.custom-calendar-toolbar {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
+		background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
 	}
 	.rbc-off-range-bg {
-		background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 	}
 	.rbc-month-row {
 		.rbc-day-bg.rbc-today {
 			border: 1px solid #e6007a;
-			background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		}
 		.rbc-day-bg {
-			border-left: 1px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
+			border-left: 1px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
 		}
-		border-top: 1px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
+		border-top: 1px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#ddd')} !important;
 	}
 
 	.rbc-month-header {
 		height: 44px;
 		display: flex;
 		align-items: center;
-		border-bottom: 1px solid ${(props) => (props.theme === 'dark' ? '#4B4B4B' : '#eee')} !important;
+		border-bottom: 1px solid ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#eee')} !important;
 
 		.rbc-header {
 			font-size: 16px;
@@ -131,8 +132,8 @@ const StyledCalendar: any = styled(Calendar)`
 			font-size: 12px;
 			padding: 5px;
 			font-weight: 500 !important;
-			background: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
-			border: ${(props) => (props.theme === 'dark' ? 'none' : '1px solid #fff')} !important;
+			background: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')};
+			border: ${(props: any) => (props.theme === 'dark' ? 'none' : '1px solid #fff')} !important;
 			border-radius: 50%;
 			cursor: pointer;
 
@@ -633,7 +634,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 										indicator={<></>}
 									>
 										<StyledCalendar
-											theme={theme}
+											theme={theme as any}
 											className='events-calendar-mini dark:bg-section-dark-overlay'
 											date={miniCalSelectedDate}
 											onNavigate={setMiniCalSelectedDate}
@@ -699,7 +700,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 								<Spin spinning={categoriesLoading}>
 									{!categoriesLoading ? ( // this is needed to render (+3 more) without changing views
 										<StyledCalendar
-											theme={theme}
+											theme={theme as any}
 											className={`events-calendar ${small || width < 768 ? 'small' : ''}`}
 											localizer={localizer}
 											date={selectedDate}

@@ -39,7 +39,6 @@ interface Props {
 }
 const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
-	console.log(theme);
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -92,7 +91,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
 								<Markdown
 									imgHidden
-									md={post?.content?.slice(0, 250) + ' .....'}
+									md={post?.parsed_content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>
 								<div className='my-2 flex flex-shrink-0 flex-wrap gap-1 max-sm:mt-2'>
@@ -147,7 +146,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<div className='flex items-center'>
 											<TopicTag
 												className='ml-1'
-												topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
+												topic={getTopicNameFromTopicId((post?.topic || post?.topic_id || post?.topic?.id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
 												style={{ border: '1px solid var(--separatorDark)' }}
@@ -201,18 +200,18 @@ export default styled(ResultPosts)`
 		overflow: hidden !important;
 	}
 	.ant-pagination .ant-pagination-item a {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination .ant-pagination-prev button,
 	.ant-pagination .ant-pagination-next button {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 	}
 	.ant-pagination-item-active a {
 		color: #e5007a !important;
 	}
 	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
 	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
 		opacity: 0.5;
 	}
 `;

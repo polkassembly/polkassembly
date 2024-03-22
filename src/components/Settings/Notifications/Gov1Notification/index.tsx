@@ -7,16 +7,12 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
 import GroupCheckbox from '../common-ui/GroupCheckbox';
-import TipsIcon from '~assets/icons/tips.svg';
-import BountiesIcon from '~assets/icons/bounties.svg';
-import ReferendumsIcon from '~assets/icons/referndums.svg';
-import TechCommiteeIcon from '~assets/icons/tech-commitee.svg';
-import TreasuryProposalIcon from '~assets/icons/treasury-proposal.svg';
 import { titleMapper } from './utils';
 import { ProposalType } from '~src/global/proposalType';
 import { ACTIONS } from '../Reducer/action';
 import { Collapse } from '../common-ui/Collapse';
 import { useTheme } from 'next-themes';
+import { BountiesIcon, ReferendumsIcon, TechComIconListing, TipsIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
 
 const { Panel } = Collapse;
 type Props = {
@@ -129,7 +125,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 		<Collapse
 			size='large'
 			className={'bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
-			theme={theme}
+			theme={theme as any}
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => {
 				setActive(isActive);
@@ -195,7 +191,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 							categoryOptions={options[ProposalType.DEMOCRACY_PROPOSALS]}
 							title='Proposal'
 							classname='md:basis-[50%]'
-							Icon={TreasuryProposalIcon}
+							Icon={TreasuryGroupIcon}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>
@@ -259,7 +255,7 @@ export default function Gov1Notification({ onSetNotification, userNotification, 
 							categoryOptions={options[ProposalType.TECH_COMMITTEE_PROPOSALS]}
 							title='Tech Committee'
 							classname='md:border-dashed md:border-x-0 md:border-y-0 md:border-l-2 md:border-[#D2D8E0] dark:border-[#3B444F] md:pl-[48px] dark:border-separatorDark'
-							Icon={TechCommiteeIcon}
+							Icon={TechComIconListing}
 							onChange={handleChange}
 							handleCategoryAllClick={handleCategoryAllClick}
 						/>

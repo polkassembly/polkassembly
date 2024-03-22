@@ -80,7 +80,7 @@ const { Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 const Menu = styled(AntdMenu)`
 	.ant-menu-sub.ant-menu-inline {
-		background: ${(props) => {
+		background: ${(props: any) => {
 			return props.theme === 'dark' ? '#0D0D0D' : '#fff';
 		}} !important;
 	}
@@ -92,7 +92,7 @@ const Menu = styled(AntdMenu)`
 		.ant-menu-item-icon {
 			color: var(--pink_primary) !important;
 		}
-		background: ${(props) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
 	}
 `;
 
@@ -196,11 +196,11 @@ const getUserDropDown = (
 		const { resolvedTheme: theme } = useTheme();
 		return (
 			<Dropdown
-				theme={theme}
+				theme={theme as any}
 				menu={{ items: dropdownMenuItems }}
 				trigger={['click']}
 				className='profile-dropdown'
-				overlayClassName='z-[1056]'
+				overlayClassName='z-[101]'
 			>
 				{children}
 			</Dropdown>
@@ -781,7 +781,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	return (
 		<Layout className={className}>
 			<NavHeader
-				theme={theme}
+				theme={theme as any}
 				sidedrawer={sidedrawer}
 				setSidedrawer={setSidedrawer}
 				previousRoute={previousRoute}
@@ -803,11 +803,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					collapsed={true}
 					onMouseOver={() => setSidedrawer(true)}
 					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-[1005] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
+					className={'sidebar fixed bottom-0 left-0 z-[101] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
 				>
 					<div className='flex h-full flex-col justify-between'>
 						<Menu
-							theme={theme}
+							theme={theme as any}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							items={sidebarItems}
@@ -838,7 +838,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						onMouseLeave={() => setSidedrawer(false)}
 					>
 						<Menu
-							theme={theme}
+							theme={theme as any}
 							mode='inline'
 							selectedKeys={[router.pathname]}
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
@@ -892,7 +892,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				/>
 			)}
-			<Footer theme={theme} />
+			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}
@@ -1053,7 +1053,7 @@ export default styled(AppLayout)`
 	}
 
 	.ant-menu-inline-collapsed-noicon {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')};
 	}
 
 	@media (max-width: 468px) and (min-width: 380px) {

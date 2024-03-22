@@ -510,7 +510,20 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMaxBond: '50',
 		externalLinks: 'https://explorer.polimec.org/polimec',
 		gTag: null,
-		rpcEndpoints: []
+		rpcEndpoints: [
+			{
+				label: 'via Helikon',
+				key: 'wss://rpc.helikon.io/polimec'
+			},
+			{
+				label: 'via Polimec Foundation',
+				key: 'wss://rpc.polimec.org'
+			},
+			{
+				label: 'via Amforc',
+				key: ' wss://polimec.rpc.amforc.com'
+			}
+		]
 	},
 	[network.ROLIMEC]: {
 		blockTime: 12000,

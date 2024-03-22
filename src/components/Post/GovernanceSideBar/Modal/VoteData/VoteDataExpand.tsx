@@ -5,7 +5,7 @@ import React from 'react';
 import { LikeFilled } from '@ant-design/icons';
 // import { DislikeFilled, LikeFilled } from '@ant-design/icons';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import CalenderIcon from '~assets/icons/calender-icon.svg';
 import PowerIcon from '~assets/icons/body-part-muscle.svg';
 import VoterIcon from '~assets/icons/vote-small-icon.svg';
@@ -22,6 +22,7 @@ import Address from '~src/ui-components/Address';
 import { VoteType } from '~src/global/proposalType';
 import { useDispatch } from 'react-redux';
 import { setClearInitialState, setIsVoteDataModalClose } from '~src/redux/voteData';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const getPercentage = (userVotes: string, totalVotes: string) => {
 	if (!totalVotes) {
@@ -215,7 +216,7 @@ const VoteDataExpand = () => {
 								))}
 							</div>
 							{delegatorLoading ? (
-								<Skeleton.Button active />
+								<SkeletonButton active />
 							) : (
 								delegatedData?.delegator > 10 && (
 									<p

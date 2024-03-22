@@ -14,6 +14,9 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import createUserActivity from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
+import { EActivityAction } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -37,7 +40,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const userReactionQuery = reactionsCollRef.where('user_id', '==', user.id);
 
-	let reactionDoc;
+	let reactionDoc: any;
 	let reactionData = {};
 
 	const userReactionQuerySnapshot = await userReactionQuery.get();
@@ -84,12 +87,34 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		.doc(reactionDoc.id)
 		.set(reactionData, { merge: true })
 		.then(() => {
-			return res.status(200).json({ message: 'Reaction updated.' });
+			res.status(200).json({ message: 'Reaction updated.' });
 		})
 		.catch((error) => {
 			console.error('Error updating reaction: ', error);
 			return res.status(500).json({ message: 'Error updating reaction' });
 		});
+
+	try {
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		const postAuthorId = postData?.user_id;
+
+		if (typeof postAuthorId == 'number' && typeof userId == 'number') {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				network,
+				postAuthorId,
+				postId,
+				postType,
+				reactionAuthorId: userId,
+				reactionId: reactionDoc.id,
+				userId
+			});
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 }
 
 export default withErrorHandling(handler);

@@ -336,6 +336,6 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 
 export default styled(LoginSuccessModal)`
 	#first_password {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '')} !important;
 	}
 `;

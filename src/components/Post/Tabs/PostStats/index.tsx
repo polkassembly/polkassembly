@@ -20,8 +20,8 @@ import { StatTabs } from './Tabs/StatTabs';
 import ConvictionVotes from './Tabs/ConvictionVotes';
 import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
-import { Skeleton } from 'antd';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface IPostStatsProps {
 	postId: string;

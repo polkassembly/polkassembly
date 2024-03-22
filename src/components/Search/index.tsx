@@ -26,7 +26,6 @@ import dayjs from 'dayjs';
 import Image from 'next/image';
 import { SearchOutlined } from '@ant-design/icons';
 import SearchLoader from '~assets/search/search-loader.gif';
-// import StartSearchIcon from '~assets/search/search-start.svg';
 import DownOutlined from '~assets/search/dropdown-down.svg';
 import HighlightDownOutlined from '~assets/search/pink-dropdown-down.svg';
 import InputClearIcon from '~assets/icons/close-tags.svg';
@@ -139,8 +138,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 	}
 
 	const getFacetFileters = (filterBy?: EFilterBy) => {
-		const postTypeFilter = [];
-
+		const postTypeFilter = [[`id:-${finalSearchInput}`]];
 		if (filterBy === EFilterBy.Referenda) {
 			postTypeFilter.push([`post_type:-${ProposalType.DISCUSSIONS}`], [`post_type:-${ProposalType.GRANTS}`]);
 			if (selectedGov1Tracks.length > 0) {
@@ -149,6 +147,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		} else if (filterBy === EFilterBy.Discussions) {
 			postTypeFilter.push([`post_type:${ProposalType.DISCUSSIONS}`, `post_type:${ProposalType.GRANTS}`]);
 		}
+
 		const tracksFilter = [
 			(isOpenGovSupported(network) || isSuperSearch) && filterBy !== EFilterBy.Discussions ? selectedOpengovTracks.map((trackId) => `track_number:${Number(trackId)}`) : []
 		];
@@ -218,6 +217,18 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			});
 	};
 
+	const filterByIndex = (data: any[]) => {
+		const matchArr: any[] = [];
+		const unmatchArr: any[] = [];
+		data?.map((item: any) => {
+			if (String(item?.id) == finalSearchInput) {
+				matchArr.push(item);
+			} else {
+				unmatchArr.push(item);
+			}
+		});
+		return [...matchArr, ...unmatchArr];
+	};
 	const getResultData = async () => {
 		if (finalSearchInput.length <= 2 || !userIndex || !postIndex) {
 			setLoading(false);
@@ -231,7 +242,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		await postIndex
 			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Referenda), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
 			.then(({ hits, nbHits }) => {
-				setOnchainPostResults({ data: hits, total: nbHits });
+				setOnchainPostResults({ data: filterByIndex(hits), total: nbHits });
 			})
 			.catch((error) => {
 				console.log(error);
@@ -242,7 +253,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		await postIndex
 			.search(finalSearchInput, { facetFilters: getFacetFileters(EFilterBy.Discussions), filters: getDateFilter(), hitsPerPage: LISTING_LIMIT, page: postsPage - 1 })
 			.then(({ hits, nbHits }) => {
-				setOffchainPostResults({ data: hits, total: nbHits });
+				setOffchainPostResults({ data: filterByIndex(hits), total: nbHits });
 			})
 			.catch((error) => {
 				console.log(error);
@@ -254,7 +265,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			.search(finalSearchInput, { hitsPerPage: LISTING_LIMIT, page: peoplePage.page - 1 })
 			.then(({ hits, nbHits }) => {
 				setPeoplePage({ ...peoplePage, totalPeople: nbHits });
-				setPeopleResults(hits);
+				setPeopleResults(filterByIndex(hits));
 				getDefaultAddress(hits);
 			})
 			.catch((error) => {
@@ -327,7 +338,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				highlightPreTag: '<mark>',
 				highlightPostTag: '</mark>',
 				page: 0,
-				restrictSearchableAttributes: ['title', 'parsed_content']
+				restrictSearchableAttributes: ['id', 'title', 'parsed_content']
 			})
 			.catch((error) => console.log('Posts autocomplete fetch error: ', error));
 
@@ -340,8 +351,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				restrictSearchableAttributes: ['username', 'profile.bio', 'profile.title']
 			})
 			.catch((error) => console.log('Users autocomplete fetch error: ', error));
-
-		setAutoCompleteResults({ posts: postResults?.hits || [], users: userResults?.hits || [] });
+		setAutoCompleteResults({ posts: filterByIndex(postResults?.hits as any[]) || [], users: userResults?.hits || [] });
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -438,6 +448,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			const bMatchedWordsLength = getMatchedWordsLength(b);
 			return aMatchedWordsLength - bMatchedWordsLength;
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoCompleteResults]);
 
 	const dedupedSortedAutoCompleteResults = useMemo(() => {
@@ -713,7 +724,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																	selectedGov1Tracks.includes(track) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 																}`}
 															>
-																<div className='mt-[2px] capitalize'>{track?.split('_')?.join(' ')}</div>
+																<div className='mt-[2px] capitalize dark:text-blue-dark-high'>{track?.split('_')?.join(' ')}</div>
 															</Checkbox>
 														))}
 												</Checkbox.Group>
@@ -738,7 +749,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 																		selectedOpengovTracks.includes(track?.name) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 																	}`}
 																>
-																	<div className='mt-[2px] capitalize'>{track?.name?.split('_')?.join(' ')}</div>
+																	<div className='mt-[2px] capitalize dark:text-blue-dark-high'>{track?.name?.split('_')?.join(' ')}</div>
 																</Checkbox>
 															))}
 													</Checkbox.Group>
@@ -780,7 +791,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 														selectedTopics.includes(topic) ? 'text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high' : 'text-separatorDark'
 													}`}
 												>
-													<div className='mt-[2px]'>{topic}</div>
+													<div className=' mt-[2px] dark:text-blue-dark-high'>{topic}</div>
 												</Checkbox>
 											))}
 									</Checkbox.Group>
@@ -821,13 +832,13 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							{dateFilter && (
 								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 font-medium dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Date:</span>
-									<span className='capitalize'>{dateFilter?.split('_')?.join(' ')}</span>
+									<span className='capitalize dark:text-blue-dark-high'>{dateFilter?.split('_')?.join(' ')}</span>
 								</div>
 							)}
 							{selectedTags.length > 0 && (
 								<div className='flex gap-1 rounded-[4px] bg-[#FEF2F8] px-2 py-1 dark:bg-section-dark-overlay'>
 									<span className='text-pink_primary'>Tags:</span>
-									<span className='capitalize'>{selectedTags?.join(', ')}</span>
+									<span className='capitalize dark:text-blue-dark-high'>{selectedTags?.join(', ')}</span>
 								</div>
 							)}
 							{(selectedOpengovTracks.length > 0 || selectedGov1Tracks.length > 0) && filterBy !== EFilterBy.Discussions && (
@@ -837,7 +848,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 										{selectedOpengovTracks?.map((trackId, index) => (
 											<span
 												key={index}
-												className='capitalize'
+												className='capitalize dark:text-blue-dark-high'
 											>
 												{getTrackNameFromId(network, Number(trackId))?.split('_')?.join(' ')}
 												{index !== selectedOpengovTracks.length - 1 && ', '}{' '}
@@ -846,9 +857,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 										{selectedGov1Tracks.map((track, index) => (
 											<span
 												key={index}
-												className='flex flex-shrink-0 capitalize'
+												className='flex flex-shrink-0 capitalize dark:text-blue-dark-high'
 											>
-												{' '}
 												{selectedOpengovTracks.length > 0 && ', '}
 												{(track as string)?.split('_')?.join(' ')}
 												{index !== selectedGov1Tracks.length - 1 && ', '}{' '}
@@ -981,18 +991,18 @@ export default styled(NewSearch)`
 		border: 1px solid var(--pink_primary);
 		height: 38px !important;
 		color: red !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 	.ant-input {
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	input::placeholder {
 		font-weight: 400 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#7788a0')} !important;
 	}
 	.listing .ant-spin-nested-loading .ant-spin-container .ant-list-items .ant-list-item {
 		padding: 0px 18px !important;
@@ -1009,5 +1019,12 @@ export default styled(NewSearch)`
 	}
 	.supersearch:hover {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
+	}
+	.ant-radio-wrapper .ant-radio-inner {
+		background-color: transparent !important;
+	}
+
+	.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+		background-color: #e5007a !important;
 	}
 `;

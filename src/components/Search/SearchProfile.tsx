@@ -16,9 +16,10 @@ import Tooltip from '~src/basic-components/Tooltip';
 import { socialLinks } from '~src/components/UserProfile/Socials';
 import Address from '~src/ui-components/Address';
 import SocialLink from '~src/ui-components/SocialLinks';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
-	loading: () => <Skeleton.Avatar active />,
+	loading: () => <SkeletonAvatar active />,
 	ssr: false
 });
 

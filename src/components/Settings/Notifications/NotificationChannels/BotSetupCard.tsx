@@ -40,7 +40,9 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 						{title} Notifications{' '}
 						{!description && (
 							<div>
-								<span className='rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[#407BFF] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>Coming Soon</span>
+								<span className='whitespace-nowrap rounded-bl-lg rounded-tr-lg border-2 border-[#5A46FF] bg-[#407BFF] px-[4px] py-[2px] text-[10px] text-[#FFFFFF]'>
+									Coming Soon
+								</span>
 							</div>
 						)}
 						{!!isBotSetup && (

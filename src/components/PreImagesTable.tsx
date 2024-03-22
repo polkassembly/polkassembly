@@ -27,6 +27,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
+import { useTheme } from 'next-themes';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];
@@ -115,7 +116,7 @@ const UnnoteButton = ({ proposer, hash, api, apiReady, network, substrateAddress
 const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const router = useRouter();
-	const { theme } = props;
+	const { resolvedTheme: theme } = useTheme();
 	const [preimages, setPreimages] = useState(props.preimages);
 	const [modalArgs, setModalArgs] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
@@ -320,9 +321,9 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 export default styled(React.memo(PreImagesTable))`
 	.ant-table-wrapper .ant-table-thead > tr > th,
 	.ant-table-wrapper .ant-table-thead > tr > td {
-		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	.ant-table-row .ant-table-row-level-0 {
-		background: ${(props) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
 	}
 `;

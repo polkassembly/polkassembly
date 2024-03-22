@@ -12,7 +12,7 @@ import { DecisionPeriodIcon, EnactmentPeriodIcon, PreparePeriodIcon } from '~src
 import GovSidebarCard from '~src/ui-components/GovSidebarCard';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IProgress } from './Curves';
-import { IPeriod } from '~src/types';
+import { IPeriod, ProgressStatusType } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import ConfirmationAttemptsRow from '~src/ui-components/ConfirmationAttemptsRow';
@@ -23,6 +23,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import Tooltip from '~src/basic-components/Tooltip';
+import Loader from '~src/ui-components/Loader';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -70,6 +71,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const [minEnactment, setMinEnactment] = useState<IPeriod>(getDefaultPeriod());
 	const [spend, setSpend] = useState<IPeriod>(getDefaultPeriod());
 	const [open, setOpen] = useState(false);
+	const [progressBarStatus, setProgressBarStatus] = useState<ProgressStatusType>('active');
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed', 'ExecutionFailed'].includes(status);
@@ -100,7 +102,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		const decisionPeriodStartsAt = decidingStatusBlock && decidingStatusBlock.timestamp ? dayjs(decidingStatusBlock.timestamp) : prepare.periodEndsAt;
 		const decision = getPeriodData(network, decisionPeriodStartsAt, trackData, 'decisionPeriod');
 		setDecision(decision);
-
 		const confirmPeriodEndsAt = confirmStartedStatusBlock && confirmStartedStatusBlock.timestamp ? dayjs(confirmStartedStatusBlock.timestamp) : decision.periodEndsAt;
 		const confirm = getPeriodData(network, confirmPeriodEndsAt, trackData, 'confirmPeriod');
 		setConfirm(confirm);
@@ -110,6 +111,13 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 		setMinEnactment(minEnactment);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setProgressBarStatus('exception');
+		}, 12000);
+		return () => clearTimeout(timer);
+	}, []);
 
 	useEffect(() => {
 		if (isTreasuryProposal) {
@@ -189,6 +197,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 					<ConfirmationAttemptsRow timeline={timeline || []} />
 				</GovSidebarCard>
 			)}
+
 			{decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 				<GovSidebarCard>
 					<div className='flex items-center justify-between'>
@@ -211,7 +220,8 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						<ProgressBar
 							className='m-0 flex items-center rounded-lg p-0'
 							showInfo={false}
-							percent={decision.periodPercent}
+							status={progressBarStatus}
+							percent={decision?.periodPercent}
 							strokeColor='#E5007A'
 							trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 							size='small'
@@ -228,7 +238,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							</Tooltip>
 						</div>
 						<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
-							{periodStartAt(decision.period, decision.periodPercent)}/{decision.period}
+							{periodStartAt(decision?.period, decision?.periodPercent)}/{decision?.period}
 						</span>
 					</p>
 					<div className='mt-[20px]'>
@@ -253,7 +263,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								</Tooltip>
 							</div>
 							<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
-								{periodStartAt(confirm.period, confirm.periodPercent)}/{confirm.period}
+								{periodStartAt(confirm?.period, confirm?.periodPercent)}/{confirm?.period}
 							</span>
 						</>
 					</p>
@@ -301,7 +311,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 									{periodStartAt(minEnactment.period, minEnactment.periodPercent)}/{minEnactment.period}
 								</span>
 							</p>
-							{isDisbursalPeriodCardVisible && (
+							{isDisbursalPeriodCardVisible && !!spend?.period ? (
 								<>
 									<div className='mt-[20px]'>
 										<ProgressBar
@@ -310,9 +320,10 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 											strokeColor='#E5007A'
 											trailColor={theme === 'dark' ? '#222222' : '#FEF2F8'}
 											size='small'
+											showInfo={false}
 										/>
 									</div>
-									<p className='m-0 mt-2 flex items-center justify-between p-0 leading-[22px]'>
+									<p className='m-0 mt-5 flex items-center justify-between p-0 leading-[22px]'>
 										<>
 											<div className='flex gap-1'>
 												<span className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>Funds Disbursal Period</span>
@@ -323,12 +334,15 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 													<InfoCircleOutlined className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium' />
 												</Tooltip>
 											</div>
+
 											<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>
 												{periodStartAt(spend.period, spend.periodPercent)}/{spend.period}
 											</span>
 										</>
 									</p>
 								</>
+							) : (
+								<Loader className='mt-2' />
 							)}
 							<ConfirmationAttemptsRow timeline={timeline || []} />
 						</GovSidebarCard>
@@ -419,7 +433,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 						</div>
 					</article>
 					<article className='flex gap-x-[23px]'>
-						<div className='h-[300px] w-[4.5px] overflow-hidden rounded-full bg-[#FCE5F2] md:h-[250px]'>
+						<div className='h-[300px] w-[4.5px] overflow-hidden rounded-full bg-[#FCE5F2] md:h-[310px]'>
 							<div
 								style={{
 									height: `${decidingStatusBlock ? (Math.min(decision.periodPercent, 100) / 100) * 300 : 0}px`
@@ -443,8 +457,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 							<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>Voting Period</h4>
 							<ul className='px-5 text-sm leading-[21px] tracking-[0.01em]'>
 								<li>A referendum will be in voting till the decision period is completed or the proposal is passed.</li>
-								<li>For a referendum to pass, the support and approval should be greater than the threshold for the track for the confirmation period.</li>
-								<li>If the referendum does not pass during the decision period, it is considered as failed.</li>
+								<li>For a referendum to enter confirmation, the support and approval should be greater than the threshold for the track.</li>
+								<li>
+									Once the proposal enters confirmation, its support and approval should remain greater than the threshold for the duration of the confirmation period for it to
+									pass.
+								</li>
+								<li>If the referendum does not enter confirmation during the decision period, it is considered as failed.</li>
 							</ul>
 						</div>
 					</article>
@@ -485,7 +503,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 
 export default styled(ReferendaV2Messages)`
 	.ant-modal .ant-modal-header {
-		background-color: ${({ theme }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
+		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#fff')};
 	}
 `;
 

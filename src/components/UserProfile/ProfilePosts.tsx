@@ -19,6 +19,9 @@ import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -61,6 +64,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setCheckedAddressList(addresses);
@@ -275,8 +279,10 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						})
 					) : (
 						<Empty
-							className='mt-8'
-							description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+							imageStyle={{ height: 300 }}
+							description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No posts found</p>}
+							className='my-6 dark:text-[#9e9e9e]'
 						/>
 					)}
 				</div>

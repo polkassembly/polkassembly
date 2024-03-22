@@ -14,7 +14,7 @@ import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import ImageComponent from '~src/components/ImageComponent';
 import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 
 interface Props {
@@ -23,8 +23,9 @@ interface Props {
 	searchedUsername?: string;
 }
 
-const LeaderboardData = ({ className, searchedUsername }: Props) => {
-	const { resolvedTheme: theme } = useTheme();
+const LeaderboardData = ({ className, searchedUsername, theme }: Props) => {
+	// const { resolvedTheme: theme } = useTheme();
+	console.log(theme);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
@@ -78,7 +79,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			dataIndex: 'rank',
 			fixed: 'left',
 			key: 'rank',
-			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
+			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank < 10 ? `0${rank}` : rank}</p>,
 			title: 'Rank',
 			width: 15
 		},
@@ -217,7 +218,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const dataSource = tableData?.map((item: any, index: number) => ({
 		key: item?.user_id,
 		profileScore: item?.profile_score,
-		rank: index < 9 ? `0${index + 1}` : index + 1,
+		rank: currentPage * 10 + index - 9,
 		user: item?.username,
 		userImage: item?.image,
 		userSince: formatTimestamp(item?.created_at._seconds)

@@ -2,11 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useContext, useEffect, useCallback, useState } from 'react';
+import React, { FC, useEffect, useCallback, useState } from 'react';
 import BN from 'bn.js';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { ApiContext } from 'src/context/ApiContext';
-import { usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
 import { useFetch } from 'src/hooks';
 import { chainProperties } from '~src/global/networkConstants';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
@@ -35,7 +34,7 @@ const ZERO = new BN(0);
 
 const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useContext(ApiContext);
+	const { api, apiReady } = useApiContext();
 
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const {
@@ -139,7 +138,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally]);
 
 	useEffect(() => {
-		if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) return;
+		if (!['cere', 'equilibrium', 'amplitude', 'pendulum', 'polimec'].includes(network)) return;
 
 		(async () => {
 			const { data, error } = await nextApiClientFetch<{
@@ -266,7 +265,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 			postType === ProposalType.REFERENDUMS && setTurnout(new BN(info.turnout));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex, voteInfoData, voteInfoError]);
+	}, [postIndex, voteInfoData, voteInfoError, getVoteInfo, apiReady]);
 
 	const tabItems: any[] = [
 		{

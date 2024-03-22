@@ -25,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 	if (!network || !isValidNetwork(network)) {
 		return res.status(400).json({ error: 'Invalid network in request header' });
 	}
-	if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) {
+	if (!['cere', 'equilibrium', 'amplitude', 'pendulum', 'polimec'].includes(network)) {
 		return res.status(400).json({ error: 'Invalid network in request header' });
 	}
 

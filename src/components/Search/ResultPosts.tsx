@@ -25,6 +25,7 @@ import CommentIcon from '~assets/search/search-comment.svg';
 import dayjs from 'dayjs';
 import { trackEvent } from 'analytics';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -37,8 +38,9 @@ interface Props {
 	searchInput?: string;
 	theme?: string;
 }
-const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
+const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	const { resolvedTheme } = useTheme();
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -88,7 +90,9 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									</div>
 								</div>
-								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
+								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>
+									#{post?.id} {titleString}
+								</div>
 								<Markdown
 									imgHidden
 									md={post?.parsed_content?.slice(0, 250) + ' .....'}
@@ -146,6 +150,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<div className='flex items-center'>
 											<TopicTag
 												className='ml-1'
+												theme={resolvedTheme as any}
 												topic={getTopicNameFromTopicId((post?.topic || post?.topic_id || post?.topic?.id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
@@ -185,7 +190,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 					hideOnSinglePage={true}
 					onChange={(page: number) => setPostsPage(page)}
 					responsive={true}
-					theme={theme}
+					theme={resolvedTheme}
 				/>
 			</div>
 		</>

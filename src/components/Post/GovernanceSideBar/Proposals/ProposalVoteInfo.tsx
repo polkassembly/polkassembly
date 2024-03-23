@@ -3,11 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import BN from 'bn.js';
 import React from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { LoadingStatusType } from 'src/types';
+import Spin from '~src/basic-components/Spin';
 import { useNetworkSelector } from '~src/redux/selectors';
 
 import formatBnBalance from '~src/util/formatBnBalance';

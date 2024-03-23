@@ -9,7 +9,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EVoteDecisionType, NotificationStatus } from 'src/types';
-import { Divider, Form, Spin } from 'antd';
+import { Divider, Form } from 'antd';
 import Loader from 'src/ui-components/Loader';
 import { BrowserProvider, Contract, formatUnits } from 'ethers';
 
@@ -22,6 +22,7 @@ import addEthereumChain from '~src/util/addEthereumChain';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Spin from '~src/basic-components/Spin';
 
 const abi = require('../../moonbeamConvictionVoting.json');
 

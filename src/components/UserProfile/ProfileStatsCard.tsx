@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Spin } from 'antd';
+import { Divider } from 'antd';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IStats } from '.';
 import { ClipboardIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

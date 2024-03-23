@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { Modal, Spin } from 'antd';
+import { Modal } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
@@ -13,6 +13,7 @@ import { NotificationStatus } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import Alert from '~src/basic-components/Alert';
+import Spin from '~src/basic-components/Spin';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import executeTx from '~src/util/executeTx';

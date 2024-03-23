@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import BlockCountdown from 'src/components/BlockCountdown';
 import useCurrentBlock from 'src/hooks/useCurrentBlock';
@@ -23,6 +22,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { InfoIcon } from '~src/ui-components/CustomIcons';
+import Spin from '~src/basic-components/Spin';
 
 interface IGeneralSignalsProps {
 	className?: string;

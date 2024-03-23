@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { Form, Modal, Spin } from 'antd';
+import { Form, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import { ApiContext } from '~src/context/ApiContext';
 import BN from 'bn.js';
@@ -27,6 +27,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

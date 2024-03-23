@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal, Spin } from 'antd';
+import { Modal } from 'antd';
 import { LoadingOutlined, InfoCircleOutlined, LikeFilled } from '@ant-design/icons';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalT
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Spin from '~src/basic-components/Spin';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;

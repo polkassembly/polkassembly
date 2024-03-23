@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Button, Modal, Spin } from 'antd';
+import { Alert, Button, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CloseIcon } from './CustomIcons';
@@ -16,6 +16,7 @@ import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
+import Spin from '~src/basic-components/Spin';
 
 interface IDetailsState {
 	userId: number | null;

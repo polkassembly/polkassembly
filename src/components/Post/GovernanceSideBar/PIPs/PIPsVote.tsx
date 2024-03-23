@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Modal, Segmented } from 'antd';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -38,6 +38,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

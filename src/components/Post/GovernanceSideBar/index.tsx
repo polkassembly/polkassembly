@@ -6,7 +6,7 @@ import { ClockCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Button, Form, Modal, Spin } from 'antd';
+import { Button, Form, Modal } from 'antd';
 import { IPIPsVoting, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APPNAME } from 'src/global/appName';
@@ -76,6 +76,7 @@ import PredictionCard from '~src/ui-components/PredictionCard';
 // import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
+import Spin from '~src/basic-components/Spin';
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;

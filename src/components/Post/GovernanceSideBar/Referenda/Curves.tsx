@@ -6,12 +6,12 @@ import { LoadingOutlined } from '@ant-design/icons';
 import React, { FC, memo } from 'react';
 import * as Chart from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { Spin } from 'antd';
 import ChartIcon from '~assets/chart-icon.svg';
 import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
+import Spin from '~src/basic-components/Spin';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 

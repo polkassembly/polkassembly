@@ -6,7 +6,7 @@ import React, { FC } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import * as Chart from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-import { Spin } from 'antd';
+import Spin from '~src/basic-components/Spin';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 

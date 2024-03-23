@@ -10,11 +10,11 @@ import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import Spin from '~src/basic-components/Spin';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;

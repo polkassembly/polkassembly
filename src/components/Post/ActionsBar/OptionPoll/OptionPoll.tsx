@@ -3,13 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Divider, Spin } from 'antd';
+import { Divider } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import HelperTooltip from 'src/ui-components/HelperTooltip';
 import { MessageType } from '~src/auth/types';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
+import Spin from '~src/basic-components/Spin';
 import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';

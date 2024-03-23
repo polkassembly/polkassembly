@@ -4,12 +4,13 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { GifsResult, GiphyFetch } from '@giphy/js-fetch-api';
-import { PaginationProps, Spin, Input } from 'antd';
+import { PaginationProps, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import { Tabs } from './Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
+import Spin from '~src/basic-components/Spin';
 
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY || '');
 const { Search } = Input;

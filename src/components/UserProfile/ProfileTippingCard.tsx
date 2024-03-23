@@ -7,7 +7,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { TIPS } from '../Tipping';
-import { Divider, Empty, Segmented, Spin, Tooltip, message } from 'antd';
+import { Divider, Empty, Segmented, Tooltip, message } from 'antd';
 import Address from '~src/ui-components/Address';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
@@ -28,6 +28,7 @@ import { CopyIcon } from '~src/ui-components/CustomIcons';
 import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import { useTheme } from 'next-themes';
+import Spin from '~src/basic-components/Spin';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false

@@ -4,7 +4,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Checkbox, Form, Modal, Slider, Spin } from 'antd';
+import { Checkbox, Form, Modal, Slider } from 'antd';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { ApiContext } from 'src/context/ApiContext';
@@ -38,6 +38,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
 import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

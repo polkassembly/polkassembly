@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { ProfileMentionsIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Divider, Empty, Spin } from 'antd';
+import { Divider, Empty } from 'antd';
 import ImageComponent from '../ImageComponent';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -18,6 +18,7 @@ import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
 import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

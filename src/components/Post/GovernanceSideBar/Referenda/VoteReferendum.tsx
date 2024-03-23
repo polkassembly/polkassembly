@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
+import { Checkbox, Form, Modal, Segmented } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -57,6 +57,7 @@ import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import Spin from '~src/basic-components/Spin';
 const ZERO_BN = new BN(0);
 
 interface Props {

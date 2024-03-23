@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose, IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Spin, Checkbox, Tooltip } from 'antd';
+import { Empty, Checkbox, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -40,6 +40,7 @@ import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
 import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal, Spin } from 'antd';
+import { Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { CloseIcon, SubscanIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
@@ -18,6 +18,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatBalance } from '@polkadot/util';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

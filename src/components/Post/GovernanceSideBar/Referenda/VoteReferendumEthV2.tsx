@@ -5,7 +5,7 @@
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Modal, Segmented } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -45,6 +45,7 @@ import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

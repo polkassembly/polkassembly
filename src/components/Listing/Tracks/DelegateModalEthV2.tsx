@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Spin } from 'antd';
+import { Form, Modal } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -29,6 +29,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import addEthereumChain from '~src/util/addEthereumChain';
 import { oneEnactmentPeriodInDays } from '~src/util/oneEnactmentPeriodInDays';
+import Spin from '~src/basic-components/Spin';
 
 const abi = require('../../../moonbeamConvictionVoting.json');
 

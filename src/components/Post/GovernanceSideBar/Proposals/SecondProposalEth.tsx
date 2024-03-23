@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import styled from 'styled-components';
-import { Modal, Spin } from 'antd';
+import { Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -24,6 +24,7 @@ import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import BN from 'bn.js';
+import Spin from '~src/basic-components/Spin';
 
 export interface SecondProposalProps {
 	className?: string;

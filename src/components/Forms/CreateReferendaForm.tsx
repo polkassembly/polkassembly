@@ -4,7 +4,7 @@
 import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 import { getTypeDef } from '@polkadot/types/create';
 import { TypeDef, TypeDefInfo } from '@polkadot/types/types';
-import { Alert, Button, Form, Input, Radio, Spin } from 'antd';
+import { Alert, Button, Form, Input, Radio } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useApiContext } from '~src/context';
@@ -33,6 +33,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
+import Spin from '~src/basic-components/Spin';
 
 // Testing adding a new commit
 interface ParamField {

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Spin } from 'antd';
+import { Button, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
@@ -31,6 +31,7 @@ import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

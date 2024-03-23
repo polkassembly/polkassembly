@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Modal, Segmented } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -39,6 +39,7 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

@@ -8,7 +8,7 @@ import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
-import { Alert, Button, Checkbox, Spin } from 'antd';
+import { Alert, Button, Checkbox } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -21,6 +21,7 @@ import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import Spin from '~src/basic-components/Spin';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();

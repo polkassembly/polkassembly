@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Spin from '~src/basic-components/Spin';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 

@@ -51,6 +51,7 @@ const ProfileTabs = ({
 	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0

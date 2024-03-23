@@ -9,7 +9,7 @@ import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 interface Props {
 	selectedGov: EGovType;
 	setSelectedGov: (pre: EGovType) => void;
-	totalCount: number;
+	totalCount?: number;
 	onConfirm?: (pre: EGovType) => void;
 }
 const SelectGovType = ({ selectedGov, setSelectedGov, totalCount, onConfirm }: Props) => {

@@ -80,7 +80,7 @@ const Subscriptions = () => {
 
 			for (const proposalType of proposalTypes) {
 				const response = (await nextApiClientFetch('/api/v1/users/user-subscriptions', { proposalType })) as UserSubscriptionsResponse;
-				if (response.data && Array.isArray(response.data.subscribedPosts) && response.data.subscribedPosts.length > 0) {
+				if (response.data && Array.isArray(response.data.subscribedPosts)) {
 					userDataTemp[proposalType] = response.data.subscribedPosts;
 				}
 				if (response.error) console.log(response.error);
@@ -122,12 +122,7 @@ const Subscriptions = () => {
 			<div className='mt-3 flex flex-col pb-6'>
 				<div className='flex items-center justify-between'>
 					<p className='text-xl font-medium'>Posts</p>
-					{/* <Dropdown
-						overlay={<Menu items={proposalTypeItems} />}
-						placement='bottomRight'
-					>
-						<a onClick={(e) => e.preventDefault()}>Select Proposal Type</a>
-					</Dropdown> */}
+
 					{isOpenGovSupported(network) && (
 						<SelectGovType
 							selectedGov={selectedGov}

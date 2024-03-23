@@ -4,7 +4,7 @@
 
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal, Spin } from 'antd';
+import { Form, Modal } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
@@ -30,6 +30,7 @@ import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

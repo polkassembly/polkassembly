@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Button, Divider, Modal, Spin } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
@@ -27,6 +27,7 @@ import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfieBalances';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	delegate: IDelegate;

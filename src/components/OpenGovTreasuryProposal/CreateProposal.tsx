@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Spin, message } from 'antd';
+import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { EEnactment, IEnactment } from '.';
 import BN from 'bn.js';
@@ -31,6 +31,7 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CalendarFilled } from '@ant-design/icons';
-import { Calendar as StyledCalendar, List, Spin } from 'antd';
+import { Calendar as StyledCalendar, List } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -28,6 +28,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
+import Spin from '~src/basic-components/Spin';
 
 dayjs.extend(localizedFormat);
 interface Props {

@@ -4,7 +4,6 @@
 
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { LoadingStatusType } from 'src/types';
 import { usePostDataContext } from '~src/context';
@@ -18,6 +17,7 @@ import ExpandIcon from '~assets/icons/expand-small-icon.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
+import Spin from '~src/basic-components/Spin';
 
 interface IVotersListProps {
 	className?: string;

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { CommentsIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Divider, Empty, Spin } from 'antd';
+import { Divider, Empty } from 'antd';
 import ImageComponent from '../ImageComponent';
 import { DislikeFilled, LikeOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -21,6 +21,7 @@ import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import Select from '~src/basic-components/Select';
 import { poppins } from 'pages/_app';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

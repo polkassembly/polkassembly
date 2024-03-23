@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { DislikeFilled, LeftOutlined, LikeFilled, LoadingOutlined, RightOutlined } from '@ant-design/icons';
-import { PaginationProps, Spin } from 'antd';
+import { PaginationProps } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -18,6 +18,7 @@ import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getBlockLink } from '~src/util/subscanCheck';
 import { IVoteHistory, IVotesHistoryResponse } from '~src/types';
+import Spin from '~src/basic-components/Spin';
 
 interface ICouncilVotesProps {
 	address: string;

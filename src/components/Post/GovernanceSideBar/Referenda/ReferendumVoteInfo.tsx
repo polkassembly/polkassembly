@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import BN from 'bn.js';
 import React, { FC, memo, useContext, useEffect, useMemo, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
@@ -23,6 +22,7 @@ import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import Spin from '~src/basic-components/Spin';
 interface IReferendumVoteInfoProps {
 	className?: string;
 	referendumId: number;

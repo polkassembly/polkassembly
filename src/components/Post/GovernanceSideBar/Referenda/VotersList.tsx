@@ -4,7 +4,7 @@
 
 import { DislikeFilled, LeftOutlined, LikeFilled, MinusCircleFilled, RightOutlined, SwapOutlined } from '@ant-design/icons';
 import { LoadingOutlined } from '@ant-design/icons';
-import { PaginationProps, Segmented, Spin } from 'antd';
+import { PaginationProps, Segmented } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { IVotesResponse } from 'pages/api/v1/votes';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -26,6 +26,7 @@ import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import Spin from '~src/basic-components/Spin';
 
 interface IVotersListProps {
 	className?: string;

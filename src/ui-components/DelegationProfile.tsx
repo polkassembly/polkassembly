@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Spin, message } from 'antd';
+import { Button, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -16,6 +16,7 @@ import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import Spin from '~src/basic-components/Spin';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,

@@ -9,8 +9,8 @@ import AyeApprovalIcon from '~assets/chart-aye-current-approval.svg';
 import AyeThresholdIcon from '~assets/chart-aye-threshold.svg';
 import NayApprovalIcon from '~assets/chart-nay-current-approval.svg';
 import NayThresholdIcon from '~assets/chart-nay-threshold.svg';
-import { Spin } from 'antd';
 import { convertGraphPoint, formatHoursAndDays } from '../../Referenda/Curves';
+import Spin from '~src/basic-components/Spin';
 
 interface IProgress {
 	approval: number;

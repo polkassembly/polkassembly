@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { BN, BN_HUNDRED } from '@polkadot/util';
-import { Alert, Button, Form, Input, Spin } from 'antd';
+import { Alert, Button, Form, Input } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
@@ -21,6 +21,7 @@ import { createPreImage } from '~src/util/create-referenda/createPreImage';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ISteps } from '../OpenGovTreasuryProposal';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 

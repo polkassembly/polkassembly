@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useEffect, useState } from 'react';
-import { Spin, Timeline, TimelineItemProps } from 'antd';
+import { Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { ESetIdentitySteps, ISocials } from '.';
@@ -15,6 +15,7 @@ import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
 import { useApiContext } from '~src/context';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Spin from '~src/basic-components/Spin';
 
 interface Props {
 	className?: string;

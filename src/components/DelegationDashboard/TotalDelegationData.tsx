@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { formatBalance } from '@polkadot/util';
-import { Divider, Spin } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
@@ -13,6 +13,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegationStats } from 'pages/api/v1/delegations/get-delegation-stats';
 import { MessageType } from '~src/auth/types';
+import Spin from '~src/basic-components/Spin';
 
 const ZERO_BN = new BN(0);
 const TotalDelegationData = () => {

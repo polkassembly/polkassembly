@@ -12,10 +12,13 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
-import { CommentReply } from '~src/types';
+import { CommentReply, EActivityAction } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import createUserActivity from '../../utils/create-activity';
+import { IDocumentPost } from './addCommentOrReplyReaction';
+import { IComment } from '~src/components/Post/Comment/Comment';
 import { firestore_db } from '~src/services/firebaseInit';
 
 export interface IAddCommentReplyResponse {
@@ -105,8 +108,31 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 		headers: firebaseFunctionsHeader(network),
 		method: 'POST'
 	});
-
-	return;
+	try {
+		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		const commentData: IComment = (await postRef.collection('comments').doc(String(commentId)).get()).data() as IComment;
+		const postAuthorId = postData?.user_id || null;
+		const commentAuthorId = commentData?.user_id || null;
+		if (typeof postAuthorId == 'number' && typeof commentAuthorId == 'number') {
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				commentAuthorId: commentAuthorId,
+				commentId,
+				content,
+				network,
+				postAuthorId: postAuthorId,
+				postId,
+				postType,
+				replyAuthorId: userId,
+				replyId: newReply?.id,
+				userId
+			});
+		}
+		return;
+	} catch (err) {
+		console.log(err);
+		return;
+	}
 };
 
 export default withErrorHandling(handler);

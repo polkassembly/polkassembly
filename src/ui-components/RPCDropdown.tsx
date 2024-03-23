@@ -83,7 +83,7 @@ const RPCDropdown: FC<IRPCDropdownProps> = (props) => {
 
 export default styled(RPCDropdown)`
 	.ant-dropdown-menu-item {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243a57')} !important;
 		font-weight: 500 !important;
 	}
 `;

@@ -20,8 +20,6 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { isSubscanSupport } from 'src/util/subscanCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import { VotingHistoryIcon } from '~src/ui-components/CustomIcons';
-import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL, GET_TOTAL_CONVICTION_VOTES_COUNT } from '~src/queries';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
@@ -70,32 +68,18 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 	};
 
 	useEffect(() => {
-		if (!['cere', 'equilibrium', 'amplitude', 'pendulum'].includes(network)) return;
+		if (!['cere', 'equilibrium', 'amplitude', 'pendulum', 'polimec'].includes(network)) return;
 
 		(async () => {
 			setIsFetchingCereVoteInfo(true);
-			const res = await fetchSubsquid({
-				network,
-				query: GET_TOTAL_CONVICTION_VOTES_COUNT,
-				variables: {
-					index_eq: referendumId,
-					type_eq: 'Referendum'
-				}
+			const { data, error } = await nextApiClientFetch<{
+				data: VoteInfo;
+				totalCount: Number;
+			}>('/api/v1/votes/getTotalVotesForOtherNetworks', {
+				postId: referendumId
 			});
-			const totalCount = res?.data?.convictionVotesConnection?.totalCount;
-
-			if (totalCount) {
-				const res = await fetchSubsquid({
-					network,
-					query: GET_CONVICTION_VOTES_WITH_REMOVED_IS_NULL,
-					variables: {
-						index_eq: referendumId,
-						limit: totalCount,
-						type_eq: 'Referendum'
-					}
-				});
-
-				if (res && res.data && res.data.convictionVotes && Array.isArray(res.data.convictionVotes)) {
+			if (data) {
+				if (data && data?.data && data?.data && Array.isArray(data?.data)) {
 					const voteInfo: VoteInfo = {
 						aye_amount: ZERO,
 						aye_without_conviction: ZERO,
@@ -105,7 +89,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						turnout: ZERO,
 						voteThreshold: ''
 					};
-					res.data.convictionVotes.forEach((vote: any) => {
+					data?.data?.forEach((vote: any) => {
 						if (vote) {
 							const { balance, lockPeriod, decision } = vote;
 							if (decision === 'yes') {
@@ -153,7 +137,10 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 					}
 					setVoteInfo(voteInfo);
 				}
+			} else if (error) {
+				console.log(error);
 			}
+
 			setIsFetchingCereVoteInfo(false);
 		})();
 	}, [network, referendumId, totalIssuance, voteThreshold]);
@@ -349,7 +336,7 @@ const ReferendumVoteInfo: FC<IReferendumVoteInfoProps> = ({ referendumId, setOpe
 						</Spin>
 					</GovSidebarCard>
 				)
-			) : ['cere', 'equilibrium'].includes(network) ? (
+			) : ['cere', 'equilibrium', 'polimec'].includes(network) ? (
 				<>
 					<GovSidebarCard>
 						<Spin

@@ -92,13 +92,13 @@ export default styled(ArgumentsTableJSONView)`
 		background: transparent !important;
 	}
 	.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-		color: ${(props) => (props.theme == 'dark' ? '#e5007a' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#e5007a' : '')} !important;
 	}
 	.ant-tabs-tab-active {
-		border: ${(props) => (props.theme == 'dark' ? 'none' : '')} !important;
+		border: ${(props: any) => (props.theme == 'dark' ? 'none' : '')} !important;
 	}
 	.ant-tabs-tab-btn {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;

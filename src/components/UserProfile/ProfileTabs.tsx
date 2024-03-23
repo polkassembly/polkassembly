@@ -7,14 +7,18 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import { Tabs } from '~src/ui-components/Tabs';
 import ProfileOverview from './ProfileOverview';
 import { votesHistoryUnavailableNetworks } from 'pages/user/[username]';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
-import { IStats } from '.';
-import { ClipboardIcon, ProfileOverviewIcon, VotesIcon } from '~src/ui-components/CustomIcons';
+import { IActivitiesCounts, IStats } from '.';
+import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import ProfileUserActivity from './ProfileUserActivity';
+import ProfileMentions from './ProfileMentions';
+import ProfileReactions from './ProfileReactions';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -29,11 +33,11 @@ interface Props {
 	statsArr: IStats[];
 	setStatsArr: (pre: IStats[]) => void;
 	onchainIdentity?: DeriveAccountRegistration | null;
+	activitiesCounts?: IActivitiesCounts | null;
 }
 
 const ProfileTabs = ({
 	className,
-	theme,
 	userProfile,
 	addressWithIdentity,
 	selectedAddresses,
@@ -43,13 +47,16 @@ const ProfileTabs = ({
 	setProfileDetails,
 	statsArr,
 	setStatsArr,
-	onchainIdentity
+	onchainIdentity,
+	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0
 	});
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		let totalPosts = 0;
@@ -67,6 +74,7 @@ const ProfileTabs = ({
 			votes: totalVotes
 		});
 	}, [statsArr, userProfile]);
+
 	const tabItems = [
 		{
 			children: (
@@ -104,6 +112,56 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ClipboardIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Posts<span className='ml-[2px]'>({totals?.posts})</span>
+				</div>
+			)
+		},
+		{
+			children: (
+				<ProfileUserActivity
+					count={activitiesCounts?.totalActivitiesCount || 0}
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: userId === userProfile.user_id ? 'My Activity' : 'Activity',
+			label: (
+				<div className='flex items-center'>
+					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
+					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
+				</div>
+			)
+		},
+		{
+			children: (
+				<ProfileReactions
+					count={activitiesCounts?.totalReactionsCount || 0}
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'Reactions',
+			label: (
+				<div className='flex items-center'>
+					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Reactions
+					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount})</span>
+				</div>
+			)
+		},
+		{
+			children: (
+				<ProfileMentions
+					count={activitiesCounts?.totalMentionsCount || 0}
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: 'Mentions',
+			label: (
+				<div className='flex items-center'>
+					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
+					Mentions
+					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
 				</div>
 			)
 		}

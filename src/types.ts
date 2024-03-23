@@ -609,3 +609,32 @@ export enum EKillOrCancel {
 	KILL = 'kill',
 	CANCEL = 'cancel'
 }
+
+export type ProgressStatusType = 'active' | 'success' | 'exception' | 'normal';
+
+export enum EUserActivityType {
+	REACTED = 'REACTED',
+	COMMENTED = 'COMMENTED',
+	REPLIED = 'REPLIED',
+	MENTIONED = 'MENTIONED'
+}
+
+export enum EUserActivityIn {
+	POST = 'POST',
+	COMMENT = 'COMMENT',
+	REPLY = 'REPLY'
+}
+
+export enum EActivityAction {
+	CREATE = 'CREATE',
+	EDIT = 'EDIT',
+	DELETE = 'DELETE'
+}
+
+export enum EActivityFilter {
+	ALL = 'ALL',
+	COMMENTS = 'COMMENTED',
+	REPLIES = 'REPLIED',
+	REACTS = 'REACTED',
+	MENTIONS = 'MENTIONED'
+}

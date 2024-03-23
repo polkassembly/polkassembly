@@ -7,7 +7,7 @@ import { DeriveAccountFlags, DeriveAccountInfo, DeriveAccountRegistration } from
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
-import { Col, Form, Row, Skeleton } from 'antd';
+import { Col, Form, Row } from 'antd';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -29,6 +29,7 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
@@ -45,7 +46,7 @@ interface Props {
 // const CouncilEmoji = () => <span aria-label="council member" className='councilMember' role="img">👑</span>;
 
 const SetOnChainIdentityButton = dynamic(() => import('src/components/Settings/setOnChainIdentityButton'), {
-	loading: () => <Skeleton.Button active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 

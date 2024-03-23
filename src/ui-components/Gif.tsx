@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Tabs } from './Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
 
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY || '');
 const { Search } = Input;
@@ -17,7 +18,6 @@ const { Search } = Input;
 export interface IGifProps {
 	onClick: (url: string, title: string) => void;
 	className?: string;
-	theme?: string;
 }
 
 const GIF_LISTING_LIMIT = 9;
@@ -29,7 +29,7 @@ const Gif: FC<IGifProps> = (props) => {
 	const [tab, setTab] = useState('trending');
 	const [query, setQuery] = useState<string>('');
 	const timeout = useRef<NodeJS.Timeout>();
-	const { theme } = props;
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (tab === 'trending' || query.length === 0) {
@@ -163,13 +163,13 @@ export default styled(Gif)`
 		margin: 0 !important;
 	}
 	.ant-input {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'light' ? '#0D0D0D' : '#fff')} !important;
-		border-color: ${(props) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '#0D0D0D' : '#fff')} !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
 	}
 	.ant-input-search-button {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'light' ? '' : '#fff')} !important;
-		border-color: ${(props) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '' : '#fff')} !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#3B444F' : '')} !important;
 	}
 `;

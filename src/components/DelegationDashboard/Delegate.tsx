@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Skeleton, Spin } from 'antd';
+import { Spin } from 'antd';
 import dynamic from 'next/dynamic';
 import DelegateCard from './DelegateCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -19,6 +19,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const DelegateModal = dynamic(() => import('../Listing/Tracks/DelegateModal'), {
 	loading: () => <Skeleton active />,

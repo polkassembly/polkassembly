@@ -51,8 +51,8 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 			const proposalIndex = lastTimeline.type === 'Tip' ? lastTimeline.hash : lastTimeline.index;
 			const subsquareComments = await getSubSquareComments(getFirestoreProposalType(lastTimeline.type), network, proposalIndex);
 			if (subsquareComments.length > 0) {
-				// const key = `${lastTimeline.index}_${lastTimeline.type}`;
-				// allTimelineComments[key] = [...(allTimelineComments?.[key] || []), ...subsquareComments];
+				const key = `${lastTimeline.index}_${lastTimeline.type}`;
+				allTimelineComments[key] = [...(allTimelineComments?.[key] || []), ...subsquareComments];
 				Object.keys(allTimelineComments).forEach((key) => {
 					allTimelineComments[key].forEach((comment: any, index: any) => {
 						const matchingSubsquareComment = subsquareComments.find((subsquareComment) => subsquareComment.id === comment.id);

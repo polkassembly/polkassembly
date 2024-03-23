@@ -15,9 +15,15 @@ import { useTheme } from 'next-themes';
 import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import ProfileStatsCard from './ProfileStatsCard';
 
+export interface IActivitiesCounts {
+	totalActivitiesCount: number;
+	totalMentionsCount: number;
+	totalReactionsCount: number;
+}
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
+	activitiesCounts?: IActivitiesCounts | null;
 	userPosts: IUserPostsListingResponse;
 }
 export interface IStats {
@@ -26,7 +32,7 @@ export interface IStats {
 }
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
-const PAProfile = ({ className, userProfile, userPosts }: Props) => {
+const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
@@ -193,6 +199,7 @@ const PAProfile = ({ className, userProfile, userPosts }: Props) => {
 				addressWithIdentity={addressWithIdentity}
 				selectedAddresses={selectedAddresses}
 				setSelectedAddresses={setSelectedAddresses}
+				activitiesCounts={activitiesCounts}
 				userPosts={userPosts}
 				setProfileDetails={setProfileDetails}
 				profileDetails={profileDetails}

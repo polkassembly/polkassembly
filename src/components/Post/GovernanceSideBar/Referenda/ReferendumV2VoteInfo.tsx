@@ -361,6 +361,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 export default styled(React.memo(ReferendumV2VoteInfo))`
 	.ant-modal .ant-modal-header {
-		background-color: ${({ theme }) => (theme === 'dark' ? '#1E1E1E' : '#F5F7FF')} !important;
+		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#F5F7FF')} !important;
 	}
 `;

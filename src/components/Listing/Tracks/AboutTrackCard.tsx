@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -33,6 +33,7 @@ import Address from '~src/ui-components/Address';
 import Link from 'next/link';
 import Alert from '~src/basic-components/Alert';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,

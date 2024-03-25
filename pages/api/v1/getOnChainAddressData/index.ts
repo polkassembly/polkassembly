@@ -5,28 +5,7 @@ import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { SubscanAPIResponseType } from '~src/auth/types';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-
-export const getOnChainAddressDetails = async (address: string | string[] | undefined) => {
-	try {
-		const { data, error } = await nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {
-			body: {
-				key: address,
-				row: 1
-			},
-			url: '/api/v2/scan/search'
-		});
-		if (error || !data) {
-			console.log('error fetching events : ', error);
-		}
-		if (data) {
-			return data;
-		}
-	} catch (error) {
-		return error;
-	}
-};
+import { getSubscanData } from '../subscanApi';
 
 const handler: NextApiHandler<{ data: any } | { error: string | null }> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -41,7 +20,10 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return res.status(400).json({ data: null, error: 'Invalid network in request header' });
 	}
 
-	const data = await getOnChainAddressDetails(address);
+	const data = await getSubscanData('/api/v2/scan/search', network, {
+		key: address,
+		row: 1
+	});
 
 	if (data.message === 'Success') {
 		res.status(200).json(data.data);

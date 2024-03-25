@@ -25,8 +25,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
 
-	const { userId, commentId, content, postId, postType, replyId } = req.body;
-	if (!userId || !commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { commentId, content, postId, postType, replyId } = req.body;
+	if (!commentId || !content || isNaN(postId) || !postType || !replyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const strProposalType = String(postType);
 	if (!isOffChainProposalTypeValid(strProposalType) && !isProposalTypeValid(strProposalType))
@@ -36,7 +36,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const userId = user.id;
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
 	const last_comment_at = new Date();

@@ -25,6 +25,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import dayjs from 'dayjs';
 
 interface Props {
 	className?: string;
@@ -108,6 +109,27 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			setFormDisabled(true);
 			setLoading(true);
 
+			const discussionDetails = localStorage.getItem('discussionDetails') || '';
+
+			if (JSON.parse(discussionDetails)?.count) {
+				const count = JSON.parse(discussionDetails)?.count || 0;
+
+				const timestampDayjs = dayjs(JSON.parse(discussionDetails)?.timeStamp);
+
+				const currenttime = dayjs();
+				const isOneHourEarlier = timestampDayjs.isBefore(currenttime.subtract(1, 'hour'));
+
+				if (count === 3 && !isOneHourEarlier) {
+					setError('Maximum discussion creation limit reached');
+					queueNotification({
+						header: 'Error',
+						message: 'Maximum discussion creation limit reached',
+						status: NotificationStatus.ERROR
+					});
+					return;
+				}
+			}
+
 			const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createPost', {
 				content,
 				gov_type: govType,
@@ -117,7 +139,6 @@ const CreatePost = ({ className, proposalType }: Props) => {
 				topicId,
 				userId: currentUser.id
 			});
-
 			if (apiError || !data?.post_id) {
 				setError(apiError || 'There was an error creating your post.');
 				queueNotification({
@@ -129,6 +150,18 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			}
 
 			if (data && data.post_id) {
+				if (JSON.parse(discussionDetails)?.count) {
+					const count = JSON.parse(discussionDetails)?.count || 0;
+					const timestampDayjs = dayjs(JSON.parse(discussionDetails)?.timeStamp);
+
+					const currenttime = dayjs();
+					const isOneHourEarlier = timestampDayjs.isBefore(currenttime.subtract(1, 'hour'));
+
+					localStorage.setItem('discussionDetails', JSON.stringify({ count: isOneHourEarlier ? 1 : count + 1, timeStamp: isOneHourEarlier ? dayjs() : timestampDayjs }));
+				} else {
+					localStorage.setItem('discussionDetails', JSON.stringify({ count: 1, timeStamp: dayjs() }));
+				}
+
 				const postId = data.post_id;
 				router.push(`/${proposalType === ProposalType.GRANTS ? 'grant' : 'post'}/${postId}`);
 				queueNotification({

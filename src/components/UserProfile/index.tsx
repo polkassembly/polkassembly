@@ -33,7 +33,6 @@ export interface IStats {
 export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
-	console.log(activitiesCounts, 'activitiesCounts');
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;

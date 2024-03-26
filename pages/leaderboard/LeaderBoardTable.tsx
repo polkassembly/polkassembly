@@ -34,7 +34,6 @@ const LeaderBoardTable = ({ className }: Props) => {
 						/>
 					</div>
 				</div>
-				{/* <p className='text-black'>{theme}</p> */}
 				<LeaderboardData
 					className='mt-4'
 					theme={theme as any}
@@ -50,9 +49,21 @@ export default styled(LeaderBoardTable)`
 		height: 42px !important;
 		width: 245px !important;
 	}
+	.ant-input {
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
 	.ant-input-search .ant-input-search-button {
 		height: 42px !important;
-		width: 40px !important;
+		width: 42px !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+		background-color: transparent !important;
+	}
+	.ant-input-search .ant-input-search-button svg {
+		fill: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#4B4B4B')};
+	}
+	.ant-table-wrapper .ant-table-pagination-right {
+		margin-top: 36px !important;
+		justify-content: center !important;
 	}
 	.table-header {
 		display: flex !important;

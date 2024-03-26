@@ -38,8 +38,9 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			console.log(error);
 		}
 		if (data) {
-			setTableData(data?.data);
-			setTotalData(data?.count);
+			const limitedData = data?.data.slice(0, 50);
+			setTableData(limitedData);
+			setTotalData(50);
 		}
 	};
 	useEffect(() => {
@@ -159,7 +160,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			// sorter: (record1, record2) => {
 			// return record1.userSince > record2.userSince;
 			// },
-			title: 'Index',
+			title: 'User Since',
 			width: 150
 		},
 		{
@@ -192,7 +193,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					/>
 				</div>
 			),
-			title: 'Auction',
+			title: 'Action',
 			width: 150
 		}
 	];
@@ -235,6 +236,24 @@ export default styled(LeaderboardData)`
 		font-weight: 500;
 		line-height: 16px;
 		letter-spacing: 0.21px;
+		color: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#485F7D')} !important;
+	}
+	.ant-pagination .ant-pagination-item a {
+		color: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-prev button,
+	.ant-pagination .ant-pagination-next button {
+		color: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : 'var(--bodyBlue)')};
+	}
+	.ant-pagination .ant-pagination-item {
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
+	.ant-pagination .ant-pagination-item-active {
+		color: #e5007a !important;
+		border-color: #e5007a;
+	}
+	.ant-pagination .ant-pagination-item-active a {
+		color: #e5007a !important;
 	}
 	.delegation-modal .ant-modal-root .ant-modal-mask {
 		z-index: 1 !important;

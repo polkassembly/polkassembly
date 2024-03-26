@@ -10,6 +10,7 @@ import ImageComponent from '~src/components/ImageComponent';
 import NameLabel from '~src/ui-components/NameLabel';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { Divider } from 'antd';
 
 interface RankCardProps {
 	place: number;
@@ -33,11 +34,18 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 		}
 	};
 
-	const placeImageMap: Record<number, string> = {
-		1: '/assets/FirstPlace.svg',
-		2: '/assets/SecondPlace.svg',
-		3: '/assets/ThirdPlace.svg'
-	};
+	const placeImageMap: Record<number, string> =
+		theme === 'dark'
+			? {
+					1: '/assets/FirstPlaceDark.svg',
+					2: '/assets/SecondPlaceDark.svg',
+					3: '/assets/ThirdPlaceDark.svg'
+			  }
+			: {
+					1: '/assets/FirstPlace.svg',
+					2: '/assets/SecondPlace.svg',
+					3: '/assets/ThirdPlace.svg'
+			  };
 
 	function getDaySuffix(day: any) {
 		if (day > 3 && day < 21) return 'th';
@@ -77,7 +85,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 	return (
 		<div
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
-			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
+			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat ${className} shadow-sm`}
 		>
 			<div className={`${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
@@ -90,7 +98,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 				<div className={'mx-auto mt-6 flex items-center'}>
-					<div className='flex items-center gap-x-2'>
+					<div className='-mt-1 flex items-center gap-x-2'>
 						<ImageComponent
 							src={data?.image || ''}
 							alt='User Picture'
@@ -116,7 +124,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 							<ImageIcon
 								src={iconSources.delegate}
 								alt='delegation-icon'
-								className='icon-container mr-4'
+								className='icon-container mr-4 cursor-pointer'
 							/>
 						</div>
 						<ImageIcon
@@ -131,10 +139,16 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 						/>
 					</div>
 				</div>
-				<div className={'divider-container mx-auto mt-4'} />
-				<div className={`mx-auto ${type === 'primary' ? 'mt-4' : 'mt-3'} flex  items-center`}>
-					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-white'>User Since: </p>
-					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue'>
+
+				<div className='mx-auto -mt-1'>
+					<Divider
+						style={{ background: '#D2D8E0' }}
+						className='dark:bg-separatorDark'
+					/>
+				</div>
+				<div className={`mx-auto ${type === 'primary' ? '-mt-1' : '-mt-3'} flex  items-center`}>
+					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-[#909090]'>User Since: </p>
+					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue dark:text-white'>
 						<ImageIcon
 							src='/assets/icons/Calendar.svg'
 							alt='calenderIcon'

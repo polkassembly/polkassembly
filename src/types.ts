@@ -636,3 +636,11 @@ export enum ESteps {
 	Create_Preimage = 'Create Preimage',
 	Create_Proposal = 'Create Proposal'
 }
+
+export enum EActivityFilter {
+	ALL = 'ALL',
+	COMMENTS = 'COMMENTED',
+	REPLIES = 'REPLIED',
+	REACTS = 'REACTED',
+	MENTIONS = 'MENTIONED'
+}

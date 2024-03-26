@@ -16,9 +16,11 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
-import { EUserActivityIn, EUserActivityType } from '~src/types';
+import { EActivityFilter, EUserActivityIn, EUserActivityType } from '~src/types';
 import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import Select from '~src/basic-components/Select';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	className?: string;
@@ -51,11 +53,13 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 	const [userActivities, setUserActivities] = useState<IUserActivityTypes[]>([]);
 	const [page, setPage] = useState<number>(1);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [filter, setFilter] = useState<EActivityFilter>(EActivityFilter.ALL);
 
 	const getData = async () => {
 		if (isNaN(profileUserId)) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<{ data: IUserActivityTypes[]; totalCount: number }>('/api/v1/users/user-activities', {
+			filterBy: filter === EActivityFilter.ALL ? null : filter,
 			page: page,
 			userId: profileUserId
 		});
@@ -67,10 +71,11 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 			setLoading(false);
 		}
 	};
+
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, page, profileUserId]);
+	}, [network, page, profileUserId, filter]);
 
 	return (
 		<Spin
@@ -88,6 +93,21 @@ const ProfileUserActivity = ({ className, userProfile, count }: Props) => {
 						<MyActivityIcon className='text-xl text-lightBlue dark:text-[#9e9e9e]' />
 						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>My Activity</div>
 						<span className='text-sm font-normal'>({count})</span>
+					</div>
+					<div>
+						<Select
+							value={filter}
+							className={classNames('w-[140px] capitalize', poppins.className, poppins.variable)}
+							onChange={(e) => setFilter(e)}
+							options={[EActivityFilter.ALL, EActivityFilter.COMMENTS, EActivityFilter.REPLIES, EActivityFilter.MENTIONS, EActivityFilter.REACTS].map((option) => {
+								return {
+									label: <span className={classNames(poppins.className, poppins.variable, 'text-sm capitalize tracking-[0.0015em]')}>{option.toLowerCase()}</span>,
+									value: option
+								};
+							})}
+						>
+							{filter?.toLowerCase()}
+						</Select>
 					</div>
 				</div>
 				<div className='mt-2 flex flex-col pb-10'>

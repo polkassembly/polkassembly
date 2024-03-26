@@ -155,7 +155,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		});
 	}
 
-	if (!isOpenGovSupported(network)) {
+	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
 		data.splice(0, 0, {
 			component: <Gov1TreasuryProposal />
 		});

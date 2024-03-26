@@ -1,15 +1,15 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Modal } from 'antd';
+import { Divider } from 'antd';
 import React, { FC } from 'react';
-import { CloseIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import TagsIcon from '~assets/icons/tags-icon.svg';
 import TagsWhiteIcon from '~assets/icons/tags-white-icon.svg';
 import { useRouter } from 'next/router';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface ITagsModalProps {
 	className?: string;
@@ -37,13 +37,12 @@ const TagsModal: FC<ITagsModalProps> = (props) => {
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={openTagsModal}
-				onCancel={(e) => {
+				onCancel={(e: any) => {
 					e.stopPropagation();
 					e.preventDefault();
 					setOpenTagsModal?.(false);
 				}}
 				footer={false}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.variable} ${poppins.className} ant-modal-content>.ant-modal-header]:bg-section-dark-overlay h-[120px] max-w-full shrink-0 max-sm:w-[100%]`}
 				title={
 					<>

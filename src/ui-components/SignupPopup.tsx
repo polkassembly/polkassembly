@@ -2,13 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal } from 'antd';
 import Signup from 'pages/signup';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useState } from 'react';
-import { CloseIcon } from './CustomIcons';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	modalOpen: boolean;
@@ -26,7 +25,6 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 	return (
 		<Modal
 			open={modalOpen}
-			footer={false}
 			closable={closable}
 			maskClosable={closable}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
@@ -38,7 +36,6 @@ const SignupPopup = ({ modalOpen, setModalOpen, isModal, setLoginOpen, className
 					setModalOpen(false);
 				}
 			}}
-			closeIcon={isClosable ? <CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' /> : null}
 		>
 			<Signup
 				network={network}

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Modal, Timeline, TimelineItemProps } from 'antd';
+import { Timeline, TimelineItemProps } from 'antd';
 import { IPostHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
@@ -12,10 +12,10 @@ import { noTitle } from '~src/global/noTitle';
 import { poppins } from 'pages/_app';
 // import sanitizeMarkdown from '~src/util/sanitizeMarkdown';
 import Markdown from './Markdown';
-import { CloseIcon } from './CustomIcons';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import { diffChars } from 'diff';
 import { useTheme } from 'next-themes';
+import Modal from '~src/basic-components/Modal/Modal';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -180,8 +180,6 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			onCancel={() => setOpen(false)}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`closeIcon shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px] max-sm:w-full ${poppins.variable} ${poppins.className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			footer={false}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>Proposal Edit History</label>}
 		>
 			<div className='post-history-timeline -mb-6 mt-9 flex flex-col px-4'>

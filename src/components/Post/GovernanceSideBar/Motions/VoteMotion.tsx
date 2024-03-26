@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { LoadingOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Modal, Spin } from 'antd';
+import { Spin } from 'antd';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { EDecision, IVotesHistoryResponse, LoadingStatusType, NotificationStatus } from 'src/types';
@@ -29,6 +29,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	accounts: InjectedTypeWithCouncilBoolean[];

@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 import { ProfileOutlined } from '@ant-design/icons';
 import { ApiPromise } from '@polkadot/api';
-import { Modal, Tooltip, message } from 'antd';
+import { Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ import Loader from '~src/ui-components/Loader';
 import Table from '~src/basic-components/Tables/Table';
 import { CopyIcon, SubscanIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IPreImagesTableProps {
 	preimages: IPreimagesListing[];

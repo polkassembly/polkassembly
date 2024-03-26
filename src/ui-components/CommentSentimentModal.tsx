@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import { Button, Modal, Slider } from 'antd';
+import { Button, Slider } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { CheckOutlined } from '@ant-design/icons';
 import { ESentiment } from '~src/types';
-import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	setIsComment: (pre: boolean) => void;
@@ -81,7 +81,6 @@ const CommentSentimentModal = ({ setIsComment, openModal, setModalOpen, setIsSen
 					</Button>
 				</div>
 			]}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			zIndex={1002}
 		>
 			<div className='center-aligned flex flex-col items-center justify-center pl-5 pr-5 text-base font-medium text-[#334D6E]'>

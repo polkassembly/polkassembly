@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider, Modal } from 'antd';
+import { Divider } from 'antd';
 import React, { FC, useState } from 'react';
 import classNames from 'classnames';
 import Markdown from '~src/ui-components/Markdown';
@@ -11,6 +11,7 @@ import { usePostDataContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import EvalutionSummary from './EvalutionSummary';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IPostSummaryProps {
 	className?: string;
@@ -85,7 +86,6 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 						</button>
 					</div>
 				}
-				footer={null}
 			>
 				<Divider className='m-0 bg-[#e1e6eb] p-0 dark:bg-separatorDark' />
 				<div className='p-4 px-5 md:p-6'>

@@ -6,8 +6,8 @@ import { Alert, Divider } from 'antd';
 import styled from 'styled-components';
 import CheckOutlineIcon from '~assets/icons/check-icon.svg';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import Modal from '~src/ui-components/Modal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const StyledAlert = styled(Alert)`
 	display: flex;

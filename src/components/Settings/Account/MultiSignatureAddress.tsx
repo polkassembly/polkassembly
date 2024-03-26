@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { Checkbox, Divider, Form, InputNumber, Modal } from 'antd';
+import { Checkbox, Divider, Form, InputNumber } from 'antd';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from 'src/context';
@@ -30,6 +30,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	open?: boolean;

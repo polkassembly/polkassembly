@@ -4,14 +4,13 @@
 
 import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { Modal } from 'antd';
 import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IPostEditOrLinkCTA {
 	className?: string;
@@ -34,9 +33,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				onCancel={() => setOpen(false)}
-				footer={[]}
 				className={`${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
 					{/* <PostEditLinkingIcon /> */}

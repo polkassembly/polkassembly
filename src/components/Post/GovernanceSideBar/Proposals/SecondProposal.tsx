@@ -4,7 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
-import { Modal, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { useContext, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
@@ -16,6 +16,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import executeTx from '~src/util/executeTx';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 export interface SecondProposalProps {
 	accounts: InjectedAccount[];

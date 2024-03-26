@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Divider, Form, Modal } from 'antd';
+import { Divider, Form } from 'antd';
 import ChangeUserIcon from '~assets/icons/change-username.svg';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { NotificationStatus } from '~src/types';
@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean; onConfirm?: () => void; onCancel: () => void; username: string }) => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -85,7 +86,6 @@ const ChangeUsername = ({ open, onConfirm, onCancel, username }: { open: boolean
 			className='min-w-[350px] dark:bg-section-dark-overlay md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 			onCancel={onCancel}
 			onOk={onConfirm}
-			footer={null}
 		>
 			<div className='flex flex-wrap items-center gap-[10px]'>
 				<Form

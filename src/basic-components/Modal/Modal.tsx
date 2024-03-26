@@ -11,13 +11,22 @@ import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 type Props = PropsWithChildren<{
-	title: string | ReactElement;
-	titleIcon: ReactElement;
-	open: boolean;
-	onConfirm: any;
-	onCancel: any;
-	footer?: Array<ReactElement>;
+	title?: string | ReactElement;
+	titleIcon?: ReactElement;
+	open?: boolean;
+	onConfirm?: any;
+	onCancel?: any;
+	footer?: Array<ReactElement> | any;
 	className?: string;
+	wrapClassName?: string | undefined;
+	onOk?: any;
+	zIndex?: any;
+	centered?: any;
+	maskClosable?: boolean;
+	closable?: boolean;
+	confirmLoading?: boolean;
+	destroyOnClose?: boolean;
+	closeIcon?: any;
 }>;
 
 const StyledModal = styled(AntdModal)`
@@ -27,7 +36,25 @@ const StyledModal = styled(AntdModal)`
 	}
 `;
 
-const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className, children }: Props) => {
+const Modal = ({
+	confirmLoading,
+	closable,
+	maskClosable,
+	centered,
+	zIndex,
+	wrapClassName,
+	title,
+	titleIcon,
+	open,
+	onConfirm,
+	onCancel,
+	footer,
+	className,
+	children,
+	onOk,
+	destroyOnClose,
+	closeIcon
+}: Props) => {
 	return (
 		<StyledModal
 			title={
@@ -40,13 +67,18 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className,
 				</div>
 			}
 			open={open}
-			closable
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			closable={closable}
+			zIndex={zIndex}
+			centered={centered}
+			closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' /> || closeIcon}
 			className={`min-w-[350px] md:min-w-[600px] ${className}`}
-			wrapClassName='dark:bg-modalOverlayDark'
+			wrapClassName={`dark:bg-modalOverlayDark ${wrapClassName}`}
 			onCancel={onCancel}
-			onOk={onConfirm}
+			onOk={onConfirm || onOk}
 			footer={footer || null}
+			maskClosable={maskClosable}
+			confirmLoading={confirmLoading}
+			destroyOnClose={destroyOnClose}
 		>
 			{children}
 		</StyledModal>

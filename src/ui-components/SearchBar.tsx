@@ -7,12 +7,11 @@ import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ClientOnly, { Search } from './ClientOnly';
 import NewSearch from 'src/components/Search';
-import { Modal } from 'antd';
 import { allowedNetwork } from '~src/components/Search';
 import { poppins } from 'pages/_app';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { CloseIcon } from './CustomIcons';
 import { useTheme } from 'next-themes';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface ISearchBarProps {
 	className?: string;
@@ -100,10 +99,8 @@ const SearchBar: FC<ISearchBarProps> = (props) => {
 							</div>
 						}
 						closable={false}
-						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						open={open}
 						onCancel={() => setOpen(false)}
-						footer={[]}
 						className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					>
 						<div className='client'>

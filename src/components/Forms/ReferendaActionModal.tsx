@@ -5,9 +5,8 @@ import React, { useEffect, useState } from 'react';
 import Loader from '~src/ui-components/Loader';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { Form, Modal, Steps } from 'antd';
+import { Form, Steps } from 'antd';
 import { poppins } from 'pages/_app';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -19,6 +18,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus, PostOrigin, EReferendumType, EKillOrCancel } from '~src/types';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const AddressConnectModal = dynamic(() => import('src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -181,7 +181,6 @@ const ReferendaActionModal = ({
 					setCloseConfirm(true);
 					setOpenModal(false);
 				}}
-				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
@@ -222,10 +221,8 @@ const ReferendaActionModal = ({
 					setCloseConfirm(true);
 					setOpenModal(false);
 				}}
-				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[720px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}

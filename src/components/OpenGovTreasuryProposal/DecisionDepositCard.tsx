@@ -4,7 +4,7 @@
 
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Form, Modal, Spin } from 'antd';
+import { Form, Spin } from 'antd';
 import BN from 'bn.js';
 import { useRouter } from 'next/router';
 import { poppins } from 'pages/_app';
@@ -27,9 +27,9 @@ import executeTx from '~src/util/executeTx';
 import { gov2ReferendumStatus } from '~src/global/statuses';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ZERO_BN = new BN(0);
 
@@ -236,7 +236,6 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`${poppins.className} ${poppins.variable} pay-decision-deposite dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={openModal}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpenModal(false)}
 			title={
 				<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>

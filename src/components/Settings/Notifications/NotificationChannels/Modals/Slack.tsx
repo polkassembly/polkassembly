@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal, message } from 'antd';
+import { message } from 'antd';
 import React, { useState } from 'react';
 import CopyIcon from '~assets/icons/content-copy-pink.svg';
 import { CHANNEL } from '..';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { shortenString } from '~src/util/shortenString';
+import Modal from '~src/basic-components/Modal/Modal';
 
 type Props = {
 	icon: any;
@@ -47,7 +48,6 @@ const SlackInfoModal = ({ icon, title, open, getVerifyToken, generatedToken = ''
 			open={open}
 			closable
 			onCancel={onClose}
-			footer={null}
 		>
 			<div className=''>
 				<ol>

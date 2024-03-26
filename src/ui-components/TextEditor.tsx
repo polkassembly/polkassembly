@@ -6,7 +6,6 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import classNames from 'classnames';
-import { Modal } from 'antd';
 import { IMG_BB_API_KEY } from '~src/global/apiKeys';
 import showdown from 'showdown';
 import styled from 'styled-components';
@@ -19,6 +18,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useQuoteCommentContext } from '~src/context';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const converter = new showdown.Converter({
 	simplifiedAutoLink: true,
@@ -203,8 +203,6 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 						open={isModalVisible}
 						onCancel={() => setIsModalVisible(false)}
 						title={<div className='dark:text-blue-dark-high'>Select GIF</div>}
-						footer={null}
-						closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 						className='dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 					>
 						<Gif

@@ -5,7 +5,7 @@
 import { DownOutlined, EditOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import type { DatePickerProps } from 'antd';
-import { DatePicker, Form, Modal, Space } from 'antd';
+import { DatePicker, Form, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { dayjs } from 'dayjs-init';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import { ChallengeMessage } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	canEdit?: boolean | '' | undefined;

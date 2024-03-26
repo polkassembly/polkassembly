@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FlagOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Form, Modal } from 'antd';
+import { Form } from 'antd';
 import { IReportContentResponse } from 'pages/api/v1/auth/actions/reportContent';
 import React, { FC, useState } from 'react';
 import { NotificationStatus } from 'src/types';
@@ -19,6 +19,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Select from '~src/basic-components/Select';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IReportButtonProps {
 	type: string;

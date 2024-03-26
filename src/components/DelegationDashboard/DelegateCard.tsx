@@ -5,14 +5,13 @@
 import React, { useEffect, useState } from 'react';
 import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
-import { Button, Divider, Modal, Spin } from 'antd';
+import { Button, Divider, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext } from '~src/context';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
@@ -27,6 +26,7 @@ import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfieBalances';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	delegate: IDelegate;
@@ -270,9 +270,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					open={openReadMore}
 					onCancel={() => setOpenReadMore(false)}
 					className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
-					footer={false}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
-					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				>
 					<div className={'pt-[20px]'}>
 						<div className='flex items-center justify-between pl-8 pt-2'>

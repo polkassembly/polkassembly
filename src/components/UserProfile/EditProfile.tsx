@@ -2,13 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal } from 'antd';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { IAddProfileResponse, ISocial, ProfileDetails, ProfileDetailsResponse } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import { handleTokenChange } from 'src/services/auth.service';
 
-import { CloseIcon, EditIcon } from '~src/ui-components/CustomIcons';
+import { EditIcon } from '~src/ui-components/CustomIcons';
 import queueNotification from '~src/ui-components/QueueNotification';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BasicInformation from './BasicInformation';
@@ -24,6 +23,7 @@ import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IEditProfileModalProps {
 	id?: number | null;
@@ -228,7 +228,6 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 						Edit Profile
 					</div>
 				}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
 					<div className='-mx-6 mt-8 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton

@@ -9,9 +9,8 @@ import { poppins } from 'pages/_app';
 import DownIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
 import Balance from '~src/components/Balance';
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 import Web2Login from '~src/components/Login/Web2Login';
-import { CloseIcon } from './CustomIcons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -19,6 +18,7 @@ import { useApiContext } from '~src/context';
 import { Wallet } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import NetworkIcon from '~assets/icons/USB.svg';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	proxyAddresses: string[];
@@ -176,7 +176,6 @@ const ProxyAccountSelectionForm = ({
 				footer={false}
 				className={`${className} ${poppins.variable} ${poppins.className} alignment-close -mt-2 border dark:border-separatorDark dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`custom-modal-backdrop ${className} dark:bg-modalOverlayDark`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {
 					setShowWalletModal?.(false);
 				}}

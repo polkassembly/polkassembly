@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Modal } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
@@ -23,6 +22,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import Tooltip from '~src/basic-components/Tooltip';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -399,7 +399,6 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 				}
 				onCancel={() => setOpen(false)}
 				closable={false}
-				footer={[]}
 				className={'dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			>
 				<section className='mt-[24px] pl-[21px] text-sidebarBlue dark:text-white'>

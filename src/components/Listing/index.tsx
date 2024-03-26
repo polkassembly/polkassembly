@@ -60,7 +60,6 @@ const Listing: FC<IListingProps> = (props) => {
 	return (
 		<div className={`${className} proposals__list`}>
 			{posts.map((post, index) => {
-				console.log(post);
 				const {
 					cid,
 					curator,

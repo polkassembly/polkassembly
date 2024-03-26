@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const getUserActivitiesCount = async ({ userId, network }: Props) => {
-	if (userId === null || isNaN(userId) || typeof userId !== 'number') return { data: null, error: messages.INVALID_PARAMS };
+	if (userId === null || isNaN(Number(userId)) || typeof Number(userId) !== 'number') return { data: null, error: messages.INVALID_PARAMS };
 	try {
 		const totalActivitiesSnapshot = await firestore_db
 			.collection('user_activities')

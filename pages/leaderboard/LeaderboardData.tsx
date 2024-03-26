@@ -109,7 +109,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 					/>
-					{/* <p className='m-0 ml-0.5 p-0 text-sm text-bodyBlue dark:text-white'>{user}</p> */}
 					<NameLabel
 						usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] text-sm text-bodyBlue dark:text-white'
 						// defaultAddress={proposer}
@@ -137,9 +136,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 			),
-			// sorter: (record1, record2) => {
-			// return record1.profileScore > record2.profileScore;
-			// },
+			sorter: (a, b) => a.profileScore - b.profileScore,
 			title: 'Profile Score',
 			width: 150
 		},
@@ -157,9 +154,13 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{userSince}</p>
 				</div>
 			),
-			// sorter: (record1, record2) => {
-			// return record1.userSince > record2.userSince;
-			// },
+			sorter: (a, b) => {
+				// Assuming userSince is displayed in a formatted string but stored as a timestamp
+				// If it's stored as a string, you'll need to convert it to a timestamp or Date object for comparison
+				const timestampA = dayjs(a.userSince, "DD[th] MMM 'YY").unix();
+				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();
+				return timestampA - timestampB;
+			},
 			title: 'User Since',
 			width: 150
 		},

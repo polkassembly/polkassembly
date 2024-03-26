@@ -130,12 +130,12 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 						<ImageIcon
 							src={iconSources.monetization}
 							alt='monetization-icon'
-							className='icon-container mr-4'
+							className='icon-container mr-4 cursor-not-allowed opacity-50'
 						/>
 						<ImageIcon
 							src={iconSources.bookmark}
 							alt='bookmark-icon'
-							className='icon-container'
+							className='icon-container cursor-not-allowed opacity-50'
 						/>
 					</div>
 				</div>

@@ -38,9 +38,14 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			console.log(error);
 		}
 		if (data) {
-			const limitedData = data?.data.slice(0, 50);
+			let limitedData = data?.data;
+			if (currentPage === 1) {
+				limitedData = limitedData.slice(3);
+				setTotalData(47);
+			} else {
+				setTotalData(50);
+			}
 			setTableData(limitedData);
-			setTotalData(50);
 		}
 	};
 	useEffect(() => {
@@ -155,8 +160,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 				</div>
 			),
 			sorter: (a, b) => {
-				// Assuming userSince is displayed in a formatted string but stored as a timestamp
-				// If it's stored as a string, you'll need to convert it to a timestamp or Date object for comparison
 				const timestampA = dayjs(a.userSince, "DD[th] MMM 'YY").unix();
 				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();
 				return timestampA - timestampB;
@@ -182,16 +185,20 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 							className='icon-container mr-4 cursor-pointer'
 						/>
 					</div>
-					<ImageIcon
-						src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
-						alt='monetization-icon'
-						className='icon-container mr-4 cursor-pointer'
-					/>
-					<ImageIcon
-						src={theme === 'dark' ? '/assets/icons/auctionIcons/BookmarkDark.svg' : '/assets/icons/auctionIcons/BookmarkLight.svg'}
-						alt='bookmark-icon'
-						className='icon-container cursor-pointer'
-					/>
+					<div className='cursor-not-allowed'>
+						<ImageIcon
+							src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
+							alt='monetization-icon'
+							className='icon-container mr-4 cursor-not-allowed opacity-50'
+						/>
+					</div>
+					<div className='cursor-not-allowed'>
+						<ImageIcon
+							src={theme === 'dark' ? '/assets/icons/auctionIcons/BookmarkDark.svg' : '/assets/icons/auctionIcons/BookmarkLight.svg'}
+							alt='bookmark-icon'
+							className='icon-container cursor-not-allowed opacity-50'
+						/>
+					</div>
 				</div>
 			),
 			title: 'Action',
@@ -202,7 +209,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const dataSource = tableData?.map((item: any, index: number) => ({
 		key: item?.user_id,
 		profileScore: item?.profile_score,
-		rank: currentPage * 10 + index - 9,
+		rank: currentPage === 1 ? index + 4 : currentPage * 10 + index + 1 - 10,
 		user: item?.username,
 		userImage: item?.image,
 		userSince: formatTimestamp(item?.created_at._seconds)

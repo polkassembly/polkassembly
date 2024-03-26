@@ -15,6 +15,9 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
+import { EUserActivityIn, EUserActivityType } from '~src/types';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 interface Props {
 	className?: string;
@@ -22,19 +25,6 @@ interface Props {
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 	count: number;
-}
-
-export enum EUserActivityType {
-	REACTED = 'REACTED',
-	COMMENTED = 'COMMENTED',
-	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
-}
-
-export enum EUserActivityIn {
-	POST = 'POST',
-	COMMENT = 'COMMENT',
-	REPLY = 'REPLY'
 }
 
 export interface IProfileMentions {
@@ -86,7 +76,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 pt-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -96,7 +86,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 						<span className='text-sm font-normal'>({count})</span>
 					</div>
 				</div>
-				<div className='mt-2 flex flex-col pb-10'>
+				<div className='mt-2 flex flex-col pb-6'>
 					{userMentions.length
 						? userMentions.map((activity, index) => {
 								return (
@@ -137,7 +127,14 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 									</div>
 								);
 						  })
-						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
+						: !loading && (
+								<Empty
+									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+									imageStyle={{ height: 300 }}
+									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No mentions found</p>}
+									className='my-6 dark:text-[#9e9e9e]'
+								/>
+						  )}
 				</div>
 				{!!userMentions?.length && (
 					<Pagination

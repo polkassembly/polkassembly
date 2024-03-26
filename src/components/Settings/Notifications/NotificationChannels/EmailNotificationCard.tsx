@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
+import { shortenString } from '~src/util/shortenString';
 import { MailFilledIcon } from '~src/ui-components/CustomIcons';
 type Props = {
 	verifiedEmail: string;
@@ -46,8 +47,13 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					</span>
 				)}
 			</h3>
-			<div className='ml-7'>
-				<h3 className='m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}</h3>
+			<div className='ml-5'>
+				<h3 className='token-desktop-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+					{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}
+				</h3>
+				<h3 className='token-mobile-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+					{verifiedEmail ? shortenString(verifiedEmail, 10) : 'Please add your email on account page.'}
+				</h3>
 			</div>
 			<DisabledConfirmation
 				open={showModal}

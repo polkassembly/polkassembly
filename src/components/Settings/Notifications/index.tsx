@@ -52,7 +52,7 @@ export default function Notifications({ network }: { network: string }) {
 				networkPreferences: {
 					...currentUser.networkPreferences,
 					triggerPreferences: {
-						...currentUser.networkPreferences.triggerPreferences,
+						...currentUser.networkPreferences?.triggerPreferences,
 						[network]: obj
 					}
 				}
@@ -145,7 +145,7 @@ export default function Notifications({ network }: { network: string }) {
 		}
 		try {
 			const { data, error } = (await nextApiClientFetch('api/v1/auth/actions/setNetworkPreferences', {
-				network_preferences: networkPreferences.triggerPreferences[network],
+				network_preferences: networkPreferences?.triggerPreferences[network],
 				networks
 			})) as { data: { message: string }; error: string | null };
 			if (error || !data.message) {
@@ -158,7 +158,7 @@ export default function Notifications({ network }: { network: string }) {
 
 	const handleCopyPrimaryNetworkNotification = async (selectedNetwork: Array<string>) => {
 		try {
-			const primarySettings = networkPreferences.triggerPreferences?.[primaryNetwork] || {};
+			const primarySettings = networkPreferences?.triggerPreferences?.[primaryNetwork] || {};
 			const { data, error } = (await nextApiClientFetch('api/v1/auth/actions/setNetworkPreferences', {
 				network_preferences: primarySettings,
 				networks: selectedNetwork
@@ -241,7 +241,7 @@ export default function Notifications({ network }: { network: string }) {
 		}
 		handleSetNetworkPreferences(selectedNames);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [networkPreferences.triggerPreferences]);
+	}, [networkPreferences?.triggerPreferences]);
 
 	useEffect(() => {
 		getPrimaryNetwork().catch((e) => console.log(e));
@@ -266,13 +266,13 @@ export default function Notifications({ network }: { network: string }) {
 				setSelectedNetwork={setSelectedNetwork}
 			/>
 			<Proposals
-				userNotification={networkPreferences.triggerPreferences[network]}
+				userNotification={networkPreferences?.triggerPreferences[network]}
 				options={notificationPreferences.myProposal}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
 			/>
 			<SubscribedPosts
-				userNotification={networkPreferences.triggerPreferences[network]}
+				userNotification={networkPreferences?.triggerPreferences[network]}
 				options={notificationPreferences.subscribePost}
 				dispatch={dispatch}
 				onSetNotification={handleCurrentNetworkNotifications}
@@ -280,14 +280,14 @@ export default function Notifications({ network }: { network: string }) {
 			{network !== AllNetworks.POLYMESH ? (
 				<>
 					<Gov1Notification
-						userNotification={networkPreferences.triggerPreferences[network]}
+						userNotification={networkPreferences?.triggerPreferences[network]}
 						options={notificationPreferences.gov1Post}
 						dispatch={dispatch}
 						onSetNotification={handleCurrentNetworkNotifications}
 					/>
 					{Object.keys(networkTrackInfo).includes(network) && (
 						<OpenGovNotification
-							userNotification={networkPreferences.triggerPreferences[network]}
+							userNotification={networkPreferences?.triggerPreferences[network]}
 							options={notificationPreferences.openGov}
 							dispatch={dispatch}
 							onSetNotification={handleCurrentNetworkNotifications}
@@ -296,7 +296,7 @@ export default function Notifications({ network }: { network: string }) {
 				</>
 			) : (
 				<PipNotification
-					userNotification={networkPreferences.triggerPreferences[network]}
+					userNotification={networkPreferences?.triggerPreferences[network]}
 					options={notificationPreferences.pipNotification}
 					dispatch={dispatch}
 					onSetNotification={handleCurrentNetworkNotifications}

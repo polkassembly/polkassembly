@@ -468,11 +468,13 @@ const UpcomingEvents = ({ className }: Props) => {
 	return (
 		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:border-[#29323C] dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
-				<CalendarFilled
-					className='inline-block cursor-pointer lg:hidden'
-					onClick={() => setShowCalendar(!showCalendar)}
-				/>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>
+					Upcoming Events
+					<CalendarFilled
+						className='ml-2 inline-block scale-90 cursor-pointer lg:hidden'
+						onClick={() => setShowCalendar(!showCalendar)}
+					/>
+				</h2>
 			</div>
 
 			{/* Desktop */}

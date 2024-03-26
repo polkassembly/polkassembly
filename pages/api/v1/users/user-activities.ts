@@ -12,15 +12,16 @@ import { noTitle } from '~src/global/noTitle';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { getUserProfileWithUserId } from '../auth/data/userProfileWithUsername';
-import { EUserActivityIn, EUserActivityType } from '~src/components/UserProfile/ProfileUserActivity';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import authServiceInstance from '~src/auth/auth';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import { EActivityFilter, EUserActivityIn, EUserActivityType } from '~src/types';
 
 interface Props {
 	userId: number;
 	page: number;
+	filterBy: EActivityFilter;
 }
 
 interface IUserActivity {
@@ -50,17 +51,19 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { userId, page = 1 } = req.body as Props;
+	const { userId, page = 1, filterBy } = req.body as Props;
 	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
-	const activitiesSnapshot = await firestore_db
-		.collection('user_activities')
-		.where('network', '==', network)
-		.where('by', '==', userId)
-		.limit(LISTING_LIMIT)
-		.offset((Number(page) - 1) * LISTING_LIMIT)
-		.get();
+	let activitiesSnapshot = firestore_db.collection('user_activities').where('network', '==', network).where('is_deleted', '==', false).where('by', '==', userId);
 
-	const activitiesDocs = activitiesSnapshot.docs;
+	if (filterBy) {
+		activitiesSnapshot = activitiesSnapshot.where('type', '==', filterBy);
+	}
+	const activitiesDocs = (
+		await activitiesSnapshot
+			.limit(LISTING_LIMIT)
+			.offset((Number(page) - 1) * LISTING_LIMIT)
+			.get()
+	).docs;
 
 	const refs: any = {};
 	const data = [];
@@ -261,6 +264,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt) });
+	return res.status(200).json({ data: data });
 };
 export default withErrorHandling(handler);

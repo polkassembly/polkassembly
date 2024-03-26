@@ -57,6 +57,8 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return res.status(400).json({ data: null, error: 'Invalid Body params passed' });
 	}
 
+	// TODO: @KanishkaRajputd please move the caching inside getSubscanData
+
 	const redisKey = generateKey({ keyType: 'subscan', network, url });
 
 	const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;

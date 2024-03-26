@@ -44,7 +44,7 @@ interface Props {
 const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId } = useUserDetailsSelector();
+	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
@@ -212,7 +212,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		>
 			<div className={classNames(className, 'mt-6')}>
 				<Form
-					initialValues={{ beneficiary, proposerAddress: proposer }}
+					initialValues={{ beneficiary, proposerAddress: proposer || loginAddress }}
 					form={form}
 					className={'proposal'}
 				>

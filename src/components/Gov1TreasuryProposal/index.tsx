@@ -89,7 +89,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 			updateGov1TreasuryProposal({
 				...gov1proposalData,
 				firstStepPercentage,
-				proposer: loginAddress,
+				proposer: proposer || loginAddress,
 				secondStepPercentage,
 				showIdentityInfoCardForBeneficiary: false,
 				showIdentityInfoCardForProposer: false,
@@ -99,7 +99,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 
 		checkProposerIdentity(proposer || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [loginAddress]);
 
 	return (
 		<div>
@@ -145,10 +145,10 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				}}
 				className={classNames(poppins.className, poppins.variable, theme, 'gov1proposal', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				wrapClassName={`${className} dark:bg-modalOverlayDark`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme}`}
 				footer={false}
 				title={
-					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<Image
 							alt=''
 							src={theme === 'dark' ? '/assets/openGovProposals/create_proposal_white.svg' : '/assets/openGovProposals/create_proposal.svg'}
@@ -159,7 +159,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					</div>
 				}
 			>
-				<div>
+				<div className={theme}>
 					<Steps
 						className={'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high'}
 						percent={step === 0 ? firstStepPercentage : secondStepPercentage}
@@ -263,7 +263,7 @@ export default styled(Gov1TreasuryProposal)`
 	}
 
 	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		color: white !important;
 	}
 

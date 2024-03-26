@@ -447,6 +447,7 @@ const Post: FC<IPostProps> = (props) => {
 								tally={post?.tally}
 								proposalId={onchainId as number}
 								statusHistory={post?.statusHistory}
+								proposalCreatedAt={post?.created_at || ''}
 							/>
 						),
 						key: 'stats',

@@ -232,7 +232,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length) return;
 
 		let promiseArr: any[] = [];
-		for (const address of [...beneficiaries.map((addr) => addr)]) {
+		for (const address of [...beneficiaries.map((addr) => (addr as any)?.value || addr)]) {
 			if (!address) continue;
 			promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
 		}

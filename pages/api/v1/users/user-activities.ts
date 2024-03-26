@@ -52,7 +52,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const { userId, page = 1, filterBy } = req.body as Props;
-	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
+	if (isNaN(Number(userId)) || typeof Number(userId) !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
 	let activitiesSnapshot = firestore_db.collection('user_activities').where('network', '==', network).where('is_deleted', '==', false).where('by', '==', userId);
 
 	if (filterBy) {
@@ -65,6 +65,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			.get()
 	).docs;
 
+	const totalCount = (await activitiesSnapshot.count().get()).data().count;
 	const refs: any = {};
 	const data = [];
 
@@ -264,6 +265,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	return res.status(200).json({ data: data });
+	return res.status(200).json({ data: data, totalCount });
 };
 export default withErrorHandling(handler);

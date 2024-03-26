@@ -1414,7 +1414,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.PDEX,
 		treasuryProposalBondPercent: '5%',
-		treasuryProposalMinBond: null,
+		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '100',
 		externalLinks: 'https://polkadex.api.subscan.io',
 		gTag: 'G-EB50MSH198',

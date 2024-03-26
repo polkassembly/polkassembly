@@ -471,10 +471,11 @@ const CreatePreimage = ({
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
+
 		await form.validateFields();
 		if (isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 
-		if (!isPreimage ? preimageCreated : preimageLinked) {
+		if (preimageCreated || preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		} else {
 			if (!isPreimage) {

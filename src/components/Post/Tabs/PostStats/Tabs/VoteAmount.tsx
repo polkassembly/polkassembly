@@ -22,10 +22,11 @@ interface IVotesAmountProps {
 	activeIssuance: BN;
 	support: BN;
 	turnout: BN | null;
+	elapsedPeriod: number;
 }
 
 const ZERO = new BN(0);
-const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmountProps) => {
+const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod }: IVotesAmountProps) => {
 	const { network } = useNetworkSelector();
 
 	const [tallyData, setTallyData] = useState({
@@ -177,6 +178,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmount
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'
+					elapsedPeriod={elapsedPeriod}
 				/>
 				<Divider
 					dashed

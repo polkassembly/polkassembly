@@ -20,11 +20,14 @@ export const getProposalTypesForNetwork = (network: string) => {
 	) {
 		proposalTypes = proposalTypes.concat([
 			{ type: ProposalType.BOUNTIES },
+			{ type: ProposalType.REFERENDUM_V2 },
 			{ type: ProposalType.COUNCIL_MOTIONS },
+			{ type: ProposalType.CHILD_BOUNTIES },
 			{ type: ProposalType.DEMOCRACY_PROPOSALS },
 			{ type: ProposalType.REFERENDUMS },
 			{ type: ProposalType.TIPS },
-			{ type: ProposalType.TREASURY_PROPOSALS }
+			{ type: ProposalType.TREASURY_PROPOSALS },
+			{ type: ProposalType.TECH_COMMITTEE_PROPOSALS }
 		]);
 	}
 

@@ -139,10 +139,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 export default styled(Leaderboard)`
 	@media (max-width: 767px) and (min-width: 319px) {
 		.rank-cards-mobile {
-			display: inline-block !important;
+			display: flex !important;
+			flex-direction: column !important;
 			transform: scale(0.7) !important;
 			margin: 0 auto !important;
-			margin-left: -20px !important;
 			margin-top: -80px !important;
 		}
 		.secondary-rank-card {
@@ -150,7 +150,7 @@ export default styled(Leaderboard)`
 			margin-bottom: 40px !important;
 		}
 		.primary-rank-card {
-			margin-left: -36px !important;
+			margin-left: -4px !important;
 			margin-bottom: 24px !important;
 		}
 		.rank-cards-desktop {

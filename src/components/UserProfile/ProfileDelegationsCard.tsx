@@ -28,6 +28,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import dynamic from 'next/dynamic';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import Markdown from '~src/ui-components/Markdown';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false
@@ -315,7 +316,11 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 								setOpenBecomeDelegateModal(true);
 							}}
 						>
-							{delegationMandate}
+							<Markdown
+								className='post-content'
+								md={delegationMandate}
+								isPreview={true}
+							/>
 						</span>
 					</div>
 				)}

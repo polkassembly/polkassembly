@@ -152,6 +152,55 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			background-color: ${(props: any) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
 			color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 		}
+		ol,
+		ul {
+			padding-left: 20px;
+			list-style-position: inside;
+		}
+
+		ol {
+			counter-reset: item;
+			list-style-type: none;
+
+			> li {
+				counter-increment: item;
+				margin-bottom: 0.5rem;
+
+				&::before {
+					content: counter(item) '. ';
+					font-weight: bold;
+				}
+			}
+
+			ul {
+				list-style-type: none;
+				counter-reset: sub-item 'a';
+
+				li {
+					display: list-item;
+					counter-increment: sub-item;
+					margin-bottom: 0.5rem;
+
+					&::before {
+						content: counter(sub-item, lower-alpha) '. ';
+						margin-right: 5px;
+					}
+
+					&::marker {
+						content: '';
+					}
+				}
+			}
+		}
+
+		ul:not(ol ul) {
+			list-style-type: disc;
+
+			li::marker {
+				font-size: 1em;
+				color: #000;
+			}
+		}
 	}
 
 	&.mde-preview-content {

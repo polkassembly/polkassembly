@@ -45,7 +45,7 @@ export const getSubscanData = async (url: string, network: string, body?: any, m
 		).json();
 
 		if (data?.message === 'Success' && cacheEnabled) {
-			setCache(redisKey, data.data);
+			setCache(redisKey, data);
 		}
 
 		return data;

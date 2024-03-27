@@ -48,7 +48,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			const totalReward = allRewardsAsBN.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
 
 			const totalAwardedReward = data.child_bounties
-				.filter((bounty) => bounty.status === 'Awarded' || 'Claimed')
+				.filter((bounty) => bounty.status === 'Claimed')
 				.map((bounty) => new BN(bounty.reward))
 				.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
 

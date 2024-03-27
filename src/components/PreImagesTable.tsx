@@ -9,7 +9,7 @@ import { Modal, Tooltip, message } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import ReactJson from 'react-json-view';
+import ReactJson from '@microlink/react-json-view';
 import NameLabel from 'src/ui-components/NameLabel';
 import { PostEmptyState } from 'src/ui-components/UIStates';
 import formatBnBalance from 'src/util/formatBnBalance';

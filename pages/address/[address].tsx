@@ -17,6 +17,8 @@ import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 
 interface IUserProfileProps {
@@ -35,8 +37,25 @@ interface IUserProfileProps {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const { params, req } = context;
-	const network = getNetworkFromReqHeaders(req.headers);
+	const { params, req, query } = context;
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -106,11 +125,20 @@ const EmptyState = styled.div`
 const UserProfile: FC<IUserProfileProps> = (props) => {
 	const { userPosts, network, userProfile, error, className, activitiesCounts } = props;
 	const { resolvedTheme: theme } = useTheme();
-
+	const router = useRouter();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

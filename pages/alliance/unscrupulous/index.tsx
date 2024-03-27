@@ -8,8 +8,25 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import SEOHead from '~src/global/SEOHead';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;

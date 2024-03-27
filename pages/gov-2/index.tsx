@@ -26,6 +26,8 @@ import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
@@ -40,8 +42,25 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -108,9 +127,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 

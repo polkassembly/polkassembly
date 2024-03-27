@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
 import React, { FC, useEffect } from 'react';
@@ -18,21 +19,48 @@ import { setNetwork } from '~src/redux/network';
 import { IApiResponse, PostOrigin } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/root?trackStatus=all&page=1'
-			}
-		};
+		if (queryNetwork) {
+			return {
+				props: {},
+				redirect: {
+					destination: `/root?trackStatus=all&page=1&network=${network}`
+				}
+			};
+		} else {
+			return {
+				props: {},
+				redirect: {
+					destination: '/root?trackStatus=all&page=1'
+				}
+			};
+		}
 	}
 
 	if (!networkTrackInfo[network][PostOrigin.ROOT]) {
@@ -106,9 +134,19 @@ interface IRootProps {
 const Root: FC<IRootProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (error) return <ErrorState errorMessage={error} />;

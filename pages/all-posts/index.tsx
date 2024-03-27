@@ -22,21 +22,49 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy, trackStatus, proposalStatus } = query;
 	if (!trackStatus && !filterBy) {
-		return {
-			props: {},
-			redirect: {
-				destination: '/all-posts?trackStatus=all&page=1'
-			}
-		};
+		if (queryNetwork) {
+			return {
+				props: {},
+				redirect: {
+					destination: `/all-posts?trackStatus=all&page=1&network=${network}`
+				}
+			};
+		} else {
+			return {
+				props: {},
+				redirect: {
+					destination: '/all-posts?trackStatus=all&page=1'
+				}
+			};
+		}
 	}
 
 	const proposalType = ProposalType.OPEN_GOV;
@@ -114,8 +142,18 @@ interface IOverviewListingProps {
 const OverviewListing: FC<IOverviewListingProps> = (props) => {
 	const { posts, error, network } = props;
 	const dispatch = useDispatch();
+	const router = useRouter();
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -33,6 +33,9 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
+import { defaultNetwork } from '~src/global/defaultNetwork';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
@@ -47,11 +50,28 @@ interface Props {
 	error: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const LATEST_POSTS_LIMIT = 8;
 
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const subDomain: any = req?.headers?.host?.split('.')[0];
+	const referer = req.headers.referer;
 
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (![subDomain].includes(network)) {
+		network = (query.network as string) || network || defaultNetwork;
+		if (queryNetwork) {
+			network = queryNetwork;
+		}
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -123,9 +143,19 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const { id: userId } = useUserDetailsSelector();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		if (!api || !apiReady) return;
 
 		let unsubscribe: () => void;

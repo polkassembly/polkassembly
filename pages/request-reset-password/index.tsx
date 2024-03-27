@@ -17,18 +17,37 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import queueNotification from '~src/ui-components/QueueNotification';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
 	network: string;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -38,13 +57,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const RequestResetPassword: FC<Props> = (props) => {
 	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 

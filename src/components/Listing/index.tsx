@@ -56,7 +56,7 @@ const Listing: FC<IListingProps> = (props) => {
 			</div>
 		);
 	}
-
+	console.log('there');
 	return (
 		<div className={`${className} proposals__list`}>
 			{posts.map((post, index) => {
@@ -89,7 +89,9 @@ const Listing: FC<IListingProps> = (props) => {
 						className='my-0'
 					>
 						{
-							<Link href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}`}>
+							<Link
+								href={`/${getSinglePostLinkFromProposalType(proposalType)}/${proposalType === ProposalType.ADVISORY_COMMITTEE ? id || proposalHashBlock : id}/?network=${network}`}
+							>
 								<GovernanceCard
 									className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
 									cid={cid}

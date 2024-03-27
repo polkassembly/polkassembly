@@ -21,10 +21,28 @@ import { NotificationStatus } from '~src/types';
 import FilteredError from '~src/ui-components/FilteredError';
 import Loader from '~src/ui-components/Loader';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -36,13 +54,22 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 const VerifyEmail = ({ network, token, identityVerification }: { network: string; token: string; identityVerification: boolean }) => {
 	const dispatch = useDispatch();
 	const [identityEmailSuccess, setIdentityEmailSuccess] = useState<boolean>(false);
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const router = useRouter();
 	const [error, setError] = useState('');
 
 	const currentUser = useUserDetailsSelector();

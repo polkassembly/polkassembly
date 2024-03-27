@@ -27,6 +27,7 @@ import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import { getSubdomain } from '~src/util/getSubdomain';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TreasuryProposalFormButton = dynamic(() => import('src/components/CreateTreasuryProposal/TreasuryProposalFormButton'), {
@@ -38,8 +39,24 @@ const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverv
 });
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
 
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -72,6 +89,15 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

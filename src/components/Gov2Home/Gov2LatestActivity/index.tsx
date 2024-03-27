@@ -126,7 +126,8 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 	];
 
 	if (network) {
-		for (const trackName of Object.keys(networkTrackInfo[network])) {
+		// eslint-disable-next-line no-unsafe-optional-chaining
+		for (const trackName of Object?.keys(networkTrackInfo[network])) {
 			tabItems.push({
 				children: (
 					<TrackPostsTable

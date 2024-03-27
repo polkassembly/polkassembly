@@ -19,9 +19,28 @@ import { setNetwork } from '~src/redux/network';
 import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useNetworkSelector } from '~src/redux/selectors';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -41,6 +60,8 @@ const Delegation = (props: { network: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { asPath } = useRouter();
+	const router = useRouter();
+	const { network } = useNetworkSelector();
 
 	const handleCopylink = () => {
 		const url = `https://${props.network}.polkassembly.io${asPath.split('#')[0]}`;
@@ -52,6 +73,15 @@ const Delegation = (props: { network: string }) => {
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

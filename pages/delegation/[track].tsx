@@ -18,9 +18,29 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { useTheme } from 'next-themes';
+import { getSubdomain } from '~src/util/getSubdomain';
+import { useRouter } from 'next/router';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -59,9 +79,20 @@ const DashboardTracks: FC<ITrackProps> = (props) => {
 	const { data, error, trackDetails } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
+	const { network } = useNetworkSelector();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		const currentUrl = window ? window.location.href : '';
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain]?.includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

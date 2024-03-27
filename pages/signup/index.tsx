@@ -15,6 +15,8 @@ import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useTheme } from 'next-themes';
+import { useRouter } from 'next/router';
+import { getSubdomain } from '~src/util/getSubdomain';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletConnectSignup'), {
@@ -38,8 +40,25 @@ interface Props {
 	setIsClosable?: (pre: boolean) => void;
 	isDelegation?: boolean;
 }
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
@@ -49,9 +68,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Signup = ({ network, isModal, setLoginOpen, setSignupOpen, setIsClosable, isDelegation }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

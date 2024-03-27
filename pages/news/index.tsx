@@ -4,6 +4,7 @@
 
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -17,9 +18,27 @@ import { setNetwork } from '~src/redux/network';
 import { NetworkSocials } from '~src/types';
 import { ErrorState, PostEmptyState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import { getSubdomain } from '~src/util/getSubdomain';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-	const network = getNetworkFromReqHeaders(req.headers);
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+	let network = getNetworkFromReqHeaders(req.headers);
+	const referer = req.headers.referer;
+
+	let queryNetwork = null;
+	if (referer) {
+		try {
+			const url = new URL(referer);
+			queryNetwork = url.searchParams.get('network');
+		} catch (error) {
+			console.error('Invalid referer URL:', referer, error);
+		}
+	}
+	if (queryNetwork) {
+		network = queryNetwork;
+	}
+	if (query?.network) {
+		network = query?.network as string;
+	}
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
@@ -41,9 +60,19 @@ enum Profile {
 
 const News: FC<Props> = ({ data, error, network }) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
+		const currentUrl = window.location.href;
+		const subDomain = getSubdomain(currentUrl);
+		if (network && ![subDomain].includes(network)) {
+			router.push({
+				query: {
+					network: network
+				}
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

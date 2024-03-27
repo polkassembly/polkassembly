@@ -30,7 +30,7 @@ export const getSubscanData = async (url: string, network: string, body?: any, m
 		const redisData = await getCache(redisKey);
 
 		if (redisData) {
-			return redisData.data;
+			return redisData;
 		}
 
 		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;

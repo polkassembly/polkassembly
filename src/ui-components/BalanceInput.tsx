@@ -23,7 +23,7 @@ interface Props {
 	className?: string;
 	label?: string;
 	helpText?: string;
-	onChange: (balance: BN) => void;
+	onChange?: (balance: BN) => void;
 	placeholder?: string;
 	address?: string;
 	withBalance?: boolean;
@@ -70,10 +70,10 @@ const BalanceInput = ({
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
 		if (isValid) {
 			setInputValue?.(value || '0');
-			onChange(balance);
+			onChange?.(balance);
 			setIsBalanceSet?.(true);
 		} else {
-			onChange(ZERO_BN);
+			onChange?.(ZERO_BN);
 			setInputValue?.('0');
 			setIsBalanceSet?.(false);
 		}
@@ -84,7 +84,6 @@ const BalanceInput = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -173,11 +172,11 @@ export default styled(BalanceInput)`
 		border-radius: 0px 4px 4px 0px !important ;
 	}
 	.suffixColor .ant-input {
-		background: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
 		border-radius: 4px 0px 0px 4px !important;
 		height: 40px !important;
-		border: ${(props) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
 	}
 	.balance-input .ant-input-number-handler-up {
 		display: none !important;
@@ -191,7 +190,7 @@ export default styled(BalanceInput)`
 		right: 2px;
 	}
 	.balance-input .ant-input-number {
-		border: ${(props) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;
 	}
 	.balance-input .ant-input-number-focused {
 		border: 1px solid var(--pink_primary);
@@ -201,10 +200,10 @@ export default styled(BalanceInput)`
 		font-size: 14px !important;
 		line-height: 21px !important;
 		letter-spacing: 0.0025em !important;
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
 	}
 	.ant-input-group-addon {
-		background-color: ${(props) => (props.theme === 'dark' ? '#e5007a' : '#edeff3')} !important;
-		border: ${(props) => (props.theme === 'dark' ? '1px solid #e5007a' : '1px solid #edeff3')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#e5007a' : '#edeff3')} !important;
+		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #e5007a' : '1px solid #edeff3')} !important;
 	}
 `;

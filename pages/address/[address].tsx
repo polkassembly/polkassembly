@@ -15,12 +15,17 @@ import { getOnChainUserPosts } from 'pages/api/v1/listing/get-on-chain-user-post
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import PAProfile from '~src/components/UserProfile';
+import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { getSubdomain } from '~src/util/getSubdomain';
+import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 
 interface IUserProfileProps {
+	activitiesCounts: {
+		data: IActivitiesCounts | null;
+		error: string | null;
+	};
 	userPosts: {
 		data: IUserPostsListingResponse;
 		error: string | null;
@@ -65,6 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	}
 
 	const { data, error } = await getUserIdWithAddress(address.toString());
+
 	const userProfile = data || !error ? await getUserProfileWithUserId(Number(data)) : null;
 	const userPosts = !userProfile
 		? await getOnChainUserPosts({
@@ -77,7 +83,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				userId: userProfile?.data?.user_id
 		  });
 
+	const activitiesCounts = userProfile ? await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null }) : null;
+
 	const props: IUserProfileProps = {
+		activitiesCounts: activitiesCounts || { data: { totalActivitiesCount: 0, totalMentionsCount: 0, totalReactionsCount: 0 }, error: null },
 		network,
 		userPosts: {
 			data: userPosts.data || getDefaultUserPosts(),
@@ -114,7 +123,7 @@ const EmptyState = styled.div`
 `;
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
-	const { userPosts, network, userProfile, error, className } = props;
+	const { userPosts, network, userProfile, error, className, activitiesCounts } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const dispatch = useDispatch();
@@ -159,6 +168,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 			<PAProfile
 				userProfile={userProfile.data}
 				userPosts={userPosts?.data}
+				activitiesCounts={activitiesCounts?.data as any}
 			/>
 		</>
 	);

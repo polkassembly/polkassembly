@@ -35,35 +35,35 @@ interface Props {
 }
 const Calendar = styled(StyledCalendar)`
 	.ant-picker-panel {
-		background: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	th {
-		color: ${(props) => (props.theme === 'dark' ? '#909090' : '#000')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#000')} !important;
 	}
 	.ant-picker-cell {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
 	}
 	.ant-select-selector {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-select-item {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-radio-button-wrapper {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
-		background: ${(props) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#000' : '#fff')} !important;
 	}
 	.ant-select-dropdown {
-		background-color: ${(props) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
 	}
 	.ant-select-selection-item {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#0d0d0d')} !important;
 	}
 `;
 
@@ -426,7 +426,7 @@ const UpcomingEvents = ({ className }: Props) => {
 				className='mb-4 rounded-xl border border-solid border-gray-300 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'
 				fullscreen={false}
 				cellRender={dateCellRender}
-				theme={theme}
+				theme={theme as any}
 			/>
 		</Spin>
 	);
@@ -468,11 +468,13 @@ const UpcomingEvents = ({ className }: Props) => {
 	return (
 		<div className={`${className} h-[520px] rounded-xxl bg-white p-4 drop-shadow-md dark:border-[#29323C] dark:bg-section-dark-overlay lg:h-[550px] lg:p-6`}>
 			<div className='mb-5 flex items-center justify-between'>
-				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>Upcoming Events</h2>
-				<CalendarFilled
-					className='inline-block cursor-pointer lg:hidden'
-					onClick={() => setShowCalendar(!showCalendar)}
-				/>
+				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high xs:mx-1 xs:my-2 sm:mx-3 sm:my-0'>
+					Upcoming Events
+					<CalendarFilled
+						className='ml-2 inline-block scale-90 cursor-pointer lg:hidden'
+						onClick={() => setShowCalendar(!showCalendar)}
+					/>
+				</h2>
 			</div>
 
 			{/* Desktop */}

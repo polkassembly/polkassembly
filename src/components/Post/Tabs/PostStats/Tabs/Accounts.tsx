@@ -18,9 +18,11 @@ interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
 	totalVotesCount: any;
 	activeIssuance: BN;
-	totalIssuance: BN;
+	support: BN;
+	turnout: BN | null;
+	elapsedPeriod: number;
 }
-const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: IVotesAccountProps) => {
+const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance, elapsedPeriod }: IVotesAccountProps) => {
 	const [delegatedVotesCount, setDelegatedVotesCount] = useState<number>(0);
 	const [soloVotesCount, setSoloVotesCount] = useState<number>(0);
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
@@ -68,22 +70,12 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 				const voteCreatedAt = new Date(vote.createdAt);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
-				if (timeSplit == 0) {
-					acc[0] = acc[0] ? acc[0] + 1 : 1;
-				} else if (timeSplit <= 7) {
-					acc[7] = acc[7] ? acc[7] + 1 : 1;
-				} else if (timeSplit <= 10) {
-					acc[10] = acc[10] ? acc[10] + 1 : 1;
-				} else if (timeSplit <= 14) {
-					acc[14] = acc[14] ? acc[14] + 1 : 1;
-				} else if (timeSplit <= 20) {
-					acc[20] = acc[20] ? acc[20] + 1 : 1;
-				} else if (timeSplit <= 24) {
-					acc[24] = acc[24] ? acc[24] + 1 : 1;
-				} else if (timeSplit <= 28) {
-					acc[28] = acc[28] ? acc[28] + 1 : 1;
-				} else {
-					acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + 1 : 1;
+				for (let i = 0; i <= 28; i++) {
+					if (timeSplit === i) {
+						acc[timeSplit] = acc[timeSplit] ? acc[timeSplit] + 1 : 1;
+					} else {
+						acc[timeSplit] = acc[timeSplit] || 0;
+					}
 				}
 				return acc;
 			},
@@ -101,7 +93,7 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 
 	return (
 		<>
-			<Nudge text='Accounts is the number of unique addresses casting a vote' />
+			<Nudge text='Accounts are the number of unique addresses casting a vote' />
 			<div className='flex flex-col gap-5'>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<TotalVotesCard
@@ -117,12 +109,14 @@ const Accounts = ({ allVotes, totalIssuance, totalVotesCount, activeIssuance }: 
 					/>
 					<VotesTurnoutCard
 						activeIssuance={activeIssuance}
-						totalIssuance={totalIssuance}
+						support={support}
+						turnout={turnout}
 					/>
 				</div>
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					isUsedInAccounts={true}
+					elapsedPeriod={elapsedPeriod}
 				/>
 				<Divider
 					dashed

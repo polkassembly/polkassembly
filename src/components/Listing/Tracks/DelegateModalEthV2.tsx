@@ -6,7 +6,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Select, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
@@ -20,6 +20,8 @@ import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { inputToBn } from 'src/util/inputToBn';
 import { BrowserProvider, Contract, formatUnits } from 'ethers';
+import Select from '~src/basic-components/Select';
+import SelectOption from '~src/basic-components/Select/SelectOption';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 import { chainProperties } from '~src/global/networkConstants';
@@ -56,17 +58,17 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const convictionOpts = useMemo(
 		() => [
-			<Select.Option
+			<SelectOption
 				key={0}
 				value={0}
 			>
 				{'0.1x voting balance, no lockup period'}
-			</Select.Option>,
+			</SelectOption>,
 			...CONVICTIONS.map(([value, lock]) => (
-				<Select.Option
+				<SelectOption
 					key={value}
 					value={value}
-				>{`${value}x voting balance, locked for ${lock * oneEnactmentPeriodInDays[network]} days`}</Select.Option>
+				>{`${value}x voting balance, locked for ${lock * oneEnactmentPeriodInDays[network]} days`}</SelectOption>
 			))
 		],
 		[CONVICTIONS, network]
@@ -84,7 +86,7 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 	}, [accounts.length, walletConnectProvider]);
 
 	const getAccounts = async () => {
-		const ethereum = (window as any).ethereum;
+		const ethereum = (window as any)?.ethereum;
 
 		if (!ethereum) {
 			return;
@@ -281,7 +283,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				gasLimit
 			})
 			.then((result: any) => {
-				console.log(result);
+				console.log(result, 'result');
+
 				queueNotification({
 					header: 'Success!',
 					message: 'Delegation successful.',
@@ -332,8 +335,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				onCancel={() => setShowModal(false)}
 				footer={[
 					<div
-						className='flex justify-end'
 						key='footer'
+						className='flex items-center justify-end gap-x-2'
 					>
 						<CustomButton
 							key='back'

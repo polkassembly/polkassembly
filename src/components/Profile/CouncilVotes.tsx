@@ -106,7 +106,6 @@ const CouncilVotes: FC<ICouncilVotesProps> = (props) => {
 	const onChange: PaginationProps['onChange'] = (page) => {
 		setCurrentPage(page);
 	};
-	console.log(votesHistory);
 	return (
 		<div className={`${className}`}>
 			{error ? <ErrorState errorMessage={error} /> : null}

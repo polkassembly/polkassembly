@@ -19,6 +19,9 @@ import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -61,6 +64,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setCheckedAddressList(addresses);
@@ -158,7 +162,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 		<div
 			className={classNames(
 				className,
-				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -275,8 +279,10 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						})
 					) : (
 						<Empty
-							className='mt-8'
-							description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+							imageStyle={{ height: 300 }}
+							description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No posts found</p>}
+							className='my-6 dark:text-[#9e9e9e]'
 						/>
 					)}
 				</div>

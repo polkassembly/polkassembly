@@ -219,11 +219,6 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			username: username || ''
 		};
 		setCurrentState && setCurrentState(postIndex.toString(), getSubsquidLikeProposalType(postType as any), comment);
-		queueNotification({
-			header: 'Success!',
-			message: 'Comment created successfully.',
-			status: NotificationStatus.SUCCESS
-		});
 		try {
 			const { data, error } = await nextApiClientFetch<IAddPostCommentResponse>('api/v1/auth/actions/addPostComment', {
 				content,
@@ -263,7 +258,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					message: error,
 					status: NotificationStatus.ERROR
 				});
-			} else {
+			} else if (data) {
+				queueNotification({
+					header: 'Success!',
+					message: 'Comment created successfully.',
+					status: NotificationStatus.SUCCESS
+				});
 				setComments((prev) => {
 					const comments: any = Object.assign({}, prev);
 					for (const key of Object.keys(comments)) {

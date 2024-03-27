@@ -2,7 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Form, Modal, Select, Spin } from 'antd';
+
+import { Form, Modal, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -22,7 +23,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import SaySomethingIcon from '~assets/icons/say-something.svg';
-import TipIcon from '~assets/icons/tip-title.svg';
 import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
 import { useDispatch } from 'react-redux';
@@ -36,9 +36,10 @@ import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, TipIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import Select from '~src/basic-components/Select';
 
 const ZERO_BN = new BN(0);
 
@@ -283,7 +284,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 			<Modal
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
-						<TipIcon className='mr-[6px]' />
+						<TipIcon className='mr-[6px] text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						Give a Tip
 					</div>
 				}
@@ -319,14 +320,6 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 					spinning={loadingStatus.isLoading}
 					tip={loadingStatus.message}
 				>
-					{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
-						<Alert
-							className='mt-6 rounded-[4px] text-bodyBlue'
-							showIcon
-							type='error'
-							message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}
-						/>
-					) : null}
 					<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 						<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 						{address && (
@@ -453,6 +446,15 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 									<span className='mt-[-24px] text-sm text-red-500'>Invalid Balance</span>
 								) : null}
 
+								{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) ? (
+									<Alert
+										className='mt-6 rounded-[4px] text-bodyBlue'
+										showIcon
+										type='error'
+										message={<span className='dark:text-blue-dark-high'>Insufficient Balance for Tipping</span>}
+									/>
+								) : null}
+
 								{!tipAmount.eq(ZERO_BN) && availableBalance.gt(tipAmount.add(existentialDeposit)) && (
 									<div className='mt-12'>
 										{/* Input component */}
@@ -468,7 +470,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 								)}
 							</div>
 						</Form>
-						{!!existentialDeposit && (
+						{!tipAmount.eq(ZERO_BN) && availableBalance.lte(tipAmount.add(existentialDeposit)) && !!existentialDeposit && (
 							<div className='mt-4 flex items-center gap-4 text-sm'>
 								<span className='font-medium tracking-wide text-lightBlue dark:text-blue-dark-medium'>
 									Existential Deposit

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Pagination as AntdPagination } from '~src/ui-components/Pagination';
-import { Input, Skeleton } from 'antd';
+import { Input } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -21,6 +21,7 @@ import { handlePaginationChange } from '~src/util/handlePaginationChange';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { getSubdomain } from '~src/util/getSubdomain';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const PreImagesTable = dynamic(() => import('~src/components/PreImagesTable'), {
 	loading: () => <Skeleton active />,
@@ -62,19 +63,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const Pagination = styled(AntdPagination)`
 	a {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#212121')} !important;
 	}
 	.ant-pagination-item-active {
-		background-color: ${(props) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
 	}
 	.anticon-right {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 	.anticon-left {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 	.ant-pagination-item-ellipsis {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '')} !important;
 	}
 `;
 
@@ -84,7 +85,7 @@ interface IPreImagesProps {
 	network: string;
 }
 
-const PreImages: FC<IPreImagesProps> = (props) => {
+const PreImages: FC<IPreImagesProps> = (props: any) => {
 	const { data, error, network } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -9,6 +8,9 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import Skeleton from '~src/basic-components/Skeleton';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
@@ -18,8 +20,8 @@ import { getSubdomain } from '~src/util/getSubdomain';
 const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 	loading: () => (
 		<div className='mb-4 mt-6 flex w-full flex-col rounded-md bg-white p-4 shadow-md dark:bg-section-dark-overlay md:p-8'>
-			<Skeleton.Input active />
-			<Skeleton.Input
+			<SkeletonInput active />
+			<SkeletonInput
 				className='mt-8'
 				active
 			/>
@@ -27,11 +29,11 @@ const CreatePost = dynamic(() => import('~src/components/Post/CreatePost'), {
 				className='mt-8'
 				active
 			/>
-			<Skeleton.Input
+			<SkeletonInput
 				className='mt-8'
 				active
 			/>
-			<Skeleton.Button
+			<SkeletonButton
 				className='mt-8'
 				active
 			/>

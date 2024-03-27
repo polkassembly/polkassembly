@@ -6,9 +6,8 @@ import { trackEvent } from 'analytics';
 import { Tooltip, Avatar } from 'antd';
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import InfoIcon from '~assets/info.svg';
-
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { InfoIcon } from '../CustomIcons';
 
 const Container = styled.div`
 	border-radius: 14px;
@@ -57,6 +56,7 @@ const PredictionCard = () => {
 	const [predictCount, setPredictCount] = useState(0);
 	const [yesCount, setyesCount] = useState(0);
 	const [endDate, setEndDate] = useState('');
+	const [hasEnded, setHasEnded] = useState(false);
 
 	const [isFixed, setIsFixed] = useState(true);
 	const govSideBarRef = useRef<HTMLElement | null>(null);
@@ -114,9 +114,11 @@ const PredictionCard = () => {
 
 			const timestamp = Number(data.markets[0].period.end);
 
+			setHasEnded(timestamp < Date.now());
+
 			setEndDate(convertTimestampToDate(timestamp));
 			setPredictCount(data.marketStats[0].participants);
-			setyesCount(data.markets[0].assets[0].price);
+			setyesCount(data.markets[0].assets[1].price);
 		}
 		getPredictionsData();
 	}, []);
@@ -142,7 +144,7 @@ const PredictionCard = () => {
 						color='#243A57'
 						title='Will this proposal pass or fail?'
 					>
-						<InfoIcon className='text-xl text-bodyBlue' />
+						<InfoIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 					</Tooltip>
 				</h1>
 				<a
@@ -174,7 +176,7 @@ const PredictionCard = () => {
 			</div>
 			<div className='flex items-center justify-between'>
 				<div className='flex items-center gap-0.5 text-xs text-lightBlue'>
-					Ends: <span className='font-medium text-bodyBlue'>{endDate}</span>
+					{hasEnded ? 'Ended' : 'Ends'}: <span className='font-medium text-bodyBlue'>{endDate}</span>
 				</div>
 				<p className='flex items-center gap-1 text-xs font-medium text-lightBlue'>
 					<Avatar.Group size='small'>

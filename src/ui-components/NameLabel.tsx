@@ -126,7 +126,7 @@ const NameLabel = ({
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={address}
-					paUsername={username}
+					paUsername={username as any}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>

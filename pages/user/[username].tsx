@@ -16,11 +16,16 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import PAProfile from '~src/components/UserProfile';
+import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/router';
 import { getSubdomain } from '~src/util/getSubdomain';
+import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 interface IUserProfileProps {
+	activitiesCounts: {
+		data: IActivitiesCounts | null;
+		error: string | null;
+	};
 	userPosts: {
 		data: IUserPostsListingResponse;
 		error: string | null;
@@ -82,7 +87,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query, param
 		network,
 		userId: userProfile?.data?.user_id
 	});
+	const activitiesCounts = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	const props: IUserProfileProps = {
+		activitiesCounts,
 		network,
 		userPosts: {
 			data: userPosts.data || getDefaultUserPosts(),
@@ -124,7 +131,7 @@ export enum EProfileHistory {
 }
 
 const UserProfile: FC<IUserProfileProps> = (props) => {
-	const { userPosts, network, userProfile, className } = props;
+	const { userPosts, network, userProfile, className, activitiesCounts } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
@@ -171,6 +178,7 @@ const UserProfile: FC<IUserProfileProps> = (props) => {
 				network={network}
 			/>
 			<PAProfile
+				activitiesCounts={activitiesCounts?.data || null}
 				userProfile={userProfile.data}
 				userPosts={userPosts?.data}
 			/>

@@ -15,27 +15,11 @@ export interface IAllVotesType {
 	data: IProfileVoteHistoryRespose[];
 	totalCount: number;
 }
-const getIsSwapStatus = (statusHistory: string[]) => {
-	const index = statusHistory.findIndex((v: any) => v.status === 'DecisionDepositPlaced');
-	if (index < 0) {
-		return false;
-	}
-
-	const decidingIndex = statusHistory.findIndex((v: any) => v.status === 'Deciding');
-	if (decidingIndex < 0) {
-		return false;
-	}
-
-	const obj = statusHistory[index];
-	statusHistory.splice(index, 1);
-	statusHistory.splice(decidingIndex, 0, obj);
-	return true;
-};
 
 async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType | { error: string }>) {
 	storeApiKeyUsage(req);
 
-	const { postId = 0, voteType = VoteType.REFERENDUM } = req.query;
+	const { postId, voteType = VoteType.REFERENDUM } = req.body;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) {
@@ -64,37 +48,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IAllVotesType |
 		variables
 	});
 
-	const totalCount = totalVotes['data'].flattenedConvictionVotesConnection?.totalCount || 0;
-	const voteData: IProfileVoteHistoryRespose[] = totalVotes['data'].flattenedConvictionVotes?.map((vote: any) => {
-		const { createdAt, index: id, proposer, statusHistory, type, trackNumber } = vote.proposal;
-
-		let status = vote?.proposal?.status;
-
-		const isSwap: boolean = getIsSwapStatus(statusHistory);
-
-		if (isSwap && status === 'DecisionDepositPlaced') {
-			status = 'Deciding';
-		}
+	const totalCount = totalVotes['data']?.flattenedConvictionVotesConnection?.totalCount || 0;
+	const voteData: IProfileVoteHistoryRespose[] = totalVotes['data']?.flattenedConvictionVotes?.map((vote: any) => {
 		return {
 			balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 			createdAt: vote?.createdAt,
 			decision: vote?.decision || null,
 			delegatedTo: vote?.delegatedTo || '',
-			delegatedVotingPower: !vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : 0,
+			delegatedVotingPower: vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : '0',
 			extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 			isDelegatedVote: vote?.isDelegated,
 			lockPeriod: Number(vote?.lockPeriod) || 0.1,
-			proposal: {
-				createdAt,
-				description: '',
-				id,
-				proposer,
-				status,
-				statusHistory,
-				title: '',
-				trackNumber,
-				type
-			},
+			selfVotingPower: vote?.parentVote?.selfVotingPower || '0',
 			voter: vote?.voter
 		};
 	});

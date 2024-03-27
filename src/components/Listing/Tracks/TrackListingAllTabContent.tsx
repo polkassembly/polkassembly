@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import React, { FC } from 'react';
@@ -13,6 +12,7 @@ import FilteredTags from '~src/ui-components/filteredTags';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface ITrackListingAllTabContentProps {
 	className?: string;

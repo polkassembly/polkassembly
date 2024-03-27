@@ -182,8 +182,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			postId: reply.post_index || reply.post_index === 0 ? reply.post_index : postIndex,
 			postType: reply.post_type || postType,
 			replyId,
-			trackNumber: track_number,
-			userId: id
+			trackNumber: track_number
 		});
 
 		if (editReplyError || !data) {

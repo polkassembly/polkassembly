@@ -26,7 +26,6 @@ interface Props {
 	theme?: string;
 	withBalance?: boolean;
 	address?: string;
-	onBalanceChange?: (balance: string) => void;
 	isBalanceUpdated?: boolean;
 	inputClassName?: string;
 	setShowWalletModal?: (pre: boolean) => void;
@@ -41,7 +40,6 @@ interface Props {
 
 const ProxyAccountSelectionForm = ({
 	isBalanceUpdated,
-	onBalanceChange,
 	withBalance,
 	address,
 	proxyAddresses,
@@ -114,7 +112,6 @@ const ProxyAccountSelectionForm = ({
 					{address && withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
-							onChange={onBalanceChange}
 							isBalanceUpdated={isBalanceUpdated}
 						/>
 					)}
@@ -146,7 +143,7 @@ const ProxyAccountSelectionForm = ({
 							disableHeader
 						/>
 						<div
-							className='mr-[154px] flex h-[18px] items-center justify-center gap-x-1 rounded-[10px] px-3'
+							className='mr-[154px] flex h-[18px] items-center justify-center gap-x-1 whitespace-nowrap rounded-[10px] px-3'
 							style={{ background: 'rgba(64, 123, 255, 0.06)' }}
 						>
 							<NetworkIcon />
@@ -201,10 +198,10 @@ const ProxyAccountSelectionForm = ({
 
 export default styled(ProxyAccountSelectionForm)`
 	.ant-dropdown-trigger {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+		border: ${(props: any) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 	}
 	.ant-modal-content {
-		border: ${(props) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
+		border: ${(props: any) => (props.theme == 'dark' ? '1px solid #4B4B4B' : '1px solid #d2d8e0')} !important;
 		padding: 0 !important;
 		padding-bottom: 8px !important;
 	}

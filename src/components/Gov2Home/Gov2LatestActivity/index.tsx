@@ -21,8 +21,8 @@ import { Tabs } from '~src/ui-components/Tabs';
 
 const Container = styled.div`
 	th {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -30,12 +30,12 @@ const Container = styled.div`
 	}
 
 	.ant-table-wrapper .ant-table-container::after {
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : 'white')} !important;
 	}
 
 	th.ant-table-cell {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -43,8 +43,8 @@ const Container = styled.div`
 	}
 
 	.ant-table-thead > tr > th {
-		color: ${(props) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? '#909090' : '#485F7D')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '#fafafa')} !important;
 		font-weight: 500 !important;
 		font-size: 14px !important;
 		line-height: 21px !important;
@@ -52,19 +52,19 @@ const Container = styled.div`
 	}
 
 	.ant-table-row {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 	}
 
 	.ant-table-row:hover > td {
-		background-color: ${(props) => (props.theme == 'dark' ? '#595959' : '')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#595959' : '')} !important;
 	}
 
 	tr {
-		color: ${(props) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
-		background-color: ${(props) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
+		color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#0D0D0D' : '')} !important;
 		font-size: 14px !important;
 		font-weight: 400 !important;
 		cursor: pointer !important;
@@ -72,17 +72,17 @@ const Container = styled.div`
 	}
 	.ant-table-wrapper .ant-table-tbody > tr > th,
 	.ant-table-wrapper .ant-table-tbody > tr > td {
-		border-bottom: ${(props) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
-		background: ${(props) => (props.theme == 'dark' ? '#0d0d0d' : '#ffffff')} !important;
+		border-bottom: ${(props: any) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#0d0d0d' : '#ffffff')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th,
 	.ant-table-wrapper .ant-table-thead > tr > td {
-		border-bottom: ${(props) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
-		background: ${(props) => (props.theme == 'dark' ? '#1C1D1F' : '#fafafa')} !important;
+		border-bottom: ${(props: any) => (props.theme == 'dark' ? '1px solid #323232' : '1px solid #E1E6EB')} !important;
+		background: ${(props: any) => (props.theme == 'dark' ? '#1C1D1F' : '#fafafa')} !important;
 	}
 	.ant-table-wrapper .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before,
 	.ant-table-wrapper .ant-table-thead > tr > td:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
-		background-color: ${(props) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? 'transparent' : 'white')} !important;
 	}
 `;
 const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any; theme?: string }) => {
@@ -152,7 +152,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 	return (
 		<Container
 			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
-			theme={theme}
+			theme={theme as any}
 		>
 			<div className='flex items-center justify-between pl-1 pr-4'>
 				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>

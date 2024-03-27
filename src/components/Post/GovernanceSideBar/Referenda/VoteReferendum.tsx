@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Checkbox, Form, Modal, Segmented, Select, Spin } from 'antd';
+import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -47,8 +47,7 @@ import VotingForm, { EFormType } from './VotingFrom';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import ImageIcon from '~src/ui-components/ImageIcon';
-
+import Image from 'next/image';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -57,6 +56,7 @@ import Address from '~src/ui-components/Address';
 import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
+import SelectOption from '~src/basic-components/Select/SelectOption';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -84,38 +84,38 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 			const days = blockToDays(num, network);
 			if (days && !isNaN(Number(days))) {
 				return [
-					<Select.Option
-						className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+					<SelectOption
+						className={`text-bodyBlue  ${poppins.variable}`}
 						key={0}
 						value={0}
 					>
 						{'0.1x voting balance, no lockup period'}
-					</Select.Option>,
+					</SelectOption>,
 					...CONVICTIONS.map(([value, lock]) => (
-						<Select.Option
-							className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+						<SelectOption
+							className={`text-bodyBlue ${poppins.variable}`}
 							key={value}
 							value={value}
-						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</Select.Option>
+						>{`${value}x voting balance, locked for ${lock}x duration (${Number(lock) * Number(days)} days)`}</SelectOption>
 					))
 				];
 			}
 		}
 	}
 	return [
-		<Select.Option
-			className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+		<SelectOption
+			className={`text-bodyBlue ${poppins.variable}`}
 			key={0}
 			value={0}
 		>
 			{'0.1x voting balance, no lockup period'}
-		</Select.Option>,
+		</SelectOption>,
 		...CONVICTIONS.map(([value, lock]) => (
-			<Select.Option
-				className={`text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high ${poppins.variable}`}
+			<SelectOption
+				className={`text-bodyBlue ${poppins.variable}`}
 				key={value}
 				value={value}
-			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</Select.Option>
+			>{`${value}x voting balance, locked for ${lock} enactment period(s)`}</SelectOption>
 		))
 	];
 };
@@ -166,6 +166,10 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
+			if (!showProxyDropdown) {
+				setSelectedProxyAddress('');
+				return;
+			}
 			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
@@ -529,7 +533,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			});
 		};
 		if (!voteTx) return;
-
 		await executeTx({
 			address,
 			api,
@@ -881,7 +884,9 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={() => setShowProxyDropdown(!showProxyDropdown)}
+											onChange={(value) => {
+												setShowProxyDropdown(value?.target?.checked);
+											}}
 										>
 											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
 										</Checkbox>
@@ -893,7 +898,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										theme={theme}
 										address={address}
 										withBalance
-										onBalanceChange={handleOnBalanceChange}
 										className={`${poppins.variable} ${poppins.className} rounded-[4px] px-3 py-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium`}
 										inputClassName='rounded-[4px] px-3 py-1'
 										wallet={wallet}
@@ -1049,14 +1053,18 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					abstainVoteValue={voteValues.abstainVoteValue}
 					icon={
 						multisig ? (
-							<ImageIcon
+							<Image
 								src='/assets/multi-vote-initiated.svg'
 								alt='multi vote initiated icon'
+								width={220}
+								height={220}
 							/>
 						) : (
-							<ImageIcon
+							<Image
 								src='/assets/delegation-tracks/success-delegate.svg'
 								alt='success delegate icon'
+								width={220}
+								height={220}
 							/>
 						)
 					}

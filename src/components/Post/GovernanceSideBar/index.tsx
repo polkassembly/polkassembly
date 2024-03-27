@@ -75,6 +75,7 @@ import { useDispatch } from 'react-redux';
 import PredictionCard from '~src/ui-components/PredictionCard';
 // import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
+import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;
@@ -134,7 +135,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet } = useUserDetailsSelector();
+	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses } = useUserDetailsSelector();
 	const {
 		postData: { created_at, track_number, statusHistory, postIndex, postType }
 	} = usePostDataContext();
@@ -948,6 +949,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 					id='gov-side-bar'
 				>
 					<Form>
+						{loginAddress?.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && proposalType === ProposalType.OPEN_GOV && (
+							<VoteUnlock
+								addresses={addresses?.length ? addresses : [loginAddress]}
+								isReferendaPage
+								referendumIndex={postIndex as number}
+								className='mb-6'
+							/>
+						)}
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}
@@ -1052,14 +1061,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 													<div className='overflow-y-hidden'>
 														<VoteReferendum
 															address={address}
-															lastVote={lastVote}
+															lastVote={lastVote as any}
 															setLastVote={setLastVote}
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
-															track_number={trackNumber}
+															track_number={trackNumber as any}
 														/>
-
 														{RenderLastVote}
 													</div>
 												)}
@@ -1115,12 +1123,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 														) : (
 															<VoteReferendum
 																address={address}
-																lastVote={lastVote}
+																lastVote={lastVote as any}
 																setLastVote={setLastVote}
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
-																track_number={trackNumber}
+																track_number={trackNumber as any}
 															/>
 														)}
 														{RenderLastVote}

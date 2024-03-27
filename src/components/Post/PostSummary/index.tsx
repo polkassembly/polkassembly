@@ -22,7 +22,7 @@ const sanitizeSummary = (md: string) => {
 	return newMd;
 };
 
-const PostSummary: FC<IPostSummaryProps> = (props) => {
+const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { className, theme } = props;
 	const {
@@ -113,15 +113,15 @@ export default styled(PostSummary)`
 	}
 	.md > p {
 		margin: 0 !important;
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
 		font-weight: 400 !important;
 	}
 	.md > ul {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
 		font-weight: 400 !important;
 	}
 	.md > ul > li {
-		color: ${(props) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#243A57')} !important;
 		font-weight: 400 !important;
 	}
 	.ai-btn-border {

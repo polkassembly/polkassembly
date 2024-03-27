@@ -122,12 +122,12 @@ const Grants: FC<IGrantsProps> = (props) => {
 				network={network}
 			/>
 			<div className='flex w-full flex-col sm:flex-row sm:items-center'>
-				<h1 className='dashboard-heading dark:text-blue-dark-hight mb-4 flex-1 sm:mb-0'>Grants Discussion</h1>
+				<h1 className='dashboard-heading mb-4 flex-1 dark:text-white sm:mb-0'>Grants Discussion</h1>
 				<CustomButton
 					text='New Grant post'
 					onClick={handleClick}
-					height={59}
-					width={174}
+					height={44}
+					width={194}
 					variant='primary'
 					fontSize='lg'
 				/>
@@ -135,7 +135,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 
 			{/* Intro and Create Post Button */}
 			<div className='mt-8 flex flex-col md:flex-row'>
-				<p className='dark:text-blue-dark-hight mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay md:p-8 md:text-base'>
+				<p className='dark:text-blue-dark-hight mb-4 w-full rounded-md bg-white p-4 text-sm font-medium text-sidebarBlue shadow-md dark:bg-section-dark-overlay dark:text-white md:p-8 md:text-base'>
 					This is the place to discuss grants for {network}. Anyone can start a new grants discussion.{' '}
 					<a
 						className='text-pink_primary'

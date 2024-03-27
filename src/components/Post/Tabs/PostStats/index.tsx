@@ -2,13 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { FC, useContext, useEffect, useCallback, useState } from 'react';
+import React, { FC, useEffect, useCallback, useState } from 'react';
 import BN from 'bn.js';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { ApiContext } from 'src/context/ApiContext';
-import { usePostDataContext } from '~src/context';
+import { useApiContext, usePostDataContext } from '~src/context';
+import { useFetch } from 'src/hooks';
+import { chainProperties } from '~src/global/networkConstants';
+import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { IVotesCount, LoadingStatusType } from 'src/types';
+import { IVotesCount, LoadingStatusType, VoteInfo } from 'src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ApiPromise } from '@polkadot/api';
 import { getVotingTypeFromProposalType } from '~src/global/proposalType';
@@ -17,19 +19,23 @@ import { StatTabs } from './Tabs/StatTabs';
 import ConvictionVotes from './Tabs/ConvictionVotes';
 import VoteAmount from './Tabs/VoteAmount';
 import Accounts from './Tabs/Accounts';
+import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface IPostStatsProps {
 	postId: string;
 	postType: ProposalType;
 	tally?: any;
+	proposalId?: number;
 	statusHistory?: any;
+	proposalCreatedAt: string;
 }
 
 const ZERO = new BN(0);
 
-const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally }: IPostStatsProps) => {
+const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHistory, tally, proposalCreatedAt }: IPostStatsProps) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useContext(ApiContext);
+	const { api, apiReady } = useApiContext();
 
 	const isReferendum2 = postType === ProposalType.REFERENDUM_V2;
 	const {
@@ -40,15 +46,20 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		ayes: ZERO,
 		nays: ZERO
 	});
+	const [noVotes, setNoVotes] = useState<boolean>(false);
+
+	const elapsedTime = Math.floor((new Date().getTime() - new Date(proposalCreatedAt).getTime()) / (1000 * 60 * 60 * 24));
+	const resolvedElapsedTime = elapsedTime > 28 ? 28 : elapsedTime;
 
 	const [totalVotesCount, setTotalVotesCount] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: true, message: 'Loading votes' });
 	const [activeIssuance, setActiveIssuance] = useState<any>(0);
-	const [totalIssuance, setTotalIssuance] = useState<any>(0);
+	const [support, setSupport] = useState<BN | undefined>(ZERO);
 	const voteType = getVotingTypeFromProposalType(postType);
 	const [allVotes, setAllVotes] = useState<IAllVotesType>();
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
+	const [turnout, setTurnout] = useState<BN | null>(null);
 
 	const handleAyeNayCount = async () => {
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -68,8 +79,17 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		}
 	};
 
-	const getReferendumV2VoteInfo = useCallback(async () => {
+	const { data: voteInfoData, error: voteInfoError } = useFetch<any>(`${chainProperties[network]?.externalLinks}/api/scan/democracy/referendum`, {
+		body: JSON.stringify({
+			referendum_index: proposalId
+		}),
+		headers: subscanApiHeaders,
+		method: 'POST'
+	});
+
+	const getVoteInfo = useCallback(async () => {
 		if (!api || !apiReady || !network) return;
+
 		let newAPI: ApiPromise = api;
 		const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
 
@@ -90,7 +110,6 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				const totalIssuance = await api.query.balances.totalIssuance();
 				const inactiveIssuance = await api.query.balances.inactiveIssuance();
 				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
-				setTotalIssuance(totalIssuance);
 			}
 		})();
 
@@ -120,7 +139,63 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				nays: new BN(tally?.nays || 0, 'hex')
 			});
 		}
-	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally?.abstain, tally?.ayes, tally?.nays]);
+	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally]);
+
+	useEffect(() => {
+		if (!['cere', 'equilibrium', 'amplitude', 'pendulum', 'polimec'].includes(network)) return;
+
+		(async () => {
+			const { data, error } = await nextApiClientFetch<{
+				data: VoteInfo;
+				totalCount: Number;
+			}>('/api/v1/votes/getTotalVotesForOtherNetworks', {
+				postId: postId
+			});
+
+			if (data) {
+				if (data && data?.data && data?.data && Array.isArray(data?.data)) {
+					const voteInfo: VoteInfo = {
+						aye_amount: ZERO,
+						aye_without_conviction: ZERO,
+						isPassing: null,
+						nay_amount: ZERO,
+						nay_without_conviction: ZERO,
+						turnout: ZERO,
+						voteThreshold: ''
+					};
+
+					data?.data?.forEach((vote: any) => {
+						if (vote) {
+							const { balance, lockPeriod, decision } = vote;
+							if (decision === 'yes') {
+								voteInfo.aye_without_conviction = voteInfo.aye_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.aye_amount = voteInfo.aye_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							} else {
+								voteInfo.nay_without_conviction = voteInfo.nay_without_conviction.add(new BN(balance.value));
+								if (lockPeriod === 0) {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).div(new BN(10)));
+								} else {
+									voteInfo.nay_amount = voteInfo.nay_amount.add(new BN(balance.value).mul(new BN(lockPeriod)));
+								}
+							}
+						}
+					});
+					setTurnout(voteInfo.aye_without_conviction.add(voteInfo.nay_without_conviction));
+					setTallyData({
+						abstain: ZERO,
+						ayes: voteInfo.aye_amount,
+						nays: voteInfo.nay_amount
+					});
+				}
+			} else if (error) {
+				console.log(error);
+			}
+		})();
+	}, [network, postId]);
 
 	useEffect(() => {
 		setLoadingStatus({
@@ -129,7 +204,10 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		});
 
 		(async () => {
-			await nextApiClientFetch<IAllVotesType>(`api/v1/votes/total?postId=${postId}&voteType=${voteType}`)
+			await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
+				postId: postId,
+				voteType: voteType
+			})
 				.then((res) => {
 					if (res.error) {
 						console.log(res.error);
@@ -139,7 +217,21 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 						});
 					} else {
 						const votesRes = res.data;
+						if (votesRes?.totalCount === 0) {
+							setNoVotes(true);
+						}
 						setAllVotes(votesRes);
+
+						const support = votesRes?.data.reduce((acc, vote) => {
+							if (!acc) acc = ZERO;
+
+							if (vote.decision === 'yes' || vote.decision !== 'no') {
+								acc = acc.add(new BN(vote.balance));
+							}
+							return acc;
+						}, new BN(0));
+
+						setSupport(support);
 
 						setLoadingStatus({
 							isLoading: false,
@@ -156,24 +248,39 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 				});
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [getReferendumV2VoteInfo, postId, voteType]);
+	}, [postId, voteType]);
 
 	useEffect(() => {
 		handleAyeNayCount();
 		(async () => {
-			await getReferendumV2VoteInfo();
+			await getVoteInfo();
 		})();
+
+		if (!voteInfoError && voteInfoData && voteInfoData.data && voteInfoData.data.info) {
+			const info = voteInfoData.data.info;
+
+			if (!tally) {
+				setTallyData({
+					abstain: new BN(info.abstain_amount),
+					ayes: new BN(info.aye_amount),
+					nays: new BN(info.nay_amount)
+				});
+			}
+			postType === ProposalType.REFERENDUMS && setTurnout(new BN(info.turnout));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
+	}, [postIndex, voteInfoData, voteInfoError, getVoteInfo, apiReady]);
 
 	const tabItems: any[] = [
 		{
 			children: (
 				<ConvictionVotes
-					totalIssuance={totalIssuance}
+					support={support || ZERO}
 					activeIssuance={activeIssuance}
 					tallyData={tallyData}
 					allVotes={allVotes}
+					turnout={turnout ? new BN(turnout) : null}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
 			key: 'conviction-votes',
@@ -182,9 +289,11 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		{
 			children: (
 				<VoteAmount
-					totalIssuance={totalIssuance}
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
+					support={support || ZERO}
+					turnout={turnout ? new BN(turnout) : null}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
 			key: 'vote-amount',
@@ -193,30 +302,41 @@ const PostStats: FC<IPostStatsProps> = ({ postId, postType, statusHistory, tally
 		{
 			children: (
 				<Accounts
-					totalIssuance={totalIssuance}
+					support={support || ZERO}
+					turnout={turnout ? new BN(turnout) : null}
 					activeIssuance={activeIssuance}
 					allVotes={allVotes}
 					totalVotesCount={totalVotesCount}
+					elapsedPeriod={resolvedElapsedTime}
 				/>
 			),
-			key: 'account',
-			label: 'Account'
+			key: 'accounts',
+			label: 'Accounts'
 		}
 	];
 
-	return (
-		<>
-			<StatTabs
-				items={tabItems}
-				setActiveTab={setActiveTab}
-				activeTab={activeTab}
-			/>
-			{tabItems.map((item) => {
-				if (item.key === activeTab) {
-					return item.children;
-				}
-			})}
-		</>
+	return activeIssuance ? (
+		noVotes ? (
+			<div className='flex flex-col items-center justify-center gap-5 p-10'>
+				<NoVotesIcon />
+				<p className='text-sm'>No votes have been casted yet</p>
+			</div>
+		) : (
+			<>
+				<StatTabs
+					items={tabItems}
+					setActiveTab={setActiveTab}
+					activeTab={activeTab}
+				/>
+				{tabItems.map((item) => {
+					if (item.key === activeTab) {
+						return item.children;
+					}
+				})}
+			</>
+		)
+	) : (
+		<Skeleton active />
 	);
 };
 

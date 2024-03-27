@@ -11,6 +11,7 @@ import { ResponsivePie } from '@nivo/pie';
 import { Card } from 'antd';
 import TotalVotesIcon from '~assets/icons/analytics/total-votes.svg';
 import TotalVotesIconDark from '~assets/icons/analytics/total-votes-dark.svg';
+import styled from 'styled-components';
 
 interface ITotalVotesProps {
 	ayeValue?: number;
@@ -51,6 +52,7 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 			value: abstainValue
 		}
 	];
+
 	return (
 		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='flex items-center gap-1 text-base font-semibold'>{theme === 'dark' ? <TotalVotesIconDark /> : <TotalVotesIcon />} Total Votes Casted</h2>
@@ -123,4 +125,20 @@ const TotalVotesCard: FC<ITotalVotesProps> = ({ ayeValue, className, nayValue, a
 	);
 };
 
-export default TotalVotesCard;
+export default styled(TotalVotesCard)`
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+`;

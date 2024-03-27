@@ -238,7 +238,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length) return;
 
 		let promiseArr: any[] = [];
-		for (const address of [...beneficiaries.map((addr) => addr)]) {
+		for (const address of [...beneficiaries.map((addr) => (addr as any)?.value || addr)]) {
 			if (!address) continue;
 			promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
 		}
@@ -509,7 +509,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							selectedTrack={selectedTrack}
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
-							isDiscussionLinked={isDiscussionLinked}
+							isDiscussionLinked={isDiscussionLinked as boolean}
 						/>
 					)}
 				</div>
@@ -583,7 +583,7 @@ export default styled(OpenGovTreasuryProposal)`
 	}
 	.opengov-proposals .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
 	.opengov-proposals .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: ${(props) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
 	}
 	input::placeholder {
 		color: #7c899b;
@@ -593,6 +593,6 @@ export default styled(OpenGovTreasuryProposal)`
 		letter-spacing: 0.0025em !important;
 	}
 	.ant-steps .ant-steps-item-wait .ant-steps-item-icon {
-		background-color: ${(props) => (props.theme === 'dark' ? '#dde4ed' : 'rgba(0, 0, 0, 0.06)')} !important;
+		background-color: ${(props: any) => (props.theme === 'dark' ? '#dde4ed' : 'rgba(0, 0, 0, 0.06)')} !important;
 	}
 `;

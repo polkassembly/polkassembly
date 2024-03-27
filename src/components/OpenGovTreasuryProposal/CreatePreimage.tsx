@@ -47,9 +47,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -188,11 +188,7 @@ const CreatePreimage = ({
 		latestBenefeciaries.forEach((beneficiary) => {
 			if (beneficiary.address && beneficiary.amount && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network)) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
-				}
+				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -413,11 +409,7 @@ const CreatePreimage = ({
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-				if ([AllNetworks.ROCOCO, AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network)) {
-					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-				} else {
-					txArr.push(api?.tx?.treasury?.spend(balance.toString(), beneficiary.address));
-				}
+				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
@@ -479,10 +471,11 @@ const CreatePreimage = ({
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
+
 		await form.validateFields();
 		if (isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 
-		if (!isPreimage ? preimageCreated : preimageLinked) {
+		if (preimageCreated || preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		} else {
 			if (!isPreimage) {
@@ -530,16 +523,19 @@ const CreatePreimage = ({
 				const params = proposal?.meta ? proposal?.meta.args.filter(({ type }): boolean => type.toString() !== 'Origin').map(({ name }) => name.toString()) : [];
 
 				const values = proposal?.args;
-				const preImageArguments =
+				const preImageArguments = convertAnyHexToASCII(
 					proposal?.args &&
-					params &&
-					params.map((name, index) => {
-						return {
-							name,
-							value: values?.[index]?.toString()
-						};
-					});
-				if (preImageArguments && proposal.section === 'treasury' && proposal?.method === 'spend') {
+						params &&
+						params.map((name, index) => {
+							return {
+								name,
+								value: values?.[index]?.toString()
+							};
+						}),
+					network
+				);
+
+				if (preImageArguments && proposal.section === 'treasury' && ['spend', 'spend_local'].includes(proposal?.method)) {
 					const balance = new BN(preImageArguments[0].value || '0') || ZERO_BN;
 
 					const newBeneficiaryAddress = {
@@ -594,7 +590,7 @@ const CreatePreimage = ({
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 
 		if (data && !data?.message) {
-			if (data.section === 'Treasury' && data.method === 'spend' && data.hash === preimageHash) {
+			if (data.section === 'Treasury' && ['spend', 'spend_local'].includes(data?.method) && data.hash === preimageHash) {
 				if (!data.proposedCall.args && !data?.proposedCall?.args?.beneficiary && !data?.proposedCall?.args?.amount) {
 					console.log('fetching data from polkadotjs');
 					getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
@@ -604,8 +600,10 @@ const CreatePreimage = ({
 
 					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
 
+					const args = convertAnyHexToASCII(data?.proposedCall?.args, network);
+
 					const newBeneficiaryAddress = {
-						address: data?.proposedCall?.args?.beneficiary,
+						address: args?.beneficiary,
 						amount: balance.toString()
 					};
 

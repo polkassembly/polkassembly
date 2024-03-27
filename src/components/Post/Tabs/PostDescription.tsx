@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { FormOutlined } from '@ant-design/icons';
-import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
@@ -23,6 +22,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (

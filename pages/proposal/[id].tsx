@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Skeleton } from 'antd';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
@@ -25,6 +24,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import { getSubdomain } from '~src/util/getSubdomain';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const Post = dynamic(() => import('src/components/Post/Post'), {
 	loading: () => <Skeleton active />,

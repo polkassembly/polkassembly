@@ -13,8 +13,8 @@ import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
 import { useApiContext } from '~src/context';
 import dynamic from 'next/dynamic';
-import { Skeleton } from 'antd';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Skeleton from '~src/basic-components/Skeleton';
 const Curves = dynamic(() => import('../Tracks/Curves'), {
 	loading: () => <Skeleton active />,
 	ssr: false

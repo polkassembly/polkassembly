@@ -78,17 +78,26 @@ export const Comment: FC<ICommentProps> = (props) => {
 			</div>
 		);
 
-	function removeQuoteCommentBackground(content: string) {
-		// Define a regex pattern to find disabled input elements
-		const pattern = /<input[^>]*?disabled[^>]*?>/g;
-		// Replace background color of disabled input elements with transparent
-		const modifiedContent = content.replace(pattern, (match) => {
-			return match.replace(/background:\s*[^;]+;/, '');
-		});
+	function modifyQuoteComment(content: string) {
+		// Regular expression to match disabled input tag and extract value
+		const inputRegex = /<input\s+(?:[^>]*\s+)?disabled(?:\s+[^>]*)?\s+value="([^"]+)"/;
+		const match = inputRegex.exec(content);
+		if (!match) return content; // Return original HTML if no match found
+
+		// Extract value
+		const value = match[1];
+
+		const modifiedContent = content.replace(
+			match[0],
+			`<div id="quote-box" style="border-left: 2px solid #E5007A; position: relative; border-radius: 5px;">
+		<p contenteditable="false" style="width: 90%; padding: 5px 10px;  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">${value}
+		</p>
+		</div><br><br>`
+		);
 		return modifiedContent;
 	}
 
-	const modifiedContent = removeQuoteCommentBackground(comment.content);
+	const modifiedContent = modifyQuoteComment(comment.content);
 
 	// TODO: author address
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

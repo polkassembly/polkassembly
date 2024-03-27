@@ -23,7 +23,6 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import { usePostDataContext } from '~src/context';
 import { getSubdomain } from '~src/util/getSubdomain';
 
 interface IDiscussionsProps {
@@ -104,8 +103,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 	const [openModal, setModalOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
-	const postData = usePostDataContext();
-	console.log(postData);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

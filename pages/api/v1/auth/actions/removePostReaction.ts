@@ -4,7 +4,6 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { activityDocRef, postsByTypeRef } from '~src/api-utils/firestore_refs';
@@ -14,6 +13,8 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -60,15 +61,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	if (!userReactionsSnapshot.empty) {
 		const reactionDocRef = userReactionsSnapshot.docs[0].ref;
+		const reactionData: any = (await reactionDocRef.get()).data();
 		await reactionDocRef
 			.delete()
-			.then(() => {
-				return res.status(200).json({ message: 'Reaction removed.' });
+			.then(async () => {
+				res.status(200).json({ message: 'Reaction removed.' });
 			})
 			.catch((error) => {
 				console.error('Error removing reaction: ', error);
 				return res.status(500).json({ message: 'Error removing reaction' });
 			});
+		try {
+			if (reactionData?.id) {
+				await createUserActivity({ action: EActivityAction.DELETE, network, reactionId: reactionData?.id, userId: userId });
+				return;
+			}
+		} catch (err) {
+			console.log(err);
+			return;
+		}
 	} else {
 		return res.status(400).json({ message: 'No reaction found' });
 	}

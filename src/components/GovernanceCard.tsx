@@ -43,6 +43,8 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
+import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
 import { formatedBalance } from '~src/util/formatedBalance';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
@@ -206,6 +208,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
+	const [disbursedAmount, setDisbursedAmount] = useState<any>('');
+	const [totalAmount, setTotalAmount] = useState<any>('');
 
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
@@ -254,6 +258,32 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const getChildBountyData = async () => {
+		const { data, error: fetchError } = await nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?listingLimit=${VOTES_LISTING_LIMIT}&postId=${parentBounty}`);
+		if (fetchError || !data) {
+			console.log('error fetching events : ', fetchError);
+		}
+
+		if (data) {
+			const allRewardsAsBN = data.child_bounties.map((bounty) => new BN(bounty.reward));
+			const totalReward = allRewardsAsBN.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
+			if (!totalReward.isZero()) {
+				setTotalAmount(totalReward);
+			}
+			const totalAwardedReward = data.child_bounties
+				.filter((bounty) => bounty.status === 'Claimed')
+				.map((bounty) => new BN(bounty.reward))
+				.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
+			setDisbursedAmount(totalAwardedReward);
+		}
+	};
+
+	useEffect(() => {
+		getChildBountyData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [parentBounty]);
 
 	useEffect(() => {
 		if (!window || trackNumber === null) return;
@@ -340,7 +370,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
 							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>
-									{formatedBalance(childBountyAmount.toString(), network)} {unit}
+									{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
 								</p>
 							)}
 						</div>
@@ -532,8 +562,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
 									<TrackListingChildBountyChart
-										childBountyAmount={childBountyAmount}
 										parentBounty={parentBounty}
+										disbursedAmount={disbursedAmount}
+										totalAmount={totalAmount}
 									/>
 								</>
 							)}
@@ -632,8 +663,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
 									<TrackListingChildBountyChart
-										childBountyAmount={childBountyAmount}
 										parentBounty={parentBounty}
+										disbursedAmount={disbursedAmount}
+										totalAmount={totalAmount}
 									/>
 								</div>
 							)}
@@ -699,7 +731,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<div className='flex items-center gap-x-2'>
 									{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
 										<p className='m-0 p-0 text-bodyBlue dark:text-white'>
-											{formatedBalance(childBountyAmount.toString(), network)} {unit}
+											{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
 										</p>
 									)}
 									<StatusTag

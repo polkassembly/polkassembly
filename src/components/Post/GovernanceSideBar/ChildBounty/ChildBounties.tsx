@@ -89,7 +89,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 			color: '#FF8E11',
 			id: 'requested',
 			label: 'Requested',
-			value: parseFloat(requestedAmount.replace(/,/g, ''))
+			value: parseFloat(requestedAmount.replace(/,/g, '') || 0)
 		}
 	];
 

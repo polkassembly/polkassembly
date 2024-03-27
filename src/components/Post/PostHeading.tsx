@@ -116,6 +116,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
+	useEffect(() => {
+		setRequestedAmount(formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [requestedAmt]);
+
 	const handleTagClick = (pathname: string, filterBy: string) => {
 		if (pathname)
 			router.replace({
@@ -145,7 +150,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			const proposer = await getProposerFromPolkadot(identityId);
 			setPolkadotProposer(proposer as string);
 		})();
-		setRequestedAmount(formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 

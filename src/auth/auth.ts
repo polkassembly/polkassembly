@@ -121,6 +121,7 @@ class AuthService {
 			id: newUserId,
 			password: password,
 			profile: PROFILE_DETAILS_DEFAULTS,
+			profile_score: 0,
 			salt: salt,
 			username: username,
 			web3_signup: web3signup

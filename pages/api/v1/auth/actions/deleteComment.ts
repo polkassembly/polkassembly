@@ -77,7 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			return res.status(500).json({ message: 'Error deleting comment' });
 		});
 	try {
-		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
+		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, postId, type: EUserActivityType.COMMENTED, userId: userId });
 		return;
 	} catch (err) {
 		console.log(err);

@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
 import { useTheme } from 'next-themes';
-import LeaderBoardTable from './LeaderBoardTable';
+// import LeaderBoardTable from './LeaderBoardTable';
 import { GetServerSideProps } from 'next';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
@@ -13,8 +13,17 @@ import { useRouter } from 'next/router';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import RankCard from './RankCard';
 import styled from 'styled-components';
+import Skeleton from '~src/basic-components/Skeleton';
+import dynamic from 'next/dynamic';
+const LeaderBoardTable = dynamic(() => import('./LeaderBoardTable'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const RankCard = dynamic(() => import('./RankCard'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 interface Props {
 	className?: string;

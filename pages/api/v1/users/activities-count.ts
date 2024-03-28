@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const getUserActivitiesCount = async ({ userId, network }: Props) => {
-	if (userId === null || isNaN(userId) || typeof userId !== 'number') return { data: null, error: messages.INVALID_PARAMS };
+	if (userId === null || isNaN(Number(userId)) || typeof Number(userId) !== 'number') return { data: null, error: messages.INVALID_PARAMS };
 	try {
 		const totalActivitiesSnapshot = await firestore_db
 			.collection('user_activities')
@@ -30,6 +30,7 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 
 		const totalReactionsSnapshot = await firestore_db
 			.collection('user_activities')
+			.orderBy('created_at', 'desc')
 			.where('network', '==', network)
 			.where('type', '==', EUserActivityType.REACTED)
 			.where(Filter.or(Filter.where('comment_author_id', '==', userId), Filter.where('post_author_id', '==', userId), Filter.where('reply_author_id', '==', userId)))

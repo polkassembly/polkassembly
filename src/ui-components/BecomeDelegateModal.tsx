@@ -6,7 +6,7 @@ import { Alert, Button, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BecomeDelegateIdentiyButton from './BecomeDelegateIdentityButton';
@@ -14,8 +14,8 @@ import Address from './Address';
 import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
-import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Modal from '~src/basic-components/Modal/Modal';
+import ContentForm from '~src/components/ContentForm';
 
 interface IDetailsState {
 	userId: number | null;
@@ -117,18 +117,11 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							{isEditMode ? 'Edit Delegation Mandate' : 'Your Delegation Mandate'}
 							<span className='font-semibold text-[#FF3C5F]'>*</span>
 						</label>
-						<InputTextarea
-							name='bio'
-							className='min-h-[100px] border px-3 py-2 text-sm font-normal text-lightBlue dark:border-[#4b4b4b] dark:bg-[#0d0d0d] dark:text-blue-dark-high'
-							placeholder='Add message for delegate address'
+						<ContentForm
 							value={newBio}
-							onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-								setNewBio(e.target.value);
-							}}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' && !e.shiftKey) {
-									e.stopPropagation(); // Prevent form submission but allow newline insertion
-								}
+							height={250}
+							onChange={(content: string) => {
+								setNewBio(content);
 							}}
 						/>
 					</div>

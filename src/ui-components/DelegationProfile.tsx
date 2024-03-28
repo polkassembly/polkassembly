@@ -16,6 +16,7 @@ import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import Markdown from './Markdown';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -119,7 +120,14 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							</div>
 						)}
 
-						{userBio || bio ? <h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>{userBio || bio}</h2> : null}
+						{userBio || bio ? (
+							<h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>
+								<Markdown
+									md={userBio || bio}
+									className={'max-h-32 overflow-y-auto'}
+								/>
+							</h2>
+						) : null}
 						{identity && social_links && (
 							<SocialsHandle
 								className='mt-3 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'

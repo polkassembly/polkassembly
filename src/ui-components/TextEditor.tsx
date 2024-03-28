@@ -236,8 +236,46 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 							<Editor
 								key={theme}
 								onPaste={(e) => {
+									const files = e.clipboardData?.files;
 									e.stopPropagation();
 									e.preventDefault();
+									if (files && files.length > 0 && (files as FileList).item(0)?.type?.includes('image')) {
+										const file = (files as FileList).item(0) as File;
+										const xhr = new XMLHttpRequest();
+										xhr.withCredentials = false;
+										xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
+
+										xhr.onload = () => {
+											if (xhr.status === 403) {
+												return;
+											}
+											if (xhr.status < 200 || xhr.status >= 300) {
+												return;
+											}
+
+											const json = JSON.parse(xhr.responseText);
+
+											if (!json || typeof json?.data?.display_url != 'string') {
+												return;
+											}
+
+											const url = json?.data?.display_url;
+											if (url) {
+												const imageContent = `<img src="${json?.data?.display_url}" alt="${file.name}">`;
+												const caretPosition = ref.current?.editor?.selection.getRng();
+												ref.current?.editor?.insertContent(imageContent, { format: 'html', caretPosition });
+											}
+										};
+										const formData = new FormData();
+										formData.append('image', file, `${file.name}`);
+										xhr.send(formData);
+									} else {
+										const content = e.clipboardData?.getData('text/plain') || '';
+										const caretPosition = ref.current?.editor?.selection.getRng();
+										const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
+										const parsed_content = converter.makeHtml(sanitisedContent);
+										ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
+									}
 									let content = e.clipboardData?.getData('text/html') || '';
 									const caretPosition = ref.current?.editor?.selection.getRng();
 									content = content.replace(/color\s*:\s*[^;{}]+[;}]/gi, '').replace(/background-color\s*:\s*[^;{}]+[;}]/gi, '');
@@ -328,7 +366,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 										'media',
 										'table',
 										'textpattern',
-										'emoticons'
+										'emoticons',
+										'paste'
 									],
 									setup: (editor) => {
 										editor.on('init', () => {

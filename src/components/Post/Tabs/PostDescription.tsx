@@ -23,7 +23,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import EditIcon from '~assets/icons/reactions/EditIcon.svg';
 import EditIconDark from '~assets/icons/reactions/EditIconDark.svg';
 import ThreeDots from '~assets/icons/reactions/ThreeDots.svg';
-import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsDark.svg';
+import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { MenuProps } from 'antd';
 

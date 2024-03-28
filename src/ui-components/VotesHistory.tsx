@@ -69,7 +69,7 @@ const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || 
 const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVotes }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { resolvedTheme: theme } = useTheme();
+
 	const { addresses } = userProfile;
 	const { network } = useNetworkSelector();
 	const headings = [EHeading.PROPOSAL, EHeading.VOTE, EHeading.STATUS, EHeading.ACTIONS];

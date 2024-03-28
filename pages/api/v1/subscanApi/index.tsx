@@ -74,9 +74,9 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 	const data = await getSubscanData(url, network, body, method);
 
 	if (data.message === 'Success') {
-		res.status(200).json(data.data);
+		res.status(200).json({ data });
 	} else {
-		res.status(400).json(data.message);
+		res.status(400).json({ error: data.message });
 	}
 };
 

@@ -7,7 +7,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
-import { ISocial, MessageType, TokenType } from '~src/auth/types';
+import { ISocial, MessageType, TokenType, User } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import isValidEmail from '~src/auth/utils/isValidEmail';
 import isValidPassowrd from '~src/auth/utils/isValidPassowrd';
@@ -15,6 +15,8 @@ import messages from '~src/auth/utils/messages';
 import nameBlacklist from '~src/auth/utils/nameBlacklist';
 import firebaseAdmin from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import changeProfileScore from '../../utils/changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -90,16 +92,52 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		updatedToken = await authServiceInstance.getSignedToken({ ...user, custom_username, profile, username });
 	}
 
-	await userRef
-		.update({ custom_username, profile, username })
-		.then(() => {
-			return res.status(200).json({ token: updatedToken });
-		})
-		.catch((error) => {
-			// The document probably doesn't exist.
-			console.error('Error updating document: ', error);
-			return res.status(500).json({ message: 'Error updating profile' });
-		});
+	await userRef.update({ custom_username, profile, username }).catch((error) => {
+		// The document probably doesn't exist.
+		console.error('Error updating document: ', error);
+		return res.status(500).json({ message: 'Error updating profile' });
+	});
+
+	res.status(200).json({ token: updatedToken });
+
+	try {
+		// get user profile
+		const { profile: existingProfile = null } = (await firestore.collection('users').doc(String(user.id)).get()).data() as User;
+
+		let totalScore = 0;
+
+		// check if profile picture exists
+		if (profile?.image && !existingProfile?.image) {
+			totalScore += REPUTATION_SCORES.add_profile_picture.value;
+		} else if (!profile?.image && existingProfile?.image) {
+			totalScore -= REPUTATION_SCORES.add_profile_picture.value;
+		}
+
+		//bio
+		if (profile?.bio && !existingProfile?.bio) {
+			totalScore += REPUTATION_SCORES.add_bio.value;
+		} else if (!profile?.bio && existingProfile?.bio) {
+			totalScore -= REPUTATION_SCORES.add_bio.value;
+		}
+
+		//title
+		if (profile?.title && !existingProfile?.title) {
+			totalScore += REPUTATION_SCORES.add_profile_title.value;
+		} else if (!profile?.title && existingProfile?.title) {
+			totalScore -= REPUTATION_SCORES.add_profile_title.value;
+		}
+
+		//tags
+		if (profile?.badges?.length && !existingProfile?.badges?.length) {
+			totalScore += REPUTATION_SCORES.add_profile_tags.value;
+		} else if (!profile?.badges?.length && existingProfile?.badges?.length) {
+			totalScore -= REPUTATION_SCORES.add_profile_tags.value;
+		}
+
+		await changeProfileScore(user.id, totalScore);
+	} catch (error) {
+		console.error('Error updating user reputation: ', error);
+	}
 }
 
 export default withErrorHandling(handler);

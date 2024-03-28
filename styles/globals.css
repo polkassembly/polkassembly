@@ -845,6 +845,13 @@ z-index: 105 !important;
   transform: scale(0.7);
 }
 
+.place-container {
+  transform: scale(0.95);
+}
+
+.divider-container {
+  border-top: 1px solid #D2D8E0 !important;
+}
 .proxyDropdown {
   border: 1px solid #d2d8e0 !important;
 }
@@ -857,4 +864,8 @@ z-index: 105 !important;
 
 .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
+}
+
+.ant-input {
+  background-color: transparent !important;
 }

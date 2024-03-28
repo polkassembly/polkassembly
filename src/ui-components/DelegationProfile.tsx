@@ -124,7 +124,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							<h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>
 								<Markdown
 									md={userBio || bio}
-									className={'h-32 overflow-y-auto'}
+									className={'max-h-32 overflow-y-auto'}
 								/>
 							</h2>
 						) : null}

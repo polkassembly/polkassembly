@@ -149,20 +149,22 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 								/>
 						  )}
 				</div>
-				{!!userReactions?.length && (
-					<Pagination
-						theme={theme}
-						defaultCurrent={1}
-						pageSize={LISTING_LIMIT}
-						total={count}
-						showSizeChanger={false}
-						hideOnSinglePage={true}
-						onChange={(page: number) => {
-							setPage(page);
-						}}
-						responsive={true}
-					/>
-				)}
+				<div className='flex items-center justify-center'>
+					{!!userReactions?.length && (
+						<Pagination
+							theme={theme}
+							defaultCurrent={1}
+							pageSize={LISTING_LIMIT}
+							total={count}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={(page: number) => {
+								setPage(page);
+							}}
+							responsive={true}
+						/>
+					)}
+				</div>
 			</div>
 		</Spin>
 	);

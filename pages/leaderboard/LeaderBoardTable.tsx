@@ -51,6 +51,7 @@ export default styled(LeaderBoardTable)`
 	}
 	.ant-input {
 		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+		color: ${(props: any) => (props.theme === 'dark' ? '#9e9e9e' : '#243a57')};
 	}
 	.ant-input-search .ant-input-search-button {
 		height: 42px !important;

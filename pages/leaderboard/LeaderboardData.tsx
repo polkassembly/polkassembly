@@ -172,7 +172,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			fixed: 'left',
 			key: 'auction',
 			render: (text, record) => (
-				<div className='flex items-center justify-start'>
+				<div className='flex cursor-pointer items-center justify-start'>
 					<div
 						onClick={() => {
 							getUserProfile(record.user);

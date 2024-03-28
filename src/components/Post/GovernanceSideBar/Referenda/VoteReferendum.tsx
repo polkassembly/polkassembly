@@ -4,7 +4,7 @@
 
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
-import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
@@ -57,6 +57,7 @@ import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import Checkbox from '~src/basic-components/Checkbox/Checkbox';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -884,7 +885,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={(value) => {
+											onChange={(value: any) => {
 												setShowProxyDropdown(value?.target?.checked);
 											}}
 										>
@@ -892,6 +893,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										</Checkbox>
 									</div>
 								)}
+
+								{/* remove this before merging */}
+								<Checkbox
+									value=''
+									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
+									onChange={(value: any) => {
+										setShowProxyDropdown(value?.target?.checked);
+									}}
+								>
+									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
+								</Checkbox>
+								{/* remove this before merging */}
+
 								{showProxyDropdown && (
 									<ProxyAccountSelectionForm
 										proxyAddresses={proxyAddresses}

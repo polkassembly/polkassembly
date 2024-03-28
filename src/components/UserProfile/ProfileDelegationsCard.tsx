@@ -317,8 +317,8 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							}}
 						>
 							<Markdown
-								className='post-content'
 								md={delegationMandate}
+								className={'max-h-32 overflow-y-auto'}
 								isPreview={true}
 							/>
 						</span>
@@ -337,7 +337,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 									<div className='flex h-full items-end justify-end'>
 										{!!Object.keys(item?.data || {})?.length && (
 											<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
-										)}{' '}
+										)}
 									</div>
 								);
 							}}

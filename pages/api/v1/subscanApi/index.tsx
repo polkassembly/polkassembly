@@ -30,7 +30,7 @@ export const getSubscanData = async (url: string, network: string, body?: any, m
 		const redisData = await getCache(redisKey);
 
 		if (redisData) {
-			return redisData.data;
+			return redisData;
 		}
 
 		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
@@ -45,7 +45,7 @@ export const getSubscanData = async (url: string, network: string, body?: any, m
 		).json();
 
 		if (data?.message === 'Success' && cacheEnabled) {
-			setCache(redisKey, data.data);
+			setCache(redisKey, data);
 		}
 
 		return data;
@@ -74,9 +74,9 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 	const data = await getSubscanData(url, network, body, method);
 
 	if (data.message === 'Success') {
-		res.status(200).json(data.data);
+		res.status(200).json({ data });
 	} else {
-		res.status(400).json(data.message);
+		res.status(400).json({ error: data.message });
 	}
 };
 

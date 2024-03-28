@@ -23,7 +23,7 @@ const LeaderBoardTable = ({ className }: Props) => {
 					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
 					<div className='search-box flex'>
 						<Input.Search
-							placeholder='enter username to search'
+							placeholder='E nter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 							onSearch={(value) => {
 								setSearchedUsername?.(value);

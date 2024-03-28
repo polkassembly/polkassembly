@@ -201,7 +201,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					</div>
 				</div>
 			),
-			title: 'Action',
+			title: 'Actions',
 			width: 150
 		}
 	];

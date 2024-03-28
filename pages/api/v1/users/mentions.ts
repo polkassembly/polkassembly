@@ -47,6 +47,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
 	const activitiesSnapshot = await firestore_db
 		.collection('user_activities')
+		.orderBy('created_at', 'desc')
 		.where('network', '==', network)
 		.where('mentions', 'array-contains', userId)
 		.where('type', '==', EUserActivityType.MENTIONED)

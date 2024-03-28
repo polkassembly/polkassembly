@@ -7,7 +7,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { Checkbox, Divider, Form, InputNumber, Modal } from 'antd';
+import { Divider, Form, InputNumber, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from 'src/context';
@@ -30,6 +30,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Alert from '~src/basic-components/Alert';
+import Checkbox from '~src/basic-components/Checkbox/Checkbox';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	open?: boolean;
@@ -38,6 +40,7 @@ interface Props {
 
 const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const [form] = Form.useForm();
 	const currentUser = useUserDetailsSelector();
@@ -112,9 +115,10 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							>
 								<Checkbox
 									checked={isSelected(address)}
-									onChange={(e) => {
+									onChange={(e: any) => {
 										handleAddSignatories(e.target.checked, address);
 									}}
+									theme={theme}
 								/>
 								<AddressComponent
 									className='item'

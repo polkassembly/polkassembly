@@ -47,11 +47,11 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	if (isNaN(userId) || typeof userId !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
 	const activitiesSnapshot = await firestore_db
 		.collection('user_activities')
-		.orderBy('created_at', 'desc')
 		.where('network', '==', network)
 		.where('mentions', 'array-contains', userId)
 		.where('type', '==', EUserActivityType.MENTIONED)
 		.where('is_deleted', '==', false)
+		.orderBy('created_at', 'desc')
 		.limit(LISTING_LIMIT)
 		.offset((Number(page) - 1) * LISTING_LIMIT)
 		.get();
@@ -146,6 +146,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt) });
+	return res.status(200).json({ data: data });
 };
 export default withErrorHandling(handler);

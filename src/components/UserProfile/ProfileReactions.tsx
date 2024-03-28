@@ -85,6 +85,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileReactionsIcon className='text-2xl text-lightBlue dark:text-[#9e9e9e]' />
 						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Reactions</div>
+						<span className='text-sm font-normal'>({count})</span>
 					</div>
 				</div>
 				<div className='mt-2 flex flex-col pb-6'>

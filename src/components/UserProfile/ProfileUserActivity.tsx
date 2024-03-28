@@ -222,20 +222,22 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 								/>
 						  )}
 				</div>
-				{!!userActivities?.length && (
-					<Pagination
-						theme={theme}
-						defaultCurrent={1}
-						pageSize={LISTING_LIMIT}
-						total={totalCount}
-						showSizeChanger={false}
-						hideOnSinglePage={true}
-						onChange={(page: number) => {
-							setPage(page);
-						}}
-						responsive={true}
-					/>
-				)}
+				<div className='flex items-center justify-center'>
+					{!!userActivities?.length && (
+						<Pagination
+							theme={theme}
+							defaultCurrent={1}
+							pageSize={LISTING_LIMIT}
+							total={totalCount}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={(page: number) => {
+								setPage(page);
+							}}
+							responsive={true}
+						/>
+					)}
+				</div>
 			</div>
 		</Spin>
 	);

@@ -136,20 +136,23 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 								/>
 						  )}
 				</div>
-				{!!userMentions?.length && (
-					<Pagination
-						theme={theme}
-						defaultCurrent={1}
-						pageSize={LISTING_LIMIT}
-						total={count}
-						showSizeChanger={false}
-						hideOnSinglePage={true}
-						onChange={(page: number) => {
-							setPage(page);
-						}}
-						responsive={true}
-					/>
-				)}
+
+				<div className='flex items-center justify-center'>
+					{!!userMentions?.length && (
+						<Pagination
+							theme={theme}
+							defaultCurrent={1}
+							pageSize={LISTING_LIMIT}
+							total={count}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={(page: number) => {
+								setPage(page);
+							}}
+							responsive={true}
+						/>
+					)}
+				</div>
 			</div>
 		</Spin>
 	);

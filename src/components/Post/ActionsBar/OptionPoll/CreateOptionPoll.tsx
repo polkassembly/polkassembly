@@ -145,7 +145,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 		<section className={`${className}`}>
 			<CustomButton
 				variant='default'
-				className='m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
+				className='reaction-button m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
 				onClick={() => setShowModal(true)}
 			>
 				<AuditOutlined />

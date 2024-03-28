@@ -283,7 +283,8 @@ const DelegateModalEthV2 = ({ trackNum }: { trackNum: number }) => {
 				gasLimit
 			})
 			.then((result: any) => {
-				console.log(result);
+				console.log(result, 'result');
+
 				queueNotification({
 					header: 'Success!',
 					message: 'Delegation successful.',

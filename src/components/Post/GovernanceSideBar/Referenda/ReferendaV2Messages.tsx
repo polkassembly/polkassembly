@@ -23,7 +23,6 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ConfirmMessage from './ConfirmMessage';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import Tooltip from '~src/basic-components/Tooltip';
-import Loader from '~src/ui-components/Loader';
 
 interface IReferendaV2Messages {
 	className?: string;
@@ -341,9 +340,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 										</>
 									</p>
 								</>
-							) : (
-								<Loader className='mt-2' />
-							)}
+							) : null}
 							<ConfirmationAttemptsRow timeline={timeline || []} />
 						</GovSidebarCard>
 					) : (

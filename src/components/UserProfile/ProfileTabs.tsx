@@ -51,11 +51,11 @@ const ProfileTabs = ({
 	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0
 	});
-	const { id: userId } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
@@ -127,7 +127,7 @@ const ProfileTabs = ({
 			label: (
 				<div className='flex items-center'>
 					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
+					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount || 0})</span>
 				</div>
 			)
 		},
@@ -144,7 +144,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Reactions
-					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount})</span>
+					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount || 0})</span>
 				</div>
 			)
 		},
@@ -161,7 +161,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
-					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
+					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span>
 				</div>
 			)
 		}

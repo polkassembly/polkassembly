@@ -24,10 +24,11 @@ interface IConvictionVotesProps {
 	activeIssuance: BN;
 	support: BN;
 	turnout: BN | null;
+	elapsedPeriod: number;
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
+const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance, elapsedPeriod }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -99,6 +100,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 						acc[i] = acc[i] || ZERO;
 					}
 				}
+
 				return acc;
 			},
 			{} as { [key: number]: BN }
@@ -173,6 +175,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'
+					elapsedPeriod={elapsedPeriod}
 				/>
 				<Divider
 					dashed

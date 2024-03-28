@@ -40,6 +40,7 @@ import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
 import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
 import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -66,7 +67,7 @@ enum EHeading {
 const abi = require('src/moonbeamConvictionVoting.json');
 const contractAddress = process.env.NEXT_PUBLIC_CONVICTION_VOTING_PRECOMPILE || '';
 
-const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, totalVotes }: Props) => {
+const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVotes }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { addresses } = userProfile;
@@ -84,8 +85,8 @@ const VotesHistory = ({ className, userProfile, theme, statsArr, setStatsArr, to
 	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
 	const [expandViewVote, setExpandViewVote] = useState<IVotesData | null>(null);
 	const [removeVoteLoading, setRemoveVoteLoading] = useState<{ ids: number[] | null; loading: boolean }>({ ids: null, loading: false });
-
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setCheckedAddressList(addresses);

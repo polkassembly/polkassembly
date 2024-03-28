@@ -50,6 +50,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		.where('type', '==', EUserActivityType.REACTED)
 		.where(Filter.or(Filter.where('comment_author_id', '==', userId), Filter.where('post_author_id', '==', userId), Filter.where('reply_author_id', '==', userId)))
 		.where('is_deleted', '==', false)
+		.orderBy('created_at', 'desc')
 		.limit(LISTING_LIMIT)
 		.offset((Number(page) - 1) * LISTING_LIMIT)
 		.get();
@@ -164,6 +165,6 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 	}
 
-	return res.status(200).json({ data: data.sort((a, b) => a.createdAt - b.createdAt) });
+	return res.status(200).json({ data: data });
 };
 export default withErrorHandling(handler);

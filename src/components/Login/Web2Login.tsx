@@ -179,7 +179,7 @@ const Web2Login: FC<Props> = ({
 
 	return (
 		<Container className={`flex flex-col rounded-md bg-white ${!showWeb2Option ? '' : 'shadow-md'} dark:bg-section-dark-overlay ${className} `}>
-			<div className='flex items-center justify-start px-8 pb-2 pt-4'>
+			<div className='flex items-center justify-start px-8 pb-4'>
 				{theme === 'dark' ? <LoginLogoDark className='mr-3' /> : <LoginLogo className='mr-3' />}
 				<span className='text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>{showWeb2Option ? 'Login to Polkassembly' : 'Change Wallet'}</span>
 			</div>

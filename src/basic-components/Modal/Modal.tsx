@@ -34,6 +34,9 @@ const StyledModal = styled(AntdModal)`
 		top: 24px !important;
 		right: 24px !important;
 	}
+	.ant-modal .ant-modal-header {
+		margin-bottom: -36px !important;
+	}
 `;
 
 const Modal = ({
@@ -58,8 +61,8 @@ const Modal = ({
 	return (
 		<StyledModal
 			title={
-				<div className='ml-[-24px] mr-[-24px] text-[18px] dark:bg-section-dark-overlay'>
-					<h3 className='align-center mb-0 ml-[24px] flex gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
+				<div className='text-[18px]'>
+					<h3 className='mb-0 ml-[24px] flex items-center gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						{' '}
 						{titleIcon} {title}{' '}
 					</h3>

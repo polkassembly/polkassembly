@@ -800,9 +800,9 @@ query ChildBountiesByParentIndex($parentBountyIndex_eq: Int = 11, $limit: Int, $
     description
     index
     status
+    reward
   }
 }
-
 `;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE_V2 = `

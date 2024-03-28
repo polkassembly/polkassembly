@@ -123,6 +123,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const [requestedAmount, setRequestedAmount] = useState('');
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -329,6 +330,8 @@ const Post: FC<IPostProps> = (props) => {
 						className={`${!isOffchainPost}`}
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
+						requestedAmount={requestedAmount}
+						bountyIndex={post.parent_bounty_index}
 					/>
 				</StickyBox>
 
@@ -570,7 +573,10 @@ const Post: FC<IPostProps> = (props) => {
 
 									{!isEditing && (
 										<>
-											<PostHeading className='mb-5' />
+											<PostHeading
+												className='mb-5'
+												setRequestedAmount={setRequestedAmount}
+											/>
 											<Tabs
 												theme={theme}
 												type='card'

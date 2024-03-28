@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { LikeFilled } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC } from 'react';
@@ -13,7 +12,12 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Tooltip from '~src/basic-components/Tooltip';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
-import DislikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
+import LikeIconfilled from '~assets/icons/reactions/LikeIconfilled.svg';
+import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
+import DislikeOutlined from '~assets/icons/reactions/DislikeOutlined.svg';
+import DislikeOutlinedDark from '~assets/icons/reactions/DislikeOutlinedDark.svg';
+import Dislikefilled from '~assets/icons/reactions/Dislikefilled.svg';
+import { useTheme } from 'next-themes';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -52,7 +56,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
 	const { id, username } = useUserDetailsSelector();
-
+	const { resolvedTheme: theme } = useTheme();
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
 	const currentUser = useUserDetailsSelector();
@@ -60,7 +64,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
 			return reacted ? (
-				<LikeFilled className='-mt-1' />
+				<LikeIconfilled />
 			) : (
 				<div
 					onClick={() => {
@@ -73,17 +77,14 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<LikeOutlined />
+					{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}
 				</div>
 			);
 		}
 
 		if (reaction == '👎') {
 			return reacted ? (
-				<LikeFilled
-					rotate={180}
-					className='-mt-1'
-				/>
+				<Dislikefilled />
 			) : (
 				<div
 					onClick={() => {
@@ -96,7 +97,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 						});
 					}}
 				>
-					<DislikeOutlined />
+					{theme == 'dark' ? <DislikeOutlinedDark /> : <DislikeOutlined />}
 				</div>
 			);
 		}
@@ -154,11 +155,10 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 				onClick={handleReact}
 				className='m-0 mr-6 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}
-				height={40}
 			>
-				<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-1'>
+				<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 					<span className='mt-1'>{getReactionIcon(reaction, reacted)}</span>
-					<span className='ml-1 text-xs font-semibold text-lightBlue'>{reactions?.[reaction as IReaction].count}</span>
+					<span className='ml-1 text-xs font-semibold text-lightBlue dark:text-icon-dark-inactive'>{reactions?.[reaction as IReaction].count}</span>
 				</span>
 			</CustomButton>
 		</span>

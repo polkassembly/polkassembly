@@ -16,6 +16,7 @@ export interface IChildBountiesResponse {
 		description: string;
 		index: number;
 		status: string;
+		reward: string;
 	}[];
 	child_bounties_count: number;
 }
@@ -72,6 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesR
 		resObj.child_bounties.push({
 			description: childBounty.description,
 			index: childBounty.index,
+			reward: childBounty?.reward,
 			status: childBounty.status
 		});
 	});

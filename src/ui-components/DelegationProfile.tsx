@@ -123,8 +123,8 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 						{userBio || bio ? (
 							<h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>
 								<Markdown
-									className='post-content'
 									md={userBio || bio}
+									className={'max-h-32 overflow-y-auto'}
 									isPreview={true}
 								/>
 							</h2>

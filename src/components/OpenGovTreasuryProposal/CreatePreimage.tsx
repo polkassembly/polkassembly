@@ -471,10 +471,11 @@ const CreatePreimage = ({
 		if (!isPreimage) {
 			if (txFee.gte(availableBalance)) return;
 		}
+
 		await form.validateFields();
 		if (isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
 
-		if (!isPreimage ? preimageCreated : preimageLinked) {
+		if (preimageCreated || preimageLinked) {
 			setSteps({ percent: 100, step: 2 });
 		} else {
 			if (!isPreimage) {
@@ -1013,7 +1014,7 @@ const CreatePreimage = ({
 								<Alert
 									className='mt-2 rounded-[4px]'
 									showIcon
-									message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+									message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
 									type='info'
 								/>
 							)}

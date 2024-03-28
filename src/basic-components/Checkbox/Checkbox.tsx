@@ -10,17 +10,22 @@ import styled from 'styled-components';
 
 interface ICheckbox {
 	className?: string;
-	value?: string;
+	value?: any;
 	onChange?: any;
+	theme: any;
+	checked?: boolean;
+	name?: string;
 }
 const Checkbox: FC<PropsWithChildren<ICheckbox>> = (props) => {
-	const { className, value, onChange } = props;
+	const { className, value, onChange, checked, name } = props;
 	return (
 		<ANTDCheckbox
 			{...props}
 			value={value}
 			onChange={onChange}
 			className={`${className}`}
+			checked={checked}
+			name={name}
 		/>
 	);
 };
@@ -29,6 +34,11 @@ export default styled(Checkbox)`
 	.ant-checkbox .ant-checkbox-inner {
 		background-color: transparent !important;
 	}
+
+	.ant-checkbox .ant-checkbox-inner {
+		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #909090' : '1px solid #D2D8E0')};
+	}
+
 	.ant-checkbox-checked .ant-checkbox-inner {
 		background-color: #e5007a !important;
 		border-color: #e5007a !important;

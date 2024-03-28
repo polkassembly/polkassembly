@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Checkbox, Divider, Space } from 'antd';
+import { Divider, Space } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import ParachainNotification from '~assets/icons/parachain-notification-icon.svg';
@@ -18,6 +18,7 @@ import Image from 'next/image';
 import { Collapse } from '../common-ui/Collapse';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import Checkbox from '~src/basic-components/Checkbox/Checkbox';
 
 const { Panel } = Collapse;
 type Props = {
@@ -35,6 +36,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 	const [openModal, setOpenModal] = useState(false);
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { resolvedTheme: theme } = useTheme();
+
 	const handleModalConfirm = (networks: ISelectedNetwork) => {
 		setSelectedNetwork(networks);
 		setOpenModal(false);
@@ -134,6 +136,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 						}}
 						checked={primaryNetwork === network}
 						className='item-center flex text-[16px] text-pink_primary'
+						theme={theme}
 					>
 						Set as Primary Network Settings
 					</Checkbox>

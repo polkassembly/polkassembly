@@ -888,23 +888,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											onChange={(value: any) => {
 												setShowProxyDropdown(value?.target?.checked);
 											}}
+											theme={theme}
 										>
 											<p className='m-0 mt-1 p-0'>Vote with proxy</p>
 										</Checkbox>
 									</div>
 								)}
-
-								{/* remove this before merging */}
-								<Checkbox
-									value=''
-									className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-									onChange={(value: any) => {
-										setShowProxyDropdown(value?.target?.checked);
-									}}
-								>
-									<p className='m-0 mt-1 p-0'>Vote with proxy</p>
-								</Checkbox>
-								{/* remove this before merging */}
 
 								{showProxyDropdown && (
 									<ProxyAccountSelectionForm

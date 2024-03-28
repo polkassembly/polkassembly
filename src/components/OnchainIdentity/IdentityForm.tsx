@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Checkbox, Divider, Form, FormInstance, Spin } from 'antd';
+import { Divider, Form, FormInstance, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import { poppins } from 'pages/_app';
+import Checkbox from '~src/basic-components/Checkbox/Checkbox';
 
 const ZERO_BN = new BN(0);
 
@@ -414,6 +415,7 @@ const IdentityForm = ({
 							onChange={() => {
 								setShowProxyDropdown(!showProxyDropdown);
 							}}
+							theme={theme}
 						>
 							<p className='m-0 mt-1 p-0'>Use proxy address</p>
 						</Checkbox>

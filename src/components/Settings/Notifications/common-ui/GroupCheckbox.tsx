@@ -1,10 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Checkbox, Col, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import Tips from '~assets/icons/tips.svg';
 import Toggler from './Toggler';
+import Checkbox from '~src/basic-components/Checkbox/Checkbox';
+import { useTheme } from 'next-themes';
 type Props = {
 	categoryOptions: any;
 	title?: string;
@@ -16,6 +18,7 @@ type Props = {
 
 export default function GroupCheckbox({ categoryOptions = [], title, classname, Icon, onChange, handleCategoryAllClick }: Props) {
 	const [all, setAll] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleAllClick = (checked: boolean) => {
 		handleCategoryAllClick(checked, categoryOptions, title);
@@ -62,9 +65,10 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 							<Checkbox
 								value={item.value}
 								name={item.value}
-								onChange={(e) => handleChange(e, item.value)}
+								onChange={(e: any) => handleChange(e, item.value)}
 								checked={item.selected}
 								className='text-blue-light-high dark:text-blue-dark-high'
+								theme={theme}
 							>
 								{item.label}
 							</Checkbox>

@@ -85,8 +85,8 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 	const [openVoteDataModal, setOpenVoteDataModal] = useState(false);
 	const [expandViewVote, setExpandViewVote] = useState<IVotesData | null>(null);
 	const [removeVoteLoading, setRemoveVoteLoading] = useState<{ ids: number[] | null; loading: boolean }>({ ids: null, loading: false });
-
 	const [selectedGov, setSelectedGov] = useState(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setCheckedAddressList(addresses);

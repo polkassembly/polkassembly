@@ -23,6 +23,16 @@ const validateURL = (url: string) => {
 
 export const getSubscanData = async (url: string, network: string, body?: any, method?: string) => {
 	try {
+		const redisKey = generateKey({ keyType: 'subscan', network, url });
+
+		const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;
+
+		const redisData = await getCache(redisKey);
+
+		if (redisData) {
+			return redisData.data;
+		}
+
 		const filteredUrl = url.charAt(0) === '/' ? url.substring(1) : url;
 
 		const validURL = new URL(`https://${network}.api.subscan.io/${filteredUrl}`);
@@ -33,6 +43,10 @@ export const getSubscanData = async (url: string, network: string, body?: any, m
 				method: method || 'POST'
 			})
 		).json();
+
+		if (data?.message === 'Success' && cacheEnabled) {
+			setCache(redisKey, data.data);
+		}
 
 		return data;
 	} catch (error) {
@@ -57,21 +71,9 @@ const handler: NextApiHandler<{ data: any } | { error: string | null }> = async 
 		return res.status(400).json({ data: null, error: 'Invalid Body params passed' });
 	}
 
-	const redisKey = generateKey({ keyType: 'subscan', network, url });
-
-	const cacheEnabled = process.env.NEXT_PUBLIC_SUBSCAN_CACHE_ENABLED;
-
-	const redisData = await getCache(redisKey);
-
-	if (redisData) {
-		res.status(200).json(redisData.data);
-		return;
-	}
-
 	const data = await getSubscanData(url, network, body, method);
 
 	if (data.message === 'Success') {
-		if (cacheEnabled) setCache(redisKey, data.data);
 		res.status(200).json(data.data);
 	} else {
 		res.status(400).json(data.message);

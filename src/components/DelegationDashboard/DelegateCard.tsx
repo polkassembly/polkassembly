@@ -8,25 +8,25 @@ import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
-import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext } from '~src/context';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import SocialLink from '~src/ui-components/SocialLinks';
-import { ESocialType } from '~src/auth/types';
-import { formatBalance } from '@polkadot/util';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { socialLinks } from '../UserProfile/Socials';
 import Markdown from '~src/ui-components/Markdown';
+import { IDelegateBalance } from '../UserProfile/TotalProfileBalances';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import SocialsHandle from '~src/ui-components/SocialsHandle';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
 import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import userProfileBalances from '~src/util/userProfieBalances';
 
 interface Props {
 	delegate: IDelegate;
@@ -50,35 +50,45 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
-	const [balance, setBalance] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const [social_links, setSocial_links] = useState<any[]>([]);
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
+	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
+	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
+	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
+
+	const getData = async () => {
+		if (!delegate?.address?.length) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: [delegate?.address]
+		});
+		if (data) {
+			const bnVotingPower = new BN(data?.votingPower);
+			setVotingPower(bnVotingPower);
+		} else if (error) {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
-
+		getData();
+		(async () => {
+			const balances = await userProfileBalances({ address: delegate?.address, api, apiReady, network });
+			setFreeBalance(balances?.freeBalance || ZERO_BN);
+			setLoading(false);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, delegate?.address]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !delegate?.address) return;
 		setLoading(true);
 
 		api.derive.accounts.info(delegate?.address, (info: DeriveAccountInfo) => {
-			setSocial_links([...social_links, { link: info.identity?.email, type: ESocialType.EMAIL }, { link: info.identity?.twitter, type: ESocialType.TWITTER }]);
+			if (info?.identity) {
+				setIdentity(info?.identity);
+			}
 		});
-
-		(async () => {
-			const balances = await userProfileBalances({ address: delegate?.address, api, apiReady, network });
-			setBalance(balances?.freeBalance || ZERO_BN);
-			setLoading(false);
-		})();
-
+		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, delegate]);
 
@@ -188,33 +198,25 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</>
 				)}
 				<div className='flex items-center justify-between px-5 pt-5'>
-					<div className='flex gap-2 max-lg:justify-start'>
+					<div className='flex items-center gap-2 max-lg:justify-start'>
 						<Address
 							address={delegate?.address}
 							displayInline
 							destroyTooltipOnHide
-							iconSize={34}
+							iconSize={26}
 							usernameClassName='font-semibold'
 							isTruncateUsername={false}
 							className='flex items-center'
 						/>
 
-						<div className='-mt-5 mr-2 flex gap-2'>
-							{socialLinks
-								?.filter((item) => item === ESocialType.EMAIL || item === ESocialType.TWITTER)
-								.map((social, index) => {
-									const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
-									return (
-										<SocialLink
-											className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
-											key={index}
-											link={link}
-											disable={!link}
-											type={social}
-											iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
-										/>
-									);
-								})}
+						<div className='mr-2 flex items-center gap-2'>
+							<SocialsHandle
+								address={address}
+								onchainIdentity={identity || null}
+								socials={[]}
+								iconSize={18}
+								boxSize={32}
+							/>
 						</div>
 					</div>
 					<Button
@@ -241,7 +243,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
-							<span className='px-1 text-2xl font-semibold'>{parseBalance(balance.toString(), 2, false, network)}</span>
+							<span className='px-1 text-2xl font-semibold'>{parseBalance(votingPower.add(freeBalance).toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>
 						</div>
 						<div className='mt-[4px] text-xs font-normal text-textGreyColor dark:text-blue-dark-medium'>Voting power</div>
@@ -274,29 +276,23 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				>
 					<div className={'pt-[20px]'}>
 						<div className='flex items-center justify-between pl-8 pt-2'>
-							<div className='flex gap-2 max-lg:justify-start'>
+							<div className='flex items-center gap-2 max-lg:justify-start'>
 								<Address
 									address={delegate?.address}
 									displayInline
-									iconSize={40}
+									iconSize={26}
 									isTruncateUsername={false}
 									usernameClassName='text-[20px] font-medium'
 								/>
 
-								<div className='-mt-4 mr-2 flex gap-2'>
-									{socialLinks?.map((social, index) => {
-										const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
-										return (
-											<SocialLink
-												className='mt-4 flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-xl text-[#96A4B6] hover:text-[#576D8B] dark:bg-inactiveIconDark'
-												key={index}
-												link={link}
-												disable={!link}
-												type={social}
-												iconClassName={`text-[20px] ${link ? 'text-[#576D8B] dark:text-blue-dark-medium' : 'text-[#96A4B6]'}`}
-											/>
-										);
-									})}
+								<div className='mr-2 flex items-center gap-2'>
+									<SocialsHandle
+										address={address}
+										onchainIdentity={identity || null}
+										socials={[]}
+										iconSize={18}
+										boxSize={32}
+									/>
 								</div>
 							</div>
 						</div>
@@ -308,6 +304,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 										className='post-content'
 										md={delegate?.bio}
 										isPreview={true}
+										imgHidden
 									/>
 								) : (
 									'No Bio'
@@ -317,7 +314,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 						<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark '>
 							<div className='flex w-[33%] flex-col items-center pt-1.5 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 								<div className='flex items-center justify-center gap-1'>
-									{parseBalance(balance.toString(), 2, false, network)}
+									{parseBalance(votingPower.add(freeBalance).toString(), 2, false, network)}
 									<span className='mt-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>{unit}</span>
 								</div>
 								<div className='text-xs font-normal text-[#576D8B] dark:text-blue-dark-medium'>Voting power</div>

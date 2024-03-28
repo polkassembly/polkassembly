@@ -16,6 +16,7 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
+import { usePostDataContext } from '~src/context';
 
 interface IConvictionVotesProps {
 	allVotes: IAllVotesType | undefined;
@@ -23,10 +24,11 @@ interface IConvictionVotesProps {
 	activeIssuance: BN;
 	support: BN;
 	turnout: BN | null;
+	elapsedPeriod: number;
 }
 
 const ZERO = new BN(0);
-const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance }: IConvictionVotesProps) => {
+const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance, elapsedPeriod }: IConvictionVotesProps) => {
 	const { network } = useNetworkSelector();
 
 	const [delegatedBalance, setDelegatedBalance] = useState<BN>(new BN(0));
@@ -39,6 +41,9 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		ayes: [],
 		nays: []
 	});
+	const {
+		postData: { created_at: createdAt }
+	} = usePostDataContext();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -83,7 +88,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
 				const convictionBalance = new BN(vote.balance).mul(new BN(vote.lockPeriod));
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
@@ -95,6 +100,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 						acc[i] = acc[i] || ZERO;
 					}
 				}
+
 				return acc;
 			},
 			{} as { [key: number]: BN }
@@ -169,6 +175,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'
+					elapsedPeriod={elapsedPeriod}
 				/>
 				<Divider
 					dashed

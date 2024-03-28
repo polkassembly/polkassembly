@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { getOnChainAddressDetails } from 'pages/api/v1/getOnChainAddressData';
+import { getOnChainAddressDetails } from '~src/util/getOnChainAddressDetails';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
-export const checkIsProposer = async (address: string, currentUserAddresses: Array<string>, network: string) => {
-	const { data: addressDetail } = await getOnChainAddressDetails(address, network);
+export const checkIsProposer = async (address: string, currentUserAddresses: Array<string>) => {
+	const { data: addressDetail } = await getOnChainAddressDetails(address);
 	const signatories = addressDetail?.account?.multisig?.multi_account_member;
 	if (signatories) {
 		const allSignatories = signatories.map((user: { address: string }) => getSubstrateAddress(user.address));

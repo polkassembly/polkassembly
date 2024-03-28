@@ -63,8 +63,8 @@ const BountyChildBounties: FC<IBountyChildBountiesProps> = (props) => {
 									<div className='my-4 rounded-md border-2 border-solid border-grey_light p-2 transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark md:p-4'>
 										<div className='flex justify-between gap-x-4'>
 											<div className='w-[70%] break-words p-1'>
-												<h5 className='m-auto h-[60px] overflow-hidden p-0 text-sm dark:text-white'>
-													{childBounty.description} || {`#${childBounty.index} Untitled`}
+												<h5 className='m-auto max-h-16 overflow-hidden p-0 text-sm dark:text-white'>
+													{`#${childBounty.index}`} {childBounty.title}
 												</h5>
 											</div>
 											{childBounty.status && (

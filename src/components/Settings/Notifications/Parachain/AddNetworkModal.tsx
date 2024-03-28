@@ -8,9 +8,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { networkLabel } from './utils';
 import { ISelectedNetwork } from '../types';
-import Modal from '~src/ui-components/Modal';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const AddNetworkModal = ({
 	open,

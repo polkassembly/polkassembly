@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { ClockCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { Divider, MenuProps, Modal } from 'antd';
+import { Divider, MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
@@ -28,6 +28,7 @@ import { getVotingTypeFromProposalType } from '~src/global/proposalType';
 import VoteList from '~src/components/Post/GovernanceSideBar/Modal/VoteData/VoteList';
 import BeneficiariesListing from './BeneficiariesListing';
 import Tooltip from '~src/basic-components/Tooltip';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const Styled = styled.div`
 	padding: 0;
@@ -274,7 +275,6 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 							<Modal
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
-								footer={false}
 								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName='dark:bg-modalOverlayDark'

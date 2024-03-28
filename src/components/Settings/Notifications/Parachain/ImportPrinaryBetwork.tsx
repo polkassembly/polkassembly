@@ -5,8 +5,8 @@ import React from 'react';
 import { Divider, Image, Tag } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import DisabledImportIcon from '~assets/icons/disabled-state-import-icon.svg';
-import Modal from '~src/ui-components/Modal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ImportPrimaryNetworkSettingModal = ({
 	open,

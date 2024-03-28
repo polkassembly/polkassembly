@@ -473,7 +473,7 @@ const Web3Login: FC<Props> = ({
 		<div className={`${className}`}>
 			{!showOptionalFields && (
 				<div>
-					<div className='mb-1 mt-2 flex items-center'>
+					<div className='-mt-1 mb-1 flex items-center'>
 						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 						<h3 className='mt-3 text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Login'}</h3>
 					</div>

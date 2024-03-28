@@ -4,7 +4,7 @@
 
 import { CheckOutlined } from '@ant-design/icons';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
-import { Divider, Form, Modal } from 'antd';
+import { Divider, Form } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { IUsernameExistResponse } from 'pages/api/v1/users/username-exist';
@@ -28,6 +28,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Skeleton from '~src/basic-components/Skeleton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const WalletButtons = dynamic(() => import('~src/components/Login/WalletButtons'), {
 	loading: () => (

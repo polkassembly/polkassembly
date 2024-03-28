@@ -5,7 +5,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
+import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -58,8 +58,6 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -71,6 +69,7 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -896,8 +895,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				onCancel={() => setIdentityMobileModal(false)}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
 				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}

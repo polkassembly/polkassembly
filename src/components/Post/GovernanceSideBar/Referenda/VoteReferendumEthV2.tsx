@@ -5,7 +5,7 @@
 import { LoadingOutlined, StopOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -36,7 +36,6 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
@@ -45,6 +44,7 @@ import DarkLikeGray from '~assets/icons/like-gray-dark.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import DarkSplitGray from '~assets/icons/split-gray-dark.svg';
 import DarkCastVoteIcon from '~assets/icons/cast-vote-icon-white.svg';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ZERO_BN = new BN(0);
 
@@ -515,9 +515,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					setShowModal(false);
 					handleModalReset();
 				}}
-				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
 					<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center justify-center gap-2 rounded-t-sm border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>

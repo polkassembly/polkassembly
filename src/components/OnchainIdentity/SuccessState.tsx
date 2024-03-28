@@ -4,16 +4,14 @@
 import React, { useEffect } from 'react';
 import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
-import { Modal } from 'antd';
 import Address from '~src/ui-components/Address';
-// import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	className?: string;
@@ -48,7 +46,6 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 			open={open}
 			className={`${poppins.variable} ${poppins.className} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				close(true);
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);

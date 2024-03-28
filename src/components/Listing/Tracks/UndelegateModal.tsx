@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Form, Modal, Spin } from 'antd';
+import { Form, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -26,9 +26,9 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ZERO_BN = new BN(0);
 
@@ -164,7 +164,6 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 	return (
 		<>
 			<Modal
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={

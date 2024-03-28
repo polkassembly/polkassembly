@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Form, Modal, Divider } from 'antd';
+import { Form, Divider } from 'antd';
 import Link from 'next/link';
 import { poppins } from 'pages/_app';
 
@@ -21,12 +21,13 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon, DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
+import { DeleteBlueIcon, DeleteWhiteIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Input from '~src/basic-components/Input';
 import Select from '~src/basic-components/Select';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const { Panel } = Collapse;
 
@@ -123,11 +124,6 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						maskClosable={true}
 						title={Title}
 						open={showModal}
-						closeIcon={
-							<div onClick={dismissModal}>
-								<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-							</div>
-						}
 						footer={[
 							<Divider
 								key='divider'

@@ -9,7 +9,7 @@ import LoadingEffect from '~assets/audit-loader.gif';
 import PdfIcon from '~assets/icons/pdfs.svg';
 import { IDataType } from '.';
 import styled from 'styled-components';
-import { Modal } from 'antd';
+import Modal from '~src/basic-components/Modal/Modal';
 
 // for showing pdf
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -75,7 +75,6 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				open={open}
 				onCancel={() => setOpen(false)}
-				footer={false}
 				className='w-full lg:max-w-[1024px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				title={
 					<button

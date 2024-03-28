@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Modal, Timeline, TimelineItemProps } from 'antd';
+import { Timeline, TimelineItemProps } from 'antd';
 import { ESentiment, ICommentHistory } from '~src/types';
 import styled from 'styled-components';
 import NameLabel from './NameLabel';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import { AgainstIcon, CloseIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
+import { AgainstIcon, ForIcon, NeutralIcon, SlightlyAgainstIcon, SlightlyForIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import UserAvatar from './UserAvatar';
 // import { diffChars } from 'diff';
@@ -20,6 +20,7 @@ import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import Tooltip from '~src/basic-components/Tooltip';
+import Modal from '~src/basic-components/Modal/Modal';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -173,8 +174,6 @@ const CommentHistoryModal = ({ className, open, setOpen, history, defaultAddress
 			onCancel={() => setOpen(false)}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`closeIcon ${poppins.variable} ${poppins.className} shadow-[0px 8px 18px rgba(0, 0, 0, 0.06)] w-[600px]  max-sm:w-full dark:[&>.ant-modal-content>.ant-modal-header]:bg-section-dark-overlay`}
-			footer={false}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-blue-dark-high'>Comment Edit History</label>}
 		>
 			<div className='post-history-timeline -mb-5 mt-9 flex flex-col px-4'>

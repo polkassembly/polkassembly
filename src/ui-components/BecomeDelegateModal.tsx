@@ -2,10 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Button, Modal, Spin } from 'antd';
+import { Alert, Button, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import styled from 'styled-components';
-import { CloseIcon } from './CustomIcons';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useEffect, useState } from 'react';
 import AuthForm from './AuthForm';
@@ -15,6 +14,7 @@ import Address from './Address';
 import { IDelegationProfileType } from '~src/auth/types';
 import { NotificationStatus } from '~src/types';
 import queueNotification from './QueueNotification';
+import Modal from '~src/basic-components/Modal/Modal';
 import ContentForm from '~src/components/ContentForm';
 
 interface IDetailsState {
@@ -90,14 +90,12 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 				</div>
 			}
 			open={isModalOpen}
-			footer={false}
 			zIndex={1008}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			className={`${poppins.variable} ${poppins.className} w-[605px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => {
 				setIsModalOpen && setIsModalOpen(false);
 			}}
-			closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin
 				spinning={loading}

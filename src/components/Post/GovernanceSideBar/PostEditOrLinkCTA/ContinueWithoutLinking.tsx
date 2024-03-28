@@ -1,11 +1,12 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Form, Modal } from 'antd';
+import { Form } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import Input from '~src/basic-components/Input';
+import Modal from '~src/basic-components/Modal/Modal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ContentForm from '~src/components/ContentForm';
 import { usePostDataContext } from '~src/context';

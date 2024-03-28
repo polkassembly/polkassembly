@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 
-import { Form, Modal, Spin } from 'antd';
+import { Form, Spin } from 'antd';
 import { useCurrentTokenDataSelector, useNetworkSelector, useTippingDataSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { LoadingStatusType, NotificationStatus } from '~src/types';
@@ -36,10 +36,11 @@ import { setReceiver } from '~src/redux/Tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { CloseIcon, TipIcon } from '~src/ui-components/CustomIcons';
+import { TipIcon } from '~src/ui-components/CustomIcons';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import Select from '~src/basic-components/Select';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ZERO_BN = new BN(0);
 
@@ -291,7 +292,6 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				open={open}
 				zIndex={1056}
 				onCancel={handleCancel}
-				closeIcon={<CloseIcon className='font-medium text-bodyBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.className} ${poppins.variable} w-[604px] max-sm:w-full ${className}`}
 				footer={
 					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 text-sm dark:border-[#3B444F]'>

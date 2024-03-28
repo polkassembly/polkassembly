@@ -4,7 +4,7 @@
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import React, { FC, useState } from 'react';
-import { Divider, Form, Modal } from 'antd';
+import { Divider, Form } from 'antd';
 import { useDispatch } from 'react-redux';
 import { handleTokenChange } from 'src/services/auth.service';
 import { Wallet } from 'src/types';
@@ -21,6 +21,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	open?: boolean;

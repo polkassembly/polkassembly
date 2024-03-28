@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
@@ -26,6 +25,7 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	className?: string;
@@ -98,7 +98,6 @@ const VoteInitiatedModal = ({
 			}
 			onCancel={() => setOpen(false)}
 			centered
-			footer={false}
 			maskClosable={false}
 			closable
 		>

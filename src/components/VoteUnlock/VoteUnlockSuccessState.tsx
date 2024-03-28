@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
 // import UnlockSuccessIcon from '~assets/icons/unlock-success-box.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -11,8 +10,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useEffect } from 'react';
 import { formatBalance } from '@polkadot/util';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	className?: string;
@@ -38,9 +37,7 @@ const VoteUnlockSuccessState = ({ className, open, setOpen, unlockedBalance }: P
 		<Modal
 			open={open}
 			onCancel={() => setOpen(false)}
-			footer={false}
 			className={`${className} ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			centered
 		>

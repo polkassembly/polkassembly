@@ -5,7 +5,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { InjectedAccountWithMeta, InjectedWindow } from '@polkadot/extension-inject/types';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { Form, Modal, Segmented, Spin } from 'antd';
+import { Form, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
@@ -34,11 +34,11 @@ import DislikeGray from '~assets/icons/dislike-gray.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { setWalletConnectProvider } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ZERO_BN = new BN(0);
 
@@ -397,9 +397,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					setShowModal(false);
 					handleModalReset();
 				}}
-				footer={false}
 				className={`alignment-close max-h-[675px] w-[550px] rounded-[6px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
 					<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.2px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<CastVoteIcon className='mt-1' />

@@ -4,7 +4,7 @@
 
 /* eslint-disable sort-keys */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Checkbox, List, Modal, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
+import { Checkbox, List, Radio, RadioChangeEvent, Collapse, InputRef } from 'antd';
 import _ from 'lodash';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -32,12 +32,12 @@ import InputClearIcon from '~assets/icons/close-tags.svg';
 import LeftArrow from '~assets/icons/arrow-left.svg';
 import PaLogo from '../AppLayout/PaLogo';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Popover from '~src/basic-components/Popover';
 import Input from '~src/basic-components/Input';
+import Modal from '~src/basic-components/Modal/Modal';
 
 const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID;
 const ALGOLIA_SEARCH_API_KEY = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
@@ -506,9 +506,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			}
 			open={openModal}
 			onCancel={() => handleClearFilters(true)}
-			footer={false}
 			className={`${className} w-[850px] max-md:w-full ${poppins.className} ${poppins.variable} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-			closeIcon={<CloseIcon className='mr-2 text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input

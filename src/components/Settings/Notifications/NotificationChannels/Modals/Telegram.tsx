@@ -2,12 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Modal, message } from 'antd';
+import { message } from 'antd';
 import React, { useState } from 'react';
 import { CHANNEL } from '..';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
+import { CopyIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 type Props = {
 	icon: any;
@@ -45,9 +46,7 @@ const TelegramInfoModal = ({ icon, title, open, getVerifyToken, generatedToken =
 			}
 			open={open}
 			closable
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={onClose}
-			footer={null}
 		>
 			<div className=''>
 				<ol>

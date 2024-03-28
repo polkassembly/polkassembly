@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 // logic source : https://github.com/polkadot-js/apps/blob/master/packages/page-referenda/src/useAccountLocks.ts
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, Spin } from 'antd';
+import { Button, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
@@ -29,8 +29,8 @@ import WhiteUnlockIcon from '~assets/icons/white-lock.svg';
 import { setUserUnlockTokensData } from '~src/redux/tokenUnlocksData';
 import { useDispatch } from 'react-redux';
 import { IUnlockTokenskData } from '~src/redux/tokenUnlocksData/@types';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	className?: string;
@@ -328,9 +328,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 			<Modal
 				open={open}
 				onCancel={() => setOpen(false)}
-				footer={false}
 				className={`${poppins.className} ${poppins.variable} ${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
-				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			>
 				<Spin

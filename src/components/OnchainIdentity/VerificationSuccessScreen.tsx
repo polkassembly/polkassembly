@@ -4,10 +4,9 @@
 import React, { useState } from 'react';
 import { poppins } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { Modal } from 'antd';
 import { useRouter } from 'next/router';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Modal from '~src/basic-components/Modal/Modal';
 
 interface Props {
 	className?: string;
@@ -26,7 +25,6 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			open={open}
 			className={`${poppins.variable} ${poppins.className} h-[300px] w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
 				onClose(false);
 			}}

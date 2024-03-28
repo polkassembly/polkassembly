@@ -150,16 +150,18 @@ export default styled(Leaderboard)`
 		.rank-cards-mobile {
 			display: flex !important;
 			flex-direction: column !important;
-			transform: scale(0.7) !important;
-			margin: 0 auto !important;
-			margin-top: -80px !important;
+			transform: scale(0.75) !important;
+			margin-top: -24px !important;
+			margin-bottom: 68px !important;
+			margin-left: -4px !important;
 		}
 		.secondary-rank-card {
 			transform: scale(1.15) !important;
 			margin-bottom: 40px !important;
+			margin-left: 0px !important;
 		}
 		.primary-rank-card {
-			margin-left: -4px !important;
+			margin-left: 0px !important;
 			margin-bottom: 24px !important;
 		}
 		.rank-cards-desktop {

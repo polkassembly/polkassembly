@@ -19,6 +19,10 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Select from '~src/basic-components/Select';
+import ReportIcon from '~assets/icons/reactions/ReportIcon.svg';
+import ReportIconDark from '~assets/icons/reactions/ReportIconDark.svg';
+// import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import { useTheme } from 'next-themes';
 
 interface IReportButtonProps {
 	type: string;
@@ -30,17 +34,19 @@ interface IReportButtonProps {
 	isDeleteModal?: boolean;
 	onSuccess?: () => void;
 	isButtonOnComment?: boolean;
+	isUsedInDescription?: boolean;
 }
 
 const reasons = ["It's suspicious or spam", "It's abusive or harmful", 'It expresses intentions of self-harm or suicide', 'other (please let us know in the field below)'];
 
 const ReportButton: FC<IReportButtonProps> = (props) => {
-	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment } = props;
+	const { type, postId, commentId, replyId, className, proposalType, isDeleteModal, onSuccess, isButtonOnComment, isUsedInDescription } = props;
 	const { allowed_roles } = useUserDetailsSelector();
 	const { setPostData } = usePostDataContext();
 	const [showModal, setShowModal] = useState(false);
 	const [formDisabled, setFormDisabled] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const [error, setError] = useState('');
 
 	const [form] = Form.useForm();
@@ -172,27 +178,40 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 	};
 	return (
 		<>
-			<button
-				className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
-				onClick={() => setShowModal(true)}
-			>
-				{isDeleteModal ? (
-					<DeleteOutlined className={`${className} text-pink_primary dark:text-icon-dark-inactive`} />
-				) : (
-					<FlagOutlined className={`${className} p-0 text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
-				)}
-				{isDeleteModal ? (
-					<span className={`${className} break-keep text-pink_primary dark:text-icon-dark-inactive`}>Delete</span>
-				) : (
-					<span
-						className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary ${
-							isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'
-						}`}
+			<div>
+				{isUsedInDescription ? (
+					<button
+						className='flex cursor-pointer items-center justify-between gap-[6px] border-none bg-transparent shadow-none'
+						onClick={() => setShowModal(true)}
 					>
-						Report
-					</span>
+						{isDeleteModal ? <DeleteOutlined className={'mr-[2px] text-lightBlue dark:text-icon-dark-inactive'} /> : theme == 'dark' ? <ReportIconDark /> : <ReportIcon />}
+						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>{isDeleteModal ? 'Delete' : 'Report'}</span>
+					</button>
+				) : (
+					<button
+						className={`${type === 'comment' ? 'm-0 p-0' : 'm-0 px-1'} flex cursor-pointer items-center gap-x-[6px] border-none bg-transparent shadow-none`}
+						onClick={() => setShowModal(true)}
+					>
+						{isDeleteModal ? (
+							<DeleteOutlined className={`${className} text-pink_primary dark:text-icon-dark-inactive`} />
+						) : (
+							<FlagOutlined className={`${className} p-0 text-pink_primary ${isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'}`} />
+						)}
+						{isDeleteModal ? (
+							<span className={`${className} break-keep text-pink_primary dark:text-icon-dark-inactive`}>Delete</span>
+						) : (
+							<span
+								className={`${className} ${type === 'comment' ? 'p-0' : ''} break-keep text-pink_primary ${
+									isButtonOnComment ? 'dark:text-icon-dark-inactive' : 'dark:text-blue-dark-helper'
+								}`}
+							>
+								Report
+							</span>
+						)}
+					</button>
 				)}
-			</button>
+			</div>
+
 			<Modal
 				className='dark:[&>.ant-modal-content>.ant-modal-header>.ant-modal-title]:bg-section-dark-overlay dark:[&>.ant-modal-content]:bg-section-dark-overlay'
 				wrapClassName='dark:bg-modalOverlayDark'

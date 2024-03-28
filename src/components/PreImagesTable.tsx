@@ -280,7 +280,6 @@ const PreImagesTable: FC<IPreImagesTableProps> = (props) => {
 					pagination={false}
 					scroll={{ x: 1000 }}
 				/>
-
 				<Modal
 					wrapClassName='dark:bg-modalOverlayDark'
 					open={Boolean(modalArgs)}

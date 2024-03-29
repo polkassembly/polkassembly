@@ -270,7 +270,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{gasFee.gte(availableBalance) && !gasFee.eq(ZERO_BN) && (
 							<Alert
 								type='error'
-								className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+								className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>

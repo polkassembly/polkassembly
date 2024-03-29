@@ -4,6 +4,7 @@ import * as admin from 'firebase-admin';
 import fetchSubsquid from './utils/fetchSubsquid';
 import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
+import trackLevelAnalytics from './trackLevelAnalytics';
 
 admin.initializeApp();
 const logger = functions.logger;
@@ -219,4 +220,10 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 		.then(({ objectID }) => {
 			logger.info('Post indexed successfully:', { objectID });
 		});
+});
+
+exports.trackLevelAnalytics = functions.pubsub.schedule('every 1 day').onRun(async () => {
+	functions.logger.info('scheduledTrackLevelAnalytics ran at : ', new Date());
+	await trackLevelAnalytics();
+	return;
 });

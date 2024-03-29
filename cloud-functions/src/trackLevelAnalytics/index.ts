@@ -62,13 +62,12 @@ query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int
     totalCount
   }
 }`;
-const GetAllProposalOftrack = `query ActiveTrackProposals($track_eq:Int!) {
+const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int!) {
   proposals(where: {trackNumber_eq: $track_eq}) {
     index
   }
-}
+}`;
 
-`;
 const logger = functions.logger;
 
 const getWSProvider = (network: string) => {
@@ -187,7 +186,7 @@ const trackLevelAnalytics = async () => {
 		for (const trackNumber of trackNumbers) {
 			const subsquidRes = await fetchSubsquid({
 				network,
-				query: GetAllProposalOftrack,
+				query: GET_ALL_TRACK_PROPOSALS,
 				variables: {
 					track_eq: trackNumber
 				}
@@ -257,7 +256,7 @@ const trackLevelAnalytics = async () => {
 	for (const chunk of chunkedArray) {
 		const batch = firestoreDB.batch();
 		for (const item of chunk) {
-			const activityRef = firestoreDB.collection('network').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('referendum_v2').doc(String(item?.referendaIndex));
+			const activityRef = firestoreDB.collection('network').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
 			batch.set(activityRef, item?.votes, { merge: true });
 		}
 		try {

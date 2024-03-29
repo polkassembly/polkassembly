@@ -203,7 +203,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 			((posts?.closed?.data?.count || 0) > 10 && activeTab === 'Closed') ? (
 				<Pagination
 					theme={theme}
-					className='mb-2 mt-4 flex justify-end sm:mt-6'
+					className='mb-2 mt-4 flex justify-end px-4 sm:mt-6 sm:px-10'
 					defaultCurrent={1}
 					current={router.query.page ? parseInt(router.query.page as string, 10) : 1}
 					onChange={onPaginationChange}

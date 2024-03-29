@@ -30,6 +30,7 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 
 		const totalReactionsSnapshot = await firestore_db
 			.collection('user_activities')
+			.orderBy('created_at', 'desc')
 			.where('network', '==', network)
 			.where('type', '==', EUserActivityType.REACTED)
 			.where(Filter.or(Filter.where('comment_author_id', '==', userId), Filter.where('post_author_id', '==', userId), Filter.where('reply_author_id', '==', userId)))

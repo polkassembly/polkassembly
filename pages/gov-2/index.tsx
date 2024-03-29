@@ -16,7 +16,6 @@ import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import ChatFloatingModal from '~src/components/ChatBot/ChatFloatingModal';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
@@ -150,7 +149,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
-			<ChatFloatingModal />
+			{/* <ChatFloatingModal /> */}
 		</>
 	);
 };

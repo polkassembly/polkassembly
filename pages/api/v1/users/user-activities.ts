@@ -14,8 +14,6 @@ import { firestore_db } from '~src/services/firebaseInit';
 import { getUserProfileWithUserId } from '../auth/data/userProfileWithUsername';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import authServiceInstance from '~src/auth/auth';
-import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import { EActivityFilter, EUserActivityIn, EUserActivityType } from '~src/types';
 
 interface Props {
@@ -45,15 +43,14 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Invalid token' });
-
-	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
-
 	const { userId, page = 1, filterBy } = req.body as Props;
 	if (isNaN(Number(userId)) || typeof Number(userId) !== 'number') return res.status(400).send({ message: messages.INVALID_PARAMS });
-	let activitiesSnapshot = firestore_db.collection('user_activities').where('network', '==', network).where('is_deleted', '==', false).where('by', '==', userId);
+	let activitiesSnapshot = firestore_db
+		.collection('user_activities')
+		.orderBy('created_at', 'desc')
+		.where('network', '==', network)
+		.where('is_deleted', '==', false)
+		.where('by', '==', userId);
 
 	if (filterBy) {
 		activitiesSnapshot = activitiesSnapshot.where('type', '==', filterBy);

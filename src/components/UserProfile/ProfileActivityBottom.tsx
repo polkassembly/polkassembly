@@ -42,10 +42,10 @@ const ActivityBottomContent = ({ activity, className }: { activity: IUserActivit
 				</span>
 			</div>
 			{activity?.content?.length > 0 && (
-				<div className='-mt-1 w-full items-center rounded-sm border-0 border-l-[1.5px] border-solid border-pink_primary bg-[#FAFAFC] px-4 pb-0.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
+				<div className='-mt-1 w-full items-center rounded-sm border-0 border-l-[1.5px] border-solid border-pink_primary bg-[#FAFAFC] px-4 pb-2.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
 					<Markdown
 						md={activity?.content.trim()}
-						className='line-clamp h-[80px] text-lightBlue dark:text-blue-dark-medium'
+						className='line-clamp h-[67px] text-lightBlue dark:text-blue-dark-medium'
 					/>
 				</div>
 			)}

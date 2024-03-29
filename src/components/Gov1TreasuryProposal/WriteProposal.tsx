@@ -27,16 +27,19 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	const gov1ProposalData = useGov1treasuryProposal();
 	const dispatch = useDispatch();
 	const [form] = Form.useForm();
-	const { isDiscussionLinked, discussionLink, title, content, tags } = gov1ProposalData;
+	const { isDiscussionLinked: discussionLinked, discussionLink, title, content, tags } = gov1ProposalData;
 	const [loading, setLoading] = useState<boolean>(false);
+	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(discussionLinked);
 
 	const handleOnchange = (obj: any) => {
 		dispatch(updateGov1TreasuryProposal({ ...gov1ProposalData, ...obj }));
 	};
+
 	const handleSubmit = async () => {
 		handleOnchange({ ...gov1ProposalData, firstStepPercentage: 100 });
 		setStep(1);
 	};
+
 	const isDiscussionLinkedValid = (value: string) => {
 		const regex = /^https:\/\/\w+\.polkassembly\.io\/post\/\d+$/;
 		return !regex.test(value) || value.split('https://')[1].split('.')[0] !== network;
@@ -55,7 +58,15 @@ const WriteProposal = ({ setStep, className }: Props) => {
 
 		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
 		if (data) {
-			handleOnchange({ content: data?.content, discussionId: postId, discussionLink: link, firstStepPercentage: 100, tags: data?.tags, title: data.title });
+			handleOnchange({
+				...gov1ProposalData,
+				content: data?.content,
+				discussionId: postId,
+				discussionLink: link,
+				firstStepPercentage: 100,
+				tags: data?.tags,
+				title: data.title
+			});
 			form.setFieldsValue({ content: data?.content, tags: data?.tags, title: data?.title });
 			setLoading(false);
 		} else if (error) {
@@ -71,7 +82,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const populateDiscussionPostDataFn = useCallback(_.debounce(getDiscussionPostData, 1500), []);
 	const handleChangeDiscussionLink = (link: string) => {
-		handleOnchange({ firstStepPercentage: 66.6 });
+		handleOnchange({ ...gov1ProposalData, firstStepPercentage: 66.6 });
 		populateDiscussionPostDataFn(link);
 	};
 
@@ -88,7 +99,8 @@ const WriteProposal = ({ setStep, className }: Props) => {
 					<Radio.Group
 						disabled={loading}
 						onChange={(e) => {
-							handleOnchange({ content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
+							setIsDiscussionLinked(e.target.value);
+							handleOnchange({ ...gov1ProposalData, content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
 							form.setFieldValue('content', '');
 							form.setFieldValue('title', '');
 							form.setFieldValue('tags', []);
@@ -140,7 +152,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 									name='discussion_link'
 									value={discussionLink}
 									onChange={(e) => handleChangeDiscussionLink(e.target.value)}
-									className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-white dark:focus:border-[#91054F]'
+									className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-white dark:focus:border-[#91054F]'
 									placeholder='https://'
 								/>
 							</Form.Item>
@@ -166,8 +178,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							}
 						/>
 					)}
-
-					{isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) : true) && (
+					{isDiscussionLinked !== null && (isDiscussionLinked ? !!discussionLink && !isDiscussionLinkedValid(discussionLink) : true) && (
 						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
 							<label className='font-medium'>Write a proposal :</label>
 							<div className='mt-4'>
@@ -195,9 +206,9 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								>
 									<Input
 										name='title'
-										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
-											handleOnchange({ firstStepPercentage: content.length === 0 ? 83.33 : 100, title: e.target.value });
+											handleOnchange({ ...gov1ProposalData, firstStepPercentage: content.length === 0 ? 83.33 : 100, title: e.target.value });
 										}}
 										disabled={isDiscussionLinked}
 										value={title}
@@ -209,7 +220,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								<Form.Item name='tags'>
 									<AddTags
 										tags={tags}
-										setTags={(tags: string[]) => handleOnchange({ tags: tags })}
+										setTags={(tags: string[]) => handleOnchange({ ...gov1ProposalData, tags: tags })}
 										disabled={isDiscussionLinked}
 									/>
 								</Form.Item>
@@ -230,7 +241,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 											value={content}
 											height={250}
 											onChange={(content: string) => {
-												handleOnchange({ content: content, firstStepPercentage: title.length === 0 ? 83.33 : 100 });
+												handleOnchange({ ...gov1ProposalData, content: content, firstStepPercentage: title.length === 0 ? 83.33 : 100 });
 											}}
 										/>
 									</Form.Item>

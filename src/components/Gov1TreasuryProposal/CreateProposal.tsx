@@ -80,6 +80,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		setGasFee(new BN(gasFee.partialFee || '0'));
 	};
 
+	const handleOnchange = (obj: any) => {
+		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, ...obj }));
+	};
+
 	const handleAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
 
@@ -93,7 +97,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 	const checkBeneficiaryMultisig = async (address: string) => {
 		if (!address) return;
-		await checkIsAddressMultisig(address).then((isMulti) => dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showMultisigInfoCard: !isMulti })));
+		await checkIsAddressMultisig(address).then((isMulti) => handleOnchange({ ...gov1proposalData, showMultisigInfoCard: !isMulti }));
 	};
 
 	const checkBeneficiaryIdentity = async (address: string) => {
@@ -101,16 +105,16 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
 			if (!info?.identity?.display) {
-				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: true }));
+				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: true });
 			} else {
-				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: false }));
+				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: false });
 			}
 		});
 	};
 
 	const handleBeneficiaryChange = async (address: string) => {
 		const encodedAddr = getEncodedAddress(address, network) || '';
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, beneficiary: encodedAddr || address }));
+		handleOnchange({ ...gov1proposalData, beneficiary: encodedAddr || address });
 		await checkBeneficiaryIdentity(encodedAddr || address);
 		await checkBeneficiaryMultisig(encodedAddr || address);
 	};
@@ -154,7 +158,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 				status: NotificationStatus.SUCCESS
 			});
 
-			dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposalIndex: postId }));
+			handleOnchange({ ...gov1proposalData, proposalIndex: postId });
 
 			setLoading({ isLoading: true, message: 'Proposal Creation Succcess!' });
 			setOpen(false);
@@ -182,6 +186,52 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		});
 	};
 
+	const checkProposerIdentity = async (address: string) => {
+		if (!api || !apiReady) return;
+		const encodedAddr = getEncodedAddress(address, network) || '';
+
+		await api.derive.accounts.info(encodedAddr, (info: DeriveAccountInfo) => {
+			if (!info?.identity?.display) {
+				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForProposer: true });
+			}
+		});
+	};
+
+	useEffect(() => {
+		let firstStepPercentage = 0;
+		let secondStepPercentage = 0;
+		if (proposer?.length) {
+			secondStepPercentage += 33.33;
+		}
+		if (beneficiary?.length) {
+			secondStepPercentage += 33.33;
+		}
+		if (fundingAmount !== '0') {
+			secondStepPercentage += 33.33;
+		}
+
+		if (title?.length) {
+			firstStepPercentage += 50;
+		}
+		if (content?.length) {
+			firstStepPercentage += 50;
+		}
+		dispatch(
+			updateGov1TreasuryProposal({
+				...gov1proposalData,
+				firstStepPercentage,
+				proposer: proposer || loginAddress,
+				secondStepPercentage,
+				showIdentityInfoCardForBeneficiary: false,
+				showIdentityInfoCardForProposer: false,
+				showMultisigInfoCard: false
+			})
+		);
+		checkProposerIdentity(proposer || loginAddress);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress]);
+
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];
 		if (networkChainProperties) {
@@ -199,7 +249,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		if (fundingAmount !== '0') {
 			percentage = 100;
 		}
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, secondStepPercentage: percentage }));
+		handleOnchange({ ...gov1proposalData, secondStepPercentage: percentage });
 
 		getGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,7 +270,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{gasFee.gte(availableBalance) && !gasFee.eq(ZERO_BN) && (
 							<Alert
 								type='error'
-								className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+								className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>
@@ -367,7 +417,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								label='Funding Amount'
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
 								className='mb-0'
-								onChange={(address: BN) => dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, fundingAmount: address.toString() }))}
+								onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
 							/>
 						</div>
 

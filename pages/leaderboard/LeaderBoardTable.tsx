@@ -62,6 +62,9 @@ export default styled(LeaderBoardTable)`
 	.ant-input-search .ant-input-search-button svg {
 		fill: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#4B4B4B')};
 	}
+	.ant-input-group {
+		display: flex !important;
+	}
 	.ant-table-wrapper .ant-table-pagination-right {
 		margin-top: 36px !important;
 		justify-content: center !important;

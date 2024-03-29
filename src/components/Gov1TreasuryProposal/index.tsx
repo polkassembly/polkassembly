@@ -67,7 +67,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 	};
 
 	return (
-		<div>
+		<div className={theme}>
 			<CustomButton
 				variant={isUsedInTreasuryPage ? 'primary' : 'text'}
 				onClick={handleClick}
@@ -110,7 +110,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				}}
 				className={classNames(poppins.className, poppins.variable, theme, 'gov1proposal', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme}`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} gov1proposal`}
 				footer={false}
 				title={
 					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
@@ -126,7 +126,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 			>
 				<div className={theme}>
 					<Steps
-						className={'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high'}
+						className={classNames(theme, 'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high')}
 						percent={step === 0 ? firstStepPercentage : secondStepPercentage}
 						current={step}
 						size='default'
@@ -186,12 +186,11 @@ export default styled(Gov1TreasuryProposal)`
 		font-weight: 700 !important;
 	}
 
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		color: var(--bodyBlue) !important;
 	}
 	.dark .gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark. .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
 	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		font-size: 14px !important;
 		color: #96a4b6 !important;
@@ -228,8 +227,8 @@ export default styled(Gov1TreasuryProposal)`
 		color: #243a57 !important;
 	}
 
-	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+	.dark .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.dark .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		color: white !important;
 	}
 

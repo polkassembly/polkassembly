@@ -4,7 +4,7 @@
 
 import { trackEvent } from 'analytics';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
@@ -17,7 +17,9 @@ import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
 import DislikeOutlined from '~assets/icons/reactions/DislikeOutlined.svg';
 import DislikeOutlinedDark from '~assets/icons/reactions/DislikeOutlinedDark.svg';
 import Dislikefilled from '~assets/icons/reactions/Dislikefilled.svg';
+import LikedGif from '~assets/icons/reactions/Liked-Colored.gif';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -60,24 +62,45 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const reacted = username && usernames?.includes(username);
 	const currentUser = useUserDetailsSelector();
+	const [showLikedGif, setShowLikedGif] = useState(false);
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
-			return reacted ? (
-				<LikeIconfilled />
-			) : (
+			return (
 				<div
-					onClick={() => {
-						!id && setLikeModalOpen && setLikeModalOpen(true);
-						const likedItem = isReactionOnReply ? 'replyLiked' : 'postLiked';
-						trackEvent('like_icon_clicked', 'liked_icon_clicked', {
-							contentType: isReactionButtonInPost ? likedItem : 'commentLiked',
-							userId: currentUser?.id || '',
-							userName: currentUser?.username || ''
-						});
-					}}
+					className='relative'
+					style={{ height: 24, width: 24 }}
 				>
-					{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}
+					{showLikedGif ? (
+						<div
+							className='absolute -left-[13px] -top-[15px] z-10'
+							style={{ height: '24px', width: '24px' }}
+						>
+							<Image
+								src={LikedGif}
+								alt='Liked'
+								width={50}
+								height={50}
+							/>
+						</div>
+					) : reacted ? (
+						<LikeIconfilled />
+					) : (
+						<div
+							onClick={() => {
+								!id && setLikeModalOpen && setLikeModalOpen(true);
+								const likedItem = isReactionOnReply ? 'replyLiked' : 'postLiked';
+								trackEvent('like_icon_clicked', 'liked_icon_clicked', {
+									contentType: isReactionButtonInPost ? likedItem : 'commentLiked',
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
+							}}
+							className='cursor-pointer'
+						>
+							{theme === 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}
+						</div>
+					)}
 				</div>
 			);
 		}
@@ -121,7 +144,8 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 			} else {
 				newReactions[reaction as IReaction].count++;
 				newReactions[reaction as IReaction].usernames?.push(username || '');
-
+				setShowLikedGif(true);
+				setTimeout(() => setShowLikedGif(false), 1400);
 				Object.keys(newReactions).forEach((key) => {
 					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
 						newReactions[key as IReaction].count--;

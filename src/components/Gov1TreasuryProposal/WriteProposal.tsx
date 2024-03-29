@@ -36,7 +36,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	};
 
 	const handleSubmit = async () => {
-		handleOnchange({ ...gov1ProposalData, firstStepPercentage: 100 });
+		handleOnchange({ firstStepPercentage: 100 });
 		setStep(1);
 	};
 
@@ -59,7 +59,6 @@ const WriteProposal = ({ setStep, className }: Props) => {
 		const { data, error } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
 		if (data) {
 			handleOnchange({
-				...gov1ProposalData,
 				content: data?.content,
 				discussionId: postId,
 				discussionLink: link,
@@ -82,7 +81,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const populateDiscussionPostDataFn = useCallback(_.debounce(getDiscussionPostData, 1500), []);
 	const handleChangeDiscussionLink = (link: string) => {
-		handleOnchange({ ...gov1ProposalData, firstStepPercentage: 66.6 });
+		handleOnchange({ firstStepPercentage: 66.6 });
 		populateDiscussionPostDataFn(link);
 	};
 
@@ -100,7 +99,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 						disabled={loading}
 						onChange={(e) => {
 							setIsDiscussionLinked(e.target.value);
-							handleOnchange({ ...gov1ProposalData, content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
+							handleOnchange({ content: '', isDiscussionLinked: e.target.value, tags: [], title: '' });
 							form.setFieldValue('content', '');
 							form.setFieldValue('title', '');
 							form.setFieldValue('tags', []);
@@ -208,7 +207,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 										name='title'
 										className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
-											handleOnchange({ ...gov1ProposalData, firstStepPercentage: content.length === 0 ? 83.33 : 100, title: e.target.value });
+											handleOnchange({ firstStepPercentage: content.length === 0 ? 83.33 : 100, title: e.target.value });
 										}}
 										disabled={isDiscussionLinked}
 										value={title}
@@ -220,7 +219,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								<Form.Item name='tags'>
 									<AddTags
 										tags={tags}
-										setTags={(tags: string[]) => handleOnchange({ ...gov1ProposalData, tags: tags })}
+										setTags={(tags: string[]) => handleOnchange({ tags: tags })}
 										disabled={isDiscussionLinked}
 									/>
 								</Form.Item>
@@ -241,7 +240,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 											value={content}
 											height={250}
 											onChange={(content: string) => {
-												handleOnchange({ ...gov1ProposalData, content: content, firstStepPercentage: title.length === 0 ? 83.33 : 100 });
+												handleOnchange({ content: content, firstStepPercentage: title.length === 0 ? 83.33 : 100 });
 											}}
 										/>
 									</Form.Item>

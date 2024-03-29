@@ -16,7 +16,6 @@ import FilterByTags from '~src/ui-components/FilterByTags';
 import FilteredTags from '~src/ui-components/filteredTags';
 import { ErrorState } from '~src/ui-components/UIStates';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import DollarIcon from '~assets/icons/dollar-icon.svg';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -24,6 +23,7 @@ import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
+import { RoundedDollarIcon } from '~src/ui-components/CustomIcons';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -85,7 +85,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 				network={network}
 			/>
 			<div className='mt-3 flex sm:items-center'>
-				<DollarIcon className='px-1 xs:mt-1 sm:-mt-3.5 sm:p-0' />
+				<RoundedDollarIcon className='px-1 text-2xl text-lightBlue dark:text-white xs:mt-1 sm:-mt-3.5 sm:p-0' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Child Bounties ({count})</h1>
 			</div>
 

@@ -171,7 +171,7 @@ const ProfileTabs = ({
 			children: (
 				<VotesHistory
 					userProfile={userProfile}
-					theme={theme}
+					theme={theme as any}
 					setStatsArr={setStatsArr}
 					statsArr={statsArr}
 					totalVotes={totals?.votes}

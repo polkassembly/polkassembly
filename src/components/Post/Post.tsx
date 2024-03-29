@@ -349,15 +349,6 @@ const Post: FC<IPostProps> = (props) => {
 		);
 	};
 
-	// const TrackerButtonComp = (
-	// {id && !isNaN(Number(onchainId)) && isOnchainPost && !isEditing && (
-	// <TrackerButton
-	// onchainId={onchainId}
-	// proposalType={proposalType}
-	// />
-	// )}
-	// </>
-	// );
 	const getOnChainTabs = () => {
 		const tabs: any[] = [
 			{

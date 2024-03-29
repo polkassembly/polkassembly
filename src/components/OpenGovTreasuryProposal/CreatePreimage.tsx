@@ -49,6 +49,7 @@ import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
@@ -919,7 +920,7 @@ const CreatePreimage = ({
 									size='large'
 									identiconSize={30}
 								/>
-								{showIdentityInfoCardForProposer && network.includes('polkadot') && (
+								{showIdentityInfoCardForProposer && onchainIdentitySupportedNetwork.includes(network) && (
 									<Alert
 										className='icon-fix mt-2 rounded-[4px] dark:text-blue-dark-high'
 										showIcon
@@ -1043,7 +1044,7 @@ const CreatePreimage = ({
 									type='info'
 								/>
 							)}
-							{showIdentityInfoCardForBeneficiary && !isIdentityCardLoading && network.includes('polkadot') && (
+							{showIdentityInfoCardForBeneficiary && !isIdentityCardLoading && onchainIdentitySupportedNetwork.includes(network) && (
 								<Alert
 									className='icon-fix mt-2 rounded-[4px] dark:text-blue-dark-high'
 									showIcon

@@ -745,7 +745,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			}
 		} catch (error) {
 			const data = await fetchSubsquare(network, strPostId);
-			if (data) {
+
+			if (data && data.message !== 'Post not found') {
 				subsquidRes['data'] = {
 					proposals: [
 						{

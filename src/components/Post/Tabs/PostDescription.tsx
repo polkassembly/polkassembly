@@ -52,7 +52,7 @@ interface IPostDescriptionProps {
 }
 
 const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, TrackerButtonComp } = props;
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar } = props;
 	const {
 		postData: { content, postType, postIndex, title, post_reactions }
 	} = usePostDataContext();
@@ -206,7 +206,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 						</Dropdown>
 					</div>
 				</div>
-				<div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div>
+				{/* <div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div> */}
 			</div>
 
 			{!isEditing && (

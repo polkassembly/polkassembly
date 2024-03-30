@@ -18,6 +18,7 @@ import DislikeOutlined from '~assets/icons/reactions/DislikeOutlined.svg';
 import DislikeOutlinedDark from '~assets/icons/reactions/DislikeOutlinedDark.svg';
 import Dislikefilled from '~assets/icons/reactions/Dislikefilled.svg';
 import LikedGif from '~assets/icons/reactions/Liked-Colored.gif';
+import LikedGifDark from '~assets/icons/reactions/Liked-Colored-Dark.gif';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 
@@ -77,7 +78,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 							style={{ height: '24px', width: '24px' }}
 						>
 							<Image
-								src={LikedGif}
+								src={theme == 'dark' ? LikedGifDark : LikedGif}
 								alt='Liked'
 								width={50}
 								height={50}
@@ -106,21 +107,43 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 		}
 
 		if (reaction == '👎') {
-			return reacted ? (
-				<Dislikefilled />
-			) : (
+			return (
 				<div
-					onClick={() => {
-						!id && setDislikeModalOpen && setDislikeModalOpen(true);
-						const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
-						trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
-							contentType: isReactionButtonInPost ? dislikedItem : 'commenDistLiked',
-							userId: currentUser?.id || '',
-							userName: currentUser?.username || ''
-						});
-					}}
+					className='relative'
+					style={{ height: 24, width: 24 }}
 				>
-					{theme == 'dark' ? <DislikeOutlinedDark /> : <DislikeOutlined />}
+					{showLikedGif ? (
+						<div
+							className='absolute -left-[13px] top-[8px] z-10'
+							style={{ height: '24px', transform: 'scaleX(-1) rotate(180deg)', width: '24px' }}
+						>
+							<Image
+								src={theme == 'dark' ? LikedGifDark : LikedGif}
+								alt='Disliked'
+								width={50}
+								height={50}
+							/>
+						</div>
+					) : reacted ? (
+						<div className='mt-[1.5px]'>
+							<Dislikefilled />
+						</div>
+					) : (
+						<div
+							onClick={() => {
+								!id && setDislikeModalOpen && setDislikeModalOpen(true);
+								const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
+								trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
+									contentType: isReactionButtonInPost ? dislikedItem : 'commenDistLiked',
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
+							}}
+							className='mt-[1.5px] cursor-pointer'
+						>
+							{theme === 'dark' ? <DislikeOutlinedDark /> : <DislikeOutlined />}
+						</div>
+					)}
 				</div>
 			);
 		}
@@ -182,7 +205,9 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 			>
 				<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 					<span className='mt-1'>{getReactionIcon(reaction, reacted)}</span>
-					<span className='ml-1 text-xs font-semibold text-lightBlue dark:text-icon-dark-inactive'>{reactions?.[reaction as IReaction].count}</span>
+					<span className={`ml-1 text-xs font-semibold ${reacted ? 'text-pink_primary dark:text-blue-dark-helper' : 'text-lightBlue dark:text-icon-dark-inactive'}`}>
+						{reactions?.[reaction as IReaction].count}
+					</span>
 				</span>
 			</CustomButton>
 		</span>

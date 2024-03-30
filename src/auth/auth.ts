@@ -539,7 +539,7 @@ class AuthService {
 		return this.getSignedToken(user);
 	}
 
-	public async AddressLinkConfirm(token: string, address: string, signature: string, wallet: Wallet): Promise<string> {
+	public async AddressLinkConfirm(token: string, address: string, signature: string, wallet: Wallet, skipSignCheck?: boolean): Promise<string> {
 		const user = await this.GetUser(token);
 		if (!user) throw apiErrorWithStatusCode(messages.USER_NOT_FOUND, 404);
 
@@ -554,10 +554,11 @@ class AuthService {
 
 		const addressToLink = addressToLinkDoc.data() as Address;
 
-		const isValidSr =
-			address.startsWith('0x') && wallet === Wallet.METAMASK
-				? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
-				: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
+		const isValidSr = skipSignCheck
+			? true
+			: address.startsWith('0x') && wallet === Wallet.METAMASK
+			? verifyMetamaskSignature(addressToLink.sign_message, addressToLink.address, signature)
+			: verifySignature(addressToLink.sign_message, addressToLink.address, signature);
 		if (!isValidSr) throw apiErrorWithStatusCode(messages.ADDRESS_LINKING_FAILED, 400);
 
 		// If this linked address is the first address to be linked. Then set it as default.

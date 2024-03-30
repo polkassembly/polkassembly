@@ -173,7 +173,7 @@ export default styled(BalanceInput)`
 	}
 	.suffixColor .ant-input {
 		background: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
-		color: ${(props: any) => (props.theme === 'dark' ? '#909090' : '#243A57')} !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : '#243A57')} !important;
 		border-radius: 4px 0px 0px 4px !important;
 		height: 40px !important;
 		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #4b4b4b' : '1px solid #D2D8E0')} !important;

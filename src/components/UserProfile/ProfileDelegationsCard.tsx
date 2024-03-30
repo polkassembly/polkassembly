@@ -317,6 +317,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							}}
 						>
 							<Markdown
+								isPreview={true}
 								md={delegationMandate}
 								className={'max-h-32 overflow-y-auto'}
 							/>

@@ -13,10 +13,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Tooltip from '~src/basic-components/Tooltip';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeIconfilled from '~assets/icons/reactions/LikeIconfilled.svg';
+import LikeIconfilledDark from '~assets/icons/reactions/LikefilledDark.svg';
 import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
 import DislikeOutlined from '~assets/icons/reactions/DislikeOutlined.svg';
 import DislikeOutlinedDark from '~assets/icons/reactions/DislikeOutlinedDark.svg';
 import Dislikefilled from '~assets/icons/reactions/Dislikefilled.svg';
+import DislikefilledDark from '~assets/icons/reactions/DislikeFilledDark.svg';
 import LikedGif from '~assets/icons/reactions/Liked-Colored.gif';
 import LikedGifDark from '~assets/icons/reactions/Liked-Colored-Dark.gif';
 import { useTheme } from 'next-themes';
@@ -85,7 +87,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 							/>
 						</div>
 					) : reacted ? (
-						<LikeIconfilled />
+						<div>{theme == 'dark' ? <LikeIconfilledDark /> : <LikeIconfilled />}</div>
 					) : (
 						<div
 							onClick={() => {
@@ -125,9 +127,7 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 							/>
 						</div>
 					) : reacted ? (
-						<div className='mt-[1.5px]'>
-							<Dislikefilled />
-						</div>
+						<div className='mt-[2px]'>{theme == 'dark' ? <DislikefilledDark /> : <Dislikefilled />}</div>
 					) : (
 						<div
 							onClick={() => {

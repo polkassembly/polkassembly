@@ -62,7 +62,7 @@ const Modal = ({
 		<StyledModal
 			title={
 				<div className='text-[18px]'>
-					<h3 className='mb-0 ml-[24px] flex items-center gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
+					<h3 className='mb-0 flex items-center gap-2 font-semibold text-blue-light-high dark:text-blue-dark-high'>
 						{' '}
 						{titleIcon} {title}{' '}
 					</h3>

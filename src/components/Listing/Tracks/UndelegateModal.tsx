@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Form, Spin } from 'antd';
+import { Form, Modal, Spin } from 'antd';
 
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
@@ -28,7 +28,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import Modal from '~src/basic-components/Modal/Modal';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const ZERO_BN = new BN(0);
 
@@ -166,6 +166,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 			<Modal
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
+				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
 				title={
 					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<UndelegateProfileIcon className='mr-2' />

@@ -10,6 +10,8 @@ import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { GET_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
+import { ProposalType } from '~src/global/proposalType';
 
 export interface IChildBountiesResponse {
 	child_bounties: {
@@ -17,6 +19,7 @@ export interface IChildBountiesResponse {
 		index: number;
 		status: string;
 		reward: string;
+		title: string;
 	}[];
 	child_bounties_count: number;
 }
@@ -69,14 +72,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesR
 		child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
 	};
 
-	subsquidData.proposals.forEach((childBounty: any) => {
+	for (const childBounty of subsquidData.proposals) {
+		const subsquireRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, childBounty.index);
+
 		resObj.child_bounties.push({
 			description: childBounty.description,
 			index: childBounty.index,
 			reward: childBounty?.reward,
-			status: childBounty.status
+			status: childBounty.status,
+			title: subsquireRes?.title || ''
 		});
-	});
+	}
 
 	return res.status(200).json(resObj);
 }

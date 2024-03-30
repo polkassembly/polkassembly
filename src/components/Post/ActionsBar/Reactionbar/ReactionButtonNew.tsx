@@ -13,7 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Tooltip from '~src/basic-components/Tooltip';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeIconfilled from '~assets/icons/reactions/LikeIconfilled.svg';
-import LikeIconfilledDark from '~assets/icons/reactions/LikefilledDark.svg';
+import LikeIconfilledDark from '~assets/icons/reactions/LikeFilledDark.svg';
 import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
 import DislikeOutlined from '~assets/icons/reactions/DislikeOutlined.svg';
 import DislikeOutlinedDark from '~assets/icons/reactions/DislikeOutlinedDark.svg';

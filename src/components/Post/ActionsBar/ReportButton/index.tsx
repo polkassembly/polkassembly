@@ -21,6 +21,8 @@ import InputTextarea from '~src/basic-components/Input/InputTextarea';
 import Select from '~src/basic-components/Select';
 import ReportIcon from '~assets/icons/reactions/ReportIcon.svg';
 import ReportIconDark from '~assets/icons/reactions/ReportIconDark.svg';
+import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
+import DeleteIconDark from '~assets/icons/reactions/DeleteIconDark.svg';
 // import DeleteIcon from '~assets/icons/reactions/DeleteIcon.svg';
 import { useTheme } from 'next-themes';
 
@@ -184,7 +186,7 @@ const ReportButton: FC<IReportButtonProps> = (props) => {
 						className='flex cursor-pointer items-center justify-between gap-[6px] border-none bg-transparent shadow-none'
 						onClick={() => setShowModal(true)}
 					>
-						{isDeleteModal ? <DeleteOutlined className={'mr-[2px] text-lightBlue dark:text-icon-dark-inactive'} /> : theme == 'dark' ? <ReportIconDark /> : <ReportIcon />}
+						{isDeleteModal ? theme == 'dark' ? <DeleteIconDark /> : <DeleteIcon /> : theme == 'dark' ? <ReportIconDark /> : <ReportIcon />}
 						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>{isDeleteModal ? 'Delete' : 'Report'}</span>
 					</button>
 				) : (

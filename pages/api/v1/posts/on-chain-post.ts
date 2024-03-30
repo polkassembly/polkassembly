@@ -737,6 +737,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				query: postQuery,
 				variables: postVariables
 			});
+
+			if (!subsquidRes?.data?.proposals?.length) {
+				console.log('Failed to fetch from subsquid, fetching from subsquare instead');
+				// this will make the control flow to the catch block to fetch from subsquare
+				throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
+			}
 		} catch (error) {
 			const data = await fetchSubsquare(network, strPostId);
 			if (data) {

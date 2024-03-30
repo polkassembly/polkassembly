@@ -1152,8 +1152,8 @@ const CreatePreimage = ({
 									value={EEnactment.At_Block_No}
 									className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 								>
-									<div className='flex h-10 items-center gap-2'>
-										<span className='w-[150px]'>
+									<div className='flex h-10 items-center gap-4'>
+										<span>
 											At Block no.
 											<HelperTooltip
 												className='ml-1'

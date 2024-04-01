@@ -91,33 +91,38 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 						/>
 					</div>
-					<div className='w-7/10 text-bodyBlue dark:text-blue-dark-high'>
-						{address && (
-							<div className='flex items-center'>
-								{address && (
+					<div className='w-7/10 gap-1 text-bodyBlue dark:text-blue-dark-high'>
+						{!!address && !!username ? (
+							<div className='flex gap-1'>
+								<span className='text-2xl font-semibold'>{username}</span>
+								<div className='flex items-center gap-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+									(
 									<Address
 										address={address}
 										disableIdenticon
-										isProfileView
 										destroyTooltipOnHide
-										className='flex gap-1'
-										usernameClassName='text-2xl'
+										className='mr-0 flex items-center'
+										addressClassName='items-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
+										disableHeader
 										passedUsername={identity?.display || identity?.legal || username}
-										usernameMaxLength={20}
+										addressMaxLength={5}
 									/>
-								)}
-								<span
-									className='flex cursor-pointer items-center text-xl'
-									onClick={(e) => {
-										isSearch && e.preventDefault();
-										copyLink(getEncodedAddress(address, network) || '');
-										success();
-									}}
-								>
-									{contextHolder}
-									<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-								</span>
+									)
+									<span
+										className='flex cursor-pointer items-center text-base'
+										onClick={(e) => {
+											isSearch && e.preventDefault();
+											copyLink(getEncodedAddress(address, network) || '');
+											success();
+										}}
+									>
+										{contextHolder}
+										<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
+									</span>
+								</div>
 							</div>
+						) : (
+							<div className='h-[40px]' />
 						)}
 
 						{userBio || bio ? (

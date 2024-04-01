@@ -50,25 +50,16 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
-	const {
-		beneficiary,
-		proposer,
-		fundingAmount,
-		title,
-		content,
-		discussionId,
-		isDiscussionLinked,
-		tags,
-		showIdentityInfoCardForProposer,
-		showIdentityInfoCardForBeneficiary,
-		showMultisigInfoCard
-	} = gov1proposalData;
+	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags } = gov1proposalData;
 
 	const [{ minBond, proposalBond }, setTreasuryData] = useState<{ proposalBond: string | null; minBond: string | null }>({
 		minBond: '',
 		proposalBond: ''
 	});
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
+	const [showIdentityInfoCardForProposer, setShowIdentityInfoCardForProposer] = useState<boolean>(false);
+	const [showMultisigInfoCard, setShowMultisigInfoCard] = useState<boolean>(false);
+	const [showIdentityInfoCardForBeneficiary, setShowIdentityInfoCardForBeneficiary] = useState<boolean>(false);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
@@ -96,19 +87,21 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkBeneficiaryMultisig = async (address: string) => {
-		if (!address) return;
-		await checkIsAddressMultisig(address).then((isMulti) => handleOnchange({ ...gov1proposalData, showMultisigInfoCard: !isMulti }));
+		if (!address) {
+			setShowMultisigInfoCard(false);
+			return;
+		}
+		await checkIsAddressMultisig(address).then((isMulti) => setShowMultisigInfoCard(!isMulti));
 	};
 
 	const checkBeneficiaryIdentity = async (address: string) => {
-		if (!api || !apiReady || !address) return;
+		if (!api || !apiReady || !address) {
+			setShowIdentityInfoCardForBeneficiary(false);
+			return;
+		}
 
 		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
-			if (!info?.identity?.display) {
-				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: true });
-			} else {
-				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: false });
-			}
+			setShowIdentityInfoCardForBeneficiary(!info?.identity?.display);
 		});
 	};
 
@@ -187,12 +180,15 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		if (!api || !apiReady) return;
+		if (!api || !apiReady || !address) {
+			setShowIdentityInfoCardForProposer(false);
+			return;
+		}
 		const encodedAddr = getEncodedAddress(address, network) || '';
 
 		await api.derive.accounts.info(encodedAddr, (info: DeriveAccountInfo) => {
 			if (!info?.identity?.display) {
-				handleOnchange({ ...gov1proposalData, showIdentityInfoCardForProposer: true });
+				setShowIdentityInfoCardForProposer(true);
 			}
 		});
 	};
@@ -221,16 +217,13 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 				...gov1proposalData,
 				firstStepPercentage,
 				proposer: proposer || loginAddress,
-				secondStepPercentage,
-				showIdentityInfoCardForBeneficiary: false,
-				showIdentityInfoCardForProposer: false,
-				showMultisigInfoCard: false
+				secondStepPercentage
 			})
 		);
 		checkProposerIdentity(proposer || loginAddress);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress]);
+	}, [loginAddress, proposer, api, apiReady]);
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];

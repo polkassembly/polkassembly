@@ -54,12 +54,25 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 					}
 				})
 				.catch((e: any) => console.error(e));
+		} else if (network === 'zeitgeist') {
+			await api.query.system
+				.account(address)
+				.then((result: any) => {
+					if (result.data.free && result.data?.free?.toBigInt() >= result.data?.miscFrozen?.toBigInt()) {
+						transferableBalance = new BN(result.data?.free?.toBigInt() - result.data?.miscFrozen?.toBigInt());
+						lockedBalance = new BN(result.data?.miscFrozen?.toBigInt().toString());
+						freeBalance = new BN(result.data?.free?.toBigInt().toString());
+					} else {
+						freeBalance = ZERO_BN;
+					}
+				})
+				.catch((e: any) => console.error(e));
 		} else {
 			await api.query.system
 				.account(address)
 				.then((result: any) => {
-					if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()) {
-						transferableBalance = new BN(result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt());
+					if (result.data.free && result.data?.free?.toBigInt() >= (result.data?.frozen || 0)?.toBigInt()) {
+						transferableBalance = new BN(result.data?.free?.toBigInt() - (result.data?.frozen || 0)?.toBigInt());
 						lockedBalance = new BN(result.data?.frozen?.toBigInt().toString());
 						freeBalance = new BN(result.data?.free?.toBigInt().toString());
 					} else {

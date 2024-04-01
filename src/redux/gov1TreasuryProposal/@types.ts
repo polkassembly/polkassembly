@@ -14,10 +14,5 @@ export interface IGov1TreasuryProposalStore {
 	fundingAmount: string;
 	firstStepPercentage: number;
 	secondStepPercentage: number;
-	showIdentityInfoCardForBeneficiary: boolean;
-	showIdentityInfoCardForProposer: boolean;
-	showMultisigInfoCard: boolean;
-	isIdentityCardLoading: boolean;
-	isMultisigCardLoading: boolean;
 	proposalIndex: null | number;
 }

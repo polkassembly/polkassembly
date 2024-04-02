@@ -715,7 +715,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network && strPostId.toLowerCase() !== strPostId.toUpperCase())
 		) {
 			postVariables = {
-				hash_eq: strPostId,
+				proposalHashBlock_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
 			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {

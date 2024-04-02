@@ -2,14 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { ShareAltOutlined } from '@ant-design/icons';
 import { trackEvent } from 'analytics';
 import React, { FC, useEffect, useState } from 'react';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { NetworkSocials } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
+import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
+import { useTheme } from 'next-themes';
 
 interface IShareButtonProps {
 	postId: number | string;
@@ -20,6 +21,7 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 	const { postId, proposalType, title } = props;
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [socialsData, setSocialsData] = useState<NetworkSocials>({
 		block_explorer: '',
 		description: '',
@@ -69,13 +71,15 @@ const ShareButton: FC<IShareButtonProps> = (props) => {
 
 	return (
 		<>
-			<CustomButton
+			<div
 				onClick={share}
-				variant='default'
-				className='m-0 border-none bg-transparent px-1 py-2 font-normal shadow-none disabled:opacity-[0.5] dark:text-blue-dark-helper '
+				className='m-0 border-none bg-transparent font-normal shadow-none disabled:opacity-[0.5] dark:text-blue-dark-helper '
 			>
-				<ShareAltOutlined /> Share
-			</CustomButton>
+				<span className='flex items-center gap-[6px]'>
+					{theme == 'dark' ? <ShareIconDark /> : <ShareIcon />}
+					<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Share</span>
+				</span>
+			</div>
 		</>
 	);
 };

@@ -17,8 +17,8 @@ const TrackAnalyticsTotalData = () => {
 					className=''
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs font-normal text-blue-light-medium'>Proposal Created</span>
-					<span className='text-2xl font-semibold text-blue-light-high'>198K</span>
+					<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Proposal Created</span>
+					<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>198K</span>
 					<div className='flex items-center space-x-1'>
 						<ImageIcon
 							src='/assets/icons/analytics/green-arrow-top.svg'
@@ -26,7 +26,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>37.8%</span>
-						<span className='text-xs font-normal text-[#485F7DB2]'>this month</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this month</span>
 					</div>
 				</div>
 			</div>
@@ -44,8 +44,8 @@ const TrackAnalyticsTotalData = () => {
 					className=''
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs font-normal text-blue-light-medium'>Total Voting Power</span>
-					<span className='text-2xl font-semibold text-blue-light-high'>89</span>
+					<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Voting Power</span>
+					<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>89</span>
 					<div className='flex items-center space-x-1'>
 						<ImageIcon
 							src='/assets/icons/analytics/green-arrow-top.svg'
@@ -53,7 +53,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>11%</span>
-						<span className='text-xs font-normal text-[#485F7DB2]'>this week</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this week</span>
 					</div>
 				</div>
 			</div>
@@ -71,8 +71,8 @@ const TrackAnalyticsTotalData = () => {
 					className=''
 				/>
 				<div className='flex flex-col'>
-					<span className='text-xs font-normal text-blue-light-medium'>Discussions Created</span>
-					<span className='text-2xl font-semibold text-blue-light-high'>89</span>
+					<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Discussions Created</span>
+					<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>89</span>
 					<div className='flex items-center space-x-1'>
 						<ImageIcon
 							src='/assets/icons/analytics/green-arrow-top.svg'
@@ -80,7 +80,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>11%</span>
-						<span className='text-xs font-normal text-[#485F7DB2]'>this week</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this week</span>
 					</div>
 				</div>
 			</div>

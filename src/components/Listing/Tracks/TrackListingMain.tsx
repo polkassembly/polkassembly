@@ -7,6 +7,7 @@ import TrackListingCardAll from './TrackListingCardAll';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import { TabsProps } from 'antd';
+import TrackAnalyticsMain from './TrackAnalyticsMain';
 
 interface IProps {
 	className?: string;
@@ -33,7 +34,7 @@ const TrackListingMain = ({ className, posts, trackName }: IProps) => {
 		{
 			children: (
 				<>
-					<h2>HELLO world</h2>
+					<TrackAnalyticsMain />
 				</>
 			),
 			key: '2',

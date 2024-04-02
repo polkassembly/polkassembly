@@ -10,6 +10,7 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { redisGet, redisSet } from '~src/auth/redis';
+import TrackListingCard from '~src/components/Listing/Tracks/TrackListingCard';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -20,7 +21,6 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { generateKey } from '~src/util/getRedisKeys';
 import { OverviewIcon } from '~src/ui-components/CustomIcons';
-import TrackListingMain from '~src/components/Listing/Tracks/TrackListingMain';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -131,7 +131,11 @@ const OverviewListing: FC<IOverviewListingProps> = (props) => {
 				<OverviewIcon className='text-lg font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 				<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>All Referenda</h2>
 			</div>
-			<TrackListingMain posts={posts} />
+			<TrackListingCard
+				className='mt-8'
+				posts={posts}
+				trackName='All Tracks'
+			/>
 		</>
 	);
 };

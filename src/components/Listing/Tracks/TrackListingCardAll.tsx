@@ -132,8 +132,8 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
 	return (
-		<div className={`${className} mt-[36px] rounded-xxl bg-white px-0 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>
-			<div className='flex items-center justify-between px-6'>
+		<div className={`${className}`}>
+			<div className='flex items-center justify-between px-1 pb-5 pt-2'>
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
@@ -150,19 +150,19 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 						value='Submitted'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Submitted({initialCountForSubmitted || 0})
+						Submitted ({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Voting({initialCountForVoting || 0})
+						Voting ({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Closed({initialCountForClosed || 0})
+						Closed ({initialCountForClosed || 0})
 					</Radio>
 				</Radio.Group>
 				<div className='flex items-center gap-x-2 '>

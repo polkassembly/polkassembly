@@ -4,46 +4,38 @@
 
 import { Divider } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-import { useNetworkSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { getDefaultTrackMetaData, getTrackData } from './AboutTrackCard';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackAnalyticsStats } from '~src/types';
 
 interface IProps {
 	className?: string;
-	trackName: string;
+	trackNumber: number;
 }
 
 const TrackAnalyticsTotalData: FC<IProps> = (props) => {
-	const { network } = useNetworkSelector();
-	const { trackName } = props;
-	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
-	useEffect(() => {
-		setTrackMetaData(getTrackData(network, trackName));
-	}, [network, trackName]);
-	const track_number = trackMetaData?.trackId;
-
+	const { trackNumber } = props;
 	const [totalData, setTotalData] = useState<ITrackAnalyticsStats>({
 		activeProposals: { diff: 0, total: 0 },
 		allProposals: { diff: 0, total: '' }
 	});
 
 	const getData = async () => {
-		const { data } = await nextApiClientFetch<{ data: ITrackAnalyticsStats }>('/api/v1/track_level_anaytics/analytics-stats', {
-			trackNum: track_number
+		const { data, error } = await nextApiClientFetch<{ data: ITrackAnalyticsStats }>('/api/v1/track_level_anaytics/analytics-stats', {
+			trackNum: trackNumber
 		});
 
 		if (data && data?.data) {
 			setTotalData(data?.data);
 		}
+		if (error) console.log(error);
 	};
 
 	useEffect(() => {
-		if (isNaN(trackMetaData.trackId)) return;
+		if (isNaN(trackNumber)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trackMetaData.trackId]);
+	}, [trackNumber]);
 
 	return (
 		<div className='mr-2.5 mt-2 flex items-center justify-between'>

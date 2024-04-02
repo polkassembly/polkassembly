@@ -43,7 +43,7 @@ export interface IReactionButtonProps {
 type IReaction = '👍' | '👎';
 
 // TODO: Refactor handleReact
-const ReactionButtonNew: FC<IReactionButtonProps> = ({
+const PostReactionButtons: FC<IReactionButtonProps> = ({
 	className,
 	reaction,
 	commentId,
@@ -234,4 +234,4 @@ const ReactionButtonNew: FC<IReactionButtonProps> = ({
 	);
 };
 
-export default ReactionButtonNew;
+export default PostReactionButtons;

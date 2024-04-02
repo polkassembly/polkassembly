@@ -214,6 +214,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref.current?.editor?.insertContent(content, { format: 'html', caretPosition });
 								setIsModalVisible(false);
 							}}
+							theme={theme}
 						/>
 					</Modal>
 

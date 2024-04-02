@@ -69,20 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		network,
 		userId: userProfile?.data?.user_id
 	});
-	// const activitiesCounts = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
-	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
-	let activitiesCounts;
-	if (activitiesCountsResult.error) {
-		activitiesCounts = {
-			data: null,
-			error: activitiesCountsResult.error.toString()
-		};
-	} else {
-		activitiesCounts = {
-			data: activitiesCountsResult.data,
-			error: null
-		};
-	}
+	const activitiesCounts = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	const props: IUserProfileProps = {
 		activitiesCounts,
 		network,

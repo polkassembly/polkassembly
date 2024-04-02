@@ -23,6 +23,7 @@ import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { useDispatch } from 'react-redux';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import { trackEvent } from 'analytics';
 
 const ZERO_BN = new BN(0);
 
@@ -33,7 +34,7 @@ export interface IRemoveIdentity {
 
 const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { network } = useNetworkSelector();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
@@ -98,6 +99,11 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		};
 
 		const onSuccess = () => {
+			trackEvent('identity_removed', 'removed_identity', {
+				loginAddress: loginAddress || '',
+				userId: id || '',
+				userName: username || ''
+			});
 			queueNotification({
 				header: 'Success!',
 				message: 'Identity remove successfully!',

@@ -26,7 +26,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>37.8%</span>
-						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this month</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-[#909090B2]'>this month</span>
 					</div>
 				</div>
 			</div>
@@ -53,7 +53,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>11%</span>
-						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this week</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-[#909090B2]'>this week</span>
 					</div>
 				</div>
 			</div>
@@ -80,7 +80,7 @@ const TrackAnalyticsTotalData = () => {
 							imgClassName='-mt-1'
 						/>
 						<span className='text-xs font-bold text-[#00AC4F]'>11%</span>
-						<span className='text-xs font-normal text-[#485F7DB2] dark:text-blue-dark-medium'>this week</span>
+						<span className='text-xs font-normal text-[#485F7DB2] dark:text-[#909090B2]'>this week</span>
 					</div>
 				</div>
 			</div>

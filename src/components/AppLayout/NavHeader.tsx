@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -30,7 +30,6 @@ import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { EGovType } from '~src/global/proposalType';
-import UserProfileDropdown from '../../ui-components/UserProfileDropdown';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
 import { onchainIdentitySupportedNetwork } from '.';
@@ -46,6 +45,12 @@ import DelegateIcon from '~assets/delegate-icon.svg';
 import { delegationSupportedNetworks } from '../DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
+import UserDropdown from '../../ui-components/UserDropdown';
+import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+
+const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
+	ssr: false
+});
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -66,8 +71,9 @@ interface Props {
 
 const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
 	const { network } = useNetworkSelector();
+
 	const currentUser = useUserDetailsSelector();
-	const { username, id } = currentUser;
+	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
 	const { web3signup } = currentUser;
 	const [open, setOpen] = useState(false);
@@ -93,6 +99,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				govType
 			})
 		);
+	};
+
+	const handleRemoveIdentity = () => {
+		if (loginAddress) {
+			dispatch(setOpenRemoveIdentityModal(true));
+		} else {
+			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
+		}
 	};
 
 	useEffect(() => {
@@ -236,35 +250,60 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	];
 
 	if (onchainIdentitySupportedNetwork.includes(network)) {
-		dropdownMenuItems.splice(1, 0, {
-			key: 'set on-chain identity',
-			label: (
-				<Link
-					className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
-					href={''}
-					onClick={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						// GAEvent for setOnchain identity clicked
-						trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-							userId: currentUser?.id || '',
-							userName: currentUser?.username || ''
-						});
-						handleIdentityButtonClick();
-					}}
-				>
-					<span className='text-2xl'>
-						<ApplayoutIdentityIcon />
-					</span>
-					<span>Set on-chain identity</span>
-					{!isVerified && (
-						<span className='flex items-center'>
-							<IdentityCaution />
-						</span>
-					)}
-				</Link>
-			)
-		});
+		dropdownMenuItems.splice(
+			1,
+			0,
+			...[
+				{
+					key: 'set on-chain identity',
+					label: (
+						<Link
+							className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+							href={''}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								// GAEvent for setOnchain identity clicked
+								trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+									userId: currentUser?.id || '',
+									userName: currentUser?.username || ''
+								});
+								handleIdentityButtonClick();
+							}}
+						>
+							<span className='text-2xl'>
+								<ApplayoutIdentityIcon />
+							</span>
+							<span>Set on-chain identity</span>
+							{!isVerified && (
+								<span className='flex items-center'>
+									<IdentityCaution />
+								</span>
+							)}
+						</Link>
+					)
+				},
+				{
+					key: 'remove identity',
+					label: (
+						<Link
+							className={`flex items-center gap-x-2.5 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+							href={''}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								handleRemoveIdentity?.();
+							}}
+						>
+							<span className='ml-0.5 text-lg'>
+								<ClearIdentityOutlinedIcon />
+							</span>
+							<span>Remove Identity</span>
+						</Link>
+					)
+				}
+			]
+		);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (
@@ -362,7 +401,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 									</div>
 								) : (
 									<div className={'flex items-center justify-between gap-x-2'}>
-										<UserProfileDropdown
+										<UserDropdown
 											className='navbar-user-dropdown h-[32px] max-w-[165px]'
 											displayName={displayName}
 											isVerified={isVerified}
@@ -478,12 +517,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				/>
 			</nav>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
-				<OnChainIdentity
-					open={open}
-					setOpen={setOpen}
-					openAddressLinkedModal={openAddressLinkedModal}
-					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-				/>
+				<>
+					<OnChainIdentity
+						open={open}
+						setOpen={setOpen}
+						openAddressLinkedModal={openAddressLinkedModal}
+						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					/>
+					<RemoveIdentity />
+				</>
 			)}
 		</Header>
 	);

@@ -38,7 +38,8 @@ import {
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ApplayoutIdentityIcon,
-	ArchivedIcon
+	ArchivedIcon,
+	ClearIdentityOutlinedIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -59,7 +60,6 @@ import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -71,6 +71,11 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+
+const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
+	ssr: false
+});
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -115,6 +120,7 @@ const getUserDropDown = (
 	isGood: boolean,
 	handleLogout: any,
 	network: string,
+	handleRemoveIdentity: (pre?: any) => void,
 	img?: string | null,
 	username?: string,
 	identityUsername?: string,
@@ -166,30 +172,55 @@ const getUserDropDown = (
 	];
 
 	if (onchainIdentitySupportedNetwork.includes(network)) {
-		dropdownMenuItems.splice(1, 0, {
-			key: 'set on-chain identity',
-			label: (
-				<Link
-					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-					href={''}
-					onClick={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						handleSetIdentityClick();
-					}}
-				>
-					<span className='ml-[2px] text-lg'>
-						<ApplayoutIdentityIcon />
-					</span>
-					<span>Set on-chain identity</span>
-					{isIdentityUnverified && (
-						<span className='flex items-center'>
-							<IdentityCaution />
-						</span>
-					)}
-				</Link>
-			)
-		});
+		dropdownMenuItems.splice(
+			1,
+			0,
+			...[
+				{
+					key: 'set on-chain identity',
+					label: (
+						<Link
+							className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+							href={''}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								handleSetIdentityClick();
+							}}
+						>
+							<span className='ml-0.5 text-lg'>
+								<ApplayoutIdentityIcon />
+							</span>
+							<span>Set on-chain identity</span>
+							{isIdentityUnverified && (
+								<span className='flex items-center'>
+									<IdentityCaution />
+								</span>
+							)}
+						</Link>
+					)
+				},
+				{
+					key: 'remove identity',
+					label: (
+						<Link
+							className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+							href={''}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								handleRemoveIdentity?.();
+							}}
+						>
+							<span className='ml-0.5 text-lg'>
+								<ClearIdentityOutlinedIcon />
+							</span>
+							<span>Remove Identity</span>
+						</Link>
+					)
+				}
+			]
+		);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => {
@@ -755,12 +786,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 	}
 
+	const handleRemoveIdentity = () => {
+		if (loginAddress) {
+			dispatch(setOpenRemoveIdentityModal(true));
+		} else {
+			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
+		}
+	};
+
 	const userDropdown = getUserDropDown(
 		handleIdentityButtonClick,
 		isIdentityUnverified,
 		isGood,
 		handleLogout,
 		network,
+		handleRemoveIdentity,
 		picture,
 		username!,
 		mainDisplay!,
@@ -885,12 +925,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				)}
 			</Layout>
 			{onchainIdentitySupportedNetwork.includes(network) && (
-				<OnChainIdentity
-					open={open}
-					setOpen={setOpen}
-					openAddressLinkedModal={openAddressLinkedModal}
-					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-				/>
+				<>
+					<OnChainIdentity
+						open={open}
+						setOpen={setOpen}
+						openAddressLinkedModal={openAddressLinkedModal}
+						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					/>
+					<RemoveIdentity />
+				</>
 			)}
 			<Footer theme={theme as any} />
 			<Modal

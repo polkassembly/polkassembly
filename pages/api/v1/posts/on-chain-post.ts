@@ -718,9 +718,9 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				proposalHashBlock_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
-			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
-				postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
-			}
+		}
+		if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		} else if (network === 'polymesh') {

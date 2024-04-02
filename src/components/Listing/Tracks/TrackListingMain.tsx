@@ -34,7 +34,7 @@ const TrackListingMain = ({ className, posts, trackName }: IProps) => {
 		{
 			children: (
 				<>
-					<TrackAnalyticsMain />
+					<TrackAnalyticsMain trackName={trackName} />
 				</>
 			),
 			key: '2',

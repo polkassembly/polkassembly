@@ -6,12 +6,13 @@ import TrackAnalyticsTotalData from './TrackAnalyticsTotalData';
 
 interface IProps {
 	className?: string;
+	trackName: string;
 }
 
-const TrackAnalyticsMain = ({ className }: IProps) => {
+const TrackAnalyticsMain = ({ className, trackName }: IProps) => {
 	return (
 		<main className={`${className}`}>
-			<TrackAnalyticsTotalData />
+			<TrackAnalyticsTotalData trackName={trackName} />
 		</main>
 	);
 };

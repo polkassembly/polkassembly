@@ -10,6 +10,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackDelegationTotalData from './TrackDelegationTotalData';
 import { IDelegationAnalytics } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { Divider } from 'antd';
+import DelegationAnalyticsTotalData from './DelegationAnalyticsTotalData';
 
 const { Panel } = Collapse;
 
@@ -76,6 +78,11 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 					totalDelegates={delegationData?.totalDelegates}
 					totalDelegators={delegationData?.totalDelegators}
 				/>
+				<Divider
+					dashed
+					className='my-3 border-[#D2D8E0]'
+				/>
+				<DelegationAnalyticsTotalData />
 			</Panel>
 		</Collapse>
 	);

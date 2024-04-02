@@ -82,7 +82,10 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 					dashed
 					className='my-3 border-[#D2D8E0]'
 				/>
-				<DelegationAnalyticsTotalData />
+				<DelegationAnalyticsTotalData
+					delegateesData={delegationData?.delegateesData}
+					delegatorsData={delegationData?.delegatorsData}
+				/>
 			</Panel>
 		</Collapse>
 	);

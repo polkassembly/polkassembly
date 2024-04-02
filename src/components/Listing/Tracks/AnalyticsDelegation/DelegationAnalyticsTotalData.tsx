@@ -5,8 +5,14 @@ import React, { useState } from 'react';
 import { Radio } from 'antd';
 import TotalDelegateeData from './TotalDelegateeData';
 import TotalDelegatorData from './TotalDelegatorData';
+import { IDelegatorsAndDelegatees } from '~src/types';
 
-const DelegationAnalyticsTotalData = () => {
+interface IProps {
+	delegateesData: IDelegatorsAndDelegatees;
+	delegatorsData: IDelegatorsAndDelegatees;
+}
+
+const DelegationAnalyticsTotalData = ({ delegateesData, delegatorsData }: IProps) => {
 	const [selectedOption, setSelectedOption] = useState('delegatee');
 
 	const onRadioChange = (e: any) => {
@@ -16,9 +22,9 @@ const DelegationAnalyticsTotalData = () => {
 	const displayData = () => {
 		switch (selectedOption) {
 			case 'delegatee':
-				return <TotalDelegateeData />;
+				return <TotalDelegateeData delegateesData={delegateesData} />;
 			case 'delegator':
-				return <TotalDelegatorData />;
+				return <TotalDelegatorData delegatorsData={delegatorsData} />;
 			default:
 				return null;
 		}

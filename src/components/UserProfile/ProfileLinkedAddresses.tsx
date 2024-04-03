@@ -20,6 +20,7 @@ import { useApiContext } from '~src/context';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
+import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -186,7 +187,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 										addressClassName='text-sm tracking-wide font-semibold dark:text-blue-dark-high'
 									/>
 								</Checkbox>
-								{id === userProfile?.user_id && (
+								{id === userProfile?.user_id && onchainIdentitySupportedNetwork.includes(network) && (
 									<div className='flex flex-shrink-0'>
 										{identityInfo[address] ? (
 											<div

@@ -78,7 +78,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 				/>
 				<Divider
 					dashed
-					className='my-3 border-[#D2D8E0]'
+					className='mb-3 mt-5 border-[#D2D8E0] dark:border-[#5A5A5A]'
 				/>
 				<DelegationAnalyticsTotalData
 					delegateesData={delegationData?.delegateesData}

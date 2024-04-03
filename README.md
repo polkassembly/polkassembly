@@ -51,6 +51,40 @@ Set environment variables:
 cp .env.example .env
 ```
 
+### Setup Polkassembly Account for use on a Rococo Testnet
+
+Instead of changing the value of `JWT_PUBLIC_KEY` in the .env file.
+For development we will use the Rococo Testnet.
+
+#### Setup Wallet for use in Polkassembly and on Rococo Testnet
+
+* [Create a Polkadot account](https://support.polkadot.network/support/solutions/articles/65000098878-how-to-create-a-dot-account)
+
+##### Setup Polkadot.js Extension
+
+* Go to https://polkadot.js.org/extension/ and install the Polkadot.js Extension
+* Configure the extension settings to be available in browser "private" mode
+* Create a new account and securely and privately backup the mnemonic seed phrase and encrypted wallet JSON file or import an existing account from an encrypted wallet JSON file or mnemonic seed phrase
+* Go to Polkadot.js Settings > Manage Website Access, search for localhost:3000, and toggle the switch to be "enabled"
+
+#### Authorization for use on Rococo Testnet
+
+* Obtain production credentials by logging in using a production email and password at the production website https://polkadot.polkassembly.io/opengov, and ensure that those credentials are already "linked" to the Polkadot account that you setup earlier and imported into your Polkadot.js Extension. 
+* Go into local storage under host https://polkadot.polkassembly.io and copy the key/value pairs for the following keys:
+  * "Authorization"
+  * "persist:polkassembly"
+* Run the local server and go to http://localhost:3000
+* Go to local storage under host http://localhost:3000 and add the same keys and associated values mentioned above, and then refresh the page.
+* Check that it works by going to http://localhost:3000/big-spender?trackStatus=all&page=1, and click "Create Proposal" and a modal should appear without error, then click the Polkadot.js icon and select the account that is linked to your production email and password. It should show a green icon "Linked", and once selected it should show your balance of ROC testnet tokens.
+
+#### Tokens for use on Rococo Testnet
+
+* Obtain ROC testnet tokens from the faucet at https://faucet.polkadot.io/ for the Substrate-based account.
+
+### Change to Rococo Testnet
+
+* Change to "rococo" (or "paseo" in future) for environment variable `NEXT_PUBLIC_DEFAULT_NETWORK="rococo"` in .env file.
+
 ### Setup Redis
 
 * Go to https://redis.io/docs/install/install-redis and follow relevant instructions to install Redis and run it (e.g. start Redis server with `redis-server` in new terminal tab and stop it with CTRL-C).

@@ -3,6 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { IDelegatorsAndDelegatees } from '~src/types';
 import { Pagination } from '~src/ui-components/Pagination';
 
@@ -11,6 +13,7 @@ interface IProps {
 }
 
 const TotalDelegatorData = ({ delegatorsData }: IProps) => {
+	const { network } = useNetworkSelector();
 	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
 	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -33,9 +36,9 @@ const TotalDelegatorData = ({ delegatorsData }: IProps) => {
 						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 					>
 						<div className='w-[35%]'>{item.from.slice(0, 16)}....</div>
-						<div className='w-[35%]'>{item.to.slice(0, 16)}....</div>
-						<div className='w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.capital}</div>
-						<div className='w-[15%]'>{item.votingPower}</div>
+						<div className='w-[35%] '>{item.to.slice(0, 16)}....</div>
+						<div className='w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
+						<div className='w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
 					</div>
 				))}
 			</div>

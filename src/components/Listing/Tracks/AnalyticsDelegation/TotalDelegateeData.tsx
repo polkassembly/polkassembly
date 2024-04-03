@@ -6,12 +6,15 @@ import React, { useState } from 'react';
 import { IDelegatorsAndDelegatees } from '~src/types';
 import { Pagination } from '~src/ui-components/Pagination';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 interface IProps {
 	delegateesData: IDelegatorsAndDelegatees;
 }
 
 const TotalDelegateeData = ({ delegateesData }: IProps) => {
+	const { network } = useNetworkSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const allDelegateeData = Object.entries(delegateesData).flatMap(([_, delegatee]) => {
 		return (
@@ -42,10 +45,10 @@ const TotalDelegateeData = ({ delegateesData }: IProps) => {
 						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 					>
 						<div className='w-[45%]'>{item.from.slice(0, 16)}....</div>
-						<div className='w-[17%]'>{item.count}</div>
-						<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.capital}</div>
-						<div className='w-[19%]'>{item.votingPower}</div>
-						<div className='w-[2%] self-end'>
+						<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
+						<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
+						<div className='w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
+						<div className='w-[2%] cursor-pointer'>
 							<DropdownGreyIcon />
 						</div>
 					</div>

@@ -34,7 +34,7 @@ const DelegationAnalyticsTotalData = ({ delegateesData, delegatorsData }: IProps
 			<Radio.Group
 				onChange={onRadioChange}
 				value={selectedOption}
-				className='mb-5 mt-3'
+				className='my-5 flex gap-2'
 			>
 				<Radio
 					className={`text-base font-medium ${selectedOption === 'delegatee' ? '' : 'text-[#243A57B2]'} dark:text-blue-dark-high`}

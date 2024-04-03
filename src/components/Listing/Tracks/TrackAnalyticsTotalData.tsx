@@ -11,22 +11,25 @@ import { ITrackAnalyticsStats } from '~src/types';
 interface IProps {
 	className?: string;
 	trackNumber: number;
+	setIsLoading: (pre: boolean) => void;
 }
 
 const TrackAnalyticsTotalData: FC<IProps> = (props) => {
-	const { trackNumber } = props;
+	const { trackNumber, setIsLoading } = props;
 	const [totalData, setTotalData] = useState<ITrackAnalyticsStats>({
 		activeProposals: { diff: 0, total: 0 },
 		allProposals: { diff: 0, total: '' }
 	});
 
 	const getData = async () => {
+		setIsLoading(true);
 		const { data, error } = await nextApiClientFetch<{ data: ITrackAnalyticsStats }>('/api/v1/track_level_anaytics/analytics-stats', {
 			trackNum: trackNumber
 		});
 
 		if (data && data?.data) {
 			setTotalData(data?.data);
+			setIsLoading(false);
 		}
 		if (error) console.log(error);
 	};

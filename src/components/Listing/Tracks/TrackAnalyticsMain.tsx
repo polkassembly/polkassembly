@@ -6,6 +6,7 @@ import TrackAnalyticsTotalData from './TrackAnalyticsTotalData';
 import DelegationAnalyticsMain from './AnalyticsDelegation/DelegationAnalyticsMain';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getDefaultTrackMetaData, getTrackData } from './AboutTrackCard';
+import { Spin } from 'antd';
 
 interface IProps {
 	className?: string;
@@ -19,11 +20,17 @@ const TrackAnalyticsMain = ({ className, trackName }: IProps) => {
 		setTrackMetaData(getTrackData(network, trackName));
 	}, [network, trackName]);
 	const track_number = trackMetaData?.trackId;
+	const [isLoading, setIsLoading] = useState(false);
 	return (
-		<main className={`${className} flex flex-col gap-8`}>
-			<TrackAnalyticsTotalData trackNumber={track_number} />
-			<DelegationAnalyticsMain trackNumber={track_number} />
-		</main>
+		<Spin spinning={isLoading}>
+			<main className={`${className} flex flex-col gap-8`}>
+				<TrackAnalyticsTotalData
+					trackNumber={track_number}
+					setIsLoading={setIsLoading}
+				/>
+				<DelegationAnalyticsMain trackNumber={track_number} />
+			</main>
+		</Spin>
 	);
 };
 

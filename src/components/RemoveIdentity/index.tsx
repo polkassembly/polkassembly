@@ -206,7 +206,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						)}
 
 						{/* Insufficient error */}
-						{isIdentityAvailable && availableBalance.lte(gasFee) && (
+						{isIdentityAvailable && availableBalance.lte(gasFee) && !loading.isLoading && (
 							<Alert
 								type='error'
 								message={'Insufficient available balance'}

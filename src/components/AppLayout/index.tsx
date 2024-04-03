@@ -73,10 +73,6 @@ import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 
-const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
-	ssr: false
-});
-
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
@@ -932,7 +928,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						openAddressLinkedModal={openAddressLinkedModal}
 						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 					/>
-					<RemoveIdentity />
 				</>
 			)}
 			<Footer theme={theme as any} />

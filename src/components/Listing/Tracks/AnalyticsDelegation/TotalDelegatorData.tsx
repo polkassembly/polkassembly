@@ -9,21 +9,21 @@ interface IProps {
 }
 
 const TotalDelegatorData = ({ delegatorsData }: IProps) => {
-	const data = delegatorsData.delegatorsData?.data || [];
+	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
 
 	return (
 		<section className=''>
-			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>
+			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium  dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium '>
 				<div className='w-[35%]'>Address</div>
 				<div className='w-[35%]'>Target</div>
 				<div className='w-[15%]'>Capital</div>
 				<div className='w-[15%]'>Voting Power</div>
 			</div>
 			<div>
-				{data.map((item, index) => (
+				{allDelegatorData.map((item, index) => (
 					<div
 						key={index}
-						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 					>
 						<div className='w-[35%]'>{item.from}</div>
 						<div className='w-[35%]'>{item.to}</div>

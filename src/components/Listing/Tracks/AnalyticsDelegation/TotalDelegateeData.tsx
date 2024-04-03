@@ -9,24 +9,33 @@ interface IProps {
 }
 
 const TotalDelegateeData = ({ delegateesData }: IProps) => {
-	const data = delegateesData.delegateesData?.data || [];
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const allDelegateeData = Object.entries(delegateesData).flatMap(([_, delegatee]) => {
+		return (
+			delegatee.data?.map((item) => ({
+				...item,
+				count: delegatee.count
+			})) || []
+		);
+	});
+
 	return (
 		<section className=''>
-			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium'>
+			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium '>
 				<div className='w-[50%]'>Address</div>
 				<div className='w-[16%]'>Count</div>
 				<div className='w-[16%]'>Capital</div>
 				<div className='w-[18%]'>Votes</div>
 			</div>
 			<div>
-				{data.map((item, index) => (
+				{allDelegateeData.map((item, index) => (
 					<div
 						key={index}
-						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'
+						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 					>
 						<div className='w-[50%]'>{item.from}</div>
-						<div className='w-[16%]'>{item.to}</div>
-						<div className='w-[16%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{(parseInt(item.capital) / 10 ** 12).toFixed(3)} KSM</div>
+						<div className='w-[16%]'>{item.count}</div>
+						<div className='w-[16%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.capital} KSM</div>
 						<div className='w-[18%]'>{item.votingPower}</div>
 					</div>
 				))}

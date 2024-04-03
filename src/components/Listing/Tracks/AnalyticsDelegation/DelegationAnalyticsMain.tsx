@@ -32,13 +32,12 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 	});
 
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<{ data: IDelegationAnalytics }>('/api/v1/track_level_anaytics/delegation-analytics-stats', {
+		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/track_level_anaytics/delegation-analytics-stats', {
 			trackNum: trackNumber
 		});
-		console.log('data', data);
 
-		if (data && data?.data) {
-			setDelegationData(data?.data);
+		if (data) {
+			setDelegationData(data);
 		}
 		if (error) console.log(error);
 	};
@@ -48,7 +47,6 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackNumber]);
-	console.log('delegationData', delegationData);
 
 	return (
 		<Collapse

@@ -146,13 +146,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		const votesPromise = voteData.map(async (vote) => {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2).doc(String(vote?.proposal?.id));
 			const postData: any = (await postDocRef.get()).data();
-			let postTitle;
-			if (postData?.title === undefined) {
-				const res = await getSubSquareContentAndTitle(type, network, vote?.proposal?.id);
-				postTitle = res?.title;
-				console.log('postTitle --> ', type, network, vote?.proposal?.id, res);
-			}
 			if (postData) {
+				let postTitle;
+				if (!postData?.title) {
+					const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, vote?.proposal?.id);
+					postTitle = res?.title;
+				}
 				return {
 					...vote,
 					proposal: {

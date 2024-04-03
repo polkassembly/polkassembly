@@ -41,9 +41,9 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 	}, [trackNumber]);
 
 	return (
-		<div className='mr-2.5 mt-2 flex items-center justify-between'>
+		<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col'>
 			{/* Proposal Created */}
-			<div className='flex items-center space-x-2'>
+			<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 				<ImageIcon
 					src='/assets/icons/analytics/proposal-created.svg'
 					alt='proposal created icon'
@@ -65,12 +65,13 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 			</div>
 
 			<Divider
-				className='h-[87px] bg-[#D2D8E0] dark:bg-separatorDark'
+				className='hidden h-[87px] bg-[#D2D8E0] dark:bg-separatorDark sm:flex'
 				type='vertical'
 			/>
+			<Divider className=' bg-[#D2D8E0] dark:bg-separatorDark sm:hidden' />
 
 			{/* Total Voting Power */}
-			<div className='flex items-center space-x-2'>
+			<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 				<ImageIcon
 					src='/assets/icons/analytics/voting-power.svg'
 					alt='proposal created icon'
@@ -92,12 +93,13 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 			</div>
 
 			<Divider
-				className='h-[87px] bg-[#D2D8E0] dark:bg-separatorDark'
+				className='hidden h-[87px] bg-[#D2D8E0] dark:bg-separatorDark sm:flex'
 				type='vertical'
 			/>
+			<Divider className=' bg-[#D2D8E0] dark:bg-separatorDark sm:hidden' />
 
 			{/* Discussions Created */}
-			<div className='flex items-center space-x-2'>
+			<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 				<ImageIcon
 					src='/assets/icons/analytics/discussions-created.svg'
 					alt='proposal created icon'

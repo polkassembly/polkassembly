@@ -16,13 +16,13 @@ interface IProps {
 const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IProps) => {
 	const { network } = useNetworkSelector();
 	return (
-		<section className='flex justify-between px-10'>
+		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-10'>
 			<div className='flex flex-col'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Delegatee</div>
 				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>{totalDelegates}</span>
 			</div>
 			<Divider
-				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark'
+				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
 				type='vertical'
 			/>
 
@@ -31,7 +31,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>{totalDelegators}</span>
 			</div>
 			<Divider
-				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark'
+				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
 				type='vertical'
 			/>
 
@@ -40,7 +40,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>~{parseBalance(totalCapital, 1, true, network)}</span>
 			</div>
 			<Divider
-				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark'
+				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
 				type='vertical'
 			/>
 

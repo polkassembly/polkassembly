@@ -27,7 +27,7 @@ const TotalDelegatorData = ({ delegatorsData }: IProps) => {
 				<div className='w-[35%]'>Address</div>
 				<div className='w-[35%]'>Target</div>
 				<div className='w-[15%]'>Capital</div>
-				<div className='w-[15%]'>Voting Power</div>
+				<div className='w-[15%]'>Votes</div>
 			</div>
 			<div>
 				{allDelegatorData.slice(startIndex, endIndex).map((item, index) => (

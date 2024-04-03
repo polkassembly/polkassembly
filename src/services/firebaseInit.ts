@@ -4,11 +4,11 @@
 
 import * as firebaseAdmin from 'firebase-admin';
 
-if (!process.env.FIREBASE_SERVICE_ACC_CONFIG) {
-	throw new Error('Internal Error: FIREBASE_SERVICE_ACC_CONFIG missing.');
+if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+	throw new Error('Internal Error: GOOGLE_APPLICATION_CREDENTIALS missing.');
 }
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACC_CONFIG) as firebaseAdmin.ServiceAccount;
+const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS) as firebaseAdmin.ServiceAccount;
 
 try {
 	firebaseAdmin.initializeApp({

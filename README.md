@@ -14,7 +14,93 @@ This repo hosts
 
 ## Getting Started
 
-First, run the development server:
+### Install Node.js
+
+Install [Node.js](https://nodejs.org). Optionally using [NVM](https://github.com/nvm-sh/nvm)
+```bash
+nvm install
+nvm use
+```
+
+Install Yarn.
+```bash
+npm install -g yarn
+```
+
+### Install OS-specific dependencies
+
+#### macOS
+
+```bash
+brew install pkg-config pango jq redis
+```
+
+### Install dependencies
+
+Install dependencies.
+```bash
+npm install
+# or
+yarn
+```
+
+### Setup default Environment Variables
+
+Set environment variables:
+```bash
+cp .env.example .env
+```
+
+### Setup Redis
+
+* Go to https://redis.io/docs/install/install-redis and follow relevant instructions to install Redis and run it (e.g. start Redis server with `redis-server` in new terminal tab and stop it with CTRL-C).
+
+### Setup Firebase
+
+* Setup [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) by going to https://console.firebase.google.com
+* Create a project with a name (e.g. <YOUR_PROJECT_NAME>) and registering your app.
+* Follow these steps to [initialize the SDK in a non-Google environment](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments) by going to "Project Settings" > "Service Accounts" > "Firebase Admin SDK" and clicking "Generate new private key" and downloading the JSON file and storing it privately and securely.
+* Convert the JSON file contents into a single line and output it to another file named credential-one-liner.json:
+```bash
+jq -c . <YOUR_PROJECT_NAME>-firebase-adminsdk-xxx-xxx.json > credential-one-liner.json
+```
+* Copy and paste the credential-one-liner.json contents as the value of `GOOGLE_APPLICATION_CREDENTIALS` environment variable in the .env file.
+* Enable Google Cloud Firestore API by going to https://console.cloud.google.com/apis/library/firestore.googleapis.com?project=<YOUR_PROJECT_NAME> and clicking "Enable" button.
+* Create Firebase Database by going to https://console.firebase.google.com/u/0/project/<YOUR_PROJECT_NAME>/firestore, choosing your region then clicking "Next", and choosing "test mode" and clicking "Create". Otherwise you will get error `Error in storeApiKeyUsage : Error: 5 NOT_FOUND:`.
+* Create an "Index" for "posts" collection queries in Firebase Cloud Firestore by going to https://console.firebase.google.com/v1/r/project/<YOUR_PROJECT_NAME>/firestore/indexes?create_composite=Ck5wcm9qZWN0cy9wb2xrYXNzZW1ibHktZGV2L2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9wb3N0cy9pbmRleGVzL18QARoNCglpc0RlbGV0ZWQQARoOCgpjcmVhdGVkX2F0EAIaDAoIX19uYW1lX18QAg and click "Save" and wait for the status to change from "Building..." to "Enabled". This will add Fields:`isDeleted`, `created_at`, `__name__`, with respective Order `Ascending` `Descending`, `Descending`. Otherwise you will get a UI error.
+
+Note: Beware of your usage and billing at https://console.firebase.google.com/u/0/project/<YOUR_PROJECT_NAME>/usage. If necessary, [delete unnecessary Cloud Firestore data from your collection](https://firebase.google.com/docs/firestore/using-console#delete_data).
+
+### Setup Algolia Search
+
+* Sign up to https://www.algolia.com
+* Rename default "My First Application" at https://dashboard.algolia.com/account/applications to your custom project name <YOUR_PROJECT_NAME>.
+* Obtain API Key for your application from https://dashboard.algolia.com/account/api-keys/all
+* Choose application name <YOUR_PROJECT_NAME>.
+* Copy "Application ID" and paste as the value `NEXT_PUBLIC_ALGOLIA_APP_ID` environment variable in .env file.
+* Copy "Search-Only API Key" and paste as the value of `NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY` environment variable in .env file.
+
+* Create multiple Indices for the application by going to https://dashboard.algolia.com/apps/<YOUR_APPLICATION_ID>/indices and clicking "Create Index" multiple times to create each of the following indices:
+  * "polkassembly_users"
+  * "polkassembly_addresses"
+  * "polkassembly_posts"
+
+### Setup TinyMCE
+
+* Sign up to https://www.tiny.cloud
+* Obtain API Key from https://www.tiny.cloud/my-account/integrate/#react
+* Paste API Key as value of `NEXT_PUBLIC_TINY_MCE_API_KEY` environment variable in .env file.
+
+### Setup Giphy
+
+* Sign up to Giphy Developers at https://developers.giphy.com/
+* Create App at https://developers.giphy.com/dashboard/
+* Obtain API Key
+* Paste API Key as value of `NEXT_PUBLIC_GIPHY_API_KEY` environment variable in .env file.
+
+### Run Server
+
+Run the development server:
 
 ```bash
 npm run dev

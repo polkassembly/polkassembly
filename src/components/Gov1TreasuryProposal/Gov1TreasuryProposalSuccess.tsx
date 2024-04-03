@@ -25,7 +25,7 @@ const Gov1TreasuryProposalSuccess = ({ open, setOpen, setStep }: Props) => {
 	const { proposalIndex, beneficiary, proposer, fundingAmount } = useGov1treasuryProposal();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
-	const unit = chainProperties[network].tokenSymbol;
+	const unit = network ? chainProperties[network].tokenSymbol : '';
 	const bnFundingAmount = new BN(fundingAmount);
 
 	return (

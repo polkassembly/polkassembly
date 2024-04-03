@@ -208,11 +208,17 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer items-center justify-start space-x-[18px] rounded-[8px] pl-[14px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => handleClick(1)}
 				>
-					<ImageIcon
-						src='/assets/icons/create-proposals-fab.svg'
-						alt='Create proposal icon'
-						imgWrapperClassName=''
-					/>
+					{theme == 'dark' ? (
+						<ImageIcon
+							src='/assets/icons/create-proposals-fab-dark.svg'
+							alt='Create proposal icon'
+						/>
+					) : (
+						<ImageIcon
+							src='/assets/icons/create-proposals-fab.svg'
+							alt='Create proposal icon'
+						/>
+					)}
 					<span className=' text-sm font-medium leading-5 tracking-[1.25%] '>Create Proposal</span>
 				</div>
 			)}

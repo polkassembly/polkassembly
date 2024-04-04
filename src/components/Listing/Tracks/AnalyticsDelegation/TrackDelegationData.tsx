@@ -1,0 +1,150 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import { Divider, Modal } from 'antd';
+import React, { useState } from 'react';
+import { IDelegatorsAndDelegatees } from '~src/types';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import VoterIcon from '~assets/icons/vote-small-icon.svg';
+import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
+import CapitalIcon from '~assets/icons/capital-small-icom.svg';
+import EmailIcon from '~assets/icons/email_icon.svg';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { useNetworkSelector } from '~src/redux/selectors';
+
+interface IProps {
+	open: boolean;
+	setOpen: (pre: boolean) => void;
+	className?: string;
+	delegateesData: IDelegatorsAndDelegatees;
+	index: string;
+}
+
+const TrackDelegationData = ({ className, open, setOpen, delegateesData, index }: IProps) => {
+	const { network } = useNetworkSelector();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const delegateeData = delegateesData[index];
+	const totalData = {
+		capital: delegateeData?.data.reduce((acc, curr) => acc + BigInt(curr.capital), BigInt(0)).toString(),
+		count: delegateeData?.count,
+		from: index,
+		votingPower: delegateeData?.data.reduce((acc, curr) => acc + BigInt(curr.votingPower), BigInt(0)).toString()
+	};
+	const convictionPower = Number(totalData.votingPower) / Number(totalData.capital);
+	const [showAll, setShowAll] = useState(false);
+
+	return (
+		<Modal
+			open={open}
+			onCancel={() => setOpen(false)}
+			className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
+			footer={false}
+			title={
+				<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					Vote Details
+				</div>
+			}
+			wrapClassName={`${className} dark:bg-modalOverlayDark`}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+		>
+			<main className='dark:bg-section-dark-overlay'>
+				<div className=' dark:bg-section-dark-overlay '>
+					<p className='mb-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>Delegation Detail</p>
+				</div>
+				<div className='my-3 flex justify-between dark:bg-section-dark-overlay'>
+					<div className='flex justify-between'>
+						<div className='flex w-[200px] flex-col gap-1'>
+							<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+							<div className='flex justify-between'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<VoterIcon /> Voting Power
+								</span>
+								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
+							</div>
+							<div className='flex justify-between'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<ConvictionIcon /> Conviction
+								</span>
+								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
+							</div>
+							<div className='flex justify-between'>
+								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<CapitalIcon /> Capital
+								</span>
+								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
+							</div>
+						</div>
+					</div>
+					{delegateeData?.count && (
+						<>
+							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
+							<div className='mr-3 flex w-[200px] flex-col gap-1'>
+								<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+								<div className='flex justify-between'>
+									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<VoterIcon /> Voting Power
+									</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.votingPower || '0').toString(), 2, true, network)}</span>
+								</div>
+								<div className='flex justify-between'>
+									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<EmailIcon /> Delegators
+									</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{totalData?.count}</span>
+								</div>
+								<div className='flex justify-between'>
+									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+										<CapitalIcon /> Capital
+									</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.capital || '0').toString(), 2, true, network)}</span>
+								</div>
+							</div>
+						</>
+					)}
+				</div>
+				<Divider
+					dashed
+					className='mt-6 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+				/>
+				<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
+					{totalData?.count > 1 && (
+						<>
+							<div>
+								<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
+								<div className='mb-2 flex items-start justify-between text-xs font-semibold'>
+									<div className='w-[200px] text-lightBlue dark:text-blue-dark-medium'>Delegators</div>
+									<div className='w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Amount</div>
+									<div className='ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>Conviction</div>
+									<div className='w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>Voting Power</div>
+								</div>
+								{delegateeData.data.slice(0, showAll ? delegateeData.data.length : 3).map((item, index) => (
+									<div
+										key={index}
+										className='flex items-start justify-between text-xs'
+									>
+										<div className='my-1 w-[200px] text-lightBlue dark:text-blue-dark-medium'>{item.from.slice(0, 8)}...</div>
+										<div className='my-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{parseBalance((item?.capital || '0').toString(), 2, true, network)}</div>
+										<div className='my-1 ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{item.lockedPeriod}</div>
+										<div className='my-1 w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>
+											{parseBalance((item.votingPower || '0').toString(), 2, true, network)}
+										</div>
+									</div>
+								))}
+								{totalData?.count > 3 && (
+									<span
+										className='cursor-pointer text-xs font-medium text-pink_primary'
+										onClick={() => setShowAll(!showAll)}
+									>
+										{showAll ? 'Show Less' : 'Show All'}
+									</span>
+								)}
+							</div>
+						</>
+					)}
+				</div>
+			</main>
+		</Modal>
+	);
+};
+
+export default TrackDelegationData;

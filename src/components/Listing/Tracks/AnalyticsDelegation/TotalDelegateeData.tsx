@@ -8,6 +8,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import TrackDelegationData from './TrackDelegationData';
 
 interface IProps {
 	delegateesData: IDelegatorsAndDelegatees;
@@ -15,62 +16,84 @@ interface IProps {
 
 const TotalDelegateeData = ({ delegateesData }: IProps) => {
 	const { network } = useNetworkSelector();
+	console.log('delegateesData delegateesData', delegateesData);
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const allDelegateeData = Object.entries(delegateesData).flatMap(([_, delegatee]) => {
-		return (
-			delegatee.data?.map((item) => ({
-				...item,
-				count: delegatee.count
-			})) || []
-		);
+	const delegateeData = Object.entries(delegateesData).map(([key, value]) => {
+		const sumCapital = value.data.reduce((acc, curr) => acc + BigInt(curr.capital), BigInt(0));
+		const sumVotingPower = value.data.reduce((acc, curr) => acc + BigInt(curr.votingPower), BigInt(0));
+		return {
+			capital: sumCapital.toString(),
+			count: value.count,
+			from: key,
+			votingPower: sumVotingPower.toString()
+		};
 	});
 	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [open, setOpen] = useState<boolean>(false);
+	const [index, setIndex] = useState<string>('');
 	const itemsPerPage = 10;
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
 
 	return (
-		<section className=''>
-			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium '>
-				<div className='w-[45%]'>Address</div>
-				<div className='w-[17%]'>Count</div>
-				<div className='w-[17%]'>Capital</div>
-				<div className='w-[19%]'>Votes</div>
-			</div>
-			<div>
-				{allDelegateeData.slice(startIndex, endIndex).map((item, index) => (
-					<div
-						key={index}
-						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
-					>
-						<div className='w-[45%]'>{item.from.slice(0, 16)}....</div>
-						<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
-						<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
-						<div className='w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
-						<div className='w-[2%] cursor-pointer'>
-							<DropdownGreyIcon />
-						</div>
-					</div>
-				))}
-			</div>
-			<div className='mt-6 flex justify-end'>
-				<Pagination
-					theme={theme}
-					size='large'
-					defaultCurrent={1}
-					current={currentPage}
-					onChange={(page: number) => {
-						setCurrentPage(page);
-					}}
-					total={allDelegateeData.length}
-					showSizeChanger={false}
-					pageSize={itemsPerPage}
-					responsive={true}
-					hideOnSinglePage={true}
-				/>
-			</div>
-		</section>
+		<>
+			<section className=''>
+				<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium '>
+					<div className='w-[45%]'>Address</div>
+					<div className='w-[17%]'>Count</div>
+					<div className='w-[17%]'>Capital</div>
+					<div className='w-[19%]'>Votes</div>
+				</div>
+				<div>
+					{delegateeData.slice(startIndex, endIndex).map((item, index) => {
+						return (
+							<div
+								key={index}
+								className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
+							>
+								<div className='w-[45%]'>{item.from.slice(0, 16)}....</div>
+								<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
+								<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
+								<div className='w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
+								<div
+									onClick={() => {
+										setIndex(item.from);
+										setOpen(true);
+									}}
+									className='w-[2%] cursor-pointer'
+								>
+									<DropdownGreyIcon />
+								</div>
+							</div>
+						);
+					})}
+				</div>
+				<div className='mt-6 flex justify-end'>
+					<Pagination
+						theme={theme}
+						size='large'
+						defaultCurrent={1}
+						current={currentPage}
+						onChange={(page: number) => {
+							setCurrentPage(page);
+						}}
+						total={delegateeData.length}
+						showSizeChanger={false}
+						pageSize={itemsPerPage}
+						responsive={true}
+						hideOnSinglePage={true}
+					/>
+				</div>
+			</section>
+			<TrackDelegationData
+				open={open}
+				setOpen={setOpen}
+				delegateesData={delegateesData}
+				index={index}
+			/>
+		</>
 	);
 };
 

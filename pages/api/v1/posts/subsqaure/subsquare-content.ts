@@ -21,7 +21,7 @@ const urlMapper = {
 	[ProposalType.TREASURY_PROPOSALS]: (id: number | string, network: string) => `https://${network}.subsquare.io/api/treasury/proposals/${id}`
 };
 
-export const getSubSquareContentAndTitle = async (proposalType: string | string[] | undefined, network: string, id: number | string) => {
+export const getSubSquareContentAndTitle = async (proposalType: string | string[], network: string, id: number | string) => {
 	try {
 		if (!proposalType) {
 			throw apiErrorWithStatusCode('Proposal type missing ', 400);

@@ -17,7 +17,6 @@ interface IProps {
 
 const TotalDelegateeData = ({ delegateesData }: IProps) => {
 	const { network } = useNetworkSelector();
-	console.log('delegateesData delegateesData', delegateesData);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = Object.entries(delegateesData).map(([key, value]) => {

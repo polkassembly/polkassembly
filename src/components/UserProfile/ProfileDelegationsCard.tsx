@@ -23,12 +23,12 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { delegationSupportedNetworks } from '../DelegationDashboard';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import dynamic from 'next/dynamic';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Markdown from '~src/ui-components/Markdown';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false

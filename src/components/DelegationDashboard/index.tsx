@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { Button } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -23,8 +22,6 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 interface Props {
 	className?: string;
 }
-
-export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <SkeletonAvatar active />,

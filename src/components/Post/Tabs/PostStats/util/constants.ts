@@ -7,4 +7,7 @@ const AnalyticsUnsupportedNetworks = [AllNetworks.POLYMESH, AllNetworks.COLLECTI
 const isAnalyticsSupportedNetwork = (network: string) => {
 	return !AnalyticsUnsupportedNetworks.includes(network);
 };
+
+export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
+
 export default isAnalyticsSupportedNetwork;

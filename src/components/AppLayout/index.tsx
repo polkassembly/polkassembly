@@ -73,6 +73,20 @@ import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 
+interface IUserDropdown {
+	handleSetIdentityClick: any;
+	isIdentityUnverified: boolean;
+	isGood: boolean;
+	handleLogout: any;
+	network: string;
+	handleRemoveIdentity: (pre?: any) => void;
+	img?: string | null;
+	username?: string;
+	identityUsername?: string;
+	className?: string;
+	isIdentityExists: boolean;
+}
+
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
@@ -110,18 +124,19 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
-const getUserDropDown = (
-	handleSetIdentityClick: any,
-	isIdentityUnverified: boolean,
-	isGood: boolean,
-	handleLogout: any,
-	network: string,
-	handleRemoveIdentity: (pre?: any) => void,
-	img?: string | null,
-	username?: string,
-	identityUsername?: string,
-	className?: string
-): MenuItem => {
+const getUserDropDown = ({
+	handleLogout,
+	handleRemoveIdentity,
+	handleSetIdentityClick,
+	isGood,
+	isIdentityExists,
+	isIdentityUnverified,
+	network,
+	className,
+	identityUsername,
+	img,
+	username
+}: IUserDropdown): MenuItem => {
 	const profileUsername = identityUsername || username || '';
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -168,55 +183,55 @@ const getUserDropDown = (
 	];
 
 	if (onchainIdentitySupportedNetwork.includes(network)) {
-		dropdownMenuItems.splice(
-			1,
-			0,
-			...[
-				{
-					key: 'set on-chain identity',
-					label: (
-						<Link
-							className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-							href={''}
-							onClick={(e) => {
-								e.stopPropagation();
-								e.preventDefault();
-								handleSetIdentityClick();
-							}}
-						>
-							<span className='ml-0.5 text-lg'>
-								<ApplayoutIdentityIcon />
+		const options = [
+			{
+				key: 'set on-chain identity',
+				label: (
+					<Link
+						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							handleSetIdentityClick();
+						}}
+					>
+						<span className='ml-0.5 text-lg'>
+							<ApplayoutIdentityIcon />
+						</span>
+						<span>Set on-chain identity</span>
+						{isIdentityUnverified && (
+							<span className='flex items-center'>
+								<IdentityCaution />
 							</span>
-							<span>Set on-chain identity</span>
-							{isIdentityUnverified && (
-								<span className='flex items-center'>
-									<IdentityCaution />
-								</span>
-							)}
-						</Link>
-					)
-				},
-				{
-					key: 'remove identity',
-					label: (
-						<Link
-							className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-							href={''}
-							onClick={(e) => {
-								e.stopPropagation();
-								e.preventDefault();
-								handleRemoveIdentity?.();
-							}}
-						>
-							<span className='ml-0.5 text-lg'>
-								<ClearIdentityOutlinedIcon />
-							</span>
-							<span>Remove Identity</span>
-						</Link>
-					)
-				}
-			]
-		);
+						)}
+					</Link>
+				)
+			}
+		];
+
+		if (isIdentityExists) {
+			options.push({
+				key: 'remove identity',
+				label: (
+					<Link
+						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							handleRemoveIdentity?.();
+						}}
+					>
+						<span className='ml-0.5 text-[22px]'>
+							<ClearIdentityOutlinedIcon />
+						</span>
+						<span>Remove Identity</span>
+					</Link>
+				)
+			});
+		}
+		dropdownMenuItems.splice(1, 0, ...options);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => {
@@ -350,7 +365,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
 				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
 				setIsGood(Boolean(isGood));
-				setIsIdentitySet(!!(info.identity.display && !info?.identity?.judgements?.length));
+				setIsIdentitySet(!!info.identity.display);
 				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
 			})
 			.then((unsub) => {
@@ -790,18 +805,19 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	};
 
-	const userDropdown = getUserDropDown(
-		handleIdentityButtonClick,
-		isIdentityUnverified,
-		isGood,
-		handleLogout,
-		network,
-		handleRemoveIdentity,
-		picture,
-		username!,
-		mainDisplay!,
-		`${className} ${poppins.className} ${poppins.variable}`
-	);
+	const userDropdown = getUserDropDown({
+		handleLogout: handleLogout,
+		handleRemoveIdentity: handleRemoveIdentity,
+		handleSetIdentityClick: handleIdentityButtonClick,
+		isGood: isGood,
+		isIdentityExists: isIdentitySet,
+		isIdentityUnverified: isIdentityUnverified,
+		network: network,
+		className: `${className} ${poppins.className} ${poppins.variable}`,
+		identityUsername: mainDisplay,
+		img: picture,
+		username: username || ''
+	});
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -823,6 +839,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				previousRoute={previousRoute}
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
+				isIdentityExists={isIdentitySet}
 			/>
 
 			{userId && (

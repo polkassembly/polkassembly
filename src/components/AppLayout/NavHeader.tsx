@@ -67,11 +67,11 @@ interface Props {
 	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
 	displayName?: string;
 	isVerified?: boolean;
+	isIdentityExists?: boolean;
 }
 
-const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
 	const { network } = useNetworkSelector();
-
 	const currentUser = useUserDetailsSelector();
 	const { username, id, loginAddress } = currentUser;
 	const router = useRouter();
@@ -250,60 +250,60 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	];
 
 	if (onchainIdentitySupportedNetwork.includes(network)) {
-		dropdownMenuItems.splice(
-			1,
-			0,
-			...[
-				{
-					key: 'set on-chain identity',
-					label: (
-						<Link
-							className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
-							href={''}
-							onClick={(e) => {
-								e.stopPropagation();
-								e.preventDefault();
-								// GAEvent for setOnchain identity clicked
-								trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-									userId: currentUser?.id || '',
-									userName: currentUser?.username || ''
-								});
-								handleIdentityButtonClick();
-							}}
-						>
-							<span className='text-2xl'>
-								<ApplayoutIdentityIcon />
+		const options = [
+			{
+				key: 'set on-chain identity',
+				label: (
+					<Link
+						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							// GAEvent for setOnchain identity clicked
+							trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
+								userId: currentUser?.id || '',
+								userName: currentUser?.username || ''
+							});
+							handleIdentityButtonClick();
+						}}
+					>
+						<span className='text-2xl'>
+							<ApplayoutIdentityIcon />
+						</span>
+						<span>Set on-chain identity</span>
+						{!isIdentityExists && (
+							<span className='flex items-center'>
+								<IdentityCaution />
 							</span>
-							<span>Set on-chain identity</span>
-							{!isVerified && (
-								<span className='flex items-center'>
-									<IdentityCaution />
-								</span>
-							)}
-						</Link>
-					)
-				},
-				{
-					key: 'remove identity',
-					label: (
-						<Link
-							className={`flex items-center gap-x-2.5 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
-							href={''}
-							onClick={(e) => {
-								e.stopPropagation();
-								e.preventDefault();
-								handleRemoveIdentity?.();
-							}}
-						>
-							<span className='ml-0.5 text-lg'>
-								<ClearIdentityOutlinedIcon />
-							</span>
-							<span>Remove Identity</span>
-						</Link>
-					)
-				}
-			]
-		);
+						)}
+					</Link>
+				)
+			}
+		];
+
+		if (isIdentityExists) {
+			options.push({
+				key: 'remove identity',
+				label: (
+					<Link
+						className={`-mt-1 flex items-center gap-x-2.5 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							handleRemoveIdentity?.();
+						}}
+					>
+						<span className='ml-0.5 text-[22px]'>
+							<ClearIdentityOutlinedIcon />
+						</span>
+						<span>Remove Identity</span>
+					</Link>
+				)
+			});
+		}
+		dropdownMenuItems.splice(1, 0, ...options);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => (

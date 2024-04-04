@@ -25,6 +25,7 @@ import CommentIcon from '~assets/search/search-comment.svg';
 import dayjs from 'dayjs';
 import { trackEvent } from 'analytics';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -37,8 +38,9 @@ interface Props {
 	searchInput?: string;
 	theme?: string;
 }
-const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
+const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
+	const { resolvedTheme } = useTheme();
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
@@ -88,10 +90,12 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										{getRelativeCreatedAt(dayjs.unix(post?.created_at).toDate())}
 									</div>
 								</div>
-								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{titleString}</div>
+								<div className='mt-2 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>
+									#{post?.id} {titleString}
+								</div>
 								<Markdown
 									imgHidden
-									md={post?.content?.slice(0, 250) + ' .....'}
+									md={post?.parsed_content?.slice(0, 250) + ' .....'}
 									className='expand-content my-2 text-sm font-normal tracking-[0.01em] text-[#8696a9]'
 								/>
 								<div className='my-2 flex flex-shrink-0 flex-wrap gap-1 max-sm:mt-2'>
@@ -146,7 +150,8 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 										<div className='flex items-center'>
 											<TopicTag
 												className='ml-1'
-												topic={post?.topic ? post?.topic?.name : getTopicNameFromTopicId((post?.topic_id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
+												theme={resolvedTheme as any}
+												topic={getTopicNameFromTopicId((post?.topic || post?.topic_id || post?.topic?.id || getTopicFromType(post?.postType as ProposalType)?.id) as any)}
 											/>
 											<Divider
 												style={{ border: '1px solid var(--separatorDark)' }}
@@ -185,7 +190,7 @@ const ResultPosts = ({ theme, className, postsData, isSuperSearch, searchInput, 
 					hideOnSinglePage={true}
 					onChange={(page: number) => setPostsPage(page)}
 					responsive={true}
-					theme={theme}
+					theme={resolvedTheme}
 				/>
 			</div>
 		</>

@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Button, FloatButton, List } from 'antd';
-import ChatFloatingModal from '../ChatBot/ChatFloatingModal';
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
@@ -12,18 +11,18 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 // import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
+import CreateDiscussionIconDark from '~assets/icons/create-icon-dark.svg';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
-// import GrillChatIcon from '~assets/icons/grill-chat-icon.svg';
 import dynamic from 'next/dynamic';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { trackEvent } from 'analytics';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -35,8 +34,17 @@ const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal
 	ssr: false
 });
 
+const Gov1TreasuryProposal = dynamic(() => import('../Gov1TreasuryProposal'), {
+	loading: () => (
+		<SkeletonButton
+			className='w-[100%]'
+			active
+		/>
+	),
+	ssr: false
+});
+
 export const treasuryProposalCreationAllowedNetwork = [AllNetworks.KUSAMA, AllNetworks.POLKADOT, AllNetworks.ROCOCO];
-const grillChatAllowedNetwork = ['CERE', 'KILT', 'KUSAMA', 'MOONBEAM', 'POLKADOT'];
 
 interface IAiChatbotProps {
 	floatButtonOpen: boolean;
@@ -47,8 +55,7 @@ interface IAiChatbotProps {
 }
 
 const AiBot: FC<IAiChatbotProps> = (props) => {
-	const { floatButtonOpen, setFloatButtonOpen, isAIChatBotOpen, className } = props;
-	const [grillChat, setGrillChat] = useState(false);
+	const { floatButtonOpen, setFloatButtonOpen, className } = props;
 	const router = useRouter();
 	const { id, username } = useUserDetailsSelector();
 	const [openDiscussionLoginPrompt, setOpenDiscussionLoginPrompt] = useState<boolean>(false);
@@ -83,7 +90,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				(window as any).DocsBotAI?.close();
 			}
 			setFloatButtonOpen(false);
-			setGrillChat(false);
 		};
 
 		router.events.on('routeChangeStart', handleRouteChange);
@@ -104,7 +110,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
-					<CreateDiscussionIcon className='ml-[-50px] mt-[5px] cursor-pointer' />
+					<div className='ml-[-50px] mt-[5px] cursor-pointer'>{theme == 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}</div>
 					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			)
@@ -144,26 +150,12 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		});
 	}
 
-	if (grillChatAllowedNetwork.includes(network?.toUpperCase())) {
-		data.splice(data.length - 1, 0, {
-			component: (
-				<div
-					className='ml-[-34px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
-					onClick={() => {
-						if (!isAIChatBotOpen) setGrillChat(!grillChat);
-					}}
-				>
-					{/* <GrillChatIcon className='ml-[-149px] mt-[5px] cursor-pointer' /> */}
-					<ImageIcon
-						imgWrapperClassName='ml-[-151px] mt-[5px] cursor-pointer'
-						src='/assets/icons/grill-chat-icon.svg'
-						alt='grill chat icon'
-					/>
-					<p className='mb-3 ml-4 mt-2.5  text-sm font-medium leading-5 tracking-[1.25%]'>Grill Chat</p>
-				</div>
-			)
+	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+		data.splice(0, 0, {
+			component: <Gov1TreasuryProposal />
 		});
 	}
+
 	return (
 		<>
 			{/* Script for AI Bot */}
@@ -202,7 +194,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
 							// (window as any).DocsBotAI.close();
 							// setIsAIChatBotOpen(false);
-							setGrillChat(false);
 						}}
 					>
 						<CloseWhite className='mt-1' />
@@ -224,7 +215,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 								className='mt-4 cursor-pointer'
 								onClick={() => {
 									setFloatButtonOpen(false);
-									setGrillChat(false);
 								}}
 							/>
 						</div>
@@ -241,7 +231,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					renderItem={(item) => <List.Item>{item.component}</List.Item>}
 				/>
 			}
-			{grillChat && <ChatFloatingModal />}
 			<ReferendaLoginPrompts
 				modalOpen={openDiscussionLoginPrompt}
 				setModalOpen={setOpenDiscussionLoginPrompt}

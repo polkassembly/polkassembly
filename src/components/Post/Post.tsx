@@ -39,7 +39,7 @@ import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
-import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -122,6 +122,7 @@ const Post: FC<IPostProps> = (props) => {
 	const isOffchainPost = !isOnchainPost;
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
+	const [requestedAmount, setRequestedAmount] = useState('');
 
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
@@ -328,6 +329,8 @@ const Post: FC<IPostProps> = (props) => {
 						className={`${!isOffchainPost}`}
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
+						requestedAmount={requestedAmount}
+						bountyIndex={post.parent_bounty_index}
 					/>
 				</StickyBox>
 
@@ -427,7 +430,7 @@ const Post: FC<IPostProps> = (props) => {
 					key: 'onChainInfo',
 					label: 'On Chain Info'
 				},
-				AnalyticsSupportedNetworks.includes(network) &&
+				isAnalyticsSupportedNetwork(network) &&
 					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
 						children: (
 							<PostStats
@@ -436,6 +439,7 @@ const Post: FC<IPostProps> = (props) => {
 								tally={post?.tally}
 								proposalId={onchainId as number}
 								statusHistory={post?.statusHistory}
+								proposalCreatedAt={post?.created_at || ''}
 							/>
 						),
 						key: 'stats',
@@ -557,7 +561,10 @@ const Post: FC<IPostProps> = (props) => {
 
 									{!isEditing && (
 										<>
-											<PostHeading className='mb-5' />
+											<PostHeading
+												className='mb-5'
+												setRequestedAmount={setRequestedAmount}
+											/>
 											<Tabs
 												theme={theme}
 												type='card'

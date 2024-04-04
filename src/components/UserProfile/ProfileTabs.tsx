@@ -18,6 +18,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -37,7 +38,6 @@ interface Props {
 
 const ProfileTabs = ({
 	className,
-	theme,
 	userProfile,
 	addressWithIdentity,
 	selectedAddresses,
@@ -51,11 +51,12 @@ const ProfileTabs = ({
 	activitiesCounts
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const { id: userId } = useUserDetailsSelector();
 	const [totals, setTotals] = useState<{ posts: number; votes: number }>({
 		posts: 0,
 		votes: 0
 	});
-	const { id: userId } = useUserDetailsSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		let totalPosts = 0;
@@ -73,6 +74,7 @@ const ProfileTabs = ({
 			votes: totalVotes
 		});
 	}, [statsArr, userProfile]);
+
 	const tabItems = [
 		{
 			children: (
@@ -115,6 +117,22 @@ const ProfileTabs = ({
 		},
 		{
 			children: (
+				<ProfileUserActivity
+					count={activitiesCounts?.totalActivitiesCount || 0}
+					userProfile={userProfile}
+					addressWithIdentity={addressWithIdentity}
+				/>
+			),
+			key: userId === userProfile.user_id ? 'My Activity' : 'Activity',
+			label: (
+				<div className='flex items-center'>
+					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
+					{userId === userProfile.user_id ? 'My Activity' : 'Activity'} <span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount || 0})</span>
+				</div>
+			)
+		},
+		{
+			children: (
 				<ProfileReactions
 					count={activitiesCounts?.totalReactionsCount || 0}
 					userProfile={userProfile}
@@ -126,7 +144,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileReactionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Reactions
-					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount})</span>
+					<span className='ml-[2px]'>({activitiesCounts?.totalReactionsCount || 0})</span>
 				</div>
 			)
 		},
@@ -143,7 +161,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<ProfileMentionsIcon className='active-icon text-2xl text-lightBlue dark:text-[#9E9E9E]' />
 					Mentions
-					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount})</span>
+					<span className='ml-[2px]'>({activitiesCounts?.totalMentionsCount || 0})</span>
 				</div>
 			)
 		}
@@ -153,7 +171,7 @@ const ProfileTabs = ({
 			children: (
 				<VotesHistory
 					userProfile={userProfile}
-					theme={theme}
+					theme={theme as any}
 					setStatsArr={setStatsArr}
 					statsArr={statsArr}
 					totalVotes={totals?.votes}
@@ -164,25 +182,6 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<VotesIcon className='active-icon text-[23px] text-lightBlue dark:text-[#9E9E9E]' />
 					Votes<span className='ml-[2px]'>({totals?.votes})</span>
-				</div>
-			)
-		});
-	}
-	if (userId === userProfile.user_id) {
-		tabItems.splice(3, 0, {
-			children: (
-				<ProfileUserActivity
-					count={activitiesCounts?.totalActivitiesCount || 0}
-					userProfile={userProfile}
-					addressWithIdentity={addressWithIdentity}
-				/>
-			),
-			key: 'My Activity',
-			label: (
-				<div className='flex items-center'>
-					<MyActivityIcon className='active-icon text-xl text-lightBlue dark:text-[#9E9E9E]' />
-					My Activity
-					<span className='ml-[2px]'>({activitiesCounts?.totalActivitiesCount})</span>
 				</div>
 			)
 		});

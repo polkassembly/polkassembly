@@ -158,6 +158,12 @@ import TelegramIconSVG from '~assets/icons/telegram-notification.svg';
 import DiscordIconSVG from '~assets/icons/discord-notification.svg';
 import TipIconSVG from '~assets/icons/tip-title.svg';
 import InfoIconSVG from '~assets/info.svg';
+import DollarIconSVG from '~assets/icons/dollar-icon.svg';
+import ReferandumSVG from '~assets/icons/referendum-canceller.svg';
+import AuctionAdminIconSVG from '~assets/icons/action-admin.svg';
+import FellowshipSVG from '~assets/icons/fellowship-admin.svg';
+import StackingAdminSVG from '~assets/icons/stacking-admin.svg';
+import ReferendumsSVG from '~assets/icons/referndums.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1183,6 +1189,43 @@ export const TipIcon = (props: Partial<CustomIconComponentProps>) => (
 export const InfoIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={InfoIconSVG}
+		{...props}
+	/>
+);
+export const RoundedDollarIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={DollarIconSVG}
+		{...props}
+	/>
+);
+
+export const ReferandumCancellorIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ReferandumSVG}
+		{...props}
+	/>
+);
+export const AuctionAdminSVGIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AuctionAdminIconSVG}
+		{...props}
+	/>
+);
+export const FellowshipIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={FellowshipSVG}
+		{...props}
+	/>
+);
+export const StackingAdminIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={StackingAdminSVG}
+		{...props}
+	/>
+);
+export const ReferendumsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ReferendumsSVG}
 		{...props}
 	/>
 );

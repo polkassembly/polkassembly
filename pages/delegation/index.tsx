@@ -16,9 +16,9 @@ import { useRouter } from 'next/router';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
+import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);

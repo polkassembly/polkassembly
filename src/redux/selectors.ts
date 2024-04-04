@@ -13,6 +13,7 @@ import { ITippingStore } from './Tipping/@types';
 import { ITreasuryProposalStore } from './treasuryProposal/@types';
 import { IVoteDataStore } from './voteData/@types';
 import { IinitialConnectAddress } from './initialConnectAddress/@types';
+import { IGov1TreasuryProposalStore } from './gov1TreasuryProposal/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -25,24 +26,35 @@ const useUserDetailsSelector = () => {
 const useUserUnlockTokensDataSelector = () => {
 	return useSelector<TAppState, IUnlockTokenskDataStore>((state) => state.userUnlockTokensData);
 };
+
 const useCurrentTokenDataSelector = () => {
 	return useSelector<TAppState, ICurrentTokenPriceStore>((state) => state.currentTokenPrice);
 };
+
 const useCurvesInformationSelector = () => {
 	return useSelector<TAppState, ICurvesInformationStore>((state) => state.curvesInformation);
 };
+
 const useTippingDataSelector = () => {
 	return useSelector<TAppState, ITippingStore>((state) => state.tipping);
 };
+
 const useTreasuryProposalSelector = () => {
 	return useSelector<TAppState, ITreasuryProposalStore>((state) => state.treasuryProposal);
 };
+
 const useVoteDataSelector = () => {
 	return useSelector<TAppState, IVoteDataStore>((state) => state.voteData);
 };
+
 const useInitialConnectAddress = () => {
 	return useSelector<TAppState, IinitialConnectAddress>((state) => state.initialConnectAddress);
 };
+
+const useGov1treasuryProposal = () => {
+	return useSelector<TAppState, IGov1TreasuryProposalStore>((state) => state.gov1TreasuryProposal);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -52,5 +64,6 @@ export {
 	useTippingDataSelector,
 	useTreasuryProposalSelector,
 	useVoteDataSelector,
-	useInitialConnectAddress
+	useInitialConnectAddress,
+	useGov1treasuryProposal
 };

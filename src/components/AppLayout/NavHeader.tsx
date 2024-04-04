@@ -43,9 +43,9 @@ import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
-import { delegationSupportedNetworks } from '../DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -294,7 +294,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[102]' : 'z-[101]'
+				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[10000]' : 'z-[101]'
 			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<span

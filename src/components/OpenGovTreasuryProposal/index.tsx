@@ -18,7 +18,7 @@ import { useApiContext } from '~src/context';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-import { IBeneficiary } from '~src/types';
+import { ESteps, IBeneficiary } from '~src/types';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
@@ -63,12 +63,6 @@ export interface ISteps {
 export enum EEnactment {
 	At_Block_No = 'at_block_number',
 	After_No_Of_Blocks = 'after_no_of_Blocks'
-}
-
-enum ESteps {
-	Write_Proposal = 'Write a Proposal',
-	Create_Preimage = 'Create Preimage',
-	Create_Proposal = 'Create Proposal'
 }
 
 export interface IEnactment {
@@ -238,7 +232,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length) return;
 
 		let promiseArr: any[] = [];
-		for (const address of [...beneficiaries.map((addr) => addr)]) {
+		for (const address of [...beneficiaries.map((addr) => (addr as any)?.value || addr)]) {
 			if (!address) continue;
 			promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
 		}

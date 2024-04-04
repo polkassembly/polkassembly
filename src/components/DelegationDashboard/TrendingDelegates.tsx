@@ -259,7 +259,7 @@ const TrendingDelegates = () => {
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
 					type='info'
-					message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+					message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
 				/>
 			)}
 

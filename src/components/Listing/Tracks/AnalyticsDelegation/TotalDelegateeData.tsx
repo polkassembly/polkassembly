@@ -8,7 +8,8 @@ import { Pagination } from '~src/ui-components/Pagination';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import TrackDelegationData from './TrackDelegationData';
+import TrackDelegationDataModal from './TrackDelegationData';
+import Address from '~src/ui-components/Address';
 
 interface IProps {
 	delegateesData: IDelegatorsAndDelegatees;
@@ -53,10 +54,17 @@ const TotalDelegateeData = ({ delegateesData }: IProps) => {
 								key={index}
 								className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 							>
-								<div className='w-[45%]'>{item.from.slice(0, 16)}....</div>
-								<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
-								<div className='w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
-								<div className='w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
+								<div className='my-[3px] w-[45%]'>
+									{' '}
+									<Address
+										address={item.from}
+										displayInline
+										isTruncateUsername={false}
+									/>
+								</div>
+								<div className='mt-[3px] w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
+								<div className='mt-[3px] w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
+								<div className='mt-[3px] w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
 								<div
 									onClick={() => {
 										setIndex(item.from);
@@ -87,7 +95,7 @@ const TotalDelegateeData = ({ delegateesData }: IProps) => {
 					/>
 				</div>
 			</section>
-			<TrackDelegationData
+			<TrackDelegationDataModal
 				open={open}
 				setOpen={setOpen}
 				delegateesData={delegateesData}

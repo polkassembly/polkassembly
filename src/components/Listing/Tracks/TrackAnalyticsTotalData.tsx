@@ -58,7 +58,7 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 							alt='proposal created icon'
 							imgClassName='-mt-1'
 						/>
-						<span className='text-xs font-bold text-[#00AC4F]'>{isNaN(Number(totalData?.allProposals?.diff)) ? 0 : Number(totalData?.allProposals?.diff) * 100}%</span>
+						<span className='text-xs font-bold text-[#00AC4F]'>{isNaN(Number(totalData?.allProposals?.diff)) ? 0 : Number(totalData?.allProposals?.diff)}%</span>
 						<span className='text-xs font-normal text-[#485F7DB2] dark:text-[#909090B2]'>this week</span>
 					</div>
 				</div>
@@ -114,7 +114,7 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 							alt='proposal created icon'
 							imgClassName='-mt-1'
 						/>
-						<span className='text-xs font-bold text-[#00AC4F]'>{isNaN(Number(totalData?.activeProposals?.diff)) ? 0 : Number(totalData?.activeProposals?.diff) * 100}%</span>
+						<span className='text-xs font-bold text-[#00AC4F]'>{isNaN(Number(totalData?.activeProposals?.diff)) ? 0 : Number(totalData?.activeProposals?.diff)}%</span>
 						<span className='text-xs font-normal text-[#485F7DB2] dark:text-[#909090B2]'>this week</span>
 					</div>
 				</div>

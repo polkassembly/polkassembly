@@ -11,6 +11,7 @@ import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import EmailIcon from '~assets/icons/email_icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Address from '~src/ui-components/Address';
 
 interface IProps {
 	open: boolean;
@@ -20,7 +21,7 @@ interface IProps {
 	index: string;
 }
 
-const TrackDelegationData = ({ className, open, setOpen, delegateesData, index }: IProps) => {
+const TrackDelegationDataModal = ({ className, open, setOpen, delegateesData, index }: IProps) => {
 	const { network } = useNetworkSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = delegateesData[index];
@@ -52,34 +53,32 @@ const TrackDelegationData = ({ className, open, setOpen, delegateesData, index }
 					<p className='mb-3 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>Delegation Detail</p>
 				</div>
 				<div className='my-3 flex justify-between dark:bg-section-dark-overlay'>
-					<div className='flex justify-between'>
-						<div className='flex w-[200px] flex-col gap-1'>
-							<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
-							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<VoterIcon /> Voting Power
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
-							</div>
-							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<ConvictionIcon /> Conviction
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
-							</div>
-							<div className='flex justify-between'>
-								<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
-									<CapitalIcon /> Capital
-								</span>
-								<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
-							</div>
+					<div className='flex w-[200px] flex-col gap-1'>
+						<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
+						<div className='flex justify-between'>
+							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<VoterIcon /> Voting Power
+							</span>
+							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
+						</div>
+						<div className='flex justify-between'>
+							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<ConvictionIcon /> Conviction
+							</span>
+							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
+						</div>
+						<div className='flex justify-between'>
+							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+								<CapitalIcon /> Capital
+							</span>
+							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
 						</div>
 					</div>
 					{delegateeData?.count && (
 						<>
 							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
 							<div className='mr-3 flex w-[200px] flex-col gap-1'>
-								<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
+								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
 										<VoterIcon /> Voting Power
@@ -122,9 +121,15 @@ const TrackDelegationData = ({ className, open, setOpen, delegateesData, index }
 										key={index}
 										className='flex items-start justify-between text-xs'
 									>
-										<div className='my-1 w-[200px] text-lightBlue dark:text-blue-dark-medium'>{item.from.slice(0, 8)}...</div>
+										<div className='my-1 w-[200px] text-lightBlue dark:text-blue-dark-medium'>
+											<Address
+												address={item.from}
+												isTruncateUsername={false}
+												displayInline
+											/>
+										</div>
 										<div className='my-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{parseBalance((item?.capital || '0').toString(), 2, true, network)}</div>
-										<div className='my-1 ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{item.lockedPeriod}</div>
+										<div className='my-1 ml-1 w-[110px] items-center text-lightBlue dark:text-blue-dark-medium'>{item.lockedPeriod}x/d</div>
 										<div className='my-1 w-[100px] items-center text-lightBlue dark:text-blue-dark-medium'>
 											{parseBalance((item.votingPower || '0').toString(), 2, true, network)}
 										</div>
@@ -147,4 +152,4 @@ const TrackDelegationData = ({ className, open, setOpen, delegateesData, index }
 	);
 };
 
-export default TrackDelegationData;
+export default TrackDelegationDataModal;

@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IDelegatorsAndDelegatees } from '~src/types';
+import Address from '~src/ui-components/Address';
 import { Pagination } from '~src/ui-components/Pagination';
 
 interface IProps {
@@ -35,10 +36,22 @@ const TotalDelegatorData = ({ delegatorsData }: IProps) => {
 						key={index}
 						className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
 					>
-						<div className='w-[35%]'>{item.from.slice(0, 16)}....</div>
-						<div className='w-[35%] '>{item.to.slice(0, 16)}....</div>
-						<div className='w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
-						<div className='w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
+						<div className='w-[35%]'>
+							<Address
+								address={item.from}
+								isTruncateUsername={false}
+								displayInline
+							/>
+						</div>
+						<div className='my-[3px] w-[35%]'>
+							<Address
+								address={item.to}
+								isTruncateUsername={false}
+								displayInline
+							/>
+						</div>
+						<div className='my-[3px] w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
+						<div className='my-[3px] w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
 					</div>
 				))}
 			</div>

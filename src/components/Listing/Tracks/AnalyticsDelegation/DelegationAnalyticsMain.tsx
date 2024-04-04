@@ -33,7 +33,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/track_level_anaytics/delegation-analytics-stats', {
-			trackNum: trackNumber
+			trackNumber
 		});
 
 		if (data) {

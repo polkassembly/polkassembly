@@ -16,6 +16,7 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
+import { usePostDataContext } from '~src/context';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
@@ -44,6 +45,10 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 		ayes: [],
 		nays: []
 	});
+
+	const {
+		postData: { created_at: createdAt }
+	} = usePostDataContext();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -97,7 +102,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
 				const voteBalance = new BN(vote.balance);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));

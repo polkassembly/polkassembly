@@ -30,7 +30,11 @@ interface Props {
 }
 
 const Web3Login = dynamic(() => import('src/components/Login/Web3Login'), {
-	loading: () => <Skeleton active />,
+	loading: () => (
+		<div className='mt-8 p-5'>
+			<Skeleton active />
+		</div>
+	),
 	ssr: false
 });
 const MetamaskLogin = dynamic(() => import('src/components/Login/MetamaskLogin'), {

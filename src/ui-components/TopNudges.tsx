@@ -98,7 +98,7 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 									</span>
 								</div>
 								<span
-									className='ml-auto'
+									className='ml-auto cursor-pointer'
 									onClick={handleNudgeClose}
 								>
 									<CloseIcon className='text-white' />

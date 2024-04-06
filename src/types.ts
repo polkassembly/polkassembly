@@ -670,3 +670,27 @@ export interface IDelegationAnalytics {
 	delegateesData: IDelegatorsAndDelegatees;
 	delegatorsData: IDelegatorsAndDelegatees;
 }
+
+export interface IAnalyticsVoteTrends {
+	network: string;
+	trackNumber: number;
+	referendaIndex: number;
+	votes: {
+		convictionVotes: {
+			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+		};
+		voteAmount: {
+			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+		};
+		accounts: {
+			delegationSplitData: { delegated: number | string; index: number; solo: number | string };
+			supportData: { percentage: string; index: number };
+			votesSplitData: { abstain: number | string; aye: number | string; nay: number | string; index: number };
+		};
+		referendaIndex: number;
+	};
+}

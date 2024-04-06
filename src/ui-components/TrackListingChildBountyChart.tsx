@@ -13,8 +13,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface ITrackListingChildBountyChart {
 	parentBounty: any;
-	status: string;
-	requestedAmount: string;
 	setTotalAmount: (pre: any) => void;
 }
 
@@ -23,7 +21,7 @@ const ZERO_BN = new BN('0');
 const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { parentBounty, requestedAmount, status, setTotalAmount } = props;
+	const { parentBounty, setTotalAmount } = props;
 	const [amountDisbursed, setAmountDisbursed] = useState<any>('');
 	const [remainingAmount, setRemainingAmount] = useState<any>('');
 	const { resolvedTheme: theme } = useTheme();
@@ -48,13 +46,13 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 			}
 
 			if (!disbursedAmount.isZero()) {
-				setAmountDisbursed(status === 'Claimed' ? disbursedAmount.sub(new BN(requestedAmount || '0')) : disbursedAmount);
+				setAmountDisbursed(disbursedAmount);
 			}
 
 			if (!totalAmount.isZero()) {
 				setTotalAmount(totalAmount);
 				const remaining = totalAmount.sub(disbursedAmount);
-				setRemainingAmount(status !== 'Claimed' ? remaining.sub(new BN(requestedAmount || '0')) : remaining);
+				setRemainingAmount(remaining);
 			}
 		}
 	};
@@ -76,12 +74,6 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 			id: 'remaining',
 			label: 'Remaining',
 			value: parseFloat(formatedBalance(remainingAmount.toString(), unit).replace(/,/g, ''))
-		},
-		{
-			color: '#FF8E11',
-			id: 'requested',
-			label: 'Requested',
-			value: parseFloat((formatedBalance(requestedAmount.toString(), unit) as string).replace(/,/g, ''))
 		}
 	];
 
@@ -137,10 +129,6 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 							<br />
 							<span className='text-xs font-semibold'>
 								Remaining: {parseFloat(formatedBalance(remainingAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
-							</span>
-							<br />
-							<span className='text-xs font-semibold'>
-								Requested: {parseFloat(formatedBalance(requestedAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
 							</span>
 						</div>
 					);

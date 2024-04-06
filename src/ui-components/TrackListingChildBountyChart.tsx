@@ -84,6 +84,25 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 				}}
 				// animate={false}
 				valueFormat={(value) => `${value} ${unit}`}
+				// xScale={{ type: 'point' }}
+				tooltip={() => {
+					return (
+						<div className={'w-[228px] rounded-md bg-[#363636] px-4 py-3 text-sm capitalize text-white dark:bg-[#1E2126]'}>
+							<span className='text-xs font-semibold'>
+								Amount Disbursed: {parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))} {unit}
+							</span>
+							<br />
+							<span className='text-xs font-semibold'>
+								Amount Remaining:{' '}
+								{(
+									parseFloat(formatedBalance(totalAmount.toString(), network).replace(/,/g, '')) -
+									parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
+								).toFixed(2)}{' '}
+								{unit}
+							</span>
+						</div>
+					);
+				}}
 			/>
 		</div>
 	);

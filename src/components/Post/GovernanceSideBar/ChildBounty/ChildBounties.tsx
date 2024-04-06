@@ -43,6 +43,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 		}
 
 		if (data) {
+			console.log(data);
 			const allRewardsAsBN = data.child_bounties.map((bounty) => new BN(bounty.reward));
 
 			const totalReward = allRewardsAsBN.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
@@ -58,9 +59,6 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 
 			if (!totalReward.isZero()) {
 				setTotalAmount(totalReward);
-			}
-
-			if (!totalAwardedReward.isZero() && !totalReward.isZero()) {
 				const remaining = totalReward.sub(totalAwardedReward);
 				setRemainingAmount(remaining);
 			}
@@ -88,7 +86,7 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 		{
 			color: '#FF8E11',
 			id: 'requested',
-			label: 'Requested',
+			label: `Requested ${parseFloat(requestedAmount.replace(/,/g, '') || 0)} ${unit}`,
 			value: parseFloat(requestedAmount.replace(/,/g, '') || 0)
 		}
 	];

@@ -602,8 +602,8 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
   }
 }`;
 
-export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
-  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, proposalHashBlock_eq: $hash_eq}) {
+export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $proposalHashBlock_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
+  proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, proposalHashBlock_eq: $proposalHashBlock_eq}) {
     index
     proposer
     status
@@ -700,7 +700,7 @@ export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByInd
       since
     }
   }
-  tippersConnection(orderBy: createdAt_DESC, where: {proposal: {hash_eq: $hash_eq, type_eq: $type_eq}}) {
+  tippersConnection(orderBy: createdAt_DESC, where: {proposal: {proposalHashBlock_eq: $proposalHashBlock_eq, type_eq: $type_eq}}) {
     totalCount
     edges {
       node {
@@ -712,7 +712,7 @@ export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByInd
       }
     }
   }
-  votesConnection(orderBy: blockNumber_DESC, where: {type_eq: $vote_type_eq, proposal: {index_eq: $index_eq, type_eq: $type_eq}}) {
+  votesConnection(orderBy: blockNumber_DESC, where: {type_eq: $vote_type_eq, proposal: {type_eq: $type_eq, AND: {index_eq: $index_eq, OR:{proposalHashBlock_eq:$proposalHashBlock_eq}}}}) {
     totalCount
     edges {
       node {

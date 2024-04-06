@@ -11,6 +11,7 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 // import AIbotIcon from '~assets/icons/ai-bot-icon.svg';
 import CautionIcon from '~assets/icons/caution-icon.svg';
 import CreateDiscussionIcon from '~assets/icons/create-icon.svg';
+import CreateDiscussionIconDark from '~assets/icons/create-icon-dark.svg';
 import CloseIcon from '~assets/icons/close-cross-icon.svg';
 import CloseWhite from '~assets/icons/close-cross-thinner.svg';
 import FabButton from '~assets/icons/fab-icon.svg';
@@ -21,8 +22,19 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { trackEvent } from 'analytics';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const OpenGovTreasuryProposal = dynamic(() => import('../OpenGovTreasuryProposal'), {
+	loading: () => (
+		<SkeletonButton
+			className='w-[100%]'
+			active
+		/>
+	),
+	ssr: false
+});
+
+const Gov1TreasuryProposal = dynamic(() => import('../Gov1TreasuryProposal'), {
 	loading: () => (
 		<SkeletonButton
 			className='w-[100%]'
@@ -98,7 +110,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
-					<CreateDiscussionIcon className='ml-[-50px] mt-[5px] cursor-pointer' />
+					<div className='ml-[-50px] mt-[5px] cursor-pointer'>{theme == 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}</div>
 					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
 				</div>
 			)
@@ -135,6 +147,12 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	if (treasuryProposalCreationAllowedNetwork.includes(network)) {
 		data.splice(0, 0, {
 			component: <OpenGovTreasuryProposal theme={theme} />
+		});
+	}
+
+	if (!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+		data.splice(0, 0, {
+			component: <Gov1TreasuryProposal />
 		});
 	}
 

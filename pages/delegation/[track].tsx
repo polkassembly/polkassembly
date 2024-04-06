@@ -18,12 +18,21 @@ import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 import { useTheme } from 'next-themes';
+import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+	if (!delegationSupportedNetworks.includes(network)) {
+		return {
+			props: {},
+			redirect: {
+				destination: '/'
+			}
+		};
+	}
 
 	const { page = 1, sortBy = sortValues.NEWEST, track } = query;
 	const trackDetails: any = getQueryToTrack(String(track), network);

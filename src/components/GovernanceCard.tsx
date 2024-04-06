@@ -189,7 +189,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
-	const bnRequestedAmount = new BN(childBountyAmount || '0');
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -339,7 +338,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
-							{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
+							{proposalType === ProposalType.CHILD_BOUNTIES && (
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>
 									{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
 								</p>
@@ -534,8 +533,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackListingChildBountyChart
 										parentBounty={parentBounty}
-										status={status as string}
-										requestedAmount={bnRequestedAmount.toString()}
 										setTotalAmount={setTotalAmount}
 									/>
 								</>
@@ -636,8 +633,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackListingChildBountyChart
 										parentBounty={parentBounty}
-										status={status as string}
-										requestedAmount={bnRequestedAmount.toString()}
 										setTotalAmount={setTotalAmount}
 									/>
 								</div>

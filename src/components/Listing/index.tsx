@@ -57,6 +57,7 @@ const Listing: FC<IListingProps> = (props) => {
 		);
 	}
 
+	console.log(posts);
 	return (
 		<div className={`${className} proposals__list`}>
 			{posts.map((post, index) => {

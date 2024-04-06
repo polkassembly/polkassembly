@@ -7,6 +7,7 @@ import DelegationAnalyticsMain from './AnalyticsDelegation/DelegationAnalyticsMa
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getDefaultTrackMetaData, getTrackData } from './AboutTrackCard';
 import { Spin } from 'antd';
+import AnalyticsVotingTrends from './AnalyticsVotingTrends';
 
 interface IProps {
 	className?: string;
@@ -28,6 +29,7 @@ const TrackAnalyticsMain = ({ className, trackName }: IProps) => {
 					trackNumber={track_number}
 					setIsLoading={setIsLoading}
 				/>
+				<AnalyticsVotingTrends trackNumber={track_number} />
 				<DelegationAnalyticsMain trackNumber={track_number} />
 			</main>
 		</Spin>

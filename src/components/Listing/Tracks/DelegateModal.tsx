@@ -33,11 +33,11 @@ import LockIcon from '~assets/icons/lock.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon, DelegateModalIcon } from '~src/ui-components/CustomIcons';
 import { useTheme } from 'next-themes';
-import { delegationSupportedNetworks } from '~src/components/DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Popover from '~src/basic-components/Popover';
 import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
+import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 const ZERO_BN = new BN(0);
 

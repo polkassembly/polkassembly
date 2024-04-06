@@ -7,12 +7,12 @@ import { ProfileDetailsResponse } from '~src/auth/types';
 import Image from 'next/image';
 import { Tag } from 'antd';
 import ProfileDelegationsCard from './ProfileDelegationsCard';
-import { delegationSupportedNetworks } from '../DelegationDashboard';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import dynamic from 'next/dynamic';
 import EditProfileModal from './EditProfile';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
 	ssr: false

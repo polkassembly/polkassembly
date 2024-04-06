@@ -13,6 +13,7 @@ import BN from 'bn.js';
 import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import Nudge from './Nudge';
+import { usePostDataContext } from '~src/context';
 
 interface IVotesAccountProps {
 	allVotes: IAllVotesType | undefined;
@@ -28,6 +29,10 @@ const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance,
 	const [votesByConviction, setVotesByConviction] = useState<any[]>([]);
 	const [votesByDelegation, setVotesByDelegation] = useState<any[]>([]);
 	const [votesByTimeSplit, setVotesByTimeSplit] = useState<any[]>([]);
+
+	const {
+		postData: { created_at: createdAt }
+	} = usePostDataContext();
 
 	useEffect(() => {
 		if (!allVotes?.data) return;
@@ -66,7 +71,7 @@ const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance,
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
 
@@ -89,7 +94,7 @@ const Accounts = ({ allVotes, turnout, support, totalVotesCount, activeIssuance,
 		setDelegatedVotesCount(delegated.length);
 		setSoloVotesCount(allVotes?.data.length - delegated.length);
 		setVotesByTimeSplit(votesByTimeSplit as any);
-	}, [allVotes]);
+	}, [allVotes, createdAt]);
 
 	return (
 		<>

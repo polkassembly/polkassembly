@@ -8,13 +8,13 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import StatusTag from 'src/ui-components/StatusTag';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
 import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { useTheme } from 'next-themes';
 import { Pagination } from '~src/ui-components/Pagination';
+import { IChildBountiesResponse } from '~src/types';
 
 interface IBountyChildBountiesProps {
 	bountyId?: number | string | null;

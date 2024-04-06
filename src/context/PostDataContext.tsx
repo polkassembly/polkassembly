@@ -47,7 +47,7 @@ export interface IPostData {
 	description?: string;
 	status: string;
 	requested?: string | number | BN;
-	reward?: string | number | BN;
+	reward?: string;
 	post_reactions?: IReactions;
 	marketMetadata: any | null;
 	comments: { [index: string]: Array<IComment> };

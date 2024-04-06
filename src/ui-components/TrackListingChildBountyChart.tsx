@@ -2,41 +2,86 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { ResponsivePie } from '@nivo/pie';
-// import { BN } from 'bn.js';
+import { BN } from 'bn.js';
 import { useTheme } from 'next-themes';
-// import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
-import React, { FC } from 'react';
-// import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
+import React, { FC, useEffect, useState } from 'react';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IChildBountiesResponse } from '~src/types';
 import { formatedBalance } from '~src/util/formatedBalance';
-// import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface ITrackListingChildBountyChart {
-	parentBounty?: any;
-	disbursedAmount?: any;
-	totalAmount?: any;
+	parentBounty: any;
+	status: string;
+	requestedAmount: string;
+	setTotalAmount: (pre: any) => void;
 }
 
+const ZERO_BN = new BN('0');
+
 const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) => {
-	const { disbursedAmount, totalAmount } = props;
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-
+	const { parentBounty, requestedAmount, status, setTotalAmount } = props;
+	const [amountDisbursed, setAmountDisbursed] = useState<any>('');
+	const [remainingAmount, setRemainingAmount] = useState<any>('');
 	const { resolvedTheme: theme } = useTheme();
+
+	const getChildBountyData = async () => {
+		const { data, error: fetchError } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+			parentBountyIndex: parentBounty
+		});
+		if (fetchError || !data) {
+			console.log('error fetching events : ', fetchError);
+		}
+		if (data?.child_bounties) {
+			let totalAmount = ZERO_BN;
+			let disbursedAmount = ZERO_BN;
+
+			for (const bounty of data.child_bounties) {
+				const bnAmount = new BN(bounty?.reward || '0');
+				if (bounty?.status === 'Claimed') {
+					disbursedAmount = disbursedAmount.add(bnAmount);
+				}
+				totalAmount = totalAmount.add(bnAmount);
+			}
+
+			if (!disbursedAmount.isZero()) {
+				setAmountDisbursed(status === 'Claimed' ? disbursedAmount.sub(new BN(requestedAmount || '0')) : disbursedAmount);
+			}
+
+			if (!totalAmount.isZero()) {
+				setTotalAmount(totalAmount);
+				const remaining = totalAmount.sub(disbursedAmount);
+				setRemainingAmount(status !== 'Claimed' ? remaining.sub(new BN(requestedAmount || '0')) : remaining);
+			}
+		}
+	};
+
+	useEffect(() => {
+		getChildBountyData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [parentBounty, network]);
 
 	const childBountyData = [
 		{
 			color: '#FFC302',
 			id: 'disbursed',
-			label: 'Amount Disbursed',
-			value: parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
+			label: 'Disbursed',
+			value: parseFloat(formatedBalance(amountDisbursed.toString(), unit).replace(/,/g, ''))
 		},
 		{
 			color: '#F1F1EF',
 			id: 'remaining',
-			label: 'Amount Remaining',
-			value: parseFloat(formatedBalance(totalAmount.toString(), network).replace(/,/g, '')) - parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
+			label: 'Remaining',
+			value: parseFloat(formatedBalance(remainingAmount.toString(), unit).replace(/,/g, ''))
+		},
+		{
+			color: '#FF8E11',
+			id: 'requested',
+			label: 'Requested',
+			value: parseFloat((formatedBalance(requestedAmount.toString(), unit) as string).replace(/,/g, ''))
 		}
 	];
 
@@ -82,23 +127,20 @@ const TrackListingChildBountyChart: FC<ITrackListingChildBountyChart> = (props) 
 						}
 					}
 				}}
-				// animate={false}
 				valueFormat={(value) => `${value} ${unit}`}
-				// xScale={{ type: 'point' }}
 				tooltip={() => {
 					return (
 						<div className={'w-[228px] rounded-md bg-[#363636] px-4 py-3 text-sm capitalize text-white dark:bg-[#1E2126]'}>
 							<span className='text-xs font-semibold'>
-								Amount Disbursed: {parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))} {unit}
+								Disbursed: {parseFloat(formatedBalance(amountDisbursed.toString(), network).replace(/,/g, ''))} {unit}
 							</span>
 							<br />
 							<span className='text-xs font-semibold'>
-								Amount Remaining:{' '}
-								{(
-									parseFloat(formatedBalance(totalAmount.toString(), network).replace(/,/g, '')) -
-									parseFloat(formatedBalance(disbursedAmount.toString(), network).replace(/,/g, ''))
-								).toFixed(2)}{' '}
-								{unit}
+								Remaining: {parseFloat(formatedBalance(remainingAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
+							</span>
+							<br />
+							<span className='text-xs font-semibold'>
+								Requested: {parseFloat(formatedBalance(requestedAmount.toString(), network).replace(/,/g, '')).toFixed(2)} {unit}
 							</span>
 						</div>
 					);

@@ -46,7 +46,7 @@ const getFromatedData = (data: any) => {
 		}
 	};
 	data?.map((item: any) => {
-		const votingPower = new BN(item?.balance?.value).mul(new BN(item?.lockPeriod || 1));
+		const votingPower = item.lockPeriod ? new BN(item?.balance?.value).mul(new BN(item?.lockPeriod || 1)) : new BN(item?.balance?.value).div(new BN('10'));
 		resObj[item?.decision].votes = [...((resObj[item?.decision] as any)?.votes || []), { ...item, totalVotingPower: votingPower.toString() || '0' }];
 		resObj[item?.decision].count = ((resObj[item?.decision] as any)?.count || 0) + 1;
 	});

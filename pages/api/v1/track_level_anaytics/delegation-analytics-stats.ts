@@ -20,7 +20,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	const { trackNumber } = req.body;
+	const { trackNumber = 0 } = req.body;
 
 	if (typeof trackNumber !== 'number') return res.status(400).json({ message: messages.INVALID_PARAMS });
 
@@ -38,9 +38,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 		const totalDelegateesObj: IDelegatorsAndDelegatees = {};
 
 		data['data']?.votingDelegations.map((delegation: { lockPeriod: number; balance: string; from: string; to: string }) => {
+			console.log(delegation);
 			const bnBalance = new BN(delegation?.balance);
-			const bnConviction = new BN(delegation?.lockPeriod || '1');
-			const vote = bnBalance.mul(bnConviction);
+			const bnConviction = new BN(delegation?.lockPeriod || 1);
+			const vote = delegation?.lockPeriod ? bnBalance.mul(bnConviction) : bnBalance.div(new BN('10'));
 
 			totalVotesBalance = totalVotesBalance.add(vote);
 

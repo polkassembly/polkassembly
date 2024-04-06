@@ -42,7 +42,6 @@ import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
 import StakeIcon from '~assets/stake-icon.svg';
 import DelegateIcon from '~assets/delegate-icon.svg';
-import { delegationSupportedNetworks } from '../DelegationDashboard';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
@@ -51,6 +50,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,

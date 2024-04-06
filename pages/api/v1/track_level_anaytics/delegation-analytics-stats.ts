@@ -20,7 +20,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	const { trackNumber = 0 } = req.body;
+	const { trackNumber } = req.body;
 
 	if (typeof trackNumber !== 'number') return res.status(400).json({ message: messages.INVALID_PARAMS });
 

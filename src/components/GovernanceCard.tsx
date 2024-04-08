@@ -535,7 +535,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<ListingChildBountyChart
 										parentBounty={parentBounty}
-										childBounties={allChildBounties}
+										childBounties={allChildBounties || []}
 										setTotalAmount={setTotalAmount}
 									/>
 								</>
@@ -637,7 +637,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<ListingChildBountyChart
 										parentBounty={parentBounty}
 										setTotalAmount={setTotalAmount}
-										childBounties={allChildBounties}
+										childBounties={allChildBounties || []}
 									/>
 								</div>
 							)}

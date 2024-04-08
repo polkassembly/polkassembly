@@ -694,3 +694,14 @@ export interface IAnalyticsVoteTrends {
 		referendaIndex: number;
 	};
 }
+
+export interface IChildBountiesResponse {
+	child_bounties: {
+		description: string;
+		index: number;
+		status: string;
+		reward: string;
+		title: string;
+	}[];
+	child_bounties_count: number;
+}

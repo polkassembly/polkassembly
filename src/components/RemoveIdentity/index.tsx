@@ -88,6 +88,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 	const handleRemoveIdentity = () => {
 		if (!api || !apiReady || !address || !isIdentityAvailable) return;
+		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {
 			queueNotification({
@@ -110,6 +111,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading({ isLoading: false, message: '' });
+			dispatch(setOpenRemoveIdentityModal(true));
 		};
 		const tx = api.tx.identity.clearIdentity();
 

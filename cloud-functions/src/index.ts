@@ -6,8 +6,13 @@ import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
 import trackLevelAnalytics from './trackLevelAnalytics';
 
+import cors = require('cors');
+const corsHandler = cors({ origin: true });
+
 admin.initializeApp();
 const logger = functions.logger;
+
+export const firestoreDB = admin.firestore();
 
 const GET_PROPOSAL_TRACKS = `query MyQuery($index_eq:Int,$type_eq:ProposalType) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq}) {
@@ -222,8 +227,25 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 		});
 });
 
-exports.trackLevelAnalytics = functions.pubsub.schedule('every 1 day').onRun(async () => {
+exports.trackLevelAnalytics = functions.pubsub.schedule('every 24 hours').onRun(async () => {
 	functions.logger.info('scheduledTrackLevelAnalytics ran at : ', new Date());
 	await trackLevelAnalytics();
 	return;
+});
+
+export const callTrackLevelAnalytics = functions.runWith({
+	timeoutSeconds: 540
+}).https.onRequest(async (req, res) => {
+	corsHandler(req, res, async () => {
+		try {
+			await trackLevelAnalytics();
+			return res.status(200).end();
+		} catch (err: unknown) {
+			logger.error('Error in callTrackLevelAnalytics:', {
+				err,
+				stack: (err as any).stack
+			});
+			return res.status(500).json({ error: 'Internal error.' });
+		}
+	});
 });

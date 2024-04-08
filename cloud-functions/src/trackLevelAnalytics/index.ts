@@ -3,20 +3,62 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import fetchSubsquid from '../utils/fetchSubsquid';
 import { networkTrackInfo } from '../trackInfo';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BN from 'bn.js';
 import formatBnBalance from '../utils/formateBnBalance';
+import { firestoreDB } from '..';
 
 const ZERO_BN = new BN(0);
+
+enum EVoteType {
+ACCOUNTS='accounts',
+CONVICTIONVOTES = 'convictionVotes',
+VOTEAMOUNT = 'voteAmount',
+}
+interface IVoteType {
+	lockPeriod: number;
+	balance: string;
+	decision: 'aye'| 'nay'|'abstain';
+	delegatedVotingPower: string;
+	selfVotingPower: string;
+	isDelegatedVote: boolean;
+	network: string;
+}
+
+interface IDataType {
+	index: number;
+	votes: IVoteType[]
+}
+interface IResponse{
+	network : string,
+	trackNumber: number,
+	referendaIndex: number,
+	votes: {
+		convictionVotes: {
+			delegationSplitData: { delegated: string | number, index: number, solo: string| number },
+			supportData:{ percentage: string, index: number },
+			votesSplitData: { abstain: string | number, aye: string | number, nay: string | number, index: number }
+		},
+		voteAmount: {
+			delegationSplitData: { delegated: string | number, index: number, solo: string | number },
+			supportData:{ percentage: string, index: number },
+			votesSplitData: { abstain: string| number, aye: string| number, nay: string| number, index: number }
+		},
+		accounts: {
+			delegationSplitData: { delegated: number | string, index: number, solo: number | string },
+			supportData:{ percentage: string, index: number },
+			votesSplitData: { abstain: number | string, aye: number | string, nay: number | string, index: number }
+		},
+		referendaIndex: number
+	}
+}
 
 export const GET_TOTAL_VOTES_FOR_PROPOSAL = `
 query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int  ) {
   flattenedConvictionVotes(where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}, orderBy: voter_DESC) {
     type
-    voter
     lockPeriod
     decision
     balance {
@@ -32,7 +74,6 @@ query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int
     createdAt
     createdAtBlock
     proposalIndex
-    delegatedTo
     isDelegated
     parentVote {
       extrinsicIndex
@@ -57,9 +98,6 @@ query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int
         votingPower
       }
     }
-  }
-  flattenedConvictionVotesConnection(orderBy: id_ASC, where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}) {
-    totalCount
   }
 }`;
 const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int!) {
@@ -95,83 +133,109 @@ const getWSProvider = (network: string) => {
 
 const AllNetworks = ['kusama', 'moonbase', 'moonriver', 'moonbeam', 'vara', 'polkadot', 'picasso', 'rococo'];
 
-admin.initializeApp();
-const firestoreDB = admin.firestore();
+const getDelegationSplit = (data: IDataType, type: EVoteType) => {
+	let convictionData = { delegated: ZERO_BN, index: data?.index, solo: ZERO_BN };
+	let voteAmountData = { delegated: ZERO_BN, index: data?.index, solo: ZERO_BN };
+	let accountsData = { delegated: 0, index: data?.index, solo: 0 };
 
-const getDelegationSplit = (data: any) => {
-	let res = { delegated: ZERO_BN, index: data?.index, solo: ZERO_BN };
+	if (type === EVoteType.ACCOUNTS) {
+		const delegatedVotes = data?.votes.filter((vote: IVoteType) => !!vote.isDelegatedVote)?.length;
+		const soloVotes = (data?.votes.length - delegatedVotes);
+		accountsData = { ...accountsData, delegated: accountsData?.delegated + delegatedVotes, solo: accountsData.solo + soloVotes };
+	} else if (type === EVoteType.CONVICTIONVOTES) {
+		data?.votes?.map((vote: IVoteType) => {
+			const balance = vote.lockPeriod == 0.1 ? new BN(vote.balance).div(new BN('10')) : new BN(vote.balance).mul(new BN(vote?.lockPeriod));
 
-	data?.votes?.map((vote: any) => {
-		if (vote?.isDelegatedVote) {
-			const delegatedBalance = new BN(vote?.delegatedVotingPower || '0');
-			res = { ...res, delegated: delegatedBalance.add(res.delegated) };
-		} else {
-			const balance = new BN(vote?.selfVotingPower || '0');
-			res = { ...res, solo: balance.add(res?.solo) };
-		}
-	});
+			if (vote?.isDelegatedVote) {
+				convictionData = { ...convictionData, delegated: balance.add(convictionData.delegated) };
+			} else {
+				convictionData = { ...convictionData, solo: balance.add(convictionData?.solo) };
+			}
+		});
+	} else {
+		data?.votes?.map((vote: IVoteType) => {
+			const balance = new BN(vote.balance);
 
-	return { ...res, delegated: res.delegated.toString(), solo: res?.solo.toString() };
-};
-
-const getVotesSplit = (data: any) => {
-	const res: any = { abstain: ZERO_BN, aye: ZERO_BN, nay: ZERO_BN, index: data?.index };
-
-	data?.votes?.map((vote: any) => {
-		const bnBalance = new BN(vote?.balance);
-		res[vote?.decision === 'yes' ? 'aye' : vote?.decision === 'no' ? 'nay' : 'abstain'] = bnBalance;
-	});
-
-	return { ...res, abstain: res.abstain.toString(), aye: res.aye.toString(), nay: res.nay.toString() };
-};
-
-const getSupportData = async (data: any, network: string) => {
-	if (network === 'picasso') {
-		fetch('https://api.polkassembly.io/api/v1/getTotalVotesForOtherNetworks/',
-			{
-				method: 'post',
-				body: JSON.stringify({
-					postId: data?.index
-				}),
-				headers: {
-					'Authorization': `Bearer ${process.env.AUTH_TOKEN}`,
-					'Content-Type': 'application/json'
-				}
-			});
+			if (vote?.isDelegatedVote) {
+				voteAmountData = { ...voteAmountData, delegated: balance.add(voteAmountData.delegated) };
+			} else {
+				voteAmountData = { ...voteAmountData, solo: balance.add(voteAmountData?.solo) };
+			}
+		});
 	}
+	switch (type) {
+	case EVoteType.ACCOUNTS:
+		return accountsData;
+	case EVoteType.CONVICTIONVOTES:
+		return { ...convictionData, delegated: convictionData.delegated.toString(), solo: convictionData.solo.toString() };
+	case EVoteType.VOTEAMOUNT:
+		return { ...voteAmountData, delegated: voteAmountData.delegated.toString(), solo: voteAmountData.solo.toString() };
+	}
+};
 
-	const wsProvider = new WsProvider(getWSProvider(network) as string);
-	const api = await ApiPromise.create({ provider: wsProvider });
+const getVotesSplit = (data: IDataType, type: EVoteType) => {
+	const convictionData = { abstain: ZERO_BN, aye: ZERO_BN, nay: ZERO_BN, index: data?.index };
+	const voteAmountData = { abstain: ZERO_BN, aye: ZERO_BN, nay: ZERO_BN, index: data?.index };
+	let accountsData = { abstain: 0, aye: 0, nay: 0, index: data?.index };
+
+	if (type === EVoteType.ACCOUNTS) {
+		const ayeVotes = data?.votes.filter((vote: IVoteType) => vote.decision === 'aye')?.length;
+		const nayVotes = data?.votes.filter((vote: IVoteType) => vote.decision === 'nay')?.length;
+
+		const abstainVotes = data?.votes.length - (ayeVotes+ nayVotes);
+		accountsData = { ...accountsData, abstain: abstainVotes, aye: ayeVotes, nay: nayVotes };
+	} else if (type === EVoteType.CONVICTIONVOTES) {
+		data?.votes?.map((vote: IVoteType) => {
+			const bnBalance = vote.lockPeriod == 0.1 ? new BN(vote.balance).div(new BN('10')) : new BN(vote.balance).mul(new BN(vote?.lockPeriod));
+			convictionData[vote?.decision] = new BN(convictionData[vote?.decision] || '0').add(bnBalance);
+		});
+	} else {
+		data?.votes?.map((vote: IVoteType) => {
+			const balance = new BN(vote.balance);
+			voteAmountData[vote?.decision] = new BN(voteAmountData[vote?.decision] || '0').add(balance);
+		});
+	}
+	switch (type) {
+	case EVoteType.ACCOUNTS:
+		return accountsData;
+	case EVoteType.CONVICTIONVOTES:
+		return { ...convictionData, abstain: convictionData.abstain.toString(), aye: convictionData.aye.toString(), nay: convictionData.nay.toString() };
+	case EVoteType.VOTEAMOUNT:
+		return { ...voteAmountData, abstain: voteAmountData.abstain.toString(), aye: voteAmountData.aye.toString(), nay: voteAmountData.nay.toString() };
+	}
+};
+
+const bnToIntBalance = function(bn: BN, network:string): number {
+	return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+};
+
+const getTotalIssuance = async (api: any, network: string) => {
+	if (network === 'picasso') {
+		const totalIssuance = await api.query.openGovBalances.totalIssuance();
+		const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
+		return (totalIssuance as any).sub(inactiveIssuance);
+	} else {
+		const totalIssuance = await api.query.balances.totalIssuance();
+		const inactiveIssuance = await api.query.balances.inactiveIssuance();
+		return (totalIssuance as any).sub(inactiveIssuance);
+	}
+};
+
+const getSupportData = async (data: IDataType, network: string, api: any) => {
 	await api.isReady;
 
-	let activeIssuance = ZERO_BN;
+	const activeIssuance = await getTotalIssuance(api, network);
 
-	(async () => {
-		if (network === 'picasso') {
-			const totalIssuance = await api.query.openGovBalances.totalIssuance();
-			const inactiveIssuance = await api.query.openGovBalances.inactiveIssuance();
-			activeIssuance = (totalIssuance as any).sub(inactiveIssuance);
-		} else {
-			const totalIssuance = await api.query.balances.totalIssuance();
-			const inactiveIssuance = await api.query.balances.inactiveIssuance();
-			activeIssuance = (totalIssuance as any).sub(inactiveIssuance);
-		}
-	})();
-
-	const bnToIntBalance = function(bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-
-	const support = data?.votes.reduce((acc: any, vote: any) => {
+	const support = data?.votes?.reduce((acc: any, vote: IVoteType) => {
 		if (!acc) acc = ZERO_BN;
 
-		if (vote.decision === 'yes' || vote.decision !== 'no') {
+		if (vote.decision === 'aye' || vote.decision !== 'nay') {
 			acc = acc.add(new BN(vote.balance));
 		}
 		return acc;
 	}, new BN(0));
 
-	const turnoutPercentage = bnToIntBalance(activeIssuance) ? (bnToIntBalance(support) / bnToIntBalance(activeIssuance)) * 100 : 100;
+	const turnoutPercentage = bnToIntBalance(activeIssuance, network) ? (bnToIntBalance(support, network) / bnToIntBalance(activeIssuance, network)) * 100 : 100;
 
 	return { percentage: turnoutPercentage.toString(), index: data?.index };
 };
@@ -179,6 +243,8 @@ const getSupportData = async (data: any, network: string) => {
 const trackLevelAnalytics = async () => {
 	const analyticsData = [];
 	for (const network of AllNetworks) {
+		const wsProvider = new WsProvider(getWSProvider(network) as string);
+		const api = await ApiPromise.create({ provider: wsProvider });
 		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => {
 			return value.trackId;
 		});
@@ -210,39 +276,52 @@ const trackLevelAnalytics = async () => {
 						...proposal,
 						balance: vote?.balance?.value || vote?.balance?.abstain || '0',
 						createdAt: vote?.createdAt,
-						decision: vote?.decision || null,
-						delegatedTo: vote?.delegatedTo || '',
+						decision: vote?.decision == 'no' ? 'nay' : vote.decision == 'yes' ? 'aye' : 'abstain' || null,
 						delegatedVotingPower: vote?.isDelegated ? vote.parentVote?.delegatedVotingPower : '0',
 						extrinsicIndex: vote?.parentVote?.extrinsicIndex,
 						isDelegatedVote: vote?.isDelegated,
 						lockPeriod: Number(vote?.lockPeriod) || 0.1,
 						network: network,
-						selfVotingPower: vote?.parentVote?.selfVotingPower || '0',
-						voter: vote?.voter
+						selfVotingPower: vote?.parentVote?.selfVotingPower || '0'
 					};
 				});
 
 				const referenda = {
 					...proposal,
-					votes: votes.length
+					votes: votes
 				};
-				const payload = {
+
+				const supportData = await getSupportData(referenda, network, api);
+
+				const payload: IResponse = {
 					network,
 					trackNumber,
 					referendaIndex: proposal.index,
 					votes: {
-						delegationSplitData: getDelegationSplit(referenda),
-						referendaIndex: proposal.index,
-						supportData: getSupportData(referenda, network),
-						votedSplitData: getVotesSplit(referenda)
+						convictionVotes: {
+							delegationSplitData: getDelegationSplit(referenda, EVoteType.CONVICTIONVOTES ),
+							supportData: supportData,
+							votesSplitData: getVotesSplit(referenda, EVoteType.CONVICTIONVOTES)
+						},
+						voteAmount: {
+							delegationSplitData: getDelegationSplit(referenda, EVoteType.VOTEAMOUNT),
+							supportData: supportData,
+							votesSplitData: getVotesSplit(referenda, EVoteType.VOTEAMOUNT)
+						},
+						accounts: {
+							delegationSplitData: getDelegationSplit(referenda, EVoteType.ACCOUNTS),
+							supportData: supportData,
+							votesSplitData: getVotesSplit(referenda, EVoteType.ACCOUNTS)
+						},
+						referendaIndex: proposal.index
 					}
 				};
 				analyticsData.push(payload);
 			}
 		}
 	}
-
-	function chunkArray(array: any[], chunkSize: number) {
+	logger.log(analyticsData, 'analyticsData');
+	function chunkArray(array: IResponse[], chunkSize: number) {
 		const chunks = [];
 		for (let i = 0; i < array.length; i += chunkSize) {
 			const chunk = array.slice(i, i + chunkSize);
@@ -252,15 +331,13 @@ const trackLevelAnalytics = async () => {
 	}
 	const chunkSize = 400;
 	const chunkedArray = chunkArray(analyticsData, chunkSize);
-	console.log(chunkedArray);
 	for (const chunk of chunkedArray) {
 		const batch = firestoreDB.batch();
 		for (const item of chunk) {
-			const activityRef = firestoreDB.collection('network').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
+			const activityRef = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
 			batch.set(activityRef, item?.votes, { merge: true });
 		}
 		try {
-			console.log(chunk, chunk.length);
 			await batch.commit();
 		} catch (err) {
 			console.log(err);

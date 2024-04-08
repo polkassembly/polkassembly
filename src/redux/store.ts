@@ -19,6 +19,7 @@ import { isExpired } from 'react-jwt';
 import { voteDataStore } from './voteData';
 import { initialConnectAddressStore } from './initialConnectAddress';
 import { gov1TreasuryProposalStore } from './gov1TreasuryProposal';
+import { removeIdentityStore } from './removeIdentity';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -104,7 +105,8 @@ export const makeStore = () => {
 		[treasuryProposalStore.name]: treasuryProposalStore.reducer,
 		[voteDataStore.name]: voteDataStore.reducer,
 		[initialConnectAddressStore.name]: initialConnectAddressStore.reducer,
-		[gov1TreasuryProposalStore.name]: gov1TreasuryProposalStore.reducer
+		[gov1TreasuryProposalStore.name]: gov1TreasuryProposalStore.reducer,
+		[removeIdentityStore.name]: removeIdentityStore.reducer
 	});
 
 	if (isServer) {

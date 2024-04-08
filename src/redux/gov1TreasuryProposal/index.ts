@@ -25,7 +25,7 @@ export const gov1TreasuryProposalStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.treasuryProposal
+				...(action as PayloadAction<any>).payload.gov1TreasuryProposal
 			};
 		});
 	},

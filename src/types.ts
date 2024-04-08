@@ -689,3 +689,14 @@ export interface IVoteDetailType {
 	supportData: { percentage: string; index: number };
 	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
 }
+
+export interface IChildBountiesResponse {
+	child_bounties: {
+		description: string;
+		index: number;
+		status: string;
+		reward: string;
+		title: string;
+	}[];
+	child_bounties_count: number;
+}

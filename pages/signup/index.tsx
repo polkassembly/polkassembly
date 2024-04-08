@@ -22,7 +22,11 @@ const WalletConnectSignup = dynamic(() => import('src/components/Signup/WalletCo
 	ssr: false
 });
 const Web3Signup = dynamic(() => import('src/components/Signup/Web3Signup'), {
-	loading: () => <Skeleton active />,
+	loading: () => (
+		<div className='mt-8 p-5'>
+			<Skeleton active />
+		</div>
+	),
 	ssr: false
 });
 const MetamaskSignup = dynamic(() => import('src/components/Signup/MetamaskSignup'), {

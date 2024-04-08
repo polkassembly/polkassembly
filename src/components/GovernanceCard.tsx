@@ -103,7 +103,7 @@ interface IGovernanceProps {
 	hash?: string;
 	childBountyAmount?: any;
 	parentBounty?: number;
-	allChildBounties: any[];
+	allChildBounties?: any[];
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {

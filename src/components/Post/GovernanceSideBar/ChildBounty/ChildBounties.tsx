@@ -13,6 +13,7 @@ import BN from 'bn.js';
 import { usePostDataContext } from '~src/context';
 import { parseBalance } from '../Modal/VoteData/utils/parseBalaceToReadable';
 import { IChildBountiesResponse } from '~src/types';
+import { Spin } from 'antd';
 
 interface IChildBountiesProps {
 	bountyIndex?: any;
@@ -95,82 +96,86 @@ const ChildBounties: FC<IChildBountiesProps> = (props) => {
 
 	return (
 		<GovSidebarCard className='overflow-y-hidden xl:max-h-[330px]'>
-			<div className='flex'>
-				<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
-				<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
-					Total: <span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{parseBalance(totalAmount.toString(), 2, true, network)}</span>
-				</p>
-			</div>
-			<div className='-mt-3 h-[286px] '>
-				<ResponsivePie
-					data={data}
-					margin={{ bottom: 80, left: 80, right: 80, top: 40 }}
-					innerRadius={0.7}
-					cornerRadius={0}
-					activeOuterRadiusOffset={8}
-					borderWidth={1}
-					borderColor={{
-						from: 'color',
-						modifiers: [['darker', 0.2]]
-					}}
-					enableArcLabels={false}
-					enableArcLinkLabels={false}
-					colors={({ data }) => data.color}
-					arcLinkLabelsSkipAngle={10}
-					arcLinkLabelsTextColor='#333333'
-					arcLinkLabelsThickness={2}
-					arcLinkLabelsColor={{ from: 'color' }}
-					arcLabelsSkipAngle={10}
-					arcLabelsTextColor={{
-						from: 'color',
-						modifiers: [['darker', 2]]
-					}}
-					legends={[
-						{
-							anchor: 'bottom',
-							direction: 'row',
-							effects: [
+			<Spin spinning={!totalAmount}>
+				<div>
+					<div className='flex'>
+						<h4 className='dashboard-heading text-sidebarBlue dark:text-white'>Bounty Amount</h4>
+						<p className='m-0 ml-auto mt-[6px] p-0 text-sm text-lightBlue dark:text-white'>
+							Total: <span className='m-0 p-0 text-aye_green_Dark dark:text-[#22A93F] dark:text-aye_green_Dark'>{parseBalance(totalAmount.toString(), 2, true, network)}</span>
+						</p>
+					</div>
+					<div className='-mt-3 h-[286px] '>
+						<ResponsivePie
+							data={data}
+							margin={{ bottom: 80, left: 80, right: 80, top: 40 }}
+							innerRadius={0.7}
+							cornerRadius={0}
+							activeOuterRadiusOffset={8}
+							borderWidth={1}
+							borderColor={{
+								from: 'color',
+								modifiers: [['darker', 0.2]]
+							}}
+							enableArcLabels={false}
+							enableArcLinkLabels={false}
+							colors={({ data }) => data.color}
+							arcLinkLabelsSkipAngle={10}
+							arcLinkLabelsTextColor='#333333'
+							arcLinkLabelsThickness={2}
+							arcLinkLabelsColor={{ from: 'color' }}
+							arcLabelsSkipAngle={10}
+							arcLabelsTextColor={{
+								from: 'color',
+								modifiers: [['darker', 2]]
+							}}
+							legends={[
 								{
-									on: 'hover',
-									style: {
-										itemTextColor: `${theme === 'dark' ? '#fff' : '#485F7D'}`
+									anchor: 'bottom',
+									direction: 'row',
+									effects: [
+										{
+											on: 'hover',
+											style: {
+												itemTextColor: `${theme === 'dark' ? '#fff' : '#485F7D'}`
+											}
+										}
+									],
+									itemDirection: 'left-to-right',
+									itemHeight: 18,
+									itemOpacity: 1,
+									itemTextColor: '#999',
+									itemWidth: 100,
+									itemsSpacing: 0,
+									justify: false,
+									symbolShape: 'circle',
+									symbolSize: 12,
+									translateX: 7,
+									translateY: 50
+								}
+							]}
+							theme={{
+								legends: {
+									text: {
+										color: '#485F7D',
+										fontSize: 12
+									}
+								},
+								tooltip: {
+									container: {
+										background: theme === 'dark' ? '#282a2d' : '#363636',
+										borderRadius: '6px',
+										color: theme === 'dark' ? '#fff' : '#fff',
+										fontSize: 14,
+										padding: '8px 16px',
+										textTransform: 'capitalize'
 									}
 								}
-							],
-							itemDirection: 'left-to-right',
-							itemHeight: 18,
-							itemOpacity: 1,
-							itemTextColor: '#999',
-							itemWidth: 100,
-							itemsSpacing: 0,
-							justify: false,
-							symbolShape: 'circle',
-							symbolSize: 12,
-							translateX: 7,
-							translateY: 50
-						}
-					]}
-					theme={{
-						legends: {
-							text: {
-								color: '#485F7D',
-								fontSize: 12
-							}
-						},
-						tooltip: {
-							container: {
-								background: theme === 'dark' ? '#282a2d' : '#363636',
-								borderRadius: '6px',
-								color: theme === 'dark' ? '#fff' : '#fff',
-								fontSize: 14,
-								padding: '8px 16px',
-								textTransform: 'capitalize'
-							}
-						}
-					}}
-					valueFormat={(value) => `${value} ${unit}`}
-				/>
-			</div>
+							}}
+							valueFormat={(value) => `${value} ${unit}`}
+						/>
+					</div>
+				</div>
+			</Spin>
 		</GovSidebarCard>
 	);
 };

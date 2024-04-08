@@ -53,7 +53,7 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
-const TrackListingChildBountyChart = dynamic(() => import('~src/ui-components/TrackListingChildBountyChart'), {
+const ListingChildBountyChart = dynamic(() => import('~src/ui-components/ListingChildBountyChart'), {
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
@@ -103,6 +103,7 @@ interface IGovernanceProps {
 	hash?: string;
 	childBountyAmount?: any;
 	parentBounty?: number;
+	allChildBounties?: any[];
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -140,7 +141,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		description,
 		hash,
 		childBountyAmount,
-		parentBounty
+		parentBounty,
+		allChildBounties
 	} = props;
 
 	const router = useRouter();
@@ -531,8 +533,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										type='vertical'
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<TrackListingChildBountyChart
+									<ListingChildBountyChart
 										parentBounty={parentBounty}
+										childBounties={allChildBounties || []}
 										setTotalAmount={setTotalAmount}
 									/>
 								</>
@@ -631,9 +634,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										type='vertical'
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<TrackListingChildBountyChart
+									<ListingChildBountyChart
 										parentBounty={parentBounty}
 										setTotalAmount={setTotalAmount}
+										childBounties={allChildBounties || []}
 									/>
 								</div>
 							)}

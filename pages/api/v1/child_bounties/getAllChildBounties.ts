@@ -9,59 +9,79 @@ import { isValidNetwork } from '~src/api-utils';
 import { GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { ProposalType } from '~src/global/proposalType';
 import { IChildBountiesResponse } from '~src/types';
+import messages from '~src/auth/utils/messages';
 
-// expects optional id, page, voteType and listingLimit
-async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
-	storeApiKeyUsage(req);
-
-	const { parentBountyIndex = 0 } = req.body;
-
-	const network = String(req.headers['x-network']);
+export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, network }: { parentBountyIndex: number; network: string }) => {
 	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ error: 'Invalid network in request header' });
+		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
 
 	const numPostId = Number(parentBountyIndex);
 	if (isNaN(numPostId) || numPostId < 0) {
-		return res.status(400).json({ error: `The postId "${parentBountyIndex}" is invalid.` });
+		throw apiErrorWithStatusCode(`The postId "${parentBountyIndex}" is invalid.`, 400);
 	}
 
-	const variables: any = {
-		parentBountyIndex_eq: numPostId
-	};
+	try {
+		const variables: any = {
+			parentBountyIndex_eq: numPostId
+		};
 
-	const subsquidRes = await fetchSubsquid({
-		network,
-		query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,
-		variables
-	});
-
-	const subsquidData = subsquidRes?.data;
-	if (!subsquidData || !subsquidData.proposals || !Array.isArray(subsquidData.proposals) || !subsquidData.proposalsConnection) {
-		throw apiErrorWithStatusCode(`Child bounties of bounty index "${parentBountyIndex}" is not found.`, 404);
-	}
-
-	const resObj: IChildBountiesResponse = {
-		child_bounties: [],
-		child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
-	};
-
-	for (const childBounty of subsquidData.proposals) {
-		const subsquireRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, childBounty.index);
-
-		resObj.child_bounties.push({
-			description: childBounty.description,
-			index: childBounty.index,
-			reward: childBounty?.reward,
-			status: childBounty.status,
-			title: subsquireRes?.title || ''
+		const subsquidRes = await fetchSubsquid({
+			network,
+			query: GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX,
+			variables
 		});
-	}
 
-	return res.status(200).json(resObj);
+		const subsquidData = subsquidRes?.data;
+		if (!subsquidData || !subsquidData.proposals || !Array.isArray(subsquidData.proposals) || !subsquidData.proposalsConnection) {
+			throw apiErrorWithStatusCode(`Child bounties of bounty index "${parentBountyIndex}" is not found.`, 404);
+		}
+
+		const resObj: IChildBountiesResponse = {
+			child_bounties: [],
+			child_bounties_count: subsquidData?.proposalsConnection?.totalCount || 0
+		};
+
+		for (const childBounty of subsquidData.proposals) {
+			resObj.child_bounties.push({
+				description: childBounty.description,
+				index: childBounty.index,
+				reward: childBounty?.reward,
+				status: childBounty.status,
+				title: ''
+			});
+		}
+
+		return {
+			data: resObj,
+			error: null,
+			status: 200
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error.message || messages.API_FETCH_ERROR,
+			status: Number(error.name) || 500
+		};
+	}
+};
+
+async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {
+	storeApiKeyUsage(req);
+
+	const { parentBountyIndex } = req.body;
+
+	const network = String(req.headers['x-network']);
+
+	const numPostId = Number(parentBountyIndex);
+	const { data, error } = await getAllchildBountiesFromBountyIndex({ network: network, parentBountyIndex: numPostId });
+
+	if (data) {
+		return res.status(200).json(data);
+	} else {
+		return res.status(400).json({ error: error });
+	}
 }
 
 export default withErrorHandling(handler);

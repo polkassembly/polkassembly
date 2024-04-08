@@ -4,7 +4,7 @@
 import { Divider } from 'antd';
 import { Pagination } from '~src/ui-components/Pagination';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { noTitle } from '~src/global/noTitle';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
@@ -41,9 +41,19 @@ interface Props {
 const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPage, setPostsPage, totalPage }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme } = useTheme();
+
+	const eventRef = useRef(null);
+
+	useEffect(() => {
+		if (eventRef.current) {
+			(eventRef.current as any).scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [postsData, postsPage]);
+
 	return postsData.length > 0 ? (
 		<>
 			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
+				<div ref={eventRef} />
 				{postsData.map((post, index: number) => {
 					let titleString = post?.title || noTitle;
 
@@ -188,7 +198,9 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 					total={totalPage}
 					showSizeChanger={false}
 					hideOnSinglePage={true}
-					onChange={(page: number) => setPostsPage(page)}
+					onChange={(page: number) => {
+						setPostsPage(page);
+					}}
 					responsive={true}
 					theme={resolvedTheme}
 				/>

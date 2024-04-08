@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProfileDetails } from '~src/auth/types';
@@ -30,9 +30,18 @@ interface Props {
 
 const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
+	const eventRef = useRef(null);
+
+	useEffect(() => {
+		if (eventRef.current) {
+			(eventRef.current as any).scrollIntoView({ behavior: 'smooth' });
+		}
+	}, [peopleData, peoplePage]);
+
 	return peopleData.length > 0 ? (
 		<>
 			<div className={`${className} ${peopleData.length > 1 && 'h-[400px] overflow-y-scroll'} -mx-6 mt-3`}>
+				<div ref={eventRef} />
 				{peopleData.map((user, index) => (
 					<a
 						rel='noreferrer'

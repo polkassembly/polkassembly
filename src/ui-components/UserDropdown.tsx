@@ -8,21 +8,13 @@ import ImageComponent from '~src/components/ImageComponent';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { DownArrowIcon } from './CustomIcons';
 
-export enum EAddressOtherTextType {
-	CONNECTED = 'Connected',
-	COUNCIL = 'Council',
-	COUNCIL_CONNECTED = 'Council (Connected)',
-	LINKED_ADDRESS = 'Linked',
-	UNLINKED_ADDRESS = 'Address not linked'
-}
-
 interface Props {
 	className?: string;
 	displayName?: string;
 	isVerified?: boolean;
 }
 
-const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX.Element => {
+const UserDropdown = ({ className, displayName, isVerified }: Props): JSX.Element => {
 	const { username, picture } = useUserDetailsSelector();
 	const profileUsername = displayName || username || '';
 
@@ -39,7 +31,7 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 			/>
 			<div className='flex w-[85%] items-center gap-1 text-xs dark:text-white'>
 				<span className={`normal-case ${isVerified && 'truncate'}`}>
-					{profileUsername && profileUsername?.length > 11 && !isVerified ? `${profileUsername?.slice(0, 11)}...` : profileUsername}
+					{!!profileUsername && profileUsername?.length > 11 && !isVerified ? `${profileUsername?.slice(0, 11)}...` : profileUsername}
 				</span>
 				{isVerified && (
 					<CheckCircleFilled
@@ -53,4 +45,4 @@ const UserProfileDropdown = ({ className, displayName, isVerified }: Props): JSX
 	);
 };
 
-export default UserProfileDropdown;
+export default UserDropdown;

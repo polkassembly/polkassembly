@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -44,7 +45,7 @@ interface Props {
 const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId, loginAddress } = useUserDetailsSelector();
+	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
@@ -144,6 +145,12 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		const postId = Number(await api.query.treasury.proposalCount());
 
 		const onSuccess = () => {
+			trackEvent('gov1_proposal_via_polkassembly_created', 'created_gov1_proposal_via_polkassembly', {
+				loginAddress: loginAddress || '',
+				postId: postId || '',
+				userId: userId || '',
+				userName: username || ''
+			});
 			handleSaveTreasuryProposal(postId);
 			queueNotification({
 				header: 'Success!',

@@ -9,8 +9,6 @@ import { isValidNetwork } from '~src/api-utils';
 import { GET_ALL_CHILD_BOUNTIES_BY_PARENT_INDEX } from '~src/queries';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
-import { ProposalType } from '~src/global/proposalType';
 import { IChildBountiesResponse } from '~src/types';
 import messages from '~src/auth/utils/messages';
 
@@ -46,14 +44,12 @@ export const getAllchildBountiesFromBountyIndex = async ({ parentBountyIndex, ne
 		};
 
 		for (const childBounty of subsquidData.proposals) {
-			const subsquireRes = await getSubSquareContentAndTitle(ProposalType.CHILD_BOUNTIES, network, childBounty.index);
-
 			resObj.child_bounties.push({
 				description: childBounty.description,
 				index: childBounty.index,
 				reward: childBounty?.reward,
 				status: childBounty.status,
-				title: subsquireRes?.title || ''
+				title: ''
 			});
 		}
 

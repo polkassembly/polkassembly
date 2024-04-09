@@ -5,16 +5,18 @@
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
 import { IVoteDetailType } from '~src/types';
+import AnalyticsDelegationSplitGraph from './TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph';
 
 interface IProps {
 	convictionVotes: IVoteDetailType[];
 }
 const AnalyticsConvictionVotes = ({ convictionVotes }: IProps) => {
-	console.log('convictionVotes', convictionVotes);
+	const delegationSplit = convictionVotes.map((data) => data.delegationSplitData);
+
 	return (
 		<>
 			<Nudge text='Conviction vote is the number of tokens used for voting multiplied by conviction .' />
-			<div>Hello From Conviction</div>
+			{/* <AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} /> */}
 		</>
 	);
 };

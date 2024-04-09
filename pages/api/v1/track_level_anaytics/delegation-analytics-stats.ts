@@ -38,7 +38,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 		const totalDelegateesObj: IDelegatorsAndDelegatees = {};
 
 		data['data']?.votingDelegations.map((delegation: { lockPeriod: number; balance: string; from: string; to: string }) => {
-			console.log(delegation);
 			const bnBalance = new BN(delegation?.balance);
 			const bnConviction = new BN(delegation?.lockPeriod || 1);
 			const vote = delegation?.lockPeriod ? bnBalance.mul(bnConviction) : bnBalance.div(new BN('10'));

@@ -51,6 +51,21 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
+	const [registrarNum, setRegistrarNum] = useState<number | null>(null);
+
+	useEffect(() => {
+		switch (network) {
+			case 'polkadot':
+				setRegistrarNum(3);
+				break;
+			case 'kusama':
+				setRegistrarNum(5);
+				break;
+			case 'polkadex':
+				setRegistrarNum(4);
+				break;
+		}
+	}, [network]);
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -84,10 +99,10 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
+		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter && registrarNum !== null) {
 			if (!api || !apiReady) return;
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
 				handleLocalStorageSave({ setIdentity: true });

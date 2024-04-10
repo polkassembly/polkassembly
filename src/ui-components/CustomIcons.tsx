@@ -165,6 +165,8 @@ import AuctionAdminIconSVG from '~assets/icons/action-admin.svg';
 import FellowshipSVG from '~assets/icons/fellowship-admin.svg';
 import StackingAdminSVG from '~assets/icons/stacking-admin.svg';
 import ReferendumsSVG from '~assets/icons/referndums.svg';
+import ClearIdentityOutlinedSVG from '~assets/icons/outlined-clear-identity.svg';
+import ClearIdentityFilledSVG from '~assets/icons/filled-clear-identity.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1233,6 +1235,20 @@ export const StackingAdminIcon = (props: Partial<CustomIconComponentProps>) => (
 export const ReferendumsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ReferendumsSVG}
+		{...props}
+	/>
+);
+
+export const ClearIdentityOutlinedIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ClearIdentityOutlinedSVG}
+		{...props}
+	/>
+);
+
+export const ClearIdentityFilledIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ClearIdentityFilledSVG}
 		{...props}
 	/>
 );

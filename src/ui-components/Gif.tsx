@@ -18,6 +18,7 @@ const { Search } = Input;
 export interface IGifProps {
 	onClick: (url: string, title: string) => void;
 	className?: string;
+	theme?: string;
 }
 
 const GIF_LISTING_LIMIT = 9;

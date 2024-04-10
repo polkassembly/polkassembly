@@ -6,15 +6,12 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EActivityAction, EUserActivityType } from '~src/types';
-import changeProfileScore from './changeProfileScore';
-import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface IDeletedCommentReply {
 	id: string;
 	type: EUserActivityType;
 	network: string;
 	userId: number;
-	postId?: number | string;
 }
 interface Args {
 	userId?: number;
@@ -36,6 +33,8 @@ interface Args {
 interface UserActivity {
 	by: number;
 	comment_author_id?: number;
+	created_at?: Date;
+	updated_at?: Date;
 	comment_id?: string;
 	network: string;
 	post_author_id: number;
@@ -101,8 +100,8 @@ const getMentionsUserIds = async (content: string) => {
 	}
 };
 
-const deleteCommentOrReply = async ({ id, type, network, userId, postId }: IDeletedCommentReply) => {
-	if (!network || isNaN(userId) || !id || !type || postId === undefined || postId === null) {
+const deleteCommentOrReply = async ({ id, type, network, userId }: IDeletedCommentReply) => {
+	if (!network || isNaN(userId) || !id || !type) {
 		console.log(messages.INVALID_PARAMS);
 	} else {
 		let snapshot = firestore_db.collection('user_activities').where('network', '==', network).where('by', '==', userId);
@@ -140,43 +139,10 @@ const deleteCommentOrReply = async ({ id, type, network, userId, postId }: IDele
 				});
 			}
 			await batch.commit();
-
-			if (type === EUserActivityType.COMMENTED) {
-				// if deleting comment on this post and user has no more comments, subtract from reputation score
-				const isOnlyComment = (
-					await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.COMMENTED).where('by', '==', userId).where('post_id', '==', postId).get()
-				).empty;
-				if (isOnlyComment) {
-					//user has no more comments
-					await changeProfileScore(userId, -REPUTATION_SCORES.comment.value);
-				}
-			}
-
-			if (type === EUserActivityType.REPLIED) {
-				// if deleting reply and user has no more replies on this post, subtract from reputation score
-				const isOnlyReply = (
-					await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.REPLIED).where('by', '==', userId).where('post_id', '==', postId).get()
-				).empty;
-				if (isOnlyReply) {
-					//user has no more replies
-					await changeProfileScore(userId, -REPUTATION_SCORES.reply.value);
-				}
-			}
 			console.log('Success');
 		} catch (err) {
 			console.log(err);
 		}
-	}
-};
-
-const createReactions = async (activityPayload: UserActivity) => {
-	const ref = firestore_db.collection('user_activities').doc();
-	try {
-		await ref.set(activityPayload, { merge: true });
-		await changeProfileScore(activityPayload.by, REPUTATION_SCORES.reaction.value);
-		console.log('Success');
-	} catch (err) {
-		console.log(err);
 	}
 };
 
@@ -198,9 +164,17 @@ const deleteReactions = async (network: string, userId: number, reactionId: stri
 	}
 	try {
 		await batch.commit();
-		if (!refs.empty) {
-			await changeProfileScore(userId, -REPUTATION_SCORES.reaction.value);
-		}
+		console.log('Success');
+	} catch (err) {
+		console.log(err);
+	}
+};
+
+const createReactions = async (activityPayload: UserActivity) => {
+	const ref = firestore_db.collection('user_activities').doc();
+	try {
+		await deleteReactions(activityPayload.network, activityPayload?.by, activityPayload.reaction_id || '');
+		await ref.set(activityPayload as any, { merge: true });
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -211,23 +185,24 @@ const postMentions = async (content: string, userId: number | null, network: str
 	const payloads = [];
 	const batch = firestore_db.batch();
 	const snapshot = firestore_db.collection('user_activities');
+	const date = new Date();
 
 	const mentions = await getMentionsUserIds(content);
 
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
-
-	// TODO: @KanishkaRajputd please add a discussion post created payload here
 
 	if (payloads?.length) {
 		for (const payload of payloads) {
@@ -237,10 +212,6 @@ const postMentions = async (content: string, userId: number | null, network: str
 	}
 	try {
 		await batch.commit();
-
-		if (userId) {
-			await changeProfileScore(userId, REPUTATION_SCORES.create_discussion.value);
-		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -251,6 +222,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	const batch = firestore_db.batch();
 	const payloads = [];
 	const mentions = await getMentionsUserIds(content);
+	const date = new Date();
 
 	if (mentions?.length) {
 		payloads.push({
@@ -261,11 +233,10 @@ const editPostMentions = async (content: string, userId: number | null, network:
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			update_at: date
 		});
 	}
-
-	// TODO: @KanishkaRajputd please add payload for post edited here
 
 	const snapshot = firestore_db.collection('user_activities');
 	const toBeDeletedDocs = await snapshot
@@ -289,18 +260,6 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	}
 	try {
 		await batch.commit();
-
-		// if (userId) {
-		// //TODO: if user is editing this post for the first time then add reputation score
-		// const isFirstEdit = (
-		// await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.EDITED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
-		// ).empty;
-
-		// if (isFirstEdit) {
-		// await changeProfileScore(userId, REPUTATION_SCORES.add_context.value);
-		// }
-		// }
-
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -311,31 +270,36 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 	const payloads = [];
 
 	const mentions = await getMentionsUserIds(content);
+	const date = new Date();
 
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
 	payloads.push({
 		by: userId || null,
 		comment_author_id: userId || null,
 		comment_id: commentId || null,
+		created_at: date,
 		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
 		post_type: postType as ProposalType,
-		type: EUserActivityType.COMMENTED
+		type: EUserActivityType.COMMENTED,
+		updated_at: date
 	});
 	try {
 		const batch = firestore_db.batch();
@@ -346,15 +310,6 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 			}
 		}
 		await batch.commit();
-		if (userId) {
-			// check if this is user's first comment on post
-			const isFirstComment = (
-				await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.COMMENTED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
-			).empty;
-			if (isFirstComment) {
-				await changeProfileScore(userId, REPUTATION_SCORES.comment.value);
-			}
-		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -362,6 +317,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 };
 
 const editCommentMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, userId }: IComment) => {
+	const date = new Date();
 	const oldActivitiesRefs = await firestore_db
 		.collection('user_activities')
 		.where('network', '==', network)
@@ -386,7 +342,8 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 			post_author_id: postAuthorId || null,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
 	if (payloads?.length) {
@@ -412,6 +369,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 const createReplyMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, replyAuthorId, replyId, userId }: IReply) => {
 	const batch = firestore_db.batch();
 
+	const date = new Date();
 	const payloads = [];
 
 	const mentions = (await getMentionsUserIds(content)) || [];
@@ -421,6 +379,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
@@ -429,7 +388,8 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			post_type: postType as ProposalType,
 			reply_author_id: replyAuthorId,
 			reply_id: replyId || null,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			update_at: date
 		});
 	}
 
@@ -437,6 +397,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		by: userId || null,
 		comment_author_id: commentAuthorId || null,
 		comment_id: commentId || null,
+		created_at: date,
 		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
@@ -444,7 +405,8 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		post_type: postType as ProposalType,
 		reply_author_id: replyAuthorId,
 		reply_id: replyId || null,
-		type: EUserActivityType.REPLIED
+		type: EUserActivityType.REPLIED,
+		updated_at: date
 	});
 
 	if (payloads?.length) {
@@ -456,15 +418,6 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 	}
 	try {
 		await batch.commit();
-		if (userId) {
-			// check if this is user's first reply on post
-			const isFirstReply = (
-				await firestore_db.collection('user_activities').where('type', '==', EUserActivityType.REPLIED).where('by', '==', Number(userId)).where('post_id', '==', postId).get()
-			).empty;
-			if (isFirstReply) {
-				await changeProfileScore(userId, REPUTATION_SCORES.reply.value);
-			}
-		}
 		console.log('Success');
 	} catch (err) {
 		console.log(err);
@@ -498,7 +451,8 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 			post_type: postType as ProposalType,
 			reply_author_id: replyAuthorId || null,
 			reply_id: replyId || null,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: new Date()
 		});
 	}
 
@@ -536,11 +490,13 @@ const createUserActivity = async ({
 	replyId,
 	action
 }: Args) => {
+	const date = new Date();
 	if (reactionId) {
 		if (reactionId && userId && !isNaN(userId)) {
 			if (action === EActivityAction.CREATE) {
 				let activityPayload: UserActivity = {
 					by: userId,
+					created_at: date,
 					is_deleted: false,
 					network,
 					post_author_id: postAuthorId as number,
@@ -548,7 +504,8 @@ const createUserActivity = async ({
 					post_type: postType as ProposalType,
 					reaction_author_id: reactionAuthorId as number,
 					reaction_id: reactionId as string,
-					type: EUserActivityType.REACTED
+					type: EUserActivityType.REACTED,
+					updated_at: date
 				};
 				if (commentAuthorId && commentId && typeof commentAuthorId == 'number') {
 					activityPayload = { ...activityPayload, comment_author_id: commentAuthorId, comment_id: commentId };
@@ -593,7 +550,7 @@ const createUserActivity = async ({
 					userId
 				});
 			} else if (action === EActivityAction.DELETE) {
-				await deleteCommentOrReply({ id: commentId, network, postId, type: EUserActivityType.COMMENTED, userId: userId });
+				await deleteCommentOrReply({ id: commentId, network, type: EUserActivityType.COMMENTED, userId: userId });
 			}
 		}
 		if (replyId && postId && content && !reactionId) {
@@ -626,7 +583,7 @@ const createUserActivity = async ({
 			}
 		}
 		if (action === EActivityAction.DELETE) {
-			await deleteCommentOrReply({ id: replyId as string, network, postId, type: EUserActivityType.REPLIED, userId: userId as number });
+			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
 		}
 	}
 };

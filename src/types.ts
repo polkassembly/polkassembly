@@ -631,10 +631,27 @@ export enum EActivityAction {
 	DELETE = 'DELETE'
 }
 
+export enum ESteps {
+	Write_Proposal = 'Write a Proposal',
+	Create_Preimage = 'Create Preimage',
+	Create_Proposal = 'Create Proposal'
+}
+
 export enum EActivityFilter {
 	ALL = 'ALL',
 	COMMENTS = 'COMMENTED',
 	REPLIES = 'REPLIED',
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
+}
+
+export interface IChildBountiesResponse {
+	child_bounties: {
+		description: string;
+		index: number;
+		status: string;
+		reward: string;
+		title: string;
+	}[];
+	child_bounties_count: number;
 }

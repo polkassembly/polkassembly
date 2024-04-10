@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { poppins } from 'pages/_app';
@@ -97,6 +96,15 @@ const QuickView = ({
 		setOpen(false);
 	};
 
+	const getRedirectionUrl = (username: string, address: string) => {
+		if (username?.length) {
+			return `https://${network}.polkassembly.io/user/${polkassemblyUsername}`;
+		} else if (address?.length) {
+			return `https://${network}.polkassembly.io/address/${substrateAddress || address}`;
+		}
+		return null;
+	};
+
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
@@ -136,18 +144,9 @@ const QuickView = ({
 							onClick={(e) => {
 								e.stopPropagation();
 								e.preventDefault();
-								const substrateAddress = address?.length ? getSubstrateAddress(address) : '';
-								if (!polkassemblyUsername?.length) {
-									window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
-								} else {
-									window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
-								}
+								window.open(getRedirectionUrl(polkassemblyUsername || '', address) || '', '_blank');
 							}}
-							href={
-								!polkassemblyUsername?.length
-									? `https://${network}.polkassembly.io/address/${substrateAddress || address}`
-									: `https://${network}.polkassembly.io/user/${polkassemblyUsername}`
-							}
+							href={getRedirectionUrl(polkassemblyUsername || '', address) || ''}
 						>
 							<ShareScreenIcon />
 						</a>
@@ -219,7 +218,7 @@ const QuickView = ({
 							variant='primary'
 							text='Tip'
 							height={32}
-							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}
+							className={`w-full p-5 ${!id || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}
 						/>
 					</div>
 				</Tooltip>

@@ -1079,7 +1079,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, proposalStatus } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
@@ -1089,6 +1089,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 		network,
 		page,
 		postIds,
+		proposalStatus: proposalType?.length && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy,
 		trackNo,

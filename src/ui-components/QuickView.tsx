@@ -101,7 +101,7 @@ const QuickView = ({
 		if (username?.length) {
 			return `https://${network}.polkassembly.io/user/${polkassemblyUsername}`;
 		} else if (address?.length) {
-			return `https://${network}.polkassembly.io/address/${substrateAddress || address}`;
+			return `https://${network}.polkassembly.io/address/${address}`;
 		}
 		return null;
 	};

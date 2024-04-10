@@ -147,12 +147,12 @@ const QuickView = ({
 								e.preventDefault();
 								window.open(getRedirectionUrl(polkassemblyUsername || '', address) || '', '_blank');
 							}}
-							href={getRedirectionUrl(polkassemblyUsername || '', address) || ''}
+							href={`${getRedirectionUrl(polkassemblyUsername || '', address)}` || ''}
 						>
 							<ShareScreenIcon />
 						</a>
 					</div>
-					<div className={`flex  gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
+					<div className={`flex gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
 						{!!address && (
 							<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 								<Address

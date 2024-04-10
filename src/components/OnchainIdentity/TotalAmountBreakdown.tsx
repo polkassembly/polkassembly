@@ -21,6 +21,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Alert from '~src/basic-components/Alert';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 
 interface Props {
 	className?: string;
@@ -51,21 +52,6 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const currentUser = useUserDetailsSelector();
-	const [registrarNum, setRegistrarNum] = useState<number | null>(null);
-
-	useEffect(() => {
-		switch (network) {
-			case 'polkadot':
-				setRegistrarNum(3);
-				break;
-			case 'kusama':
-				setRegistrarNum(5);
-				break;
-			case 'polkadex':
-				setRegistrarNum(4);
-				break;
-		}
-	}, [network]);
 
 	const handleLocalStorageSave = (field: any) => {
 		let data: any = localStorage.getItem('identityForm');
@@ -99,10 +85,13 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter && registrarNum !== null) {
-			if (!api || !apiReady) return;
+		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
+			const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+			if (!api || !apiReady || registrarIndex === null) return;
+
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
 				handleLocalStorageSave({ setIdentity: true });

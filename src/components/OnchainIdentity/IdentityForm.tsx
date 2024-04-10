@@ -413,7 +413,7 @@ const IdentityForm = ({
 				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
 					<ProxyAccountSelectionForm
 						proxyAddresses={proxyAddresses}
-						theme={theme}
+						theme={theme as string}
 						address={address}
 						withBalance
 						heading={'Proxy Address'}

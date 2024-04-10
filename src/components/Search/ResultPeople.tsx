@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useRef } from 'react';
-import { Pagination } from '~src/ui-components/Pagination';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProfileDetails } from '~src/auth/types';
 import styled from 'styled-components';
-import { useTheme } from 'next-themes';
 import SearchProfile from './SearchProfile';
+import { useTheme } from 'next-themes';
+import { Pagination } from '~src/ui-components/Pagination';
 
 interface IUser {
 	username: string;
@@ -17,7 +17,6 @@ interface IUser {
 	addresses?: string[];
 	defaultAddress?: string;
 }
-
 interface Props {
 	className?: string;
 	peopleData: IUser[];
@@ -30,18 +29,27 @@ interface Props {
 
 const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const eventRef = useRef(null);
+
+	const eventRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		if (eventRef.current) {
-			(eventRef.current as any).scrollIntoView({ behavior: 'smooth' });
-		}
-	}, [peopleData, peoplePage]);
+		const scrollToTop = setTimeout(() => {
+			if (eventRef.current) {
+				eventRef.current.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+			}
+		}, 1000);
+
+		return () => {
+			clearTimeout(scrollToTop);
+		};
+	}, [peoplePage, peopleData]);
 
 	return peopleData.length > 0 ? (
 		<>
-			<div className={`${className} ${peopleData.length > 1 && 'h-[400px] overflow-y-scroll'} -mx-6 mt-3`}>
-				<div ref={eventRef} />
+			<div
+				className={`${className} ${peopleData.length > 1 ? 'h-[400px] overflow-y-auto' : ''} -mx-6 mt-3`}
+				ref={eventRef}
+			>
 				{peopleData.map((user, index) => (
 					<a
 						rel='noreferrer'
@@ -83,20 +91,5 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 export default styled(ResultPeople)`
 	.ant-pagination-item-active {
 		background-color: transparent !important;
-	}
-	.ant-pagination-item a {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')} !important;
-	}
-	.ant-pagination .ant-pagination-prev button,
-	.ant-pagination .ant-pagination-next button {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
-	}
-	.ant-pagination-item-active a {
-		color: #e5007a !important;
-	}
-	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
-	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
-		opacity: 0.5;
 	}
 `;

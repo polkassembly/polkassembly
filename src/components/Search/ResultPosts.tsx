@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider } from 'antd';
 import { Pagination } from '~src/ui-components/Pagination';
-
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { noTitle } from '~src/global/noTitle';
@@ -42,24 +41,30 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme } = useTheme();
 
-	const eventRef = useRef(null);
+	const eventRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		if (eventRef.current) {
-			(eventRef.current as any).scrollIntoView({ behavior: 'smooth' });
-		}
+		const scrollToTop = setTimeout(() => {
+			if (eventRef.current) {
+				eventRef.current.scrollTo({ behavior: 'smooth', left: 0, top: 0 });
+			}
+		}, 1000);
+		return () => {
+			clearTimeout(scrollToTop);
+		};
 	}, [postsData, postsPage]);
 
 	return postsData.length > 0 ? (
 		<>
-			<div className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 && 'overflow-y-scroll'}`}>
-				<div ref={eventRef} />
+			<div
+				className={`${className} -mx-6 mt-4 h-[400px] ${postsData.length > 1 ? 'overflow-y-auto' : ''}`}
+				ref={eventRef}
+			>
 				{postsData.map((post, index: number) => {
 					let titleString = post?.title || noTitle;
 
 					const titleTrimmed = titleString.match(/.{1,80}(\s|$)/g)![0];
 					titleString = `${titleTrimmed} ${titleTrimmed.length != titleString.length ? '...' : ''}`;
-
 					return (
 						<a
 							rel='noreferrer'
@@ -70,7 +75,7 @@ const ResultPosts = ({ className, postsData, isSuperSearch, searchInput, postsPa
 							<div
 								className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[150px] cursor-pointer flex-col rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-6 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
 									index % 2 === 1 && 'bg-[#fafafb] dark:bg-[#161616]'
-								} ${index === postsData.length - 1 && 'border-b-[1px]'} dark:border-none max-md:flex-wrap`}
+								} ${index === postsData.length - 1 ? 'border-b-[1px]' : ''} dark:border-none max-md:flex-wrap`}
 								onClick={() => {
 									// GAEvent when user clicks on search result
 									trackEvent('search_results_clicked', 'clicked_search_result', {
@@ -215,20 +220,5 @@ export default styled(ResultPosts)`
 		-webkit-box-orient: vertical;
 		width: 100%;
 		overflow: hidden !important;
-	}
-	.ant-pagination .ant-pagination-item a {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
-	}
-	.ant-pagination .ant-pagination-prev button,
-	.ant-pagination .ant-pagination-next button {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
-	}
-	.ant-pagination-item-active a {
-		color: #e5007a !important;
-	}
-	.ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
-	.ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis {
-		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--bodyBlue)')};
-		opacity: 0.5;
 	}
 `;

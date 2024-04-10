@@ -13,14 +13,9 @@ const initialState: IGov1TreasuryProposalStore = {
 	firstStepPercentage: 0,
 	fundingAmount: '0',
 	isDiscussionLinked: null,
-	isIdentityCardLoading: false,
-	isMultisigCardLoading: false,
 	proposalIndex: null,
 	proposer: '',
 	secondStepPercentage: 0,
-	showIdentityInfoCardForBeneficiary: false,
-	showIdentityInfoCardForProposer: false,
-	showMultisigInfoCard: false,
 	tags: [],
 	title: ''
 };
@@ -30,7 +25,7 @@ export const gov1TreasuryProposalStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.treasuryProposal
+				...(action as PayloadAction<any>).payload.gov1TreasuryProposal
 			};
 		});
 	},
@@ -47,12 +42,7 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.tags = [];
 			state.firstStepPercentage = 0;
 			state.secondStepPercentage = 0;
-			state.isIdentityCardLoading = false;
 			state.proposalIndex = null;
-			state.isMultisigCardLoading = false;
-			state.showIdentityInfoCardForBeneficiary = false;
-			state.showIdentityInfoCardForProposer = false;
-			state.showMultisigInfoCard = false;
 			state.title = '';
 		},
 		updateGov1TreasuryProposal: (state, action: PayloadAction<IGov1TreasuryProposalStore>) => {
@@ -68,11 +58,6 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.proposalIndex = action?.payload?.proposalIndex;
 			state.firstStepPercentage = action.payload.firstStepPercentage;
 			state.secondStepPercentage = action.payload.secondStepPercentage;
-			state.isIdentityCardLoading = action.payload.isIdentityCardLoading;
-			state.isMultisigCardLoading = action.payload.isMultisigCardLoading;
-			state.showIdentityInfoCardForBeneficiary = action.payload.showIdentityInfoCardForBeneficiary;
-			state.showIdentityInfoCardForProposer = action.payload.showIdentityInfoCardForProposer;
-			state.showMultisigInfoCard = action.payload.showMultisigInfoCard;
 		}
 	}
 });

@@ -30,19 +30,17 @@ const MotionVoteInfo: FC<IMotionVoteInfoProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const itemsPerPage = 10;
-	// const totalPages = Math.ceil(councilVotes.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
 	const onChange = (page: number) => {
 		setCurrentPage(page);
 	};
-
 	return (
 		<GovSidebarCard className={`${className} px-1 md:px-9 xl:overflow-y-visible`}>
 			<h3 className='dashboard-heading flex items-center dark:text-white'>
 				{postType === ProposalType.ADVISORY_COMMITTEE && 'Advisory'} Council Votes
 				<HelperTooltip
-					className='ml-2 w-[14px] font-normal'
+					className='ml-2 w-3.5 font-normal'
 					text='This represents the onchain votes of council members'
 				/>
 			</h3>

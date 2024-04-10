@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import Listing from '~src/components/Listing';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { ProposalType } from '~src/global/proposalType';
@@ -112,7 +113,9 @@ const Treasury: FC<ITreasuryProps> = (props) => {
 						className='flex h-10 cursor-pointer items-center rounded-md bg-pink_primary px-3'
 					/>
 				)}
-				{!isOpenGovSupported(network) && <Gov1TreasuryProposal isUsedInTreasuryPage />}
+				{!isOpenGovSupported(network) && ![AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network) && (
+					<Gov1TreasuryProposal isUsedInTreasuryPage />
+				)}
 			</div>
 
 			{/* Intro and Create Post Button */}

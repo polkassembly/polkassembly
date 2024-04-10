@@ -715,12 +715,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network && strPostId.toLowerCase() !== strPostId.toUpperCase())
 		) {
 			postVariables = {
-				hash_eq: strPostId,
+				proposalHashBlock_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
-			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
-				postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
-			}
+		}
+		if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		} else if (network === 'polymesh') {
@@ -737,6 +737,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				query: postQuery,
 				variables: postVariables
 			});
+
+			if (!subsquidRes?.data?.proposals?.length) {
+				console.log('Failed to fetch from subsquid, fetching from subsquare instead');
+				// this will make the control flow to the catch block to fetch from subsquare
+				throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
+			}
 		} catch (error) {
 			const data = await fetchSubsquare(network, strPostId);
 			if (data) {

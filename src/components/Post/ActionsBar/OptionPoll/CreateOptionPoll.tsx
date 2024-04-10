@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AuditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Select } from 'antd';
 import { ICreatePollResponse } from 'pages/api/v1/auth/actions/createPoll';
 import React, { FC, useState } from 'react';
@@ -17,6 +17,9 @@ import { usePostDataContext } from '~src/context';
 import POLL_TYPE from '~src/global/pollTypes';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import CreatePollOpt from '~assets/icons/reactions/CreatePoll.svg';
+import CreatePollOptDark from '~assets/icons/reactions/CreatePollDark.svg';
+import { useTheme } from 'next-themes';
 
 interface ICreatePollProps {
 	postId: number | string;
@@ -69,6 +72,7 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const { setPostData } = usePostDataContext();
+	const { resolvedTheme: theme } = useTheme();
 
 	const handleCreate = async () => {
 		try {
@@ -144,14 +148,15 @@ const CreatePoll: FC<ICreatePollProps> = (props) => {
 
 	return (
 		<section className={`${className}`}>
-			<CustomButton
-				variant='default'
-				className='m-0 border-none px-2 text-pink_primary shadow-none dark:text-blue-dark-helper'
+			<div
+				className='m-0 border-none text-pink_primary shadow-none dark:text-blue-dark-helper'
 				onClick={() => setShowModal(true)}
 			>
-				<AuditOutlined />
-				<span className='ml-1 font-normal'>Create Poll</span>
-			</CustomButton>
+				<span className='flex items-center justify-between gap-[6px]'>
+					{theme == 'dark' ? <CreatePollOptDark /> : <CreatePollOpt />}
+					<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Create Poll</span>
+				</span>
+			</div>
 
 			<Modal
 				className={`${className} dark:[&>.ant-modal-content]:bg-section-dark-overlay`}

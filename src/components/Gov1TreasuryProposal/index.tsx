@@ -2,8 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Steps } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -12,15 +11,13 @@ import { poppins } from 'pages/_app';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import { ESteps } from '~src/types';
 import styled from 'styled-components';
-import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGov1treasuryProposal, useUserDetailsSelector } from '~src/redux/selectors';
 import WriteProposal from './WriteProposal';
 import { useDispatch } from 'react-redux';
 import { updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import CreateProposal from './CreateProposal';
-import { useApiContext } from '~src/context';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import Gov1TreasuryProposalSuccess from './Gov1TreasuryProposalSuccess';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
 
@@ -30,79 +27,31 @@ interface Props {
 }
 const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkSelector();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
 	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const [step, setStep] = useState<number>(0);
-	const { firstStepPercentage, secondStepPercentage, beneficiary, proposer, fundingAmount, title, content } = gov1proposalData;
+	const { firstStepPercentage, secondStepPercentage } = gov1proposalData;
 	const [open, setOpen] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState(false);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
-	const checkProposerIdentity = async (address: string) => {
-		if (!api || !apiReady) return;
-		const encodedAddr = getEncodedAddress(address, network) || '';
-
-		await api.derive.accounts.info(encodedAddr, (info: DeriveAccountInfo) => {
-			if (!info?.identity?.display) {
-				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForProposer: true }));
-			}
-		});
-	};
-
 	const handleClick = () => {
 		if (userId) {
 			if (loginAddress.length) {
-				checkProposerIdentity(loginAddress);
 				setOpen(!open);
 			} else {
 				setOpenAddressLinkedModal(true);
+				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: loginAddress }));
 			}
 		} else {
 			setOpenLoginPrompt(true);
 		}
 	};
 
-	useEffect(() => {
-		let firstStepPercentage = 0;
-		let secondStepPercentage = 0;
-		if (proposer?.length) {
-			secondStepPercentage += 33.33;
-		}
-		if (beneficiary?.length) {
-			secondStepPercentage += 33.33;
-		}
-		if (fundingAmount !== '0') {
-			secondStepPercentage += 33.33;
-		}
-
-		if (title?.length) {
-			firstStepPercentage += 50;
-		}
-		if (content?.length) {
-			firstStepPercentage += 50;
-		}
-		dispatch(
-			updateGov1TreasuryProposal({
-				...gov1proposalData,
-				firstStepPercentage,
-				proposer: proposer || loginAddress,
-				secondStepPercentage,
-				showIdentityInfoCardForBeneficiary: false,
-				showIdentityInfoCardForProposer: false,
-				showMultisigInfoCard: false
-			})
-		);
-
-		checkProposerIdentity(proposer || loginAddress);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress]);
-
 	return (
-		<div>
+		<div className={theme}>
 			<CustomButton
 				variant={isUsedInTreasuryPage ? 'primary' : 'text'}
 				onClick={handleClick}
@@ -129,7 +78,6 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 					onConfirm={(address: string) => {
 						setOpen(true);
 						dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposer: address }));
-						checkProposerIdentity(address);
 					}}
 					walletAlertTitle='Treasury proposal creation'
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
@@ -145,10 +93,10 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				}}
 				className={classNames(poppins.className, poppins.variable, theme, 'gov1proposal', 'w-[650px] px-6')}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme}`}
+				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} gov1proposal`}
 				footer={false}
 				title={
-					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<Image
 							alt=''
 							src={theme === 'dark' ? '/assets/openGovProposals/create_proposal_white.svg' : '/assets/openGovProposals/create_proposal.svg'}
@@ -161,7 +109,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 			>
 				<div className={theme}>
 					<Steps
-						className={'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high'}
+						className={classNames(theme, 'mt-6 font-medium text-bodyBlue dark:text-blue-dark-high')}
 						percent={step === 0 ? firstStepPercentage : secondStepPercentage}
 						current={step}
 						size='default'
@@ -220,17 +168,17 @@ export default styled(Gov1TreasuryProposal)`
 		font-size: 14px !important;
 		font-weight: 700 !important;
 	}
-	.gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+
+	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+		color: var(--bodyBlue) !important;
+	}
+	.dark .gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		font-size: 14px !important;
 		color: #96a4b6 !important;
 		line-height: 21px !important;
 		font-weight: 500 !important;
-	}
-	.gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
-		color: var(--bodyBlue) !important;
 	}
 	.gov1proposal .ant-steps .ant-steps-item-wait .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		color: #96a4b6 !important;
@@ -262,8 +210,8 @@ export default styled(Gov1TreasuryProposal)`
 		color: #243a57 !important;
 	}
 
-	.dark .gov1proposal .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
-	.dark .gov1proposal .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
+	.dark .ant-steps .ant-steps-item-finish .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title,
+	.dark .ant-steps .ant-steps-item-active .ant-steps-item-container .ant-steps-item-content .ant-steps-item-title {
 		color: white !important;
 	}
 

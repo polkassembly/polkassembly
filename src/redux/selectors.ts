@@ -14,6 +14,7 @@ import { ITreasuryProposalStore } from './treasuryProposal/@types';
 import { IVoteDataStore } from './voteData/@types';
 import { IinitialConnectAddress } from './initialConnectAddress/@types';
 import { IGov1TreasuryProposalStore } from './gov1TreasuryProposal/@types';
+import { IRemoveIdentityStore } from './removeIdentity/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -55,6 +56,10 @@ const useGov1treasuryProposal = () => {
 	return useSelector<TAppState, IGov1TreasuryProposalStore>((state) => state.gov1TreasuryProposal);
 };
 
+const useRemoveIdentity = () => {
+	return useSelector<TAppState, IRemoveIdentityStore>((state) => state.removeIdentity);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -65,5 +70,6 @@ export {
 	useTreasuryProposalSelector,
 	useVoteDataSelector,
 	useInitialConnectAddress,
-	useGov1treasuryProposal
+	useGov1treasuryProposal,
+	useRemoveIdentity
 };

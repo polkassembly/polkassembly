@@ -91,7 +91,6 @@ interface IGovernanceSidebarProps {
 	trackName?: string;
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
-	requestedAmount?: any;
 	bountyIndex?: any;
 }
 
@@ -133,7 +132,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, requestedAmount, bountyIndex } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex } = props;
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	const { network } = useNetworkSelector();
@@ -1291,8 +1290,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.CHILD_BOUNTIES && (
 							<>
 								<ChildBounties
-									requestedAmount={requestedAmount}
 									bountyIndex={bountyIndex}
+									status={status as string}
 								/>
 							</>
 						)}

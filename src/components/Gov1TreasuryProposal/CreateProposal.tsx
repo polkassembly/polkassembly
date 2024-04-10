@@ -33,6 +33,7 @@ import Link from 'next/link';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
+import { trackEvent } from 'analytics';
 
 interface Props {
 	className?: string;
@@ -44,31 +45,22 @@ interface Props {
 const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId, loginAddress } = useUserDetailsSelector();
+	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
-	const {
-		beneficiary,
-		proposer,
-		fundingAmount,
-		title,
-		content,
-		discussionId,
-		isDiscussionLinked,
-		tags,
-		showIdentityInfoCardForProposer,
-		showIdentityInfoCardForBeneficiary,
-		showMultisigInfoCard
-	} = gov1proposalData;
+	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags } = gov1proposalData;
 
 	const [{ minBond, proposalBond }, setTreasuryData] = useState<{ proposalBond: string | null; minBond: string | null }>({
 		minBond: '',
 		proposalBond: ''
 	});
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
+	const [showIdentityInfoCardForProposer, setShowIdentityInfoCardForProposer] = useState<boolean>(false);
+	const [showMultisigInfoCard, setShowMultisigInfoCard] = useState<boolean>(false);
+	const [showIdentityInfoCardForBeneficiary, setShowIdentityInfoCardForBeneficiary] = useState<boolean>(false);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
@@ -78,6 +70,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		const tx = api.tx.treasury.proposeSpend(fundingAmount, beneficiary);
 		const gasFee = await tx.paymentInfo(proposer);
 		setGasFee(new BN(gasFee.partialFee || '0'));
+	};
+
+	const handleOnchange = (obj: any) => {
+		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, ...obj }));
 	};
 
 	const handleAvailableBalanceChange = (balanceStr: string) => {
@@ -92,25 +88,27 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkBeneficiaryMultisig = async (address: string) => {
-		if (!address) return;
-		await checkIsAddressMultisig(address).then((isMulti) => dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showMultisigInfoCard: !isMulti })));
+		if (!address) {
+			setShowMultisigInfoCard(false);
+			return;
+		}
+		await checkIsAddressMultisig(address).then((isMulti) => setShowMultisigInfoCard(!isMulti));
 	};
 
 	const checkBeneficiaryIdentity = async (address: string) => {
-		if (!api || !apiReady || !address) return;
+		if (!api || !apiReady || !address) {
+			setShowIdentityInfoCardForBeneficiary(false);
+			return;
+		}
 
 		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
-			if (!info?.identity?.display) {
-				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: true }));
-			} else {
-				dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, showIdentityInfoCardForBeneficiary: false }));
-			}
+			setShowIdentityInfoCardForBeneficiary(!info?.identity?.display);
 		});
 	};
 
 	const handleBeneficiaryChange = async (address: string) => {
 		const encodedAddr = getEncodedAddress(address, network) || '';
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, beneficiary: encodedAddr || address }));
+		handleOnchange({ ...gov1proposalData, beneficiary: encodedAddr || address });
 		await checkBeneficiaryIdentity(encodedAddr || address);
 		await checkBeneficiaryMultisig(encodedAddr || address);
 	};
@@ -147,6 +145,12 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		const postId = Number(await api.query.treasury.proposalCount());
 
 		const onSuccess = () => {
+			trackEvent('gov1_proposal_via_polkassembly_created', 'created_gov1_proposal_via_polkassembly', {
+				loginAddress: loginAddress || '',
+				postId: postId || '',
+				userId: userId || '',
+				userName: username || ''
+			});
 			handleSaveTreasuryProposal(postId);
 			queueNotification({
 				header: 'Success!',
@@ -154,7 +158,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 				status: NotificationStatus.SUCCESS
 			});
 
-			dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, proposalIndex: postId }));
+			handleOnchange({ ...gov1proposalData, proposalIndex: postId });
 
 			setLoading({ isLoading: true, message: 'Proposal Creation Succcess!' });
 			setOpen(false);
@@ -182,6 +186,50 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		});
 	};
 
+	const checkProposerIdentity = async (address: string) => {
+		if (!api || !apiReady || !address) {
+			setShowIdentityInfoCardForProposer(false);
+			return;
+		}
+		const encodedAddr = getEncodedAddress(address, network) || '';
+
+		await api?.derive?.accounts?.info(encodedAddr, (info: DeriveAccountInfo) => {
+			setShowIdentityInfoCardForProposer(!info?.identity?.display);
+		});
+	};
+
+	useEffect(() => {
+		let firstStepPercentage = 0;
+		let secondStepPercentage = 0;
+		if (proposer?.length) {
+			secondStepPercentage += 33.33;
+		}
+		if (beneficiary?.length) {
+			secondStepPercentage += 33.33;
+		}
+		if (fundingAmount !== '0') {
+			secondStepPercentage += 33.33;
+		}
+
+		if (title?.length) {
+			firstStepPercentage += 50;
+		}
+		if (content?.length) {
+			firstStepPercentage += 50;
+		}
+		dispatch(
+			updateGov1TreasuryProposal({
+				...gov1proposalData,
+				firstStepPercentage,
+				proposer: proposer || loginAddress,
+				secondStepPercentage
+			})
+		);
+		checkProposerIdentity(proposer || loginAddress);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [loginAddress, proposer, api, apiReady]);
+
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];
 		if (networkChainProperties) {
@@ -199,7 +247,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		if (fundingAmount !== '0') {
 			percentage = 100;
 		}
-		dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, secondStepPercentage: percentage }));
+		handleOnchange({ ...gov1proposalData, secondStepPercentage: percentage });
 
 		getGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,7 +268,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						{gasFee.gte(availableBalance) && !gasFee.eq(ZERO_BN) && (
 							<Alert
 								type='error'
-								className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
+								className={`h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 								showIcon
 								message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 							/>
@@ -367,7 +415,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								label='Funding Amount'
 								inputClassName='dark:text-blue-dark-high text-bodyBlue'
 								className='mb-0'
-								onChange={(address: BN) => dispatch(updateGov1TreasuryProposal({ ...gov1proposalData, fundingAmount: address.toString() }))}
+								onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
 							/>
 						</div>
 
@@ -428,8 +476,10 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						variant='primary'
 						height={40}
 						width={155}
-						className={`${(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading) && 'opacity-50'} `}
-						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading.isLoading}
+						className={`${
+							(!beneficiary?.length || !proposer?.length || fundingAmount == '0' || loading?.isLoading || availableBalance.lte(new BN(fundingAmount || '0'))) && 'opacity-50'
+						} `}
+						disabled={!beneficiary?.length || !proposer?.length || fundingAmount == '0' || availableBalance.lte(new BN(fundingAmount || '0')) || loading.isLoading}
 					/>
 				</div>
 			</div>

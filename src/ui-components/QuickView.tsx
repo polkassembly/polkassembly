@@ -133,7 +133,9 @@ const QuickView = ({
 							target='_blank'
 							rel='noreferrer'
 							className='flex text-pink_primary'
-							onClick={() => {
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
 								const substrateAddress = address?.length ? getSubstrateAddress(address) : '';
 								if (!polkassemblyUsername?.length) {
 									window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
@@ -141,6 +143,11 @@ const QuickView = ({
 									window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
 								}
 							}}
+							href={
+								!polkassemblyUsername?.length
+									? `https://${network}.polkassembly.io/address/${substrateAddress || address}`
+									: `https://${network}.polkassembly.io/user/${polkassemblyUsername}`
+							}
 						>
 							<ShareScreenIcon />
 						</a>

@@ -16,7 +16,6 @@ import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
-import { Wallet } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import NetworkIcon from '~assets/icons/USB.svg';
 
@@ -81,19 +80,7 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
-		if (changedWallet === 'subwallet-js') {
-			setWalletType(Wallet.SUBWALLET);
-		} else if (changedWallet === 'polkadot-js') {
-			setWalletType(Wallet.POLKADOT);
-		} else if (changedWallet === 'talisman') {
-			setWalletType(Wallet.TALISMAN);
-		} else if (changedWallet === 'polkagate') {
-			setWalletType(Wallet.POLKAGATE);
-		} else if (changedWallet === 'polywallet') {
-			setWalletType(Wallet.POLYWALLET);
-		} else if (changedWallet === 'polkasafe') {
-			setWalletType(Wallet.POLKASAFE);
-		}
+		setWalletType(changedWallet);
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;

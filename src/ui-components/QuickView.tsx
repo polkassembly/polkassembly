@@ -96,15 +96,7 @@ const QuickView = ({
 		setOpen(false);
 	};
 
-	const getUserRedirection = (address: string, username: string | null) => {
-		if (!network) return null;
-		if (username?.length) {
-			return `https://${network}.polkassembly.io/user/${polkassemblyUsername}`;
-		} else if (address?.length) {
-			return `https://${network}.polkassembly.io/address/${address}`;
-		}
-		return null;
-	};
+	const path = username?.length ? `user/${polkassemblyUsername}` : `address/${address}`;
 
 	return (
 		<div
@@ -145,9 +137,9 @@ const QuickView = ({
 							onClick={(e) => {
 								e.stopPropagation();
 								e.preventDefault();
-								window.open(getUserRedirection(address, polkassemblyUsername || null) || '', '_blank');
+								window.open(`https://${network}.polkassembly.io/${path}`, '_blank');
 							}}
-							href={`${getUserRedirection(address, polkassemblyUsername || null)}` || ''}
+							href={`https://${network}.polkassembly.io/${path}` || ''}
 						>
 							<ShareScreenIcon />
 						</a>

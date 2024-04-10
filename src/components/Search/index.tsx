@@ -230,7 +230,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		return [...matchArr, ...unmatchArr];
 	};
 	const getResultData = async () => {
-		if ((finalSearchInput.length <= 2 && isNaN(Number(finalSearchInput))) || !userIndex || !postIndex) {
+		if ((finalSearchInput.length <= 2 && isNaN(Number(finalSearchInput))) || !userIndex || !postIndex || !finalSearchInput.length) {
 			setLoading(false);
 			return;
 		}
@@ -285,7 +285,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 		(isSuperSearch ? selectedNetworks.length > 0 : false)
 			? setIsFilter(true)
 			: setIsFilter(false);
-		if ((finalSearchInput.length > 2 || !isNaN(Number(finalSearchInput))) && !searchInputErr.err) {
+		if ((finalSearchInput.length > 2 || !isNaN(Number(finalSearchInput))) && !searchInputErr.err && finalSearchInput.length) {
 			setLoading(true);
 			getResultData();
 		}
@@ -924,7 +924,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							/>
 						)}
 
-						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults || !isNaN(Number(finalSearchInput))) && (
+						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults || (!isNaN(Number(finalSearchInput)) && finalSearchInput.length)) && (
 							<SearchErrorsCard
 								isSearchErr={(searchInput?.trim().length <= 2 || isNaN(Number(finalSearchInput))) && searchInputErr.clicked ? true : searchInputErr?.err}
 								filterBy={filterBy}

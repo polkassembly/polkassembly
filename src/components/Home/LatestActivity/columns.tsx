@@ -4,7 +4,7 @@
 
 import { ColumnsType } from 'antd/es/table';
 
-import { ProposalType, getFirestoreProposalType, getProposalTypeTitle } from '~src/global/proposalType';
+import { ProposalType, getFirestoreProposalType, getProposalTypeTitle, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import NameLabel from '~src/ui-components/NameLabel';
 import StatusTag from '~src/ui-components/StatusTag';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
@@ -25,13 +25,26 @@ const Index: any = {
 	width: 75
 };
 
-const Title: any = {
-	dataIndex: 'title',
-	fixed: 'left',
-	key: 'title',
-	render: (title: any) => <div className='truncate'>{title}</div>,
-	title: 'Title',
-	width: 420
+const Title = (network: string): any => {
+	return {
+		dataIndex: 'title',
+		fixed: 'left',
+		key: 'title',
+		render: (title: any, { type, post_id }: { type: any; post_id: any }) => {
+			const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
+
+			return (
+				<a
+					rel='noreffer'
+					href={`https://${network}.polkassembly.io/${path}/${post_id}`}
+				>
+					<div className='truncate'>{title}</div>
+				</a>
+			);
+		},
+		title: 'Title',
+		width: 420
+	};
 };
 
 const Description: any = {
@@ -126,19 +139,24 @@ const PIPsType = {
 	width: 200
 };
 
-const columns: ColumnsType<IPostsRowData> = [Index, Title, Creator, Status, CreatedAt];
+const columns = (network: string): ColumnsType<IPostsRowData> => [Index, Title(network), Creator, Status, CreatedAt];
 
-const allColumns: ColumnsType<IPostsRowData> = [
+const allColumns = (network: string): ColumnsType<IPostsRowData> => [
 	Index,
 	{
 		dataIndex: 'title',
 		fixed: 'left',
 		key: 'title',
-		render: (title) => {
+		render: (title, { type, post_id }) => {
+			const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
+
 			return (
-				<>
+				<a
+					rel='noreffer'
+					href={`https://${network}.polkassembly.io/${path}/${post_id}`}
+				>
 					<div className='truncate'>{title}</div>
-				</>
+				</a>
 			);
 		},
 		title: 'Title',
@@ -256,13 +274,13 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 
 const PIPsColumns = [Index, Description, Proposer, CreatedAt, PIPsType, Status];
 
-export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData> {
+export function getColumns(key: 'all' | ProposalType, network: string): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
-		return allColumns;
+		return allColumns(network);
 	} else if (key === ProposalType.TIPS) {
 		return tipColumns;
 	} else if ([ProposalType.BOUNTIES, ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS, ProposalType.COUNCIL_MOTIONS, ProposalType.TREASURY_PROPOSALS].includes(key)) {
-		return columns;
+		return columns(network);
 	} else if ([ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(key)) {
 		return offChainColumns;
 	} else if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(key)) {

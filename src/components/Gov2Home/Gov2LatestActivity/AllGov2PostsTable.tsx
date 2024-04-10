@@ -17,9 +17,10 @@ import Tooltip from '~src/basic-components/Tooltip';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
 import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 
-const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
+const getCols = (network: string, theme?: string): ColumnsType<IPostsRowData> => {
 	const columns: ColumnsType<IPostsRowData> = [
 		{
 			title: '#',
@@ -35,11 +36,12 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 			key: 'title',
 			width: 340,
 			fixed: 'left',
-			render: (title) => {
+			render: (title, { post_id, type }) => {
+				const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
 				return (
-					<>
+					<a href={`https://${network}.polkassembly.io/${path}/${post_id}`}>
 						<h4 className='m-0 truncate'>{title}</h4>
-					</>
+					</a>
 				);
 			}
 		},
@@ -56,7 +58,12 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 				};
 			},
 			render: (username, { proposer }) => (
-				<div className='truncate'>
+				<a
+					className='truncate'
+					href={username?.length ? `https://${network}.polkassembly.io/user/${username}` : `https://${network}.polkassembly.io/address/${proposer}`}
+					target='_blank'
+					rel='noreferrer'
+				>
 					<NameLabel
 						usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] font-semibold'
 						defaultAddress={proposer}
@@ -64,7 +71,7 @@ const getCols = (theme?: string): ColumnsType<IPostsRowData> => {
 						usernameMaxLength={15}
 						truncateUsername={false}
 					/>
-				</div>
+				</a>
 			),
 			width: 200
 		},
@@ -130,6 +137,7 @@ interface IAllGov2PostsTableProps {
 }
 
 const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -181,7 +189,7 @@ const AllGov2PostsTable: FC<IAllGov2PostsTableProps> = ({ posts, error }) => {
 			<>
 				<div className='hidden p-0 md:block'>
 					<PopulatedLatestActivity
-						columns={getCols(theme)}
+						columns={getCols(network, theme)}
 						tableData={tableData}
 						// modify the tableData to add the onClick event
 						onClick={(rowData) => gotoPost(rowData)}

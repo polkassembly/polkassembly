@@ -36,6 +36,7 @@ interface Props {
 	setSelectedProxyAddress?: (pre: string) => void;
 	selectedProxyAddress?: string;
 	heading?: string;
+	onBalanceChange: (pre: string) => void;
 }
 
 const ProxyAccountSelectionForm = ({
@@ -51,7 +52,8 @@ const ProxyAccountSelectionForm = ({
 	selectedProxyAddress,
 	setIsProxyExistsOnWallet,
 	heading,
-	isUsedInIdentity
+	isUsedInIdentity,
+	onBalanceChange
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -109,10 +111,11 @@ const ProxyAccountSelectionForm = ({
 			<article className={`${isUsedInIdentity ? 'mt-3' : 'mt-2'} flex w-full flex-col`}>
 				<div className={`${isUsedInIdentity ? '-mb-[10px]' : 'mb-1'} ml-[-6px] flex items-center gap-x-2`}>
 					<h3 className={`inner-headings mb-[1px] ml-1.5 ${isUsedInIdentity ? 'dark:text-white' : 'dark:text-blue-dark-medium'}`}>{heading ? heading : 'Vote with Proxy'}</h3>
-					{address && withBalance && (
+					{!!address && !!withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
 							isBalanceUpdated={isBalanceUpdated}
+							onChange={(balance: string | undefined) => onBalanceChange(balance || '')}
 						/>
 					)}
 				</div>
@@ -120,8 +123,8 @@ const ProxyAccountSelectionForm = ({
 					trigger={['click']}
 					overlayClassName='z-[2000]'
 					className={`${className} ${inputClassName} ${
-						isUsedInIdentity ? 'h-10' : 'h-[48px] py-1'
-					} rounded-md border-[1px] border-solid border-gray-300 px-3  text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+						isUsedInIdentity ? 'h-10' : 'h-12 py-1'
+					} rounded-md border-[1px] border-solid border-gray-300 px-3 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
 					menu={{
 						items: dropdownMenuItems,
 						onClick: (e: any) => {
@@ -164,7 +167,7 @@ const ProxyAccountSelectionForm = ({
 							/>
 							Change Wallet
 						</Button>
-						<span className='mx-2 mb-1'>
+						<span className='ml-1'>
 							<DownIcon />
 						</span>
 					</div>

@@ -35,7 +35,7 @@ interface Props {
 	setSelectedProxyAddress?: (pre: string) => void;
 	selectedProxyAddress?: string;
 	heading?: string;
-	onBalanceChange: (pre: string) => void;
+	onBalanceChange?: (pre: string) => void;
 }
 
 const ProxyAccountSelectionForm = ({
@@ -102,7 +102,7 @@ const ProxyAccountSelectionForm = ({
 						<Balance
 							address={selectedProxyAddress || ''}
 							isBalanceUpdated={isBalanceUpdated}
-							onChange={(balance: string | undefined) => onBalanceChange(balance || '')}
+							onChange={(balance: string | undefined) => onBalanceChange?.(balance || '')}
 						/>
 					)}
 				</div>

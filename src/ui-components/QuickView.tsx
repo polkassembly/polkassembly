@@ -97,6 +97,7 @@ const QuickView = ({
 	};
 
 	const getRedirectionUrl = (username: string, address: string) => {
+		if (!network) return null;
 		if (username?.length) {
 			return `https://${network}.polkassembly.io/user/${polkassemblyUsername}`;
 		} else if (address?.length) {

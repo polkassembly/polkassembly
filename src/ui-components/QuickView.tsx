@@ -147,7 +147,7 @@ const QuickView = ({
 								e.preventDefault();
 								window.open(getUserRedirection(polkassemblyUsername || '', address) || '', '_blank');
 							}}
-							href={`${getUserRedirection(polkassemblyUsername || '', address)}` || ''}
+							// href={`${getUserRedirection(polkassemblyUsername || '', address)}` || ''}
 						>
 							<ShareScreenIcon />
 						</a>

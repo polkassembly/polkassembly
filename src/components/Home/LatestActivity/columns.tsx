@@ -25,26 +25,24 @@ const Index: any = {
 	width: 75
 };
 
-const Title = (network: string): any => {
-	return {
-		dataIndex: 'title',
-		fixed: 'left',
-		key: 'title',
-		render: (title: any, { type, post_id }: { type: any; post_id: any }) => {
-			const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
+const Title: any = {
+	dataIndex: 'title',
+	fixed: 'left',
+	key: 'title',
+	render: (title: any, { type, post_id }: { type: any; post_id: any }) => {
+		const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
 
-			return (
-				<a
-					rel='noreffer'
-					href={`https://${network}.polkassembly.io/${path}/${post_id}`}
-				>
-					<div className='truncate'>{title}</div>
-				</a>
-			);
-		},
-		title: 'Title',
-		width: 420
-	};
+		return (
+			<a
+				rel='noreffer'
+				href={`/${path}/${post_id}`}
+			>
+				<div className='truncate'>{title}</div>
+			</a>
+		);
+	},
+	title: 'Title',
+	width: 420
 };
 
 const Description: any = {
@@ -139,9 +137,9 @@ const PIPsType = {
 	width: 200
 };
 
-const columns = (network: string): ColumnsType<IPostsRowData> => [Index, Title(network), Creator, Status, CreatedAt];
+const columns: ColumnsType<IPostsRowData> = [Index, Title, Creator, Status, CreatedAt];
 
-const allColumns = (network: string): ColumnsType<IPostsRowData> => [
+const allColumns: ColumnsType<IPostsRowData> = [
 	Index,
 	{
 		dataIndex: 'title',
@@ -153,7 +151,7 @@ const allColumns = (network: string): ColumnsType<IPostsRowData> => [
 			return (
 				<a
 					rel='noreffer'
-					href={`https://${network}.polkassembly.io/${path}/${post_id}`}
+					href={`/${path}/${post_id}`}
 				>
 					<div className='truncate'>{title}</div>
 				</a>
@@ -252,11 +250,13 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 		dataIndex: 'title',
 		fixed: 'left',
 		key: 'title',
-		render: (title) => {
+		render: (title, { post_id, type }) => {
+			const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
+
 			return (
-				<>
+				<a href={`/${path}/${post_id}`}>
 					<div className='truncate'>{title}</div>
-				</>
+				</a>
 			);
 		},
 		title: 'Title',
@@ -274,13 +274,13 @@ const offChainColumns: ColumnsType<IPostsRowData> = [
 
 const PIPsColumns = [Index, Description, Proposer, CreatedAt, PIPsType, Status];
 
-export function getColumns(key: 'all' | ProposalType, network: string): ColumnsType<IPostsRowData> {
+export function getColumns(key: 'all' | ProposalType): ColumnsType<IPostsRowData> {
 	if (key === 'all') {
-		return allColumns(network);
+		return allColumns;
 	} else if (key === ProposalType.TIPS) {
 		return tipColumns;
 	} else if ([ProposalType.BOUNTIES, ProposalType.DEMOCRACY_PROPOSALS, ProposalType.REFERENDUMS, ProposalType.COUNCIL_MOTIONS, ProposalType.TREASURY_PROPOSALS].includes(key)) {
-		return columns(network);
+		return columns;
 	} else if ([ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(key)) {
 		return offChainColumns;
 	} else if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS, ProposalType.COMMUNITY_PIPS].includes(key)) {

@@ -16,7 +16,6 @@ import { getColumns } from './columns';
 import PostsTable from './PostsTable';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
-import { useNetworkSelector } from '~src/redux/selectors';
 
 interface ILatestActivityProps {
 	latestPosts: {
@@ -118,7 +117,6 @@ const getLabel = (key: 'all' | ProposalType): string => {
 };
 
 const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) => {
-	const { network } = useNetworkSelector();
 	const [currentTab, setCurrentTab] = useState('all');
 	const { resolvedTheme: theme } = useTheme();
 	const tabItems = (Object.entries(latestPosts) as [key: 'all' | ProposalType, value: IApiResponse<ILatestActivityPostsListingResponse>][]).map(([key, value]) => {
@@ -129,7 +127,7 @@ const LatestActivity: FC<ILatestActivityProps> = ({ className, latestPosts }) =>
 					count={value?.data?.count || 0}
 					posts={value?.data?.posts}
 					error={value?.error || ''}
-					columns={getColumns(key, network)}
+					columns={getColumns(key)}
 					type={key}
 				/>
 			),

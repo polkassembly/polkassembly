@@ -109,7 +109,7 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			children: (
 				<PostsTable
 					count={gov2LatestPosts.discussionPosts?.data?.count || 0}
-					columns={getColumns(ProposalType.DISCUSSIONS, network)}
+					columns={getColumns(ProposalType.DISCUSSIONS)}
 					error={gov2LatestPosts?.discussionPosts?.error}
 					posts={gov2LatestPosts?.discussionPosts?.data?.posts}
 					type={ProposalType.DISCUSSIONS}

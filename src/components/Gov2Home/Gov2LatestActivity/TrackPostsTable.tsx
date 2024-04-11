@@ -13,6 +13,7 @@ import StatusTag from 'src/ui-components/StatusTag';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 
 import { IPostsRowData } from '~src/components/Home/LatestActivity/PostsTable';
+import { getFirestoreProposalType, getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 
 const columns: ColumnsType<IPostsRowData> = [
 	{
@@ -28,11 +29,13 @@ const columns: ColumnsType<IPostsRowData> = [
 		key: 'title',
 		width: 400,
 		fixed: 'left',
-		render: (title) => {
+		render: (title, { post_id, type }) => {
+			const path = getSinglePostLinkFromProposalType(getFirestoreProposalType(type) as any);
+
 			return (
-				<>
+				<a href={`/${path}/${post_id}`}>
 					<div className='truncate'>{title}</div>
-				</>
+				</a>
 			);
 		}
 	},

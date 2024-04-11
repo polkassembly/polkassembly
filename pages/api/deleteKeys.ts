@@ -10,31 +10,36 @@ import { deleteKeys, redisDel } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
-	storeApiKeyUsage(req);
+	try {
+		storeApiKeyUsage(req);
 
-	const { network, postId, postType, password } = req.query;
+		const { network, postId, postType, password } = req.query;
 
-	if (!network || !String(postId) || !postType || !password) {
-		return res.status(400).json({ message: 'Invalid parameters' });
+		if (!network || !String(postId) || !postType || !password) {
+			return res.status(400).json({ message: 'Invalid parameters' });
+		}
+
+		if (!isValidNetwork(String(network))) {
+			return res.status(400).json({ message: 'Invalid network' });
+		}
+
+		if (!password || !process.env.REDIS_DELETE_PASSPHRASE || password !== process.env.REDIS_DELETE_PASSPHRASE) {
+			return res.status(401).json({ message: 'Unauthorized' });
+		}
+
+		const postDetail = `${network}_${postType}_postId_${postId}`;
+		const listingKeys = `${network}_${postType}_page_*`;
+		const latestActivityKey = `${network}_latestActivity_OpenGov`;
+
+		await redisDel(postDetail);
+		await redisDel(latestActivityKey);
+		await deleteKeys(listingKeys);
+
+		return res.status(200).json({ message: 'Success' });
+	} catch (error) {
+		console.log('Error: ', error);
+		return res.status(500).json({ message: 'Internal server error' });
 	}
-
-	if (!isValidNetwork(String(network))) {
-		return res.status(400).json({ message: 'Invalid network' });
-	}
-
-	if (!password || !process.env.REDIS_DELETE_PASSPHRASE || password !== process.env.REDIS_DELETE_PASSPHRASE) {
-		return res.status(401).json({ message: 'Unauthorized' });
-	}
-
-	const postDetail = `${network}_${postType}_postId_${postId}`;
-	const listingKeys = `${network}_${postType}_page_*`;
-	const latestActivityKey = `${network}_latestActivity_OpenGov`;
-
-	await redisDel(postDetail);
-	await redisDel(latestActivityKey);
-	await deleteKeys(listingKeys);
-
-	return res.status(200).json({ message: 'Success' });
 };
 
 export default withErrorHandling(handler);

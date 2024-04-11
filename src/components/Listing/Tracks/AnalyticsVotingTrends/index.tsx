@@ -13,6 +13,7 @@ import { StatTabs } from '~src/components/Post/Tabs/PostStats/Tabs/StatTabs';
 import AnalyticsConvictionVotes from './AnalyticsConvictionVotes';
 import AnalyticsVoteAmountVotes from './AnalyticsVoteAmountVotes';
 import AnalyticsAccountsVotes from './AnalyticsAccountsVotes';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const { Panel } = Collapse;
 
@@ -30,41 +31,48 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
 	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	console.log('trackNumber', trackNumber);
 
 	const getVoteData = async () => {
 		try {
+			setIsLoading(true);
 			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/track_level_anaytics/votes-analytics', {
 				trackNumber
 			});
 
+			console.log('data', data);
 			if (data && data?.votes) {
 				setVoteData(data?.votes);
+				setIsLoading(false);
 			}
 		} catch (error) {
 			console.error(error);
+			setIsLoading(false);
 		}
 	};
 
 	useEffect(() => {
 		if (!isNaN(trackNumber)) {
 			getVoteData();
+			console.log('fetchinggg');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackNumber]);
 
 	const tabItems: ITabItem[] = [
 		{
-			children: <AnalyticsConvictionVotes convictionVotes={voteData.map((vote: any) => vote?.convictionVotes)} />,
+			children: <AnalyticsConvictionVotes convictionVotes={voteData.map((vote: any) => vote.convictionVotes)} />,
 			key: 'conviction-votes',
 			label: 'Conviction Votes'
 		},
 		{
-			children: <AnalyticsVoteAmountVotes voteAmount={voteData.map((vote: any) => vote?.voteAmount)} />,
+			children: <AnalyticsVoteAmountVotes voteAmount={voteData.map((vote: any) => vote.voteAmount)} />,
 			key: 'vote-amount',
 			label: 'Vote Amount'
 		},
 		{
-			children: <AnalyticsAccountsVotes accounts={voteData.map((vote: any) => vote?.accounts)} />,
+			children: <AnalyticsAccountsVotes accounts={voteData.map((vote: any) => vote.accounts)} />,
 			key: 'accounts',
 			label: 'Accounts'
 		}
@@ -90,12 +98,19 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 				}
 				key='1'
 			>
-				<StatTabs
-					items={tabItems}
-					setActiveTab={setActiveTab}
-					activeTab={activeTab}
-				/>
-				{tabItems.find((item) => item.key === activeTab)?.children}
+				{' '}
+				{isLoading ? (
+					<Skeleton />
+				) : (
+					<>
+						<StatTabs
+							items={tabItems}
+							setActiveTab={setActiveTab}
+							activeTab={activeTab}
+						/>
+						{tabItems.find((item) => item.key === activeTab)?.children}
+					</>
+				)}
 			</Panel>
 		</Collapse>
 	);

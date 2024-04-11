@@ -5,18 +5,25 @@
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
 import { IVoteDetailType } from '~src/types';
-import AnalyticsDelegationSplitGraph from './TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph';
+import dynamic from 'next/dynamic';
+import { useNetworkSelector } from '~src/redux/selectors';
+
+const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 
 interface IProps {
 	convictionVotes: IVoteDetailType[];
 }
 const AnalyticsConvictionVotes = ({ convictionVotes }: IProps) => {
-	const delegationSplit = convictionVotes.map((data) => data.delegationSplitData);
+	const { network } = useNetworkSelector();
+	const sortedConvictionVotes = [...convictionVotes].sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index);
+
+	const delegationSplit = sortedConvictionVotes.map((data) => data.delegationSplitData);
+	console.log('delegationSplit', delegationSplit);
 
 	return (
 		<>
 			<Nudge text='Conviction vote is the number of tokens used for voting multiplied by conviction .' />
-			{/* <AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} /> */}
+			<AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} />
 		</>
 	);
 };

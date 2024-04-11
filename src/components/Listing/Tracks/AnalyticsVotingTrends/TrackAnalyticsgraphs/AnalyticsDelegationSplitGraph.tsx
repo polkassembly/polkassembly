@@ -7,23 +7,18 @@
 import { ResponsiveBar } from '@nivo/bar';
 import { useTheme } from 'next-themes';
 import React from 'react';
-import { useNetworkSelector } from '~src/redux/selectors';
-import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-
 
 interface IProps {
 	delegationSplitData: { delegated: string | number; index: number; solo: string | number }[];
 }
 
 const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
-	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
-	console.log('delegationSplitData', delegationSplitData);
 
 	const data = delegationSplitData.map((item) => ({
-		delegated: Number(item.delegated),
 		index: `${item.index}`,
-		solo: Number(item.solo)
+		delegated: item.delegated,
+		solo: item.solo
 	}));
 
 	const colors: { [key: string]: string } = {
@@ -37,10 +32,10 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
 				data={data}
 				keys={['delegated', 'solo']}
 				indexBy='index'
-				margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+				margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 				padding={0.5}
 				valueScale={{ type: 'linear' }}
-				indexScale={{ round: true, type: 'band' }}
+				indexScale={{ type: 'band', round: true }}
 				colors={(bar) => colors[bar.id]}
 				borderRadius={3}
 				borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
@@ -50,16 +45,15 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
 					tickPadding: 5,
 					tickRotation: 0,
 					tickSize: 5,
-					legend: 'Index',
-					legendOffset: 32,
-					legendPosition: 'middle'
+					truncateTickAt: 0
 				}}
 				axisLeft={{
-					format: (value) => formatUSDWithUnits(value, 1),
+					tickSize: 5,
 					tickPadding: 5,
 					tickRotation: 0,
-					tickSize: 5,
-					truncateTickAt: 0
+					legend: 'Value',
+					legendPosition: 'middle',
+					legendOffset: -40
 				}}
 				enableLabel={false}
 				labelSkipWidth={6}
@@ -67,9 +61,9 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
 				labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
 				legends={[
 					{
-						anchor: 'bottom-right',
+						anchor: 'bottom',
 						dataFrom: 'keys',
-						direction: 'column',
+						direction: 'row',
 						effects: [
 							{
 								on: 'hover',
@@ -79,15 +73,16 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
 							}
 						],
 						itemDirection: 'left-to-right',
-						itemsSpacing: 2,
 						itemHeight: 20,
 						itemOpacity: 0.85,
-						itemTextColor: '#999',
+						itemTextColor: theme === 'dark' ? '#747474' : '#576D8B',
 						itemWidth: 100,
+						itemsSpacing: 2,
 						justify: false,
-						symbolSize: 20,
-						translateY: 0,
-						translateX: 120
+						symbolShape: 'circle',
+						symbolSize: 6,
+						translateX: 20,
+						translateY: 50
 					}
 				]}
 				role='application'
@@ -130,7 +125,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData }: IProps) => {
 						}
 					}
 				}}
-				animate={true}
+				ariaLabel='Nivo bar chart demo'
 			/>
 		</div>
 	);

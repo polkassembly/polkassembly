@@ -1089,7 +1089,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 		network,
 		page,
 		postIds,
-		proposalStatus: proposalType?.length && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
+		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy,
 		trackNo,

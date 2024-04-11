@@ -1,0 +1,137 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
+
+import React from 'react';
+import { ResponsiveLine } from '@nivo/line';
+import styled from 'styled-components';
+import { Card } from 'antd';
+import { useTheme } from 'next-themes';
+
+interface IProps {
+	supportData: { percentage: string; index: number }[];
+}
+
+const StyledCard = styled(Card)`
+	g[transform='translate(0,0)'] g:nth-child(even) {
+		display: none !important;
+	}
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+`;
+
+const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
+	const { resolvedTheme: theme } = useTheme();
+	const data = [
+		{
+			id: 'Turnout',
+			data: supportData.map((item) => ({
+				x: item.index,
+				y: parseFloat(item.percentage)
+			}))
+		}
+	];
+
+	return (
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+			<h2 className='text-xl font-semibold'>Average Turnout Percentage</h2>
+			<div className='h-[250px]'>
+				<ResponsiveLine
+					data={data}
+					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
+					xScale={{ type: 'point' }}
+					yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
+					axisTop={null}
+					axisRight={null}
+					axisBottom={{
+						tickSize: 5,
+						tickPadding: 8,
+						tickRotation: 0,
+						legend: '',
+						legendOffset: 36,
+						legendPosition: 'middle'
+					}}
+					axisLeft={{
+						tickSize: 5,
+						tickPadding: 5,
+						tickRotation: 0,
+						format: (value) => `${value}%`
+					}}
+					tooltipFormat={(value) => `${Number(value).toFixed(1)}%`}
+					colors={['#978FED']}
+					pointSize={10}
+					pointColor={{ theme: 'background' }}
+					pointBorderWidth={2}
+					pointBorderColor={{ from: 'serieColor' }}
+					pointLabelYOffset={-12}
+					useMesh={true}
+					enableSlices='x'
+					enableGridX={false}
+					enableGridY={false}
+					curve='monotoneX'
+					enableArea={true}
+					areaOpacity={0.1}
+					enablePoints={false}
+					theme={{
+						axis: {
+							domain: {
+								line: {
+									stroke: 'transparent',
+									strokeWidth: 1
+								}
+							},
+							ticks: {
+								line: {
+									stroke: 'transparent'
+								},
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 11,
+									outlineColor: 'transparent',
+									outlineWidth: 0
+								}
+							}
+						},
+						grid: {
+							line: {
+								stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+								strokeDasharray: '2 2',
+								strokeWidth: 1
+							}
+						},
+						legends: {
+							text: {
+								fontSize: 12,
+								textTransform: 'capitalize'
+							}
+						},
+						tooltip: {
+							container: {
+								background: theme === 'dark' ? '#1E2126' : '#fff',
+								color: theme === 'dark' ? '#fff' : '#576D8B',
+								fontSize: 11,
+								textTransform: 'capitalize'
+							}
+						}
+					}}
+				/>
+			</div>
+		</StyledCard>
+	);
+};
+
+export default AnalyticsTurnoutPercentageGraph;

@@ -508,6 +508,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 export default styled(TextEditor)`
 	.tox-tinymce {
 		border-radius: 1rem;
+		border: 1px solid ${({ theme }) => (theme === 'dark' ? '#4b4b4b' : '#cccccc')};
 	}
 	.tox-editor-header {
 		opacity: 0.3;

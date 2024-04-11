@@ -233,7 +233,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const fetchHistory = async () => {
 			const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
 				proposalIndex: onchainId,
-				proposalType: getFirestoreProposalType(`${proposalType}`),
+				proposalType: getFirestoreProposalType(`${proposalType}`) || proposalType,
 				voterAddress: encoded
 			});
 

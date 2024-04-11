@@ -12,8 +12,8 @@ import ProfileCard from './ProfileCard';
 import classNames from 'classnames';
 import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
-import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import ProfileStatsCard from './ProfileStatsCard';
+import { IUserPostsListingResponse } from '~src/types';
 
 export interface IActivitiesCounts {
 	totalActivitiesCount: number;

@@ -12,17 +12,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { ProposalType } from '~src/global/proposalType';
-
-export interface IChildBountiesResponse {
-	child_bounties: {
-		description: string;
-		index: number;
-		status: string;
-		reward: string;
-		title: string;
-	}[];
-	child_bounties_count: number;
-}
+import { IChildBountiesResponse } from '~src/types';
 
 // expects optional id, page, voteType and listingLimit
 async function handler(req: NextApiRequest, res: NextApiResponse<IChildBountiesResponse | { error: string }>) {

@@ -74,11 +74,10 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 
 interface IPostHeadingProps {
 	className?: string;
-	setRequestedAmount?: any;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className, setRequestedAmount } = props;
+	const { className } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -101,7 +100,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			track_name,
 			cid,
 			history,
-			// content,
 			summary,
 			identityId,
 			hash
@@ -115,11 +113,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { network } = useNetworkSelector();
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
-
-	useEffect(() => {
-		setRequestedAmount(formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [requestedAmt]);
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
 		if (pathname)

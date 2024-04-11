@@ -21,6 +21,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Alert from '~src/basic-components/Alert';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 
 interface Props {
 	className?: string;
@@ -85,9 +86,12 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			userName: currentUser?.username || ''
 		});
 		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
-			if (!api || !apiReady) return;
+			const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+			if (!api || !apiReady || registrarIndex === null) return;
+
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
 				handleLocalStorageSave({ setIdentity: true });

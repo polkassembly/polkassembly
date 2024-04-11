@@ -33,6 +33,7 @@ import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -101,6 +102,7 @@ export interface IPostListing {
 	isSpamReportInvalid?: boolean;
 	spam_users_count?: number;
 	beneficiaries?: string[];
+	allChildBounties?: any[];
 }
 
 export interface IPostsListingResponse {
@@ -271,10 +273,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			});
 			const subsquidData = subsquidRes?.data;
 			const subsquidPosts: any[] = subsquidData?.proposals;
+			const parentBountyIndexes: any = {};
 
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
 					subsquidPost;
+
+				if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
+					parentBountyIndexes[parentBountyIndex] = 1;
+				}
 
 				let parentBountyRequestedAmount = '0';
 
@@ -443,6 +450,25 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			});
 
 			const subsquidDataPost = await Promise.all(subsquidPostsPromise);
+
+			if (Object.keys(parentBountyIndexes)?.length) {
+				for (const index of Object.keys(parentBountyIndexes)) {
+					const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
+					if (data) {
+						parentBountyIndexes[index] = data?.child_bounties;
+					}
+				}
+			}
+
+			if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length) {
+				subsquidDataPost.map((post) => {
+					if (typeof post?.parent_bounty_index === 'number') {
+						return { ...post, allChildBounties: parentBountyIndexes[post?.parent_bounty_index] };
+					}
+					return post;
+				});
+			}
+
 			const data: IPostsListingResponse = {
 				count: count,
 				posts: subsquidDataPost
@@ -717,9 +743,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				}
 				posts = await Promise.all(postsPromise);
 			} else {
+				const parentBountyIndexes: any = {};
+
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
 					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
 						subsquidPost;
+					if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
+						parentBountyIndexes[parentBountyIndex] = 1;
+					}
 
 					let parentBountyRequestedAmount = '0';
 
@@ -907,9 +938,23 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				});
 
 				const postsResults = await Promise.allSettled(postsPromise);
+
+				if (Object.keys(parentBountyIndexes)?.length) {
+					for (const index of Object.keys(parentBountyIndexes)) {
+						const { data } = await getAllchildBountiesFromBountyIndex({ network, parentBountyIndex: Number(index) });
+						if (data) {
+							parentBountyIndexes[index] = data?.child_bounties;
+						}
+					}
+				}
+
 				posts = postsResults.reduce((prev, post) => {
 					if (post && post.status === 'fulfilled') {
-						prev.push(post.value);
+						if (proposalType === ProposalType.CHILD_BOUNTIES && Object.keys(parentBountyIndexes)?.length && typeof post?.value?.parent_bounty_index === 'number') {
+							prev.push({ ...post?.value, allChildBounties: parentBountyIndexes[post?.value?.parent_bounty_index] });
+						} else {
+							prev.push(post.value);
+						}
 					}
 					return prev;
 				}, [] as any[]);
@@ -1034,7 +1079,7 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, proposalStatus } = req.query;
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const postIds = req.body.postIds;
@@ -1044,6 +1089,7 @@ const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async
 		network,
 		page,
 		postIds,
+		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy,
 		trackNo,

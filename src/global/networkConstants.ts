@@ -1438,7 +1438,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,

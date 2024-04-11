@@ -9,9 +9,16 @@ import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import React from 'react';
 import styled from 'styled-components';
+import { useNetworkSelector } from '~src/redux/selectors';
+import formatBnBalance from '~src/util/formatBnBalance';
+import BN from 'bn.js';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { chainProperties } from '~src/global/networkConstants';
 
+const ZERO = new BN(0);
 interface IProps {
 	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
+	isUsedInAccounts?: boolean;
 }
 
 const StyledCard = styled(Card)`
@@ -35,26 +42,44 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const AnalyticsVoteSplitGraph = ({ votesSplitData }: IProps) => {
+const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) => {
+	console.log('votesSplitData', votesSplitData);
+	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+
+	const bnToIntBalance = (bnValue: string | number | BN): number => {
+		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue.toString());
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
+
 	const data = votesSplitData.map((item) => ({
 		abstain: item.abstain,
 		aye: item.aye,
 		index: item.index,
 		nay: item.nay
 	}));
+
 	const colors: { [key: string]: string } = {
 		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
 		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
 		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
-	console.log('votesSplitData', votesSplitData);
+
+	const chartData = votesSplitData.map((item) => {
+		return {
+			abstain: bnToIntBalance(item.abstain || ZERO) || 0,
+			aye: bnToIntBalance(item.aye || ZERO) || 0,
+			nay: bnToIntBalance(item.nay || ZERO) || 0,
+			index: item.index
+		};
+	});
+
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Vote Split</h2>
 			<div className='h-[260px]'>
 				<ResponsiveBar
-					data={data}
+					data={isUsedInAccounts ? data : chartData}
 					keys={['aye', 'nay', 'abstain']}
 					indexBy='index'
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
@@ -76,9 +101,11 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData }: IProps) => {
 						truncateTickAt: 0
 					}}
 					axisLeft={{
-						tickSize: 5,
+						format: (value) => formatUSDWithUnits(value, 1),
 						tickPadding: 5,
-						tickRotation: 0
+						tickRotation: 0,
+						tickSize: 5,
+						truncateTickAt: 0
 					}}
 					labelSkipWidth={6}
 					labelSkipHeight={12}
@@ -155,6 +182,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData }: IProps) => {
 					}}
 					animate={true}
 					groupMode='stacked'
+					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
 				/>
 			</div>
 		</StyledCard>

@@ -23,9 +23,15 @@ const AnalyticsAccountsVotes = ({ accounts }: IProps) => {
 			<Nudge text='Accounts are the number of unique addresses casting a vote .' />
 			<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
 				<AnalyticsTurnoutPercentageGraph supportData={supportGraph} />
-				<AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} />
+				<AnalyticsDelegationSplitGraph
+					delegationSplitData={delegationSplit}
+					isUsedInAccounts={true}
+				/>
 			</div>
-			<AnalyticsVoteSplitGraph votesSplitData={votesSplit} />
+			<AnalyticsVoteSplitGraph
+				votesSplitData={votesSplit}
+				isUsedInAccounts={true}
+			/>
 		</>
 	);
 };

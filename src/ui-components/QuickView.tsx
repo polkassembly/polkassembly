@@ -139,6 +139,7 @@ const QuickView = ({
 								e.preventDefault();
 								window.open(`https://${network}.polkassembly.io/${path}`, '_blank');
 							}}
+							href={`/${path}`}
 						>
 							<ShareScreenIcon />
 						</a>

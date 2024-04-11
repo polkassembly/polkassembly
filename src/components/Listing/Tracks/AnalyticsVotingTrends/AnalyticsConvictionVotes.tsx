@@ -6,7 +6,6 @@ import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
 import { IVoteDetailType } from '~src/types';
 import dynamic from 'next/dynamic';
-// import { useNetworkSelector } from '~src/redux/selectors';
 
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });

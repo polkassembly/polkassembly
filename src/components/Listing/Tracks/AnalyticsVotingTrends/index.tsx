@@ -32,7 +32,6 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
 	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	console.log('trackNumber', trackNumber);
 
 	const getVoteData = async () => {
 		try {
@@ -41,7 +40,6 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 				trackNumber
 			});
 
-			console.log('data', data);
 			if (data && data?.votes) {
 				setVoteData(data?.votes);
 				setIsLoading(false);
@@ -55,7 +53,6 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	useEffect(() => {
 		if (!isNaN(trackNumber)) {
 			getVoteData();
-			console.log('fetchinggg');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackNumber]);

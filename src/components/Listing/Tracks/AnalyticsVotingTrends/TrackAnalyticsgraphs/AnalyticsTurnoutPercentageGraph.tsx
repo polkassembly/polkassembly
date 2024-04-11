@@ -4,7 +4,7 @@
 /* eslint-disable sort-keys */
 
 import React from 'react';
-import { ResponsiveLine } from '@nivo/line';
+import { PointTooltipProps, ResponsiveLine } from '@nivo/line';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
@@ -34,6 +34,15 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const CustomTooltip = ({ point }: PointTooltipProps) => {
+	return (
+		<div className='rounded-md bg-white p-4 shadow-md dark:bg-[#1E2126]'>
+			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{point.data.xFormatted}</div>
+			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.yFormatted).toFixed(1)}%</div>
+		</div>
+	);
+};
+
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
 	const data = [
@@ -49,7 +58,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-xl font-semibold'>Average Turnout Percentage</h2>
-			<div className='h-[250px]'>
+			<div className='h-[300px]'>
 				<ResponsiveLine
 					data={data}
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
@@ -57,21 +66,23 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 					axisTop={null}
 					axisRight={null}
-					axisBottom={{
-						tickSize: 5,
-						tickPadding: 8,
-						tickRotation: 0,
-						legend: '',
-						legendOffset: 36,
-						legendPosition: 'middle'
-					}}
+					axisBottom={null}
+					// axisBottom={{
+					// tickSize: 5,
+					// tickPadding: 8,
+					// tickRotation: 0,
+					// legend: '',
+					// legendOffset: 36,
+					// legendPosition: 'middle'
+					// }}
 					axisLeft={{
-						tickSize: 5,
-						tickPadding: 5,
+						tickSize: 3,
+						tickPadding: 0,
 						tickRotation: 0,
 						format: (value) => `${value}%`
 					}}
-					tooltipFormat={(value) => `${Number(value).toFixed(1)}%`}
+					tooltip={CustomTooltip}
+					tooltipFormat={(value) => `${Number(value).toFixed(1)} %`}
 					colors={['#978FED']}
 					pointSize={10}
 					pointColor={{ theme: 'background' }}
@@ -79,7 +90,6 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					pointBorderColor={{ from: 'serieColor' }}
 					pointLabelYOffset={-12}
 					useMesh={true}
-					enableSlices='x'
 					enableGridX={false}
 					enableGridY={false}
 					curve='monotoneX'
@@ -116,14 +126,6 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 						legends: {
 							text: {
 								fontSize: 12,
-								textTransform: 'capitalize'
-							}
-						},
-						tooltip: {
-							container: {
-								background: theme === 'dark' ? '#1E2126' : '#fff',
-								color: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 11,
 								textTransform: 'capitalize'
 							}
 						}

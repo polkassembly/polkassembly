@@ -15,7 +15,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 interface IListingChildBountyChart {
 	childBounties: any[];
 	parentBounty: any;
-	setTotalAmount: (pre: any) => void;
+	setTotalAmount?: (pre: any) => void;
 }
 
 const ZERO_BN = new BN('0');
@@ -45,7 +45,7 @@ const ListingChildBountyChart: FC<IListingChildBountyChart> = (props) => {
 		}
 
 		if (!totalAmount.isZero()) {
-			setTotalAmount(totalAmount);
+			setTotalAmount?.(totalAmount);
 			const remaining = totalAmount.sub(disbursedAmount);
 			setRemainingAmount(remaining);
 		}

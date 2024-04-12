@@ -4,7 +4,7 @@
 
 import * as functions from 'firebase-functions';
 import fetchSubsquid from '../utils/fetchSubsquid';
-import { networkTrackInfo } from '../trackInfo';
+import { networkTrackInfo } from './utils/trackInfo';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BN from 'bn.js';
 import formatBnBalance from '../utils/formateBnBalance';
@@ -329,7 +329,7 @@ const trackLevelAnalytics = async () => {
 		}
 		return chunks;
 	}
-	const chunkSize = 400;
+	const chunkSize = 500;
 	const chunkedArray = chunkArray(analyticsData, chunkSize);
 	for (const chunk of chunkedArray) {
 		const batch = firestoreDB.batch();

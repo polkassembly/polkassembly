@@ -1068,7 +1068,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
-															track_number={trackNumber as any}
+															trackNumber={trackNumber as any}
 														/>
 														{RenderLastVote}
 													</div>
@@ -1130,7 +1130,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
-																track_number={trackNumber as any}
+																trackNumber={trackNumber as any}
 															/>
 														)}
 														{RenderLastVote}

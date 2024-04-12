@@ -127,7 +127,7 @@ const QuickView = ({
 						<div className='flex items-center justify-center '>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled style={{ color }} />}</div>
 						{isW3FDelegate && (
 							<Tooltip
-								title='Web3 foundation member'
+								title='Web3 foundation delegate'
 								className={classNames(poppins.className, poppins.variable)}
 							>
 								<Image

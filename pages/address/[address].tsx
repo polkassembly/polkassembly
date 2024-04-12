@@ -4,7 +4,7 @@
 
 import { GetServerSideProps } from 'next';
 import { getUserIdWithAddress, getUserProfileWithUserId } from 'pages/api/v1/auth/data/userProfileWithUsername';
-import { getDefaultUserPosts, getUserPosts, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
+import { getDefaultUserPosts, getUserPosts } from 'pages/api/v1/listing/user-posts';
 import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
@@ -18,6 +18,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
+import { IUserPostsListingResponse } from '~src/types';
 
 interface IUserProfileProps {
 	activitiesCounts: {
@@ -64,8 +65,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				userId: userProfile?.data?.user_id
 		  });
 
-	const activitiesCounts = userProfile ? await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null }) : null;
-
+	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
+	let activitiesCounts;
+	if (activitiesCountsResult.error) {
+		activitiesCounts = {
+			data: null,
+			error: activitiesCountsResult.error.toString()
+		};
+	} else {
+		activitiesCounts = {
+			data: activitiesCountsResult.data,
+			error: null
+		};
+	}
 	const props: IUserProfileProps = {
 		activitiesCounts: activitiesCounts || { data: { totalActivitiesCount: 0, totalMentionsCount: 0, totalReactionsCount: 0 }, error: null },
 		network,

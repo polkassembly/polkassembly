@@ -43,8 +43,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { VOTES_LISTING_LIMIT } from '~src/global/listingLimit';
-import { IChildBountiesResponse } from 'pages/api/v1/child_bounties';
 import { formatedBalance } from '~src/util/formatedBalance';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
@@ -55,7 +53,7 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
-const TrackListingChildBountyChart = dynamic(() => import('~src/ui-components/TrackListingChildBountyChart'), {
+const ListingChildBountyChart = dynamic(() => import('~src/ui-components/ListingChildBountyChart'), {
 	loading: () => <SkeletonButton active />,
 	ssr: false
 });
@@ -105,6 +103,7 @@ interface IGovernanceProps {
 	hash?: string;
 	childBountyAmount?: any;
 	parentBounty?: number;
+	allChildBounties?: any[];
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -142,7 +141,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		description,
 		hash,
 		childBountyAmount,
-		parentBounty
+		parentBounty,
+		allChildBounties
 	} = props;
 
 	const router = useRouter();
@@ -191,7 +191,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
-
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -208,7 +207,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
-	const [disbursedAmount, setDisbursedAmount] = useState<any>('');
 	const [totalAmount, setTotalAmount] = useState<any>('');
 
 	const getProposerFromPolkadot = async (identityId: string) => {
@@ -235,7 +233,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		const fetchHistory = async () => {
 			const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
 				proposalIndex: onchainId,
-				proposalType: getFirestoreProposalType(`${proposalType}`),
+				proposalType: getFirestoreProposalType(`${proposalType}`) || proposalType,
 				voterAddress: encoded
 			});
 
@@ -258,32 +256,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const getChildBountyData = async () => {
-		const { data, error: fetchError } = await nextApiClientFetch<IChildBountiesResponse>(`api/v1/child_bounties?listingLimit=${VOTES_LISTING_LIMIT}&postId=${parentBounty}`);
-		if (fetchError || !data) {
-			console.log('error fetching events : ', fetchError);
-		}
-
-		if (data) {
-			const allRewardsAsBN = data.child_bounties.map((bounty) => new BN(bounty.reward));
-			const totalReward = allRewardsAsBN.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
-			if (!totalReward.isZero()) {
-				setTotalAmount(totalReward);
-			}
-			const totalAwardedReward = data.child_bounties
-				.filter((bounty) => bounty.status === 'Claimed')
-				.map((bounty) => new BN(bounty.reward))
-				.reduce((accumulator, currentReward) => accumulator.add(currentReward), new BN(0));
-			setDisbursedAmount(totalAwardedReward);
-		}
-	};
-
-	useEffect(() => {
-		getChildBountyData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [parentBounty]);
 
 	useEffect(() => {
 		if (!window || trackNumber === null) return;
@@ -368,7 +340,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
-							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+							{proposalType === ProposalType.CHILD_BOUNTIES && (
 								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>
 									{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
 								</p>
@@ -555,16 +527,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
-							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+							{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
 								<>
 									<Divider
 										type='vertical'
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<TrackListingChildBountyChart
+									<ListingChildBountyChart
 										parentBounty={parentBounty}
-										disbursedAmount={disbursedAmount}
-										totalAmount={totalAmount}
+										childBounties={allChildBounties || []}
+										setTotalAmount={setTotalAmount}
 									/>
 								</>
 							)}
@@ -656,16 +628,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									</div>
 								</>
 							)}
-							{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+							{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
 								<div className='ml-3'>
 									<Divider
 										type='vertical'
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<TrackListingChildBountyChart
+									<ListingChildBountyChart
 										parentBounty={parentBounty}
-										disbursedAmount={disbursedAmount}
-										totalAmount={totalAmount}
+										setTotalAmount={setTotalAmount}
+										childBounties={allChildBounties || []}
 									/>
 								</div>
 							)}
@@ -729,7 +701,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
 							{status && (
 								<div className='flex items-center gap-x-2'>
-									{proposalType === ProposalType.CHILD_BOUNTIES && childBountyAmount && (
+									{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
 										<p className='m-0 p-0 text-bodyBlue dark:text-white'>
 											{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
 										</p>

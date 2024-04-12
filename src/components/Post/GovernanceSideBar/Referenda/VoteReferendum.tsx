@@ -149,7 +149,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-
 	const { client, connect } = usePolkasafe(address);
 	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
@@ -161,16 +160,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [delegatedTo, setDelegatedTo] = useState<string | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
+	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
-			if (!showProxyDropdown) {
-				setSelectedProxyAddress('');
-				return;
-			}
 			setSelectedProxyAddress(proxyAddr[0]);
 		}
 	};
@@ -255,16 +251,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const handleBalanceErr = useCallback(() => {
 		switch (vote) {
 			case EVoteDecisionType.AYE:
-				setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(lockedBalance));
+				setIsBalanceErr((showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)?.lte(lockedBalance));
 				break;
 			case EVoteDecisionType.NAY:
-				setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(lockedBalance));
+				setIsBalanceErr((showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)?.lte(lockedBalance));
 				break;
 			case EVoteDecisionType.SPLIT:
-				setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(nayVoteValue.add(ayeVoteValue)));
+				setIsBalanceErr((showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)?.lte(nayVoteValue.add(ayeVoteValue)));
 				break;
 			case EVoteDecisionType.ABSTAIN:
-				setIsBalanceErr((showMultisig ? multisigBalance : availableBalance)?.lte(nayVoteValue.add(ayeVoteValue).add(abstainVoteValue)));
+				setIsBalanceErr((showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)?.lte(nayVoteValue.add(ayeVoteValue).add(abstainVoteValue)));
 				break;
 		}
 
@@ -300,6 +296,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			console.log(err);
 		}
 	};
+
+	const handleProxyAddressBalnceChange = (balanceStr: string) => {
+		if (!api || !apiReady || !balanceStr) {
+			return;
+		}
+		let balance = ZERO_BN;
+		try {
+			balance = new BN(balanceStr || '0');
+			setProxyAddressBalance(balance);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
 		localStorage.setItem('selectedWallet', wallet);
 		setLoadingStatus({ ...loadingStatus, isLoading: true });
@@ -415,26 +425,30 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!api || !apiReady) {
 			return;
 		}
-
-		if (!multisig) {
-			if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
-
-			if (lockedBalance && availableBalance.lte(lockedBalance)) {
-				return;
-			}
-			if (
-				(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
-				(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
-				(abstainVoteValue && availableBalance.lte(abstainVoteValue))
-			) {
-				return;
-			}
-		}
-
 		const totalVoteValue = (ayeVoteValue || ZERO_BN)
 			.add(nayVoteValue || ZERO_BN)
 			?.add(abstainVoteValue || ZERO_BN)
 			.add(lockedBalance || ZERO_BN);
+
+		if (!multisig) {
+			if (showProxyDropdown) {
+				if (proxyAddressBalance.lte(totalVoteValue)) return;
+			} else {
+				if (!lockedBalance || availableBalance.lte(lockedBalance)) return;
+
+				if (lockedBalance && availableBalance.lte(lockedBalance)) {
+					return;
+				}
+				if (
+					(ayeVoteValue && availableBalance.lte(ayeVoteValue)) ||
+					(nayVoteValue && availableBalance.lte(nayVoteValue)) ||
+					(abstainVoteValue && availableBalance.lte(abstainVoteValue))
+				) {
+					return;
+				}
+			}
+		}
+
 		setVoteValues((prevState) => ({
 			...prevState,
 			totalVoteValue: totalVoteValue
@@ -552,11 +566,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			onFailed,
 			onSuccess,
 			params: network === 'equilibrium' ? { nonce: -1 } : {},
-			proxyAddress: selectedProxyAddress,
+			proxyAddress: showProxyDropdown ? selectedProxyAddress : '',
 			setStatus: (status: string) => setLoadingStatus({ isLoading: true, message: status }),
 			tx: voteTx
 		});
 	};
+
 	const ayeNayVotesArr = [
 		{
 			label: (
@@ -608,7 +623,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
-							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
 							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
@@ -889,7 +903,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										className='mt-4'
 									/>
 								)}
-								{proxyAddresses && proxyAddresses?.length > 0 && (
+								{!!proxyAddresses?.length && (
 									<div className='mt-2'>
 										<Checkbox
 											value=''
@@ -914,6 +928,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										setIsProxyExistsOnWallet={setIsProxyExistsOnWallet}
 										setSelectedProxyAddress={setSelectedProxyAddress}
 										selectedProxyAddress={selectedProxyAddress}
+										onBalanceChange={handleProxyAddressBalnceChange}
 									/>
 								)}
 								{showProxyDropdown && !isProxyExistsOnWallet && (
@@ -949,7 +964,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											(showMultisig && !multisig) ||
 											(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 											isBalanceErr ||
-											(showMultisig && multisigBalance.lte(lockedBalance))
+											(showMultisig && multisigBalance.lte(lockedBalance)) ||
+											(showProxyDropdown && proxyAddressBalance.lte(lockedBalance))
 										}
 										conviction={conviction}
 										setConviction={setConviction}
@@ -966,7 +982,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
 											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance)}
+											.gte(showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)}
 									/>
 								)}
 
@@ -980,12 +996,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										convictionClassName={className}
 										handleSubmit={handleSubmit}
 										disabled={
+											(showProxyDropdown && proxyAddressBalance.lte(lockedBalance)) ||
 											!wallet ||
 											ayeVoteValue.lte(ZERO_BN) ||
 											nayVoteValue.lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
 											(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 											isBalanceErr ||
+											(showProxyDropdown && proxyAddressBalance.lte(lockedBalance)) ||
 											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
 										}
 										conviction={conviction}
@@ -1003,7 +1021,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
 											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance)}
+											.gte(showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)}
 									/>
 								)}
 
@@ -1024,7 +1042,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											abstainVoteValue.lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
 											isBalanceErr ||
-											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
+											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance))) ||
+											(showProxyDropdown && proxyAddressBalance.lte(lockedBalance))
 										}
 										conviction={conviction}
 										setConviction={setConviction}
@@ -1041,7 +1060,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											.add(nayVoteValue)
 											.add(abstainVoteValue)
 											.add(lockedBalance)
-											.gte(showMultisig ? multisigBalance : availableBalance)}
+											.gte(showMultisig ? multisigBalance : showProxyDropdown ? proxyAddressBalance : availableBalance)}
 									/>
 								)}
 							</>

@@ -206,7 +206,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
 	const childBountyRequestedAmount = new BN(allChildBounties?.filter((bounty) => bounty.index === onchainId)[0]?.reward || 0);
-	console.log(allChildBounties?.filter((bounty) => bounty.index === onchainId)[0], onchainId);
 
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;

@@ -11,7 +11,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import DelegateModal from './DelegateModal';
 import { useApiContext } from '~src/context';
-import { TrackProps } from '~src/types';
+import { ETrackDelegationStatus, TrackProps } from '~src/types';
 import { ChartData, Point } from 'chart.js';
 import { getTrackFunctions } from '../../Post/GovernanceSideBar/Referenda/util';
 import blockToTime from '~src/util/blockToTime';
@@ -34,6 +34,7 @@ import Link from 'next/link';
 import Alert from '~src/basic-components/Alert';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -150,48 +151,63 @@ export const blocksToRelevantTime = (network: string, blocks: number): string =>
 
 const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
+	const { loginAddress } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { className, trackName } = props;
-	const [delegatedTo, setDelegatedTo] = useState('');
+	const [delegatedTo, setDelegatedTo] = useState<string | null>(null);
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
-	useEffect(() => {
-		setTrackMetaData(getTrackData(network, trackName));
-	}, [network, trackName]);
+	const [curvesLoading, setCurvesLoading] = useState(true);
+	const [showDetails, setShowDetails] = useState(false);
+	const [trackNum, setTrackNum] = useState<number | null>(null);
+
 	const [data, setData] = useState<any>({
 		datasets: [],
 		labels: []
 	});
-	const [curvesLoading, setCurvesLoading] = useState(true);
-	const [showDetails, setShowDetails] = useState(false);
-	//get the track number of the track
-	const track_number = trackMetaData?.trackId;
-	const { api, apiReady } = useApiContext();
-	const { loginAddress } = useUserDetailsSelector();
-	const getData = async () => {
-		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+
+	const getData = async (trackNum: number) => {
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: loginAddress,
-			track: trackMetaData.trackId
+			track: trackNum
 		});
-		if (data && data[0]?.delegations[0]?.to) {
-			setDelegatedTo(data[0]?.delegations[0]?.to || '');
+
+		if (data && data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))?.length) {
+			const delegated = data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))[0];
+			delegated?.delegations.map((item) => {
+				if (getEncodedAddress(item.from, network) === getEncodedAddress(loginAddress, network)) {
+					setDelegatedTo(item?.to);
+				} else {
+					setDelegatedTo(null);
+				}
+			});
+		} else if (error) {
+			console.log(error);
+			setDelegatedTo(null);
 		}
 	};
 
 	useEffect(() => {
-		if (!loginAddress || isNaN(trackMetaData.trackId)) return;
-		getData();
+		const data = getTrackData(network, trackName);
+		setTrackMetaData(data);
+		setTrackNum(data.trackId);
+
+		if (typeof data?.trackId !== 'number') return;
+		getData(data?.trackId);
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trackMetaData.trackId, loginAddress]);
+	}, [network, trackName]);
 
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
 		}
 		setCurvesLoading(true);
+
 		const getData = async () => {
 			const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
 			if (tracks && Array.isArray(tracks)) {
-				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+				const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === trackNum);
 				if (track && Array.isArray(track) && track.length > 1) {
 					const trackInfo = track[1] as any;
 					const { decisionPeriod } = trackInfo;
@@ -258,7 +274,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 			setCurvesLoading(false);
 		};
 		getData();
-	}, [api, apiReady, network, track_number]);
+	}, [api, apiReady, network, trackNum]);
 
 	const path = window.location.pathname;
 

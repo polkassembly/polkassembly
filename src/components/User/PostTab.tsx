@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import Link from 'next/link';
-import { IUserPost } from 'pages/api/v1/listing/user-posts';
 import React, { FC } from 'react';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import GovernanceCard from '../GovernanceCard';
+import { IUserPost } from '~src/types';
 
 interface IPostTabProps {
 	posts: IUserPost[];

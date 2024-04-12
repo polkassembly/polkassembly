@@ -43,7 +43,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { formatedBalance } from '~src/util/formatedBalance';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -193,7 +192,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
-	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
 	const convertRemainingTime = (preiodEndsAt: any) => {
 		const diffMilliseconds = preiodEndsAt.diff();
@@ -207,7 +205,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
-	const [totalAmount, setTotalAmount] = useState<any>('');
+	const childBountyRequestedAmount = new BN(allChildBounties?.filter((bounty) => bounty.index === onchainId)[0]?.reward || 0);
 
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
@@ -341,12 +339,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
 							{proposalType === ProposalType.CHILD_BOUNTIES && (
-								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>
-									{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
-								</p>
+								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 							)}
 						</div>
-						{requestedAmount && (
+						{!!requestedAmount && (
 							<div className='flex items-center justify-center'>
 								{requestedAmount > 100 ? (
 									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
@@ -536,7 +532,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<ListingChildBountyChart
 										parentBounty={parentBounty}
 										childBounties={allChildBounties || []}
-										setTotalAmount={setTotalAmount}
 									/>
 								</>
 							)}
@@ -579,7 +574,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								/>
 							</div>
 						)}
-						{requestedAmount && (
+						{!!requestedAmount && (
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ? (
 									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
@@ -636,7 +631,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<ListingChildBountyChart
 										parentBounty={parentBounty}
-										setTotalAmount={setTotalAmount}
 										childBounties={allChildBounties || []}
 									/>
 								</div>
@@ -699,12 +693,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 
 						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
-							{status && (
+							{!!status && (
 								<div className='flex items-center gap-x-2'>
-									{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
-										<p className='m-0 p-0 text-bodyBlue dark:text-white'>
-											{formatedBalance(totalAmount.toString(), network).replace(/,/g, '') || 0} {unit}
-										</p>
+									{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyRequestedAmount && (
+										<p className='m-0 p-0 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
 									)}
 									<StatusTag
 										theme={theme}

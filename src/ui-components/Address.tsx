@@ -493,7 +493,7 @@ const Address = (props: Props) => {
 								{(!!kiltName || (!!identity && !!isGood)) && <VerifiedIcon className='scale-125' />}
 								{isW3FDelegate && (
 									<Tooltip
-										title='Web3 foundation member'
+										title='Web3 foundation delegate'
 										className={classNames(poppins.className, poppins.variable)}
 									>
 										<Image

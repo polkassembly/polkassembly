@@ -43,7 +43,6 @@ const StyledCard = styled(Card)`
 `;
 
 const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) => {
-	console.log('votesSplitData', votesSplitData);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 

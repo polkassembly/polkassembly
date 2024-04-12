@@ -71,7 +71,7 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 			<Divider className=' bg-[#D2D8E0] dark:bg-separatorDark sm:hidden' />
 
 			{/* Total Voting Power */}
-			<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
+			{/* <div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 				<ImageIcon
 					src='/assets/icons/analytics/voting-power.svg'
 					alt='proposal created icon'
@@ -96,7 +96,7 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 				className='hidden h-[87px] bg-[#D2D8E0] dark:bg-separatorDark sm:flex'
 				type='vertical'
 			/>
-			<Divider className=' bg-[#D2D8E0] dark:bg-separatorDark sm:hidden' />
+			<Divider className=' bg-[#D2D8E0] dark:bg-separatorDark sm:hidden' /> */}
 
 			{/* Discussions Created */}
 			<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>

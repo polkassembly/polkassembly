@@ -43,3 +43,9 @@ export interface IAppLayout {
 	pageProps: any;
 	className?: string;
 }
+
+export interface ITopNudges {
+	isIdentitySet: boolean;
+	isIdentityUnverified?: boolean;
+	handleSetIdentityClick: () => void;
+}

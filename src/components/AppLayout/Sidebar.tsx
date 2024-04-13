@@ -5,7 +5,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 import React, { memo, useState } from 'react';
-import { NextComponentType, NextPageContext } from 'next';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -53,18 +52,12 @@ import { useTheme } from 'next-themes';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
-import { ISidebar } from './types';
+import { IAppLayout, ISidebar } from './types';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const { Content, Sider } = Layout;
 
-interface Props {
-	Component: NextComponentType<NextPageContext, any, any>;
-	pageProps: any;
-	className?: string;
-}
-
-const CustomContent = memo(function CustomContent({ Component, pageProps }: Props) {
+const CustomContent = memo(function CustomContent({ Component, pageProps }: IAppLayout) {
 	return (
 		<Content className={'mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6'}>
 			<Component {...pageProps} />

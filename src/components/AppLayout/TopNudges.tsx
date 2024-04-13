@@ -8,14 +8,9 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import ImageIcon from '../../ui-components/ImageIcon';
 import { onchainIdentitySupportedNetwork } from '~src/components/Post/Tabs/PostStats/util/constants';
+import { ITopNudges } from './types';
 
-interface Props {
-	isIdentitySet: boolean;
-	isIdentityUnverified?: boolean;
-	handleSetIdentityClick: () => void;
-}
-
-const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified }: Props) => {
+const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified }: ITopNudges) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
 	const router = useRouter();

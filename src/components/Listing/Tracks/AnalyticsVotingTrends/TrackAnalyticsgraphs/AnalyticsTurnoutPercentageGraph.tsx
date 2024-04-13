@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PointTooltipProps, ResponsiveLine } from '@nivo/line';
 import styled from 'styled-components';
-import { Card } from 'antd';
+import { Card, Slider } from 'antd';
 import { useTheme } from 'next-themes';
 
 interface IProps {
@@ -43,17 +43,40 @@ const CustomTooltip = ({ point }: PointTooltipProps) => {
 	);
 };
 
+const calculateDefaultRange = (dataLength: number): [number, number] => {
+	if (dataLength > 50) {
+		return [dataLength - 50, dataLength - 1];
+	}
+	return [0, dataLength - 1];
+};
+
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
+
+	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
+
+	useEffect(() => {
+		setSelectedRange(calculateDefaultRange(supportData.length));
+	}, [supportData.length]);
+
+	const onChange = (value: [number, number]) => {
+		setSelectedRange(value);
+	};
 	const data = [
 		{
 			id: 'Turnout',
-			data: supportData.map((item) => ({
+			data: supportData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 				x: item.index,
 				y: parseFloat(item.percentage)
 			}))
 		}
 	];
+	const minIndex = supportData[0].index;
+	const maxIndex = supportData[supportData.length - 1].index;
+	const marks = {
+		[0]: minIndex.toString(),
+		[supportData.length - 1]: maxIndex.toString()
+	};
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
@@ -128,6 +151,23 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 								fontSize: 12,
 								textTransform: 'capitalize'
 							}
+						}
+					}}
+				/>
+				<Slider
+					range
+					min={0}
+					max={supportData.length - 1}
+					value={selectedRange}
+					onChange={onChange}
+					marks={marks}
+					tooltip={{
+						formatter: (value) => {
+							if (value !== undefined && value >= 0 && value < supportData.length) {
+								const dataIndex = supportData[value].index;
+								return `Referenda: ${dataIndex}`;
+							}
+							return '';
 						}
 					}}
 				/>

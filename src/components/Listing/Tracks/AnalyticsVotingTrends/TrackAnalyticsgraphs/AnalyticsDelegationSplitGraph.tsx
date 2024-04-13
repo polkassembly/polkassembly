@@ -5,9 +5,9 @@
 /* eslint-disable sort-keys */
 
 import { ResponsiveBar } from '@nivo/bar';
-import { Card } from 'antd';
+import { Card, Slider } from 'antd';
 import { useTheme } from 'next-themes';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -41,9 +41,21 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const calculateDefaultRange = (dataLength: number): [number, number] => {
+	if (dataLength > 50) {
+		return [dataLength - 50, dataLength - 1];
+	}
+	return [0, dataLength - 1];
+};
+
 const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }: IProps) => {
-	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
+	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
+
+	useEffect(() => {
+		setSelectedRange(calculateDefaultRange(delegationSplitData.length));
+	}, [delegationSplitData.length]);
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -59,26 +71,36 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 		const solo = bnToIntBalance(new BN(item?.solo?.toString())) || 0;
 		return { delegated, solo };
 	};
-	const data = delegationSplitData.map((item) => ({
+	const onChange = (value: [number, number]) => {
+		setSelectedRange(value);
+	};
+	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 		index: `${item.index}`,
 		delegated: item.delegated,
 		solo: item.solo
 	}));
 
-	const chartData = delegationSplitData.map((item) => ({
+	const filteredChartData = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 		index: `${item.index}`,
 		...getDelegatedAndSoloVotes(item)
 	}));
 
-	const tickInterval = Math.ceil(delegationSplitData.length / 10);
-	const tickValues = delegationSplitData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
+	const tickInterval = Math.ceil(filteredChartData.length / 10);
+	const tickValues = filteredChartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
+
+	const minIndex = delegationSplitData[0].index;
+	const maxIndex = delegationSplitData[delegationSplitData.length - 1].index;
+	const marks = {
+		[0]: minIndex.toString(),
+		[delegationSplitData.length - 1]: maxIndex.toString()
+	};
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Delegation Split</h2>
 			<div className='h-[250px]'>
 				<ResponsiveBar
-					data={isUsedInAccounts ? data : chartData}
+					data={isUsedInAccounts ? data : filteredChartData}
 					keys={['delegated', 'solo']}
 					indexBy='index'
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
@@ -178,6 +200,23 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					}}
 					ariaLabel='Nivo bar chart demo'
 					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+				/>
+				<Slider
+					range
+					min={0}
+					max={delegationSplitData.length - 1}
+					value={selectedRange}
+					onChange={onChange}
+					marks={marks}
+					tooltip={{
+						formatter: (value) => {
+							if (value !== undefined && value >= 0 && value < delegationSplitData.length) {
+								const dataIndex = delegationSplitData[value].index;
+								return `Referenda: ${dataIndex}`;
+							}
+							return '';
+						}
+					}}
 				/>
 			</div>
 		</StyledCard>

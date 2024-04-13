@@ -5,9 +5,9 @@
 /* eslint-disable sort-keys */
 
 import { ResponsiveBar } from '@nivo/bar';
-import { Card } from 'antd';
+import { Card, Slider } from 'antd';
 import { useTheme } from 'next-themes';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import formatBnBalance from '~src/util/formatBnBalance';
@@ -42,16 +42,28 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const calculateDefaultRange = (dataLength: number): [number, number] => {
+	if (dataLength > 50) {
+		return [dataLength - 50, dataLength - 1];
+	}
+	return [0, dataLength - 1];
+};
+
 const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
+
+	useEffect(() => {
+		setSelectedRange(calculateDefaultRange(votesSplitData.length));
+	}, [votesSplitData.length]);
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
 		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue.toString());
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
-	const data = votesSplitData.map((item) => ({
+	const data = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 		abstain: item.abstain,
 		aye: item.aye,
 		index: item.index,
@@ -64,7 +76,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
 
-	const chartData = votesSplitData.map((item) => {
+	const chartData = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => {
 		return {
 			abstain: bnToIntBalance(item.abstain || ZERO) || 0,
 			aye: bnToIntBalance(item.aye || ZERO) || 0,
@@ -72,8 +84,19 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 			index: item.index
 		};
 	});
-	const tickInterval = Math.ceil(votesSplitData.length / 10);
-	const tickValues = votesSplitData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
+
+	const onChange = (value: [number, number]) => {
+		setSelectedRange(value);
+	};
+	const tickInterval = Math.ceil(chartData.length / 20);
+	const tickValues = chartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
+
+	const minIndex = votesSplitData[0].index;
+	const maxIndex = votesSplitData[votesSplitData.length - 1].index;
+	const marks = {
+		[0]: minIndex.toString(),
+		[votesSplitData.length - 1]: maxIndex.toString()
+	};
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
@@ -185,6 +208,23 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					animate={true}
 					groupMode='stacked'
 					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+				/>
+				<Slider
+					range
+					min={0}
+					max={votesSplitData.length - 1}
+					value={selectedRange}
+					onChange={onChange}
+					marks={marks}
+					tooltip={{
+						formatter: (value) => {
+							if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+								const dataIndex = votesSplitData[value].index;
+								return `Referenda: ${dataIndex}`;
+							}
+							return '';
+						}
+					}}
 				/>
 			</div>
 		</StyledCard>

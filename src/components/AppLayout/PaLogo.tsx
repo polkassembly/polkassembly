@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import { useTheme } from 'next-themes';
-import { IPaLogo } from './type';
+import { IPaLogo } from './types';
 
 const PaLogo: FC<IPaLogo> = (props) => {
 	const { className, sidedrawer = true } = props;

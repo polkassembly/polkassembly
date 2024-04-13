@@ -18,13 +18,13 @@ import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
-import { IUserDropdown } from './type';
 import styled from 'styled-components';
 
 import MailIcon from '~assets/icons/mail.svg';
 import ArrowIcon from '~assets/icons/arrow.svg';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { ApplayoutIdentityIcon, ArrowDownIcon, ClearIdentityOutlinedIcon } from '../../ui-components/CustomIcons';
+import { IUserDropdown } from './types';
 
 const UserDropdown = ({ className, displayName, isVerified, isIdentityExists, setOpenAddressLinkedModal, setOpenIdentityModal, children }: IUserDropdown): JSX.Element => {
 	const { network } = useNetworkSelector();

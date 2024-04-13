@@ -31,9 +31,9 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from './UserDropdown';
-import { INavHeader } from './type';
 import ProductsRedirectionMenu from './ProductsRedirectionMenu';
 import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
+import { INavHeader } from './types';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false

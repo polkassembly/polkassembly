@@ -20,7 +20,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
-import TopNudges from '~src/ui-components/TopNudges';
+import TopNudges from '~src/components/AppLayout/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 import { IAppLayout } from './types';

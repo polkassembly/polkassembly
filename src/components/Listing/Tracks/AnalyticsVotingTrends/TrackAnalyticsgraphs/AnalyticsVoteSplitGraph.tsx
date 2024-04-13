@@ -209,23 +209,25 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					groupMode='stacked'
 					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
 				/>
-				<Slider
-					range
-					min={0}
-					max={votesSplitData.length - 1}
-					value={selectedRange}
-					onChange={onChange}
-					marks={marks}
-					tooltip={{
-						formatter: (value) => {
-							if (value !== undefined && value >= 0 && value < votesSplitData.length) {
-								const dataIndex = votesSplitData[value].index;
-								return `Referenda: ${dataIndex}`;
+				{votesSplitData.length > 10 ? (
+					<Slider
+						range
+						min={0}
+						max={votesSplitData.length - 1}
+						value={selectedRange}
+						onChange={onChange}
+						marks={marks}
+						tooltip={{
+							formatter: (value) => {
+								if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+									const dataIndex = votesSplitData[value].index;
+									return `Referenda: ${dataIndex}`;
+								}
+								return '';
 							}
-							return '';
-						}
-					}}
-				/>
+						}}
+					/>
+				) : null}
 			</div>
 		</StyledCard>
 	);

@@ -154,23 +154,25 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 						}
 					}}
 				/>
-				<Slider
-					range
-					min={0}
-					max={supportData.length - 1}
-					value={selectedRange}
-					onChange={onChange}
-					marks={marks}
-					tooltip={{
-						formatter: (value) => {
-							if (value !== undefined && value >= 0 && value < supportData.length) {
-								const dataIndex = supportData[value].index;
-								return `Referenda: ${dataIndex}`;
+				{supportData.length > 10 ? (
+					<Slider
+						range
+						min={0}
+						max={supportData.length - 1}
+						value={selectedRange}
+						onChange={onChange}
+						marks={marks}
+						tooltip={{
+							formatter: (value) => {
+								if (value !== undefined && value >= 0 && value < supportData.length) {
+									const dataIndex = supportData[value].index;
+									return `Referenda: ${dataIndex}`;
+								}
+								return '';
 							}
-							return '';
-						}
-					}}
-				/>
+						}}
+					/>
+				) : null}
 			</div>
 		</StyledCard>
 	);

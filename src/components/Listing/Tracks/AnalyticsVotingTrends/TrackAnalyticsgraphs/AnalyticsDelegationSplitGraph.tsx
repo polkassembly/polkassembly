@@ -70,6 +70,9 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 		...getDelegatedAndSoloVotes(item)
 	}));
 
+	const tickInterval = Math.ceil(delegationSplitData.length / 10);
+	const tickValues = delegationSplitData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
+
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Delegation Split</h2>
@@ -88,6 +91,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					axisTop={null}
 					axisRight={null}
 					axisBottom={{
+						tickValues: tickValues,
 						tickPadding: 5,
 						tickRotation: 0,
 						tickSize: 5,

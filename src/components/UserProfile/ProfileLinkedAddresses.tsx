@@ -20,7 +20,7 @@ import { useApiContext } from '~src/context';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
-import { onchainIdentitySupportedNetwork } from '../AppLayout';
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false

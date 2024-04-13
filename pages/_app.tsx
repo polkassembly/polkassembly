@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
 import { useEffect, useState } from 'react';
-import AppLayout from 'src/components/AppLayout';
+import AppLayout from '~src/components/AppLayout';
 // import CMDK from 'src/components/CMDK';
 import { antdTheme } from 'styles/antdTheme';
 

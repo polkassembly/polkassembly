@@ -858,3 +858,7 @@ z-index: 105 !important;
 .dark .ant-spin-nested-loading >div>.ant-spin .ant-spin-text {
   text-shadow: none !important;
 }
+
+.dark-icons{
+  filter: invert(64%) sepia(0%) saturate(814%) hue-rotate(171deg) brightness(89%) contrast(94%) !important;
+}

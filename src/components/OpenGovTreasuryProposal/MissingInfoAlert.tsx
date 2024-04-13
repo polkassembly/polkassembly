@@ -8,8 +8,8 @@ import Link from 'next/link';
 import DownArrowIcon from '~assets/icons/down-icon.svg';
 import styled from 'styled-components';
 import { useNetworkSelector, useTreasuryProposalSelector } from '~src/redux/selectors';
-import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Alert from '~src/basic-components/Alert';
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 
 interface Props {
 	isDiscussionLinked: boolean;

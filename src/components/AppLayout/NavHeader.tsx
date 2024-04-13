@@ -3,54 +3,41 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { Dashboard } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import styled from 'styled-components';
 import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
-import TownHall from '~assets/icons/TownHall.svg';
-import Mail from '~assets/icons/mail.svg';
-import MailWhite from '~assets/icons/mailIconWhite.svg';
-import Arrow from '~assets/icons/arrow.svg';
-import ArrowWhite from '~assets/icons/arrow-white.svg';
-import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
 import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { EGovType } from '~src/global/proposalType';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { IconLogout, IconProfile, IconSettings } from '~src/ui-components/CustomIcons';
-import { onchainIdentitySupportedNetwork } from '.';
-import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { logout, setUserDetailsState } from '~src/redux/userDetails';
+import { setUserDetailsState } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import PolkasafeWhiteIcon from '~assets/icons/polkasafe-white-logo.svg';
 import { trackEvent } from 'analytics';
-import StakeIcon from '~assets/stake-icon.svg';
-import DelegateIcon from '~assets/delegate-icon.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
-import UserDropdown from '../../ui-components/UserDropdown';
-import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import UserDropdown from './UserDropdown';
+import { INavHeader } from './type';
+import ProductsRedirectionMenu from './ProductsRedirectionMenu';
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
-import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -60,23 +47,12 @@ const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 	ssr: false
 });
 
-interface Props {
-	className?: string;
-	sidedrawer: boolean;
-	previousRoute?: string;
-	setSidedrawer: React.Dispatch<React.SetStateAction<boolean>>;
-	displayName?: string;
-	isVerified?: boolean;
-	isIdentityExists?: boolean;
-}
-
-const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: Props) => {
+const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerified, isIdentityExists }: INavHeader) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	const { username, id, loginAddress } = currentUser;
+	const { username, id } = currentUser;
 	const router = useRouter();
-	const { web3signup } = currentUser;
-	const [open, setOpen] = useState(false);
+	const [openIdentityModal, setOpenIdentityModal] = useState(false);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
@@ -85,13 +61,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
-	const handleLogout = async (username: string) => {
-		dispatch(logout());
-		if (!router.query?.username) return;
-		if (router.query?.username.includes(username)) {
-			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
-		}
-	};
 	const setGovTypeToContext = (govType: EGovType) => {
 		dispatch(
 			setUserDetailsState({
@@ -101,234 +70,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		);
 	};
 
-	const handleRemoveIdentity = () => {
-		if (loginAddress) {
-			dispatch(setOpenRemoveIdentityModal(true));
-		} else {
-			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
-		}
-	};
-
 	useEffect(() => {
 		if (network && !isOpenGovSupported(network)) {
 			setGovTypeToContext(EGovType.GOV1);
 		}
-		setOpen(Boolean(router?.query?.setidentity) || false);
+		setOpenIdentityModal(Boolean(router?.query?.setidentity) || false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
-	const handleIdentityButtonClick = () => {
-		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			return;
-		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
-		}
-	};
-
-	const menudropDownItems: ItemType[] = [
-		{
-			className: 'logo-class',
-			key: 'Townhall',
-			label: (
-				<a
-					href='https://townhallgov.com/'
-					target='_blank'
-					rel='noreferrer'
-					className='custom-link after:hidden'
-				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-						<TownHall />
-						<span>TownHall</span>
-					</span>
-				</a>
-			)
-		},
-		{
-			className: 'logo-class',
-			key: 'Polkasafe',
-			label: (
-				<a
-					href='https://polkasafe.xyz/'
-					target='_blank'
-					rel='noreferrer'
-					className='custom-link after:hidden'
-				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-						{theme === 'dark' ? <PolkasafeWhiteIcon /> : <PolkaSafe />}
-						<span>Polkasafe</span>
-					</span>
-				</a>
-			)
-		},
-		{
-			className: 'logo-class',
-			key: 'Staking',
-			label: (
-				<a
-					href='https://staking.polkadot.network/'
-					target='_blank'
-					rel='noreferrer'
-					className='custom-link after:hidden'
-				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-						<StakeIcon />
-						<span>Staking</span>
-					</span>
-				</a>
-			)
-		}
-	];
-
-	if (delegationSupportedNetworks?.includes(network)) {
-		menudropDownItems.push({
-			className: 'logo-class',
-			key: 'Delegation',
-			label: (
-				<a
-					href={`https://${network}.polkassembly.io/delegation`}
-					target='_blank'
-					rel='noreferrer'
-					className='custom-link after:hidden'
-				>
-					<span className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'>
-						<DelegateIcon />
-						<span>Delegation</span>
-					</span>
-				</a>
-			)
-		});
-	}
-
-	const dropdownMenuItems: ItemType[] = [
-		{
-			key: 'view profile',
-			label: (
-				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					href={`/user/${username}`}
-				>
-					<IconProfile className='userdropdown-icon text-2xl' />
-					<span>View Profile</span>
-				</Link>
-			)
-		},
-		{
-			key: 'settings',
-			label: (
-				<Link
-					className='flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary'
-					href='/settings?tab=account'
-				>
-					<IconSettings className='userdropdown-icon text-2xl' />
-					<span>Settings</span>
-				</Link>
-			)
-		},
-		{
-			key: 'logout',
-			label: (
-				<Link
-					href='/'
-					className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
-					onClick={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						handleLogout(username || '');
-						window.location.reload();
-					}}
-				>
-					<IconLogout className='userdropdown-icon text-2xl' />
-					<span>Logout</span>
-				</Link>
-			)
-		}
-	];
-
-	if (onchainIdentitySupportedNetwork.includes(network)) {
-		const options = [
-			{
-				key: 'set on-chain identity',
-				label: (
-					<Link
-						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
-						href={''}
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							// GAEvent for setOnchain identity clicked
-							trackEvent('set_onchain_identity_clicked', 'opened_identity_verification', {
-								userId: currentUser?.id || '',
-								userName: currentUser?.username || ''
-							});
-							handleIdentityButtonClick();
-						}}
-					>
-						<span className='text-2xl'>
-							<ApplayoutIdentityIcon />
-						</span>
-						<span>Set on-chain identity</span>
-						{!isIdentityExists && (
-							<span className='flex items-center'>
-								<IdentityCaution />
-							</span>
-						)}
-					</Link>
-				)
-			}
-		];
-
-		if (isIdentityExists) {
-			options.push({
-				key: 'remove identity',
-				label: (
-					<Link
-						className={`-mt-1 flex items-center gap-x-2.5 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
-						href={''}
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							handleRemoveIdentity?.();
-						}}
-					>
-						<span className='ml-0.5 text-[22px]'>
-							<ClearIdentityOutlinedIcon />
-						</span>
-						<span>Remove Identity</span>
-					</Link>
-				)
-			});
-		}
-		dropdownMenuItems.splice(1, 0, ...options);
-	}
-
-	const AuthDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			menu={{ items: dropdownMenuItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			className='cursor-pointer'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
 
 	return (
 		<Header
@@ -390,25 +138,13 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								/>
 							</div>
 						) : (
-							<AuthDropdown>
-								{!web3signup ? (
-									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
-										{theme === 'dark' ? <MailWhite /> : <Mail />}
-										<div className='flex items-center justify-between gap-x-1'>
-											<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
-											{theme === 'dark' ? <ArrowWhite /> : <Arrow />}
-										</div>
-									</div>
-								) : (
-									<div className={'flex items-center justify-between gap-x-2'}>
-										<UserDropdown
-											className='navbar-user-dropdown h-[32px] max-w-[165px]'
-											displayName={displayName}
-											isVerified={isVerified}
-										/>
-									</div>
-								)}
-							</AuthDropdown>
+							<UserDropdown
+								isIdentityExists={isIdentityExists || false}
+								displayName={displayName || ''}
+								isVerified={isVerified || false}
+								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+								setOpenIdentityModal={setOpenIdentityModal}
+							/>
 						)}
 						<div
 							className='mr-2 lg:mr-0'
@@ -419,28 +155,30 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								});
 							}}
 						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
+							<ProductsRedirectionMenu />
 						</div>
 					</Space>
-					{open ? (
+					{openIdentityModal ? (
 						<button
 							onBlur={() => {
 								setTimeout(() => {
-									setOpen(false);
+									setOpenIdentityModal(false);
 								}, 100);
 							}}
 							onClick={() => {
 								if (!isClicked.current) {
-									setOpen(false);
+									setOpenIdentityModal(false);
 								}
 								isClicked.current = false;
 							}}
 							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px] dark:text-white' />
-							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
+							<div
+								className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${
+									!sidedrawer && openIdentityModal ? 'block' : 'hidden'
+								}`}
+							>
 								<div
 									onClick={() => {
 										isClicked.current = true;
@@ -464,7 +202,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<div className='flex flex-col gap-y-4'>
 												<button
 													onClick={() => {
-														setOpen(false);
+														setOpenIdentityModal(false);
 														router.push('/signup');
 													}}
 													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
@@ -473,7 +211,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 												</button>
 												<button
 													onClick={() => {
-														setOpen(false);
+														setOpenIdentityModal(false);
 														router.push('/login');
 													}}
 													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
@@ -490,7 +228,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						<button
 							onClick={() => {
 								setSidedrawer(false);
-								setOpen(true);
+								setOpenIdentityModal(true);
 							}}
 							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
 						>
@@ -519,8 +257,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
 					<OnChainIdentity
-						open={open}
-						setOpen={setOpen}
+						open={openIdentityModal}
+						setOpen={setOpenIdentityModal}
 						openAddressLinkedModal={openAddressLinkedModal}
 						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 					/>
@@ -595,9 +333,6 @@ export default styled(NavHeader)`
 		display: none !important;
 	}
 
-	.userdropdown-icon {
-		transform: scale(0.9);
-	}
 	.text-container {
 		font-size: 16px !important;
 		font-style: normal;

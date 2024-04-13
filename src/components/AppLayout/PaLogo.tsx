@@ -3,13 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import { useTheme } from 'next-themes';
+import { IPaLogo } from './type';
 
-interface IPaLogoProps {
-	className?: string;
-	sidedrawer?: boolean;
-	style?: object;
-}
-const PaLogo: FC<IPaLogoProps> = (props) => {
+const PaLogo: FC<IPaLogo> = (props) => {
 	const { className, sidedrawer = true } = props;
 	const { resolvedTheme: theme } = useTheme();
 	return sidedrawer ? (

@@ -4,13 +4,12 @@
 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { memo, ReactNode, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
@@ -37,9 +36,7 @@ import {
 	RootIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
-	ApplayoutIdentityIcon,
-	ArchivedIcon,
-	ClearIdentityOutlinedIcon
+	ArchivedIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
@@ -58,34 +55,17 @@ import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 
-import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { useDispatch } from 'react-redux';
-import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
-import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
-
-interface IUserDropdown {
-	handleSetIdentityClick: any;
-	isIdentityUnverified: boolean;
-	isGood: boolean;
-	handleLogout: any;
-	network: string;
-	handleRemoveIdentity: (pre?: any) => void;
-	img?: string | null;
-	username?: string;
-	identityUsername?: string;
-	className?: string;
-	isIdentityExists: boolean;
-}
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
+import UserDropdown from './UserDropdown';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -122,169 +102,6 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 	} as MenuItem;
 }
 
-export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
-
-const getUserDropDown = ({
-	handleLogout,
-	handleRemoveIdentity,
-	handleSetIdentityClick,
-	isGood,
-	isIdentityExists,
-	isIdentityUnverified,
-	network,
-	className,
-	identityUsername,
-	img,
-	username
-}: IUserDropdown): MenuItem => {
-	const profileUsername = identityUsername || username || '';
-	const dropdownMenuItems: ItemType[] = [
-		{
-			key: 'view profile',
-			label: (
-				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
-					href={`/user/${username}`}
-				>
-					<UserOutlined />
-					<span>View Profile</span>
-				</Link>
-			)
-		},
-		{
-			key: 'settings',
-			label: (
-				<Link
-					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
-					href='/settings?tab=account'
-				>
-					<SettingOutlined />
-					<span>Settings</span>
-				</Link>
-			)
-		},
-		{
-			key: 'logout',
-			label: (
-				<Link
-					href='/'
-					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
-					onClick={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						handleLogout(username);
-					}}
-				>
-					<LogoutOutlined />
-					<span>Logout</span>
-				</Link>
-			)
-		}
-	];
-
-	if (onchainIdentitySupportedNetwork.includes(network)) {
-		const options = [
-			{
-				key: 'set on-chain identity',
-				label: (
-					<Link
-						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-						href={''}
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							handleSetIdentityClick();
-						}}
-					>
-						<span className='ml-0.5 text-lg'>
-							<ApplayoutIdentityIcon />
-						</span>
-						<span>Set on-chain identity</span>
-						{isIdentityUnverified && (
-							<span className='flex items-center'>
-								<IdentityCaution />
-							</span>
-						)}
-					</Link>
-				)
-			}
-		];
-
-		if (isIdentityExists) {
-			options.push({
-				key: 'remove identity',
-				label: (
-					<Link
-						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-						href={''}
-						onClick={(e) => {
-							e.stopPropagation();
-							e.preventDefault();
-							handleRemoveIdentity?.();
-						}}
-					>
-						<span className='ml-0.5 text-[22px]'>
-							<ClearIdentityOutlinedIcon />
-						</span>
-						<span>Remove Identity</span>
-					</Link>
-				)
-			});
-		}
-		dropdownMenuItems.splice(1, 0, ...options);
-	}
-
-	const AuthDropdown = ({ children }: { children: ReactNode }) => {
-		const { resolvedTheme: theme } = useTheme();
-		return (
-			<Dropdown
-				theme={theme as any}
-				menu={{ items: dropdownMenuItems }}
-				trigger={['click']}
-				className='profile-dropdown'
-				overlayClassName='z-[101]'
-			>
-				{children}
-			</Dropdown>
-		);
-	};
-
-	return getSiderMenuItem(
-		<AuthDropdown>
-			<div className='flex items-center justify-between gap-x-2'>
-				<div className={`flex gap-2 text-sm ${!isGood && isIdentityUnverified && 'w-[85%]'}`}>
-					<span className={`normal-case ${!isGood && isIdentityUnverified && 'truncate'}`}>
-						{profileUsername && profileUsername?.length > 12 && isGood && !isIdentityUnverified ? `${profileUsername?.slice(0, 12)}...` : profileUsername}
-					</span>
-					{isGood && !isIdentityUnverified && (
-						<CheckCircleFilled
-							style={{ color: 'green' }}
-							className='rounded-full border-none bg-transparent text-sm'
-						/>
-					)}
-				</div>
-				<DownOutlined className='text-base text-navBlue hover:text-pink_primary' />
-			</div>
-		</AuthDropdown>,
-		'userMenu',
-		<AuthDropdown>
-			{img ? (
-				<Avatar
-					className='-ml-2.5 mr-2'
-					size={40}
-					src={img}
-				/>
-			) : (
-				<Avatar
-					className='-ml-2.5 mr-2'
-					size={40}
-					icon={<UserOutlined />}
-				/>
-			)}
-		</AuthDropdown>
-	);
-};
-
 interface Props {
 	Component: NextComponentType<NextPageContext, any, any>;
 	pageProps: any;
@@ -307,7 +124,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isIdentitySet, setIsIdentitySet] = useState<boolean>(false);
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
-	const dispatch = useDispatch();
 
 	// const [notificationVisible, setNotificationVisible] = useState(true);
 	useEffect(() => {
@@ -759,13 +575,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			isMobile && setSidedrawer(false);
 		}
 	};
-	const handleLogout = async (username: string) => {
-		dispatch(logout());
-		if (!router.query?.username) return;
-		if (router.query?.username.includes(username)) {
-			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
-		}
-	};
 
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
@@ -797,28 +606,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 	}
 
-	const handleRemoveIdentity = () => {
-		if (loginAddress) {
-			dispatch(setOpenRemoveIdentityModal(true));
-		} else {
-			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
-		}
-	};
-
-	const userDropdown = getUserDropDown({
-		handleLogout: handleLogout,
-		handleRemoveIdentity: handleRemoveIdentity,
-		handleSetIdentityClick: handleIdentityButtonClick,
-		isGood: isGood,
-		isIdentityExists: isIdentitySet,
-		isIdentityUnverified: isIdentityUnverified,
-		network: network,
-		className: `${className} ${poppins.className} ${poppins.variable}`,
-		identityUsername: mainDisplay,
-		img: picture,
-		username: username || ''
-	});
-
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
 	if (isOpenGovSupported(network)) {
@@ -826,8 +613,43 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		sidebarItems = !sidedrawer ? gov2CollapsedItems : gov2Items;
 	}
 
-	if (isMobile) {
-		sidebarItems = [username && isMobile ? userDropdown : null, ...sidebarItems];
+	if (isMobile && username) {
+		sidebarItems = [
+			getSiderMenuItem(
+				<UserDropdown
+					key='user-dropdown'
+					isIdentityExists={isIdentitySet}
+					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					setOpenIdentityModal={setOpen}
+					displayName={mainDisplay}
+					isVerified={isGood && !isIdentityUnverified}
+				/>,
+				'userMenu',
+				<UserDropdown
+					key='user-dropdown'
+					isIdentityExists={isIdentitySet}
+					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					setOpenIdentityModal={setOpen}
+					displayName={mainDisplay}
+					isVerified={isGood && !isIdentityUnverified}
+				>
+					{picture ? (
+						<Avatar
+							className='-ml-2.5 mr-2'
+							size={40}
+							src={picture}
+						/>
+					) : (
+						<Avatar
+							className='-ml-2.5 mr-2'
+							size={40}
+							icon={<UserOutlined />}
+						/>
+					)}
+				</UserDropdown>
+			),
+			...sidebarItems
+		];
 	}
 
 	return (

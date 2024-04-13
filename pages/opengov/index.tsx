@@ -26,7 +26,6 @@ import styled from 'styled-components';
 import { redisGet, redisSet } from '~src/auth/redis';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
@@ -34,6 +33,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
+import { onchainIdentitySupportedNetwork } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,

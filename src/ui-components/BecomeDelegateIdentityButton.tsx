@@ -4,8 +4,8 @@
 import React, { useState } from 'react';
 import ImageIcon from './ImageIcon';
 import OnChainIdentity from '~src/components/OnchainIdentity';
-import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { onchainIdentitySupportedNetwork } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 interface Props {
 	closeModal: () => void;

@@ -4,10 +4,10 @@
 import React, { useState, useEffect } from 'react';
 import { useApiContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useRouter } from 'next/router';
 import ImageIcon from './ImageIcon';
+import { onchainIdentitySupportedNetwork } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 interface Props {
 	isIdentitySet: boolean;

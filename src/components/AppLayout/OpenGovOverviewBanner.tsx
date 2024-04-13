@@ -3,15 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { OpenGovBannerIcon } from '~src/ui-components/CustomIcons';
-import { getTime } from './OpenGovHeaderBanner';
 import Link from 'next/link';
+import { getProposalGoLiveTime } from './utils/getProposalGoLiveTime';
 
 const OpenGovOverviewBanner = () => {
-	const [[days, hrs, mins, secs], setTime] = useState(getTime());
+	const [[days, hrs, mins, secs], setTime] = useState(getProposalGoLiveTime());
 	useEffect(() => {
 		const timer = setInterval(() => {
 			setTime(() => {
-				return getTime();
+				return getProposalGoLiveTime();
 			});
 		}, 1000);
 		return () => clearInterval(timer);

@@ -97,7 +97,19 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
-			<h2 className='text-xl font-semibold'>Delegation Split</h2>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-xl font-semibold'>Delegation Split</h2>
+				<div className='-mt-2 flex items-center gap-[14px]'>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#796EEC]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Delegated</div>
+					</div>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#B6B0FB]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Solo</div>
+					</div>
+				</div>
+			</div>
 			<div className='h-[250px]'>
 				<ResponsiveBar
 					data={isUsedInAccounts ? data : filteredChartData}
@@ -129,33 +141,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					labelSkipWidth={6}
 					labelSkipHeight={12}
 					labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-					legends={[
-						{
-							anchor: 'bottom',
-							dataFrom: 'keys',
-							direction: 'row',
-							effects: [
-								{
-									on: 'hover',
-									style: {
-										itemOpacity: 1
-									}
-								}
-							],
-							itemDirection: 'left-to-right',
-							itemHeight: 20,
-							itemOpacity: 0.85,
-							itemTextColor: theme === 'dark' ? '#747474' : '#576D8B',
-							itemWidth: 100,
-							itemsSpacing: 2,
-							justify: false,
-							symbolShape: 'circle',
-							symbolSize: 6,
-							translateX: 20,
-							translateY: 50
-						}
-					]}
 					role='application'
+					legends={[]}
 					theme={{
 						axis: {
 							domain: {

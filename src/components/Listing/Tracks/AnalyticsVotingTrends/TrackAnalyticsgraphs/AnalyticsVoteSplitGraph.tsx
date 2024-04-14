@@ -100,7 +100,23 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
-			<h2 className='text-xl font-semibold'>Vote Split</h2>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-xl font-semibold'>Vote Split</h2>
+				<div className='-mt-2 flex items-center gap-[14px]'>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#2ED47A] dark:bg-[#64A057]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Aye</div>
+					</div>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#E84865] dark:bg-[#BD2020]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Nay</div>
+					</div>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#407BFF]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Abstain</div>
+					</div>
+				</div>
+			</div>
 			<div className='h-[250px]'>
 				<ResponsiveBar
 					data={isUsedInAccounts ? data : chartData}
@@ -136,32 +152,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					labelSkipHeight={12}
 					enableLabel={false}
 					labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-					legends={[
-						{
-							anchor: 'bottom',
-							dataFrom: 'keys',
-							direction: 'row',
-							effects: [
-								{
-									on: 'hover',
-									style: {
-										itemOpacity: 1
-									}
-								}
-							],
-							itemDirection: 'left-to-right',
-							itemHeight: 20,
-							itemOpacity: 0.85,
-							itemTextColor: theme === 'dark' ? '#747474' : '#576D8B',
-							itemWidth: 50,
-							itemsSpacing: 2,
-							justify: false,
-							symbolShape: 'circle',
-							symbolSize: 6,
-							translateX: -20,
-							translateY: 50
-						}
-					]}
+					legends={[]}
 					role='application'
 					theme={{
 						axis: {

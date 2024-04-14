@@ -84,7 +84,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 			<div className='h-[250px]'>
 				<ResponsiveLine
 					data={data}
-					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
+					margin={{ bottom: 30, left: 35, right: 0, top: 10 }}
 					xScale={{ type: 'point' }}
 					yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 					axisTop={null}
@@ -156,23 +156,25 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 				/>
 			</div>
 			{supportData.length > 10 ? (
-				<Slider
-					range
-					min={0}
-					max={supportData.length - 1}
-					value={selectedRange}
-					onChange={onChange}
-					marks={marks}
-					tooltip={{
-						formatter: (value) => {
-							if (value !== undefined && value >= 0 && value < supportData.length) {
-								const dataIndex = supportData[value].index;
-								return `Referenda: ${dataIndex}`;
+				<div className='ml-auto w-[96%]'>
+					<Slider
+						range
+						min={0}
+						max={supportData.length - 1}
+						value={selectedRange}
+						onChange={onChange}
+						marks={marks}
+						tooltip={{
+							formatter: (value) => {
+								if (value !== undefined && value >= 0 && value < supportData.length) {
+									const dataIndex = supportData[value].index;
+									return `Referenda: ${dataIndex}`;
+								}
+								return '';
 							}
-							return '';
-						}
-					}}
-				/>
+						}}
+					/>
+				</div>
 			) : null}
 		</StyledCard>
 	);

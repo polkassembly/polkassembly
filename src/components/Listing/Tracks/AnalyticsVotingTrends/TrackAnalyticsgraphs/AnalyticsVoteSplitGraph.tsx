@@ -122,7 +122,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					data={isUsedInAccounts ? data : chartData}
 					keys={['aye', 'nay', 'abstain']}
 					indexBy='index'
-					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
+					margin={{ bottom: 40, left: 40, right: 0, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
 					borderRadius={2}
@@ -202,23 +202,25 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 				/>
 			</div>
 			{votesSplitData.length > 10 ? (
-				<Slider
-					range
-					min={0}
-					max={votesSplitData.length - 1}
-					value={selectedRange}
-					onChange={onChange}
-					marks={marks}
-					tooltip={{
-						formatter: (value) => {
-							if (value !== undefined && value >= 0 && value < votesSplitData.length) {
-								const dataIndex = votesSplitData[value].index;
-								return `Referenda: ${dataIndex}`;
+				<div className='ml-auto w-[98%]'>
+					<Slider
+						range
+						min={0}
+						max={votesSplitData.length - 1}
+						value={selectedRange}
+						onChange={onChange}
+						marks={marks}
+						tooltip={{
+							formatter: (value) => {
+								if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+									const dataIndex = votesSplitData[value].index;
+									return `Referenda: ${dataIndex}`;
+								}
+								return '';
 							}
-							return '';
-						}
-					}}
-				/>
+						}}
+					/>
+				</div>
 			) : null}
 		</StyledCard>
 	);

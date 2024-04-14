@@ -65,7 +65,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 							src='/assets/icons/delegate-green-icon.svg'
 							alt='Delegate icon'
 						/>{' '}
-						<span className='text-base font-semibold dark:text-blue-dark-high'>Delegation</span>
+						<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Delegation</span>
 					</div>
 				}
 				key='2'

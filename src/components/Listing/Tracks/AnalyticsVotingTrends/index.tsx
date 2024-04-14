@@ -14,6 +14,7 @@ import AnalyticsConvictionVotes from './AnalyticsConvictionVotes';
 import AnalyticsVoteAmountVotes from './AnalyticsVoteAmountVotes';
 import AnalyticsAccountsVotes from './AnalyticsAccountsVotes';
 import Skeleton from '~src/basic-components/Skeleton';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const { Panel } = Collapse;
 
@@ -32,6 +33,7 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
 	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
 
 	const getVoteData = async () => {
 		try {
@@ -82,32 +84,46 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			activeKey={activeKey}
+			onChange={(key) => {
+				if (typeof key === 'string' || typeof key === 'number') {
+					setActiveKey(key);
+				} else if (Array.isArray(key) && key.length > 0) {
+					setActiveKey(key[0]);
+				} else {
+					setActiveKey(undefined);
+				}
+			}}
 		>
 			<Panel
 				header={
-					<div className='flex items-center gap-2'>
-						<ImageIcon
-							src='/assets/icons/voting-trends.svg'
-							alt='Voting Trends icon'
-						/>
-						<span className='text-base font-semibold dark:text-blue-dark-high'>Voting Trends</span>
+					<div className='flex w-full items-center space-x-4'>
+						<div className='flex items-center gap-2'>
+							<ImageIcon
+								src='/assets/icons/voting-trends.svg'
+								alt='Voting Trends icon'
+							/>
+							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Voting Trends</span>
+						</div>
+						{activeKey === '1' && (
+							<div onClick={(e) => e.stopPropagation()}>
+								{isLoading ? (
+									<SkeletonButton />
+								) : (
+									<StatTabs
+										items={tabItems}
+										setActiveTab={setActiveTab}
+										activeTab={activeTab}
+										isUsedInAnalytics={true}
+									/>
+								)}
+							</div>
+						)}
 					</div>
 				}
 				key='1'
 			>
-				{' '}
-				{isLoading ? (
-					<Skeleton />
-				) : (
-					<>
-						<StatTabs
-							items={tabItems}
-							setActiveTab={setActiveTab}
-							activeTab={activeTab}
-						/>
-						{tabItems.find((item) => item.key === activeTab)?.children}
-					</>
-				)}
+				{isLoading ? <Skeleton /> : <>{tabItems.find((item) => item.key === activeTab)?.children}</>}
 			</Panel>
 		</Collapse>
 	);

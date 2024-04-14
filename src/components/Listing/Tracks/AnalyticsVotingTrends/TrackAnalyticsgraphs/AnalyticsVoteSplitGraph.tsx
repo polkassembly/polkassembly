@@ -71,9 +71,9 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 	}));
 
 	const colors: { [key: string]: string } = {
-		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
-		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
-		nay: theme === 'dark' ? '#BD2020' : '#E84865'
+		abstain: '#407BFF',
+		aye: '#6DE1A2',
+		nay: '#FF778F'
 	};
 
 	const chartData = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => {
@@ -104,11 +104,11 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 				<h2 className='text-xl font-semibold'>Vote Split</h2>
 				<div className='-mt-2 flex items-center gap-[14px]'>
 					<div className='flex items-center gap-1'>
-						<div className='h-1 w-1 rounded-full bg-[#2ED47A] dark:bg-[#64A057]'></div>
+						<div className='h-1 w-1 rounded-full bg-[#6DE1A2]'></div>
 						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Aye</div>
 					</div>
 					<div className='flex items-center gap-1'>
-						<div className='h-1 w-1 rounded-full bg-[#E84865] dark:bg-[#BD2020]'></div>
+						<div className='h-1 w-1 rounded-full bg-[#FF778F]'></div>
 						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Nay</div>
 					</div>
 					<div className='flex items-center gap-1'>
@@ -125,7 +125,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
-					borderRadius={3}
+					borderRadius={2}
 					colors={(bar) => colors[bar.id]}
 					defs={[
 						{ id: 'dots', type: 'patternDots', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', size: 4, padding: 1, stagger: true },

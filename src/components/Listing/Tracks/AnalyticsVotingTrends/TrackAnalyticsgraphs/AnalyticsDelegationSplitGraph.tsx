@@ -113,14 +113,14 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 			<div className='h-[250px]'>
 				<ResponsiveBar
 					data={isUsedInAccounts ? data : filteredChartData}
-					keys={['delegated', 'solo']}
+					keys={['solo', 'delegated']}
 					indexBy='index'
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ type: 'band', round: true }}
 					colors={(bar) => colors[bar.id]}
-					borderRadius={3}
+					borderRadius={2}
 					borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
 					axisTop={null}
 					axisRight={null}

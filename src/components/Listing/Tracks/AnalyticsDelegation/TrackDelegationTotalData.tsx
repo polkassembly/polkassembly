@@ -19,7 +19,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-10'>
 			<div className='flex flex-col'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Delegatee</div>
-				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>{totalDelegates}</span>
+				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalDelegates}</span>
 			</div>
 			<Divider
 				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
@@ -28,7 +28,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 
 			<div className='flex flex-col'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Delegator</div>
-				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>{totalDelegators}</span>
+				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalDelegators}</span>
 			</div>
 			<Divider
 				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
@@ -37,7 +37,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 
 			<div className='flex flex-col'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Capital</div>
-				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>~{parseBalance(totalCapital, 1, true, network)}</span>
+				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>~{parseBalance(totalCapital, 1, true, network)}</span>
 			</div>
 			<Divider
 				className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
@@ -46,7 +46,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 
 			<div className='flex flex-col'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Votes</div>
-				<span className='text-[28px] font-semibold dark:text-blue-dark-high'>~{parseBalance(totalVotesBalance, 1, true, network)}</span>
+				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>~{parseBalance(totalVotesBalance, 1, true, network)}</span>
 			</div>
 		</section>
 	);

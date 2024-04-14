@@ -81,7 +81,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-xl font-semibold'>Average Turnout Percentage</h2>
-			<div className='h-[300px]'>
+			<div className='h-[250px]'>
 				<ResponsiveLine
 					data={data}
 					margin={{ bottom: 50, left: 50, right: 10, top: 10 }}
@@ -154,26 +154,26 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 						}
 					}}
 				/>
-				{supportData.length > 10 ? (
-					<Slider
-						range
-						min={0}
-						max={supportData.length - 1}
-						value={selectedRange}
-						onChange={onChange}
-						marks={marks}
-						tooltip={{
-							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < supportData.length) {
-									const dataIndex = supportData[value].index;
-									return `Referenda: ${dataIndex}`;
-								}
-								return '';
-							}
-						}}
-					/>
-				) : null}
 			</div>
+			{supportData.length > 10 ? (
+				<Slider
+					range
+					min={0}
+					max={supportData.length - 1}
+					value={selectedRange}
+					onChange={onChange}
+					marks={marks}
+					tooltip={{
+						formatter: (value) => {
+							if (value !== undefined && value >= 0 && value < supportData.length) {
+								const dataIndex = supportData[value].index;
+								return `Referenda: ${dataIndex}`;
+							}
+							return '';
+						}
+					}}
+				/>
+			) : null}
 		</StyledCard>
 	);
 };

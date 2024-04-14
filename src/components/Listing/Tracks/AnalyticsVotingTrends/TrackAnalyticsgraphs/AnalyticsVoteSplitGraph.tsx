@@ -101,7 +101,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Vote Split</h2>
-			<div className='h-[260px]'>
+			<div className='h-[250px]'>
 				<ResponsiveBar
 					data={isUsedInAccounts ? data : chartData}
 					keys={['aye', 'nay', 'abstain']}
@@ -209,26 +209,26 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					groupMode='stacked'
 					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
 				/>
-				{votesSplitData.length > 10 ? (
-					<Slider
-						range
-						min={0}
-						max={votesSplitData.length - 1}
-						value={selectedRange}
-						onChange={onChange}
-						marks={marks}
-						tooltip={{
-							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < votesSplitData.length) {
-									const dataIndex = votesSplitData[value].index;
-									return `Referenda: ${dataIndex}`;
-								}
-								return '';
-							}
-						}}
-					/>
-				) : null}
 			</div>
+			{votesSplitData.length > 10 ? (
+				<Slider
+					range
+					min={0}
+					max={votesSplitData.length - 1}
+					value={selectedRange}
+					onChange={onChange}
+					marks={marks}
+					tooltip={{
+						formatter: (value) => {
+							if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+								const dataIndex = votesSplitData[value].index;
+								return `Referenda: ${dataIndex}`;
+							}
+							return '';
+						}
+					}}
+				/>
+			) : null}
 		</StyledCard>
 	);
 };

@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 
 import { ResponsiveBar } from '@nivo/bar';
-import { Card, Slider } from 'antd';
+import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -14,6 +14,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from '~src/global/networkConstants';
+import Slider from '~src/ui-components/Slider';
 
 interface IProps {
 	delegationSplitData: { delegated: string | number; index: number; solo: string | number }[];
@@ -194,6 +195,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					<Slider
 						range
 						min={0}
+						theme={theme as any}
 						max={delegationSplitData.length - 1}
 						value={selectedRange}
 						onChange={onChange}

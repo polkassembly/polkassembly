@@ -5,7 +5,7 @@
 /* eslint-disable sort-keys */
 
 import { ResponsiveBar } from '@nivo/bar';
-import { Card, Slider } from 'antd';
+import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -14,6 +14,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from '~src/global/networkConstants';
+import Slider from '~src/ui-components/Slider';
 
 const ZERO = new BN(0);
 interface IProps {
@@ -206,6 +207,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					<Slider
 						range
 						min={0}
+						theme={theme as any}
 						max={votesSplitData.length - 1}
 						value={selectedRange}
 						onChange={onChange}

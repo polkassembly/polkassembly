@@ -6,8 +6,9 @@
 import React, { useEffect, useState } from 'react';
 import { PointTooltipProps, ResponsiveLine } from '@nivo/line';
 import styled from 'styled-components';
-import { Card, Slider } from 'antd';
+import { Card } from 'antd';
 import { useTheme } from 'next-themes';
+import Slider from '~src/ui-components/Slider';
 
 interface IProps {
 	supportData: { percentage: string; index: number }[];
@@ -160,6 +161,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					<Slider
 						range
 						min={0}
+						theme={theme as any}
 						max={supportData.length - 1}
 						value={selectedRange}
 						onChange={onChange}

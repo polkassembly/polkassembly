@@ -16,6 +16,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from '~src/global/networkConstants';
 import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const ZERO = new BN(0);
 interface IProps {
@@ -48,9 +49,12 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
+		setIsLoading(true);
 		setSelectedRange(calculateDefaultRange(votesSplitData.length));
+		setIsLoading(false);
 	}, [votesSplitData.length]);
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
@@ -112,112 +116,118 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 					</div>
 				</div>
 			</div>
-			<div className='h-[250px]'>
-				<ResponsiveBar
-					data={isUsedInAccounts ? data : chartData}
-					keys={['aye', 'nay', 'abstain']}
-					indexBy='index'
-					margin={{ bottom: 40, left: 40, right: 0, top: 10 }}
-					padding={0.5}
-					valueScale={{ type: 'linear' }}
-					borderRadius={2}
-					colors={(bar) => colors[bar.id]}
-					defs={[
-						{ id: 'dots', type: 'patternDots', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', size: 4, padding: 1, stagger: true },
-						{ id: 'lines', type: 'patternLines', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', rotation: -45, lineWidth: 6, spacing: 10 }
-					]}
-					borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-					axisTop={null}
-					axisRight={null}
-					axisBottom={{
-						tickValues: tickValues,
-						tickPadding: 5,
-						tickRotation: 0,
-						tickSize: 5,
-						truncateTickAt: 0
-					}}
-					axisLeft={{
-						format: (value) => formatUSDWithUnits(value, 1),
-						tickPadding: 5,
-						tickRotation: 0,
-						tickSize: 5,
-						truncateTickAt: 0
-					}}
-					labelSkipWidth={6}
-					labelSkipHeight={12}
-					enableLabel={false}
-					labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-					legends={[]}
-					role='application'
-					theme={{
-						axis: {
-							domain: {
-								line: {
-									stroke: 'transparent',
-									strokeWidth: 1
-								}
-							},
-							ticks: {
-								line: {
-									stroke: 'transparent'
+			{isLoading ? (
+				<Skeleton />
+			) : (
+				<>
+					<div className='h-[250px]'>
+						<ResponsiveBar
+							data={isUsedInAccounts ? data : chartData}
+							keys={['aye', 'nay', 'abstain']}
+							indexBy='index'
+							margin={{ bottom: 40, left: 40, right: 0, top: 10 }}
+							padding={0.5}
+							valueScale={{ type: 'linear' }}
+							borderRadius={2}
+							colors={(bar) => colors[bar.id]}
+							defs={[
+								{ id: 'dots', type: 'patternDots', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', size: 4, padding: 1, stagger: true },
+								{ id: 'lines', type: 'patternLines', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', rotation: -45, lineWidth: 6, spacing: 10 }
+							]}
+							borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+							axisTop={null}
+							axisRight={null}
+							axisBottom={{
+								tickValues: tickValues,
+								tickPadding: 5,
+								tickRotation: 0,
+								tickSize: 5,
+								truncateTickAt: 0
+							}}
+							axisLeft={{
+								format: (value) => formatUSDWithUnits(value, 1),
+								tickPadding: 5,
+								tickRotation: 0,
+								tickSize: 5,
+								truncateTickAt: 0
+							}}
+							labelSkipWidth={6}
+							labelSkipHeight={12}
+							enableLabel={false}
+							labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+							legends={[]}
+							role='application'
+							theme={{
+								axis: {
+									domain: {
+										line: {
+											stroke: 'transparent',
+											strokeWidth: 1
+										}
+									},
+									ticks: {
+										line: {
+											stroke: 'transparent'
+										},
+										text: {
+											fill: theme === 'dark' ? '#fff' : '#576D8B',
+											fontSize: 11,
+											outlineColor: 'transparent',
+											outlineWidth: 0
+										}
+									}
 								},
-								text: {
-									fill: theme === 'dark' ? '#fff' : '#576D8B',
-									fontSize: 11,
-									outlineColor: 'transparent',
-									outlineWidth: 0
+								grid: {
+									line: {
+										stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+										strokeDasharray: '2 2',
+										strokeWidth: 1
+									}
+								},
+								legends: {
+									text: {
+										fontSize: 12,
+										textTransform: 'capitalize'
+									}
+								},
+								tooltip: {
+									container: {
+										background: theme === 'dark' ? '#1E2126' : '#fff',
+										color: theme === 'dark' ? '#fff' : '#576D8B',
+										fontSize: 11,
+										textTransform: 'capitalize'
+									}
 								}
-							}
-						},
-						grid: {
-							line: {
-								stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
-								strokeDasharray: '2 2',
-								strokeWidth: 1
-							}
-						},
-						legends: {
-							text: {
-								fontSize: 12,
-								textTransform: 'capitalize'
-							}
-						},
-						tooltip: {
-							container: {
-								background: theme === 'dark' ? '#1E2126' : '#fff',
-								color: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 11,
-								textTransform: 'capitalize'
-							}
-						}
-					}}
-					animate={true}
-					groupMode='stacked'
-					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
-				/>
-			</div>
-			{votesSplitData.length > 10 ? (
-				<div className='ml-auto w-[98%]'>
-					<Slider
-						range
-						min={0}
-						theme={theme as any}
-						max={votesSplitData.length - 1}
-						value={selectedRange}
-						onChange={onChange}
-						marks={marks}
-						tooltip={{
-							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < votesSplitData.length) {
-									const dataIndex = votesSplitData[value].index;
-									return `Referenda: ${dataIndex}`;
-								}
-								return '';
-							}
-						}}
-					/>
-				</div>
-			) : null}
+							}}
+							animate={true}
+							groupMode='stacked'
+							valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+						/>
+					</div>
+					{votesSplitData.length > 10 ? (
+						<div className='ml-auto w-[98%]'>
+							<Slider
+								range
+								min={0}
+								theme={theme as any}
+								max={votesSplitData.length - 1}
+								value={selectedRange}
+								onChange={onChange}
+								marks={marks}
+								tooltip={{
+									formatter: (value) => {
+										if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+											const dataIndex = votesSplitData[value].index;
+											return `Referenda: ${dataIndex}`;
+										}
+										return '';
+									}
+								}}
+							/>
+						</div>
+					) : null}
+				</>
+			)}
 		</StyledCard>
 	);
 };

@@ -11,6 +11,7 @@ import { useTheme } from 'next-themes';
 import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import { CustomTooltip } from '../../utils/CustomTooltip';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface IProps {
 	supportData: { percentage: string; index: number }[];
@@ -39,11 +40,13 @@ const StyledCard = styled(Card)`
 
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
-
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 
 	useEffect(() => {
+		setIsLoading(true);
 		setSelectedRange(calculateDefaultRange(supportData.length));
+		setIsLoading(false);
 	}, [supportData.length]);
 
 	const onChange = (value: [number, number]) => {
@@ -68,102 +71,110 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-xl font-semibold'>Average Turnout Percentage</h2>
-			<div className='h-[250px]'>
-				<ResponsiveLine
-					data={data}
-					margin={{ bottom: 30, left: 35, right: 0, top: 10 }}
-					xScale={{ type: 'point' }}
-					yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
-					axisTop={null}
-					axisRight={null}
-					axisBottom={null}
-					// axisBottom={{
-					// tickSize: 5,
-					// tickPadding: 8,
-					// tickRotation: 0,
-					// legend: '',
-					// legendOffset: 36,
-					// legendPosition: 'middle'
-					// }}
-					axisLeft={{
-						tickSize: 3,
-						tickPadding: 0,
-						tickRotation: 0,
-						format: (value) => `${value}%`
-					}}
-					tooltip={CustomTooltip}
-					tooltipFormat={(value) => `${Number(value).toFixed(1)} %`}
-					colors={['#978FED']}
-					pointSize={10}
-					pointColor={{ theme: 'background' }}
-					pointBorderWidth={2}
-					pointBorderColor={{ from: 'serieColor' }}
-					pointLabelYOffset={-12}
-					useMesh={true}
-					enableGridX={false}
-					enableGridY={false}
-					curve='monotoneX'
-					enableArea={true}
-					areaOpacity={0.1}
-					enablePoints={false}
-					theme={{
-						axis: {
-							domain: {
-								line: {
-									stroke: 'transparent',
-									strokeWidth: 1
-								}
-							},
-							ticks: {
-								line: {
-									stroke: 'transparent'
+			{isLoading ? (
+				<Skeleton />
+			) : (
+				<>
+					<div className='h-[250px]'>
+						<ResponsiveLine
+							data={data}
+							margin={{ bottom: 30, left: 35, right: 0, top: 10 }}
+							xScale={{ type: 'point' }}
+							yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
+							axisTop={null}
+							axisRight={null}
+							axisBottom={null}
+							// axisBottom={{
+							// tickSize: 5,
+							// tickPadding: 8,
+							// tickRotation: 0,
+							// legend: '',
+							// legendOffset: 36,
+							// legendPosition: 'middle'
+							// }}
+							axisLeft={{
+								tickSize: 3,
+								tickPadding: 0,
+								tickRotation: 0,
+								format: (value) => `${value}%`
+							}}
+							tooltip={CustomTooltip}
+							tooltipFormat={(value) => `${Number(value).toFixed(1)} %`}
+							colors={['#978FED']}
+							pointSize={10}
+							pointColor={{ theme: 'background' }}
+							pointBorderWidth={2}
+							pointBorderColor={{ from: 'serieColor' }}
+							pointLabelYOffset={-12}
+							useMesh={true}
+							enableGridX={false}
+							enableGridY={false}
+							curve='monotoneX'
+							enableArea={true}
+							areaOpacity={0.1}
+							enablePoints={false}
+							theme={{
+								axis: {
+									domain: {
+										line: {
+											stroke: 'transparent',
+											strokeWidth: 1
+										}
+									},
+									ticks: {
+										line: {
+											stroke: 'transparent'
+										},
+										text: {
+											fill: theme === 'dark' ? '#fff' : '#576D8B',
+											fontSize: 11,
+											outlineColor: 'transparent',
+											outlineWidth: 0
+										}
+									}
 								},
-								text: {
-									fill: theme === 'dark' ? '#fff' : '#576D8B',
-									fontSize: 11,
-									outlineColor: 'transparent',
-									outlineWidth: 0
+								grid: {
+									line: {
+										stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+										strokeDasharray: '2 2',
+										strokeWidth: 1
+									}
+								},
+								legends: {
+									text: {
+										fontSize: 12,
+										textTransform: 'capitalize'
+									}
 								}
-							}
-						},
-						grid: {
-							line: {
-								stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
-								strokeDasharray: '2 2',
-								strokeWidth: 1
-							}
-						},
-						legends: {
-							text: {
-								fontSize: 12,
-								textTransform: 'capitalize'
-							}
-						}
-					}}
-				/>
-			</div>
-			{supportData.length > 10 ? (
-				<div className='ml-auto w-[96%]'>
-					<Slider
-						range
-						min={0}
-						theme={theme as any}
-						max={supportData.length - 1}
-						value={selectedRange}
-						onChange={onChange}
-						marks={marks}
-						tooltip={{
-							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < supportData.length) {
-									const dataIndex = supportData[value].index;
-									return `Referenda: ${dataIndex}`;
-								}
-								return '';
-							}
-						}}
-					/>
-				</div>
-			) : null}
+							}}
+						/>
+					</div>
+					<div>
+						{supportData.length > 10 ? (
+							<div className='ml-auto w-[96%]'>
+								<Slider
+									range
+									min={0}
+									theme={theme as any}
+									max={supportData.length - 1}
+									value={selectedRange}
+									onChange={onChange}
+									marks={marks}
+									tooltip={{
+										formatter: (value) => {
+											if (value !== undefined && value >= 0 && value < supportData.length) {
+												const dataIndex = supportData[value].index;
+												return `Referenda: ${dataIndex}`;
+											}
+											return '';
+										}
+									}}
+								/>
+							</div>
+						) : null}
+					</div>
+				</>
+			)}
 		</StyledCard>
 	);
 };

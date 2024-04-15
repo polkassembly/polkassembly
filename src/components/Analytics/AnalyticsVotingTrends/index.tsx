@@ -34,6 +34,7 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
+	const isSmallScreen = window.innerWidth < 640;
 
 	const getVoteData = async () => {
 		try {
@@ -61,17 +62,32 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 
 	const tabItems: ITabItem[] = [
 		{
-			children: <AnalyticsConvictionVotes convictionVotes={voteData.map((vote: any) => vote.convictionVotes)} />,
+			children: (
+				<AnalyticsConvictionVotes
+					isSmallScreen={isSmallScreen}
+					convictionVotes={voteData.map((vote: any) => vote.convictionVotes)}
+				/>
+			),
 			key: 'conviction-votes',
 			label: 'Conviction Votes'
 		},
 		{
-			children: <AnalyticsVoteAmountVotes voteAmount={voteData.map((vote: any) => vote.voteAmount)} />,
+			children: (
+				<AnalyticsVoteAmountVotes
+					isSmallScreen={isSmallScreen}
+					voteAmount={voteData.map((vote: any) => vote.voteAmount)}
+				/>
+			),
 			key: 'vote-amount',
 			label: 'Vote Amount'
 		},
 		{
-			children: <AnalyticsAccountsVotes accounts={voteData.map((vote: any) => vote.accounts)} />,
+			children: (
+				<AnalyticsAccountsVotes
+					isSmallScreen={isSmallScreen}
+					accounts={voteData.map((vote: any) => vote.accounts)}
+				/>
+			),
 			key: 'accounts',
 			label: 'Accounts'
 		}
@@ -106,7 +122,10 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Voting Trends</span>
 						</div>
 						{activeKey === '1' && (
-							<div onClick={(e) => e.stopPropagation()}>
+							<div
+								className='hidden sm:flex'
+								onClick={(e) => e.stopPropagation()}
+							>
 								{isLoading ? (
 									<SkeletonButton />
 								) : (
@@ -123,7 +142,28 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 				}
 				key='1'
 			>
-				{isLoading ? <Skeleton /> : <>{tabItems.find((item) => item.key === activeTab)?.children}</>}
+				{isLoading ? (
+					<Skeleton />
+				) : (
+					<>
+						<div
+							className='mb-4 sm:hidden'
+							onClick={(e) => e.stopPropagation()}
+						>
+							{isLoading ? (
+								<SkeletonButton />
+							) : (
+								<StatTabs
+									items={tabItems}
+									setActiveTab={setActiveTab}
+									activeTab={activeTab}
+									isUsedInAnalytics={true}
+								/>
+							)}
+						</div>
+						{tabItems.find((item) => item.key === activeTab)?.children}
+					</>
+				)}
 			</Panel>
 		</Collapse>
 	);

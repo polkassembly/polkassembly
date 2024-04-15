@@ -12,9 +12,10 @@ const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgr
 
 interface IProps {
 	accounts: IVoteDetailType[];
+	isSmallScreen: boolean;
 }
 
-const AnalyticsAccountsVotes = ({ accounts }: IProps) => {
+const AnalyticsAccountsVotes = ({ accounts, isSmallScreen }: IProps) => {
 	const supportGraph = accounts.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
 	const delegationSplit = accounts.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
 	const votesSplit = accounts.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
@@ -22,15 +23,20 @@ const AnalyticsAccountsVotes = ({ accounts }: IProps) => {
 		<>
 			<Nudge text='Accounts are the number of unique addresses casting a vote .' />
 			<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
-				<AnalyticsTurnoutPercentageGraph supportData={supportGraph} />
+				<AnalyticsTurnoutPercentageGraph
+					isSmallScreen={isSmallScreen}
+					supportData={supportGraph}
+				/>
 				<AnalyticsDelegationSplitGraph
 					delegationSplitData={delegationSplit}
 					isUsedInAccounts={true}
+					isSmallScreen={isSmallScreen}
 				/>
 			</div>
 			<AnalyticsVoteSplitGraph
 				votesSplitData={votesSplit}
 				isUsedInAccounts={true}
+				isSmallScreen={isSmallScreen}
 			/>
 		</>
 	);

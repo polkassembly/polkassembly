@@ -13,8 +13,9 @@ const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgr
 
 interface IProps {
 	convictionVotes: IVoteDetailType[];
+	isSmallScreen: boolean;
 }
-const AnalyticsConvictionVotes = ({ convictionVotes }: IProps) => {
+const AnalyticsConvictionVotes = ({ convictionVotes, isSmallScreen }: IProps) => {
 	const supportGraph = convictionVotes.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
 	const delegationSplit = convictionVotes.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
 	const votesSplit = convictionVotes.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
@@ -23,10 +24,19 @@ const AnalyticsConvictionVotes = ({ convictionVotes }: IProps) => {
 		<>
 			<Nudge text='Conviction vote is the number of tokens used for voting multiplied by conviction.' />
 			<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
-				<AnalyticsTurnoutPercentageGraph supportData={supportGraph} />
-				<AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} />
+				<AnalyticsTurnoutPercentageGraph
+					isSmallScreen={isSmallScreen}
+					supportData={supportGraph}
+				/>
+				<AnalyticsDelegationSplitGraph
+					isSmallScreen={isSmallScreen}
+					delegationSplitData={delegationSplit}
+				/>
 			</div>
-			<AnalyticsVoteSplitGraph votesSplitData={votesSplit} />
+			<AnalyticsVoteSplitGraph
+				isSmallScreen={isSmallScreen}
+				votesSplitData={votesSplit}
+			/>
 		</>
 	);
 };

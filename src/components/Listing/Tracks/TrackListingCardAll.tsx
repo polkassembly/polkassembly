@@ -133,7 +133,16 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 	};
 	return (
 		<div className={`${className}`}>
-			<div className='flex items-center justify-between px-1 pb-5 pt-2'>
+			<div className='items-center justify-between px-1 pb-5 pt-2 sm:flex sm:flex-row-reverse'>
+				<div className='mb-3 flex items-center justify-end gap-x-2 sm:mb-0'>
+					{trackStatus !== 'submitted' && <FilterByStatus setStatusItem={setStatusItem} />}
+					<FilterByTags />
+					<SortByDropdownComponent
+						sortBy={sortBy}
+						setSortBy={setSortBy}
+						isUsedInTrackListing={true}
+					/>
+				</div>
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
@@ -165,15 +174,6 @@ const TrackListingCardAll = ({ className, posts, trackName }: Props) => {
 						Closed ({initialCountForClosed || 0})
 					</Radio>
 				</Radio.Group>
-				<div className='flex items-center gap-x-2 '>
-					{trackStatus !== 'submitted' && <FilterByStatus setStatusItem={setStatusItem} />}
-					<FilterByTags />
-					<SortByDropdownComponent
-						sortBy={sortBy}
-						setSortBy={setSortBy}
-						isUsedInTrackListing={true}
-					/>
-				</div>
 			</div>
 			{/* <FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' /> */}
 			{getContent()}

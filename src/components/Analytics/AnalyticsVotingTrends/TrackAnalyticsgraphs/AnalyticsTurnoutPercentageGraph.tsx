@@ -15,6 +15,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 
 interface IProps {
 	supportData: { percentage: string; index: number }[];
+	isSmallScreen?: boolean;
 }
 
 const StyledCard = styled(Card)`
@@ -34,6 +35,11 @@ const StyledCard = styled(Card)`
 		100% {
 			visibility: visible;
 			opacity: 1;
+		}
+	}
+	@media (max-width: 640px) {
+		.ant-card-body {
+			padding: 12px !important;
 		}
 	}
 `;
@@ -70,7 +76,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<h2 className='text-xl font-semibold'>Average Turnout Percentage</h2>
+			<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
 			{isLoading ? (
 				<Skeleton />
 			) : (
@@ -78,7 +84,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					<div className='h-[250px]'>
 						<ResponsiveLine
 							data={data}
-							margin={{ bottom: 30, left: 35, right: 0, top: 10 }}
+							margin={{ bottom: 30, left: 30, right: 0, top: 10 }}
 							xScale={{ type: 'point' }}
 							yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 							axisTop={null}
@@ -151,7 +157,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					</div>
 					<div>
 						{supportData.length > 10 ? (
-							<div className='ml-auto w-[96%]'>
+							<div className='ml-auto hidden w-[96%] sm:flex'>
 								<Slider
 									range
 									min={0}

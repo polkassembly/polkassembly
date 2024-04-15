@@ -22,6 +22,7 @@ const ZERO = new BN(0);
 interface IProps {
 	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
 	isUsedInAccounts?: boolean;
+	isSmallScreen?: boolean;
 }
 
 const StyledCard = styled(Card)`
@@ -43,9 +44,14 @@ const StyledCard = styled(Card)`
 			opacity: 1;
 		}
 	}
+	@media (max-width: 640px) {
+		.ant-card-body {
+			padding: 12px !important;
+		}
+	}
 `;
 
-const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) => {
+const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScreen }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
@@ -87,7 +93,8 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 	const onChange = (value: [number, number]) => {
 		setSelectedRange(value);
 	};
-	const tickInterval = Math.ceil(chartData.length / 20);
+	const tickvalueDivisor = isSmallScreen ? 10 : 20;
+	const tickInterval = Math.ceil(chartData.length / tickvalueDivisor);
 	const tickValues = chartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
 	const minIndex = votesSplitData[0].index;
@@ -100,8 +107,8 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-semibold'>Vote Split</h2>
-				<div className='-mt-2 flex items-center gap-[14px]'>
+				<h2 className='text-base font-semibold sm:text-xl'>Vote Split</h2>
+				<div className='-mt-2 hidden items-center gap-2 sm:flex sm:gap-[14px]'>
 					<div className='flex items-center gap-1'>
 						<div className='h-1 w-1 rounded-full bg-[#6DE1A2]'></div>
 						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Aye</div>
@@ -205,7 +212,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) =
 						/>
 					</div>
 					{votesSplitData.length > 10 ? (
-						<div className='ml-auto w-[98%]'>
+						<div className=' ml-auto hidden w-[98%] sm:flex'>
 							<Slider
 								range
 								min={0}

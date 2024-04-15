@@ -21,6 +21,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 interface IProps {
 	delegationSplitData: { delegated: string | number; index: number; solo: string | number }[];
 	isUsedInAccounts?: boolean;
+	isSmallScreen?: boolean;
 }
 
 const StyledCard = styled(Card)`
@@ -40,6 +41,11 @@ const StyledCard = styled(Card)`
 		100% {
 			visibility: visible;
 			opacity: 1;
+		}
+	}
+	@media (max-width: 640px) {
+		.ant-card-body {
+			padding: 12px !important;
 		}
 	}
 `;
@@ -101,8 +107,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 			) : (
 				<>
 					<div className='flex items-center justify-between'>
-						<h2 className='text-xl font-semibold'>Delegation Split</h2>
-						<div className='-mt-2 flex items-center gap-[14px]'>
+						<h2 className='text-base font-semibold sm:text-xl'>Delegation Split</h2>
+						<div className='-mt-2 hidden items-center gap-[14px] sm:flex'>
 							<div className='flex items-center gap-1'>
 								<div className='h-1 w-1 rounded-full bg-[#796EEC]'></div>
 								<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Delegated</div>
@@ -194,7 +200,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					</div>
 
 					{delegationSplitData.length > 10 ? (
-						<div className='ml-auto w-[96%]'>
+						<div className='ml-auto hidden w-[96%] sm:flex'>
 							<Slider
 								range
 								min={0}

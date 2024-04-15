@@ -662,34 +662,6 @@ export interface IDelegatorsAndDelegatees {
 	};
 }
 
-export interface IDelegationAnalytics {
-	totalCapital: string;
-	totalVotesBalance: string;
-	totalDelegates: number;
-	totalDelegators: number;
-	delegateesData: IDelegatorsAndDelegatees;
-	delegatorsData: IDelegatorsAndDelegatees;
-}
-
-export interface IAnalyticsVoteTrends {
-	network: string;
-	trackNumber: number;
-	referendaIndex: number;
-	votes: IVoteDetails;
-}
-
-export interface IVoteDetails {
-	convictionVotes: IVoteDetailType;
-	voteAmount: IVoteDetailType;
-	accounts: IVoteDetailType;
-	referendaIndex: number;
-}
-export interface IVoteDetailType {
-	delegationSplitData: { delegated: string | number; index: number; solo: string | number };
-	supportData: { percentage: string; index: number };
-	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
-}
-
 export interface IChildBountiesResponse {
 	child_bounties: {
 		description: string;

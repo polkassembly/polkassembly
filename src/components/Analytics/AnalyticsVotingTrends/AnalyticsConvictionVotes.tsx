@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
-import { IVoteDetailType } from '~src/types';
+import { IVoteDetailType } from '../types';
 import dynamic from 'next/dynamic';
 
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });

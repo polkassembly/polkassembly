@@ -15,9 +15,11 @@ import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { chainProperties } from '~src/global/networkConstants';
 import Slider from '~src/ui-components/Slider';
+import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 
+const ZERO = new BN(0);
 interface IProps {
-	delegationSplitData: { delegated: string | number; index: number; solo: string | number }[];
+	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
 	isUsedInAccounts?: boolean;
 }
 
@@ -42,86 +44,88 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const calculateDefaultRange = (dataLength: number): [number, number] => {
-	if (dataLength > 50) {
-		return [dataLength - 50, dataLength - 1];
-	}
-	return [0, dataLength - 1];
-};
-
-const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }: IProps) => {
+const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 
 	useEffect(() => {
-		setSelectedRange(calculateDefaultRange(delegationSplitData.length));
-	}, [delegationSplitData.length]);
+		setSelectedRange(calculateDefaultRange(votesSplitData.length));
+	}, [votesSplitData.length]);
 
-	const bnToIntBalance = function (bn: BN): number {
+	const bnToIntBalance = (bnValue: string | number | BN): number => {
+		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue.toString());
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
+	const data = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
+		abstain: item.abstain,
+		aye: item.aye,
+		index: item.index,
+		nay: item.nay
+	}));
+
 	const colors: { [key: string]: string } = {
-		delegated: '#796EEC',
-		solo: '#B6B0FB'
+		abstain: '#407BFF',
+		aye: '#6DE1A2',
+		nay: '#FF778F'
 	};
 
-	const getDelegatedAndSoloVotes = (item: any) => {
-		const delegated = bnToIntBalance(new BN(item?.delegated?.toString())) || 0;
-		const solo = bnToIntBalance(new BN(item?.solo?.toString())) || 0;
-		return { delegated, solo };
-	};
+	const chartData = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => {
+		return {
+			abstain: bnToIntBalance(item.abstain || ZERO) || 0,
+			aye: bnToIntBalance(item.aye || ZERO) || 0,
+			nay: bnToIntBalance(item.nay || ZERO) || 0,
+			index: item.index
+		};
+	});
+
 	const onChange = (value: [number, number]) => {
 		setSelectedRange(value);
 	};
-	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
-		index: `${item.index}`,
-		delegated: item.delegated,
-		solo: item.solo
-	}));
+	const tickInterval = Math.ceil(chartData.length / 20);
+	const tickValues = chartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
-	const filteredChartData = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
-		index: `${item.index}`,
-		...getDelegatedAndSoloVotes(item)
-	}));
-
-	const tickInterval = Math.ceil(filteredChartData.length / 10);
-	const tickValues = filteredChartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
-
-	const minIndex = delegationSplitData[0].index;
-	const maxIndex = delegationSplitData[delegationSplitData.length - 1].index;
+	const minIndex = votesSplitData[0].index;
+	const maxIndex = votesSplitData[votesSplitData.length - 1].index;
 	const marks = {
 		[0]: minIndex.toString(),
-		[delegationSplitData.length - 1]: maxIndex.toString()
+		[votesSplitData.length - 1]: maxIndex.toString()
 	};
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-xl font-semibold'>Delegation Split</h2>
+				<h2 className='text-xl font-semibold'>Vote Split</h2>
 				<div className='-mt-2 flex items-center gap-[14px]'>
 					<div className='flex items-center gap-1'>
-						<div className='h-1 w-1 rounded-full bg-[#796EEC]'></div>
-						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Delegated</div>
+						<div className='h-1 w-1 rounded-full bg-[#6DE1A2]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Aye</div>
 					</div>
 					<div className='flex items-center gap-1'>
-						<div className='h-1 w-1 rounded-full bg-[#B6B0FB]'></div>
-						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Solo</div>
+						<div className='h-1 w-1 rounded-full bg-[#FF778F]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Nay</div>
+					</div>
+					<div className='flex items-center gap-1'>
+						<div className='h-1 w-1 rounded-full bg-[#407BFF]'></div>
+						<div className='text-xs font-medium text-[#576D8B] dark:text-[#747474]'>Abstain</div>
 					</div>
 				</div>
 			</div>
 			<div className='h-[250px]'>
 				<ResponsiveBar
-					data={isUsedInAccounts ? data : filteredChartData}
-					keys={['solo', 'delegated']}
+					data={isUsedInAccounts ? data : chartData}
+					keys={['aye', 'nay', 'abstain']}
 					indexBy='index'
 					margin={{ bottom: 40, left: 40, right: 0, top: 10 }}
 					padding={0.5}
 					valueScale={{ type: 'linear' }}
-					indexScale={{ type: 'band', round: true }}
-					colors={(bar) => colors[bar.id]}
 					borderRadius={2}
+					colors={(bar) => colors[bar.id]}
+					defs={[
+						{ id: 'dots', type: 'patternDots', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', size: 4, padding: 1, stagger: true },
+						{ id: 'lines', type: 'patternLines', background: 'inherit', color: 'rgba(255, 255, 255, 0.3)', rotation: -45, lineWidth: 6, spacing: 10 }
+					]}
 					borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
 					axisTop={null}
 					axisRight={null}
@@ -134,16 +138,17 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 					}}
 					axisLeft={{
 						format: (value) => formatUSDWithUnits(value, 1),
-						tickSize: 5,
 						tickPadding: 5,
-						tickRotation: 0
+						tickRotation: 0,
+						tickSize: 5,
+						truncateTickAt: 0
 					}}
-					enableLabel={false}
 					labelSkipWidth={6}
 					labelSkipHeight={12}
+					enableLabel={false}
 					labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-					role='application'
 					legends={[]}
+					role='application'
 					theme={{
 						axis: {
 							domain: {
@@ -186,24 +191,25 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 							}
 						}
 					}}
-					ariaLabel='Nivo bar chart demo'
+					animate={true}
+					groupMode='stacked'
 					valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
 				/>
 			</div>
-			{delegationSplitData.length > 10 ? (
-				<div className='ml-auto w-[96%]'>
+			{votesSplitData.length > 10 ? (
+				<div className='ml-auto w-[98%]'>
 					<Slider
 						range
 						min={0}
 						theme={theme as any}
-						max={delegationSplitData.length - 1}
+						max={votesSplitData.length - 1}
 						value={selectedRange}
 						onChange={onChange}
 						marks={marks}
 						tooltip={{
 							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < delegationSplitData.length) {
-									const dataIndex = delegationSplitData[value].index;
+								if (value !== undefined && value >= 0 && value < votesSplitData.length) {
+									const dataIndex = votesSplitData[value].index;
 									return `Referenda: ${dataIndex}`;
 								}
 								return '';
@@ -216,4 +222,4 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 	);
 };
 
-export default AnalyticsDelegationSplitGraph;
+export default AnalyticsVoteSplitGraph;

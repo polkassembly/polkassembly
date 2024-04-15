@@ -4,11 +4,13 @@
 /* eslint-disable sort-keys */
 
 import React, { useEffect, useState } from 'react';
-import { PointTooltipProps, ResponsiveLine } from '@nivo/line';
+import { ResponsiveLine } from '@nivo/line';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
 import Slider from '~src/ui-components/Slider';
+import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
+import { CustomTooltip } from '../../utils/CustomTooltip';
 
 interface IProps {
 	supportData: { percentage: string; index: number }[];
@@ -34,22 +36,6 @@ const StyledCard = styled(Card)`
 		}
 	}
 `;
-
-const CustomTooltip = ({ point }: PointTooltipProps) => {
-	return (
-		<div className='rounded-md bg-white p-4 shadow-md dark:bg-[#1E2126]'>
-			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{point.data.xFormatted}</div>
-			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.yFormatted).toFixed(1)}%</div>
-		</div>
-	);
-};
-
-const calculateDefaultRange = (dataLength: number): [number, number] => {
-	if (dataLength > 50) {
-		return [dataLength - 50, dataLength - 1];
-	}
-	return [0, dataLength - 1];
-};
 
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();

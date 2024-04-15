@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import TrackAnalyticsTotalData from './TrackAnalyticsTotalData';
 import DelegationAnalyticsMain from './AnalyticsDelegation/DelegationAnalyticsMain';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { getDefaultTrackMetaData, getTrackData } from './AboutTrackCard';
+import { getDefaultTrackMetaData, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { Spin } from 'antd';
 import AnalyticsVotingTrends from './AnalyticsVotingTrends';
 

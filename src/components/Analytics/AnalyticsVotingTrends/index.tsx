@@ -6,7 +6,6 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
-import { IAnalyticsVoteTrends } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { StatTabs } from '~src/components/Post/Tabs/PostStats/Tabs/StatTabs';
@@ -15,6 +14,7 @@ import AnalyticsVoteAmountVotes from './AnalyticsVoteAmountVotes';
 import AnalyticsAccountsVotes from './AnalyticsAccountsVotes';
 import Skeleton from '~src/basic-components/Skeleton';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { IAnalyticsVoteTrends } from '../types';
 
 const { Panel } = Collapse;
 

@@ -7,7 +7,7 @@ import TrackListingCardAll from './TrackListingCardAll';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import { TabsProps } from 'antd';
-import TrackAnalyticsMain from './TrackAnalyticsMain';
+import TrackAnalyticsMain from '../../Analytics/TrackAnalyticsMain';
 
 interface IProps {
 	className?: string;

@@ -8,10 +8,10 @@ import { Collapse } from '~src/components/Settings/Notifications/common-ui/Colla
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackDelegationTotalData from './TrackDelegationTotalData';
-import { IDelegationAnalytics } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
 import DelegationAnalyticsTotalData from './DelegationAnalyticsTotalData';
+import { IDelegationAnalytics } from '../types';
 
 const { Panel } = Collapse;
 

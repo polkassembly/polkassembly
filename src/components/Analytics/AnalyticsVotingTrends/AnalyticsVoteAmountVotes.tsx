@@ -4,36 +4,29 @@
 import dynamic from 'next/dynamic';
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
-import { IVoteDetailType } from '~src/types';
+import { IVoteDetailType } from '../types';
 
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });
 const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsTurnoutPercentageGraph'), { ssr: false });
-
 interface IProps {
-	accounts: IVoteDetailType[];
+	voteAmount: IVoteDetailType[];
 }
 
-const AnalyticsAccountsVotes = ({ accounts }: IProps) => {
-	const supportGraph = accounts.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
-	const delegationSplit = accounts.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
-	const votesSplit = accounts.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
+const AnalyticsVoteAmountVotes = ({ voteAmount }: IProps) => {
+	const supportGraph = voteAmount.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
+	const delegationSplit = voteAmount.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
+	const votesSplit = voteAmount.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
 	return (
 		<>
-			<Nudge text='Accounts are the number of unique addresses casting a vote .' />
+			<Nudge text='Vote amount is the number of tokens used for voting .' />
 			<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
 				<AnalyticsTurnoutPercentageGraph supportData={supportGraph} />
-				<AnalyticsDelegationSplitGraph
-					delegationSplitData={delegationSplit}
-					isUsedInAccounts={true}
-				/>
+				<AnalyticsDelegationSplitGraph delegationSplitData={delegationSplit} />
 			</div>
-			<AnalyticsVoteSplitGraph
-				votesSplitData={votesSplit}
-				isUsedInAccounts={true}
-			/>
+			<AnalyticsVoteSplitGraph votesSplitData={votesSplit} />
 		</>
 	);
 };
 
-export default AnalyticsAccountsVotes;
+export default AnalyticsVoteAmountVotes;

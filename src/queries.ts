@@ -1134,6 +1134,9 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         proposer
         preimage {
           proposer
+          proposedCall{
+            args
+          }
         }
         hash
       }
@@ -1151,6 +1154,9 @@ query ProposalsByProposerAddress($proposer_in: [String!]) {
         preimage {
           method
           proposer
+           proposedCall{
+            args
+          }
         }
         description
         proposalArguments {

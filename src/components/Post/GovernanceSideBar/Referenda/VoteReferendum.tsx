@@ -7,7 +7,7 @@ import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/type
 import { Checkbox, Form, Modal, Segmented, Spin } from 'antd';
 import BN from 'bn.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
+import { ETrackDelegationStatus, EVoteDecisionType, ILastVote, LoadingStatusType, NotificationStatus, Wallet } from 'src/types';
 import AccountSelectionForm from 'src/ui-components/AccountSelectionForm';
 import queueNotification from 'src/ui-components/QueueNotification';
 import styled from 'styled-components';
@@ -57,6 +57,7 @@ import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import getEncodedAddress from '~src/util/getEncodedAddress';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -68,7 +69,7 @@ interface Props {
 	proposalType: ProposalType;
 	address: string;
 	theme?: string;
-	track_number?: number;
+	trackNumber?: number;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -120,7 +121,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, track_number }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -156,7 +157,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
 	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
-	const [delegatedTo, setDelegatedTo] = useState('');
+	const [delegatedTo, setDelegatedTo] = useState<string | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
@@ -177,21 +178,30 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	const getData = async (address: any) => {
 		if (!address) return;
-		const { data } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
+		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
 			address: address,
-			track: track_number
+			track: trackNumber
 		});
-		if (data && data[0]?.delegations[0]?.to) {
-			setDelegatedTo(data[0]?.delegations[0]?.to);
-		} else {
-			setDelegatedTo('');
+		if (data && data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))?.length) {
+			const delegated = data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))[0];
+			delegated?.delegations.map((item) => {
+				if (getEncodedAddress(item.from, network) === getEncodedAddress(loginAddress, network)) {
+					setDelegatedTo(item?.to);
+				} else {
+					setDelegatedTo(null);
+				}
+			});
+		} else if (error) {
+			console.log(error);
+			setDelegatedTo(null);
 		}
 	};
 
 	useEffect(() => {
+		if (typeof trackNumber !== 'number') return;
 		getData(address);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [track_number, address]);
+	}, [trackNumber, address]);
 
 	useEffect(() => {
 		getWallet();
@@ -613,7 +623,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
-							{' '}
 							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
 							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
 						</div>
@@ -874,7 +883,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									/>
 								) : null}
 
-								{delegatedTo && (
+								{!!delegatedTo && (
 									<Alert
 										message={
 											<span className='flex items-center dark:text-blue-dark-high'>

@@ -11,7 +11,6 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import VotesHistory from '~src/ui-components/VotesHistory';
 import styled from 'styled-components';
 import ProfilePosts from './ProfilePosts';
-import { IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { IActivitiesCounts, IStats } from '.';
 import { ClipboardIcon, MyActivityIcon, ProfileMentionsIcon, ProfileOverviewIcon, ProfileReactionsIcon, VotesIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -19,6 +18,7 @@ import ProfileUserActivity from './ProfileUserActivity';
 import ProfileMentions from './ProfileMentions';
 import ProfileReactions from './ProfileReactions';
 import { useTheme } from 'next-themes';
+import { IUserPostsListingResponse } from '~src/types';
 
 interface Props {
 	className?: string;

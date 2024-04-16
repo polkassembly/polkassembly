@@ -432,7 +432,8 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 
 			setFinalSearchInput(searchInput?.trim());
 			setSearchInputErr({ err: false, clicked: true });
-		} else if (searchInput?.trim().length <= 2 && isNaN(Number(searchInput))) {
+		}
+		if (searchInput?.trim().length <= 2 && isNaN(Number(searchInput))) {
 			setOnchainPostResults(null);
 			setOffchainPostResults(null);
 			setPeopleResults([]);
@@ -899,19 +900,21 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 				)}
 				{(finalSearchInput.length > 2 || searchInputErr.err || !isNaN(Number(finalSearchInput))) && (
 					<div className={`${loading && 'hidden'} z-10`}>
-						{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) && !searchInputErr.err && (onchainPostResults || offchainPostResults) && (
-							<ResultPosts
-								setOpenModal={setOpenModal}
-								isSuperSearch={isSuperSearch}
-								postsData={filterBy === EFilterBy.Referenda ? onchainPostResults?.data || [] : offchainPostResults?.data || []}
-								totalPage={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
-								className='mt-3'
-								postsPage={postsPage}
-								setPostsPage={setPostsPage}
-								searchInput={searchInput}
-								theme={theme}
-							/>
-						)}
+						{(filterBy === EFilterBy.Referenda || filterBy === EFilterBy.Discussions) &&
+							!searchInputErr.err &&
+							!!(onchainPostResults?.data?.length || offchainPostResults?.data?.length) && (
+								<ResultPosts
+									setOpenModal={setOpenModal}
+									isSuperSearch={isSuperSearch}
+									postsData={filterBy === EFilterBy.Referenda ? onchainPostResults?.data || [] : offchainPostResults?.data || []}
+									totalPage={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
+									className='mt-3'
+									postsPage={postsPage}
+									setPostsPage={setPostsPage}
+									searchInput={searchInput}
+									theme={theme}
+								/>
+							)}
 
 						{filterBy === EFilterBy.People && !searchInputErr.err && peopleResults && (
 							<ResultPeople
@@ -924,20 +927,23 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 							/>
 						)}
 
-						{!loading && (searchInputErr.err || onchainPostResults || offchainPostResults || peopleResults || (!isNaN(Number(finalSearchInput)) && finalSearchInput.length)) && (
-							<SearchErrorsCard
-								isSearchErr={(searchInput?.trim().length <= 2 || isNaN(Number(finalSearchInput))) && searchInputErr.clicked ? true : searchInputErr?.err}
-								filterBy={filterBy}
-								setFilterBy={setFilterBy}
-								setOpenModal={setOpenModal}
-								setIsSuperSearch={setIsSuperSearch}
-								setPeoplePage={setPeoplePage}
-								setPostsPage={setPostsPage}
-								postResultsCounts={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
-								peopleResultsCounts={peoplePage.totalPeople || 0}
-								isSuperSearch={isSuperSearch}
-							/>
-						)}
+						{!loading &&
+							(!!searchInputErr.err || !!onchainPostResults || !!offchainPostResults || !!peopleResults || (!isNaN(Number(finalSearchInput)) && !!finalSearchInput.length)) && (
+								<SearchErrorsCard
+									isSearchErr={
+										(searchInput?.trim().length <= 2 || !isNaN(Number(finalSearchInput))) && searchInputErr.clicked ? true : searchInputErr?.err && !!finalSearchInput?.length
+									}
+									filterBy={filterBy}
+									setFilterBy={setFilterBy}
+									setOpenModal={setOpenModal}
+									setIsSuperSearch={setIsSuperSearch}
+									setPeoplePage={setPeoplePage}
+									setPostsPage={setPostsPage}
+									postResultsCounts={filterBy === EFilterBy.Discussions ? offchainPostResults?.total || 0 : onchainPostResults?.total || 0}
+									peopleResultsCounts={peoplePage.totalPeople || 0}
+									isSuperSearch={isSuperSearch}
+								/>
+							)}
 					</div>
 				)}
 

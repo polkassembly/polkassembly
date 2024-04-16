@@ -15,6 +15,7 @@ import { IVoteDataStore } from './voteData/@types';
 import { IinitialConnectAddress } from './initialConnectAddress/@types';
 import { IGov1TreasuryProposalStore } from './gov1TreasuryProposal/@types';
 import { IRemoveIdentityStore } from './removeIdentity/@types';
+import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -60,6 +61,10 @@ const useRemoveIdentity = () => {
 	return useSelector<TAppState, IRemoveIdentityStore>((state) => state.removeIdentity);
 };
 
+const useTrackLevelAnalytics = () => {
+	return useSelector<TAppState, ITrackLevelAnalyticsStore>((state) => state.trackLevelAnalytics);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -71,5 +76,6 @@ export {
 	useVoteDataSelector,
 	useInitialConnectAddress,
 	useGov1treasuryProposal,
-	useRemoveIdentity
+	useRemoveIdentity,
+	useTrackLevelAnalytics
 };

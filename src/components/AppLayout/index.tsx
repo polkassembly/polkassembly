@@ -48,7 +48,7 @@ import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { PostOrigin } from '~src/types';
+import { IActiveProposalCount, PostOrigin } from '~src/types';
 
 import Footer from './Footer';
 import NavHeader from './NavHeader';
@@ -72,6 +72,7 @@ import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IUserDropdown {
 	handleSetIdentityClick: any;
@@ -308,8 +309,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
-
 	// const [notificationVisible, setNotificationVisible] = useState(true);
+	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
+
+	const getTotalActiveProposalsCount = async () => {
+		if (!network) return;
+
+		const { data, error } = await nextApiClientFetch<IActiveProposalCount>('/api/v1/posts/active-proposals-count');
+		if (data) {
+			setTotalActiveProposalsCount(data);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
@@ -340,6 +353,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			window.location.reload();
 		});
 	}, []);
+
+	useEffect(() => {
+		getTotalActiveProposalsCount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
@@ -413,24 +431,50 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem(
+						`Proposals ${totalActiveProposalsCount?.democracyProposalsCount ? totalActiveProposalsCount['democracyProposalsCount'] : ''}`,
+						'/proposals',
+						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						`Referenda ${totalActiveProposalsCount?.referendumsCount ? totalActiveProposalsCount['referendumsCount'] : ''}`,
+						'/referenda',
+						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
 			  ]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Motions', '/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem(
+						`Motions ${totalActiveProposalsCount?.councilMotionsCount ? totalActiveProposalsCount['councilMotionsCount'] : ''}`,
+						'/motions',
+						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
 					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Tips', '/tips', <TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem(
+						`Proposals ${totalActiveProposalsCount?.treasuryProposalsCount ? totalActiveProposalsCount['treasuryProposalsCount'] : ''}`,
+						'/treasury-proposals',
+						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						`Tips ${totalActiveProposalsCount?.tips ? totalActiveProposalsCount['tips'] : ''}`,
+						'/tips',
+						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
 			  ]
 			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl
-			? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)]
+			? [
+					getSiderMenuItem(
+						`Proposals ${totalActiveProposalsCount?.techCommetteeProposalsCount ? totalActiveProposalsCount['techCommetteeProposalsCount'] : ''}`,
+						'/tech-comm-proposals',
+						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
+			  ]
 			: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -443,15 +487,31 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
-						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+						getSiderMenuItem(
+							`Technical Committee ${totalActiveProposalsCount?.technicalPipsCount ? totalActiveProposalsCount['technicalPipsCount'] : ''}`,
+							'/technical',
+							<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem(
+							`Upgrade Committee ${totalActiveProposalsCount?.upgradePipsCount ? totalActiveProposalsCount['upgradePipsCount'] : ''}`,
+							'/upgrade',
+							<UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem(
+							`Community ${totalActiveProposalsCount?.communityPipsCount ? totalActiveProposalsCount['communityPipsCount'] : ''}`,
+							'/community',
+							<CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						)
 				  ]
 				: [],
 		AdvisoryCommittee:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
-						getSiderMenuItem('Motions', '/advisory-committee/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+						getSiderMenuItem(
+							`Motions ${totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? totalActiveProposalsCount['advisoryCommitteeMotionsCount'] : ''}`,
+							'/advisory-committee/motions',
+							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 				  ]
 				: []
@@ -572,13 +632,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (network && networkTrackInfo[network]) {
-		gov2TrackItems.mainItems.push(getSiderMenuItem('All', '/all-posts', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
-
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				`All ${totalActiveProposalsCount?.allCount ? totalActiveProposalsCount?.allCount : ''}`,
+				'/all-posts',
+				<OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+			)
+		);
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			if (!networkTrackInfo[network][trackName] || !('group' in networkTrackInfo[network][trackName])) continue;
 
+			const activeProposal = totalActiveProposalsCount?.[networkTrackInfo[network][trackName]?.trackId];
+
 			const menuItem = getSiderMenuItem(
-				trackName.split(/(?=[A-Z])/).join(' '),
+				`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
 				`/${trackName
 					.split(/(?=[A-Z])/)
 					.join('-')
@@ -592,7 +659,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -603,7 +670,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -624,7 +691,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						);
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -723,7 +790,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 		if (isOpenGovSupported(network)) {
-			items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
+			items = items.concat(
+				getSiderMenuItem(`Bounties ${totalActiveProposalsCount?.['bountiesCount'] ? totalActiveProposalsCount?.['bountiesCount'] : ''}`, '/bounties', null),
+				getSiderMenuItem(`Child Bounties ${totalActiveProposalsCount?.['childBountiesCount'] ? totalActiveProposalsCount?.['childBountiesCount'] : ''}`, '/child_bounties', null)
+			);
 		}
 		gov2Items.splice(
 			-1,

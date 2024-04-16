@@ -38,44 +38,46 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 		const totalDelegatorsObj: IDelegatorsAndDelegatees = {};
 		const totalDelegateesObj: IDelegatorsAndDelegatees = {};
 
-		data['data']?.votingDelegations.map((delegation: { lockPeriod: number; balance: string; from: string; to: string }) => {
-			const bnBalance = new BN(delegation?.balance);
-			const bnConviction = new BN(delegation?.lockPeriod || 1);
-			const vote = delegation?.lockPeriod ? bnBalance.mul(bnConviction) : bnBalance.div(new BN('10'));
+		if (data['data']?.votingDelegations?.length) {
+			data['data']?.votingDelegations.map((delegation: { lockPeriod: number; balance: string; from: string; to: string }) => {
+				const bnBalance = new BN(delegation?.balance);
+				const bnConviction = new BN(delegation?.lockPeriod || 1);
+				const vote = delegation?.lockPeriod ? bnBalance.mul(bnConviction) : bnBalance.div(new BN('10'));
 
-			totalVotesBalance = totalVotesBalance.add(vote);
+				totalVotesBalance = totalVotesBalance.add(vote);
 
-			totalCapital = totalCapital.add(bnBalance);
+				totalCapital = totalCapital.add(bnBalance);
 
-			if (totalDelegateesObj[delegation?.to] === undefined) {
-				totalDelegateesObj[delegation?.to] = {
-					count: 1,
-					data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
-				};
-			} else {
-				totalDelegateesObj[delegation?.to] = {
-					count: totalDelegateesObj[delegation?.to]?.count + 1,
-					data: [
-						...(totalDelegateesObj[delegation?.to]?.data || []),
-						{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }
-					]
-				};
-			}
-			if (totalDelegatorsObj[delegation?.from] === undefined) {
-				totalDelegatorsObj[delegation?.from] = {
-					count: 1,
-					data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
-				};
-			} else {
-				totalDelegatorsObj[delegation?.from] = {
-					count: totalDelegatorsObj[delegation?.to]?.count + 1,
-					data: [
-						...(totalDelegatorsObj[delegation?.to]?.data || []),
-						{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation.to, votingPower: vote.toString() }
-					]
-				};
-			}
-		});
+				if (totalDelegateesObj[delegation?.to] === undefined) {
+					totalDelegateesObj[delegation?.to] = {
+						count: 1,
+						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
+					};
+				} else {
+					totalDelegateesObj[delegation?.to] = {
+						count: totalDelegateesObj[delegation?.to]?.count + 1,
+						data: [
+							...(totalDelegateesObj[delegation?.to]?.data || []),
+							{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }
+						]
+					};
+				}
+				if (totalDelegatorsObj[delegation?.from] === undefined) {
+					totalDelegatorsObj[delegation?.from] = {
+						count: 1,
+						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
+					};
+				} else {
+					totalDelegatorsObj[delegation?.from] = {
+						count: totalDelegatorsObj[delegation?.to]?.count + 1,
+						data: [
+							...(totalDelegatorsObj[delegation?.to]?.data || []),
+							{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation.to, votingPower: vote.toString() }
+						]
+					};
+				}
+			});
+		}
 
 		const delegationStats: IDelegationAnalytics = {
 			delegateesData: totalDelegateesObj,

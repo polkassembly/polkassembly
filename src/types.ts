@@ -646,7 +646,7 @@ export enum EActivityFilter {
 }
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
-	allProposals: { diff: number; total: string };
+	allProposals: { diff: number; total: number };
 }
 
 export interface IDelegatorsAndDelegatees {

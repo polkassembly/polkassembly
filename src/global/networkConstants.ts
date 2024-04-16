@@ -11,6 +11,7 @@ import amplitudeLogo from '~assets/parachain-logos/amplitude-logo.png';
 import astarLogo from '~assets/parachain-logos/astar-logo.png';
 import automataLogo from '~assets/parachain-logos/automata-logo.jpg';
 import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
+import curioLogo from '~assets/parachain-logos/curio-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
@@ -119,7 +120,8 @@ export const network = {
 	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx',
 	ZEITGEIST: 'zeitgeist',
-	MANDALA: 'mandala'
+	MANDALA: 'mandala',
+	CURIO: 'curio'
 };
 
 export const tokenSymbol = {
@@ -176,7 +178,8 @@ export const tokenSymbol = {
 	VARA: 'VARA',
 	XX: 'XX',
 	ZTG: 'ZTG',
-	KPGT: 'KPGT'
+	KPGT: 'KPGT',
+	CGT: 'CGT'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -478,6 +481,29 @@ export const chainProperties: types.ChainPropType = {
 			}
 		]
 	},
+	[network.CURIO]: {
+		blockTime: 12000,
+		category: 'kusama',
+		chainId: 3339,
+		logo: curioLogo,
+		rpcEndpoint: 'wss://archive.parachain.curioinvest.com/',
+		ss58Format: 777,
+		subsquidUrl: '',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.CGT,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '5',
+		externalLinks: '',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Curio',
+				key: 'wss://archive.parachain.curioinvest.com/'
+			}
+		]
+	},
+
 	[network.PIONEER]: {
 		blockTime: 12000,
 		category: 'solo',
@@ -1917,5 +1943,6 @@ export const addressPrefix: Record<string, number> = {
 	moonbeam: 1284,
 	moonriver: 1285,
 	moonbase: 1287,
-	polkadot: 0
+	polkadot: 0,
+	curio: 777
 };

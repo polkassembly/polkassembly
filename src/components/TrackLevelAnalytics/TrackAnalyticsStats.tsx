@@ -14,7 +14,7 @@ interface IProps {
 	setIsLoading: (pre: boolean) => void;
 }
 
-const TrackAnalyticsTotalData: FC<IProps> = (props) => {
+const TrackAnalyticsStats: FC<IProps> = (props) => {
 	const { trackNumber, setIsLoading } = props;
 	const [totalData, setTotalData] = useState<ITrackAnalyticsStats>({
 		activeProposals: { diff: 0, total: 0 },
@@ -23,7 +23,7 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 
 	const getData = async () => {
 		setIsLoading(true);
-		const { data, error } = await nextApiClientFetch<{ data: ITrackAnalyticsStats }>('/api/v1/track_level_anaytics/analytics-stats', {
+		const { data, error } = await nextApiClientFetch<{ data: ITrackAnalyticsStats }>('/api/v1/trackLevelAnalytics/analytics-stats', {
 			trackNum: trackNumber
 		});
 
@@ -123,4 +123,4 @@ const TrackAnalyticsTotalData: FC<IProps> = (props) => {
 	);
 };
 
-export default TrackAnalyticsTotalData;
+export default TrackAnalyticsStats;

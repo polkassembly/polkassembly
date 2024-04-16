@@ -8,14 +8,14 @@ import { Pagination } from '~src/ui-components/Pagination';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import TrackDelegationDataModal from './TrackDelegationData';
+import DelegateesModal from './DelegateesModal';
 import Address from '~src/ui-components/Address';
 
 interface IProps {
 	delegateesData: IDelegatorsAndDelegatees;
 }
 
-const TotalDelegateeData = ({ delegateesData }: IProps) => {
+const DelegateesTab = ({ delegateesData }: IProps) => {
 	const { network } = useNetworkSelector();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -94,7 +94,7 @@ const TotalDelegateeData = ({ delegateesData }: IProps) => {
 					/>
 				</div>
 			</section>
-			<TrackDelegationDataModal
+			<DelegateesModal
 				open={open}
 				setOpen={setOpen}
 				delegateesData={delegateesData}
@@ -104,4 +104,4 @@ const TotalDelegateeData = ({ delegateesData }: IProps) => {
 	);
 };
 
-export default TotalDelegateeData;
+export default DelegateesTab;

@@ -39,7 +39,7 @@ const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
 	const getVoteData = async () => {
 		try {
 			setIsLoading(true);
-			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/track_level_anaytics/votes-analytics', {
+			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/votes-analytics', {
 				trackNumber
 			});
 

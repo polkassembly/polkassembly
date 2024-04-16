@@ -13,7 +13,7 @@ interface IProps {
 	delegatorsData: IDelegatorsAndDelegatees;
 }
 
-const TotalDelegatorData = ({ delegatorsData }: IProps) => {
+const DelegatorsTab = ({ delegatorsData }: IProps) => {
 	const { network } = useNetworkSelector();
 	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
 	const { resolvedTheme: theme } = useTheme();
@@ -75,4 +75,4 @@ const TotalDelegatorData = ({ delegatorsData }: IProps) => {
 	);
 };
 
-export default TotalDelegatorData;
+export default DelegatorsTab;

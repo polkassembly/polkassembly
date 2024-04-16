@@ -21,7 +21,7 @@ interface IProps {
 	index: string;
 }
 
-const TrackDelegationDataModal = ({ className, open, setOpen, delegateesData, index }: IProps) => {
+const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IProps) => {
 	const { network } = useNetworkSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = delegateesData[index];
@@ -152,4 +152,4 @@ const TrackDelegationDataModal = ({ className, open, setOpen, delegateesData, in
 	);
 };
 
-export default TrackDelegationDataModal;
+export default DelegateesModal;

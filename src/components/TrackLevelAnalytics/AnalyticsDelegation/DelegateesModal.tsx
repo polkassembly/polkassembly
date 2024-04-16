@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Modal } from 'antd';
 import React, { useState } from 'react';
-import { IDelegatorsAndDelegatees } from '~src/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import VoterIcon from '~assets/icons/vote-small-icon.svg';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
@@ -12,16 +11,9 @@ import EmailIcon from '~assets/icons/email_icon.svg';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
+import { IDelegateesModal } from '../types';
 
-interface IProps {
-	open: boolean;
-	setOpen: (pre: boolean) => void;
-	className?: string;
-	delegateesData: IDelegatorsAndDelegatees;
-	index: string;
-}
-
-const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IProps) => {
+const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IDelegateesModal) => {
 	const { network } = useNetworkSelector();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = delegateesData[index];

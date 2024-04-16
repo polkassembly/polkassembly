@@ -11,11 +11,7 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import DelegateesModal from './DelegateesModal';
 import Address from '~src/ui-components/Address';
 
-interface IProps {
-	delegateesData: IDelegatorsAndDelegatees;
-}
-
-const DelegateesTab = ({ delegateesData }: IProps) => {
+const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDelegatees }) => {
 	const { network } = useNetworkSelector();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

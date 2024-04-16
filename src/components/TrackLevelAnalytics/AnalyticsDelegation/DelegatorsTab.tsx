@@ -9,11 +9,7 @@ import { IDelegatorsAndDelegatees } from '~src/types';
 import Address from '~src/ui-components/Address';
 import { Pagination } from '~src/ui-components/Pagination';
 
-interface IProps {
-	delegatorsData: IDelegatorsAndDelegatees;
-}
-
-const DelegatorsTab = ({ delegatorsData }: IProps) => {
+const DelegatorsTab = ({ delegatorsData }: { delegatorsData: IDelegatorsAndDelegatees }) => {
 	const { network } = useNetworkSelector();
 	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
 	const { resolvedTheme: theme } = useTheme();

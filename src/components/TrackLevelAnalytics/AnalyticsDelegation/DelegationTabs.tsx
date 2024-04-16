@@ -5,14 +5,9 @@ import React, { useState } from 'react';
 import { Radio } from 'antd';
 import Delegatees from './DelegateesTab';
 import DelegatorsTab from './DelegatorsTab';
-import { IDelegatorsAndDelegatees } from '~src/types';
+import { IDelegationTabs } from '../types';
 
-interface IProps {
-	delegateesData: IDelegatorsAndDelegatees;
-	delegatorsData: IDelegatorsAndDelegatees;
-}
-
-const DelegationTabs = ({ delegateesData, delegatorsData }: IProps) => {
+const DelegationTabs = ({ delegateesData, delegatorsData }: IDelegationTabs) => {
 	const [selectedOption, setSelectedOption] = useState('delegatee');
 
 	const onRadioChange = (e: any) => {

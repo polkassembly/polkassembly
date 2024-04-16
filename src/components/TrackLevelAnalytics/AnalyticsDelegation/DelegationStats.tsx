@@ -5,15 +5,9 @@ import { Divider } from 'antd';
 import React from 'react';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IDelegationStats } from '../types';
 
-interface IProps {
-	totalCapital: string;
-	totalVotesBalance: string;
-	totalDelegates: number;
-	totalDelegators: number;
-}
-
-const DelegationStats = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IProps) => {
+const DelegationStats = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IDelegationStats) => {
 	const { network } = useNetworkSelector();
 	return (
 		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-4'>

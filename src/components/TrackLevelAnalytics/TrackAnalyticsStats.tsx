@@ -18,7 +18,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	const { trackNumber, setIsLoading } = props;
 	const [totalData, setTotalData] = useState<ITrackAnalyticsStats>({
 		activeProposals: { diff: 0, total: 0 },
-		allProposals: { diff: 0, total: '' }
+		allProposals: { diff: 0, total: 0 }
 	});
 
 	const getData = async () => {

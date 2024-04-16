@@ -32,3 +32,21 @@ export interface IVoteDetailType {
 	supportData: { percentage: string; index: number };
 	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
 }
+export interface IDelegateesModal {
+	open: boolean;
+	setOpen: (pre: boolean) => void;
+	className?: string;
+	delegateesData: IDelegatorsAndDelegatees;
+	index: string;
+}
+export interface IDelegationStats {
+	totalCapital: string;
+	totalVotesBalance: string;
+	totalDelegates: number;
+	totalDelegators: number;
+}
+
+export interface IDelegationTabs {
+	delegateesData: IDelegatorsAndDelegatees;
+	delegatorsData: IDelegatorsAndDelegatees;
+}

@@ -264,5 +264,6 @@ export default styled(AiBot)`
 	}
 	.ant-spin-container {
 		padding: 0px 23px;
+		padding-bottom: 12px;
 	}
 `;

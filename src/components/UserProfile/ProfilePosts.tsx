@@ -4,13 +4,12 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Empty, Popover } from 'antd';
 import classNames from 'classnames';
-import { IUserPost, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { EGovType } from '~src/types';
+import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -271,6 +270,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 												proposalType={post?.type}
 												trackNumber={post?.track_number}
 												truncateUsername={false}
+												requestedAmount={(post.requestedAmount || null) as any}
 											/>
 										</Link>
 									}

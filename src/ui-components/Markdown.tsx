@@ -56,7 +56,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		table {
 			line-height: 160%;
 			margin: 0 0 0.5rem 0;
-			color: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
+			color: ${(props: any) => (props.theme == 'dark' ? '#fff' : '#243A57')} !important;
 			font-weight: ${(props: any) => (props.theme == 'dark' ? '300' : '500')} !important;
 			border: ${(props: any) => (props.theme == 'dark' ? 'white' : '#243A57')} !important;
 		}
@@ -198,7 +198,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 			li::marker {
 				font-size: 1em;
-				color: #000;
+				color: ${(props: any) => (props.theme == 'dark' ? '#fff' : '#243A57')} !important;
 			}
 		}
 	}

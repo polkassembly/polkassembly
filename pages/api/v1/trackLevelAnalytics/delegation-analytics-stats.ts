@@ -11,7 +11,7 @@ import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import { IDelegatorsAndDelegatees } from '~src/types';
-import { IDelegationAnalytics } from '~src/components/Analytics/types';
+import { IDelegationAnalytics } from '~src/components/TrackLevelAnalytics/types';
 
 const ZERO_BN = new BN(0);
 

@@ -13,7 +13,7 @@ interface IProps {
 	totalDelegators: number;
 }
 
-const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IProps) => {
+const DelegationStats = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IProps) => {
 	const { network } = useNetworkSelector();
 	return (
 		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-4'>
@@ -52,4 +52,4 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 	);
 };
 
-export default TrackDelegationTotalData;
+export default DelegationStats;

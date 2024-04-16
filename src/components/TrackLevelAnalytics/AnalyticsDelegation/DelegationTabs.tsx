@@ -3,8 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { Radio } from 'antd';
-import TotalDelegateeData from './TotalDelegateeData';
-import TotalDelegatorData from './TotalDelegatorData';
+import Delegatees from './DelegateesTab';
+import DelegatorsTab from './DelegatorsTab';
 import { IDelegatorsAndDelegatees } from '~src/types';
 
 interface IProps {
@@ -12,7 +12,7 @@ interface IProps {
 	delegatorsData: IDelegatorsAndDelegatees;
 }
 
-const DelegationAnalyticsTotalData = ({ delegateesData, delegatorsData }: IProps) => {
+const DelegationTabs = ({ delegateesData, delegatorsData }: IProps) => {
 	const [selectedOption, setSelectedOption] = useState('delegatee');
 
 	const onRadioChange = (e: any) => {
@@ -22,9 +22,9 @@ const DelegationAnalyticsTotalData = ({ delegateesData, delegatorsData }: IProps
 	const displayData = () => {
 		switch (selectedOption) {
 			case 'delegatee':
-				return <TotalDelegateeData delegateesData={delegateesData} />;
+				return <Delegatees delegateesData={delegateesData} />;
 			case 'delegator':
-				return <TotalDelegatorData delegatorsData={delegatorsData} />;
+				return <DelegatorsTab delegatorsData={delegatorsData} />;
 			default:
 				return null;
 		}
@@ -54,4 +54,4 @@ const DelegationAnalyticsTotalData = ({ delegateesData, delegatorsData }: IProps
 	);
 };
 
-export default DelegationAnalyticsTotalData;
+export default DelegationTabs;

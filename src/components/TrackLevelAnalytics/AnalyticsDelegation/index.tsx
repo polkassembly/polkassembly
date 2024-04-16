@@ -7,10 +7,10 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import TrackDelegationTotalData from './TrackDelegationTotalData';
+import DelegationStats from './DelegationStats';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
-import DelegationAnalyticsTotalData from './DelegationAnalyticsTotalData';
+import DelegationTabs from './DelegationTabs';
 import { IDelegationAnalytics } from '../types';
 
 const { Panel } = Collapse;
@@ -20,7 +20,7 @@ interface IProps {
 	trackNumber: number;
 }
 
-const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
+const AnalyticsDelegation = ({ trackNumber }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [delegationData, setDelegationData] = useState<IDelegationAnalytics>({
 		delegateesData: {},
@@ -32,7 +32,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 	});
 
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/track_level_anaytics/delegation-analytics-stats', {
+		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/delegation-analytics-stats', {
 			trackNumber
 		});
 
@@ -70,7 +70,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 				}
 				key='2'
 			>
-				<TrackDelegationTotalData
+				<DelegationStats
 					totalCapital={delegationData?.totalCapital}
 					totalVotesBalance={delegationData?.totalVotesBalance}
 					totalDelegates={delegationData?.totalDelegates}
@@ -80,7 +80,7 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 					dashed
 					className='mb-3 mt-5 border-[#D2D8E0] dark:border-[#5A5A5A]'
 				/>
-				<DelegationAnalyticsTotalData
+				<DelegationTabs
 					delegateesData={delegationData?.delegateesData}
 					delegatorsData={delegationData?.delegatorsData}
 				/>
@@ -89,4 +89,4 @@ const DelegationAnalyticsMain = ({ trackNumber }: IProps) => {
 	);
 };
 
-export default DelegationAnalyticsMain;
+export default AnalyticsDelegation;

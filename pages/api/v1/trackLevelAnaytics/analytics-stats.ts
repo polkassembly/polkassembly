@@ -12,7 +12,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { GET_TRACK_LEVEL_ANALYTICS_STATS } from '~src/queries';
 import dayjs from 'dayjs';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { ITrackAnalyticsStats } from '~src/types';
+import { ITrackAnalyticsStats } from '~src/redux/trackLevelAnalytics/@types';
 
 export const getTrackAnalyticsStats = async ({ trackNum, network }: { trackNum: number; network: string }) => {
 	if (!network || !isValidNetwork(network)) {

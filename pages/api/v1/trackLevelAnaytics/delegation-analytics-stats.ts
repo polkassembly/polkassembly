@@ -10,8 +10,8 @@ import { GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA } from '~src/queries';
 import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
-import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/redux/trackLevelAnalytics/@types';
 
 const ZERO_BN = new BN(0);
 

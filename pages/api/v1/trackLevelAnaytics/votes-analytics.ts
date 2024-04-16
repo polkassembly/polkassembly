@@ -10,8 +10,8 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
+import { IAnalyticsVoteTrends } from '~src/redux/trackLevelAnalytics/@types';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IAnalyticsVoteTrends } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { generateKey } from '~src/util/getRedisKeys';
 

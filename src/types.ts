@@ -644,57 +644,6 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
-export interface ITrackAnalyticsStats {
-	activeProposals: { diff: number; total: number };
-	allProposals: { diff: number; total: number };
-}
-
-export interface IDelegatorsAndDelegatees {
-	[key: string]: {
-		count: number;
-		data: {
-			to: string;
-			from: string;
-			capital: string;
-			lockedPeriod: number;
-			votingPower: string;
-		}[];
-	};
-}
-
-export interface IDelegationAnalytics {
-	totalCapital: string;
-	totalVotesBalance: string;
-	totalDelegates: number;
-	totalDelegators: number;
-	delegateesData: IDelegatorsAndDelegatees;
-	delegatorsData: IDelegatorsAndDelegatees;
-}
-
-export interface IAnalyticsVoteTrends {
-	network: string;
-	trackNumber: number;
-	referendaIndex: number;
-	votes: {
-		convictionVotes: {
-			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
-			supportData: { percentage: string; index: number };
-			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
-		};
-		voteAmount: {
-			delegationSplitData: { delegated: string | number; index: number; solo: string | number };
-			supportData: { percentage: string; index: number };
-			votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
-		};
-		accounts: {
-			delegationSplitData: { delegated: number | string; index: number; solo: number | string };
-			supportData: { percentage: string; index: number };
-			votesSplitData: { abstain: number | string; aye: number | string; nay: number | string; index: number };
-		};
-		referendaIndex: number;
-	};
-}
-
 export interface IChildBountiesResponse {
 	child_bounties: {
 		description: string;

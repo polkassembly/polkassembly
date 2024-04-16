@@ -61,3 +61,9 @@ export interface IAnalyticsTurnoutPercentageGraph {
 	supportData: { percentage: string; index: number }[];
 	isSmallScreen?: boolean;
 }
+
+export interface IAnalyticsVoteSplitGraph {
+	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
+	isUsedInAccounts?: boolean;
+	isSmallScreen?: boolean;
+}

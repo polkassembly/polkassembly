@@ -14,16 +14,6 @@ const DelegationTabs = ({ delegateesData, delegatorsData }: IDelegationTabs) => 
 		setSelectedOption(e.target.value);
 	};
 
-	const displayData = () => {
-		switch (selectedOption) {
-			case 'delegatee':
-				return <Delegatees delegateesData={delegateesData} />;
-			case 'delegator':
-				return <DelegatorsTab delegatorsData={delegatorsData} />;
-			default:
-				return null;
-		}
-	};
 	return (
 		<div>
 			<Radio.Group
@@ -32,7 +22,7 @@ const DelegationTabs = ({ delegateesData, delegatorsData }: IDelegationTabs) => 
 				className='my-5 flex gap-2'
 			>
 				<Radio
-					className={`text-base font-medium ${selectedOption === 'delegatee' ? 'text-blue-light-high' : 'text-[#243A57B2]'} text-blue-light-high dark:text-blue-dark-high`}
+					className={`text-base font-medium ${selectedOption === 'delegatee' ? 'text-blue-light-high' : 'text-[#243A57B2]'} dark:text-blue-dark-high`}
 					value='delegatee'
 				>
 					Delegatee
@@ -44,7 +34,7 @@ const DelegationTabs = ({ delegateesData, delegatorsData }: IDelegationTabs) => 
 					Delegator
 				</Radio>
 			</Radio.Group>
-			{displayData()}
+			{selectedOption === 'delegatee' ? <Delegatees delegateesData={delegateesData} /> : selectedOption === 'delegator' ? <DelegatorsTab delegatorsData={delegatorsData} /> : null}
 		</div>
 	);
 };

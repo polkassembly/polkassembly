@@ -3,11 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React from 'react';
-import TrackListingCardAll from './TrackListingCardAll';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import { TabsProps } from 'antd';
 import TrackLevelAnalytics from '../../TrackLevelAnalytics';
+import TrackListingStatusTabs from './TrackListingStatusTabs';
 
 interface IProps {
 	className?: string;
@@ -15,14 +15,14 @@ interface IProps {
 	trackName: string;
 }
 
-const TrackListingMain = ({ className, posts, trackName }: IProps) => {
+const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 	const { resolvedTheme: theme } = useTheme();
 
 	const tabItems: TabsProps['items'] = [
 		{
 			children: (
 				<>
-					<TrackListingCardAll
+					<TrackListingStatusTabs
 						posts={posts}
 						trackName={trackName}
 					/>
@@ -54,4 +54,4 @@ const TrackListingMain = ({ className, posts, trackName }: IProps) => {
 	);
 };
 
-export default TrackListingMain;
+export default TrackListingTabs;

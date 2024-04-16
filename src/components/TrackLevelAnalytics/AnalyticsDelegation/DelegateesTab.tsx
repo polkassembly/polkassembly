@@ -10,6 +10,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import DelegateesModal from './DelegateesModal';
 import Address from '~src/ui-components/Address';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDelegatees }) => {
 	const { network } = useNetworkSelector();
@@ -29,9 +30,8 @@ const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDeleg
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [open, setOpen] = useState<boolean>(false);
 	const [index, setIndex] = useState<string>('');
-	const itemsPerPage = 10;
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = startIndex + itemsPerPage;
+	const startIndex = (currentPage - 1) * LISTING_LIMIT;
+	const endIndex = startIndex + LISTING_LIMIT;
 
 	return (
 		<>
@@ -84,7 +84,7 @@ const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDeleg
 						}}
 						total={delegateeData.length}
 						showSizeChanger={false}
-						pageSize={itemsPerPage}
+						pageSize={LISTING_LIMIT}
 						responsive={true}
 						hideOnSinglePage={true}
 					/>

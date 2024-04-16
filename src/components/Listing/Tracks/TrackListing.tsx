@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
-import TrackListingMain from './TrackListingMain';
+import TrackListingTabs from './TrackListingTabs';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/Tracks/AboutTrackCard'), {
 	loading: () => <Skeleton active />,
@@ -23,7 +23,7 @@ const TrackListing: FC<ITrackListingProps> = (props) => {
 	return (
 		<>
 			<AboutTrackCard trackName={trackName} />
-			<TrackListingMain
+			<TrackListingTabs
 				className='mt-12'
 				posts={posts}
 				trackName={trackName}

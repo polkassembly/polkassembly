@@ -10,13 +10,8 @@ import { GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA } from '~src/queries';
 import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
-<<<<<<<< HEAD:pages/api/v1/trackLevelAnalytics/delegation-analytics-stats.ts
-import { IDelegatorsAndDelegatees } from '~src/types';
-import { IDelegationAnalytics } from '~src/components/TrackLevelAnalytics/types';
-========
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/redux/trackLevelAnalytics/@types';
->>>>>>>> feature/kr/track-level-api:pages/api/v1/trackLevelAnaytics/delegation-analytics-stats.ts
 
 const ZERO_BN = new BN(0);
 

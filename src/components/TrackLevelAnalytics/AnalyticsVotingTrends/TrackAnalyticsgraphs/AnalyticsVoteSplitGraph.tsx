@@ -17,13 +17,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import Skeleton from '~src/basic-components/Skeleton';
+import { IAnalyticsVoteSplitGraph } from '../../types';
 
 const ZERO = new BN(0);
-interface IProps {
-	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
-	isUsedInAccounts?: boolean;
-	isSmallScreen?: boolean;
-}
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -51,7 +47,7 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScreen }: IProps) => {
+const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScreen }: IAnalyticsVoteSplitGraph) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);

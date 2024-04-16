@@ -212,7 +212,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 						/>
 					</div>
 					{votesSplitData.length > 10 ? (
-						<div className=' ml-auto hidden w-[98%] sm:flex'>
+						<div className=' ml-auto hidden w-[98%] sm:block'>
 							<Slider
 								range
 								min={0}

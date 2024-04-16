@@ -16,8 +16,8 @@ interface IProps {
 const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IProps) => {
 	const { network } = useNetworkSelector();
 	return (
-		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-10'>
-			<div className='flex flex-col'>
+		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-4'>
+			<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 sm:bg-transparent'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Delegatee</div>
 				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalDelegates}</span>
 			</div>
@@ -26,7 +26,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 				type='vertical'
 			/>
 
-			<div className='flex flex-col'>
+			<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 sm:bg-transparent'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Delegator</div>
 				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{totalDelegators}</span>
 			</div>
@@ -35,7 +35,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 				type='vertical'
 			/>
 
-			<div className='flex flex-col'>
+			<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 sm:bg-transparent'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Capital</div>
 				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>~{parseBalance(totalCapital, 1, true, network)}</span>
 			</div>
@@ -44,7 +44,7 @@ const TrackDelegationTotalData = ({ totalCapital, totalVotesBalance, totalDelega
 				type='vertical'
 			/>
 
-			<div className='flex flex-col'>
+			<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 sm:bg-transparent'>
 				<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Total Votes</div>
 				<span className='text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>~{parseBalance(totalVotesBalance, 1, true, network)}</span>
 			</div>

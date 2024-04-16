@@ -157,7 +157,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
 					</div>
 					<div>
 						{supportData.length > 10 ? (
-							<div className='ml-auto hidden w-[96%] sm:flex'>
+							<div className='ml-auto hidden w-[96%] sm:block'>
 								<Slider
 									range
 									min={0}

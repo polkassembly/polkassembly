@@ -11,7 +11,6 @@ import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { IAnalyticsVoteTrends } from '~src/components/TrackLevelAnalytics/types';
 import { ProposalType } from '~src/global/proposalType';
-import { IAnalyticsVoteTrends } from '~src/redux/trackLevelAnalytics/@types';
 import { firestore_db } from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { generateKey } from '~src/util/getRedisKeys';

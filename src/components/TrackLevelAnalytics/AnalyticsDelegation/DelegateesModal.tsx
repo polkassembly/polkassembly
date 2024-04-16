@@ -15,7 +15,6 @@ import { IDelegateesModal } from '../types';
 
 const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IDelegateesModal) => {
 	const { network } = useNetworkSelector();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const delegateeData = delegateesData[index];
 	const totalData = {
 		capital: delegateeData?.data.reduce((acc, curr) => acc + BigInt(curr.capital), BigInt(0)).toString(),

@@ -12,11 +12,7 @@ import Slider from '~src/ui-components/Slider';
 import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import { CustomTooltip } from '../../utils/CustomTooltip';
 import Skeleton from '~src/basic-components/Skeleton';
-
-interface IProps {
-	supportData: { percentage: string; index: number }[];
-	isSmallScreen?: boolean;
-}
+import { IAnalyticsTurnoutPercentageGraph } from '../../types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -44,7 +40,7 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const AnalyticsTurnoutPercentageGraph = ({ supportData }: IProps) => {
+const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPercentageGraph) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);

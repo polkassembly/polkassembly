@@ -50,3 +50,14 @@ export interface IDelegationTabs {
 	delegateesData: IDelegatorsAndDelegatees;
 	delegatorsData: IDelegatorsAndDelegatees;
 }
+
+export interface IAnalyticsDelegationSplitGraph {
+	delegationSplitData: { delegated: string | number; index: number; solo: string | number }[];
+	isUsedInAccounts?: boolean;
+	isSmallScreen?: boolean;
+}
+
+export interface IAnalyticsTurnoutPercentageGraph {
+	supportData: { percentage: string; index: number }[];
+	isSmallScreen?: boolean;
+}

@@ -9,12 +9,8 @@ import { IVoteDetailType } from '../types';
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });
 const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsTurnoutPercentageGraph'), { ssr: false });
-interface IProps {
-	voteAmount: IVoteDetailType[];
-	isSmallScreen: boolean;
-}
 
-const AnalyticsVoteAmountVotes = ({ voteAmount, isSmallScreen }: IProps) => {
+const AnalyticsVoteAmountVotes = ({ voteAmount, isSmallScreen }: { voteAmount: IVoteDetailType[]; isSmallScreen: boolean }) => {
 	const supportGraph = voteAmount.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
 	const delegationSplit = voteAmount.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
 	const votesSplit = voteAmount.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);

@@ -11,11 +11,7 @@ const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgrap
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });
 const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsTurnoutPercentageGraph'), { ssr: false });
 
-interface IProps {
-	convictionVotes: IVoteDetailType[];
-	isSmallScreen: boolean;
-}
-const AnalyticsConvictionVotes = ({ convictionVotes, isSmallScreen }: IProps) => {
+const AnalyticsConvictionVotes = ({ convictionVotes, isSmallScreen }: { convictionVotes: IVoteDetailType[]; isSmallScreen: boolean }) => {
 	const supportGraph = convictionVotes.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
 	const delegationSplit = convictionVotes.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
 	const votesSplit = convictionVotes.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);

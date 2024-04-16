@@ -15,12 +15,7 @@ import { IDelegationAnalytics } from '../types';
 
 const { Panel } = Collapse;
 
-interface IProps {
-	className?: string;
-	trackNumber: number;
-}
-
-const AnalyticsDelegation = ({ trackNumber }: IProps) => {
+const AnalyticsDelegation = ({ trackNumber }: { className?: string; trackNumber: number }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [delegationData, setDelegationData] = useState<IDelegationAnalytics>({
 		delegateesData: {},

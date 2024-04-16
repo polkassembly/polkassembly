@@ -18,17 +18,13 @@ import { IAnalyticsVoteTrends } from '../types';
 
 const { Panel } = Collapse;
 
-interface IProps {
-	trackNumber: number;
-}
-
 interface ITabItem {
 	key: string;
 	label: string;
 	children: React.ReactNode;
 }
 
-const AnalyticsVotingTrends = ({ trackNumber }: IProps) => {
+const AnalyticsVotingTrends = ({ trackNumber }: { trackNumber: number }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
 	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);

@@ -40,7 +40,7 @@ export const getTrackAnalyticsStats = async ({ trackNum, network }: { trackNum: 
 			error: null
 		};
 	} catch (err) {
-		return { data: null, error: err };
+		return { data: null, error: err || messages.API_FETCH_ERROR };
 	}
 };
 

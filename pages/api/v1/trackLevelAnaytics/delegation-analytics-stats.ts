@@ -11,20 +11,16 @@ import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 const ZERO_BN = new BN(0);
 
-async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnalytics | MessageType>) {
-	storeApiKeyUsage(req);
-
-	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-
-	const { trackNumber } = req.body;
-
-	if (typeof trackNumber !== 'number') return res.status(400).json({ message: messages.INVALID_PARAMS });
-
+export const getDelegationAnalyticsStats = async ({ network, trackNumber }: { network: string; trackNumber: number }) => {
 	try {
+		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
+
+		if (typeof trackNumber !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+
 		const data = await fetchSubsquid({
 			network,
 			query: GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA,
@@ -32,6 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 				track_num: Number(trackNumber)
 			}
 		});
+
 		let totalCapital = ZERO_BN;
 		let totalVotesBalance = ZERO_BN;
 		const totalDelegatorsObj: IDelegatorsAndDelegatees = {};
@@ -86,10 +83,33 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 			totalDelegators: Object.keys(totalDelegatorsObj)?.length,
 			totalVotesBalance: totalVotesBalance.toString()
 		};
-		return res.status(200).json(delegationStats);
+		return {
+			data: delegationStats,
+			error: null,
+			status: 200
+		};
 	} catch (error) {
-		return res.status(500).json({ message: error });
+		return {
+			data: null,
+			error: error || messages.API_FETCH_ERROR,
+			status: 500
+		};
 	}
+};
+
+async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnalytics | MessageType>) {
+	storeApiKeyUsage(req);
+
+	const network = String(req.headers['x-network']);
+
+	const { trackNumber } = req.body;
+
+	const { data, error } = await getDelegationAnalyticsStats({ network, trackNumber: Number(trackNumber) });
+
+	if (data) {
+		return res.status(200).json(data);
+	}
+	return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 }
 
 export default withErrorHandling(handler);

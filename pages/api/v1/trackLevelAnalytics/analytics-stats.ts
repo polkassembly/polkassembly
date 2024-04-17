@@ -14,11 +14,11 @@ import dayjs from 'dayjs';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { ITrackAnalyticsStats } from '~src/redux/trackLevelAnalytics/@types';
 
-export const getTrackAnalyticsStats = async ({ trackNum, network }: { trackNum: number; network: string }) => {
+export const getTrackAnalyticsStats = async ({ trackId, network }: { trackId: number; network: string }) => {
 	if (!network || !isValidNetwork(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
-	if (typeof trackNum !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+	if (typeof trackId !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 	try {
 		const subsquidRes = await fetchSubsquid({
@@ -26,7 +26,7 @@ export const getTrackAnalyticsStats = async ({ trackNum, network }: { trackNum: 
 			query: GET_TRACK_LEVEL_ANALYTICS_STATS,
 			variables: {
 				before: dayjs().subtract(7, 'days').toISOString(),
-				track_num: Number(trackNum)
+				track_num: Number(trackId)
 			}
 		});
 		const data = subsquidRes['data'];
@@ -44,17 +44,17 @@ export const getTrackAnalyticsStats = async ({ trackNum, network }: { trackNum: 
 	}
 };
 
-const handler: NextApiHandler<{ data: ITrackAnalyticsStats } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<ITrackAnalyticsStats | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
 
-	const { trackNum } = req.body;
+	const { trackId } = req.body;
 
-	const { data, error } = await getTrackAnalyticsStats({ network, trackNum });
+	const { data, error } = await getTrackAnalyticsStats({ network, trackId });
 
 	if (data) {
-		return res.status(200).json({ data: data as ITrackAnalyticsStats });
+		return res.status(200).json(data as ITrackAnalyticsStats);
 	} else {
 		return res.status(500).json({ message: error || 'Activities count not found!' });
 	}

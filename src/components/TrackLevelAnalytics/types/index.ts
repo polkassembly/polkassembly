@@ -15,10 +15,22 @@ export interface IDelegationAnalytics {
 }
 
 export interface IAnalyticsVoteTrends {
-	network: string;
-	trackNumber: number;
+	convictionVotes: {
+		delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+		supportData: { percentage: string; index: number };
+		votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+	};
+	voteAmount: {
+		delegationSplitData: { delegated: string | number; index: number; solo: string | number };
+		supportData: { percentage: string; index: number };
+		votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number };
+	};
+	accounts: {
+		delegationSplitData: { delegated: number | string; index: number; solo: number | string };
+		supportData: { percentage: string; index: number };
+		votesSplitData: { abstain: number | string; aye: number | string; nay: number | string; index: number };
+	};
 	referendaIndex: number;
-	votes: IVoteDetails;
 }
 
 export interface IVoteDetails {
@@ -62,8 +74,19 @@ export interface IAnalyticsTurnoutPercentageGraph {
 	isSmallScreen?: boolean;
 }
 
+export enum ETrackLevelDelegationFilters {
+	DELEGATORS = 'delegators',
+	DELEGATEES = 'delegatees'
+}
+
 export interface IAnalyticsVoteSplitGraph {
 	votesSplitData: { abstain: string | number; aye: string | number; nay: string | number; index: number }[];
 	isUsedInAccounts?: boolean;
 	isSmallScreen?: boolean;
+}
+
+export enum ETrackLevelAnalyticsFilterBy {
+	CONVICTION_VOTES = 'convictionVotes',
+	ACCOUNTS = 'accounts',
+	VOTE_AMOUNT = 'voteAmount'
 }

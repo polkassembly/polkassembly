@@ -86,14 +86,6 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 							axisTop={null}
 							axisRight={null}
 							axisBottom={null}
-							// axisBottom={{
-							// tickSize: 5,
-							// tickPadding: 8,
-							// tickRotation: 0,
-							// legend: '',
-							// legendOffset: 36,
-							// legendPosition: 'middle'
-							// }}
 							axisLeft={{
 								tickSize: 3,
 								tickPadding: 0,

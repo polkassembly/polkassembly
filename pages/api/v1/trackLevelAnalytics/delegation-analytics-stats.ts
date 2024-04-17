@@ -15,17 +15,17 @@ import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/redux/track
 
 const ZERO_BN = new BN(0);
 
-export const getDelegationAnalyticsStats = async ({ network, trackNumber }: { network: string; trackNumber: number }) => {
+export const getDelegationAnalyticsStats = async ({ network, trackId }: { network: string; trackId: number }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		if (typeof trackNumber !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+		if (typeof trackId !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		const data = await fetchSubsquid({
 			network,
 			query: GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA,
 			variables: {
-				track_num: Number(trackNumber)
+				track_num: Number(trackId)
 			}
 		});
 
@@ -102,9 +102,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 
 	const network = String(req.headers['x-network']);
 
-	const { trackNumber } = req.body;
+	const { trackId } = req.body;
 
-	const { data, error } = await getDelegationAnalyticsStats({ network, trackNumber: Number(trackNumber) });
+	const { data, error } = await getDelegationAnalyticsStats({ network, trackId: Number(trackId) });
 
 	if (data) {
 		return res.status(200).json(data);

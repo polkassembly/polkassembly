@@ -3,16 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
-import { IDelegatorsAndDelegatees } from '~src/types';
 import { Pagination } from '~src/ui-components/Pagination';
 import DropdownGreyIcon from '~assets/icons/dropdown-grey.svg';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useTrackLevelAnalytics } from '~src/redux/selectors';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import DelegateesModal from './DelegateesModal';
 import Address from '~src/ui-components/Address';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
-const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDelegatees }) => {
+const DelegateesTab = () => {
+	const { delegateesData } = useTrackLevelAnalytics();
 	const { network } = useNetworkSelector();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars

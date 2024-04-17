@@ -3,35 +3,31 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import TrackAnalyticsStats from './TrackAnalyticsStats';
-import AnalyticsDelegation from './AnalyticsDelegation';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { getDefaultTrackMetaData, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { Spin } from 'antd';
 import AnalyticsVotingTrends from './AnalyticsVotingTrends';
+import AnalyticsDelegation from './AnalyticsDelegation';
 
-interface IProps {
-	className?: string;
-	trackName: string;
-}
-
-const TrackLevelAnalytics = ({ className, trackName }: IProps) => {
+const TrackLevelAnalytics = ({ className, trackName }: { className?: string; trackName: string }) => {
 	const { network } = useNetworkSelector();
-	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
+	const [trackId, setTrackId] = useState<number | null>(null);
+
 	useEffect(() => {
-		setTrackMetaData(getTrackData(network, trackName));
-	}, [network, trackName]);
-	const track_number = trackMetaData?.trackId;
-	const [isLoading, setIsLoading] = useState(false);
+		if (!network) return;
+		setTrackId(networkTrackInfo?.[network]?.[trackName]?.trackId);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
 	return (
-		<Spin spinning={isLoading}>
-			<main className={`${className} flex flex-col gap-8`}>
-				<TrackAnalyticsStats
-					trackNumber={track_number}
-					setIsLoading={setIsLoading}
-				/>
-				<AnalyticsVotingTrends trackNumber={track_number} />
-				<AnalyticsDelegation trackNumber={track_number} />
-			</main>
+		<Spin spinning={trackId == null}>
+			{trackId !== null && (
+				<div className={`${className} flex flex-col gap-8`}>
+					<TrackAnalyticsStats trackId={trackId} />
+					<AnalyticsVotingTrends trackId={trackId} />
+					<AnalyticsDelegation trackId={trackId} />
+				</div>
+			)}
 		</Spin>
 	);
 };

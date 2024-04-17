@@ -14,7 +14,9 @@ import AnalyticsVoteAmountVotes from './AnalyticsVoteAmountVotes';
 import AnalyticsAccountsVotes from './AnalyticsAccountsVotes';
 import Skeleton from '~src/basic-components/Skeleton';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { IAnalyticsVoteTrends } from '../types';
+import { ETrackLevelAnalyticsFilterBy, IAnalyticsVoteTrends } from '../types';
+import { useDispatch } from 'react-redux';
+import { setTrackLevelVotesAnalyticsData } from '~src/redux/trackLevelAnalytics';
 
 const { Panel } = Collapse;
 
@@ -24,10 +26,10 @@ interface ITabItem {
 	children: React.ReactNode;
 }
 
-const AnalyticsVotingTrends = ({ trackNumber }: { trackNumber: number }) => {
+const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 	const { resolvedTheme: theme } = useTheme();
-	const [activeTab, setActiveTab] = useState<string>('conviction-votes');
-	const [voteData, setVoteData] = useState<IAnalyticsVoteTrends[]>([]);
+	const dispatch = useDispatch();
+	const [activeTab, setActiveTab] = useState<string>(ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
 	const isSmallScreen = window.innerWidth < 640;
@@ -36,11 +38,12 @@ const AnalyticsVotingTrends = ({ trackNumber }: { trackNumber: number }) => {
 		try {
 			setIsLoading(true);
 			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/votes-analytics', {
-				trackNumber
+				trackId
 			});
 
 			if (data && data?.votes) {
-				setVoteData(data?.votes);
+				console.log(data?.votes);
+				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
 				setIsLoading(false);
 			}
 		} catch (error) {
@@ -50,41 +53,25 @@ const AnalyticsVotingTrends = ({ trackNumber }: { trackNumber: number }) => {
 	};
 
 	useEffect(() => {
-		if (!isNaN(trackNumber)) {
-			getVoteData();
-		}
+		if (isNaN(trackId)) return;
+		getVoteData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trackNumber]);
+	}, [trackId]);
 
 	const tabItems: ITabItem[] = [
 		{
-			children: (
-				<AnalyticsConvictionVotes
-					isSmallScreen={isSmallScreen}
-					convictionVotes={voteData.map((vote: any) => vote.convictionVotes)}
-				/>
-			),
-			key: 'conviction-votes',
+			children: <AnalyticsConvictionVotes isSmallScreen={isSmallScreen} />,
+			key: ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES,
 			label: 'Conviction Votes'
 		},
 		{
-			children: (
-				<AnalyticsVoteAmountVotes
-					isSmallScreen={isSmallScreen}
-					voteAmount={voteData.map((vote: any) => vote.voteAmount)}
-				/>
-			),
-			key: 'vote-amount',
+			children: <AnalyticsVoteAmountVotes isSmallScreen={isSmallScreen} />,
+			key: ETrackLevelAnalyticsFilterBy.VOTE_AMOUNT,
 			label: 'Vote Amount'
 		},
 		{
-			children: (
-				<AnalyticsAccountsVotes
-					isSmallScreen={isSmallScreen}
-					accounts={voteData.map((vote: any) => vote.accounts)}
-				/>
-			),
-			key: 'accounts',
+			children: <AnalyticsAccountsVotes isSmallScreen={isSmallScreen} />,
+			key: ETrackLevelAnalyticsFilterBy.ACCOUNTS,
 			label: 'Accounts'
 		}
 	];

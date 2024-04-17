@@ -4,12 +4,12 @@
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { IDelegatorsAndDelegatees } from '~src/types';
+import { useNetworkSelector, useTrackLevelAnalytics } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { Pagination } from '~src/ui-components/Pagination';
 
-const DelegatorsTab = ({ delegatorsData }: { delegatorsData: IDelegatorsAndDelegatees }) => {
+const DelegatorsTab = () => {
+	const { delegatorsData } = useTrackLevelAnalytics();
 	const { network } = useNetworkSelector();
 	const allDelegatorData = Object.values(delegatorsData).flatMap((delegator) => delegator.data || []);
 	const { resolvedTheme: theme } = useTheme();

@@ -4,11 +4,11 @@
 import { Divider } from 'antd';
 import React from 'react';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import { useNetworkSelector } from '~src/redux/selectors';
-import { IDelegationStats } from '../types';
+import { useNetworkSelector, useTrackLevelAnalytics } from '~src/redux/selectors';
 
-const DelegationStats = ({ totalCapital, totalVotesBalance, totalDelegates, totalDelegators }: IDelegationStats) => {
+const DelegationStats = () => {
 	const { network } = useNetworkSelector();
+	const { totalCapital, totalDelegates, totalDelegators, totalVotesBalance } = useTrackLevelAnalytics();
 	const stats = [
 		{ title: 'Delegatee', value: totalDelegates },
 		{ title: 'Delegator', value: totalDelegators },

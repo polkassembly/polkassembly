@@ -128,7 +128,7 @@ export const makeStore = () => {
 			key: 'polkassembly',
 			storage,
 			transforms: [userDetailsTransform],
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'trackLevelAnalytics'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

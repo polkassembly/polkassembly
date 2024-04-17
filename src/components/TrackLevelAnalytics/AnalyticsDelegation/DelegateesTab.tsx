@@ -36,10 +36,10 @@ const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDeleg
 	return (
 		<>
 			<section className=''>
-				<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-5 py-3 text-sm font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium '>
-					<div className='w-[45%]'>Address</div>
-					<div className='w-[17%]'>Count</div>
-					<div className='w-[17%]'>Capital</div>
+				<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5'>
+					<div className='w-[40%] min-[450px]:w-[45%]'>Address</div>
+					<div className='mr-2 w-[15%] min-[450px]:mr-0 min-[450px]:w-[17%]'>Count</div>
+					<div className='mr-1 w-[17%] min-[450px]:mr-0'>Capital</div>
 					<div className='w-[19%]'>Votes</div>
 				</div>
 				<div>
@@ -47,19 +47,27 @@ const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDeleg
 						return (
 							<div
 								key={index}
-								className='flex border-0 border-b border-l border-r border-solid border-section-light-container px-5 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high'
+								className='flex justify-between border-0 border-b border-l border-r border-solid border-section-light-container px-2 py-3 text-sm font-medium text-blue-light-high dark:border-[#5A5A5A] dark:bg-[#17181a] dark:text-blue-dark-high sm:px-5'
 							>
-								<div className='my-[3px] w-[45%]'>
+								<div className='my-[3px] w-[42%] min-[450px]:w-[45%]'>
 									{' '}
 									<Address
 										address={item.from}
 										displayInline
 										isTruncateUsername={false}
+										className='hidden sm:inline-flex'
+									/>
+									<Address
+										address={item.from}
+										usernameMaxLength={4}
+										isTruncateUsername={true}
+										displayInline
+										className='text-xs sm:hidden'
 									/>
 								</div>
-								<div className='mt-[3px] w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{item.count}</div>
-								<div className='mt-[3px] w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 2, true, network)}</div>
-								<div className='mt-[3px] w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 2, true, network)}</div>
+								<div className='mt-[3px] w-[15%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high min-[450px]:w-[17%]'>{item.count}</div>
+								<div className='mt-[3px] w-[17%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.capital, 1, true, network)}</div>
+								<div className='mt-[3px] w-[19%] text-xs font-normal text-blue-light-high dark:text-blue-dark-high'>{parseBalance(item.votingPower, 1, true, network)}</div>
 								<div
 									onClick={() => {
 										setIndex(item.from);
@@ -76,7 +84,7 @@ const DelegateesTab = ({ delegateesData }: { delegateesData: IDelegatorsAndDeleg
 				<div className='mt-6 flex justify-end'>
 					<Pagination
 						theme={theme}
-						size='large'
+						size='small'
 						defaultCurrent={1}
 						current={currentPage}
 						onChange={(page: number) => {

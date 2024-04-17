@@ -4,17 +4,23 @@
 
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
-import { IVoteDetailType } from '../types';
 import dynamic from 'next/dynamic';
+import { useTrackLevelAnalytics } from '~src/redux/selectors';
+import getAnalyticsVotesByFilter from '../utils/getAnalyticsVotesByFilter';
+import { ETrackLevelAnalyticsFilterBy } from '../types';
 
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });
 const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsTurnoutPercentageGraph'), { ssr: false });
 
-const AnalyticsConvictionVotes = ({ convictionVotes, isSmallScreen }: { convictionVotes: IVoteDetailType[]; isSmallScreen: boolean }) => {
-	const supportGraph = convictionVotes.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
-	const delegationSplit = convictionVotes.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
-	const votesSplit = convictionVotes.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
+const AnalyticsConvictionVotes = ({ isSmallScreen }: { isSmallScreen: boolean }) => {
+	const { votes } = useTrackLevelAnalytics();
+
+	const convictionVotesData = getAnalyticsVotesByFilter(votes, ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
+
+	const supportGraph = convictionVotesData.sort((a, b) => a?.supportData?.index - b?.supportData?.index).map((item) => item.supportData);
+	const delegationSplit = convictionVotesData.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
+	const votesSplit = convictionVotesData.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
 
 	return (
 		<>

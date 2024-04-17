@@ -15,11 +15,11 @@ import { firestore_db } from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { generateKey } from '~src/util/getRedisKeys';
 
-const getVoteAnalyticsData = async ({ trackNumber, network }: { trackNumber: number; network: string }) => {
+const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; network: string }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-		if (typeof trackNumber !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
+		if (typeof trackId !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		if (process.env.IS_CACHING_ALLOWED == '1') {
 			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
@@ -34,7 +34,7 @@ const getVoteAnalyticsData = async ({ trackNumber, network }: { trackNumber: num
 			}
 		}
 
-		const votesRef = await firestore_db.collection('networks').doc(network).collection('track_level_analytics').doc(String(trackNumber)).collection('votes').get();
+		const votesRef = await firestore_db.collection('networks').doc(network).collection('track_level_analytics').doc(String(trackId)).collection('votes').get();
 		const data: IAnalyticsVoteTrends[] = [];
 
 		if (!votesRef.empty) {
@@ -56,11 +56,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ votes: IAnaly
 
 	const network = String(req.headers['x-network']);
 
-	const { trackNumber } = req.body;
+	const { trackId } = req.body;
 
 	const { data, error } = await getVoteAnalyticsData({
 		network,
-		trackNumber: Number(trackNumber)
+		trackId: Number(trackId)
 	});
 	if (data) {
 		return res.status(200).json(data);

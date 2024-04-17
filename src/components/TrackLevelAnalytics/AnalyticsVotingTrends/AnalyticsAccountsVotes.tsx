@@ -4,16 +4,23 @@
 import dynamic from 'next/dynamic';
 import React from 'react';
 import Nudge from '~src/components/Post/Tabs/PostStats/Tabs/Nudge';
-import { IVoteDetailType } from '../types';
+import { ETrackLevelAnalyticsFilterBy } from '../types';
+import getAnalyticsVotesByFilter from '../utils/getAnalyticsVotesByFilter';
+import { useTrackLevelAnalytics } from '~src/redux/selectors';
 
 const AnalyticsDelegationSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsDelegationSplitGraph'), { ssr: false });
 const AnalyticsVoteSplitGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsVoteSplitGraph'), { ssr: false });
 const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgraphs/AnalyticsTurnoutPercentageGraph'), { ssr: false });
 
-const AnalyticsAccountsVotes = ({ accounts, isSmallScreen }: { accounts: IVoteDetailType[]; isSmallScreen: boolean }) => {
-	const supportGraph = accounts.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
-	const delegationSplit = accounts.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
-	const votesSplit = accounts.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
+const AnalyticsAccountsVotes = ({ isSmallScreen }: { isSmallScreen: boolean }) => {
+	const { votes } = useTrackLevelAnalytics();
+
+	const accountsData = getAnalyticsVotesByFilter(votes, ETrackLevelAnalyticsFilterBy.ACCOUNTS);
+
+	const supportGraph = accountsData.sort((a, b) => a.supportData.index - b.supportData.index).map((item) => item.supportData);
+	const delegationSplit = accountsData.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
+	const votesSplit = accountsData.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
+
 	return (
 		<>
 			<Nudge text='Accounts are the number of unique addresses casting a vote .' />

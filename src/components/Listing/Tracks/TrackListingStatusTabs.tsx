@@ -146,7 +146,7 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
-					className={`my-auto flex gap-[1px] ${poppins.variable} ${poppins.className} flex-wrap`}
+					className={`my-auto flex gap-[2px] ${poppins.variable} ${poppins.className} flex-wrap`}
 					style={{ marginBottom: 16 }}
 				>
 					<Radio

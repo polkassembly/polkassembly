@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import { Radio } from 'antd';
-import Delegatees from './DelegateesTab';
 import DelegatorsTab from './DelegatorsTab';
 import { ETrackLevelDelegationFilters } from '../types';
+import DelegateesTab from './DelegateesTab';
 
 const DelegationTabs = () => {
 	const [selectedOption, setSelectedOption] = useState(ETrackLevelDelegationFilters.DELEGATEES);
@@ -19,22 +19,26 @@ const DelegationTabs = () => {
 			<Radio.Group
 				onChange={onRadioChange}
 				value={selectedOption}
-				className='my-5 flex gap-2'
+				className='my-5 flex sm:gap-2'
 			>
 				<Radio
-					className={`text-base font-medium ${selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? 'text-blue-light-high' : 'text-bodyBlue'} dark:text-blue-dark-high`}
-					value='delegatee'
+					className={`text-xs font-medium sm:text-sm ${
+						selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? 'text-blue-light-high' : 'text-[#243A57B2]'
+					} dark:text-blue-dark-high`}
+					value='delegatees'
 				>
 					Delegatee
 				</Radio>
 				<Radio
-					className={`text-base font-medium ${selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? 'text-blue-light-high' : 'text-bodyBlue'} dark:text-blue-dark-high`}
-					value='delegator'
+					className={`text-xs font-medium sm:text-sm ${
+						selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? 'text-blue-light-high' : 'text-[#243A57B2]'
+					} dark:text-blue-dark-high`}
+					value='delegators'
 				>
 					Delegator
 				</Radio>
 			</Radio.Group>
-			{selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? <Delegatees /> : selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? <DelegatorsTab /> : null}
+			{selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? <DelegateesTab /> : selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? <DelegatorsTab /> : null}
 		</div>
 	);
 };

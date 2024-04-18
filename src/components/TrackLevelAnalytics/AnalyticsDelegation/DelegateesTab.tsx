@@ -37,7 +37,7 @@ const DelegateesTab = () => {
 		<>
 			<section className=''>
 				<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222] dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5'>
-					<div className='w-[40%] min-[450px]:w-[45%]'>Address</div>
+					<div className='ml-1 w-[40%] min-[450px]:w-[45%] sm:ml-0'>Address</div>
 					<div className='mr-2 w-[15%] min-[450px]:mr-0 min-[450px]:w-[17%]'>Count</div>
 					<div className='mr-1 w-[17%] min-[450px]:mr-0'>Capital</div>
 					<div className='w-[19%]'>Votes</div>

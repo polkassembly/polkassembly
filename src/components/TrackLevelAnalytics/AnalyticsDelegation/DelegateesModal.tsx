@@ -12,6 +12,21 @@ import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteD
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import { IDelegateesModal } from '../types';
+import { styled } from 'styled-components';
+
+const StyledModal = styled(Modal)`
+	@media (max-width: 640px) {
+		&.modal {
+			width: 725px;
+			max-width: 100%;
+		}
+		.ant-modal-content {
+			padding: 6px !important;
+			border-radius: 14px !important;
+			box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.08) !important;
+		}
+	}
+`;
 
 const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: IDelegateesModal) => {
 	const { network } = useNetworkSelector();
@@ -26,7 +41,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 	const [showAll, setShowAll] = useState(false);
 
 	return (
-		<Modal
+		<StyledModal
 			open={open}
 			onCancel={() => setOpen(false)}
 			className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
@@ -139,7 +154,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 					)}
 				</div>
 			</main>
-		</Modal>
+		</StyledModal>
 	);
 };
 

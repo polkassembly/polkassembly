@@ -188,7 +188,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									)
 								);
 								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value))?.toFixed(2)?.toString());
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(
@@ -230,7 +230,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								)
 							);
 							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
-								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value))?.toFixed(2)?.toString());
+								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
 							}
 							value = formatUSDWithUnits(
 								formatBnBalance(

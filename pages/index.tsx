@@ -34,13 +34,13 @@ import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 // @ts-ignore
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useRouter } from 'next/router';
-import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import { onchainIdentitySupportedNetwork } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,

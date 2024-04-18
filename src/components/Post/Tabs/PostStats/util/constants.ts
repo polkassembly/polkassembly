@@ -10,4 +10,6 @@ const isAnalyticsSupportedNetwork = (network: string) => {
 
 export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
+export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
+
 export default isAnalyticsSupportedNetwork;

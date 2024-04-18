@@ -49,8 +49,8 @@ import { useDispatch } from 'react-redux';
 import { setBeneficiaries } from '~src/redux/treasuryProposal';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
-import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false

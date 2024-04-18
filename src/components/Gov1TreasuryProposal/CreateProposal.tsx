@@ -30,10 +30,10 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
 import Link from 'next/link';
-import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
+import { onchainIdentitySupportedNetwork } from '../Post/Tabs/PostStats/util/constants';
 
 interface Props {
 	className?: string;

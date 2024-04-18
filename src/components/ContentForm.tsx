@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Form } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
 import TextEditor from '~src/ui-components/TextEditor';
 
@@ -35,6 +36,7 @@ const validateContent = (content: string): ValidationResult => {
 };
 
 const ContentForm = ({ className, height, onChange, value, autofocus = false }: Props): JSX.Element => {
+	const { resolvedTheme: theme } = useTheme();
 	const [validationStatus, setValidation] = useState<ValidationResult>({
 		errorMsg: null,
 		validateStatus: 'success'
@@ -62,6 +64,7 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 				<TextEditor
 					name='content'
 					value={value}
+					theme={theme}
 					height={height}
 					onChange={onChangeWrapper}
 					autofocus={autofocus}

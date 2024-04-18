@@ -141,6 +141,38 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 		}
 	}, [api, apiReady, isReferendum2, network, postId, statusHistory, tally]);
 
+	const getTotalVotes = async () => {
+		const { data, error } = await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
+			postId: postId,
+			voteType: voteType
+		});
+		if (error || !data) {
+			console.log(error);
+		} else {
+			const votesRes = data;
+			if (votesRes?.totalCount === 0) {
+				setNoVotes(true);
+			}
+			setAllVotes(votesRes);
+
+			const support = votesRes?.data.reduce((acc, vote) => {
+				if (!acc) acc = ZERO;
+
+				if (vote.decision === 'yes' || vote.decision !== 'no') {
+					acc = acc.add(new BN(vote.balance));
+				}
+				return acc;
+			}, new BN(0));
+
+			setSupport(support);
+
+			setLoadingStatus({
+				isLoading: false,
+				message: ''
+			});
+		}
+	};
+
 	useEffect(() => {
 		if (!['cere', 'equilibrium', 'amplitude', 'pendulum', 'polimec'].includes(network)) return;
 
@@ -203,50 +235,7 @@ const PostStats: FC<IPostStatsProps> = ({ proposalId, postId, postType, statusHi
 			message: 'Loading votes'
 		});
 
-		(async () => {
-			await nextApiClientFetch<IAllVotesType>('api/v1/votes/total', {
-				postId: postId,
-				voteType: voteType
-			})
-				.then((res) => {
-					if (res.error) {
-						console.log(res.error);
-						setLoadingStatus({
-							isLoading: false,
-							message: ''
-						});
-					} else {
-						const votesRes = res.data;
-						if (votesRes?.totalCount === 0) {
-							setNoVotes(true);
-						}
-						setAllVotes(votesRes);
-
-						const support = votesRes?.data.reduce((acc, vote) => {
-							if (!acc) acc = ZERO;
-
-							if (vote.decision === 'yes' || vote.decision !== 'no') {
-								acc = acc.add(new BN(vote.balance));
-							}
-							return acc;
-						}, new BN(0));
-
-						setSupport(support);
-
-						setLoadingStatus({
-							isLoading: false,
-							message: ''
-						});
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-					setLoadingStatus({
-						isLoading: false,
-						message: ''
-					});
-				});
-		})();
+		getTotalVotes();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postId, voteType]);
 

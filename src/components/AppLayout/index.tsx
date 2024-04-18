@@ -859,11 +859,25 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		];
 	}
 
-	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [
-			...gov2Items,
-			getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-		];
+	if (![AllNetworks.POLYMESH].includes(network)) {
+		if (AllNetworks.WESTEND.includes(network)) {
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+					getSiderMenuItem(
+						'Treasury',
+						'treasury_group',
+						<TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						gov1Items.treasuryItems.slice(0, 1)
+					)
+				])
+			];
+		} else {
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+			];
+		}
 		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 	}
 

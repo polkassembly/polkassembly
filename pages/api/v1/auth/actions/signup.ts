@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 	if (!isValidUsername(username)) return res.status(400).json({ message: messages.USERNAME_INVALID_ERROR });
 	if (!isValidPassowrd(password)) return res.status(400).json({ message: messages.PASSWORD_LENGTH_ERROR });
 
-	const { token } = await authServiceInstance.SignUp(email, password, username, network);
+	const { token } = await authServiceInstance.SignUp(email.toLowerCase(), password, username, network);
 
 	return res.status(200).json({ token });
 }

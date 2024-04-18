@@ -188,7 +188,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									)
 								);
 								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value))?.toFixed(2)?.toString());
 								}
 								value = formatUSDWithUnits(
 									formatBnBalance(
@@ -230,7 +230,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 								)
 							);
 							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
-								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value))?.toFixed(2)?.toString());
 							}
 							value = formatUSDWithUnits(
 								formatBnBalance(
@@ -405,7 +405,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			</div>
 
 			{/* CurrentPrice */}
-			{!['moonbase', 'polimec', 'rolimec'].includes(network) && (
+			{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
 						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>

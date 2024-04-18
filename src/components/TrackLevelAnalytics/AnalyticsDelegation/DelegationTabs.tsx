@@ -25,7 +25,7 @@ const DelegationTabs = () => {
 					className={`text-xs font-medium sm:text-sm ${
 						selectedOption === ETrackLevelDelegationFilters.DELEGATEES ? 'text-blue-light-high' : 'text-[#243A57B2]'
 					} dark:text-blue-dark-high`}
-					value='delegatees'
+					value={ETrackLevelDelegationFilters.DELEGATEES}
 				>
 					Delegatee
 				</Radio>
@@ -33,7 +33,7 @@ const DelegationTabs = () => {
 					className={`text-xs font-medium sm:text-sm ${
 						selectedOption === ETrackLevelDelegationFilters.DELEGATORS ? 'text-blue-light-high' : 'text-[#243A57B2]'
 					} dark:text-blue-dark-high`}
-					value='delegators'
+					value={ETrackLevelDelegationFilters.DELEGATORS}
 				>
 					Delegator
 				</Radio>

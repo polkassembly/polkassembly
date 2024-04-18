@@ -426,33 +426,57 @@ const Sidebar = ({ Component, pageProps, className, displayName, isIdentityExist
 	}
 
 	if (network !== AllNetworks.POLYMESH) {
-		if ([AllNetworks.PICASSO].includes(network)) {
-			items = items.concat([
-				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
-				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
-				getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
-			]);
+		if (AllNetworks.WESTEND.includes(network)) {
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+					getSiderMenuItem(
+						'Treasury',
+						'treasury_group',
+						<TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						gov1Items.treasuryItems.slice(0, 1)
+					)
+				])
+			];
 		} else {
-			items = items.concat([
-				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
-				getSiderMenuItem(
-					'Treasury',
-					'treasury_group',
-					null,
-					isOpenGovSupported(network)
-						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
-							? [...gov1Items.treasuryItems]
-							: network === AllNetworks.MOONBEAM
-							? [
-									...[
+			if ([AllNetworks.PICASSO].includes(network)) {
+				items = items.concat([
+					getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+					getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
+					getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
+				]);
+			} else {
+				items = items.concat([
+					getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+					getSiderMenuItem(
+						'Treasury',
+						'treasury_group',
+						null,
+						isOpenGovSupported(network)
+							? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
+								? [...gov1Items.treasuryItems]
+								: network === AllNetworks.MOONBEAM
+								? [
+										...[
+											getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+											getSiderMenuItem(
+												'Child Bounties',
+												'/child_bounties',
+												<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+											)
+										]
+								  ]
+								: [
+										...gov1Items.treasuryItems,
 										getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 										getSiderMenuItem(
 											'Child Bounties',
 											'/child_bounties',
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 										)
-									]
-							  ]
+								  ]
+							: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+							? [...gov1Items.treasuryItems.slice(0, 1)]
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -462,31 +486,21 @@ const Sidebar = ({ Component, pageProps, className, displayName, isIdentityExist
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
-						? [...gov1Items.treasuryItems.slice(0, 1)]
-						: [
-								...gov1Items.treasuryItems,
-								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-								getSiderMenuItem(
-									'Child Bounties',
-									'/child_bounties',
-									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
-								)
-						  ]
-				),
+					),
 
-				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
+					getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
 
-				getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
-			]);
+					getSiderMenuItem('Tech. Comm.', 'tech_comm_group', null, [...gov1Items.techCommItems])
+				]);
+			}
+			collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
+
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+			];
+			gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 		}
-		collapsedItems = collapsedItems.concat([...gov1Items.democracyItems, ...gov1Items.treasuryItems, ...gov1Items.councilItems, ...gov1Items.techCommItems]);
-
-		gov2Items = [
-			...gov2Items,
-			getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-		];
-		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 	}
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;

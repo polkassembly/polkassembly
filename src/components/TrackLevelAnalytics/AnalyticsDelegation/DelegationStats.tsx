@@ -19,7 +19,7 @@ const DelegationStats = () => {
 		<section className='grid grid-cols-2 gap-2 sm:flex sm:justify-between sm:px-4'>
 			{stats.map((stat, index) => (
 				<React.Fragment key={index}>
-					<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 dark:bg-transparent sm:bg-transparent'>
+					<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 dark:bg-section-dark-container sm:bg-transparent dark:sm:bg-transparent'>
 						<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{stat.title}</div>
 						<div className=' text-center text-[28px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{stat.value}</div>
 					</div>

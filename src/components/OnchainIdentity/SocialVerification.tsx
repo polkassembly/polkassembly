@@ -247,6 +247,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			localStorage.removeItem('identityForm');
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');
+			localStorage.setItem('isJudgementPassed', JSON.stringify(true));
 			setOpenSuccessModal(true);
 			closeModal(true);
 			startLoading({ isLoading: false, message: '' });
@@ -254,6 +255,7 @@ const SocialVerification = ({ className, socials, onCancel, startLoading, closeM
 			closeModal(true);
 
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
+			router.reload();
 			router.replace('/');
 		} else if (error) {
 			queueNotification({

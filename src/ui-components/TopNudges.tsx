@@ -20,12 +20,17 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState<boolean | null>(null);
+	const [isJudgementPassed, setIsJudgementPassed] = useState<boolean>(false);
 	const [notificationVisible, setNotificationVisible] = useState(!(isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network)));
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 
 		const nudgeStatus = sessionStorage.getItem('identityNudgeStatus');
+
+		const isJudgementPassed = JSON.parse(localStorage.getItem('isJudgementPassed') || 'false');
+
+		setIsJudgementPassed(isJudgementPassed);
 
 		if (nudgeStatus !== 'viewed') {
 			setIsOpen(true);
@@ -80,7 +85,7 @@ const TopNudges = ({ isIdentitySet, handleSetIdentityClick, isIdentityUnverified
 				</div>
 			) : (
 				<>
-					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
+					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && !isJudgementPassed && (
 						<div className='flex flex-row border-none bg-[#5D38F4]'>
 							<div className='hidden w-[80px] lg:block'></div>
 							<div className='ant-layout-content mx-auto flex w-[94vw] max-w-7xl flex-initial flex-row items-center justify-between gap-8 px-2 py-2 lg:w-[85vw] 2xl:w-5/6'>

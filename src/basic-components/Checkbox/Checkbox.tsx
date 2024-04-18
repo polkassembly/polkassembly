@@ -5,10 +5,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, PropsWithChildren } from 'react';
-import { Checkbox as ANTDCheckbox } from 'antd';
+import { Checkbox as ANTDCheckbox, CheckboxProps } from 'antd';
 import styled from 'styled-components';
 
-interface ICheckbox {
+interface ICheckbox extends CheckboxProps {
 	className?: string;
 	value?: any;
 	onChange?: any;

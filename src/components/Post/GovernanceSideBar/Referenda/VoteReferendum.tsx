@@ -885,7 +885,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={(value: any) => {
+											onChange={(value: React.ChangeEvent<HTMLInputElement>) => {
 												setShowProxyDropdown(value?.target?.checked);
 											}}
 											theme={theme}

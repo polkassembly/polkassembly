@@ -65,7 +65,7 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 							<Checkbox
 								value={item.value}
 								name={item.value}
-								onChange={(e: any) => handleChange(e, item.value)}
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e, item.value)}
 								checked={item.selected}
 								className='text-blue-light-high dark:text-blue-dark-high'
 								theme={theme}

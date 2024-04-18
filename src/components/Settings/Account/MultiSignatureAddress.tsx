@@ -115,7 +115,7 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 							>
 								<Checkbox
 									checked={isSelected(address)}
-									onChange={(e: any) => {
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 										handleAddSignatories(e.target.checked, address);
 									}}
 									theme={theme}

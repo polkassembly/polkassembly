@@ -146,31 +146,32 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
-					className={`my-auto flex gap-1 sm:gap-[1px] ${poppins.variable} ${poppins.className} flex-wrap`}
+					className={`my-auto flex gap-1 ${poppins.variable} ${poppins.className} flex-wrap`}
+					style={{ marginBottom: 16 }}
 				>
 					<Radio
 						value='All'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						All <span className='hidden sm:inline-flex'>({initialCountForAll || 0})</span>
+						All ({initialCountForAll || 0}){' '}
 					</Radio>
 					<Radio
 						value='Submitted'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Submitted <span className='hidden sm:inline-flex'>({initialCountForSubmitted || 0})</span>
+						Submitted ({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Voting <span className='hidden sm:inline-flex'>({initialCountForVoting || 0})</span>
+						Voting ({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Closed <span className='hidden sm:inline-flex'>({initialCountForClosed || 0})</span>
+						Closed ({initialCountForClosed || 0})
 					</Radio>
 				</Radio.Group>
 			</div>

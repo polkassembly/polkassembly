@@ -146,32 +146,32 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 				<Radio.Group
 					onChange={onRadioChange}
 					value={selectedRadio}
-					className={`my-auto flex gap-1 ${poppins.variable} ${poppins.className} flex-wrap`}
+					className={`my-auto flex gap-[1px] ${poppins.variable} ${poppins.className} flex-wrap`}
 					style={{ marginBottom: 16 }}
 				>
 					<Radio
 						value='All'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						All ({initialCountForAll || 0}){' '}
+						All({initialCountForAll || 0}){' '}
 					</Radio>
 					<Radio
 						value='Submitted'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Submitted ({initialCountForSubmitted || 0})
+						Submitted({initialCountForSubmitted || 0})
 					</Radio>
 					<Radio
 						value='Voting'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Voting ({initialCountForVoting || 0})
+						Voting({initialCountForVoting || 0})
 					</Radio>
 					<Radio
 						value='Closed'
 						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
 					>
-						Closed ({initialCountForClosed || 0})
+						Closed {initialCountForClosed || 0})
 					</Radio>
 				</Radio.Group>
 			</div>

@@ -175,7 +175,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 							className='flex justify-end'
 							onClick={() => setAmountBreakup(!amountBreakup)}
 						>
-							{formatedBalance(perSocialBondFee.add(registerarFee.add(minDeposite)).toString(), unit, 2)} {unit}
+							{formatedBalance(perSocialBondFee?.add(registerarFee?.add(minDeposite)).toString(), unit, 2)} {unit}
 							{amountBreakup ? <DownArrowIcon className='ml-2 text-2xl' /> : <UpArrowIcon className='ml-2 text-xl' />}
 						</span>
 						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>

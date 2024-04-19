@@ -335,14 +335,6 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{alreadyVerifiedfields?.alreadyVerified && (
-					<Alert
-						showIcon
-						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue'
-						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
-					/>
-				)}
 				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && (
 					<Alert
 						className='mb-6'

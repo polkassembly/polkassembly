@@ -21,7 +21,7 @@ const LeaderBoardTable = ({ className }: Props) => {
 			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
 				<div className='table-header items-center'>
 					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
-					<div className='search-box flex'>
+					<div className='search-box mr-8 flex'>
 						<Input.Search
 							placeholder='Enter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'

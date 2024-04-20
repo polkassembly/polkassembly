@@ -58,6 +58,7 @@ import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import Checkbox from '~src/basic-components/Checkbox/Checkbox';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -885,7 +886,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<Checkbox
 											value=''
 											className='text-xs text-bodyBlue dark:text-blue-dark-medium'
-											onChange={(value: React.ChangeEvent<HTMLInputElement>) => {
+											onChange={(value: CheckboxChangeEvent) => {
 												setShowProxyDropdown(value?.target?.checked);
 											}}
 											theme={theme}

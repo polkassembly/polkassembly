@@ -10,22 +10,14 @@ import styled from 'styled-components';
 
 interface ICheckbox extends CheckboxProps {
 	className?: string;
-	value?: any;
-	onChange?: any;
-	theme: any;
-	checked?: boolean;
-	name?: string;
+	theme?: any;
 }
 const Checkbox: FC<PropsWithChildren<ICheckbox>> = (props) => {
-	const { className, value, onChange, checked, name } = props;
+	const { className } = props;
 	return (
 		<ANTDCheckbox
 			{...props}
-			value={value}
-			onChange={onChange}
 			className={`${className}`}
-			checked={checked}
-			name={name}
 		/>
 	);
 };

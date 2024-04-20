@@ -72,9 +72,9 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	}));
 
 	const colors: { [key: string]: string } = {
-		abstain: '#407BFF',
-		aye: '#64A057',
-		nay: '#E84865'
+		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
+		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
+		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
 
 	const chartData = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => {

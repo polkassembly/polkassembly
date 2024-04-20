@@ -37,4 +37,9 @@ export const Collapse = styled(AntDCollapse)`
 			padding: 8px 12px !important;
 		}
 	}
+	@media (max-width: 640px) {
+		.ant-collapse-content-box {
+			padding: 16px 8px !important;
+		}
+	}
 `;

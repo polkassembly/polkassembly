@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 			const bnBalance = new BN(item?.balance);
 			const bnLockedPeriod = new BN(item?.lockPeriod || 0);
 			totalDelegateBalance = totalDelegateBalance.add(bnBalance);
-			votingPower = item?.lockPeriod ? votingPower.add(bnBalance.mul(bnLockedPeriod)) : votingPower.add(bnBalance);
+			votingPower = item?.lockPeriod ? votingPower.add(bnBalance.mul(bnLockedPeriod)) : votingPower.add(bnBalance.div(new BN('10')));
 		});
 
 		const delegationStats: IDelegateBalance = {

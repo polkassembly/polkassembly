@@ -47,7 +47,7 @@ interface IAboutTrackCardProps {
 	trackName: string;
 }
 
-const getDefaultTrackMetaData = () => {
+export const getDefaultTrackMetaData = () => {
 	return {
 		confirmPeriod: '',
 		decisionDeposit: '',

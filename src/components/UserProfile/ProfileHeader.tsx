@@ -17,6 +17,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -134,7 +135,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 					username={userProfile.username || ''}
 				/>
 			)}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
+			{delegationSupportedNetworks.includes(network) && (
 				<DelegateModal
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}

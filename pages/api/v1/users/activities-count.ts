@@ -22,6 +22,7 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 	try {
 		const totalActivitiesSnapshot = await firestore_db
 			.collection('user_activities')
+			.orderBy('created_at', 'desc')
 			.where('network', '==', network)
 			.where('by', '==', userId)
 			.where('is_deleted', '==', false)
@@ -40,6 +41,7 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 
 		const totalMentionsSnapshot = await firestore_db
 			.collection('user_activities')
+			.orderBy('created_at', 'desc')
 			.where('network', '==', network)
 			.where('mentions', 'array-contains', userId)
 			.where('type', '==', EUserActivityType.MENTIONED)

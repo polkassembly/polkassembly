@@ -15,7 +15,6 @@ import { WalletIcon } from '~src/components/Login/MetamaskLogin';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
-import { Wallet } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import NetworkIcon from '~assets/icons/USB.svg';
 import Modal from '~src/basic-components/Modal/Modal';
@@ -36,6 +35,7 @@ interface Props {
 	setSelectedProxyAddress?: (pre: string) => void;
 	selectedProxyAddress?: string;
 	heading?: string;
+	onBalanceChange?: (pre: string) => void;
 }
 
 const ProxyAccountSelectionForm = ({
@@ -51,7 +51,8 @@ const ProxyAccountSelectionForm = ({
 	selectedProxyAddress,
 	setIsProxyExistsOnWallet,
 	heading,
-	isUsedInIdentity
+	isUsedInIdentity,
+	onBalanceChange
 }: Props) => {
 	const [showWalletModal, setShowWalletModal] = useState(false);
 	const { network } = useNetworkSelector();
@@ -79,19 +80,7 @@ const ProxyAccountSelectionForm = ({
 
 	const getAllAccounts = async () => {
 		if (!api || !apiReady || !wallet) return;
-		if (changedWallet === 'subwallet-js') {
-			setWalletType(Wallet.SUBWALLET);
-		} else if (changedWallet === 'polkadot-js') {
-			setWalletType(Wallet.POLKADOT);
-		} else if (changedWallet === 'talisman') {
-			setWalletType(Wallet.TALISMAN);
-		} else if (changedWallet === 'polkagate') {
-			setWalletType(Wallet.POLKAGATE);
-		} else if (changedWallet === 'polywallet') {
-			setWalletType(Wallet.POLYWALLET);
-		} else if (changedWallet === 'polkasafe') {
-			setWalletType(Wallet.POLKASAFE);
-		}
+		setWalletType(changedWallet);
 		const addressData = await getAccountsFromWallet({ api, apiReady, chosenWallet: changedWallet || wallet, loginAddress, network });
 		if (addressData?.accounts?.length && selectedProxyAddress) {
 			const exists = addressData?.accounts.filter((account) => getSubstrateAddress(account.address) === getSubstrateAddress(selectedProxyAddress))?.length;
@@ -109,10 +98,11 @@ const ProxyAccountSelectionForm = ({
 			<article className={`${isUsedInIdentity ? 'mt-3' : 'mt-2'} flex w-full flex-col`}>
 				<div className={`${isUsedInIdentity ? '-mb-[10px]' : 'mb-1'} ml-[-6px] flex items-center gap-x-2`}>
 					<h3 className={`inner-headings mb-[1px] ml-1.5 ${isUsedInIdentity ? 'dark:text-white' : 'dark:text-blue-dark-medium'}`}>{heading ? heading : 'Vote with Proxy'}</h3>
-					{address && withBalance && (
+					{!!address && !!withBalance && (
 						<Balance
 							address={selectedProxyAddress || ''}
 							isBalanceUpdated={isBalanceUpdated}
+							onChange={(balance: string | undefined) => onBalanceChange?.(balance || '')}
 						/>
 					)}
 				</div>
@@ -120,8 +110,8 @@ const ProxyAccountSelectionForm = ({
 					trigger={['click']}
 					overlayClassName='z-[2000]'
 					className={`${className} ${inputClassName} ${
-						isUsedInIdentity ? 'h-10' : 'h-[48px] py-1'
-					} rounded-md border-[1px] border-solid border-gray-300 px-3  text-xs dark:border-[#3B444F] dark:border-separatorDark`}
+						isUsedInIdentity ? 'h-10' : 'h-12 py-1'
+					} rounded-md border-[1px] border-solid border-gray-300 px-3 text-xs dark:border-[#3B444F] dark:border-separatorDark`}
 					menu={{
 						items: dropdownMenuItems,
 						onClick: (e: any) => {
@@ -164,7 +154,7 @@ const ProxyAccountSelectionForm = ({
 							/>
 							Change Wallet
 						</Button>
-						<span className='mx-2 mb-1'>
+						<span className='ml-1'>
 							<DownIcon />
 						</span>
 					</div>

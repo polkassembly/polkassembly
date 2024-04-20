@@ -22,7 +22,7 @@ const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; net
 		if (typeof trackId !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
 		if (process.env.IS_CACHING_ALLOWED == '1') {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2, trackId: trackId });
 			const redisData = await redisGet(redisKey);
 
 			if (redisData) {
@@ -43,7 +43,7 @@ const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; net
 			});
 		}
 		if (process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 }), JSON.stringify(data));
+			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2, trackId: trackId }), JSON.stringify(data));
 		}
 		return { data: { votes: data }, error: null, status: 200 };
 	} catch (err) {

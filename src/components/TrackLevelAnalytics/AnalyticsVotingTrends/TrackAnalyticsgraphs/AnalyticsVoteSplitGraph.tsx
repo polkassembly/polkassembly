@@ -72,9 +72,9 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	}));
 
 	const colors: { [key: string]: string } = {
-		abstain: '#407BFF',
-		aye: '#6DE1A2',
-		nay: '#FF778F'
+		abstain: theme === 'dark' ? '#407BFF' : '#407BFF',
+		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
+		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
 
 	const chartData = votesSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => {
@@ -128,7 +128,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							data={isUsedInAccounts ? data : chartData}
 							keys={['aye', 'nay', 'abstain']}
 							indexBy='index'
-							margin={{ bottom: 40, left: 40, right: 0, top: 10 }}
+							margin={{ bottom: 40, left: 45, right: 0, top: 10 }}
 							padding={0.5}
 							valueScale={{ type: 'linear' }}
 							borderRadius={2}

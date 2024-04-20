@@ -59,7 +59,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 			id: 'Turnout',
 			data: supportData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 				x: item.index,
-				y: parseFloat(item.percentage)
+				y: parseFloat(item.percentage).toFixed(2)
 			}))
 		}
 	];

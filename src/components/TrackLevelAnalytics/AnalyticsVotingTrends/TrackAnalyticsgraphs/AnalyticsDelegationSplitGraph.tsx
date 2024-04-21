@@ -190,7 +190,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 								}
 							}}
 							ariaLabel='Nivo bar chart demo'
-							valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 

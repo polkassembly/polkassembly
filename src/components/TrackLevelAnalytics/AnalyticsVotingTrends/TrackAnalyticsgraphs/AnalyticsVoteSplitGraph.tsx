@@ -128,7 +128,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							data={isUsedInAccounts ? data : chartData}
 							keys={['aye', 'nay', 'abstain']}
 							indexBy='index'
-							margin={{ bottom: 40, left: 45, right: 0, top: 10 }}
+							margin={{ bottom: 40, left: 50, right: 0, top: 10 }}
 							padding={0.5}
 							valueScale={{ type: 'linear' }}
 							borderRadius={2}
@@ -204,7 +204,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							}}
 							animate={true}
 							groupMode='stacked'
-							valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 					{votesSplitData.length > 10 ? (

@@ -44,10 +44,12 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
+	console.log('supportData', supportData);
 
 	useEffect(() => {
 		setIsLoading(true);
 		setSelectedRange(calculateDefaultRange(supportData.length));
+		console.log('supportDataLength', supportData.length);
 		setIsLoading(false);
 	}, [supportData.length]);
 
@@ -69,6 +71,14 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 		[0]: minIndex.toString(),
 		[supportData.length - 1]: maxIndex.toString()
 	};
+	if (supportData.length === 1) {
+		return (
+			<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+				<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
+				<div className='mt-4 h-[250px]'>Insufficient data for graph display.</div>
+			</StyledCard>
+		);
+	}
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>

@@ -23,9 +23,11 @@ const DelegationStats = () => {
 				<React.Fragment key={index}>
 					<div className='flex flex-col items-center rounded-xl bg-[#D2D8E04F] pb-1 pt-2 dark:bg-[#1F1F20] sm:bg-transparent dark:sm:bg-transparent'>
 						<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{stat.title}</div>
-						<div className=' text-center text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high max-md:text-xl'>
+						<div className=' text-center text-[22px] font-semibold text-blue-light-high dark:text-blue-dark-high sm:text-[24px]'>
 							{stat.value}
-							{typeof stat.value !== 'number' && <span className='ml-[2px] text-lg font-semibold text-blue-light-medium dark:text-blue-dark-medium'>{tokenSymbol}</span>}
+							{typeof stat.value !== 'number' && (
+								<span className='ml-[2px] text-base font-semibold text-blue-light-medium dark:text-blue-dark-medium sm:text-lg'>{tokenSymbol}</span>
+							)}
 						</div>
 					</div>
 					{index < stats.length - 1 && (

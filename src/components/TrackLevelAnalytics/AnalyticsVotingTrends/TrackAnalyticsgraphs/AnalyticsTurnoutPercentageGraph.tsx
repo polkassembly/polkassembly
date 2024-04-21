@@ -72,7 +72,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 		[0]: minIndex.toString(),
 		[supportData.length - 1]: maxIndex.toString()
 	};
-	if (supportData.length === 1) {
+	if (supportData.length <= 1) {
 		return (
 			<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 				<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>

@@ -9,6 +9,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import BN from 'bn.js';
 import formatBnBalance from '../utils/formateBnBalance';
 import { firestoreDB } from '..';
+import { GET_ALL_TRACK_PROPOSALS, GET_TOTAL_VOTES_FOR_PROPOSAL } from '../queries';
 
 const ZERO_BN = new BN(0);
 
@@ -54,57 +55,6 @@ interface IResponse{
 		referendaIndex: number
 	}
 }
-
-export const GET_TOTAL_VOTES_FOR_PROPOSAL = `
-query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int  ) {
-  flattenedConvictionVotes(where: {type_eq: $type_eq, proposalIndex_eq: $index_eq, removedAtBlock_isNull: true}, orderBy: voter_DESC) {
-    type
-    lockPeriod
-    decision
-    balance {
-      ... on StandardVoteBalance {
-        value
-      }
-      ... on SplitVoteBalance {
-        aye
-        nay
-        abstain
-      }
-    }
-    createdAt
-    createdAtBlock
-    proposalIndex
-    isDelegated
-    parentVote {
-      extrinsicIndex
-      selfVotingPower
-      type
-      voter
-      lockPeriod
-      delegatedVotingPower
-      delegatedVotes(where: {removedAtBlock_isNull: true}) {
-        voter
-        balance {
-          ... on StandardVoteBalance {
-            value
-          }
-          ... on SplitVoteBalance {
-            aye
-            nay
-            abstain
-          }
-        }
-        lockPeriod
-        votingPower
-      }
-    }
-  }
-}`;
-const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int!) {
-  proposals(where: {trackNumber_eq: $track_eq}) {
-    index
-  }
-}`;
 
 const logger = functions.logger;
 
@@ -257,7 +207,7 @@ const trackLevelAnalytics = async () => {
 					track_eq: trackNumber
 				}
 			});
-			const proposals = subsquidRes?.['data']?.proposals;
+			const proposals = subsquidRes?.['data']?.proposals || [];
 
 			for (const proposal of proposals) {
 				const query = GET_TOTAL_VOTES_FOR_PROPOSAL;

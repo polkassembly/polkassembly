@@ -39,7 +39,21 @@ const StyledSlider = styled(AntdSlider)`
 		letter-spacing: -0.03em;
 		text-align: left;
 		color: ${(props: any) => (props.theme == 'dark' ? '#747474' : '#485F7D')} !important;
-		margin-top: 4px;
+		margin-top: 6px;
+	}
+	.ant-slider .ant-slider-handle:focus::after {
+		box-shadow: none;
+	}
+
+	.ant-slider-handle.ant-slider-handle::after {
+		height: 33px;
+		margin-top: -7px;
+		width: 33px;
+		background-image: url(${(props: any) => (props.theme == 'dark' ? '/assets/icons/analytics/slider-button-dark.svg' : '/assets/icons/analytics/slider-button.svg')}) !important;
+		background-repeat: no-repeat !important;
+		box-shadow: none;
+		background-color: transparent;
+		margin-left: -7px;
 	}
 `;
 

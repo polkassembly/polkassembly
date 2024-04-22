@@ -335,7 +335,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && (
+				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && !alreadyVerifiedfields.alreadyVerified && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -718,7 +718,11 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity() ? (
+				{alreadyVerifiedfields?.twitter &&
+				alreadyVerifiedfields?.email &&
+				alreadyVerifiedfields?.displayName &&
+				handleAllowSetIdentity() &&
+				!alreadyVerifiedfields.alreadyVerified ? (
 					<CustomButton
 						onClick={handleSetIdentity}
 						loading={loading}

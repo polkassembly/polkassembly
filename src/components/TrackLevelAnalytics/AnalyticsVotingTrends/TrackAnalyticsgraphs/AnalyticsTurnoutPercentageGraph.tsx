@@ -42,7 +42,6 @@ const StyledCard = styled(Card)`
 `;
 
 const CustomBarTooltip = ({ index, value }: BarTooltipProps<{ x: string | number; y: string }>) => {
-	console.log('indexindex', index);
 	return (
 		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
 			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{index}</div>
@@ -59,7 +58,6 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	useEffect(() => {
 		setIsLoading(true);
 		setSelectedRange(calculateDefaultRange(supportData.length));
-		console.log('supportDataLength', supportData.length);
 		setIsLoading(false);
 	}, [supportData.length]);
 

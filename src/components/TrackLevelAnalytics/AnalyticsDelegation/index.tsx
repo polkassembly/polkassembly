@@ -65,6 +65,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 				}
 				key='2'
 			>
+				<DelegationStats />
 				{noData ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>
 						<NoVotesIcon />
@@ -72,7 +73,6 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 					</div>
 				) : (
 					<>
-						<DelegationStats />
 						<Divider
 							dashed
 							className='mb-3 mt-5 border-section-light-container dark:border-separatorDark'

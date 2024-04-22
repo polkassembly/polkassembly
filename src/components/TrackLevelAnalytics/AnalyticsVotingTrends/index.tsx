@@ -17,6 +17,7 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { ETrackLevelAnalyticsFilterBy, IAnalyticsVoteTrends } from '../types';
 import { useDispatch } from 'react-redux';
 import { setTrackLevelVotesAnalyticsData } from '~src/redux/trackLevelAnalytics';
+import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 
 const { Panel } = Collapse;
 
@@ -32,6 +33,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 	const [activeTab, setActiveTab] = useState<string>(ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
+	const [noData, setNoData] = useState<boolean>(false);
 	const isSmallScreen = window.innerWidth < 640;
 
 	const getVoteData = async () => {
@@ -45,6 +47,9 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 				console.log(data?.votes);
 				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
 				setIsLoading(false);
+			}
+			if (data && data?.votes.length === 0) {
+				setNoData(true);
 			}
 		} catch (error) {
 			console.error(error);
@@ -104,7 +109,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 							/>
 							<span className='py-[3.8px] text-base font-semibold text-blue-light-high dark:text-blue-dark-high'>Voting Trends</span>
 						</div>
-						{activeKey === '1' && (
+						{activeKey === '1' && !noData && (
 							<div
 								className='hidden sm:flex'
 								onClick={(e) => e.stopPropagation()}
@@ -125,8 +130,11 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 				}
 				key='1'
 			>
-				{isLoading ? (
-					<Skeleton />
+				{noData ? (
+					<div className='flex flex-col items-center justify-center gap-5 p-10'>
+						<NoVotesIcon />
+						<p className='text-sm'>Not enough data available</p>
+					</div>
 				) : (
 					<>
 						<div
@@ -134,7 +142,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 							onClick={(e) => e.stopPropagation()}
 						>
 							{isLoading ? (
-								<SkeletonButton />
+								<Skeleton />
 							) : (
 								<StatTabs
 									items={tabItems}

@@ -15,6 +15,7 @@ const AnalyticsTurnoutPercentageGraph = dynamic(() => import('./TrackAnalyticsgr
 
 const AnalyticsConvictionVotes = ({ isSmallScreen }: { isSmallScreen: boolean }) => {
 	const { votes } = useTrackLevelAnalytics();
+	console.log('votes', votes);
 
 	const convictionVotesData = getAnalyticsVotesByFilter(votes, ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
 

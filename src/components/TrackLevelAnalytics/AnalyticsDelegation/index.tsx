@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
@@ -14,12 +14,14 @@ import DelegationTabs from './DelegationTabs';
 import { useDispatch } from 'react-redux';
 import { setTrackLevelDelegationAnalyticsData } from '~src/redux/trackLevelAnalytics';
 import { IDelegationAnalytics } from '~src/redux/trackLevelAnalytics/@types';
+import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 
 const { Panel } = Collapse;
 
 const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	const [noData, setNoData] = useState<boolean>(false);
 
 	const getData = async () => {
 		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/delegation-analytics-stats', {
@@ -27,6 +29,9 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 		});
 
 		if (data) {
+			if (data?.totalDelegates == 0) {
+				setNoData(true);
+			}
 			dispatch(setTrackLevelDelegationAnalyticsData(data));
 		}
 		if (error) console.log(error);
@@ -60,12 +65,21 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 				}
 				key='2'
 			>
-				<DelegationStats />
-				<Divider
-					dashed
-					className='mb-3 mt-5 border-section-light-container dark:border-separatorDark'
-				/>
-				<DelegationTabs />
+				{noData ? (
+					<div className='flex flex-col items-center justify-center gap-5 p-10'>
+						<NoVotesIcon />
+						<p className='text-sm'>Not enough data available</p>
+					</div>
+				) : (
+					<>
+						<DelegationStats />
+						<Divider
+							dashed
+							className='mb-3 mt-5 border-section-light-container dark:border-separatorDark'
+						/>
+						<DelegationTabs />
+					</>
+				)}
 			</Panel>
 		</Collapse>
 	);

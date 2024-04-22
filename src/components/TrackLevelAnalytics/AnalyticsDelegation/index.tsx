@@ -29,7 +29,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 		});
 
 		if (data) {
-			if (data?.totalDelegates == 0) {
+			if (!data?.totalDelegates && !data?.totalDelegators) {
 				setNoData(true);
 			}
 			dispatch(setTrackLevelDelegationAnalyticsData(data));

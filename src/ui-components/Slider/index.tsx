@@ -28,7 +28,10 @@ const StyledSlider = styled(AntdSlider)`
 		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-rail {
-		background-color: #f4f0f0 !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
+	}
+	.ant-slider-dot {
+		display: ${(props: any) => (props.theme == 'dark' ? 'none' : '')} !important;
 		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-mark-text {

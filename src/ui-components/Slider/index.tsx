@@ -25,11 +25,11 @@ const StyledSlider = styled(AntdSlider)`
 		background-color: ${(props: any) => (props.theme == 'dark' ? '#3B444F' : '#d2d8e0')} !important;
 	}
 	&:hover .ant-slider-rail {
-		background-color: ${(props: any) => (props.theme == 'dark' ? '#6f7f93' : '#f4f0f0')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-rail {
 		background-color: #f4f0f0 !important;
-		background-color: ${(props: any) => (props.theme == 'dark' ? '#6f7f93' : '#f4f0f0')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-mark-text {
 		font-family: 'Poppins', sans-serif;

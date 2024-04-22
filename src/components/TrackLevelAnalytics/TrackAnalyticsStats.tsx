@@ -47,7 +47,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 
 	return (
 		<Spin spinning={loading}>
-			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col'>
+			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col sm:max-w-[50%]'>
 				{/* Proposal Created */}
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<ImageIcon

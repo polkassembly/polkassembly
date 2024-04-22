@@ -26,7 +26,6 @@ import { treasuryProposalCreationAllowedNetwork } from '~src/components/AiBot/Ai
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ITrackDelegation } from 'pages/api/v1/delegations';
 import Address from '~src/ui-components/Address';
@@ -35,6 +34,7 @@ import Alert from '~src/basic-components/Alert';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -47,7 +47,7 @@ interface IAboutTrackCardProps {
 	trackName: string;
 }
 
-const getDefaultTrackMetaData = () => {
+export const getDefaultTrackMetaData = () => {
 	return {
 		confirmPeriod: '',
 		decisionDeposit: '',
@@ -294,7 +294,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin'].includes(trackName) && (
 							<ProposalActionButtons
 								isCreateProposal={trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin'}
@@ -485,7 +485,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
 					<div className='flex gap-x-1'>
-						{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
+						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'

@@ -18,7 +18,6 @@ import VoterIcon from '~assets/icons/vote-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
@@ -514,7 +513,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 					))}
 				</div>
 			</div>
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
+			{delegationSupportedNetworks.includes(network) && (
 				<DelegateModal
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}

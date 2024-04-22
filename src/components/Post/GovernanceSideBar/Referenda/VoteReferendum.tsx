@@ -998,8 +998,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										disabled={
 											(showProxyDropdown && proxyAddressBalance.lte(lockedBalance)) ||
 											!wallet ||
-											ayeVoteValue.lte(ZERO_BN) ||
-											nayVoteValue.lte(ZERO_BN) ||
+											ayeVoteValue.add(nayVoteValue).lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
 											(showMultisig && initiatorBalance.lte(totalDeposit)) ||
 											isBalanceErr ||
@@ -1037,9 +1036,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										handleSubmit={handleSubmit}
 										disabled={
 											!wallet ||
-											ayeVoteValue.lte(ZERO_BN) ||
-											nayVoteValue.lte(ZERO_BN) ||
-											abstainVoteValue.lte(ZERO_BN) ||
+											ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).lte(ZERO_BN) ||
 											(showMultisig && !multisig) ||
 											isBalanceErr ||
 											(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance))) ||

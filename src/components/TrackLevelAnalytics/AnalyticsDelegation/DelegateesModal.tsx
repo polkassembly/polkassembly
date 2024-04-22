@@ -62,19 +62,19 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 					<div className='flex w-[200px] flex-col gap-1'>
 						<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 						<div className='flex justify-between'>
-							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 								<VoterIcon /> Voting Power
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
 						</div>
 						<div className='flex justify-between'>
-							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 								<ConvictionIcon /> Conviction
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
 						</div>
 						<div className='flex justify-between'>
-							<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 								<CapitalIcon /> Capital
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
@@ -86,19 +86,19 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 							<div className='mr-3 flex w-[200px] flex-col gap-1'>
 								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 										<VoterIcon /> Voting Power
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.votingPower || '0').toString(), 2, true, network)}</span>
 								</div>
 								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 										<EmailIcon /> Delegators
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{totalData?.count}</span>
 								</div>
 								<div className='flex justify-between'>
-									<span className='flex items-center gap-1 text-xs text-[#576D8B]'>
+									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
 										<CapitalIcon /> Capital
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.capital || '0').toString(), 2, true, network)}</span>

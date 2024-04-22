@@ -227,7 +227,9 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 		});
 });
 
-exports.trackLevelAnalytics = functions.pubsub.schedule('every 24 hours').onRun(async () => {
+exports.trackLevelAnalytics = functions.runWith({
+	timeoutSeconds: 540
+}).pubsub.schedule('every 24 hours').onRun(async () => {
 	functions.logger.info('scheduledTrackLevelAnalytics ran at : ', new Date());
 	await trackLevelAnalytics();
 	return;

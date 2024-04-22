@@ -11,7 +11,8 @@ const subsquidUrlMap = {
 	moonbase: 'wss://wss.api.moonbase.moonbeam.network',
 	rococo: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
 	picasso: 'https://squid.subsquid.io/picasso-polkassembly/graphql',
-	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql'
+	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
+	westend: 'https://polkassembly.squids.live/westend-polkassembly/graphql'
 };
 
 interface Args {

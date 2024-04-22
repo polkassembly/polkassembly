@@ -76,12 +76,14 @@ const getWSProvider = (network: string) => {
 		return 'wss://wss.api.moonbase.moonbeam.network';
 	case 'picasso':
 		return 'wss://picasso-rpc.composable.finance';
+	case 'westend':
+		return 'wss://westend-rpc.dwellir.com';
 	default:
 		return null;
 	}
 };
 
-const AllNetworks = ['kusama', 'moonbase', 'moonriver', 'moonbeam', 'vara', 'polkadot', 'picasso', 'rococo'];
+const AllNetworks = ['kusama', 'moonbase', 'moonriver', 'moonbeam', 'vara', 'polkadot', 'picasso', 'rococo', 'westend'];
 
 const getDelegationSplit = (data: IDataType, type: EVoteType) => {
 	let convictionData = { delegated: ZERO_BN, index: data?.index, solo: ZERO_BN };

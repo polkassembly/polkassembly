@@ -1,8 +1,13 @@
+describe('Login and Logout functionality', () => {
 
-describe('Login functionality', () => {
-  it('Logs in to the website', () => {
+  Cypress.on('uncaught:exception', (err, runnable) => {
+    console.error('Uncaught Exception:', err.message);
+    return false;
+  });  
+
+  it('Verify login and logout using Web 2', () => {
     // Visit the website
-    cy.visit('https://polkadot.polkassembly.io')
+    cy.visit("https://polkadot.polkassembly.io/")
     cy.wait(2000);
 
     // Click on the login button
@@ -20,6 +25,12 @@ describe('Login functionality', () => {
     cy.get('input#password').type('Gjmptw%4567890')
 
     // Submit the login form
-    cy.get('button').contains('Login').click()
-  })
+    cy.get('button[text="Login"][type="submit"]').click();
+
+    // Wait for the logout button to appear
+    cy.get('.navbar-user-dropdown').should('be.visible').click();
+
+    // Click on the "Logout" option from the dropdown menu
+    cy.get('.ant-dropdown-menu-title-content > .mt-1').click();
+    })
 })

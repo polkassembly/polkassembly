@@ -6,7 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
-import { redisGet, redisSet } from '~src/auth/redis';
+import { redisGet, redisSetex } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { IAnalyticsVoteTrends } from '~src/components/TrackLevelAnalytics/types';
@@ -16,6 +16,8 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { generateKey } from '~src/util/getRedisKeys';
 
 const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; network: string }) => {
+	const TTL_DURATION = 3600 * 23; // 23 Hours or 82800 seconds
+
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -43,7 +45,11 @@ const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; net
 			});
 		}
 		if (process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSet(generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2, trackId: trackId }), JSON.stringify(data));
+			await redisSetex(
+				generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2, trackId: trackId }),
+				TTL_DURATION,
+				JSON.stringify(data)
+			);
 		}
 		return { data: { votes: data }, error: null, status: 200 };
 	} catch (err) {

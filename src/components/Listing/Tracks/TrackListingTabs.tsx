@@ -47,7 +47,11 @@ const TrackListingTabs = ({ className, posts, trackName }: IProps) => {
 				</>
 			),
 			key: '2',
-			label: <span className='px-1.5'>Analytics</span>
+			label: (
+				<div className='flex items-center gap-2'>
+					<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Analytics
+				</div>
+			)
 		}
 	];
 

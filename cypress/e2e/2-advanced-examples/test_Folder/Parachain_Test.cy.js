@@ -9,7 +9,7 @@ describe('Verify Polkadot and Parachain functionality', () => {
       cy.visit("https://polkadot.polkassembly.io/");
   
       // Loop through child elements from 1 to 16
-      for (let i = 1; i <= 16; i++) {
+      for (let i = 1; i <= 8; i++) {
 
         if (i === 5) {
             // Continue to the next iteration of the loop

@@ -22,13 +22,15 @@ describe('Login and Logout functionality', () => {
     cy.get('input#username').type('paras@polkassembly.io')
 
     // Fill in the password
-    cy.get('input#password').type('Gjmptw%4567890')
+    cy.get('input#password').type('Polka@123')
 
     // Submit the login form
     cy.get('button[text="Login"][type="submit"]').click();
+    cy.wait(1000);
 
     // Wait for the logout button to appear
     cy.get('.navbar-user-dropdown').should('be.visible').click();
+    cy.wait(1000);
 
     // Click on the "Logout" option from the dropdown menu
     cy.get('.ant-dropdown-menu-title-content > .mt-1').click();

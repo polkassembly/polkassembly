@@ -915,7 +915,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								className=''
 							>
 								<span>
-									<MoneyIcon className='mr-1' />
+									{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
 									{formatedBalance(balance?.toString(), unit)}
 									{` ${unit}`}
 								</span>

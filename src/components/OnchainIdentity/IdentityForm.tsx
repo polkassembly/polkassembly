@@ -283,8 +283,11 @@ const IdentityForm = ({
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
-			const identityHash = await api?.query?.identity?.identityOf(address).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
+			const identityHash = await api?.query?.identity
+				?.identityOf(address)
+				.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 			if (!identityHash) {
+				setStartLoading({ isLoading: false, message: '' });
 				console.log('Error in unwraping identityHash');
 				return;
 			}

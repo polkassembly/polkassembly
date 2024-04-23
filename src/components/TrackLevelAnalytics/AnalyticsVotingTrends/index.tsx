@@ -44,7 +44,6 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 			});
 
 			if (data && data?.votes) {
-				console.log(data?.votes);
 				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
 				setIsLoading(false);
 			}

@@ -36,7 +36,7 @@ const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; net
 			}
 		}
 
-		const votesRef = await firestore_db.collection('networks').doc(network).collection('track_level_analytics').doc(String(trackId)).collection('votes').get();
+		const votesRef = await firestore_db.collection('networks').doc(network).collection('track_level_analytics').doc(String(trackId))?.collection('votes').get();
 		const data: IAnalyticsVoteTrends[] = [];
 
 		if (!votesRef.empty) {

@@ -8,7 +8,6 @@ import { getOffChainPosts } from 'pages/api/v1/listing/off-chain-posts';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect, useState } from 'react';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
@@ -23,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
+import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -132,8 +132,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					them.
 				</p>
 			</div>
-			<OffChainPostsContainer
-				proposalType={OffChainProposalType.DISCUSSIONS}
+			<OffChainTabs
 				posts={posts}
 				defaultPage={page || 1}
 				count={count}

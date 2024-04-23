@@ -1,4 +1,4 @@
-name: test
+name: Test
 
 on:
   pull_request:
@@ -39,8 +39,8 @@ jobs:
             - Commit: ${{ github.sha }}
             - Author: ${{ github.actor }}
             - Status: ${{ job.status }}
-          channels: ${{ secrets.SLACK_CHANNEL }}
+          channel: github-workflows-test-alerts  
           username: GitHub Actions
           icon_emoji: ":github:"
-          color: ${{ job.status == 'success' && '#2eb886' || job.status == 'failure' && '#d73a49' || '#ffd700' }}
-          footer: "Polkassembly CI"
+          job_name: CI
+          github_token: ${{ secrets.GITHUB_TOKEN }}

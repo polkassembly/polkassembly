@@ -9,7 +9,7 @@ describe('Verify Polkadot and Parachain functionality', () => {
       cy.visit("https://polkadot.polkassembly.io/");
   
       // Loop through child elements from 1 to 16
-      for (let i = 1; i <= 8; i++) {
+      for (let i = 1; i <= 9; i++) {
 
         if (i === 5) {
             // Continue to the next iteration of the loop
@@ -18,7 +18,7 @@ describe('Verify Polkadot and Parachain functionality', () => {
         // Click on the dropdown trigger to open the dropdown
         cy.get('a.ant-dropdown-trigger').click();
   
-        // Wait for 3000ms to ensure the dropdown menu appears
+        // Wait for 2000ms to ensure the dropdown menu appears
         cy.wait(2000);
   
         // Click on a specific child element based on the value of i
@@ -38,9 +38,9 @@ describe('Verify Polkadot and Parachain functionality', () => {
           cy.get(`:nth-child(2) > :nth-child(${i}) > .my-2 > .text-sm`).click();
         }
   
-        // Wait for 5000ms
+        // Wait for 4000ms
         cy.wait(4000);
       }
     });
-  });
+});
   

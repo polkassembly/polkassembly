@@ -235,7 +235,9 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 
 		(async () => {
 			try {
-				const identityHash = await api?.query?.identity?.identityOf(encoded_addr).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
+				const identityHash = await api?.query?.identity
+					?.identityOf(encoded_addr)
+					.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 				if (!identityHash) {
 					console.log('Error in unwrapping identity hash');
 					return;

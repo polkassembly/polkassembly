@@ -1,4 +1,4 @@
-name: Test
+name: test
 
 on:
   pull_request:
@@ -26,21 +26,3 @@ jobs:
 
       - name: Run Cypress tests
         run: npm run cy:run
-
-      - name: Send test results to Slack
-        if: always()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: |
-            Test results for the pull request:
-            - Repository: ${{ github.repository }}
-            - Branch: ${{ github.ref }}
-            - Commit: ${{ github.sha }}
-            - Author: ${{ github.actor }}
-            - Status: ${{ job.status }}
-          channel: github-workflows-test-alerts  
-          username: GitHub Actions
-          icon_emoji: ":github:"
-          job_name: CI
-          github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -25,11 +25,14 @@ const StyledSlider = styled(AntdSlider)`
 		background-color: ${(props: any) => (props.theme == 'dark' ? '#3B444F' : '#d2d8e0')} !important;
 	}
 	&:hover .ant-slider-rail {
-		background-color: ${(props: any) => (props.theme == 'dark' ? '#6f7f93' : '#f4f0f0')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-rail {
-		background-color: #f4f0f0 !important;
-		background-color: ${(props: any) => (props.theme == 'dark' ? '#6f7f93' : '#f4f0f0')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
+	}
+	.ant-slider-dot {
+		display: ${(props: any) => (props.theme == 'dark' ? 'none' : '')} !important;
+		background-color: ${(props: any) => (props.theme == 'dark' ? '#24292f' : '#f4f0f0')} !important;
 	}
 	.ant-slider-mark-text {
 		font-family: 'Poppins', sans-serif;
@@ -39,7 +42,21 @@ const StyledSlider = styled(AntdSlider)`
 		letter-spacing: -0.03em;
 		text-align: left;
 		color: ${(props: any) => (props.theme == 'dark' ? '#747474' : '#485F7D')} !important;
-		margin-top: 4px;
+		margin-top: 6px;
+	}
+	.ant-slider .ant-slider-handle:focus::after {
+		box-shadow: none;
+	}
+
+	.ant-slider-handle.ant-slider-handle::after {
+		height: 33px;
+		margin-top: -7px;
+		width: 33px;
+		background-image: url(${(props: any) => (props.theme == 'dark' ? '/assets/icons/analytics/slider-button-dark.svg' : '/assets/icons/analytics/slider-button.svg')}) !important;
+		background-repeat: no-repeat !important;
+		box-shadow: none;
+		background-color: transparent;
+		margin-left: -7px;
 	}
 `;
 

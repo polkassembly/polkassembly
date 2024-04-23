@@ -51,6 +51,7 @@ const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import InAppNotification from '../InAppNotification';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -370,6 +371,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
+					<InAppNotification />
 
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />

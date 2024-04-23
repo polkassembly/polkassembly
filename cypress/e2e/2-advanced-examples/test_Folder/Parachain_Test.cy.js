@@ -27,16 +27,12 @@ describe('Verify Polkadot and Parachain functionality', () => {
           cy.get('.ant-card-body > :nth-child(2) > :nth-child(3) > .flex > .capitalize').click();
         } 
         else if (i === 7) {
-        // Perform a specific action if i is equal to 6
+        // Perform a specific action if i is equal to 7
         cy.get(':nth-child(2) > :nth-child(7) > .flex > .capitalize').click(); }
-    else if (i === 8) {
-        // Perform a specific action if i is equal to 6
+        else if (i === 8) {
+        // Perform a specific action if i is equal to 8
         cy.get(':nth-child(2) > :nth-child(8) > .flex > .capitalize').click();
-    }
-    else if (i === 9) {
-        // Perform a specific action if i is equal to 6
-        cy.get(':nth-child(2) > :nth-child(9) > .flex > .capitalize').click();
-    }
+        }
         else {
           // Click on the child element
           cy.get(`:nth-child(2) > :nth-child(${i}) > .my-2 > .text-sm`).click();

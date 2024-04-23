@@ -1,0 +1,46 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install cypress
+          npm install @cypress/react @cypress/selenium-webdriver
+
+      - name: Run Cypress tests
+        run: npm run cy:run
+
+      - name: Send test results to Slack
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Test results for the pull request:
+            - Repository: ${{ github.repository }}
+            - Branch: ${{ github.ref }}
+            - Commit: ${{ github.sha }}
+            - Author: ${{ github.actor }}
+            - Status: ${{ job.status }}
+          channels: ${{ secrets.SLACK_CHANNEL }}
+          username: GitHub Actions
+          icon_emoji: ":github:"
+          color: ${{ job.status == 'success' && '#2eb886' || job.status == 'failure' && '#d73a49' || '#ffd700' }}
+          footer: "Polkassembly CI"

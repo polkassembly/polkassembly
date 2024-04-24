@@ -34,7 +34,6 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 						posts={posts}
 						defaultPage={defaultPage}
 						count={count}
-						className=''
 						// sortBy={sortBy}
 						// setSortBy={setSortBy}
 					/>

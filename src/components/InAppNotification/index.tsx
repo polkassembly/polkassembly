@@ -29,7 +29,9 @@ const InAppNotification = ({ className }: { className?: string }) => {
 					lastReadTime: null,
 					recentNotifications: [],
 					recentNotificationsCount: 0,
-					unreadNotifications: notifications,
+					unreadNotifications: notifications.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.UNREAD };
+					}),
 					unreadNotificationsCount: notifications?.length
 				})
 			);

@@ -48,6 +48,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		payload = {
 			...payload,
 			handle: user.id,
+			name: 'in_app',
 			verified: enabled
 		};
 	}

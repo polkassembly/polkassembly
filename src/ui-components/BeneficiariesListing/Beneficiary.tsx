@@ -18,6 +18,7 @@ interface Props {
 
 const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading }: Props) => {
 	const { network } = useNetworkSelector();
+	console.log(beneficiary);
 	return (
 		<div className={`${className} flex items-center gap-1`}>
 			<Address
@@ -27,7 +28,7 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 					typeof beneficiary.address === 'string'
 						? beneficiary.address
 						: (beneficiary.address as any)?.value.length
-						? (beneficiary.address as any)?.value.length
+						? (beneficiary.address as any)?.value
 						: ((beneficiary?.address as any)?.value.interior?.value?.id as string) || ''
 				}
 				inPostHeading={inPostHeading}

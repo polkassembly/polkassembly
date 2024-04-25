@@ -54,25 +54,22 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 			setIsLoading(false);
 		}
 	};
-	useEffect(() => {
-		if (trackId === undefined || trackId === 0) return;
-		getAllVoteData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const getVoteData = async () => {
 		try {
 			setIsLoading(true);
-			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/votes-analytics', {
-				trackId
-			});
+			if (typeof trackId === 'number') {
+				const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/votes-analytics', {
+					trackId
+				});
 
-			if (data && data?.votes) {
-				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
-				setIsLoading(false);
-			}
-			if (data && data?.votes.length === 0) {
-				setNoData(true);
+				if (data && data?.votes) {
+					dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
+					setIsLoading(false);
+				}
+				if (data && data?.votes.length === 0) {
+					setNoData(true);
+				}
 			}
 		} catch (error) {
 			console.error(error);
@@ -81,8 +78,16 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 	};
 
 	useEffect(() => {
-		if (trackId === undefined || isNaN(trackId)) return;
-		getVoteData();
+		if (trackId === undefined) {
+			getAllVoteData();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (trackId !== undefined) {
+			getVoteData();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 

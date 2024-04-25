@@ -36,31 +36,36 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		if (trackId === undefined || trackId === 0) return;
-		getAllData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	const getData = async () => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/track-analytics-stats', {
-			trackId: trackId
-		});
+		try {
+			if (typeof trackId === 'number') {
+				const { data } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/track-analytics-stats', {
+					trackId: trackId
+				});
 
-		if (data) {
-			dispatch(setTrackLevelAnalyticsStats(data));
-			setLoading(false);
-		}
-		if (error) {
+				if (data) {
+					dispatch(setTrackLevelAnalyticsStats(data));
+					setLoading(false);
+				}
+			}
+		} catch (error) {
 			console.log(error);
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		if (trackId === undefined || isNaN(trackId)) return;
-		getData();
+		if (trackId === undefined) {
+			getAllData();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (trackId !== undefined) {
+			getData();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 

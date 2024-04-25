@@ -35,30 +35,37 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 		if (error) console.log(error);
 	};
 
-	useEffect(() => {
-		if (trackId === undefined || trackId === 0) return;
-		getAllData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/track-delegation-analytics-stats', {
-			trackId
-		});
+		try {
+			if (typeof trackId === 'number') {
+				const { data } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/track-delegation-analytics-stats', {
+					trackId
+				});
 
-		if (data) {
-			if (!data?.totalDelegates && !data?.totalDelegators) {
-				setNoData(true);
+				if (data) {
+					if (!data?.totalDelegates && !data?.totalDelegators) {
+						setNoData(true);
+					}
+					dispatch(setTrackLevelDelegationAnalyticsData(data));
+					setNoData(false);
+				}
 			}
-			dispatch(setTrackLevelDelegationAnalyticsData(data));
-			setNoData(false);
+		} catch (error) {
+			console.log(error);
 		}
-		if (error) console.log(error);
 	};
 
 	useEffect(() => {
-		if (trackId === undefined || isNaN(trackId)) return;
-		getData();
+		if (trackId === undefined) {
+			getAllData();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (trackId !== undefined) {
+			getData();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 

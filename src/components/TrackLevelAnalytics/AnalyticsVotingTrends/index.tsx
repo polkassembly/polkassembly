@@ -55,7 +55,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 		}
 	};
 	useEffect(() => {
-		if (trackId) return;
+		if (trackId === undefined || trackId === 0) return;
 		getAllVoteData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -81,7 +81,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 	};
 
 	useEffect(() => {
-		if (trackId && isNaN(trackId)) return;
+		if (trackId === undefined || isNaN(trackId)) return;
 		getVoteData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);

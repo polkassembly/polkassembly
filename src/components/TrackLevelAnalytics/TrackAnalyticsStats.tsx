@@ -37,7 +37,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (trackId) return;
+		if (trackId === undefined || trackId === 0) return;
 		getAllData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -59,7 +59,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (trackId && typeof trackId === 'undefined' && isNaN(trackId)) return;
+		if (trackId === undefined || isNaN(trackId)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);

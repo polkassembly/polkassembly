@@ -644,6 +644,23 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+export interface ITrackAnalyticsStats {
+	activeProposals: { diff: number; total: number };
+	allProposals: { diff: number; total: number };
+}
+
+export interface IDelegatorsAndDelegatees {
+	[key: string]: {
+		count: number;
+		data: {
+			to: string;
+			from: string;
+			capital: string;
+			lockedPeriod: number;
+			votingPower: string;
+		}[];
+	};
+}
 
 export interface IChildBountiesResponse {
 	child_bounties: {

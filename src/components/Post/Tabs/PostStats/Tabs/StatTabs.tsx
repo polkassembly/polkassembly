@@ -9,9 +9,10 @@ interface IStatsProps {
 	items: any;
 	setActiveTab: (tab: string) => void;
 	activeTab: any;
+	isUsedInAnalytics?: boolean;
 }
 
-export const StatTabs = ({ items, setActiveTab, activeTab }: IStatsProps) => {
+export const StatTabs = ({ items, setActiveTab, activeTab, isUsedInAnalytics }: IStatsProps) => {
 	return (
 		<>
 			{items && items.length > 0 ? (
@@ -45,7 +46,9 @@ export const StatTabs = ({ items, setActiveTab, activeTab }: IStatsProps) => {
 							return (
 								<Button
 									key={item.key}
-									className='mb-5 w-fit text-left  font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'
+									className={`${
+										isUsedInAnalytics ? 'py-0 text-sm' : 'mb-5'
+									} w-fit text-left font-medium text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 								>
 									{item.label} <DownOutlined />
 								</Button>

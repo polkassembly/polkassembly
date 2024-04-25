@@ -283,8 +283,11 @@ const IdentityForm = ({
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
-			const identityHash = await api?.query?.identity?.identityOf(address).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
+			const identityHash = await api?.query?.identity
+				?.identityOf(address)
+				.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 			if (!identityHash) {
+				setStartLoading({ isLoading: false, message: '' });
 				console.log('Error in unwraping identityHash');
 				return;
 			}
@@ -335,15 +338,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{alreadyVerifiedfields?.alreadyVerified && (
-					<Alert
-						showIcon
-						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue'
-						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
-					/>
-				)}
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && (
+				{!!alreadyVerifiedfields?.twitter && !!alreadyVerifiedfields?.email && !!alreadyVerifiedfields?.displayName && !alreadyVerifiedfields.alreadyVerified && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -726,7 +721,11 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity() ? (
+				{!!alreadyVerifiedfields?.twitter &&
+				!!alreadyVerifiedfields?.email &&
+				!!alreadyVerifiedfields?.displayName &&
+				handleAllowSetIdentity() &&
+				!alreadyVerifiedfields.alreadyVerified ? (
 					<CustomButton
 						onClick={handleSetIdentity}
 						loading={loading}

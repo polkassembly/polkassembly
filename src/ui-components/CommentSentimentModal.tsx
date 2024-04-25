@@ -147,7 +147,7 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-image: url('/assets/icons/against.svg') !important;
 			box-shadow: none;
 			background-color: transparent;
-			margin-left: -5px;
+			margin-left: -10px;
 		}
 	}
 	.sentiment_${ESentiment.SlightlyAgainst} {
@@ -158,7 +158,7 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-image: url('/assets/icons/slightly-against.svg') !important;
 			box-shadow: none;
 			background-color: transparent;
-			margin-left: -2px;
+			margin-left: -10px;
 		}
 	}
 
@@ -170,7 +170,7 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-image: url('/assets/icons/neutral.svg') !important;
 			box-shadow: none;
 			background-color: transparent;
-			margin-left: -2px;
+			margin-left: -10px;
 		}
 	}
 
@@ -182,7 +182,7 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-image: url('/assets/icons/slightly-for.svg') !important;
 			box-shadow: none;
 			background-color: transparent;
-			margin-left: -2px;
+			margin-left: -10px;
 		}
 	}
 
@@ -194,7 +194,7 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-image: url('/assets/icons/for.svg') !important;
 			box-shadow: none;
 			background-color: transparent;
-			margin-left: -2px;
+			margin-left: -10px;
 		}
 	}
 `;

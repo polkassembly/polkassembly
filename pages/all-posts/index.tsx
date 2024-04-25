@@ -8,7 +8,6 @@ import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count'
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { redisGet, redisSet } from '~src/auth/redis';
 import TrackListingCard from '~src/components/Listing/Tracks/TrackListingCard';

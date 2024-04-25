@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "module": "commonjs",
@@ -9,7 +10,8 @@
     "strict": true,
     "target": "ES2020",
     "typeRoots": ["./node_modules/@types"],
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": [

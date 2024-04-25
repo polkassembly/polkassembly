@@ -60,6 +60,7 @@ const w3fDelegatesPolkadot = [
 		shortDescription: ''
 	}
 ];
+
 const w3fDelegatesKusama = [
 	{
 		address: 'GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj',

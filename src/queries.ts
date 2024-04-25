@@ -2313,6 +2313,7 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
     from
     to
     balance
+    track
   }
 }
 `;
@@ -2391,6 +2392,21 @@ diffActiveProposals: proposalsConnection(where: { trackNumber_eq: $track_num, st
     totalCount
 }
 }`;
+export const GET_ALL_TRACK_LEVEL_ANALYTICS_STATS = `
+query getTrackLevelAnalyticsStats($before: DateTime ="2024-02-01T13:21:30.000000Z") {
+diffActiveProposals: proposalsConnection(where: { status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before }, orderBy: id_ASC){
+    totalCount
+}
+  diffProposalCount:  proposalsConnection(where: {  createdAt_gt: $before}, orderBy: id_ASC){
+    totalCount
+}
+  totalActiveProposals: proposalsConnection(where: {status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed] }, orderBy: id_ASC){
+    totalCount
+}
+  totalProposalCount:  proposalsConnection( orderBy: id_ASC){
+    totalCount
+}
+}`;
 
 export const GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `
 query DelegationStats ($track_num:Int!){
@@ -2401,3 +2417,13 @@ query DelegationStats ($track_num:Int!){
     lockPeriod
   }
 }`;
+
+export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationStats{
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov}) {
+    from
+    to
+    balance
+    lockPeriod
+  }
+}
+`;

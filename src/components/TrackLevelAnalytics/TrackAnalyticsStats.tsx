@@ -25,7 +25,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 
 	const getData = async () => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/analytics-stats', {
+		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/track-analytics-stats', {
 			trackId: trackId
 		});
 

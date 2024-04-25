@@ -24,7 +24,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 	const [noData, setNoData] = useState<boolean>(false);
 
 	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/delegation-analytics-stats', {
+		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/track-delegation-analytics-stats', {
 			trackId
 		});
 

@@ -15,7 +15,7 @@ import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/redux/track
 
 const ZERO_BN = new BN(0);
 
-export const getDelegationAnalyticsStats = async ({ network, trackId }: { network: string; trackId: number }) => {
+export const getTrackDelegationAnalyticsStats = async ({ network, trackId }: { network: string; trackId: number }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -104,7 +104,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegationAnal
 
 	const { trackId } = req.body;
 
-	const { data, error } = await getDelegationAnalyticsStats({ network, trackId: Number(trackId) });
+	const { data, error } = await getTrackDelegationAnalyticsStats({ network, trackId: Number(trackId) });
 
 	if (data) {
 		return res.status(200).json(data);

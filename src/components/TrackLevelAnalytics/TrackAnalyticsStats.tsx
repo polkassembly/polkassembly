@@ -14,7 +14,7 @@ import { useTrackLevelAnalytics } from '~src/redux/selectors';
 
 interface IProps {
 	className?: string;
-	trackId: number;
+	trackId?: number;
 }
 
 const TrackAnalyticsStats: FC<IProps> = (props) => {
@@ -22,6 +22,25 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	const dispatch = useDispatch();
 	const { activeProposals, allProposals } = useTrackLevelAnalytics();
 	const [loading, setLoading] = useState<boolean>(false);
+
+	const getAllData = async () => {
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/all-track-analytics-stats');
+		if (data) {
+			dispatch(setTrackLevelAnalyticsStats(data));
+			setLoading(false);
+		}
+		if (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (trackId) return;
+		getAllData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getData = async () => {
 		setLoading(true);
@@ -40,7 +59,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (isNaN(trackId)) return;
+		if (trackId && typeof trackId === 'undefined' && isNaN(trackId)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);

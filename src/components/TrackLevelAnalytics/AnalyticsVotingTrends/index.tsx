@@ -27,7 +27,7 @@ interface ITabItem {
 	children: React.ReactNode;
 }
 
-const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
+const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const [activeTab, setActiveTab] = useState<string>(ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
@@ -35,6 +35,30 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 	const [activeKey, setActiveKey] = useState<string | number | undefined>(undefined);
 	const [noData, setNoData] = useState<boolean>(false);
 	const isSmallScreen = window.innerWidth < 640;
+
+	const getAllVoteData = async () => {
+		try {
+			setIsLoading(true);
+			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/all-track-votes-analytics');
+
+			if (data && data?.votes) {
+				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
+				setNoData(false);
+				setIsLoading(false);
+			}
+			if (data && data?.votes.length === 0) {
+				setNoData(true);
+			}
+		} catch (error) {
+			console.error(error);
+			setIsLoading(false);
+		}
+	};
+	useEffect(() => {
+		if (trackId) return;
+		getAllVoteData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getVoteData = async () => {
 		try {
@@ -57,7 +81,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId: number }) => {
 	};
 
 	useEffect(() => {
-		if (isNaN(trackId)) return;
+		if (trackId && isNaN(trackId)) return;
 		getVoteData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);

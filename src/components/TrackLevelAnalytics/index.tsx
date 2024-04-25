@@ -14,20 +14,34 @@ const TrackLevelAnalytics = ({ className, trackName }: { className?: string; tra
 	const [trackId, setTrackId] = useState<number | null>(null);
 
 	useEffect(() => {
-		if (!network) return;
+		if (trackName === 'All Tracks' || !network) return;
+
 		setTrackId(networkTrackInfo?.[network]?.[trackName]?.trackId);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, trackName]);
+
+	const isAllTracks = trackName === 'All Tracks';
 
 	return (
-		<Spin spinning={trackId == null}>
-			{trackId !== null && (
-				<div className={`${className} flex flex-col gap-8`}>
-					<TrackAnalyticsStats trackId={trackId} />
-					<AnalyticsVotingTrends trackId={trackId} />
-					<AnalyticsDelegation trackId={trackId} />
-				</div>
-			)}
+		<Spin spinning={!isAllTracks && trackId == null}>
+			<div className={`${className} flex flex-col gap-8`}>
+				{isAllTracks ? (
+					<>
+						<TrackAnalyticsStats />
+						<AnalyticsVotingTrends />
+						<AnalyticsDelegation />
+					</>
+				) : (
+					<>
+						{trackId !== null && (
+							<>
+								<TrackAnalyticsStats trackId={trackId} />
+								<AnalyticsVotingTrends trackId={trackId} />
+								<AnalyticsDelegation trackId={trackId} />
+							</>
+						)}
+					</>
+				)}
+			</div>
 		</Spin>
 	);
 };

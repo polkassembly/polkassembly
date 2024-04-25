@@ -18,15 +18,13 @@ import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 
 const { Panel } = Collapse;
 
-const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number }) => {
+const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const [noData, setNoData] = useState<boolean>(false);
 
-	const getData = async () => {
-		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/track-delegation-analytics-stats', {
-			trackId
-		});
+	const getAllData = async () => {
+		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/all-track-delegation-analytics');
 
 		if (data) {
 			if (!data?.totalDelegates && !data?.totalDelegators) {
@@ -38,7 +36,28 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId: number 
 	};
 
 	useEffect(() => {
-		if (isNaN(trackId)) return;
+		if (trackId) return;
+		getAllData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const getData = async () => {
+		const { data, error } = await nextApiClientFetch<IDelegationAnalytics>('/api/v1/trackLevelAnalytics/track-delegation-analytics-stats', {
+			trackId
+		});
+
+		if (data) {
+			if (!data?.totalDelegates && !data?.totalDelegators) {
+				setNoData(true);
+			}
+			dispatch(setTrackLevelDelegationAnalyticsData(data));
+			setNoData(false);
+		}
+		if (error) console.log(error);
+	};
+
+	useEffect(() => {
+		if (trackId && isNaN(trackId)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);

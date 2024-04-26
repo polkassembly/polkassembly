@@ -91,8 +91,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 	const minIndex = delegationSplitData[0]?.index;
 	const maxIndex = delegationSplitData[delegationSplitData?.length - 1]?.index;
 	const marks = {
-		[0]: minIndex.toString(),
-		[delegationSplitData.length - 1]: maxIndex.toString()
+		[0]: minIndex && minIndex.toString(),
+		[delegationSplitData.length - 1]: maxIndex && maxIndex.toString()
 	};
 
 	return (

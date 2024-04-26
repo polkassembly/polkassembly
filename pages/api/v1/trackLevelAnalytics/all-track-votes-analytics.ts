@@ -37,7 +37,7 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 		await Promise.allSettled(dataPromise);
 
 		if (process.env.IS_CACHING_ALLOWED == '1') {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allTrackVotesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
 			const redisData = await redisGet(redisKey);
 
 			if (redisData) {
@@ -50,7 +50,11 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 		}
 
 		if (process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSetex(generateKey({ govType: 'OpenGov', keyType: 'votesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 }), TTL_DURATION, JSON.stringify(votes));
+			await redisSetex(
+				generateKey({ govType: 'OpenGov', keyType: 'allTrackVotesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 }),
+				TTL_DURATION,
+				JSON.stringify(votes)
+			);
 		}
 		return { data: { votes: votes || [] }, error: null, status: 200 };
 	} catch (err) {

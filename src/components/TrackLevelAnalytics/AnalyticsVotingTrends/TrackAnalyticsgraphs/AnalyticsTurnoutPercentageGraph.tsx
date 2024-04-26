@@ -57,7 +57,11 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 
 	useEffect(() => {
 		setIsLoading(true);
-		setSelectedRange(calculateDefaultRange(supportData.length));
+		if (supportData.length > 0) {
+			setSelectedRange(calculateDefaultRange(supportData.length));
+		} else {
+			setSelectedRange([0, 0]);
+		}
 		setIsLoading(false);
 	}, [supportData.length]);
 
@@ -67,14 +71,17 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	const data = [
 		{
 			id: 'Turnout',
-			data: supportData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
-				x: item.index,
-				y: parseFloat(item.percentage).toFixed(2)
-			}))
+			data: supportData
+				.slice(selectedRange[0], selectedRange[1] + 1)
+				.map((item) => ({
+					x: item.index,
+					y: parseFloat(item.percentage) ? parseFloat(item.percentage).toFixed(2) : null
+				}))
+				.filter((item) => item.y !== null)
 		}
 	];
-	const minIndex = supportData[0].index;
-	const maxIndex = supportData[supportData.length - 1].index;
+	const minIndex = supportData[0]?.index;
+	const maxIndex = supportData[supportData?.length - 1]?.index;
 	const marks = {
 		[0]: minIndex.toString(),
 		[supportData.length - 1]: maxIndex.toString()

@@ -2475,16 +2475,16 @@ diffActiveProposals: proposalsConnection(where: { trackNumber_eq: $track_num, st
 }`;
 export const GET_ALL_TRACK_LEVEL_ANALYTICS_STATS = `
 query getTrackLevelAnalyticsStats($before: DateTime ="2024-02-01T13:21:30.000000Z") {
-diffActiveProposals: proposalsConnection(where: { status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before }, orderBy: id_ASC){
+diffActiveProposals: proposalsConnection(where: { status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before, type_eq: ReferendumV2 }, orderBy: id_ASC){
     totalCount
 }
-  diffProposalCount:  proposalsConnection(where: {  createdAt_gt: $before}, orderBy: id_ASC){
+  diffProposalCount:  proposalsConnection(where: {  createdAt_gt: $before, type_eq: ReferendumV2}, orderBy: id_ASC ){
     totalCount
 }
-  totalActiveProposals: proposalsConnection(where: {status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed] }, orderBy: id_ASC){
+  totalActiveProposals: proposalsConnection(where: {status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], type_eq: ReferendumV2  }, orderBy: id_ASC){
     totalCount
 }
-  totalProposalCount:  proposalsConnection( orderBy: id_ASC){
+  totalProposalCount:  proposalsConnection( orderBy: id_ASC,where:{ type_eq: ReferendumV2} ){
     totalCount
 }
 }`;

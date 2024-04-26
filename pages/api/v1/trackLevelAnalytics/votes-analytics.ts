@@ -6,12 +6,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import { networkDocRef } from '~src/api-utils/firestore_refs';
 import { redisGet, redisSetex } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { IAnalyticsVoteTrends } from '~src/components/TrackLevelAnalytics/types';
 import { ProposalType } from '~src/global/proposalType';
-import { firestore_db } from '~src/services/firebaseInit';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { generateKey } from '~src/util/getRedisKeys';
 
@@ -36,7 +36,7 @@ const getVoteAnalyticsData = async ({ trackId, network }: { trackId: number; net
 			}
 		}
 
-		const votesRef = await firestore_db.collection('networks').doc(network).collection('track_level_analytics').doc(String(trackId))?.collection('votes').get();
+		const votesRef = await networkDocRef(network).collection('track_level_analytics').doc(String(trackId))?.collection('votes').get();
 		const data: IAnalyticsVoteTrends[] = [];
 
 		if (!votesRef.empty) {

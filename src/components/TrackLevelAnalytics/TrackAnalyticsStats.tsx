@@ -14,7 +14,7 @@ import { useTrackLevelAnalytics } from '~src/redux/selectors';
 
 interface IProps {
 	className?: string;
-	trackId: number;
+	trackId?: number;
 }
 
 const TrackAnalyticsStats: FC<IProps> = (props) => {
@@ -25,29 +25,29 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 
 	const getData = async () => {
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/analytics-stats', {
-			trackId: trackId
-		});
-
-		if (data) {
-			dispatch(setTrackLevelAnalyticsStats(data));
-			setLoading(false);
-		}
-		if (error) {
+		const url = trackId === undefined ? '/api/v1/trackLevelAnalytics/all-track-analytics-stats' : '/api/v1/trackLevelAnalytics/track-analytics-stats';
+		const payload = trackId === undefined ? {} : { trackId: trackId };
+		try {
+			const { data } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>(url, payload);
+			if (data) {
+				dispatch(setTrackLevelAnalyticsStats(data));
+				setLoading(false);
+			}
+		} catch (error) {
 			console.log(error);
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		if (isNaN(trackId)) return;
+		if (trackId && isNaN(trackId)) return;
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 
 	return (
 		<Spin spinning={loading}>
-			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col'>
+			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col lg:max-w-[55%]'>
 				{/* Proposal Created */}
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<ImageIcon

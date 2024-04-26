@@ -65,7 +65,6 @@ const VotingForm = ({
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isBalanceSet, setIsBalanceSet] = useState(false);
-
 	const ConvictionSelect = ({ className }: { className?: string }) => (
 		<Form.Item className={className}>
 			<label className='inner-headings dark:text-blue-dark-medium'>Vote lock</label>

@@ -23,6 +23,7 @@ import { formatBalance } from '@polkadot/util';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTheme } from 'next-themes';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -75,7 +76,7 @@ export const handleTrack = (track: string) => {
 	return trackName.trim();
 };
 
-const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, theme }: Props) => {
+const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const {
@@ -93,6 +94,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (!window) return;
@@ -249,7 +251,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount, the
 						status={status}
 						totalCount={totalCount}
 						delegatedTo={status.includes(ETrackDelegationStatus.DELEGATED) ? rowData.filter((row) => row.delegatedTo !== address)[0].delegatedTo : null}
-						theme={theme}
+						theme={theme as any}
 					/>
 				</div>
 			) : (

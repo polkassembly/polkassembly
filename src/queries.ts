@@ -2313,6 +2313,7 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
     from
     to
     balance
+    track
   }
 }
 `;
@@ -2376,6 +2377,87 @@ query AllVotesForProposalIndex($type_eq: VoteType = ReferendumV2, $index_eq: Int
   }
 }`;
 
+export const GET_NETWORK_TRACK_ACTIVE_PROPOSALS_COUNT = `query getNetworkTrackActiveProposalsCount {
+  proposals(where:{type_eq:ReferendumV2, status_in:[Started, DecisionDepositPlaced, Deciding,Submitted, ConfirmStarted]}){
+    trackNumber
+  } 
+  all: proposalsConnection(where:{type_eq:ReferendumV2, status_in:[Started, DecisionDepositPlaced, Deciding,Submitted, ConfirmStarted]} , orderBy:id_ASC){
+    totalCount
+  }
+ bountiesCount: proposalsConnection(where:{type_in:Bounty, status_in:[Active, Proposed, Extended]}, orderBy:id_ASC) {
+    totalCount
+  }
+   childBountiesCount: proposalsConnection(where:{type_eq:ChildBounty, status_in:[Awarded,Added, Active]}, orderBy:id_ASC) {
+    totalCount
+  }
+}
+`;
+
+export const GOV1_NETWORK_ACTIVE_PROPOSALS_COUNT = `query gov1ActiveProposalsCount {
+ bounties: proposalsConnection(where:{type_in:Bounty, status_in:[Active, Proposed, Extended]}, orderBy:id_ASC) {
+    totalCount
+  }
+   childBounties: proposalsConnection(where:{type_eq:ChildBounty, status_in:[Awarded,Added, Active]}, orderBy:id_ASC) {
+    totalCount
+  }
+  councilMotions: proposalsConnection(where:{type_eq:CouncilMotion, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  democracyProposals:proposalsConnection(where:{type_eq:DemocracyProposal, status_in:[Proposed ]}, orderBy:id_ASC) {
+    totalCount
+  }
+  referendums:proposalsConnection(where:{type_eq:Referendum, status_in:[Submitted, Started, ConfirmStarted,Deciding]}, orderBy:id_ASC) {
+    totalCount
+  }
+  tips: proposalsConnection(where:{type_eq:Tip, status_in:[Opened]}, orderBy:id_ASC) {
+    totalCount
+  }
+  treasuryProposals: proposalsConnection(where:{type_eq:TreasuryProposal, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  techCommetteeProposals: proposalsConnection(where:{type_eq:TechCommitteeProposal, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  } 
+}`;
+
+export const ZEITGEIST_NETWORK_ACTIVE_PROPOSALS_COUNT = `
+query zeitgeistActiveProposalsCount {
+  councilMotions: proposalsConnection(where:{type_eq:CouncilMotion, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  democracyProposals:proposalsConnection(where:{type_eq:DemocracyProposal, status_in:[Proposed ]}, orderBy:id_ASC) {
+    totalCount
+  }
+  referendums:proposalsConnection(where:{type_eq:Referendum, status_in:[Submitted, Started, ConfirmStarted,Deciding]}, orderBy:id_ASC) {
+    totalCount
+  }
+  tips: proposalsConnection(where:{type_eq:Tip, status_in:[Opened]}, orderBy:id_ASC) {
+    totalCount
+  }
+  treasuryProposals: proposalsConnection(where:{type_eq:TreasuryProposal, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  techCommitteeProposals:  proposalsConnection(where:{type_eq:TechCommitteeProposal, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  advisoryCommitteeMotions:proposalsConnection(where:{type_eq:AdvisoryCommittee, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+}`;
+
+export const POLYMESH_NETWORK_ACTIVE_PROPOSALS_COUNT = `
+query polymeshActiveProposalsCount {
+  communityPips: proposalsConnection(where:{type_eq:Community, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  technicalPips: proposalsConnection(where:{type_eq:TechnicalCommittee, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+  upgradePips: proposalsConnection(where:{type_eq:UpgradeCommittee, status_in:[Proposed]}, orderBy:id_ASC) {
+    totalCount
+  }
+}
+`;
 export const GET_TRACK_LEVEL_ANALYTICS_STATS = `
 query getTrackLevelAnalyticsStats($track_num: Int! = 0, $before: DateTime ="2024-02-01T13:21:30.000000Z") {
 diffActiveProposals: proposalsConnection(where: { trackNumber_eq: $track_num, status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before }, orderBy: id_ASC){
@@ -2391,6 +2473,21 @@ diffActiveProposals: proposalsConnection(where: { trackNumber_eq: $track_num, st
     totalCount
 }
 }`;
+export const GET_ALL_TRACK_LEVEL_ANALYTICS_STATS = `
+query getTrackLevelAnalyticsStats($before: DateTime ="2024-02-01T13:21:30.000000Z") {
+diffActiveProposals: proposalsConnection(where: { status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], createdAt_gt:$before, type_eq: ReferendumV2 }, orderBy: id_ASC){
+    totalCount
+}
+  diffProposalCount:  proposalsConnection(where: {  createdAt_gt: $before, type_eq: ReferendumV2}, orderBy: id_ASC ){
+    totalCount
+}
+  totalActiveProposals: proposalsConnection(where: {status_not_in: [Cancelled, TimedOut, Confirmed, Approved, Rejected, Executed, Killed, ExecutionFailed], type_eq: ReferendumV2  }, orderBy: id_ASC){
+    totalCount
+}
+  totalProposalCount:  proposalsConnection( orderBy: id_ASC,where:{ type_eq: ReferendumV2} ){
+    totalCount
+}
+}`;
 
 export const GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `
 query DelegationStats ($track_num:Int!){
@@ -2401,3 +2498,13 @@ query DelegationStats ($track_num:Int!){
     lockPeriod
   }
 }`;
+
+export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationStats{
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov}) {
+    from
+    to
+    balance
+    lockPeriod
+  }
+}
+`;

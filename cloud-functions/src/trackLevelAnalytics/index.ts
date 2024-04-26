@@ -8,8 +8,8 @@ import { networkTrackInfo } from './utils/trackInfo';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BN from 'bn.js';
 import formatBnBalance from '../utils/formateBnBalance';
-import { firestoreDB } from '..';
 import { GET_ALL_TRACK_PROPOSALS, GET_TOTAL_VOTES_FOR_PROPOSAL } from '../queries';
+import { firestoreDB } from '..';
 
 const ZERO_BN = new BN(0);
 
@@ -18,6 +18,7 @@ ACCOUNTS='accounts',
 CONVICTIONVOTES = 'convictionVotes',
 VOTEAMOUNT = 'voteAmount',
 }
+
 interface IVoteType {
 	lockPeriod: number;
 	balance: string;
@@ -193,15 +194,15 @@ const getSupportData = async (data: IDataType, network: string, api: any) => {
 };
 
 const trackLevelAnalytics = async () => {
-	const analyticsData = [];
-	for (const network of AllNetworks) {
+	let analyticsData: any = [];
+	const analyticsDataPromise = AllNetworks.map(async (network) => {
 		const wsProvider = new WsProvider(getWSProvider(network) as string);
 		const api = await ApiPromise.create({ provider: wsProvider });
 		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => {
 			return value.trackId;
 		});
 
-		for (const trackNumber of trackNumbers) {
+		const trackNumbersPromise = trackNumbers.map(async (trackNumber) => {
 			const subsquidRes = await fetchSubsquid({
 				network,
 				query: GET_ALL_TRACK_PROPOSALS,
@@ -209,9 +210,10 @@ const trackLevelAnalytics = async () => {
 					track_eq: trackNumber
 				}
 			});
+
 			const proposals = subsquidRes?.['data']?.proposals || [];
 
-			for (const proposal of proposals) {
+			const proposalsPromise = proposals.map(async (proposal: any) => {
 				const query = GET_TOTAL_VOTES_FOR_PROPOSAL;
 
 				const variables: any = {
@@ -251,7 +253,7 @@ const trackLevelAnalytics = async () => {
 					referendaIndex: proposal.index,
 					votes: {
 						convictionVotes: {
-							delegationSplitData: getDelegationSplit(referenda, EVoteType.CONVICTIONVOTES ),
+							delegationSplitData: getDelegationSplit(referenda, EVoteType.CONVICTIONVOTES),
 							supportData: supportData,
 							votesSplitData: getVotesSplit(referenda, EVoteType.CONVICTIONVOTES)
 						},
@@ -269,9 +271,21 @@ const trackLevelAnalytics = async () => {
 					}
 				};
 				analyticsData.push(payload);
-			}
+			});
+			Promise.allSettled(proposalsPromise);
+		});
+		Promise.allSettled(trackNumbersPromise);
+	});
+	await Promise.allSettled(analyticsDataPromise);
+
+	analyticsData = await Promise.allSettled(analyticsData);
+
+	analyticsData = analyticsData.map((item: any) => {
+		if (item.status =='fulfilled') {
+			return item?.value;
 		}
-	}
+	});
+
 	logger.log(analyticsData, 'analyticsData');
 	function chunkArray(array: IResponse[], chunkSize: number) {
 		const chunks = [];
@@ -286,8 +300,10 @@ const trackLevelAnalytics = async () => {
 	for (const chunk of chunkedArray) {
 		const batch = firestoreDB.batch();
 		for (const item of chunk) {
-			const activityRef = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
-			batch.set(activityRef, item?.votes, { merge: true });
+			if (item?.network && typeof item?.trackNumber=='number' && typeof item?.referendaIndex === 'number' && item?.votes) {
+				const activityRef = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber)).collection('votes').doc(String(item?.referendaIndex));
+				batch.set(activityRef, item?.votes, { merge: true });
+			}
 		}
 		try {
 			await batch.commit();

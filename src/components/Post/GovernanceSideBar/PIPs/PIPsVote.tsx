@@ -38,6 +38,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import SelectOption from '~src/basic-components/Select/SelectOption';
+import classNames from 'classnames';
 
 const ZERO_BN = new BN(0);
 
@@ -553,7 +554,7 @@ const PIPsVote = ({ className, referendumId, onAccountChange, lastVote, setLastV
 	if ([ProposalType.TECHNICAL_PIPS, ProposalType.UPGRADE_PIPS].includes(proposalType)) {
 		if (isPolymeshCommitteeMember) return VoteUI;
 
-		return <div className={className}>Only Polymesh Committee members may vote.</div>;
+		return <div className={classNames(className, 'dark:text-blue-dark-high')}>Only Polymesh Committee members may vote.</div>;
 	}
 
 	return VoteUI;

@@ -104,7 +104,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 				{/* content */}
 				{unreadNotificationsCount + recentNotificationsCount > 0 && !isLoading ? (
 					<NotificationsLayout inPage={inPage} />
-				) : (
+				) : !isLoading ? (
 					<div className='flex h-[350px] flex-col items-center gap-2 py-8'>
 						<Image
 							src={theme == 'dark' ? '/assets/icons/notification-empty-state-dark.svg' : '/assets/icons/notification-empty-state.svg'}
@@ -134,6 +134,8 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 							</div>
 						)}
 					</div>
+				) : (
+					<div className='h-[200px]' />
 				)}
 			</div>
 

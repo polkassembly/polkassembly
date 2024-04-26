@@ -23,6 +23,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const { id: userId } = useUserDetailsSelector();
 	const { lastReadTime: lastSeen, unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
@@ -34,7 +35,6 @@ const InAppNotification = ({ className }: { className?: string }) => {
 			lastReadTime = lastSeen;
 		}
 
-		console.log(lastReadTime);
 		if (!lastReadTime) {
 			dispatch(
 				inAppNotificationsActions.updateInAppNotifications({
@@ -72,6 +72,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 
 	const getNotifications = async () => {
 		if (typeof userId !== 'number') return;
+		setLoadingTime(loadingTime + 1);
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IInAppNotification[]>('/api/v1/inAppNotifications/get-notifications', {
 			userId: userId
@@ -85,7 +86,32 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	};
 
 	useEffect(() => {
-		getNotifications();
+		let intervalId: any = null;
+
+		const startInterval = () => {
+			intervalId = setInterval(getNotifications, 60000); // 30000 ms is 30 secs
+		};
+
+		const stopInterval = () => {
+			clearInterval(intervalId);
+		};
+
+		startInterval();
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') {
+				startInterval();
+			} else {
+				stopInterval();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () => {
+			stopInterval();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 
@@ -95,10 +121,10 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				<Popover
 					content={
 						<Spin
-							spinning={loading}
+							spinning={loading && !loadingTime}
 							className='h-[200px]'
 						>
-							<NotificationsContent isLoading={loading} />
+							<NotificationsContent isLoading={loading && !loadingTime} />
 						</Spin>
 					}
 					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}

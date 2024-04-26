@@ -37,6 +37,7 @@ const DelegatorsTab = () => {
 								address={item.from}
 								isTruncateUsername={false}
 								displayInline
+								destroyTooltipOnHide={true}
 								className='mt-1 hidden sm:inline-flex'
 							/>
 							<Address
@@ -44,6 +45,7 @@ const DelegatorsTab = () => {
 								usernameMaxLength={3}
 								isTruncateUsername={true}
 								displayInline
+								destroyTooltipOnHide={true}
 								className='text-xs sm:hidden'
 							/>
 						</div>

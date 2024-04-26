@@ -73,8 +73,8 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 			}))
 		}
 	];
-	const minIndex = supportData[0]?.index;
-	const maxIndex = supportData[supportData.length - 1]?.index;
+	const minIndex = supportData[0].index;
+	const maxIndex = supportData[supportData.length - 1].index;
 	const marks = {
 		[0]: minIndex.toString(),
 		[supportData.length - 1]: maxIndex.toString()

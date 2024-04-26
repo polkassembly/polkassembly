@@ -5,7 +5,9 @@ import React, { useState } from 'react';
 import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
-import { MailFilledIcon } from '~src/ui-components/CustomIcons';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import classNames from 'classnames';
 
 type Props = {
 	handleEnableDisabled: any;
@@ -14,6 +16,7 @@ type Props = {
 
 export default function InAppNotificationsCard({ handleEnableDisabled, notificationEnabled }: Props) {
 	const [showModal, setShowModal] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 	const handleToggleClick = () => {
 		setShowModal(true);
 	};
@@ -22,7 +25,14 @@ export default function InAppNotificationsCard({ handleEnableDisabled, notificat
 		<div className='mb-2 flex flex-col'>
 			<h3 className='m-0 flex items-center gap-2 text-base font-medium text-blue-light-high dark:text-blue-dark-high'>
 				<span className='flex '>
-					<MailFilledIcon className='mt-1 text-2xl text-lightBlue dark:text-icon-dark-inactive' /> <p className='m-0 ml-1 mr-1 p-0'>In App Notifications</p>
+					<Image
+						src={'/assets/icons/notification-bell-default.svg'}
+						height={24}
+						width={24}
+						alt='notific...'
+						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
+					/>{' '}
+					<p className='m-0 ml-1 mr-1 p-0'>In App Notifications</p>
 				</span>
 				{
 					<span className='flex items-center gap-1'>

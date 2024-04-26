@@ -65,7 +65,7 @@ const NotificationsLayout = ({ inPage }: { inPage: boolean }) => {
 			{!!recentNotificationsCount && (
 				<NotificationsContainer
 					count={recentNotificationsCount}
-					data={inPage ? recentNotifications : recentNotifications.slice(0, 2)}
+					data={inPage ? recentNotifications : recentNotifications.slice(0, !unreadNotificationsCount ? 10 : 2)}
 					inPage={inPage}
 					title='Recent'
 					key={EInAppNotificationsType.RECENT}

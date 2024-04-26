@@ -15,16 +15,26 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import NotificationsContent from './NotificationsContent';
 import { Spin } from 'antd';
+import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 
 const InAppNotification = ({ className }: { className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { id: userId } = useUserDetailsSelector();
-	const { lastReadTime, unreadNotificationsCount } = useInAppNotificationsSelector();
 	const dispatch = useDispatch();
+	const { id: userId } = useUserDetailsSelector();
+	const { lastReadTime: lastSeen, unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	const handleModifyData = (notifications: IInAppNotification[]) => {
+		let lastReadTime = JSON.parse(localStorage.getItem('lastReadTime') || '');
+		if (lastReadTime) {
+			lastReadTime = dayjs(lastReadTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+		} else {
+			lastReadTime = lastSeen;
+		}
+
+		console.log(lastReadTime);
 		if (!lastReadTime) {
 			dispatch(
 				inAppNotificationsActions.updateInAppNotifications({
@@ -68,7 +78,6 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		});
 		if (data) {
 			handleModifyData(data);
-			console.log(data);
 		} else if (error) {
 			console.log(error);
 		}
@@ -81,33 +90,64 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	}, [userId]);
 
 	return (
-		<Popover
-			content={
-				<Spin
-					spinning={loading}
-					className='h-[200px]'
+		<div className='mr-1'>
+			{userId ? (
+				<Popover
+					content={
+						<Spin
+							spinning={loading}
+							className='h-[200px]'
+						>
+							<NotificationsContent isLoading={loading} />
+						</Spin>
+					}
+					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}
+					trigger={'click'}
+					className={classNames(className, '')}
+					placement={isMobile ? 'bottom' : 'bottomLeft'}
 				>
-					<NotificationsContent />
-				</Spin>
-			}
-			overlayClassName={classNames('h-[600px] w-[480px] mt-1.5 max-sm:w-full', className)}
-			trigger={'click'}
-			className={className}
-			placement={isMobile ? 'bottom' : 'bottomLeft'}
-		>
-			<Image
-				src={!unreadNotificationsCount ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
-				height={24}
-				width={24}
-				alt='notific...'
-				className={classNames(theme === 'dark' && !unreadNotificationsCount ? 'dark-icons' : '', 'cursor-pointer')}
-			/>
-			{!!unreadNotificationsCount && (
-				<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
-					{unreadNotificationsCount}
+					<div className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'>
+						<Image
+							src={!unreadNotificationsCount && !userId ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
+							height={24}
+							width={24}
+							alt='notific...'
+							className={classNames(theme === 'dark' && !unreadNotificationsCount ? 'dark-icons' : '', 'cursor-pointer')}
+						/>
+						{!!unreadNotificationsCount && (
+							<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
+								{unreadNotificationsCount}
+							</div>
+						)}
+					</div>
+				</Popover>
+			) : (
+				<div
+					className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'
+					onClick={() => setOpenLoginPrompt(!openLoginPrompt)}
+				>
+					<Image
+						src={'/assets/icons/notification-bell-default.svg'}
+						height={24}
+						width={24}
+						alt='notific...'
+						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
+					/>
+					{!!unreadNotificationsCount && (
+						<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
+							{unreadNotificationsCount}
+						</div>
+					)}
 				</div>
 			)}
-		</Popover>
+			<ReferendaLoginPrompts
+				modalOpen={openLoginPrompt}
+				setModalOpen={setOpenLoginPrompt}
+				image='/assets/referenda-endorse.png'
+				title='Join Polkassembly to start using notifications.'
+				subtitle='Please login to use polkassembly notifications.'
+			/>
+		</div>
 	);
 };
 export default styled(InAppNotification)`

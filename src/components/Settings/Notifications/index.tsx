@@ -69,27 +69,26 @@ export default function Notifications({ network }: { network: string }) {
 			if (error) {
 				throw new Error(error);
 			}
+
+			let payload = {};
 			if (data?.notification_preferences?.channelPreferences) {
-				reduxDispatch(
-					setUserDetailsState({
-						...currentUser,
-						networkPreferences: {
-							...currentUser.networkPreferences,
-							channelPreferences: data?.notification_preferences?.channelPreferences
-						}
-					})
-				);
+				payload = {
+					...currentUser,
+					networkPreferences: {
+						...currentUser.networkPreferences,
+						channelPreferences: data?.notification_preferences?.channelPreferences
+					}
+				};
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
-				reduxDispatch(
-					setUserDetailsState({
-						...currentUser,
-						networkPreferences: {
-							...currentUser.networkPreferences,
-							triggerPreferences: data?.notification_preferences?.triggerPreferences
-						}
-					})
-				);
+				payload = {
+					...currentUser,
+					networkPreferences: {
+						...currentUser.networkPreferences,
+						triggerPreferences: data?.notification_preferences?.triggerPreferences
+					}
+				};
+
 				dispatch({
 					payload: {
 						data: data?.notification_preferences?.triggerPreferences?.[network],
@@ -98,6 +97,12 @@ export default function Notifications({ network }: { network: string }) {
 					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
 			}
+			reduxDispatch(
+				setUserDetailsState({
+					...currentUser,
+					...payload
+				})
+			);
 			setLoading(false);
 		} catch (e) {
 			console.log(e);
@@ -252,7 +257,7 @@ export default function Notifications({ network }: { network: string }) {
 	return loading ? (
 		<Loader />
 	) : (
-		<div className='flex flex-col gap-[24px] text-blue-light-high dark:text-blue-dark-high'>
+		<div className='flex flex-col gap-6 text-blue-light-high dark:text-blue-dark-high'>
 			<NotificationChannels
 				handleEnableDisabled={handleEnableDisabled}
 				handleReset={handleReset}

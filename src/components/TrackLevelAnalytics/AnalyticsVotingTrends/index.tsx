@@ -36,40 +36,19 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 	const [noData, setNoData] = useState<boolean>(false);
 	const isSmallScreen = window.innerWidth < 640;
 
-	const getAllVoteData = async () => {
+	const getVoteData = async () => {
+		setIsLoading(true);
+		const url = trackId === undefined ? '/api/v1/trackLevelAnalytics/all-track-votes-analytics' : '/api/v1/trackLevelAnalytics/votes-analytics';
+		const payload = trackId === undefined ? {} : { trackId: trackId };
 		try {
-			setIsLoading(true);
-			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/all-track-votes-analytics');
-
+			const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>(url, payload);
 			if (data && data?.votes) {
 				dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
-				setNoData(false);
 				setIsLoading(false);
 			}
 			if (data && data?.votes.length === 0) {
 				setNoData(true);
-			}
-		} catch (error) {
-			console.error(error);
-			setIsLoading(false);
-		}
-	};
-
-	const getVoteData = async () => {
-		try {
-			setIsLoading(true);
-			if (typeof trackId === 'number') {
-				const { data } = await nextApiClientFetch<{ votes: IAnalyticsVoteTrends[] }>('/api/v1/trackLevelAnalytics/votes-analytics', {
-					trackId
-				});
-
-				if (data && data?.votes) {
-					dispatch(setTrackLevelVotesAnalyticsData(data?.votes));
-					setIsLoading(false);
-				}
-				if (data && data?.votes.length === 0) {
-					setNoData(true);
-				}
+				setIsLoading(false);
 			}
 		} catch (error) {
 			console.error(error);
@@ -78,16 +57,8 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 	};
 
 	useEffect(() => {
-		if (trackId === undefined) {
-			getAllVoteData();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		if (trackId !== undefined) {
-			getVoteData();
-		}
+		if (trackId && isNaN(trackId)) return;
+		getVoteData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 

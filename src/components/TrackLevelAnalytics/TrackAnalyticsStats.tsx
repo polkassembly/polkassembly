@@ -23,31 +23,15 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	const { activeProposals, allProposals } = useTrackLevelAnalytics();
 	const [loading, setLoading] = useState<boolean>(false);
 
-	const getAllData = async () => {
-		setLoading(true);
-		const { data, error } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/all-track-analytics-stats');
-		if (data) {
-			dispatch(setTrackLevelAnalyticsStats(data));
-			setLoading(false);
-		}
-		if (error) {
-			console.log(error);
-			setLoading(false);
-		}
-	};
-
 	const getData = async () => {
 		setLoading(true);
+		const url = trackId === undefined ? '/api/v1/trackLevelAnalytics/all-track-analytics-stats' : '/api/v1/trackLevelAnalytics/track-analytics-stats';
+		const payload = trackId === undefined ? {} : { trackId: trackId };
 		try {
-			if (typeof trackId === 'number') {
-				const { data } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>('/api/v1/trackLevelAnalytics/track-analytics-stats', {
-					trackId: trackId
-				});
-
-				if (data) {
-					dispatch(setTrackLevelAnalyticsStats(data));
-					setLoading(false);
-				}
+			const { data } = await nextApiClientFetch<ITrackAnalyticsStats | MessageType>(url, payload);
+			if (data) {
+				dispatch(setTrackLevelAnalyticsStats(data));
+				setLoading(false);
 			}
 		} catch (error) {
 			console.log(error);
@@ -56,16 +40,8 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (trackId === undefined) {
-			getAllData();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		if (trackId !== undefined) {
-			getData();
-		}
+		if (trackId && isNaN(trackId)) return;
+		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [trackId]);
 

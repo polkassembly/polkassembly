@@ -94,7 +94,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	const tickValues = chartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
 	const minIndex = votesSplitData[0]?.index;
-	const maxIndex = votesSplitData[votesSplitData.length - 1]?.index;
+	const maxIndex = votesSplitData[votesSplitData?.length - 1]?.index;
 	const marks = {
 		[0]: minIndex.toString(),
 		[votesSplitData.length - 1]: maxIndex.toString()

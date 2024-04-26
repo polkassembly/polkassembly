@@ -88,8 +88,8 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 	const tickInterval = Math.ceil(filteredChartData.length / 10);
 	const tickValues = filteredChartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
-	const minIndex = delegationSplitData[0].index;
-	const maxIndex = delegationSplitData[delegationSplitData.length - 1].index;
+	const minIndex = delegationSplitData[0]?.index;
+	const maxIndex = delegationSplitData[delegationSplitData?.length - 1]?.index;
 	const marks = {
 		[0]: minIndex.toString(),
 		[delegationSplitData.length - 1]: maxIndex.toString()

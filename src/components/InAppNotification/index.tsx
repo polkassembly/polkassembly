@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EInAppNotificationsType, IInAppNotification } from './types';
@@ -14,12 +14,14 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import NotificationsContent from './NotificationsContent';
+import { Spin } from 'antd';
 
 const InAppNotification = ({ className }: { className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { id: userId } = useUserDetailsSelector();
 	const { lastReadTime, unreadNotificationsCount } = useInAppNotificationsSelector();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	const handleModifyData = (notifications: IInAppNotification[]) => {
@@ -60,7 +62,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 
 	const getNotifications = async () => {
 		if (typeof userId !== 'number') return;
-		// setLoading(true);
+		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IInAppNotification[]>('/api/v1/inAppNotifications/get-notifications', {
 			userId: userId
 		});
@@ -70,7 +72,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		} else if (error) {
 			console.log(error);
 		}
-		// setLoading(false);
+		setLoading(false);
 	};
 
 	useEffect(() => {
@@ -80,7 +82,14 @@ const InAppNotification = ({ className }: { className?: string }) => {
 
 	return (
 		<Popover
-			content={<NotificationsContent />}
+			content={
+				<Spin
+					spinning={loading}
+					className='h-[200px]'
+				>
+					<NotificationsContent />
+				</Spin>
+			}
 			overlayClassName={classNames('h-[600px] w-[480px] mt-1.5 max-sm:w-full', className)}
 			trigger={'click'}
 			className={className}
@@ -88,8 +97,8 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		>
 			<Image
 				src={!unreadNotificationsCount ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
-				height={28}
-				width={28}
+				height={24}
+				width={24}
 				alt='notific...'
 				className={classNames(theme === 'dark' && !unreadNotificationsCount ? 'dark-icons' : '', 'cursor-pointer')}
 			/>

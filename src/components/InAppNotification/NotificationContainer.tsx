@@ -36,7 +36,9 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 							target='_blank'
 						>
 							<div className='flex items-start gap-1.5'>
-								{notification.type === EInAppNotificationsType.UNREAD && <span className='mt-1 aspect-square h-2 w-2 rounded-full bg-[#3B47DF]' />}
+								{notification.type === EInAppNotificationsType.UNREAD && (
+									<span className={classNames('aspect-square h-2 w-2 rounded-full bg-[#3B47DF]', inPage ? 'mt-[5px]' : 'mt-1')} />
+								)}
 
 								<div
 									className={classNames(
@@ -45,13 +47,14 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 										inPage && notification.type === EInAppNotificationsType.UNREAD ? 'font-semibold' : 'font-medium'
 									)}
 								>
-									<div className='flex items-center gap-2 text-xs text-bodyBlue dark:text-blue-dark-high'>{notification.title}</div>
+									<div className={classNames('flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high', inPage ? 'text-sm' : 'text-xs')}>{notification.title}</div>
 									<div className='flex w-full flex-wrap'>
 										<Markdown
 											md={inPage ? notification.message : `${notification.message.slice(0, 140)}...`}
 											className={classNames(
-												'line-clamp-1 flex w-full flex-wrap text-xs text-lightBlue dark:text-blue-dark-medium',
-												inPage && notification.type === EInAppNotificationsType.UNREAD ? 'container font-semibold' : 'font-normal'
+												'line-clamp-1 flex w-full flex-wrap text-lightBlue dark:text-blue-dark-medium',
+												inPage && notification.type === EInAppNotificationsType.UNREAD ? 'container font-semibold' : 'font-normal',
+												inPage ? 'text-sm' : 'text-xs'
 											)}
 											theme={theme}
 											imgHidden
@@ -61,7 +64,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 								</div>
 							</div>
 
-							<div className='flex items-center px-3 pb-3 text-xs text-lightBlue dark:text-blue-dark-medium'>
+							<div className={classNames('flex items-center px-3 pb-3 text-lightBlue dark:text-blue-dark-medium', inPage ? 'text-sm' : 'text-xs')}>
 								<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{getRelativeCreatedAt(notification.createdAt)}</span>
 							</div>
 						</Link>

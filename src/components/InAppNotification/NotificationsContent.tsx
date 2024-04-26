@@ -66,13 +66,13 @@ const NotificationsContent = ({ className, inPage = false }: { className?: strin
 							</span>
 						)}
 					</div>
-					<div className='flex gap-2'>
+					<div className='flex gap-4'>
 						{!!unreadNotificationsCount && (
 							<button
 								onClick={handleMarkAsRead}
 								className={classNames(
-									'flex cursor-pointer items-center gap-1 bg-transparent px-3 py-0.5 text-xs font-medium text-[#3B47DF] dark:text-[#5B67FF]',
-									inPage ? 'rounded-md border-[1px] border-solid border-[#5B67FF] bg-[#F3F4FD] dark:bg-[#1A1B34]' : 'border-none'
+									'flex cursor-pointer items-center gap-1 bg-transparent py-0.5 text-xs font-medium text-[#3B47DF] dark:text-[#5B67FF]',
+									inPage ? 'rounded-md border-[1px] border-solid border-[#5B67FF] bg-[#F3F4FD] px-3 dark:bg-[#1A1B34]' : 'border-none'
 								)}
 							>
 								<Image
@@ -130,7 +130,7 @@ const NotificationsContent = ({ className, inPage = false }: { className?: strin
 					</Link>
 					<Link
 						href='/notification'
-						className='font-medium text-pink_primary'
+						className='font-medium text-pink_primary dark:text-blue-dark-helper'
 					>
 						View All
 					</Link>

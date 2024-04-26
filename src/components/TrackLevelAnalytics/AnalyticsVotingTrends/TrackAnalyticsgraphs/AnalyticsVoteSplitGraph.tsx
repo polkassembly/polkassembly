@@ -60,7 +60,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	}, [votesSplitData.length]);
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
-		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue.toString());
+		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue && bnValue.toString());
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
@@ -96,8 +96,8 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	const minIndex = votesSplitData[0]?.index;
 	const maxIndex = votesSplitData[votesSplitData?.length - 1]?.index;
 	const marks = {
-		[0]: minIndex.toString(),
-		[votesSplitData.length - 1]: maxIndex.toString()
+		[0]: minIndex && minIndex.toString(),
+		[votesSplitData.length - 1]: maxIndex && maxIndex.toString()
 	};
 
 	return (

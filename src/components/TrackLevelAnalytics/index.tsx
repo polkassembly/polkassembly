@@ -12,33 +12,20 @@ import AnalyticsDelegation from './AnalyticsDelegation';
 const TrackLevelAnalytics = ({ className, trackName }: { className?: string; trackName: string }) => {
 	const { network } = useNetworkSelector();
 	const [trackId, setTrackId] = useState<number | null>(null);
+	const isAllTracks = trackName === 'All Tracks';
 
 	useEffect(() => {
-		if (trackName === 'All Tracks' || !network) return;
-
 		setTrackId(networkTrackInfo?.[network]?.[trackName]?.trackId);
 	}, [network, trackName]);
-
-	const isAllTracks = trackName === 'All Tracks';
 
 	return (
 		<Spin spinning={!isAllTracks && trackId == null}>
 			<div className={`${className} flex flex-col gap-8`}>
-				{isAllTracks ? (
+				{trackId !== null && (
 					<>
-						<TrackAnalyticsStats />
-						<AnalyticsVotingTrends />
-						<AnalyticsDelegation />
-					</>
-				) : (
-					<>
-						{trackId !== null && (
-							<>
-								<TrackAnalyticsStats trackId={trackId} />
-								<AnalyticsVotingTrends trackId={trackId} />
-								<AnalyticsDelegation trackId={trackId} />
-							</>
-						)}
+						<TrackAnalyticsStats trackId={trackId} />
+						<AnalyticsVotingTrends trackId={trackId} />
+						<AnalyticsDelegation trackId={trackId} />
 					</>
 				)}
 			</div>

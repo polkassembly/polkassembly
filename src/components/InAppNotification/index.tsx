@@ -87,9 +87,8 @@ const InAppNotification = ({ className }: { className?: string }) => {
 
 	useEffect(() => {
 		let intervalId: any = null;
-
 		const startInterval = () => {
-			intervalId = setInterval(getNotifications, 60000); // 30000 ms is 30 secs
+			intervalId = setInterval(getNotifications, 50000); // 50000 ms is 50 secs
 		};
 
 		const stopInterval = () => {
@@ -115,6 +114,11 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 
+	useEffect(() => {
+		getNotifications();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userId]);
+
 	return (
 		<div className='mr-1'>
 			{userId ? (
@@ -134,7 +138,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				>
 					<div className='rounded-full p-2 hover:bg-[#FEF5FA] hover:dark:bg-[#48092A]'>
 						<Image
-							src={!unreadNotificationsCount && !userId ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
+							src={!unreadNotificationsCount || !userId ? '/assets/icons/notification-bell-default.svg' : '/assets/icons/notification-bell-active.svg'}
 							height={24}
 							width={24}
 							alt='notific...'
@@ -159,7 +163,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 						alt='notific...'
 						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 					/>
-					{!!unreadNotificationsCount && (
+					{!!unreadNotificationsCount && !!userId && (
 						<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
 							{unreadNotificationsCount}
 						</div>

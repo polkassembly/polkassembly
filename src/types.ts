@@ -221,7 +221,8 @@ export const PostOrigin = {
 	SMALL_TIPPER: 'SmallTipper',
 	STAKING_ADMIN: 'StakingAdmin',
 	TREASURER: 'Treasurer',
-	WHITELISTED_CALLER: 'WhitelistedCaller'
+	WHITELISTED_CALLER: 'WhitelistedCaller',
+	WISH_FOR_CHANGE: 'WishForChange'
 };
 
 export type TrackInfoType = {

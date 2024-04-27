@@ -35,6 +35,7 @@ import {
 	TechComProposalIcon,
 	DelegatedIcon,
 	RootIcon,
+	WishForChangeIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ApplayoutIdentityIcon,
@@ -684,6 +685,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<RootIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.ROOT ? (
 							<RootIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
+							<WishForChangeIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<AuctionAdminIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : (

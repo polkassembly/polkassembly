@@ -37,7 +37,6 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 	const [showModal, setShowModal] = useState<CHANNEL | null>(null);
 	const { network } = useNetworkSelector();
 	const { id, networkPreferences, email, email_verified, loginAddress } = useUserDetailsSelector();
-	console.log(networkPreferences);
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const botsArr = Bots();
 	const handleClick = (channelName: CHANNEL) => {

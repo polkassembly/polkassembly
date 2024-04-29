@@ -38,7 +38,6 @@ export default function Notifications({ network }: { network: string }) {
 	const currentUser = useUserDetailsSelector();
 	const { id, networkPreferences, primaryNetwork } = currentUser;
 	const reduxDispatch = useDispatch();
-
 	const [notificationPreferences, dispatch] = useReducer(reducer, notificationInitialState(network));
 	const [selectedNetwork, setSelectedNetwork] = useState<{
 		[index: string]: Array<{ name: string; selected: boolean }>;
@@ -70,25 +69,23 @@ export default function Notifications({ network }: { network: string }) {
 				throw new Error(error);
 			}
 
-			let payload = {};
+			let networkPreferences: any = {};
 			if (data?.notification_preferences?.channelPreferences) {
-				payload = {
-					...currentUser,
-					networkPreferences: {
-						...currentUser.networkPreferences,
-						channelPreferences: data?.notification_preferences?.channelPreferences
-					}
+				networkPreferences = {
+					channelPreferences: data?.notification_preferences?.channelPreferences
 				};
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
-				payload = {
-					...currentUser,
-					networkPreferences: {
-						...currentUser.networkPreferences,
-						triggerPreferences: data?.notification_preferences?.triggerPreferences
-					}
+				networkPreferences = {
+					...networkPreferences,
+					triggerPreferences: data?.notification_preferences?.triggerPreferences
 				};
-
+				reduxDispatch(
+					setUserDetailsState({
+						...currentUser,
+						networkPreferences: networkPreferences
+					})
+				);
 				dispatch({
 					payload: {
 						data: data?.notification_preferences?.triggerPreferences?.[network],
@@ -97,12 +94,6 @@ export default function Notifications({ network }: { network: string }) {
 					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
 			}
-			reduxDispatch(
-				setUserDetailsState({
-					...currentUser,
-					...payload
-				})
-			);
 			setLoading(false);
 		} catch (e) {
 			console.log(e);
@@ -249,8 +240,8 @@ export default function Notifications({ network }: { network: string }) {
 	}, [networkPreferences?.triggerPreferences]);
 
 	useEffect(() => {
-		getPrimaryNetwork().catch((e) => console.log(e));
 		getNotificationSettings(network);
+		getPrimaryNetwork().catch((e) => console.log(e));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 

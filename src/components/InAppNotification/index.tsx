@@ -158,7 +158,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 						height={24}
 						width={24}
 						alt='notific...'
-						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
+						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer', !unreadNotificationsCount ? '-mr-1' : '')}
 					/>
 					{!!unreadNotificationsCount && !!userId && (
 						<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>

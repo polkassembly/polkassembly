@@ -124,9 +124,10 @@ const BalanceInput = ({
 									message: 'Invalid Balance',
 									validator(rule, value, callback) {
 										if (
-											(callback && isNaN(Number(value))) ||
-											(Number(value) > 0 && value?.split('.')?.[1]?.length > chainProperties[network]?.tokenDecimals) ||
-											(value.length && Number(value) <= 0)
+											callback &&
+											(isNaN(Number(value)) ||
+												(Number(value) > 0 && value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals < (value?.split('.')?.[1].length || 0)) ||
+												(value.length && Number(value) <= 0))
 										) {
 											setIsBalanceSet && setIsBalanceSet(false);
 											callback(rule?.message?.toString());

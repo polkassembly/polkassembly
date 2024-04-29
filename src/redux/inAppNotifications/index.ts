@@ -32,7 +32,7 @@ export const inAppNotificationsStore = createSlice({
 			state.unreadNotifications = action.payload.unreadNotifications;
 			state.unreadNotificationsCount = action.payload.unreadNotificationsCount;
 		},
-		updateNotificationReadTime: (state, action: PayloadAction<Date>) => {
+		updateNotificationReadTime: (state, action: PayloadAction<string>) => {
 			state.lastReadTime = action.payload;
 		}
 	}
@@ -45,7 +45,7 @@ const updateInAppNotifications: any = (payload: IInAppNotificationsStore) => {
 	};
 };
 
-const updateNotificationReadTime: any = (payload: Date) => {
+const updateNotificationReadTime: any = (payload: string) => {
 	return (dispatch: any) => {
 		dispatch(inAppNotificationsActions.updateNotificationReadTime(payload));
 	};

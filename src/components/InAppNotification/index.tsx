@@ -21,21 +21,14 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const { id: userId } = useUserDetailsSelector();
-	const { lastReadTime: lastSeen, unreadNotificationsCount } = useInAppNotificationsSelector();
+	const { unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
-	const handleModifyData = (notifications: IInAppNotification[]) => {
-		let lastReadTime = JSON.parse(localStorage.getItem('lastReadTime') || '');
-		if (lastReadTime) {
-			lastReadTime = dayjs(lastReadTime).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-		} else {
-			lastReadTime = lastSeen;
-		}
-
-		if (!lastReadTime) {
+	const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
+		if (!lastSeen) {
 			dispatch(
 				inAppNotificationsActions.updateInAppNotifications({
 					lastReadTime: null,
@@ -48,10 +41,12 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				})
 			);
 		} else {
+			const lastReadTime = dayjs(lastSeen).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+
 			const recent: IInAppNotification[] = [];
 			const unread: IInAppNotification[] = [];
 			notifications.map((notification) => {
-				if (dayjs(notification.createdAt).isAfter(lastReadTime)) {
+				if (dayjs(notification.createdAt).isAfter(lastSeen)) {
 					unread.push({ ...notification, type: EInAppNotificationsType.UNREAD });
 				} else {
 					recent.push({ ...notification, type: EInAppNotificationsType.RECENT });
@@ -74,11 +69,11 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		if (typeof userId !== 'number') return;
 		setLoadingTime(loadingTime + 1);
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IInAppNotification[]>('/api/v1/inAppNotifications/get-notifications', {
+		const { data, error } = await nextApiClientFetch<{ notifications: IInAppNotification[]; lastSeen: Date }>('/api/v1/inAppNotifications/get-notifications', {
 			userId: userId
 		});
 		if (data) {
-			handleModifyData(data);
+			handleModifyData(data.notifications, data?.lastSeen);
 		} else if (error) {
 			console.log(error);
 		}
@@ -86,9 +81,10 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	};
 
 	useEffect(() => {
+		if (!userId) return;
 		let intervalId: any = null;
 		const startInterval = () => {
-			intervalId = setInterval(getNotifications, 50000); // 50000 ms is 50 secs
+			intervalId = setInterval(getNotifications, 30000); // 50000 ms is 50 secs
 		};
 
 		const stopInterval = () => {
@@ -115,6 +111,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	}, [userId]);
 
 	useEffect(() => {
+		console.log('heree');
 		getNotifications();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);

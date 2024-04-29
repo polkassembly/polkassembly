@@ -9,5 +9,5 @@ export interface IInAppNotificationsStore {
 	unreadNotifications: IInAppNotification[];
 	recentNotificationsCount: number;
 	unreadNotificationsCount: number;
-	lastReadTime: Date | null;
+	lastReadTime: string | null;
 }

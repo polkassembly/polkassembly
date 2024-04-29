@@ -15,19 +15,29 @@ import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
 import { EInAppNotificationsType } from './types';
 import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { MessageType } from '~src/auth/types';
 
 const NotificationsContent = ({ className, inPage = false, isLoading }: { className?: string; inPage?: boolean; isLoading?: boolean }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
 	const dispatch = useDispatch();
-	const { networkPreferences } = useUserDetailsSelector();
+	const { networkPreferences, id: userId } = useUserDetailsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
+	const handleUpdateLastSeen = async () => {
+		const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/inAppNotifications/add-last-seen', {
+			userId: userId
+		});
+
+		if (error || data) console.log(error || data?.message || '');
+	};
+
 	const handleMarkAsRead = () => {
-		localStorage.setItem('lastReadTime', JSON.stringify(new Date()));
+		handleUpdateLastSeen();
 		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
-				lastReadTime: new Date(),
+				lastReadTime: JSON.stringify(new Date()),
 				recentNotifications: [
 					...unreadNotifications.map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.RECENT };

@@ -11,41 +11,15 @@ import messages from '~src/auth/utils/messages';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IInAppNotification } from '~src/components/InAppNotification/types';
 
 export const getUserNotifications = async ({ userId }: { userId: number }) => {
 	try {
-		const notificationsSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').get();
+		const userSnapshot = firestore_db.collection('users').doc(String(userId));
 
-		const userSnapshot = await firestore_db.collection('users').doc(String(userId)).get();
-		let lastSeen = null;
-		if (userSnapshot.exists) {
-			const userData = userSnapshot.data();
-			lastSeen = userData?.lastSeen?.toDate ? userData?.lastSeen?.toDate() : userData?.lastSeen || null;
-		}
-
-		const response: IInAppNotification[] = [];
-
-		if (!notificationsSnapshot.empty) {
-			notificationsSnapshot.docs.map((doc) => {
-				if (doc.exists) {
-					const docData = doc.data();
-					const payload: IInAppNotification = {
-						createdAt: docData.created_at?.toDate ? docData.created_at?.toDate() : docData.created_at,
-						id: docData?.id,
-						message: docData?.message,
-						network: docData.network,
-						title: docData?.title,
-						url: docData?.url,
-						userId: docData?.userId
-					};
-					response.push(payload);
-				}
-			});
-		}
+		await userSnapshot.update({ lastSeen: new Date() });
 
 		return {
-			data: { lastSeen: lastSeen || null, notifications: response },
+			data: 'Success',
 			error: null,
 			status: 200
 		};
@@ -58,12 +32,12 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 	}
 };
 
-const handler: NextApiHandler<{ notifications: IInAppNotification[]; lastSeen: Date } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 	const { userId } = req.body;
 	const network = String(req.headers['x-network']);
 
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
@@ -78,7 +52,7 @@ const handler: NextApiHandler<{ notifications: IInAppNotification[]; lastSeen: D
 	if (error || !data) {
 		return res.status(status).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
-		return res.status(status).json(data);
+		return res.status(status).json({ message: data });
 	}
 };
 

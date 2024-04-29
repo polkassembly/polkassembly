@@ -31,7 +31,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 								inPage ? 'px-8 pt-5 max-sm:px-3' : 'px-5 pt-3',
 								notification.type === EInAppNotificationsType.UNREAD ? 'bg-[#f7f8ff] dark:bg-[#1a1b34]' : ''
 							)}
-							key={notification.id}
+							key={`${notification.id}_${index}`}
 							href={notification.url}
 							target='_blank'
 						>

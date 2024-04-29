@@ -17,9 +17,7 @@ jobs:
         run: npm install --force
 
       - name: Install Cypress
-        run: |
-          npm install cypress --force
-          $(npm bin)/cypress verify 
+        run: npm install cypress --force
 
       - name: Run Cypress tests
         run: | 

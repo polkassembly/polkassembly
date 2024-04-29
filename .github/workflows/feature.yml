@@ -7,7 +7,6 @@ on:
 
 jobs:
   test:
-    if: github.ref != 'refs/heads/main' # Run only if not the main branch
     runs-on: ubuntu-latest
 
     steps:
@@ -15,12 +14,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --force
 
       - name: Install Cypress
         run: |
-          $(npm bin)/cypress install --force
+          npm install cypress --force
+          $(npm bin)/cypress verify 
 
       - name: Run Cypress tests
-        run: |
-          $(npm bin)/cypress run --spec 'cypress/test_Folder/*.js'
+        run: | 
+            $(npm bin)/cypress run --spec "cypress/e2e/test_Folder/*.js"

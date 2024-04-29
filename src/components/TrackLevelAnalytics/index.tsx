@@ -12,22 +12,23 @@ import AnalyticsDelegation from './AnalyticsDelegation';
 const TrackLevelAnalytics = ({ className, trackName }: { className?: string; trackName: string }) => {
 	const { network } = useNetworkSelector();
 	const [trackId, setTrackId] = useState<number | null>(null);
+	const isAllTracks = trackName === 'All Tracks';
 
 	useEffect(() => {
-		if (!network) return;
 		setTrackId(networkTrackInfo?.[network]?.[trackName]?.trackId);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, trackName]);
 
 	return (
-		<Spin spinning={trackId == null}>
-			{trackId !== null && (
-				<div className={`${className} flex flex-col gap-8`}>
-					<TrackAnalyticsStats trackId={trackId} />
-					<AnalyticsVotingTrends trackId={trackId} />
-					<AnalyticsDelegation trackId={trackId} />
-				</div>
-			)}
+		<Spin spinning={!isAllTracks && trackId == null}>
+			<div className={`${className} flex flex-col gap-8`}>
+				{trackId !== null && (
+					<>
+						<TrackAnalyticsStats trackId={trackId} />
+						<AnalyticsVotingTrends trackId={trackId} />
+						<AnalyticsDelegation trackId={trackId} />
+					</>
+				)}
+			</div>
 		</Spin>
 	);
 };

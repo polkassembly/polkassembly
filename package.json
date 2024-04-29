@@ -11,7 +11,7 @@
     "api:bump": "yarn add @polkadot/api @polkadot/api-augment @polkadot/extension-dapp @polkadot/extension-inject @polkadot/react-identicon @polkadot/ui-settings @polkadot/util @polkadot/util-crypto",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "test:cypress": "cypress run --spec '/Users/parasraghav/Documents/Test Folder/polkassembly/cypress/e2e/test/*.js'"
+    "test:cypress": "cypress run --spec 'cypress/e2e/test/*.js'"
   },
   "engines": {
     "node": "18"

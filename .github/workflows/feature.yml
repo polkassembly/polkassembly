@@ -20,4 +20,4 @@ jobs:
         run: npm install cypress --force
 
       - name: Run Cypress tests
-        run: cypress-io/github-action@v5
+        run: npm run test:cypress

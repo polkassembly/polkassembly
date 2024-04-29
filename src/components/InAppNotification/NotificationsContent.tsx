@@ -18,7 +18,17 @@ import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 
-const NotificationsContent = ({ className, inPage = false, isLoading }: { className?: string; inPage?: boolean; isLoading?: boolean }) => {
+const NotificationsContent = ({
+	className,
+	inPage = false,
+	isLoading,
+	closePopover
+}: {
+	className?: string;
+	inPage?: boolean;
+	isLoading?: boolean;
+	closePopover: (pre: boolean) => void;
+}) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
 	const dispatch = useDispatch();
@@ -96,6 +106,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 							<div className=''>
 								<Link
 									href={'/settings?tab=notifications'}
+									onClick={() => closePopover(true)}
 									className='flex items-center gap-2 rounded-md border-[1px] border-solid border-section-light-container p-2 dark:border-separatorDark'
 								>
 									<Image
@@ -125,17 +136,18 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>No Notifications</span>
 						{!networkPreferences.channelPreferences?.[CHANNEL.IN_APP]?.enabled && !isLoading && (
 							<div className='mt-1 flex items-center justify-center gap-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-								<div className={'flex items-center gap-1'}>
+								<div className={'flex items-center justify-between gap-1'}>
 									<Image
 										src={'/assets/icons/notification-bell-default.svg'}
-										height={16}
-										width={16}
+										height={14}
+										width={14}
 										alt='notific...'
 										className={theme == 'dark' ? 'pink-dark-icon ' : 'pink-icon'}
 									/>
 									<Link
+										onClick={() => closePopover(true)}
 										href={'/settings?tab=notifications'}
-										className={'text-pink_primary dark:text-blue-dark-helper'}
+										className={'-ml-0.5 text-pink_primary dark:text-blue-dark-helper'}
 									>
 										set Notifications
 									</Link>
@@ -160,6 +172,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 					<Link
 						href={'/settings?tab=notifications'}
 						className='flex items-center gap-2'
+						onClick={() => closePopover(true)}
 					>
 						<Image
 							height={16}
@@ -174,6 +187,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading }: { classN
 						<Link
 							href='/notifications'
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
+							onClick={() => closePopover(true)}
 						>
 							View All
 						</Link>

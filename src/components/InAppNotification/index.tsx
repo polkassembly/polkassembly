@@ -30,6 +30,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [open, setOpen] = useState(false);
 
 	const getNotificationSettings = async (network: string) => {
 		if (!network) {
@@ -173,12 +174,17 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		<div className='mr-1'>
 			{userId ? (
 				<Popover
+					onOpenChange={(open: boolean) => setOpen(open)}
+					open={open}
 					content={
 						<Spin
 							spinning={loading && !loadingTime}
 							className='h-[200px]'
 						>
-							<NotificationsContent isLoading={loading && !loadingTime} />
+							<NotificationsContent
+								isLoading={loading && !loadingTime}
+								closePopover={(open: boolean) => setOpen(!open)}
+							/>
 						</Spin>
 					}
 					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}

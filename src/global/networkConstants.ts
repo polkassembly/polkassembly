@@ -702,7 +702,7 @@ export const chainProperties: types.ChainPropType = {
 			{ key: 'wss://dot-rpc.stakeworld.io', label: 'Stakeworld' }
 		],
 		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/collectives-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
 		treasuryProposalBondPercent: null,

@@ -18,17 +18,14 @@ import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 
-const NotificationsContent = ({
-	className,
-	inPage = false,
-	isLoading,
-	closePopover
-}: {
+interface INotificationsContent {
 	className?: string;
 	inPage?: boolean;
 	isLoading?: boolean;
-	closePopover: (pre: boolean) => void;
-}) => {
+	closePopover?: (pre: boolean) => void;
+}
+
+const NotificationsContent = ({ className, inPage = false, isLoading, closePopover }: INotificationsContent) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
 	const dispatch = useDispatch();
@@ -106,7 +103,7 @@ const NotificationsContent = ({
 							<div className=''>
 								<Link
 									href={'/settings?tab=notifications'}
-									onClick={() => closePopover(true)}
+									onClick={() => closePopover?.(true)}
 									className='flex items-center gap-2 rounded-md border-[1px] border-solid border-section-light-container p-2 dark:border-separatorDark'
 								>
 									<Image
@@ -145,7 +142,7 @@ const NotificationsContent = ({
 										className={theme == 'dark' ? 'pink-dark-icon ' : 'pink-icon'}
 									/>
 									<Link
-										onClick={() => closePopover(true)}
+										onClick={() => closePopover?.(true)}
 										href={'/settings?tab=notifications'}
 										className={'-ml-0.5 text-pink_primary dark:text-blue-dark-helper'}
 									>
@@ -172,7 +169,7 @@ const NotificationsContent = ({
 					<Link
 						href={'/settings?tab=notifications'}
 						className='flex items-center gap-2'
-						onClick={() => closePopover(true)}
+						onClick={() => closePopover?.(true)}
 					>
 						<Image
 							height={16}
@@ -187,7 +184,7 @@ const NotificationsContent = ({
 						<Link
 							href='/notifications'
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
-							onClick={() => closePopover(true)}
+							onClick={() => closePopover?.(true)}
 						>
 							View All
 						</Link>

@@ -10,7 +10,8 @@
     "lint:fix": "next lint --fix",
     "api:bump": "yarn add @polkadot/api @polkadot/api-augment @polkadot/extension-dapp @polkadot/extension-inject @polkadot/react-identicon @polkadot/ui-settings @polkadot/util @polkadot/util-crypto",
     "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "test:cypress": "cypress run --spec '/Users/parasraghav/Documents/Test Folder/polkassembly/cypress/test_Folder/*.js'"
   },
   "engines": {
     "node": "18"

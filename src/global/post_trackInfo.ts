@@ -40,6 +40,32 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		},
+		[PostOrigin.WISH_FOR_CHANGE]: {
+			trackId: 2,
+			description: 'Origin for signaling that the network wishes for some change.',
+			group: 'Main',
+			name: 'wish_for_change',
+			maxDeciding: 10,
+			decisionDeposit: 666666666660000,
+			preparePeriod: 1200,
+			decisionPeriod: 201600,
+			confirmPeriod: 14400,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				linearDecreasing: {
+					length: 1000000000,
+					floor: 0,
+					ceil: 500000000
+				}
+			}
+		},
 		[PostOrigin.BIG_SPENDER]: {
 			trackId: 34,
 			description: 'Origin able to spend up to 33,333 KSM from the treasury at once.',
@@ -683,6 +709,31 @@ export const networkTrackInfo: INetworkTrackInfo = {
 			decisionPeriod: 403200,
 			confirmPeriod: 14400,
 			minEnactmentPeriod: 14400,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				linearDecreasing: {
+					length: 1000000000,
+					floor: 0,
+					ceil: 500000000
+				}
+			}
+		},
+		[PostOrigin.WISH_FOR_CHANGE]: {
+			trackId: 2,
+			description: 'Origin for signaling that the network wishes for some change.',
+			group: 'Main',
+			name: 'wish_for_change',
+			decisionDeposit: 200000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 14400,
+			minEnactmentPeriod: 100,
 			minApproval: {
 				reciprocal: {
 					factor: 222222224,

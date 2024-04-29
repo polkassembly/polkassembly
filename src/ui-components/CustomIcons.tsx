@@ -55,6 +55,7 @@ import FellowshipGroupSVG from '~assets/sidebar/gov2_fellowship_group.svg';
 import GovernanceGroupSVG from '~assets/sidebar/gov2_governance_group.svg';
 import PreimagesSVG from '~assets/sidebar/gov2_preimages.svg';
 import RootSVG from '~assets/sidebar/root-icon-gov2.svg';
+import WishForChangeSVG from '~assets/sidebar/wish-for-change.svg';
 import StakingAdminSVG from '~assets/sidebar/staking-admin-gov2.svg';
 import TreasuryGroupSVG from '~assets/sidebar/treasury-groupicon-gov2.svg';
 import MembersSVG from '~assets/sidebar/council-members-icon.svg';
@@ -694,6 +695,12 @@ export const VotingHistoryIcon = (props: Partial<CustomIconComponentProps>) => (
 export const RootIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={RootSVG}
+		{...props}
+	/>
+);
+export const WishForChangeIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={WishForChangeSVG}
 		{...props}
 	/>
 );

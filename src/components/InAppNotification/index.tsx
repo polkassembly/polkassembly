@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { EInAppNotificationsType, IInAppNotification } from './types';
-import { useInAppNotificationsSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
 import dayjs from 'dayjs';
@@ -16,16 +16,63 @@ import classNames from 'classnames';
 import NotificationsContent from './NotificationsContent';
 import { Spin } from 'antd';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
+import { setUserDetailsState } from '~src/redux/userDetails';
+import { ACTIONS } from '../Settings/Notifications/Reducer/action';
 
 const InAppNotification = ({ className }: { className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { network } = useNetworkSelector();
 	const dispatch = useDispatch();
-	const { id: userId } = useUserDetailsSelector();
+	const currentUser = useUserDetailsSelector();
+	const { id: userId } = currentUser;
 	const { unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+
+	const getNotificationSettings = async (network: string) => {
+		if (!network) {
+			return;
+		}
+		try {
+			const { data, error } = (await nextApiClientFetch('api/v1/auth/data/notificationSettings')) as { data: any; error: null | string };
+			if (error) {
+				throw new Error(error);
+			}
+
+			let networkPreferences: any = {};
+			if (data?.notification_preferences?.channelPreferences) {
+				networkPreferences = {
+					...currentUser.networkPreferences,
+					channelPreferences: data?.notification_preferences?.channelPreferences
+				};
+			}
+			if (data?.notification_preferences?.triggerPreferences) {
+				networkPreferences = {
+					...currentUser.networkPreferences,
+					...networkPreferences,
+					triggerPreferences: data?.notification_preferences?.triggerPreferences
+				};
+				dispatch(
+					setUserDetailsState({
+						...currentUser,
+						networkPreferences: networkPreferences
+					})
+				);
+				dispatch({
+					payload: {
+						data: data?.notification_preferences?.triggerPreferences?.[network],
+						network
+					},
+					type: ACTIONS.GET_NOTIFICATION_OBJECT
+				});
+			}
+			setLoading(false);
+		} catch (e) {
+			console.log(e);
+		}
+	};
 
 	const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
 		if (!lastSeen) {
@@ -115,6 +162,12 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		getNotifications();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
+
+	useEffect(() => {
+		if (!network || !userId) return;
+		getNotificationSettings(network);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, userId]);
 
 	return (
 		<div className='mr-1'>

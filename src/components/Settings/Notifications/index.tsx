@@ -72,11 +72,13 @@ export default function Notifications({ network }: { network: string }) {
 			let networkPreferences: any = {};
 			if (data?.notification_preferences?.channelPreferences) {
 				networkPreferences = {
+					...currentUser.networkPreferences,
 					channelPreferences: data?.notification_preferences?.channelPreferences
 				};
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
 				networkPreferences = {
+					...currentUser.networkPreferences,
 					...networkPreferences,
 					triggerPreferences: data?.notification_preferences?.triggerPreferences
 				};

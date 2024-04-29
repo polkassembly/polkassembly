@@ -15,10 +15,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: npm install --force
+        run: npm ci
 
       - name: Install Cypress
-        run: npm install cypress --force
+        run: |
+          $(npm bin)/cypress install --force
 
       - name: Run Cypress tests
-        run: npm run test:cypress
+        run: |
+          $(npm bin)/cypress run --spec 'cypress/test_Folder/*.js'

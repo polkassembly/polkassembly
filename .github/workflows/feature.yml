@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - test
+      - main
 
 jobs:
   test:
@@ -12,6 +13,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: bahmutov/npm-install@v1
+
+      - name: Install Cypress
+        run: npm install cypress --force
 
       - name: Run Cypress tests
         run: npm run test:cypress

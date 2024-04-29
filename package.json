@@ -115,6 +115,7 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "@cypress/cli": "^9.7.0",
     "@svgr/webpack": "^6.5.1",
     "@types/cookie": "^0.5.1",
     "@types/diff": "^5.0.3",
@@ -134,7 +135,8 @@
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.2.4",
+    "cypress": "^13.7.3"
   },
   "resolutions": {
     "styled-components": "^6"

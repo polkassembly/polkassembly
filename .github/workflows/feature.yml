@@ -20,5 +20,4 @@ jobs:
         run: npm install cypress --force
 
       - name: Run Cypress tests
-        run: | 
-            $(npm bin)/cypress run --spec "cypress/e2e/test_Folder/*.js"
+        run: npm run test:cypress

@@ -433,12 +433,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						`Proposals ${totalActiveProposalsCount?.democracyProposalsCount ? totalActiveProposalsCount['democracyProposalsCount'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.democracyProposalsCount ? `[${totalActiveProposalsCount['democracyProposalsCount']}]` : ''}
+							</span>
+						</div>,
 						'/proposals',
 						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
-						`Referenda ${totalActiveProposalsCount?.referendumsCount ? totalActiveProposalsCount['referendumsCount'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Referenda
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.referendumsCount ? `[${totalActiveProposalsCount['referendumsCount']}]` : ''}
+							</span>
+						</div>,
 						'/referenda',
 						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
@@ -447,7 +457,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						`Motions ${totalActiveProposalsCount?.councilMotionsCount ? totalActiveProposalsCount['councilMotionsCount'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Motions
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.councilMotionsCount ? `[${totalActiveProposalsCount['councilMotionsCount']}]` : ''}
+							</span>
+						</div>,
 						'/motions',
 						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
@@ -457,12 +472,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						`Proposals ${totalActiveProposalsCount?.treasuryProposalsCount ? totalActiveProposalsCount['treasuryProposalsCount'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.treasuryProposalsCount ? `[${totalActiveProposalsCount['treasuryProposalsCount']}]` : ''}
+							</span>
+						</div>,
 						'/treasury-proposals',
 						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
-						`Tips ${totalActiveProposalsCount?.tips ? totalActiveProposalsCount['tips'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Tips
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.tips ? `[${totalActiveProposalsCount['tips']}]` : ''}</span>
+						</div>,
 						'/tips',
 						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
@@ -471,7 +494,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		techCommItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						`Proposals ${totalActiveProposalsCount?.techCommetteeProposalsCount ? totalActiveProposalsCount['techCommetteeProposalsCount'] : ''}`,
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `[${totalActiveProposalsCount['techCommetteeProposalsCount']}]` : ''}
+							</span>
+						</div>,
 						'/tech-comm-proposals',
 						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
@@ -489,17 +517,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
 						getSiderMenuItem(
-							`Technical Committee ${totalActiveProposalsCount?.technicalPipsCount ? totalActiveProposalsCount['technicalPipsCount'] : ''}`,
+							<div className='flex items-center gap-1.5'>
+								Technical Committee
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.technicalPipsCount ? `[${totalActiveProposalsCount['technicalPipsCount']}]` : ''}
+								</span>
+							</div>,
 							'/technical',
 							<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem(
-							`Upgrade Committee ${totalActiveProposalsCount?.upgradePipsCount ? totalActiveProposalsCount['upgradePipsCount'] : ''}`,
+							<div className='flex items-center gap-1.5'>
+								Upgrade Committee
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.upgradePipsCount ? `[${totalActiveProposalsCount['upgradePipsCount']}]` : ''}{' '}
+								</span>
+							</div>,
 							'/upgrade',
 							<UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem(
-							`Community ${totalActiveProposalsCount?.communityPipsCount ? totalActiveProposalsCount['communityPipsCount'] : ''}`,
+							<div className='flex items-center gap-1.5'>
+								Community
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.communityPipsCount ? `[${totalActiveProposalsCount['communityPipsCount']}]` : ''}{' '}
+								</span>
+							</div>,
 							'/community',
 							<CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						)
@@ -509,7 +552,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
 						getSiderMenuItem(
-							`Motions ${totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? totalActiveProposalsCount['advisoryCommitteeMotionsCount'] : ''}`,
+							<div className='flex items-center gap-1.5'>
+								Motions
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `[${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}]` : ''}
+								</span>
+							</div>,
 							'/advisory-committee/motions',
 							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
@@ -543,9 +591,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							: network === AllNetworks.MOONBEAM
 							? [
 									...[
-										getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 										getSiderMenuItem(
-											'Child Bounties',
+											<div className='flex items-center gap-1.5'>
+												Bounties
+												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+													{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+												</span>
+											</div>,
+											'/bounties',
+											<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+										),
+										getSiderMenuItem(
+											<div className='flex items-center gap-1.5'>
+												Child Bounties
+												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+													{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+												</span>
+											</div>,
 											'/child_bounties',
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 										)
@@ -553,9 +615,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							  ]
 							: [
 									...gov1Items.treasuryItems,
-									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 									getSiderMenuItem(
-										'Child Bounties',
+										<div className='flex items-center gap-1.5'>
+											Bounties
+											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+												{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+											</span>
+										</div>,
+										'/bounties',
+										<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+									),
+									getSiderMenuItem(
+										<div className='flex items-center gap-1.5'>
+											Child Bounties
+											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+												{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+											</span>
+										</div>,
 										'/child_bounties',
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
@@ -564,9 +640,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
-								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 								getSiderMenuItem(
-									'Child Bounties',
+									<div className='flex items-center gap-1.5'>
+										Bounties
+										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+											{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+										</span>
+									</div>,
+									'/bounties',
+									<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+								),
+								getSiderMenuItem(
+									<div className='flex items-center gap-1.5'>
+										Child Bounties
+										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+											{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+										</span>
+									</div>,
 									'/child_bounties',
 									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)
@@ -635,7 +725,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network && networkTrackInfo[network]) {
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
-				`All ${totalActiveProposalsCount?.allCount ? totalActiveProposalsCount?.allCount : ''}`,
+				<div className='flex items-center gap-1.5'>
+					All
+					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.allCount ? `[${totalActiveProposalsCount?.allCount}]` : ''}</span>
+				</div>,
 				'/all-posts',
 				<OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 			)
@@ -646,7 +739,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			const activeProposal = totalActiveProposalsCount?.[networkTrackInfo[network][trackName]?.trackId];
 
 			const menuItem = getSiderMenuItem(
-				`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
+				<div className='flex gap-1.5'>
+					{trackName.split(/(?=[A-Z])/).join(' ')}
+					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+				</div>,
 				`/${trackName
 					.split(/(?=[A-Z])/)
 					.join('-')
@@ -660,7 +756,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -671,7 +770,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -694,7 +796,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						);
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
-							`${trackName.split(/(?=[A-Z])/).join(' ')}  ${activeProposal ? activeProposal : ''}`,
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -794,8 +899,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		let items = [...gov2TrackItems.treasuryItems];
 		if (isOpenGovSupported(network)) {
 			items = items.concat(
-				getSiderMenuItem(`Bounties ${totalActiveProposalsCount?.['bountiesCount'] ? totalActiveProposalsCount?.['bountiesCount'] : ''}`, '/bounties', null),
-				getSiderMenuItem(`Child Bounties ${totalActiveProposalsCount?.['childBountiesCount'] ? totalActiveProposalsCount?.['childBountiesCount'] : ''}`, '/child_bounties', null)
+				getSiderMenuItem(
+					<div className='flex items-center gap-1.5'>
+						Bounties
+						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+						</span>
+					</div>,
+					'/bounties',
+					null
+				),
+				getSiderMenuItem(
+					<div className='flex items-center gap-1.5'>
+						Child Bounties
+						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+							{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+						</span>
+					</div>,
+					'/child_bounties',
+					null
+				)
 			);
 		}
 		gov2Items.splice(

@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "commonjs", // Change to "commonjs" instead of "esnext"
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": false,
@@ -23,7 +23,7 @@
     "paths": {
       "~assets/*": ["public/assets/*"],
       "~src/*": ["src/*"],
-      "~styles/*": ["styles/*"],
+      "~styles/*": ["styles/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

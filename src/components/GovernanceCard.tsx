@@ -363,6 +363,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Markdown
 										className='post-content'
 										md={content}
+										imgHidden={showSimilarPost}
 									/>
 								</p>
 							</h1>

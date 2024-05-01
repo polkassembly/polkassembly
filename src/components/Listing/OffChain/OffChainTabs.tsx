@@ -4,14 +4,11 @@
 import { TabsProps } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { OffChainProposalType } from '~src/global/proposalType';
 import { Tabs } from '~src/ui-components/Tabs';
 import OffChainPostsContainer from './OffChainPostsContainer';
-import ForumDiscussions from '~src/components/ForumDiscussions';
 import { styled } from 'styled-components';
-// import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
-// import FilterByTags from '~src/ui-components/FilterByTags';
-// import { sortValues } from '~src/global/sortOptions';
 
 interface IOffChainTabs {
 	className?: string;
@@ -22,7 +19,7 @@ interface IOffChainTabs {
 
 const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) => {
 	const { resolvedTheme: theme } = useTheme();
-	// const [sortBy, setSortBy] = useState<string>(sortValues.COMMENTED);
+	const router = useRouter();
 	const [activeTab, setActiveTab] = useState('PADiscussions');
 
 	const tabItems: TabsProps['items'] = [
@@ -34,8 +31,6 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 						posts={posts}
 						defaultPage={defaultPage}
 						count={count}
-						// sortBy={sortBy}
-						// setSortBy={setSortBy}
 					/>
 				</>
 			),
@@ -43,11 +38,7 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 			label: <span className='px-1.5'>Polkassembly Discussions</span>
 		},
 		{
-			children: (
-				<>
-					<ForumDiscussions />
-				</>
-			),
+			children: <></>,
 			key: 'Forum',
 			label: (
 				<div className='flex items-center gap-2'>
@@ -55,21 +46,13 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 				</div>
 			)
 		}
-		// {
-		// key: 'Filter',
-		// : (
-		// <div className='flex items-center justify-between py-3 align-middle md:py-5'>
-		// <FilterByTags className='mr-2' />
-		// <SortByDropdownComponent
-		// sortBy={sortBy}
-		// setSortBy={setSortBy}
-		// />
-		// </div>
-		// }
 	];
 	const onTabClick = (key: string) => {
-		if (key === 'Filter') return;
-		setActiveTab(key);
+		if (key === 'Forum') {
+			router.push('/forum');
+		} else {
+			setActiveTab(key);
+		}
 	};
 	return (
 		<div className={`${className} mt-[36px] rounded-xxl bg-white px-4 drop-shadow-md dark:bg-section-dark-overlay xs:py-4 sm:py-8`}>

@@ -14,7 +14,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
-// import PostHistoryModal from '~src/ui-components/PostHistoryModal';
+import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
@@ -100,13 +100,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			track_name,
 			cid,
 			history,
+			content,
 			summary,
 			identityId,
 			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
@@ -257,7 +257,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{/* {history && history.length > 0 && (
+			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -265,7 +265,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)} */}
+			)}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

@@ -1039,13 +1039,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const firestorePost = await postDocRef.get();
 		if (firestorePost) {
 			let data = firestorePost.data();
-			// traverse the group, get and set the data.
-			const history = data?.history
-				? data?.history.map((item: any) => {
-						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
-				  })
-				: [];
-			post.history = history;
+			post.history = [];
 			try {
 				data = await getAndSetNewData({
 					data,

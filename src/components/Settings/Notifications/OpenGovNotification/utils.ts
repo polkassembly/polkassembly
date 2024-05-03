@@ -4,7 +4,7 @@
 
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { PostOrigin } from '~src/types';
-import { AuctionAdminSVGIcon, FellowshipIcon, ReferandumCancellorIcon, RootIcon, StackingAdminIcon, TipsIcon } from '~src/ui-components/CustomIcons';
+import { AuctionAdminSVGIcon, FellowshipIcon, WishForChangeIcon, ReferandumCancellorIcon, RootIcon, StackingAdminIcon, TipsIcon } from '~src/ui-components/CustomIcons';
 
 // of the Apache-2.0 license. See the LICENSE file for details.
 const options = [
@@ -300,6 +300,9 @@ export const iconMapper = (origin: string) => {
 		}
 		case PostOrigin.WHITELISTED_CALLER: {
 			return FellowshipIcon;
+		}
+		case PostOrigin.WISH_FOR_CHANGE: {
+			return WishForChangeIcon;
 		}
 	}
 };

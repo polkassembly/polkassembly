@@ -71,9 +71,27 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 		const solo = bnToIntBalance(new BN(item?.solo?.toString())) || 0;
 		return { delegated, solo };
 	};
+
 	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+		const [start, end] = value;
+		let newStart = start;
+		let newEnd = end;
+
+		const gap = end - start;
+
+		if (gap > 40) {
+			newEnd = start + 40;
+		} else if (start + 40 > delegationSplitData.length - 1) {
+			newStart = delegationSplitData.length - 41;
+			newEnd = delegationSplitData.length - 1;
+		} else {
+			newStart = end - gap;
+			newEnd = end;
+		}
+
+		setSelectedRange([newStart, newEnd]);
 	};
+
 	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 		index: `${item.index}`,
 		delegated: item.delegated,

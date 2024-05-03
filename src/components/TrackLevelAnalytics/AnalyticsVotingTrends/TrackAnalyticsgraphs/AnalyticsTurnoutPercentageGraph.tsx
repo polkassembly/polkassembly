@@ -66,8 +66,25 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	}, [supportData.length]);
 
 	const onChange = (value: [number, number]) => {
-		setSelectedRange(value);
+		const [start, end] = value;
+		let newStart = start;
+		let newEnd = end;
+
+		const gap = end - start;
+
+		if (gap > 40) {
+			newEnd = start + 40;
+		} else if (start + 40 > supportData.length - 1) {
+			newStart = supportData.length - 41;
+			newEnd = supportData.length - 1;
+		} else {
+			newStart = end - gap;
+			newEnd = end;
+		}
+
+		setSelectedRange([newStart, newEnd]);
 	};
+
 	const data = [
 		{
 			id: 'Turnout',

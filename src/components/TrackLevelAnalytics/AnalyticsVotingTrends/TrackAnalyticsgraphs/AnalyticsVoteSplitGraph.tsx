@@ -88,22 +88,25 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 
 	const onChange = (value: [number, number]) => {
 		const [start, end] = value;
-		let newStart = start;
-		let newEnd = end;
-
 		const gap = end - start;
 
+		const [currentStart, currentEnd] = selectedRange;
 		if (gap > 40) {
-			newEnd = start + 40;
-		} else if (start + 40 > votesSplitData.length - 1) {
-			newStart = votesSplitData.length - 41;
-			newEnd = votesSplitData.length - 1;
+			let newStart = currentStart;
+			let newEnd = currentEnd;
+			if (start !== newStart) {
+				newStart = start;
+				newEnd = newStart + 40;
+			} else if (end !== newEnd) {
+				newEnd = end;
+				newStart = newEnd - 40;
+			}
+			setSelectedRange([newStart, newEnd]);
 		} else {
-			newStart = end - gap;
-			newEnd = end;
+			if (start !== currentStart || end !== currentEnd) {
+				setSelectedRange([start, end]);
+			}
 		}
-
-		setSelectedRange([newStart, newEnd]);
 	};
 
 	const tickvalueDivisor = isSmallScreen ? 10 : 20;

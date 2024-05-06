@@ -4,7 +4,7 @@
 import React, { FC } from 'react';
 import { Topic } from './types';
 import { Divider } from 'antd';
-import { ClockCircleOutlined, LikeOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, LikeOutlined, EyeFilled } from '@ant-design/icons';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 
@@ -17,7 +17,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	return (
 		<div className='mt-6'>
 			{topics.map((topic, index) => {
-				const { title, id, created_at, reply_count, like_count, tags } = topic;
+				const { title, id, created_at, reply_count, like_count, tags, views } = topic;
 				const date = new Date(created_at);
 				return (
 					<div
@@ -40,10 +40,27 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 											<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
 											<span className=' text-lightBlue dark:text-blue-dark-medium'>{reply_count}</span>
 										</div>
+										<div className='items-center xs:hidden sm:flex'>
+											<EyeFilled className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
+											<span className=' text-lightBlue dark:text-blue-dark-medium'>{views}</span>
+										</div>
 										<Divider
 											type='vertical'
 											className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
 										/>
+										{created_at && (
+											<>
+												<div className='hidden items-center text-lightBlue dark:text-icon-dark-inactive sm:flex'>
+													<ClockCircleOutlined className='mr-1' /> {getRelativeCreatedAt(date)}
+												</div>
+											</>
+										)}
+										{tags && tags.length > 0 && (
+											<Divider
+												type='vertical'
+												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+											/>
+										)}
 
 										{tags && tags.length > 0 && (
 											<>
@@ -71,19 +88,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 												)}
 											</>
 										)}
-										{tags && tags.length > 0 && (
-											<Divider
-												type='vertical'
-												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
-											/>
-										)}
-										{created_at && (
-											<>
-												<div className='hidden items-center text-lightBlue dark:text-icon-dark-inactive sm:flex'>
-													<ClockCircleOutlined className='mr-1' /> {getRelativeCreatedAt(date)}
-												</div>
-											</>
-										)}
+
 										{/* {topic ? (
 									<div className='flex items-center sm:-mt-1'>
 										<Divider

@@ -35,14 +35,14 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 				</>
 			),
 			key: 'PADiscussions',
-			label: <span className='px-1.5'>Polkassembly Discussions</span>
+			label: <span className='px-1.5'>Polkassembly</span>
 		},
 		{
 			children: <></>,
 			key: 'Forum',
 			label: (
 				<div className='flex items-center gap-2'>
-					<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Forum Discussions
+					<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Forum
 				</div>
 			)
 		}

@@ -96,6 +96,7 @@ const ForumDiscussions: React.FC<ForumDiscussionsProps> = ({ data }) => {
 			</div>
 			<div>
 				<Cascader
+					allowClear
 					key={category?.toString() || 'default-key'}
 					placeholder='All Categories'
 					options={options}

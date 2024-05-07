@@ -291,12 +291,11 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 								ref={ref}
 								disabled={isDisabled}
 								onEditorChange={(content) => {
-									const allowedTags = ['ul', 'li', 'img', 'table'];
+									const allowedTags = ['ul', 'li', 'img', 'table', 'iframe'];
 									const regex = new RegExp(`<(?!\\/?(${allowedTags.join('|')})\\b)[^>]+>|&nbsp;|\\n`, 'gi');
 									const cleanContent = content.replace(regex, '');
 
 									const textContent = ref.current?.editor?.getContent({ format: 'text' }).trim();
-
 									if (!textContent && !cleanContent) {
 										onChange('');
 										return;
@@ -508,6 +507,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 export default styled(TextEditor)`
 	.tox-tinymce {
 		border-radius: 1rem;
+		border: 1px solid ${({ theme }) => (theme === 'dark' ? '#4b4b4b' : '#cccccc')};
 	}
 	.tox-editor-header {
 		opacity: 0.3;

@@ -111,7 +111,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				status: NotificationStatus.SUCCESS
 			});
 			setLoading({ isLoading: false, message: '' });
-			dispatch(setOpenRemoveIdentityModal(true));
+			dispatch(setOpenRemoveIdentityModal(false));
 		};
 		const tx = api.tx.identity.clearIdentity();
 

@@ -221,7 +221,8 @@ export const PostOrigin = {
 	SMALL_TIPPER: 'SmallTipper',
 	STAKING_ADMIN: 'StakingAdmin',
 	TREASURER: 'Treasurer',
-	WHITELISTED_CALLER: 'WhitelistedCaller'
+	WHITELISTED_CALLER: 'WhitelistedCaller',
+	WISH_FOR_CHANGE: 'WishForChange'
 };
 
 export type TrackInfoType = {
@@ -644,6 +645,23 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+export interface ITrackAnalyticsStats {
+	activeProposals: { diff: number; total: number };
+	allProposals: { diff: number; total: number };
+}
+
+export interface IDelegatorsAndDelegatees {
+	[key: string]: {
+		count: number;
+		data: {
+			to: string;
+			from: string;
+			capital: string;
+			lockedPeriod: number;
+			votingPower: string;
+		}[];
+	};
+}
 
 export interface IChildBountiesResponse {
 	child_bounties: {
@@ -654,4 +672,116 @@ export interface IChildBountiesResponse {
 		title: string;
 	}[];
 	child_bounties_count: number;
+}
+
+export interface IUserPost {
+	content: string;
+	created_at: Date;
+	id: string;
+	post_reactions: {
+		'👍': number;
+		'👎': number;
+	};
+	proposer: string;
+	title: string;
+	type: ProposalType;
+	username?: string;
+	track_number?: number;
+	tally?: {
+		ayes: string;
+		nays: string;
+	} | null;
+	status?: string;
+	status_history?: {
+		status: string;
+		block: any;
+	};
+	timeline?: any;
+	tags?: string[];
+	comments_count?: number;
+	requestedAmount?: string | null;
+}
+
+export interface IUserPostsListingResponse {
+	gov1: {
+		discussions: {
+			posts: IUserPost[];
+			total: number;
+		};
+		democracy: {
+			referenda: IUserPost[];
+			proposals: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+		treasury: {
+			treasury_proposals: IUserPost[];
+			bounties: IUserPost[];
+			tips: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+		collective: {
+			council_motions: IUserPost[];
+			tech_comm_proposals: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+	};
+	open_gov: {
+		discussions: {
+			posts: IUserPost[];
+			total: number;
+		};
+		root: IUserPost[];
+		staking_admin: IUserPost[];
+		auction_admin: IUserPost[];
+		governance: {
+			lease_admin: IUserPost[];
+			general_admin: IUserPost[];
+			referendum_canceller: IUserPost[];
+			referendum_killer: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+		treasury: {
+			treasurer: IUserPost[];
+			small_tipper: IUserPost[];
+			big_tipper: IUserPost[];
+			small_spender: IUserPost[];
+			medium_spender: IUserPost[];
+			big_spender: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+		fellowship: {
+			member_referenda: IUserPost[];
+			whitelisted_caller: IUserPost[];
+			fellowship_admin: IUserPost[];
+			total: number;
+			posts: IUserPost[];
+		};
+	};
+	gov1_total: number;
+	open_gov_total: number;
+}
+
+export interface IActiveProposalCount {
+	[
+		key:
+			| 'allCount'
+			| 'communityPipsCount'
+			| 'technicalPipsCount'
+			| 'upgradePipsCount'
+			| 'councilMotionsCount'
+			| 'democracyProposalsCount'
+			| 'referendumsCount'
+			| 'techCommetteeProposalsCount'
+			| 'tipsCount'
+			| 'treasuryProposalsCount'
+			| 'bountiesCount'
+			| 'childBountiesCount'
+			| 'advisoryCommitteeMotionsCount'
+			| string
+	]: number;
 }

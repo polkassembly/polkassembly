@@ -24,7 +24,9 @@ export default function getEncodedAddress(address: any, network: string): string
 
 	const newAddress = address?.value || address;
 
-	if (newAddress?.startsWith('0x')) return newAddress;
+	if (newAddress.length) {
+		if (newAddress?.startsWith('0x')) return newAddress;
+	}
 
 	try {
 		return encodeAddress(newAddress, ss58Format);

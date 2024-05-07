@@ -915,7 +915,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								className=''
 							>
 								<span>
-									<MoneyIcon className='mr-1' />
+									{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
 									{formatedBalance(balance?.toString(), unit)}
 									{` ${unit}`}
 								</span>
@@ -1068,7 +1068,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
-															track_number={trackNumber as any}
+															trackNumber={trackNumber as any}
 														/>
 														{RenderLastVote}
 													</div>
@@ -1130,7 +1130,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
-																track_number={trackNumber as any}
+																trackNumber={trackNumber as any}
 															/>
 														)}
 														{RenderLastVote}

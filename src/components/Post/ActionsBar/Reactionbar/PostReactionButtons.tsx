@@ -4,7 +4,7 @@
 
 import { trackEvent } from 'analytics';
 import { IReactions } from 'pages/api/v1/posts/on-chain-post';
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
@@ -66,6 +66,18 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const reacted = username && usernames?.includes(username);
 	const currentUser = useUserDetailsSelector();
 	const [showLikedGif, setShowLikedGif] = useState(false);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const [clickQueue, setClickQueue] = useState(0);
+
+	useEffect(() => {
+		if (clickQueue > 0 && !showLikedGif) {
+			setShowLikedGif(true);
+			timeoutRef.current = setTimeout(() => {
+				setShowLikedGif(false);
+				setClickQueue((prev) => prev - 1);
+			}, 1400);
+		}
+	}, [clickQueue, showLikedGif]);
 
 	const getReactionIcon = (reaction: string, reacted: string | boolean | null | undefined) => {
 		if (reaction == '👍') {
@@ -167,8 +179,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 			} else {
 				newReactions[reaction as IReaction].count++;
 				newReactions[reaction as IReaction].usernames?.push(username || '');
-				setShowLikedGif(true);
-				setTimeout(() => setShowLikedGif(false), 1400);
+				setClickQueue((prev) => prev + 1);
 				Object.keys(newReactions).forEach((key) => {
 					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
 						newReactions[key as IReaction].count--;
@@ -203,9 +214,13 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 				className='m-0 mr-6 border-none p-0 disabled:bg-transparent disabled:opacity-[0.5]'
 				disabled={reactionsDisabled}
 			>
-				<span className='flex items-center rounded-md bg-[#F4F6F8] px-2 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
+				<span className='flex min-w-[48px] items-center rounded-md bg-[#F4F6F8] px-1 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 					<span className='mt-1'>{getReactionIcon(reaction, reacted)}</span>
-					<span className={`ml-1 text-xs font-semibold ${reacted ? 'text-pink_primary dark:text-blue-dark-helper' : 'text-lightBlue dark:text-icon-dark-inactive'}`}>
+					<span
+						className={`${reactions?.[reaction as IReaction].count < 12 ? 'ml-1 ' : ''} text-xs font-semibold ${
+							reacted ? 'text-pink_primary dark:text-blue-dark-helper' : 'text-lightBlue dark:text-icon-dark-inactive'
+						}`}
+					>
 						{reactions?.[reaction as IReaction].count}
 					</span>
 				</span>

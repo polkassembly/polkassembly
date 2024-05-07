@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import { poppins } from 'pages/_app';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 
 const ZERO_BN = new BN(0);
 
@@ -120,19 +121,6 @@ const IdentityForm = ({
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
-	let registrarNum: number;
-
-	switch (network) {
-		case 'polkadot':
-			registrarNum = 3;
-			break;
-		case 'kusama':
-			registrarNum = 5;
-			break;
-		case 'polkadex':
-			registrarNum = 4;
-			break;
-	}
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -279,10 +267,13 @@ const IdentityForm = ({
 				userName: currentUser?.username || ''
 			});
 		}
-		if (!api || !apiReady || !okAll) return;
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+
 		let tx;
 		let identityTx;
-		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarNum, txFee.registerarFee.toString());
+		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity()) {
 			tx = requestedJudgementTx;
 		} else {
@@ -292,8 +283,11 @@ const IdentityForm = ({
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
-			const identityHash = await api?.query?.identity?.identityOf(address).then((res) => (res.unwrapOr(null) as any)?.info.hash.toHex());
+			const identityHash = await api?.query?.identity
+				?.identityOf(address)
+				.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 			if (!identityHash) {
+				setStartLoading({ isLoading: false, message: '' });
 				console.log('Error in unwraping identityHash');
 				return;
 			}
@@ -344,15 +338,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{alreadyVerifiedfields?.alreadyVerified && (
-					<Alert
-						showIcon
-						type='info'
-						className='h-10 rounded-[4px] text-sm text-bodyBlue'
-						message={<span className='dark:text-blue-dark-high'>This account has already set.</span>}
-					/>
-				)}
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && (
+				{!!alreadyVerifiedfields?.twitter && !!alreadyVerifiedfields?.email && !!alreadyVerifiedfields?.displayName && !alreadyVerifiedfields.alreadyVerified && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -422,7 +408,7 @@ const IdentityForm = ({
 				{!!proxyAddresses && !!proxyAddresses?.length && showProxyDropdown && (
 					<ProxyAccountSelectionForm
 						proxyAddresses={proxyAddresses}
-						theme={theme}
+						theme={theme as string}
 						address={address}
 						withBalance
 						heading={'Proxy Address'}
@@ -735,7 +721,11 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity() ? (
+				{!!alreadyVerifiedfields?.twitter &&
+				!!alreadyVerifiedfields?.email &&
+				!!alreadyVerifiedfields?.displayName &&
+				handleAllowSetIdentity() &&
+				!alreadyVerifiedfields.alreadyVerified ? (
 					<CustomButton
 						onClick={handleSetIdentity}
 						loading={loading}

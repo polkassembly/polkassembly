@@ -55,7 +55,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		const votesByConviction = allVotes?.data.reduce(
 			(acc, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0').div(new BN('10')) : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				if (!acc[conviction]) {
 					acc[conviction] = {
 						abstain: ZERO,
@@ -72,7 +72,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 		const votesByDelegation = allVotes?.data.reduce(
 			(acc: { [key: string]: { delegated: BN; solo: BN } }, vote) => {
 				const conviction = vote.lockPeriod.toString();
-				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0') : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
+				const convictionBalance = conviction == '0.1' ? new BN(vote?.balance || '0').div(new BN('10')) : new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1'));
 				const delegation = vote.isDelegatedVote ? 'delegated' : 'solo';
 				if (!acc[conviction]) {
 					acc[conviction] = {
@@ -113,7 +113,7 @@ const ConvictionVotes = ({ allVotes, turnout, tallyData, support, activeIssuance
 
 		const votesDistribution = allVotes?.data.reduce(
 			(acc, vote) => {
-				const balance = bnToIntBalance(new BN(vote?.balance || '0').mul(new BN(vote?.lockPeriod || '1')));
+				const balance = bnToIntBalance(new BN(vote?.balance || '0'));
 				const votingPower = bnToIntBalance(new BN(vote?.selfVotingPower || '0').add(new BN(vote?.delegatedVotingPower || '0')));
 
 				if (vote.decision === 'yes') {

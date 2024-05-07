@@ -14,17 +14,18 @@ export interface LeaderboardResponse {
 	data: LeaderboardEntry[];
 }
 
-export const getLeaderboard = async ({ page }: { page: number }) => {
+export const getLeaderboard = async ({ page, username = '' }: { page: number; username: string }) => {
 	try {
 		const totalUsers = (await firestore_db.collection('users').count().get()).data().count || 0;
 
+		const usersQuery = username ? firestore_db.collection('users').where('username', '==', username) : firestore_db.collection('users');
+
 		const users = (
-			await firestore_db
-				.collection('users')
+			await usersQuery
 				.orderBy('profile_score', 'desc')
 				.orderBy('created_at', 'asc')
-				.offset((Number(page) - 1) * LISTING_LIMIT)
-				.limit(LISTING_LIMIT)
+				.offset(username ? 0 : (Number(page) - 1) * LISTING_LIMIT)
+				.limit(username ? 1 : LISTING_LIMIT)
 				.get()
 		).docs.map((doc) => {
 			const userData = doc.data() as User;
@@ -53,13 +54,15 @@ export const getLeaderboard = async ({ page }: { page: number }) => {
 };
 
 const handler: NextApiHandler<LeaderboardResponse | MessageType> = async (req, res) => {
-	const { page = 1 } = req.body;
-	if (isNaN(page)) {
+	const { page = 1, username = '' } = req.body;
+
+	if (isNaN(page) || (username && typeof username !== 'string')) {
 		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
 	}
 
 	const { data, error, status } = await getLeaderboard({
-		page
+		page,
+		username
 	});
 
 	if (error || !data) {

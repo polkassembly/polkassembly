@@ -16,6 +16,7 @@ import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
+import { formatTimestamp } from './utils';
 
 interface Props {
 	className: string;
@@ -67,28 +68,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 		setCurrentPage(pagination.current);
 	};
 
-	function getDaySuffix(day: any) {
-		if (day > 3 && day < 21) return 'th';
-		switch (day % 10) {
-			case 1:
-				return 'st';
-			case 2:
-				return 'nd';
-			case 3:
-				return 'rd';
-			default:
-				return 'th';
-		}
-	}
-
-	function formatTimestamp(seconds: number) {
-		const date = dayjs.unix(seconds);
-		const day = date.date();
-		const month = date.format('MMM');
-		const year = date.format('YY');
-		return `${day}${getDaySuffix(day)} ${month}' ${year}`;
-	}
-
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
@@ -137,7 +116,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
 				>
 					<StarIcon />
-					<p className='m-0 p-0 text-sm text-[#534930]'>{profileScore}</p>
+					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{profileScore}</p>
 					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 			),
@@ -154,7 +133,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					<ImageIcon
 						src='/assets/icons/Calendar.svg'
 						alt='calenderIcon'
-						className='icon-container'
+						className='icon-container scale-[0.8]'
 					/>
 					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{userSince}</p>
 				</div>

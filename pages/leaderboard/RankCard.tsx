@@ -5,12 +5,12 @@ import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import InfoIcon from '~assets/info.svg';
-import dayjs from 'dayjs';
 import ImageComponent from '~src/components/ImageComponent';
 import NameLabel from '~src/ui-components/NameLabel';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
+import { formatTimestamp } from './utils';
 
 interface RankCardProps {
 	place: number;
@@ -47,28 +47,6 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 					3: '/assets/ThirdPlace.svg'
 			  };
 
-	function getDaySuffix(day: any) {
-		if (day > 3 && day < 21) return 'th';
-		switch (day % 10) {
-			case 1:
-				return 'st';
-			case 2:
-				return 'nd';
-			case 3:
-				return 'rd';
-			default:
-				return 'th';
-		}
-	}
-
-	function formatTimestamp(seconds: number) {
-		const date = dayjs.unix(seconds);
-		const day = date.date();
-		const month = date.format('MMM');
-		const year = date.format('YY');
-		return `${day}${getDaySuffix(day)} ${month}' ${year}`;
-	}
-
 	const iconSources =
 		theme === 'dark'
 			? {
@@ -94,7 +72,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 					style={{ border: '0.9px solid #9EA1A7' }}
 				>
 					<StarIcon />
-					<p className='m-0 p-0 text-sm text-[#534930]'>{data?.profile_score}</p>
+					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{data?.profile_score}</p>
 					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 				<div className={'mx-auto mt-6 flex items-center'}>
@@ -152,7 +130,7 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 						<ImageIcon
 							src='/assets/icons/Calendar.svg'
 							alt='calenderIcon'
-							className='icon-container scale-90'
+							className='icon-container -mt-0.5 scale-75'
 						/>
 						{formatTimestamp(data?.created_at._seconds)}
 					</span>

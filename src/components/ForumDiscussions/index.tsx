@@ -12,7 +12,7 @@ interface ForumDiscussionsProps {
 const ForumPostsContainer: React.FC<ForumDiscussionsProps> = ({ topics }) => {
 	return (
 		<>
-			<div className='flex flex-col'>
+			<div>
 				<ForumPostsListing topics={topics} />
 			</div>
 		</>

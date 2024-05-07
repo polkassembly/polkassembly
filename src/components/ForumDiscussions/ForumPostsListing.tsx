@@ -12,7 +12,7 @@ interface ForumPostsListingProps {
 const ForumPostsListing: React.FC<ForumPostsListingProps> = ({ topics }) => {
 	return (
 		<>
-			<div className='mt-6 rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0'>
+			<div>
 				{/* <Link /> */}
 				{topics && <ForumPostCard topics={topics?.topics} />}
 			</div>

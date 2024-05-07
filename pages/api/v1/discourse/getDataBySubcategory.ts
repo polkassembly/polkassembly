@@ -12,19 +12,40 @@ type ApiError = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse | ApiError>): Promise<void> {
-	const { page = '0', category } = req.query;
+	const { page = '0', category, subcategory } = req.query;
 	const pageNumber = parseInt(page as string);
-	console.log('CATEGORY TS', category);
 
-	const categories = (category as string).split(',');
-
-	const subcategoryUrlMap = {
-		'ecosystem,digest': `https://forum.polkadot.network/c/ecosystem/digest/25.json?page=${pageNumber}`,
-		'polkadot-forum-meta,profiles': `https://forum.polkadot.network/c/polkadot-forum-meta/profiles/9.json?page=${pageNumber}`,
-		'polkadot-forum-meta,suggestions': `https://forum.polkadot.network/c/polkadot-forum-meta/suggestions/27.json?page=${pageNumber}`
+	const baseUrl = 'https://forum.polkadot.network/c';
+	const urlMap = {
+		ecosystem: {
+			all: `${baseUrl}/ecosystem/24/none.json?page=${pageNumber}`,
+			digest: `${baseUrl}/ecosystem/digest/25.json?page=${pageNumber}`
+		},
+		'polkadot-forum-meta': {
+			all: `${baseUrl}/polkadot-forum-meta/5/none.json?page=${pageNumber}`,
+			profiles: `${baseUrl}/polkadot-forum-meta/profiles/9.json?page=${pageNumber}`,
+			suggestions: `${baseUrl}/polkadot-forum-meta/suggestions/27.json?page=${pageNumber}`
+		}
 	};
 
-	const url = subcategoryUrlMap[categories.join(',') as keyof typeof subcategoryUrlMap];
+	// Ensure valid category and subcategory inputs
+	if (!category || typeof category !== 'string' || !subcategory || typeof subcategory !== 'string') {
+		res.status(400).json({ error: 'Invalid category or subcategory' });
+		return;
+	}
+
+	// Determine the URL based on category and subcategory
+	const categoryUrls = urlMap[category as keyof typeof urlMap];
+	if (!categoryUrls) {
+		res.status(404).json({ error: 'Category not found' });
+		return;
+	}
+
+	const url = categoryUrls[subcategory as keyof typeof categoryUrls];
+	if (!url) {
+		res.status(404).json({ error: 'Subcategory not found' });
+		return;
+	}
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {

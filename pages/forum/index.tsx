@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import React from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
 import { ForumData } from '~src/components/ForumDiscussions/types';
-import ForumLayout from './forumLayout';
+import ForumLayout from './ForumLayout';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const page = context.query.page ? parseInt(context.query.page as string) : 0;

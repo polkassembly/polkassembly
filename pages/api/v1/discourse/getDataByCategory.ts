@@ -18,7 +18,6 @@ type CategoryKey = 'polkadot-technology' | 'ambassador-programme' | 'polkadot-fo
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse | ApiError>): Promise<void> {
 	const { page = '0', category } = req.query;
 	const pageNumber = parseInt(page as string);
-	console.log('CATEGORY TS', category);
 
 	const categoryUrlMap = {
 		'polkadot-technology': `https://forum.polkadot.network/c/polkadot-technology/6/none.json?page=${pageNumber}`,

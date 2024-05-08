@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
-import ForumLayout from 'pages/forum/forumLayout';
+import ForumLayout from 'pages/forum/ForumLayout';
 import React, { FC } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
 import { ForumData } from '~src/components/ForumDiscussions/types';

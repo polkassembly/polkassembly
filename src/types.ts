@@ -221,7 +221,8 @@ export const PostOrigin = {
 	SMALL_TIPPER: 'SmallTipper',
 	STAKING_ADMIN: 'StakingAdmin',
 	TREASURER: 'Treasurer',
-	WHITELISTED_CALLER: 'WhitelistedCaller'
+	WHITELISTED_CALLER: 'WhitelistedCaller',
+	WISH_FOR_CHANGE: 'WishForChange'
 };
 
 export type TrackInfoType = {
@@ -763,4 +764,24 @@ export interface IUserPostsListingResponse {
 	};
 	gov1_total: number;
 	open_gov_total: number;
+}
+
+export interface IActiveProposalCount {
+	[
+		key:
+			| 'allCount'
+			| 'communityPipsCount'
+			| 'technicalPipsCount'
+			| 'upgradePipsCount'
+			| 'councilMotionsCount'
+			| 'democracyProposalsCount'
+			| 'referendumsCount'
+			| 'techCommetteeProposalsCount'
+			| 'tipsCount'
+			| 'treasuryProposalsCount'
+			| 'bountiesCount'
+			| 'childBountiesCount'
+			| 'advisoryCommitteeMotionsCount'
+			| string
+	]: number;
 }

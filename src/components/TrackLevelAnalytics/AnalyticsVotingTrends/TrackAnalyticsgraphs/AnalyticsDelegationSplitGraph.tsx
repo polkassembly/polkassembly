@@ -88,11 +88,11 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 	const tickInterval = Math.ceil(filteredChartData.length / 10);
 	const tickValues = filteredChartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
-	const minIndex = delegationSplitData[0].index;
-	const maxIndex = delegationSplitData[delegationSplitData.length - 1].index;
+	const minIndex = delegationSplitData[0]?.index;
+	const maxIndex = delegationSplitData[delegationSplitData?.length - 1]?.index;
 	const marks = {
-		[0]: minIndex.toString(),
-		[delegationSplitData.length - 1]: maxIndex.toString()
+		[0]: minIndex && minIndex.toString(),
+		[delegationSplitData.length - 1]: maxIndex && maxIndex.toString()
 	};
 
 	return (
@@ -190,7 +190,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 								}
 							}}
 							ariaLabel='Nivo bar chart demo'
-							valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 

@@ -5,7 +5,7 @@
 import { PointTooltipProps } from '@nivo/line';
 export const CustomTooltip = ({ point }: PointTooltipProps) => {
 	return (
-		<div className='rounded-md bg-white p-4 shadow-md dark:bg-[#1E2126]'>
+		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
 			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{point.data.xFormatted}</div>
 			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.yFormatted).toFixed(1)}%</div>
 		</div>

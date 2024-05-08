@@ -466,7 +466,6 @@ const CreatePreimage = ({
 				return;
 			}
 		}
-
 		if (!areBeneficiaryAddressesValid) return;
 
 		if (!isPreimage) {
@@ -660,7 +659,7 @@ const CreatePreimage = ({
 		setPreimageHash(preimageHash);
 		onChangeLocalStorageSet({ preimageHash: preimageHash }, Boolean(isPreimage));
 		setPreimageCreated(false);
-		setPreimageLinked(false);
+		setPreimageLinked(isPreimage);
 	};
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {

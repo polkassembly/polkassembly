@@ -13,6 +13,7 @@ import { calculateDefaultRange } from '../../utils/calculateDefaultRange';
 import { CustomTooltip } from '../../utils/CustomTooltip';
 import Skeleton from '~src/basic-components/Skeleton';
 import { IAnalyticsTurnoutPercentageGraph } from '../../types';
+import { BarTooltipProps, ResponsiveBar } from '@nivo/bar';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -40,6 +41,15 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const CustomBarTooltip = ({ index, value }: BarTooltipProps<{ x: string | number; y: string }>) => {
+	return (
+		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
+			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda #{index}</div>
+			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(value).toFixed(2)}%</div>
+		</div>
+	);
+};
+
 const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPercentageGraph) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,7 +57,11 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 
 	useEffect(() => {
 		setIsLoading(true);
-		setSelectedRange(calculateDefaultRange(supportData.length));
+		if (supportData.length > 0) {
+			setSelectedRange(calculateDefaultRange(supportData.length));
+		} else {
+			setSelectedRange([0, 0]);
+		}
 		setIsLoading(false);
 	}, [supportData.length]);
 
@@ -57,18 +71,109 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	const data = [
 		{
 			id: 'Turnout',
-			data: supportData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
-				x: item.index,
-				y: parseFloat(item.percentage).toFixed(2)
-			}))
+			data: supportData
+				.slice(selectedRange[0], selectedRange[1] + 1)
+				.map((item) => ({
+					x: item.index,
+					y: parseFloat(item.percentage) ? parseFloat(item.percentage).toFixed(2) : null
+				}))
+				.filter((item) => item.y !== null)
 		}
 	];
-	const minIndex = supportData[0].index;
-	const maxIndex = supportData[supportData.length - 1].index;
+	const minIndex = supportData[0]?.index;
+	const maxIndex = supportData[supportData?.length - 1]?.index;
 	const marks = {
-		[0]: minIndex.toString(),
-		[supportData.length - 1]: maxIndex.toString()
+		[0]: minIndex && minIndex.toString(),
+		[supportData.length - 1]: maxIndex && maxIndex.toString()
 	};
+	if (supportData.length == 1) {
+		return (
+			<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+				<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
+				<div className='h-[250px]'>
+					<ResponsiveBar
+						data={supportData.map((item) => ({
+							x: item.index,
+							y: parseFloat(item.percentage).toFixed(2)
+						}))}
+						keys={['y']}
+						indexBy='x'
+						margin={{ bottom: 40, left: 50, right: 0, top: 10 }}
+						padding={0.5}
+						layout='vertical'
+						colors={['#796EEC']}
+						borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+						axisTop={null}
+						axisRight={null}
+						axisBottom={{
+							tickSize: 5,
+							tickPadding: 5,
+							tickRotation: 0,
+							legendPosition: 'middle',
+							legendOffset: 32
+						}}
+						axisLeft={{
+							tickSize: 5,
+							tickPadding: 5,
+							tickRotation: 0,
+							legend: 'Percentage',
+							legendPosition: 'middle',
+							legendOffset: -45
+						}}
+						enableLabel={false}
+						labelSkipWidth={12}
+						labelSkipHeight={12}
+						labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+						animate={true}
+						legends={[]}
+						tooltip={CustomBarTooltip}
+						theme={{
+							axis: {
+								domain: {
+									line: {
+										stroke: 'transparent',
+										strokeWidth: 1
+									}
+								},
+								ticks: {
+									line: {
+										stroke: 'transparent'
+									},
+									text: {
+										fill: theme === 'dark' ? '#fff' : '#576D8B',
+										fontSize: 11,
+										outlineColor: 'transparent',
+										outlineWidth: 0
+									}
+								}
+							},
+							grid: {
+								line: {
+									stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+									strokeDasharray: '2 2',
+									strokeWidth: 1
+								}
+							},
+							legends: {
+								text: {
+									fontSize: 12,
+									textTransform: 'capitalize'
+								}
+							},
+							tooltip: {
+								container: {
+									background: theme === 'dark' ? '#1E2126' : '#fff',
+									color: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 11,
+									textTransform: 'capitalize'
+								}
+							}
+						}}
+					/>
+				</div>
+			</StyledCard>
+		);
+	}
 
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>

@@ -60,7 +60,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	}, [votesSplitData.length]);
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
-		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue.toString());
+		const bn = BN.isBN(bnValue) ? bnValue : new BN(bnValue && bnValue.toString());
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
 	};
 
@@ -93,11 +93,11 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	const tickInterval = Math.ceil(chartData.length / tickvalueDivisor);
 	const tickValues = chartData.filter((_, index) => index % tickInterval === 0).map((item) => `${item.index}`);
 
-	const minIndex = votesSplitData[0].index;
-	const maxIndex = votesSplitData[votesSplitData.length - 1].index;
+	const minIndex = votesSplitData[0]?.index;
+	const maxIndex = votesSplitData[votesSplitData?.length - 1]?.index;
 	const marks = {
-		[0]: minIndex.toString(),
-		[votesSplitData.length - 1]: maxIndex.toString()
+		[0]: minIndex && minIndex.toString(),
+		[votesSplitData.length - 1]: maxIndex && maxIndex.toString()
 	};
 
 	return (
@@ -128,7 +128,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							data={isUsedInAccounts ? data : chartData}
 							keys={['aye', 'nay', 'abstain']}
 							indexBy='index'
-							margin={{ bottom: 40, left: 45, right: 0, top: 10 }}
+							margin={{ bottom: 40, left: 50, right: 0, top: 10 }}
 							padding={0.5}
 							valueScale={{ type: 'linear' }}
 							borderRadius={2}
@@ -204,7 +204,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 							}}
 							animate={true}
 							groupMode='stacked'
-							valueFormat={(value) => `${formatUSDWithUnits(value.toString(), 1)}  ${isUsedInAccounts ? 'voters' : chainProperties[network]?.tokenSymbol}`}
+							valueFormat={(value) => (isUsedInAccounts ? `${value} voters` : `${formatUSDWithUnits(value.toString(), 1)} ${chainProperties[network]?.tokenSymbol}`)}
 						/>
 					</div>
 					{votesSplitData.length > 10 ? (

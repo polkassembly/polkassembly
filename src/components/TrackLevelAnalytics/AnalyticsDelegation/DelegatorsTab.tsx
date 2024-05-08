@@ -20,7 +20,7 @@ const DelegatorsTab = () => {
 
 	return (
 		<section className=''>
-			<div className='flex w-full rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222]  dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5 '>
+			<div className='flex h-[56px] w-full  items-center rounded-2xl border border-solid border-section-light-container bg-[#F7F7F9] px-1 py-3 text-xs font-medium text-blue-light-medium dark:border-[#5A5A5A] dark:bg-[#222222]  dark:text-blue-dark-medium min-[450px]:text-sm sm:px-5 '>
 				<div className='w-[32%] min-[450px]:w-[35%]'>Address</div>
 				<div className='w-[32%] min-[450px]:w-[35%]'>Target</div>
 				<div className='w-[17%] min-[450px]:w-[15%]'>Capital</div>
@@ -37,13 +37,15 @@ const DelegatorsTab = () => {
 								address={item.from}
 								isTruncateUsername={false}
 								displayInline
-								className='hidden sm:inline-flex'
+								destroyTooltipOnHide={true}
+								className='mt-1 hidden sm:inline-flex'
 							/>
 							<Address
 								address={item.from}
 								usernameMaxLength={3}
 								isTruncateUsername={true}
 								displayInline
+								destroyTooltipOnHide={true}
 								className='text-xs sm:hidden'
 							/>
 						</div>
@@ -52,13 +54,15 @@ const DelegatorsTab = () => {
 								address={item.to}
 								isTruncateUsername={false}
 								displayInline
-								className='hidden sm:inline-flex'
+								destroyTooltipOnHide={true}
+								className='mt-1 hidden sm:inline-flex'
 							/>
 							<Address
 								address={item.to}
 								isTruncateUsername={false}
 								usernameMaxLength={3}
 								displayInline
+								destroyTooltipOnHide={true}
 								className='text-xs sm:hidden'
 							/>
 						</div>

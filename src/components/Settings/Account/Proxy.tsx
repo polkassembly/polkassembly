@@ -21,6 +21,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import Alert from '~src/basic-components/Alert';
+import AddressInput from '~src/ui-components/AddressInput';
 
 interface Props {
 	open?: boolean;
@@ -47,12 +48,6 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 	const dispatch = useDispatch();
 
 	const onProxiedAccountChange = (address: string) => {
-		const substrateAddress = getSubstrateAddress(address) || address;
-		if (!currentUser.addresses?.includes(substrateAddress)) {
-			setError('Please select a linked address or link an address before linking a proxy for it.');
-		} else {
-			setError('');
-		}
 		setProxiedAddress(address);
 	};
 
@@ -129,8 +124,9 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 
 		const injectedWindow = window as Window & InjectedWindow;
 		const injectedWallet = injectedWindow?.injectedWeb3?.[String(selectedWallet)];
+
 		if (!injectedWallet || !proxyAddress || !proxiedAddress || proxyAddress === proxiedAddress) {
-			setError('Please select valid addresses  to continue.');
+			setError('Please select valid addresses to continue.');
 			return;
 		}
 
@@ -276,12 +272,16 @@ const Proxy: FC<Props> = ({ dismissModal, open }) => {
 						) : (
 							<>
 								<section>
-									<AccountSelectionForm
-										isDisabled={loading}
-										title='Select proxied account'
-										accounts={accounts}
-										address={proxiedAddress}
-										onAccountChange={onProxiedAccountChange}
+									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Select proxied account:</label>
+									<AddressInput
+										defaultAddress={proxiedAddress}
+										onChange={onProxiedAccountChange}
+										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium dark:bg-[#1D1D1D]'}
+										className='-mt-6 text-sm font-normal text-bodyBlue dark:bg-[#1D1D1D] dark:text-blue-dark-high'
+										disabled={loading}
+										size='large'
+										identiconSize={30}
+										skipFormatCheck={true}
 									/>
 								</section>
 								<section>

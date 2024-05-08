@@ -23,7 +23,13 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 			<Address
 				displayInline
 				iconSize={20}
-				address={typeof beneficiary.address === 'string' ? beneficiary.address : ((beneficiary.address as any)?.value as string)}
+				address={
+					typeof beneficiary.address === 'string'
+						? beneficiary.address
+						: (beneficiary.address as any)?.value.length
+						? (beneficiary.address as any)?.value
+						: ((beneficiary?.address as any)?.value.interior?.value?.id as string) || ''
+				}
 				inPostHeading={inPostHeading}
 			/>
 			<span className='text-blue-light-high dark:text-blue-dark-high'>

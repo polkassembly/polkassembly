@@ -37,25 +37,40 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const router = useRouter();
 
 	const getLeaderboardData = async () => {
-		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { page: currentPage });
-		if (!data || error) {
-			console.log(error);
+		let body;
+		if (searchedUsername && searchedUsername !== '') {
+			body = {
+				username: searchedUsername || ''
+			};
+		} else {
+			body = {
+				page: currentPage
+			};
 		}
+		console.log(body);
+		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
+
+		if (error) {
+			console.error(error);
+			return;
+		}
+
 		if (data) {
-			let limitedData = data?.data;
-			if (currentPage === 1) {
-				limitedData = limitedData.slice(3);
-				setTotalData(47);
+			console.log('leaderboard data --> ', data);
+			if (searchedUsername && searchedUsername !== '') {
+				setTableData(data.data);
+				setTotalData(1);
 			} else {
-				setTotalData(50);
+				setTableData(currentPage === 1 ? data.data.slice(3) : data.data);
+				setTotalData(currentPage === 1 ? 47 : 50);
 			}
-			setTableData(limitedData);
 		}
 	};
+
 	useEffect(() => {
 		router.isReady && getLeaderboardData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, router.isReady]);
+	}, [currentPage, router.isReady, searchedUsername]);
 
 	const getUserProfile = async (username: string) => {
 		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);

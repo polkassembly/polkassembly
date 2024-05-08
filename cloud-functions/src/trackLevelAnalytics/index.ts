@@ -3,13 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import * as functions from 'firebase-functions';
-import fetchSubsquid from '../utils/fetchSubsquid';
 import { networkTrackInfo } from './utils/trackInfo';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import BN from 'bn.js';
 import formatBnBalance from '../utils/formateBnBalance';
 import { GET_ALL_TRACK_PROPOSALS, GET_TOTAL_VOTES_FOR_PROPOSAL } from '../queries';
 import { firestoreDB } from '..';
+import fetchSubsquid from '../utils/fetchSubsquid';
 
 const ZERO_BN = new BN(0);
 
@@ -194,7 +194,7 @@ const getSupportData = async (data: IDataType, network: string, api: any) => {
 };
 
 const trackLevelAnalytics = async () => {
-	let analyticsData: any = [];
+	const analyticsData: any = [];
 	const analyticsDataPromise = AllNetworks.map(async (network) => {
 		const wsProvider = new WsProvider(getWSProvider(network) as string);
 		const api = await ApiPromise.create({ provider: wsProvider });
@@ -272,19 +272,11 @@ const trackLevelAnalytics = async () => {
 				};
 				analyticsData.push(payload);
 			});
-			Promise.allSettled(proposalsPromise);
+			await Promise.allSettled(proposalsPromise);
 		});
-		Promise.allSettled(trackNumbersPromise);
+		await Promise.allSettled(trackNumbersPromise);
 	});
 	await Promise.allSettled(analyticsDataPromise);
-
-	analyticsData = await Promise.allSettled(analyticsData);
-
-	analyticsData = analyticsData.map((item: any) => {
-		if (item.status =='fulfilled') {
-			return item?.value;
-		}
-	});
 
 	logger.log(analyticsData, 'analyticsData');
 	function chunkArray(array: IResponse[], chunkSize: number) {

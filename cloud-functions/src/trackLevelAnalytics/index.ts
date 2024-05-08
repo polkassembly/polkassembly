@@ -304,7 +304,7 @@ const trackLevelAnalytics = async () => {
 		}
 	}
 
-	logger.info('vote indexed successfully');
+	logger.info('vote indexed successfully', analyticsData.length);
 };
 
 export default trackLevelAnalytics;

@@ -20,7 +20,6 @@ interface ForumTopicProps {
 }
 
 const ForumTopicContainer = ({ data }: ForumTopicProps) => {
-	console.log(data);
 	const {
 		fancy_title,
 		title,

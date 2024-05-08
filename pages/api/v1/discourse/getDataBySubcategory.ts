@@ -28,13 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		}
 	};
 
-	// Ensure valid category and subcategory inputs
 	if (!category || typeof category !== 'string' || !subcategory || typeof subcategory !== 'string') {
 		res.status(400).json({ error: 'Invalid category or subcategory' });
 		return;
 	}
 
-	// Determine the URL based on category and subcategory
 	const categoryUrls = urlMap[category as keyof typeof urlMap];
 	if (!categoryUrls) {
 		res.status(404).json({ error: 'Category not found' });

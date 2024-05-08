@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import TrophyIcon from '~assets/TrophyCup.svg';
 import { useTheme } from 'next-themes';
-// import LeaderBoardTable from './LeaderBoardTable';
 import { GetServerSideProps } from 'next';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
@@ -16,11 +15,12 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import styled from 'styled-components';
 import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
-const LeaderBoardTable = dynamic(() => import('./LeaderBoardTable'), {
+
+const LeaderBoardTable = dynamic(() => import('src/components/Leaderboard/LeaderBoardTable'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-const RankCard = dynamic(() => import('./RankCard'), {
+const RankCard = dynamic(() => import('src/components/Leaderboard/RankCard'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

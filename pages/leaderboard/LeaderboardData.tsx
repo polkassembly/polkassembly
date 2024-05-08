@@ -17,6 +17,7 @@ import NameLabel from '~src/ui-components/NameLabel';
 import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import { formatTimestamp } from './utils';
+// import Tipping from '~src/components/Tipping';
 
 interface Props {
 	className: string;
@@ -30,6 +31,8 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const [tableData, setTableData] = useState<any>();
 	const [totalData, setTotalData] = useState<number>(0);
 	const [open, setOpen] = useState<boolean>(false);
+	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	console.log(openTipping);
 
 	const router = useRouter();
 
@@ -164,11 +167,17 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 							className='icon-container mr-4 cursor-pointer'
 						/>
 					</div>
-					<div className='cursor-not-allowed'>
+					<div
+						onClick={() => {
+							getUserProfile(record.user);
+							setOpenTipping(true);
+						}}
+						className='cursor-pointer'
+					>
 						<ImageIcon
 							src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
 							alt='monetization-icon'
-							className='icon-container mr-4 cursor-not-allowed opacity-50'
+							className='icon-container mr-4'
 						/>
 					</div>
 					<div className='cursor-not-allowed'>
@@ -204,6 +213,17 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					setOpen={setOpen}
 				/>
 			)}
+			{/* {address && (
+				<Tipping
+					username={user || ''}
+					open={openTipping}
+					setOpen={setOpenTipping}
+					key={address}
+					paUsername={user as any}
+					setOpenAddressChangeModal={setOpenAddressChangeModal}
+					openAddressChangeModal={openAddressChangeModal}
+				/>
+			)} */}
 			<Table
 				columns={columns}
 				className={`${className} w-full overflow-x-auto`}

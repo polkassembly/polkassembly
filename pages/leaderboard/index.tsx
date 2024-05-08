@@ -60,9 +60,13 @@ const Leaderboard = ({ network, className }: Props) => {
 				className='h-[122px] w-full rounded-[20px] py-6'
 				style={{ background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))' }}
 			>
-				<TrophyIcon className='absolute right-[764px] top-[56px] z-10' />
-				<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
-				<p className='m-0 flex items-center justify-center p-0 text-sm text-white'>Find your rank in {network} ecosystem</p>
+				<div className='-ml-[236px] flex justify-center'>
+					<TrophyIcon className='-mt-[92px]' />
+					<div>
+						<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
+						<p className='m-0 flex items-center justify-center p-0 text-sm text-white'>Find your rank in {network} ecosystem</p>
+					</div>
+				</div>
 			</div>
 			<div className='rank-cards-desktop mt-8 flex w-full items-center justify-center'>
 				{leaderboardData[1] && (

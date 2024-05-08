@@ -14,10 +14,8 @@ type ApiError = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse | ApiError>): Promise<void> {
 	const { slug, id } = req.query;
-
-	if (typeof slug !== 'string' || typeof id !== 'number' || !slug.match(/^[a-z0-9-]+$/i) || isNaN(parseInt(id))) {
-		return res.status(400).json({ error: 'Invalid input' });
-	}
+	if (!slug || typeof slug !== 'string') return res.status(400).json({ error: 'Invalid slug' });
+	if (!slug || typeof slug !== 'string') return res.status(400).json({ error: 'Invalid Id' });
 
 	const url = `https://forum.polkadot.network/t/${slug}/${id}.json`;
 

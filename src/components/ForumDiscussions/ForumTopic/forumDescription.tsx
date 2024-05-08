@@ -6,8 +6,8 @@ import React from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
-import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
-import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
+// import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
+// import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
 
 interface ForumDescriptionProps {
 	description: string;
@@ -43,7 +43,7 @@ const ForumDescription = ({ like_count, description }: ForumDescriptionProps) =>
 					<span className='mt-1'>{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}</span>
 					<span className='text-xs font-semibold text-lightBlue dark:text-icon-dark-inactive'>{like_count}</span>
 				</span>
-				<div
+				{/* <div
 					// onClick={share}
 					className=' cursor-pointer'
 				>
@@ -51,7 +51,7 @@ const ForumDescription = ({ like_count, description }: ForumDescriptionProps) =>
 						{theme == 'dark' ? <ShareIconDark /> : <ShareIcon />}
 						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Share</span>
 					</span>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

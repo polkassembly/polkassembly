@@ -63,3 +63,108 @@ export interface ForumData {
 	flair_groups: any[];
 	topic_list: TopicList;
 }
+
+export interface ForumPost {
+	id: number;
+	name: string;
+	username: string;
+	avatar_template: string;
+	created_at: string;
+	cooked: string;
+	post_number: number;
+	post_type: number;
+	updated_at: string;
+	reply_count: number;
+	reply_to_post_number: number | null;
+	quote_count: number;
+	incoming_link_count: number;
+	reads: number;
+	readers_count: number;
+	score: number;
+	yours: boolean;
+	topic_id: number;
+	topic_slug: string;
+	display_username: string;
+	primary_group_name: string | null;
+	flair_name: string | null;
+	flair_url: string | null;
+	flair_bg_color: string | null;
+	flair_color: string | null;
+	flair_group_id: string | null;
+	version: number;
+	can_edit: boolean;
+	can_delete: boolean;
+	can_recover: boolean;
+	can_see_hidden_post: boolean;
+	can_wiki: boolean;
+	read: boolean;
+	user_title: string | null;
+	bookmarked: boolean;
+	actions_summary: ActionSummary[];
+	moderator: boolean;
+	admin: boolean;
+	staff: boolean;
+	user_id: number;
+	hidden: boolean;
+	trust_level: number;
+	deleted_at: string | null;
+	user_deleted: boolean;
+	edit_reason: string | null;
+	can_view_edit_history: boolean;
+	wiki: boolean;
+	user_suspended?: boolean;
+	reactions: Reaction[];
+	current_user_reaction: string | null;
+	reaction_users_count: number;
+	current_user_used_main_reaction: boolean;
+	can_accept_answer: boolean;
+	can_unaccept_answer: boolean;
+	accepted_answer: boolean;
+	topic_accepted_answer: true;
+	reply_to_user?: ReplyToUser;
+	link_counts?: LinkCount[];
+	polls?: Poll[];
+	replies?: ForumPost[];
+}
+
+export interface ActionSummary {
+	id: number;
+	count: number;
+}
+
+export interface Reaction {
+	id: string;
+	type: string;
+	count: number;
+}
+
+export interface ReplyToUser {
+	username: string;
+	name: string;
+	avatar_template: string;
+}
+
+export interface LinkCount {
+	url: string;
+	internal: boolean;
+	reflection: boolean;
+	title: string;
+	clicks: number;
+}
+
+export interface Poll {
+	name: string;
+	type: string;
+	status: string;
+	results: string;
+	options: PollOption[];
+	voters: number;
+	chart_type: string;
+	title: string | null;
+}
+
+export interface PollOption {
+	id: string;
+	html: string;
+	votes: number;
+}

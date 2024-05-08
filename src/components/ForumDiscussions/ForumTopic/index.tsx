@@ -11,6 +11,9 @@ import { Divider } from 'antd';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import ForumDescription from './forumDescription';
+import ForumComments from './ForumComments';
+import CommentMapping from '../utils/CommentsMapping';
+import formatAvatarUrl from '../utils/FormatAvatarUrl';
 
 interface ForumTopicProps {
 	data: any;
@@ -31,6 +34,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 	const { name: cName, username: cUsername, avatar_template: cImg, cooked: description, display_username: dUsername } = posts[0];
 	const { resolvedTheme: theme } = useTheme();
 	const date = new Date(created_at);
+	const allComments = CommentMapping(posts);
 
 	const tabItems: any[] = [
 		{
@@ -62,10 +66,13 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				</h2>
 				<div className='flex items-center gap-1'>
 					<div className='flex items-center gap-1'>
-						<ImageIcon
-							src={cImg ? cImg : null}
-							alt='user image'
-						/>
+						<div className='rounded-full'>
+							<ImageIcon
+								src={formatAvatarUrl(cImg, '14')}
+								alt='user image'
+								imgClassName='rounded-full'
+							/>
+						</div>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>in</span>
 					</div>
@@ -94,6 +101,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 					{reply_count || 0}
 					<span className='ml-1'>Comments</span>
 				</span>
+				<ForumComments comments={allComments} />
 			</div>
 		</div>
 	);

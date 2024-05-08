@@ -60,11 +60,11 @@ const Leaderboard = ({ network, className }: Props) => {
 				className='h-[122px] w-full rounded-[20px] py-6'
 				style={{ background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))' }}
 			>
-				<div className='-ml-[236px] flex justify-center'>
-					<TrophyIcon className='-mt-[92px]' />
-					<div>
-						<h1 className='m-0 flex items-center justify-center p-0 text-[40px] font-semibold text-white'>Leaderboard</h1>
-						<p className='m-0 flex items-center justify-center p-0 text-sm text-white'>Find your rank in {network} ecosystem</p>
+				<div className='-ml-[236px] flex justify-center px-4'>
+					<TrophyIcon className='-mt-[92px] ml-[190px] md:ml-0' />
+					<div className='ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center'>
+						<h1 className='m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>Leaderboard</h1>
+						<p className='m-0 flex items-center justify-center p-0 text-sm text-white md:text-base'>Find your rank in {network} ecosystem</p>
 					</div>
 				</div>
 			</div>
@@ -155,8 +155,8 @@ export default styled(Leaderboard)`
 			display: flex !important;
 			flex-direction: column !important;
 			transform: scale(0.75) !important;
-			margin-top: -24px !important;
-			margin-bottom: 68px !important;
+			margin-top: -64px !important;
+			margin-bottom: 36px !important;
 			margin-left: -4px !important;
 		}
 		.secondary-rank-card {

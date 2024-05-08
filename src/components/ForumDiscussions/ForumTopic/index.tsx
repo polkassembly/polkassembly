@@ -28,6 +28,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 		like_count,
 		id,
 		reply_count,
+		participant_count,
 		// tags,
 		post_stream: { posts }
 	} = data;
@@ -98,7 +99,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				/>
 				<Divider className='border-l-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
 				<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
-					{reply_count || 0}
+					{reply_count || participant_count || 0}
 					<span className='ml-1'>Comments</span>
 				</span>
 				<ForumComments comments={allComments} />

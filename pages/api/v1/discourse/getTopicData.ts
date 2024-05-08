@@ -15,8 +15,14 @@ type ApiError = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse | ApiError>): Promise<void> {
 	const { slug, id } = req.query;
 
+	if (typeof slug !== 'string' || typeof id !== 'number' || !slug.match(/^[a-z0-9-]+$/i) || isNaN(parseInt(id))) {
+		return res.status(400).json({ error: 'Invalid input' });
+	}
+
+	const url = `https://forum.polkadot.network/t/${slug}/${id}.json`;
+
 	try {
-		const response = await fetch(`https://forum.polkadot.network/t/${slug}/${id}.json`);
+		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
 		}

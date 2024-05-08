@@ -11,6 +11,7 @@ import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
 import { formatTimestamp } from './utils';
+import Tipping from '~src/components/Tipping';
 
 interface RankCardProps {
 	place: number;
@@ -23,6 +24,9 @@ interface RankCardProps {
 const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const [openTipping, setOpenTipping] = useState<boolean>(false);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const [tippingUser, setTippingUser] = useState<string>('');
 
 	const getUserProfile = async (username: string) => {
 		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -105,16 +109,23 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 								className='icon-container mr-4 cursor-pointer'
 							/>
 						</div>
-						<ImageIcon
-							src={iconSources.monetization}
-							alt='monetization-icon'
-							className='icon-container mr-4 cursor-not-allowed opacity-50'
-						/>
-						<ImageIcon
+						<div
+							onClick={() => {
+								setTippingUser(data?.username);
+								setOpenTipping(true);
+							}}
+						>
+							<ImageIcon
+								src={iconSources.monetization}
+								alt='monetization-icon'
+								className='icon-container mr-4 cursor-pointer'
+							/>
+						</div>
+						{/* <ImageIcon
 							src={iconSources.bookmark}
 							alt='bookmark-icon'
 							className='icon-container cursor-not-allowed opacity-50'
-						/>
+						/> */}
 					</div>
 				</div>
 
@@ -137,8 +148,18 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 				</div>
 			</div>
 			{address && (
+				<Tipping
+					username={tippingUser || ''}
+					open={openTipping}
+					setOpen={setOpenTipping}
+					key={address}
+					paUsername={tippingUser as any}
+					setOpenAddressChangeModal={setOpenAddressChangeModal}
+					openAddressChangeModal={openAddressChangeModal}
+				/>
+			)}
+			{address && (
 				<DelegateModal
-					// trackNum={trackDetails?.trackId}
 					defaultTarget={address}
 					open={open}
 					setOpen={setOpen}

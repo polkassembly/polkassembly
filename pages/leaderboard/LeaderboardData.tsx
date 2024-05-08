@@ -17,7 +17,7 @@ import NameLabel from '~src/ui-components/NameLabel';
 import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import { formatTimestamp } from './utils';
-// import Tipping from '~src/components/Tipping';
+import Tipping from '~src/components/Tipping';
 
 interface Props {
 	className: string;
@@ -32,7 +32,8 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 	const [totalData, setTotalData] = useState<number>(0);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
-	console.log(openTipping);
+	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
+	const [tippingUser, setTippingUser] = useState<string>('');
 
 	const router = useRouter();
 
@@ -47,7 +48,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 				page: currentPage
 			};
 		}
-		console.log(body);
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
 
 		if (error) {
@@ -56,7 +56,6 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 		}
 
 		if (data) {
-			console.log('leaderboard data --> ', data);
 			if (searchedUsername && searchedUsername !== '') {
 				setTableData(data.data);
 				setTotalData(1);
@@ -184,7 +183,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					</div>
 					<div
 						onClick={() => {
-							getUserProfile(record.user);
+							setTippingUser(record.user);
 							setOpenTipping(true);
 						}}
 						className='cursor-pointer'
@@ -195,13 +194,13 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 							className='icon-container mr-4'
 						/>
 					</div>
-					<div className='cursor-not-allowed'>
+					{/* <div className='cursor-not-allowed'>
 						<ImageIcon
 							src={theme === 'dark' ? '/assets/icons/auctionIcons/BookmarkDark.svg' : '/assets/icons/auctionIcons/BookmarkLight.svg'}
 							alt='bookmark-icon'
 							className='icon-container cursor-not-allowed opacity-50'
 						/>
-					</div>
+					</div> */}
 				</div>
 			),
 			title: 'Actions',
@@ -228,17 +227,17 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 					setOpen={setOpen}
 				/>
 			)}
-			{/* {address && (
+			{address && (
 				<Tipping
-					username={user || ''}
+					username={tippingUser || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={address}
-					paUsername={user as any}
+					paUsername={tippingUser as any}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>
-			)} */}
+			)}
 			<Table
 				columns={columns}
 				className={`${className} w-full overflow-x-auto`}

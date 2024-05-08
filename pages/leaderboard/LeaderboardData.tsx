@@ -146,7 +146,7 @@ const LeaderboardData = ({ className, searchedUsername }: Props) => {
 			fixed: 'left',
 			key: 'userSince',
 			render: (userSince) => (
-				<div className='flex items-center justify-start gap-x-1'>
+				<div className='flex w-[120px] items-center justify-start gap-x-1'>
 					<ImageIcon
 						src='/assets/icons/Calendar.svg'
 						alt='calenderIcon'

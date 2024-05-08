@@ -26,7 +26,6 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 	const [address, setAddress] = useState<string>('');
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
-	const [tippingUser, setTippingUser] = useState<string>('');
 
 	const getUserProfile = async (username: string) => {
 		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -111,7 +110,6 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 						</div>
 						<div
 							onClick={() => {
-								setTippingUser(data?.username);
 								setOpenTipping(true);
 							}}
 						>
@@ -149,11 +147,11 @@ const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className
 			</div>
 			{address && (
 				<Tipping
-					username={tippingUser || ''}
+					username={data?.username || ''}
 					open={openTipping}
 					setOpen={setOpenTipping}
 					key={address}
-					paUsername={tippingUser as any}
+					paUsername={data?.username as any}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
 				/>

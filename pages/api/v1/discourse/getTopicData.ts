@@ -29,10 +29,18 @@ export const fetchTopicData = async (slug: string, id: string): Promise<ApiRespo
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> => {
 	const { slug, id } = req.query;
-	if (!slug || typeof slug !== 'string') return res.status(400).json({ data: null, error: 'Invalid slug' });
-	if (!id || typeof id !== 'string') return res.status(400).json({ data: null, error: 'Invalid Id' });
 
-	const response = await fetchTopicData(slug, id);
+	if (!slug || !id || typeof slug !== 'string' || typeof id !== 'string') {
+		return res.status(400).json({ data: null, error: 'Invalid input' });
+	}
+	if (!/^\d+$/.test(id) || !/^[a-z0-9-]+$/i.test(slug)) {
+		return res.status(400).json({ data: null, error: 'Invalid informat' });
+	}
+
+	const safeSlug = encodeURIComponent(slug);
+	const safeId = encodeURIComponent(id);
+
+	const response = await fetchTopicData(safeSlug, safeId);
 	if (!response.data) {
 		res.status(500).json({
 			data: null,

@@ -60,7 +60,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 					<span className='text-sm font-medium'>Back to Forum </span>
 				</div>
 			</Link>
-			<div className='my-6 w-[65%] rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
+			<div className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[67%] lg:p-6 '>
 				<h2 className={'mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'}>
 					#{id} {fancy_title ? fancy_title : title}
 				</h2>

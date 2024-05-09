@@ -5,22 +5,38 @@ import React, { FC } from 'react';
 import { GetServerSideProps } from 'next/types';
 import { Topic } from '~src/components/ForumDiscussions/types';
 import ForumTopicContainer from '~src/components/ForumDiscussions/ForumTopic';
+import { fetchTopicData } from 'pages/api/v1/discourse/getTopicData';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { slug, id } = context.query;
+
+	if (typeof slug !== 'string' || typeof id !== 'string') {
+		return { props: { data: null } };
+	}
+
 	try {
-		const res = await fetch(`http://localhost:3000/api/v1/discourse/getTopicData?slug=${slug}&id=${id}`);
-		const data: Topic = await res.json();
+		const { data, error } = await fetchTopicData(slug, id);
+		if (data) {
+			return {
+				props: {
+					data: data || null,
+					error: null
+				}
+			};
+		} else {
+			return {
+				props: {
+					data: null,
+					error: error
+				}
+			};
+		}
+	} catch (error: any) {
+		console.error('Failed to execute fetchForumTopics:', error.message);
 		return {
 			props: {
-				data
-			}
-		};
-	} catch (error) {
-		console.error('Failed to fetch data:', error);
-		return {
-			props: {
-				data: null
+				data: null,
+				error: error.message || 'Failed to load data'
 			}
 		};
 	}

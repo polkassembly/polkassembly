@@ -78,6 +78,7 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 
 	const onChange: any = (value: string[]) => {
 		setCategory(value);
+		if (!value) return;
 		if (value[0] === 'latest') return router.push('/forum');
 		if (value.length > 1) {
 			const subcategory = value[value.length - 1];
@@ -102,7 +103,7 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 					them.
 				</p>
 			</div>
-			<div className='mt-6 flex flex-col rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0'>
+			<div className='mt-10 flex flex-col rounded-[14px] bg-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] dark:bg-section-dark-overlay xs:px-0 xs:py-3 md:p-0'>
 				<div className=' px-4 xs:py-4 sm:pb-0 sm:pt-6'>
 					<Tabs
 						theme={theme}

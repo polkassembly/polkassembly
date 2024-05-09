@@ -7,25 +7,33 @@ import React from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
 import { ForumData } from '~src/components/ForumDiscussions/types';
 import ForumLayout from './ForumLayout';
+import { fetchForumTopics } from 'pages/api/v1/discourse/getLatestTopics';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const page = context.query.page ? parseInt(context.query.page as string) : 0;
-
-	const url = `http://localhost:3000/api/v1/discourse/getLatestTopics?page=${page}`;
-
+	const pageNumber = context.query.page ? parseInt(context.query.page as string) : 0;
 	try {
-		const res = await fetch(url);
-		const data: ForumData = await res.json();
+		const { data, error } = await fetchForumTopics(pageNumber);
+		if (data) {
+			return {
+				props: {
+					data: data || null,
+					error: null
+				}
+			};
+		} else {
+			return {
+				props: {
+					data: null,
+					error: error
+				}
+			};
+		}
+	} catch (error: any) {
+		console.error('Failed to execute fetchForumTopics:', error.message);
 		return {
 			props: {
-				data
-			}
-		};
-	} catch (error) {
-		console.error('Failed to fetch data:', error);
-		return {
-			props: {
-				data: null
+				data: null,
+				error: error.message || 'Failed to load data'
 			}
 		};
 	}

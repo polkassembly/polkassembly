@@ -3,31 +3,43 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiRequest, NextApiResponse } from 'next';
+import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 
 type ApiResponse = {
-	topics: any[];
+	data: any;
+	error: string | null;
 };
 
-type ApiError = {
-	error: string;
-};
+const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiResponse | ApiError>): Promise<void> {
-	const { slug, id } = req.query;
-	if (!slug || typeof slug !== 'string') return res.status(400).json({ error: 'Invalid slug' });
-	if (!slug || typeof slug !== 'string') return res.status(400).json({ error: 'Invalid Id' });
-
-	const url = `https://forum.polkadot.network/t/${slug}/${id}.json`;
+export const fetchTopicData = async (slug: string, id: string): Promise<ApiResponse> => {
+	const url = `${baseURL}/t/${slug}/${id}.json`;
 
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
 		}
-		const data: ApiResponse = await response.json();
-
-		res.status(200).json(data);
+		const responseData: any = await response.json();
+		return { data: responseData, error: null };
 	} catch (error: any) {
-		res.status(500).json({ error: error.message });
+		return { data: null, error: error.message || 'Failed to fetch topics' };
 	}
-}
+};
+
+const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> => {
+	const { slug, id } = req.query;
+	if (!slug || typeof slug !== 'string') return res.status(400).json({ data: null, error: 'Invalid slug' });
+	if (!id || typeof id !== 'string') return res.status(400).json({ data: null, error: 'Invalid Id' });
+
+	const response = await fetchTopicData(slug, id);
+	if (!response.data) {
+		res.status(500).json({
+			data: null,
+			error: 'Failed to fetch'
+		});
+	}
+	res.status(200).json(response);
+};
+
+export default withErrorHandling(handler);

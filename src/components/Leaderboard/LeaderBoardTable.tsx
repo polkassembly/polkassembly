@@ -1,18 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+import { ILeaderboardTable } from './types';
 
-interface Props {
-	theme?: string;
-	className?: string;
-}
-
-const LeaderBoardTable = ({ className }: Props) => {
+const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 

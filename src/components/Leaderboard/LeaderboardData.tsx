@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import StarIcon from '~assets/icons/StarIcon.svg';
@@ -16,15 +16,11 @@ import dayjs from 'dayjs';
 import NameLabel from '~src/ui-components/NameLabel';
 import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
-import { formatTimestamp } from './utils';
 import Tipping from '~src/components/Tipping';
+import { IleaderboardData } from './types';
+import { formatTimestamp } from './utils';
 
-interface Props {
-	className: string;
-	searchedUsername?: string;
-}
-
-const LeaderboardData = ({ className, searchedUsername }: Props) => {
+const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [address, setAddress] = useState<string>('');

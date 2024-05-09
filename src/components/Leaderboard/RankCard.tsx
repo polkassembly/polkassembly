@@ -12,16 +12,9 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
 import { formatTimestamp } from './utils';
 import Tipping from '~src/components/Tipping';
+import { IRankCardProps } from './types';
 
-interface RankCardProps {
-	place: number;
-	data: any;
-	theme: string | undefined;
-	type: string;
-	className?: string;
-}
-
-const RankCard: React.FC<RankCardProps> = ({ place, data, theme, type, className }) => {
+const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, className }) => {
 	const [open, setOpen] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [openTipping, setOpenTipping] = useState<boolean>(false);

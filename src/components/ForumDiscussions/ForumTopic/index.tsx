@@ -84,11 +84,11 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 								imgClassName='rounded-full'
 							/>
 						</div>
-						<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
-							<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
-							<span className='hidden text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:flex'>in</span>
+						<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center gap-1'}>
+							<span className='text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
+							<div className='hidden text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:flex'>in</div>
 							<div
-								className={`hidden rounded-[4px] ${
+								className={` hidden rounded-[4px] ${
 									[9, 25, 27].includes(category_id)
 										? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
 										: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'

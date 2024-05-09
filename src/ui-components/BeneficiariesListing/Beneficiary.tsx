@@ -28,7 +28,7 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 				address={
 					typeof beneficiary.address === 'string'
 						? beneficiary.address
-						: (beneficiary.address as any)?.value.length
+						: (beneficiary.address as any)?.value?.length
 						? (beneficiary.address as any)?.value
 						: ((beneficiary?.address as any)?.value.interior?.value?.id as string) || ''
 				}

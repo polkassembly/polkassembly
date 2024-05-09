@@ -107,7 +107,7 @@ export interface IPIPsVoting {
 }
 
 export interface IPostResponse {
-	assetId: string | null;
+	assetId?: string | null;
 	post_reactions: IReactions;
 	timeline: any[];
 	comments: any;

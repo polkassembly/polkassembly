@@ -107,6 +107,7 @@ export interface IPIPsVoting {
 }
 
 export interface IPostResponse {
+	assetId: string | null;
 	post_reactions: IReactions;
 	timeline: any[];
 	comments: any;
@@ -807,34 +808,42 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let remark = '';
 		let requested = BigInt(0);
 		const beneficiaries: IBeneficiary[] = [];
+		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-			if (proposedCall.args.amount) {
-				requested = proposedCall.args.amount;
-				if (proposedCall.args.beneficiary) {
-					beneficiaries.push({
-						address: proposedCall.args.beneficiary as string,
-						amount: proposedCall.args.amount
-					});
+			if (proposedCall?.args) {
+				if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+					const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 				}
-			} else {
-				const calls = proposedCall.args.calls;
-				if (calls && Array.isArray(calls) && calls.length > 0) {
-					calls.forEach((call) => {
-						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-							remark += call.remark + '\n';
-						}
-						if (call && call.amount) {
-							requested += BigInt(call.amount);
-							if (call.beneficiary) {
-								beneficiaries.push({
-									address: call.beneficiary as string,
-									amount: call.amount
-								});
+
+				proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+				if (proposedCall.args.amount) {
+					requested = proposedCall.args.amount;
+					if (proposedCall.args.beneficiary) {
+						beneficiaries.push({
+							address: proposedCall.args.beneficiary as string,
+							amount: proposedCall.args.amount
+						});
+					}
+				} else {
+					const calls = proposedCall.args.calls;
+					if (calls && Array.isArray(calls) && calls.length > 0) {
+						calls.forEach((call) => {
+							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+								remark += call.remark + '\n';
 							}
-						}
-					});
+							if (call && call.amount) {
+								requested += BigInt(call.amount);
+								if (call.beneficiary) {
+									beneficiaries.push({
+										address: call.beneficiary as string,
+										amount: call.amount
+									});
+								}
+							}
+						});
+					}
 				}
 			}
 		}
@@ -864,6 +873,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
+			assetId: assetId || null,
 			beneficiaries,
 			bond: postData?.bond,
 			cid: postData?.cid,

@@ -103,6 +103,7 @@ export interface IPostListing {
 	spam_users_count?: number;
 	beneficiaries?: string[];
 	allChildBounties?: any[];
+	assetId: string | null;
 }
 
 export interface IPostsListingResponse {
@@ -297,8 +298,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
 				}
 				let requested = BigInt(0);
+				let assetId: null | string = null;
 				let args = preimage?.proposedCall?.args;
+
 				if (args) {
+					if (args?.assetKind?.assetId?.value?.interior) {
+						const call = args?.assetKind?.assetId?.value?.interior?.value;
+						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+					}
+
 					args = convertAnyHexToASCII(args, network);
 					if (args?.amount) {
 						requested = args.amount;
@@ -376,6 +384,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const topic_id = data?.topic_id;
 
 						return {
+							assetId: assetId || null,
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
 							curator,
@@ -422,6 +431,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				subsquareTitle = res?.title;
 
 				return {
+					assetId: assetId || null,
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
 					created_at: createdAt,
 					curator,
@@ -826,9 +836,16 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					let args = preimage?.proposedCall?.args;
 					let requested = BigInt(0);
+
 					const beneficiaries: string[] = [];
+					let assetId: null | string = null;
 
 					if (args) {
+						if (args?.assetKind?.assetId?.value?.interior) {
+							const call = args?.assetKind?.assetId?.value?.interior?.value;
+							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						}
+
 						args = convertAnyHexToASCII(args, network);
 						if (args?.amount) {
 							requested = args.amount;
@@ -863,6 +880,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const topic_id = data?.topic_id;
 
 							return {
+								assetId: assetId || null,
 								beneficiaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
@@ -909,6 +927,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
 					return {
+						assetId: assetId || null,
 						beneficiaries,
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,

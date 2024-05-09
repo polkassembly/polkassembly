@@ -41,6 +41,7 @@ const BlocksToTime = dynamic(() => import('src/components/BlocksToTime'), {
 });
 
 export interface IOnChainInfo {
+	assetId?: null | string;
 	beneficiaries: IBeneficiary[];
 	cid?: string;
 	codec?: string;
@@ -152,7 +153,8 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 		payee,
 		statusHistory,
 		version,
-		marketMetadata
+		marketMetadata,
+		assetId
 	} = onChainInfo;
 	const blockNumber = getBlockNumber(statusHistory);
 
@@ -555,6 +557,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 									{beneficiaries.map((beneficiary, index) => (
 										<Beneficiary
 											key={index}
+											assetId={assetId}
 											beneficiary={beneficiary}
 										/>
 									))}

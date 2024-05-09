@@ -17,6 +17,13 @@ interface ForumPostCardProps {
 	topics: Topic[];
 }
 
+function formatCount(count: number) {
+	if (count >= 10000) {
+		return (count / 1000).toFixed(1) + 'k';
+	}
+	return count.toString();
+}
+
 const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	// const [tagsModal, setTagsModal] = useState<boolean>(false);
 	const [usernames, setUsernames] = useState<{ [key: number]: string }>({});
@@ -87,7 +94,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 									</div>
 									<span className='text-sm font-medium text-[#334D6E] dark:text-blue-dark-high'>{title}</span>
 									<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:flex lg:flex-row lg:items-center'>
-										<div className='flex items-center gap-x-2'>
+										<div className='mr-2 flex items-center gap-x-3'>
 											<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
 												<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
 												<span className='text-lightBlue dark:text-blue-dark-medium'>{like_count}</span>
@@ -99,11 +106,13 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 											</div>
 											<div className='items-center xs:hidden sm:flex'>
 												<EyeFilled className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
-												<span className=' text-lightBlue dark:text-blue-dark-medium'>{views}</span>
+												<span className=' text-lightBlue dark:text-blue-dark-medium'>{formatCount(views)}</span>
 											</div>
+										</div>
+										<div className='flex items-center gap-x-2'>
 											<Divider
 												type='vertical'
-												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden '
 											/>
 											{created_at && (
 												<>
@@ -116,7 +125,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 												<>
 													<Divider
 														type='vertical'
-														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden '
 													/>
 													<div
 														className={`rounded-[4px] ${
@@ -134,7 +143,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 												<>
 													<Divider
 														type='vertical'
-														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden '
 													/>
 													{tags?.slice(0, 2).map((tag, index) => (
 														<div

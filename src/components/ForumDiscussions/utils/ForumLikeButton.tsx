@@ -6,7 +6,7 @@ import React from 'react';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
 
-const LikeButton = ({ like_count, className }: { like_count: number; className?: string }) => {
+const ForumLikeButton = ({ like_count, className }: { like_count: number; className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
 		<div className={className}>
@@ -18,4 +18,4 @@ const LikeButton = ({ like_count, className }: { like_count: number; className?:
 	);
 };
 
-export default LikeButton;
+export default ForumLikeButton;

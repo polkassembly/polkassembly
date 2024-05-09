@@ -8,7 +8,7 @@ import { useTheme } from 'next-themes';
 import formatAvatarUrl from '../utils/FormatAvatarUrl';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
-import LikeButton from '../utils/likeButton';
+import ForumLikeButton from '../utils/ForumLikeButton';
 
 const ForumComments = ({ comments }: any) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -45,7 +45,7 @@ const ForumComments = ({ comments }: any) => {
 						</div>
 						{comment.reaction_users_count > 0 && (
 							<div className='my-2 ml-16'>
-								<LikeButton like_count={comment.reaction_users_count} />
+								<ForumLikeButton like_count={comment.reaction_users_count} />
 							</div>
 						)}
 						{comment.replies.length > 0 && <ForumReplies replies={comment.replies} />}

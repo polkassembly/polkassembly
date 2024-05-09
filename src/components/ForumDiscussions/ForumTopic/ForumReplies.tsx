@@ -7,7 +7,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import ForumReply from './ForumReply';
 import formatAvatarUrl from '../utils/FormatAvatarUrl';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import LikeButton from '../utils/likeButton';
+import LikeButton from '../utils/ForumLikeButton';
 
 const ForumReplies = ({ replies }: any) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);

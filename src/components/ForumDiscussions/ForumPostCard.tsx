@@ -67,8 +67,8 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 													<div
 														className={`rounded-[4px] ${
 															[9, 25, 27].includes(category_id)
-																? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
-																: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
+																? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#0B353C] dark:text-[#93C9D1]'
+																: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#302234] dark:text-[#CCAED4]'
 														}  px-2 py-1 text-[10px] font-medium `}
 													>
 														{getCategoryName(category_id)}

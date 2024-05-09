@@ -9,13 +9,15 @@ import { fetchTopicData } from 'pages/api/v1/discourse/getTopicData';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { slug, id } = context.query;
-
-	if (typeof slug !== 'string' || typeof id !== 'string') {
+	if (!slug || !id || typeof slug !== 'string' || typeof id !== 'string') {
 		return { props: { data: null } };
 	}
 
+	const safeSlug = encodeURIComponent(slug);
+	const safeId = encodeURIComponent(id);
+
 	try {
-		const { data, error } = await fetchTopicData(slug, id);
+		const { data, error } = await fetchTopicData(safeSlug, safeId);
 		if (data) {
 			return {
 				props: {

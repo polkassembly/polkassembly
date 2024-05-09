@@ -36,6 +36,7 @@ const ForumDescription = ({ like_count, description }: ForumDescriptionProps) =>
 					className='post-content'
 					md={description}
 					theme={theme}
+					disableQuote={true}
 				/>
 			)}
 			<div className=' mt-6 flex items-center justify-between'>

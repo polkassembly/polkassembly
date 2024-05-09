@@ -13,25 +13,25 @@ const ForumReplies = ({ replies }: any) => {
 	const [showReplies, setShowReplies] = useState<boolean>(true);
 	const toggleShowReplies = () => setShowReplies(!showReplies);
 	return (
-		<div className='comment-content my-3 ml-[44px]'>
+		<div className='comment-content my-3 sm:ml-[44px]'>
 			{replies.length > 0 ? (
 				!showReplies ? (
 					<div
-						className='ml-5 flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
+						className='flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white sm:ml-5'
 						onClick={toggleShowReplies}
 					>
 						{replies.length} replies <DownOutlined className='ml-1' />
 					</div>
 				) : (
 					<div
-						className='mb-4 ml-5 flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white'
+						className='mb-4 flex cursor-pointer items-center border-none text-sm font-medium text-sidebarBlue dark:text-white sm:ml-5'
 						onClick={toggleShowReplies}
 					>
 						Hide replies <UpOutlined className='ml-1' />
 					</div>
 				)
 			) : null}
-			<div className='ml-6 flex flex-col items-start gap-6'>
+			<div className='flex flex-col items-start gap-6 sm:ml-6'>
 				{showReplies &&
 					replies.map((reply: any) => {
 						return (

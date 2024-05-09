@@ -17,6 +17,7 @@ interface Props {
 	md: string;
 	imgHidden?: boolean;
 	theme?: string;
+	disableQuote?: boolean;
 }
 
 const StyledMarkdown = styled(ReactMarkdown)`
@@ -254,7 +255,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
@@ -265,7 +266,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 			ref={markdownRef}
 			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
 		>
-			<HighlightMenu markdownRef={markdownRef} />
+			{!disableQuote && <HighlightMenu markdownRef={markdownRef} />}
 			<StyledMarkdown
 				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}

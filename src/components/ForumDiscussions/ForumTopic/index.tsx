@@ -63,9 +63,18 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				</div>
 			</Link>
 			<div className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[67%] lg:p-6 '>
-				<h2 className={'mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high'}>
+				<h2 className={'mb-1 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3'}>
 					#{id} {fancy_title ? fancy_title : title}
 				</h2>
+				<div
+					className={`mb-3 inline-block rounded-[4px] sm:hidden ${
+						[9, 25, 27].includes(category_id)
+							? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
+							: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
+					}  px-2 py-1 text-[10px] font-medium `}
+				>
+					{getCategoryName(category_id)}
+				</div>
 				<div className='flex items-center gap-1'>
 					<div className='flex items-center gap-1'>
 						<div className='rounded-full'>
@@ -75,16 +84,18 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 								imgClassName='rounded-full'
 							/>
 						</div>
-						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
-						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>in</span>
-						<div
-							className={`rounded-[4px] ${
-								[9, 25, 27].includes(category_id)
-									? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
-									: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
-							}  px-2 py-1 text-[10px] font-medium `}
-						>
-							{getCategoryName(category_id)}
+						<div className={'flex max-w-full flex-shrink-0 flex-wrap items-center'}>
+							<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
+							<span className='hidden text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium sm:flex'>in</span>
+							<div
+								className={`hidden rounded-[4px] ${
+									[9, 25, 27].includes(category_id)
+										? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
+										: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
+								}  px-2 py-1 text-[10px] font-medium sm:flex`}
+							>
+								{getCategoryName(category_id)}
+							</div>
 						</div>
 					</div>
 					<Divider
@@ -93,7 +104,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 					/>
 					{created_at && (
 						<>
-							<div className='hidden  items-center text-xs font-normal text-lightBlue dark:text-icon-dark-inactive sm:flex'>
+							<div className='items-center text-xs font-normal text-lightBlue dark:text-icon-dark-inactive'>
 								<ClockCircleOutlined className='mr-1' /> <span></span>
 								{getRelativeCreatedAt(date)}
 							</div>

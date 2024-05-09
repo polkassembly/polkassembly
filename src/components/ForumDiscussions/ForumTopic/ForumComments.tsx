@@ -13,7 +13,7 @@ import ForumLikeButton from '../utils/ForumLikeButton';
 const ForumComments = ({ comments }: any) => {
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div className='ml-[140px] mt-6 flex flex-col items-start gap-6'>
+		<div className='mt-6 flex flex-col items-start gap-6 sm:ml-[140px] sm:pr-6'>
 			{comments.map((comment: any) => {
 				const date = new Date(comment.updated_at);
 				return (

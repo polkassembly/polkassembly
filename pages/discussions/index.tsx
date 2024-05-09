@@ -23,6 +23,7 @@ import { setNetwork } from '~src/redux/network';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
+import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -132,6 +133,22 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					them.
 				</p>
 			</div>
+			{network === 'polkadot' ? (
+				<OffChainTabs
+					posts={posts}
+					defaultPage={page || 1}
+					count={count}
+					className='mt-6'
+				/>
+			) : (
+				<OffChainPostsContainer
+					proposalType={OffChainProposalType.DISCUSSIONS}
+					posts={posts}
+					defaultPage={page || 1}
+					count={count}
+					className='mt-6'
+				/>
+			)}
 			<OffChainTabs
 				posts={posts}
 				defaultPage={page || 1}

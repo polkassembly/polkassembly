@@ -8,6 +8,7 @@ import { ClockCircleOutlined, LikeOutlined, EyeFilled } from '@ant-design/icons'
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import Link from 'next/link';
+import getCategoryName from './utils/getCategoryName';
 
 interface ForumPostCardProps {
 	topics: Topic[];
@@ -18,7 +19,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	return (
 		<div className='mt-6'>
 			{topics.map((topic, index) => {
-				const { title, id, created_at, reply_count, like_count, tags, views, slug } = topic;
+				const { title, id, created_at, reply_count, like_count, tags, views, slug, category_id } = topic;
 				const date = new Date(created_at);
 				return (
 					<div
@@ -57,15 +58,30 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 													</div>
 												</>
 											)}
-											{tags && tags.length > 0 && (
-												<Divider
-													type='vertical'
-													className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
-												/>
+											{category_id && (
+												<>
+													<Divider
+														type='vertical'
+														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden sm:mt-1'
+													/>
+													<div
+														className={`rounded-[4px] ${
+															[9, 25, 27].includes(category_id)
+																? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
+																: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
+														}  px-2 py-1 text-[10px] font-medium `}
+													>
+														{getCategoryName(category_id)}
+													</div>
+												</>
 											)}
 
 											{tags && tags.length > 0 && (
 												<>
+													<Divider
+														type='vertical'
+														className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+													/>
 													{tags?.slice(0, 2).map((tag, index) => (
 														<div
 															key={index}

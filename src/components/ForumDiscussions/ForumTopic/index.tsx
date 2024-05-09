@@ -14,6 +14,7 @@ import ForumDescription from './forumDescription';
 import ForumComments from './ForumComments';
 import CommentMapping from '../utils/CommentsMapping';
 import formatAvatarUrl from '../utils/FormatAvatarUrl';
+import getCategoryName from '../utils/getCategoryName';
 
 interface ForumTopicProps {
 	data: any;
@@ -28,6 +29,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 		id,
 		reply_count,
 		participant_count,
+		category_id,
 		// tags,
 		post_stream: { posts }
 	} = data;
@@ -75,6 +77,15 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 						</div>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{dUsername ? dUsername : cUsername ? cUsername : cName}</span>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>in</span>
+						<div
+							className={`rounded-[4px] ${
+								[9, 25, 27].includes(category_id)
+									? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
+									: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
+							}  px-2 py-1 text-[10px] font-medium `}
+						>
+							{getCategoryName(category_id)}
+						</div>
 					</div>
 					<Divider
 						type='vertical'

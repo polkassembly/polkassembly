@@ -2,9 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useContext, useEffect, useState } from 'react';
-import { ESetIdentitySteps, IName, ISocials, ITxFee, IVerifiedFields } from '.';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Checkbox, Divider, Form, FormInstance, Spin } from 'antd';
+import { Checkbox, Divider, Form, Spin } from 'antd';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -14,7 +13,7 @@ import BN from 'bn.js';
 import { BN_ONE } from '@polkadot/util';
 import SuccessState from './SuccessState';
 import executeTx from '~src/util/executeTx';
-import { ILoading, NotificationStatus } from '~src/types';
+import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import Balance from '../Balance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -30,56 +29,16 @@ import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import { poppins } from 'pages/_app';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
+import { IIdentityForm, ITxFee } from './types';
+import { checkIdentityFieldsValidity } from './utils/checkIdentityFieldsValidity';
 
 const ZERO_BN = new BN(0);
 
-interface Props {
-	className?: string;
-	address: string;
-	txFee: ITxFee;
-	name: IName;
-	onChangeName: (pre: IName) => void;
-	socials: ISocials;
-	onChangeSocials: (pre: ISocials) => void;
-	setTxFee: (pre: ITxFee) => void;
-	setStartLoading: (pre: ILoading) => void;
-	onCancel: () => void;
-	perSocialBondFee: BN;
-	changeStep: (pre: ESetIdentitySteps) => void;
-	closeModal: (pre: boolean) => void;
-	form: FormInstance;
-	setIsIdentityCallDone: (pre: boolean) => void;
-	setIdentityHash: (pre: string) => void;
-	setAddressChangeModalOpen: () => void;
-	alreadyVerifiedfields: IVerifiedFields;
-	wallet?: any;
-}
 interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
 
-export function checkValue(
-	hasValue: boolean,
-	value: string | null | undefined,
-	minLength: number,
-	includes: string[],
-	excludes: string[],
-	starting: string[],
-	notStarting: string[] = WHITESPACE,
-	notEnding: string[] = WHITESPACE
-): boolean {
-	return (
-		!hasValue ||
-		(!!value &&
-			value.length >= minLength &&
-			includes.reduce((hasIncludes: boolean, check) => hasIncludes && value.includes(check), true) &&
-			(!starting.length || starting.some((check) => value.startsWith(check))) &&
-			!excludes.some((check) => value.includes(check)) &&
-			!notStarting.some((check) => value.startsWith(check)) &&
-			!notEnding.some((check) => value.endsWith(check)))
-	);
-}
 const WHITESPACE = [' ', '\t'];
 
 const IdentityForm = ({
@@ -95,14 +54,14 @@ const IdentityForm = ({
 	setStartLoading,
 	onCancel,
 	perSocialBondFee,
-	alreadyVerifiedfields,
+	alreadySetIdentityCredentials,
 	changeStep,
 	closeModal,
 	setIsIdentityCallDone,
 	setIdentityHash,
 	setAddressChangeModalOpen,
 	wallet
-}: Props) => {
+}: IIdentityForm) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
@@ -120,7 +79,9 @@ const IdentityForm = ({
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!alreadyVerifiedfields?.alreadyVerified || !!alreadyVerifiedfields.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee.add(
+		bondFee?.add(registerarFee?.add(!!alreadySetIdentityCredentials?.alreadyVerified || !!alreadySetIdentityCredentials.isIdentitySet ? ZERO_BN : minDeposite))
+	);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -164,7 +125,7 @@ const IdentityForm = ({
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
-		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !form.getFieldValue('twitter')) {
+		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email')) {
 			setTxFee({ ...txFeeVal, gasFee: ZERO_BN });
 			return;
 		}
@@ -189,33 +150,33 @@ const IdentityForm = ({
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = form.getFieldValue('twitter').trim();
 
-		const okDisplay = checkValue(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
-		const okLegal = checkValue(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
-		const okEmail = checkValue(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
-		// const okRiot = checkValue((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
-		const okTwitter = checkValue(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
-		// const okWeb = checkValue((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
+		const okDisplay = checkIdentityFieldsValidity(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
+		const okLegal = checkIdentityFieldsValidity(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
+		const okEmail = checkIdentityFieldsValidity(emailVal.length > 0, emailVal, 3, ['@'], WHITESPACE, []);
+		// const okRiot = checkIdentityFieldsValidity((riotVal).length > 0, (riotVal), 6, [':'], WHITESPACE, ['@', '~']);
+		const okTwitter = checkIdentityFieldsValidity(twitterVal.length > 0, twitterVal, 3, [], [...WHITESPACE, '/'], []);
+		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
-		if (okEmail && emailVal.length > 0 && alreadyVerifiedfields?.email !== emailVal) {
+		if (okEmail && emailVal.length > 0 && alreadySetIdentityCredentials?.email !== emailVal) {
 			okSocials += 1;
 		}
-		// if(okRiot && riotVal.length > 0){okSocials+=1;}
-		if (okTwitter && twitterVal.length > 0 && alreadyVerifiedfields?.twitter !== twitterVal) {
+		if (okTwitter && twitterVal.length > 0 && alreadySetIdentityCredentials?.twitter !== twitterVal) {
 			okSocials += 1;
 		}
-		// if(okWeb && webVal.length > 0){okSocials+=1;}
 
 		setInfo({
 			info: {
 				display: { [okDisplay ? 'raw' : 'none']: displayNameVal || null },
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
-				// riot: { [(okRiot && (riotVal).length > 0) ? 'raw' : 'none']: (okRiot && (riotVal).length > 0) ? (riotVal) : null },
-				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null }
-				// web: { [(okWeb && (webVal).length > 0) ? 'raw' : 'none']: (okWeb && (webVal).length > 0) ? (webVal) : null }
+				riot: { [alreadySetIdentityCredentials.riot.length > 0 ? 'raw' : 'none']: alreadySetIdentityCredentials.riot.length > 0 ? alreadySetIdentityCredentials.riot : null },
+				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
+				web: { [alreadySetIdentityCredentials.web.length > 0 ? 'raw' : 'none']: alreadySetIdentityCredentials.web.length > 0 ? alreadySetIdentityCredentials.web : null }
 			},
-			okAll: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
+			okAll: twitterVal.length
+				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !twitterVal
+				: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal
 		});
 		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
 		const fee = { ...txFee, bondFee: okSocials === 1 ? ZERO_BN : perSocialBondFee?.mul(okSocialsBN) };
@@ -235,12 +196,15 @@ const IdentityForm = ({
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
 		const twitterVal = form.getFieldValue('twitter').trim();
-		return (
-			displayNameVal === alreadyVerifiedfields?.displayName &&
-			twitterVal === alreadyVerifiedfields?.twitter &&
-			emailVal === alreadyVerifiedfields?.email &&
-			legalNameVal === alreadyVerifiedfields?.legalName
-		);
+		const condition =
+			displayNameVal === alreadySetIdentityCredentials?.displayName &&
+			emailVal === alreadySetIdentityCredentials?.email &&
+			legalNameVal === alreadySetIdentityCredentials?.legalName;
+
+		if (alreadySetIdentityCredentials.twitter?.length) {
+			return twitterVal === alreadySetIdentityCredentials?.twitter && condition;
+		}
+		return condition;
 	};
 
 	const handleIdentityHashSave = async (hash: string) => {
@@ -253,8 +217,8 @@ const IdentityForm = ({
 		}
 	};
 
-	const handleSetIdentity = async () => {
-		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity()) {
+	const handleSetIdentity = async (requestJudgement: boolean) => {
+		if (alreadySetIdentityCredentials?.email && alreadySetIdentityCredentials?.displayName && handleAllowSetIdentity()) {
 			// GAEvent for request judgement button clicked
 			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 				userId: currentUser?.id || '',
@@ -270,16 +234,17 @@ const IdentityForm = ({
 		const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
 		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+		if (requestJudgement && alreadySetIdentityCredentials.alreadyVerified) return;
 
 		let tx;
-		let identityTx;
-		const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-		if (alreadyVerifiedfields?.twitter && alreadyVerifiedfields?.email && alreadyVerifiedfields?.displayName && handleAllowSetIdentity()) {
-			tx = requestedJudgementTx;
+		if (requestJudgement) {
+			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 		} else {
-			identityTx = api.tx?.identity?.setIdentity(info);
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			const identityTx = api.tx?.identity?.setIdentity(info);
 			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
 		}
+
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
 
 		const onSuccess = async () => {
@@ -338,7 +303,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{!!alreadyVerifiedfields?.twitter && !!alreadyVerifiedfields?.email && !!alreadyVerifiedfields?.displayName && !alreadyVerifiedfields.alreadyVerified && (
+				{!!alreadySetIdentityCredentials?.email && !!alreadySetIdentityCredentials?.displayName && !alreadySetIdentityCredentials.alreadyVerified && (
 					<Alert
 						className='mb-6'
 						type='warning'
@@ -348,7 +313,7 @@ const IdentityForm = ({
 								This account has already set social verification. Kindly{' '}
 								<span
 									className='cursor-pointer font-semibold text-pink_primary'
-									onClick={() => handleSetIdentity()}
+									onClick={() => handleSetIdentity(true)}
 								>
 									Request Judgement
 								</span>{' '}
@@ -357,6 +322,7 @@ const IdentityForm = ({
 						}
 					/>
 				)}
+
 				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Your Address{' '}
@@ -437,7 +403,11 @@ const IdentityForm = ({
 							{
 								message: 'Invalid display name',
 								validator(rule, value, callback) {
-									if (callback && value.length && !checkValue(form?.getFieldValue('displayName')?.trim()?.length > 0, form?.getFieldValue('displayName')?.trim(), 1, [], [], [])) {
+									if (
+										callback &&
+										value.length &&
+										!checkIdentityFieldsValidity(form?.getFieldValue('displayName')?.trim()?.length > 0, form?.getFieldValue('displayName')?.trim(), 1, [], [], [])
+									) {
 										callback(rule?.message?.toString());
 									} else {
 										callback();
@@ -468,7 +438,11 @@ const IdentityForm = ({
 							{
 								message: 'Invalid legal name',
 								validator(rule, value, callback) {
-									if (callback && value.length && !checkValue(form?.getFieldValue('legalName')?.trim()?.length > 0, form?.getFieldValue('legalName')?.trim(), 1, [], [], [])) {
+									if (
+										callback &&
+										value.length &&
+										!checkIdentityFieldsValidity(form?.getFieldValue('legalName')?.trim()?.length > 0, form?.getFieldValue('legalName')?.trim(), 1, [], [], [])
+									) {
 										callback(rule?.message?.toString());
 									} else {
 										callback();
@@ -509,7 +483,7 @@ const IdentityForm = ({
 					<Form.Item className='w-full' name='web' rules={[{
 						message: 'Invalid web',
 						validator(rule, value, callback) {
-							if (callback && value.length && !checkValue(web.length > 0, web, 8, ['.'], WHITESPACE, ['https://', 'http://']) ){
+							if (callback && value.length && !checkIdentityFieldsValidity(web.length > 0, web, 8, ['.'], WHITESPACE, ['https://', 'http://']) ){
 								callback(rule?.message?.toString());
 							}else {
 								callback();
@@ -536,7 +510,7 @@ const IdentityForm = ({
 										if (
 											callback &&
 											value.length > 0 &&
-											!checkValue(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])
+											!checkIdentityFieldsValidity(form.getFieldValue('email')?.trim()?.length > 0, form.getFieldValue('email')?.trim(), 3, ['@'], WHITESPACE, [])
 										) {
 											callback(rule?.message?.toString());
 										} else {
@@ -548,7 +522,7 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && alreadyVerifiedfields?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
+								addonAfter={email?.verified && alreadySetIdentityCredentials?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
@@ -579,7 +553,7 @@ const IdentityForm = ({
 										if (
 											callback &&
 											value.length &&
-											!checkValue(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], [...WHITESPACE, '/'], [])
+											!checkIdentityFieldsValidity(form.getFieldValue('twitter')?.trim()?.length > 0, form.getFieldValue('twitter')?.trim(), 3, [], [...WHITESPACE, '/'], [])
 										) {
 											callback(rule?.message?.toString());
 										} else {
@@ -592,7 +566,7 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && alreadyVerifiedfields?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
+								addonAfter={twitter?.verified && alreadySetIdentityCredentials?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
@@ -613,7 +587,7 @@ const IdentityForm = ({
 					<Form.Item name='riot' className='w-full' rules={[{
 						message: 'Invalid riot',
 						validator(rule, value, callback) {
-							if (callback && value.length && !checkValue(riot.length > 0, riot, 6, [':'], WHITESPACE, ['@', '~']) ){
+							if (callback && value.length && !checkIdentityFieldsValidity(riot.length > 0, riot, 6, [':'], WHITESPACE, ['@', '~']) ){
 								callback(rule?.message?.toString());
 							}else {
 								callback();
@@ -721,13 +695,9 @@ const IdentityForm = ({
 					variant='default'
 					buttonsize='xs'
 				/>
-				{!!alreadyVerifiedfields?.twitter &&
-				!!alreadyVerifiedfields?.email &&
-				!!alreadyVerifiedfields?.displayName &&
-				handleAllowSetIdentity() &&
-				!alreadyVerifiedfields.alreadyVerified ? (
+				{!!alreadySetIdentityCredentials?.email && !!alreadySetIdentityCredentials?.displayName && handleAllowSetIdentity() && !alreadySetIdentityCredentials.alreadyVerified ? (
 					<CustomButton
-						onClick={handleSetIdentity}
+						onClick={() => handleSetIdentity(true)}
 						loading={loading}
 						className='rounded-[4px]'
 						text='Request Judgement'
@@ -744,7 +714,7 @@ const IdentityForm = ({
 							handleAllowSetIdentity() ||
 							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
 						}
-						onClick={handleSetIdentity}
+						onClick={() => handleSetIdentity(false)}
 						loading={loading}
 						className={`rounded-[4px] ${
 							(!okAll ||

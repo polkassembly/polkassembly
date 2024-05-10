@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect } from 'react';
-import { ESetIdentitySteps, IName, ISocials, ITxFee } from '.';
 import { poppins } from 'pages/_app';
 import { Modal } from 'antd';
 import Address from '~src/ui-components/Address';
@@ -14,20 +13,9 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { ESetIdentitySteps, IIdentitySuccessState } from './types';
 
-interface Props {
-	className?: string;
-	socials: ISocials;
-	name: IName;
-	txFee: ITxFee;
-	open?: boolean;
-	address: string;
-	changeStep: (step: ESetIdentitySteps) => void;
-	close: (pre: boolean) => void;
-	openPreModal: (pre: boolean) => void;
-}
-
-const SuccessState = ({ className, open, close, changeStep, openPreModal, name, socials, address }: Props) => {
+const SuccessState = ({ className, open, close, changeStep, openPreModal, name, socials, address }: IIdentitySuccessState) => {
 	const { network } = useNetworkSelector();
 	const { displayName } = name;
 	const { email, web, twitter, riot } = socials;
@@ -59,7 +47,6 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 		>
 			<>
 				<div className='-mt-[132px] flex flex-col items-center justify-center'>
-					{/* <SuccessIcon /> */}
 					<ImageIcon
 						src='/assets/icons/identity-success.svg'
 						alt='identity success icon'

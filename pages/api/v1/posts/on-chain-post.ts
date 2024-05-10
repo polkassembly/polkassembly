@@ -40,6 +40,7 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import getAscciiFromHex from '~src/util/getAscciiFromHex';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -888,7 +889,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			decision_deposit_amount: postData?.decisionDeposit?.amount,
 			delay: postData?.delay,
 			deposit: postData?.deposit,
-			description: postData?.description,
+			description: network == AllNetworks.POLYMESH ? getAscciiFromHex(postData?.description) : postData?.description,
 			enactment_after_block: postData?.enactmentAfterBlock,
 			enactment_at_block: postData?.enactmentAtBlock,
 			end: postData?.end,

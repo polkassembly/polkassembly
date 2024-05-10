@@ -67,7 +67,7 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 
 		router.push({
 			pathname: router.pathname,
-			query: { ...router.query, trackStatus: e.target.value.toLowerCase() }
+			query: { ...router.query, trackStatus: e.target.value.toLowerCase(), page: 1 }
 		});
 	};
 

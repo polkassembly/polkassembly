@@ -53,7 +53,8 @@ interface IResponse{
 			supportData:{ percentage: string, index: number },
 			votesSplitData: { abstain: number | string, aye: number | string, nay: number | string, index: number }
 		},
-		referendaIndex: number
+		referendaIndex: number,
+		created_at : Date;
 	}
 }
 
@@ -252,6 +253,7 @@ const trackLevelAnalytics = async () => {
 					trackNumber,
 					referendaIndex: proposal.index,
 					votes: {
+						created_at: new Date(),
 						convictionVotes: {
 							delegationSplitData: getDelegationSplit(referenda, EVoteType.CONVICTIONVOTES),
 							supportData: supportData,

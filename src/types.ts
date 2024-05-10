@@ -675,6 +675,7 @@ export interface IChildBountiesResponse {
 }
 
 export interface IUserPost {
+	assetId?: null | string;
 	content: string;
 	created_at: Date;
 	id: string;

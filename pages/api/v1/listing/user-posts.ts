@@ -256,7 +256,13 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 
 					let requested = BigInt(0);
 					let args = preimage?.proposedCall?.args;
+					let assetId: null | string = null;
+
 					if (args) {
+						if (args?.assetKind?.assetId?.value?.interior) {
+							const call = args?.assetKind?.assetId?.value?.interior?.value;
+							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						}
 						args = convertAnyHexToASCII(args, network);
 						if (args?.amount) {
 							requested = args.amount;
@@ -275,6 +281,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 					const proposalType = getFirestoreProposalType(type);
 					const id = type === 'Tip' ? hash : index;
 					const newData: IUserPost = {
+						assetId: assetId || null,
 						content: description || (proposalArguments && proposalArguments.description ? proposalArguments.description : ''),
 						created_at: createdAt || null,
 						id: id,

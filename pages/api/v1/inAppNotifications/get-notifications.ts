@@ -21,7 +21,7 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 		let lastSeen = null;
 		if (userSnapshot.exists) {
 			const userData = userSnapshot.data();
-			lastSeen = userData?.lastSeen?.toDate ? userData?.lastSeen?.toDate() : userData?.lastSeen || null;
+			lastSeen = userData?.notificationsReadTill?.toDate() || userData?.notificationsReadTill || null;
 		}
 
 		const response: IInAppNotification[] = [];
@@ -60,7 +60,6 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 
 const handler: NextApiHandler<{ notifications: IInAppNotification[]; lastSeen: Date } | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
-	const { userId } = req.body;
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
@@ -69,10 +68,10 @@ const handler: NextApiHandler<{ notifications: IInAppNotification[]; lastSeen: D
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user || userId !== user.id) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	const { data, error, status } = await getUserNotifications({
-		userId: userId
+		userId: user.id
 	});
 
 	if (error || !data) {

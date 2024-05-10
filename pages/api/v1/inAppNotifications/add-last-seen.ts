@@ -12,11 +12,11 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
 
-export const getUserNotifications = async ({ userId }: { userId: number }) => {
+export const getNotificationsLastSeen = async ({ userId }: { userId: number }) => {
 	try {
 		const userSnapshot = firestore_db.collection('users').doc(String(userId));
 
-		await userSnapshot.update({ lastSeen: new Date() });
+		await userSnapshot.update({ notificationsReadTill: new Date() });
 
 		return {
 			data: 'Success',
@@ -34,7 +34,6 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
-	const { userId } = req.body;
 	const network = String(req.headers['x-network']);
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
@@ -43,10 +42,10 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user || userId !== user.id) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
-	const { data, error, status } = await getUserNotifications({
-		userId: userId
+	const { data, error, status } = await getNotificationsLastSeen({
+		userId: user.id
 	});
 
 	if (error || !data) {

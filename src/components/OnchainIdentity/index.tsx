@@ -27,48 +27,11 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useTheme } from 'next-themes';
+import { ESetIdentitySteps, IName, IOnChainIdentity, ISocials, ITxFee, IVerifiedFields } from './types';
 
 const ZERO_BN = new BN(0);
 
-export enum ESetIdentitySteps {
-	AMOUNT_BREAKDOWN = 1,
-	SET_IDENTITY_FORM = 2,
-	SOCIAL_VERIFICATION = 3
-}
-
-export interface ITxFee {
-	bondFee: BN;
-	gasFee: BN;
-	registerarFee: BN;
-	minDeposite: BN;
-}
-
-export interface IName {
-	legalName: string;
-	displayName: string;
-}
-
-export interface ISocials {
-	web: { value: string; verified: boolean };
-	email: { value: string; verified: boolean };
-	twitter: { value: string; verified: boolean };
-	riot: { value: string; verified: boolean };
-}
-export interface IVerifiedFields {
-	email: string;
-	twitter: string;
-	displayName: string;
-	legalName: string;
-	alreadyVerified: boolean;
-	isIdentitySet: boolean;
-}
-interface Props {
-	open: boolean;
-	setOpen: (pre: boolean) => void;
-	openAddressLinkedModal?: boolean;
-	setOpenAddressLinkedModal?: (pre: boolean) => void;
-}
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: Props) => {
+const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: IOnChainIdentity) => {
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress } = useUserDetailsSelector();
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
@@ -91,13 +54,15 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 	const [identityHash, setIdentityHash] = useState<string>('');
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
-	const [alreadyVerifiedfields, setAlreadyVerifiedFields] = useState<IVerifiedFields>({
+	const [alreadySetIdentityCredentials, setAlreadySetIdentityCredentials] = useState<IVerifiedFields>({
 		alreadyVerified: false,
 		displayName: '',
 		email: '',
 		isIdentitySet: false,
 		legalName: '',
-		twitter: ''
+		riot: '',
+		twitter: '',
+		web: ''
 	});
 	const [currentWallet, setCurrentWallet] = useState<any>();
 	const router = useRouter();
@@ -283,13 +248,15 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						verified: !unverified && !!identity?.twitter
 					}
 				});
-				setAlreadyVerifiedFields({
+				setAlreadySetIdentityCredentials({
 					alreadyVerified: !unverified,
 					displayName: identity?.display || '',
 					email: identity?.email || '',
 					isIdentitySet: !!identity?.display || !!identity?.legal || !!identity?.twitter || !!identity?.email,
 					legalName: identity?.legal || '',
-					twitter: identity?.twitter || ''
+					riot: identity?.riot || '',
+					twitter: identity?.twitter || '',
+					web: identity.web || ''
 				});
 				form.setFieldValue('displayName', identity?.display || '');
 				form?.setFieldValue('legalName', identity?.legal || '');
@@ -438,19 +405,19 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				>
 					{step === ESetIdentitySteps.AMOUNT_BREAKDOWN && (
 						<TotalAmountBreakdown
-							isIdentityAlreadySet={!alreadyVerifiedfields.alreadyVerified && alreadyVerifiedfields.isIdentitySet}
+							isIdentityAlreadySet={!alreadySetIdentityCredentials.alreadyVerified && alreadySetIdentityCredentials.isIdentitySet}
 							loading={loading?.isLoading}
 							txFee={txFee}
 							perSocialBondFee={perSocialBondFee}
 							changeStep={setStep}
-							alreadyVerifiedfields={alreadyVerifiedfields}
+							alreadySetIdentityCredentials={alreadySetIdentityCredentials}
 							address={address}
 							setStartLoading={setLoading}
 						/>
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (
 						<IdentityForm
-							alreadyVerifiedfields={alreadyVerifiedfields}
+							alreadySetIdentityCredentials={alreadySetIdentityCredentials}
 							setIsIdentityCallDone={setIsIdentityCallDone}
 							className='mt-3'
 							txFee={txFee}

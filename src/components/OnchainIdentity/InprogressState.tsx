@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect } from 'react';
-import { ESetIdentitySteps, ISocials } from '.';
 import { poppins } from 'pages/_app';
 import { Modal } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
@@ -12,18 +11,9 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { ESetIdentitySteps, IIdentityInProgress } from './types';
 
-interface Props {
-	className?: string;
-	socials: ISocials;
-	open?: boolean;
-	changeStep: (step: ESetIdentitySteps) => void;
-	close: (pre: boolean) => void;
-	openPreModal: (pre: boolean) => void;
-	handleVerify: (pre: ESocials) => Promise<void>;
-}
-
-const InprogressState = ({ className, open, close, changeStep, openPreModal, socials, handleVerify }: Props) => {
+const InprogressState = ({ className, open, close, changeStep, openPreModal, socials, handleVerify }: IIdentityInProgress) => {
 	const { email } = socials;
 
 	const { network } = useNetworkSelector();

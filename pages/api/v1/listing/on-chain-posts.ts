@@ -103,7 +103,7 @@ export interface IPostListing {
 	spam_users_count?: number;
 	beneficiaries?: string[];
 	allChildBounties?: any[];
-	assetId: string | null;
+	assetId?: string | null;
 }
 
 export interface IPostsListingResponse {

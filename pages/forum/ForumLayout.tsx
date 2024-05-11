@@ -36,7 +36,7 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 			key: 'Forum',
 			label: (
 				<div className='flex items-center gap-2'>
-					<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Forum
+					Forum<span className='h-5 w-[34px] rounded-[4px] bg-[#407BFF] px-[6px] text-[10px] font-bold text-white'>New</span>
 				</div>
 			)
 		}

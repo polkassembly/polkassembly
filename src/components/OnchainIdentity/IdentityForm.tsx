@@ -495,7 +495,7 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<EmailIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
 							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
 								Email<span className='ml-1 text-[#FF3C5F]'>*</span>
 							</span>
@@ -538,10 +538,8 @@ const IdentityForm = ({
 
 					<div className='mt-1 flex items-center'>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
-							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-[#576D8B] dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
-							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>
-								Twitter<span className='ml-1 text-[#FF3C5F]'>*</span>
-							</span>
+							<TwitterIcon className='rounded-full bg-[#edeff3] p-2.5 text-xl text-blue-light-helper dark:bg-inactiveIconDark dark:text-blue-dark-medium' />
+							<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Twitter</span>
 						</span>
 						<Form.Item
 							name='twitter'
@@ -581,7 +579,7 @@ const IdentityForm = ({
 
 					{/* <div className='flex items-center mt-1'>
 					<span className='flex gap-2 items-center w-[150px] mb-6'>
-						<RiotIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-[#576D8B]'/>
+						<RiotIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-blue-light-helper'/>
 						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Riot</span>
 					</span>
 					<Form.Item name='riot' className='w-full' rules={[{

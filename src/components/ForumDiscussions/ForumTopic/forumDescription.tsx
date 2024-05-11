@@ -6,28 +6,29 @@ import React from 'react';
 import Markdown from '~src/ui-components/Markdown';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
-// import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
-// import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
+import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
+import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
 
 interface ForumDescriptionProps {
 	description: string;
+	username: string;
 	like_count: number;
 }
 
-const ForumDescription = ({ like_count, description }: ForumDescriptionProps) => {
+const ForumDescription = ({ like_count, description, username }: ForumDescriptionProps) => {
 	const { resolvedTheme: theme } = useTheme();
 
-	// const share = () => {
-	// const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
+	const share = () => {
+		// const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
 
-	// let message = `The referendum ${title ? `for ${title}` : ''} is now live for @${twitterHandle} \n`;
-	// message += `Cast your vote here: ${global.window.location.href}`;
+		let message = `Check out this forum discussion ${username ? `by ${username}` : ''} \n`;
+		message += `On ${global.window.location.href}`;
 
-	// const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polk_gov')];
+		const twitterParameters = [`text=${encodeURI(message)}`, 'via=' + encodeURI('polk_gov')];
 
-	// const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
-	// global.window.open(url);
-	// };
+		const url = 'https://twitter.com/intent/tweet?' + twitterParameters.join('&');
+		global.window.open(url);
+	};
 
 	return (
 		<div className='mt-4'>
@@ -44,15 +45,15 @@ const ForumDescription = ({ like_count, description }: ForumDescriptionProps) =>
 					<span className='mt-1'>{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}</span>
 					<span className='text-xs font-semibold text-lightBlue dark:text-icon-dark-inactive'>{like_count}</span>
 				</span>
-				{/* <div
-					// onClick={share}
+				<div
+					onClick={share}
 					className=' cursor-pointer'
 				>
 					<span className='flex items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133] '>
 						{theme == 'dark' ? <ShareIconDark /> : <ShareIcon />}
 						<span className='font-medium text-lightBlue dark:text-icon-dark-inactive'>Share</span>
 					</span>
-				</div> */}
+				</div>
 			</div>
 		</div>
 	);

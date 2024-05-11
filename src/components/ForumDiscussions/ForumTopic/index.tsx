@@ -44,6 +44,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				<ForumDescription
 					description={description}
 					like_count={like_count}
+					username={dUsername}
 				/>
 			),
 			key: 'description',

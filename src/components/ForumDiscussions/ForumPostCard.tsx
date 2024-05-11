@@ -5,7 +5,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Topic } from './types';
 import { Divider } from 'antd';
 import { ClockCircleOutlined, LikeOutlined, EyeFilled } from '@ant-design/icons';
-import { CommentsIcon } from '~src/ui-components/CustomIcons';
+import { ForumCommentsIcon } from '~src/ui-components/CustomIcons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import Link from 'next/link';
 import getCategoryName from './utils/getCategoryName';
@@ -102,18 +102,18 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 									)}
 									<span className='text-sm font-medium text-[#334D6E] dark:text-blue-dark-high'>{title}</span>
 									<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:hidden sm:flex lg:flex-row lg:items-center'>
-										<div className='mr-2 flex items-center gap-x-3'>
+										<div className='mr-2 flex items-center gap-x-3 p-1'>
 											<div className='items-center justify-center gap-x-1.5 xs:hidden sm:flex'>
-												<LikeOutlined className='text-lightBlue dark:text-icon-dark-inactive' />
+												<LikeOutlined className='-mt-[2px] text-[13px] text-lightBlue dark:text-icon-dark-inactive' />
 												<span className='text-lightBlue dark:text-blue-dark-medium'>{like_count}</span>
 											</div>
 
 											<div className='items-center xs:hidden sm:flex'>
-												<CommentsIcon className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
+												<ForumCommentsIcon className='mr-1 text-[13px] text-lightBlue dark:text-icon-dark-inactive' />
 												<span className=' text-lightBlue dark:text-blue-dark-medium'>{reply_count}</span>
 											</div>
 											<div className='items-center xs:hidden sm:flex'>
-												<EyeFilled className='mr-1 text-lightBlue dark:text-icon-dark-inactive' />
+												<EyeFilled className='mr-1 text-[13px] text-lightBlue dark:text-icon-dark-inactive' />
 												<span className=' text-lightBlue dark:text-blue-dark-medium'>{formatCount(views)}</span>
 											</div>
 										</div>
@@ -140,7 +140,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 															[9, 25, 27].includes(category_id)
 																? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#0B353C] dark:text-[#93C9D1]'
 																: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#302234] dark:text-[#CCAED4]'
-														}  px-2 py-1 text-[10px] font-medium `}
+														}  px-2 py-1 text-[12px] font-medium `}
 													>
 														{getCategoryName(category_id)}
 													</div>
@@ -207,7 +207,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 												[9, 25, 27].includes(category_id)
 													? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#0B353C] dark:text-[#93C9D1]'
 													: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#302234] dark:text-[#CCAED4]'
-											}  px-2 py-1 text-[10px] font-medium `}
+											}  px-2 py-1 text-[12px] font-medium `}
 										>
 											{getCategoryName(category_id)}
 										</div>
@@ -217,16 +217,20 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 									</div>
 									<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 										<div className='items-center xs:flex xs:justify-start sm:hidden'>
-											<div className='mb-1 flex items-center gap-2'>
-												{user_avatar && (
-													<ImageIcon
-														src={formatAvatarUrl(user_avatar, '22')}
-														alt='user image'
-														imgClassName='rounded-full w-[18px]'
-													/>
-												)}
-												<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{username}</span>
-											</div>
+											{isLoading ? (
+												<SkeletonInput active />
+											) : (
+												<div className='mb-1 flex items-center gap-2'>
+													{user_avatar && (
+														<ImageIcon
+															src={formatAvatarUrl(user_avatar, '22')}
+															alt='user image'
+															imgClassName='rounded-full w-[18px]'
+														/>
+													)}
+													<span className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{username}</span>
+												</div>
+											)}
 											<Divider
 												type='vertical'
 												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-lg:hidden xs:inline-block sm:mt-0.5'

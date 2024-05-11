@@ -488,7 +488,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 					{description && network === 'polymesh' ? (
 						<div className='mt-5 grid grid-cols-6 gap-x-5 md:grid-cols-8'>
 							<h6 className='col-span-6 text-base font-medium text-lightBlue dark:font-normal dark:text-blue-dark-medium md:col-span-2'>Description</h6>
-							<p className='col-span-6 font-medium leading-6 text-bodyBlue'>{description}</p>
+							<p className='col-span-6 font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>{description}</p>
 						</div>
 					) : null}
 					{proposalType === ProposalType.ADVISORY_COMMITTEE && !!marketMetadata && (

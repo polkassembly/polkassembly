@@ -16,6 +16,7 @@ export const checkWalletForSubstrateNetwork = (network: string) => {
 		availableWallets[Wallet.POLKADOT] === undefined &&
 		availableWallets[Wallet.SUBWALLET] === undefined &&
 		availableWallets[Wallet.POLKAGATE] === undefined &&
+		availableWallets[Wallet.POLKAGATESNAP] === undefined &&
 		!(window as any).walletExtension?.isNovaWallet
 	) {
 		if (!['polymesh'].includes(network)) {

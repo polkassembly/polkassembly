@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { DownOutlined, PlusOutlined, UpOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Enable as snapEnable } from '@polkagate/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import classNames from 'classnames';
@@ -59,6 +60,11 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 
 	const handleDetect = async () => {
 		const extensions = await web3Enable(APPNAME);
+
+		/** to enable metamask snap */
+		const metamaskSnap = await snapEnable('onlysnap');
+		metamaskSnap && extensions.push(...metamaskSnap);
+
 		if (extensions.length === 0) {
 			setExtensionNotAvailable(true);
 			return;
@@ -143,6 +149,10 @@ const MultiSignatureAddress: FC<Props> = ({ open, dismissModal }) => {
 		if (!api || !apiReady) return;
 
 		const extensions = await web3Enable(APPNAME);
+
+		/** to enable metamask snap */
+		const metamaskSnap = await snapEnable('onlysnap');
+		metamaskSnap && extensions.push(...metamaskSnap);
 
 		if (extensions.length === 0) {
 			setExtensionNotAvailable(true);

@@ -4,6 +4,7 @@
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Enable as snapEnable } from '@polkagate/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { Modal, Spin } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
@@ -36,6 +37,10 @@ const ClaimPayoutModal = ({ className, parentBountyId, childBountyId }: Props) =
 	const getAccounts = async () => {
 		setIsLoading(true);
 		const extensions = await web3Enable(APPNAME);
+
+		/** to enable metamask snap */
+		const metamaskSnap = await snapEnable('onlysnap');
+		metamaskSnap && extensions.push(...metamaskSnap);
 
 		if (extensions.length === 0) {
 			setExtensionNotAvailable(true);

@@ -4,6 +4,7 @@
 
 import { Signer } from '@polkadot/api/types';
 import { isWeb3Injected, web3Enable } from '@polkadot/extension-dapp';
+import { web3Enable as snapEnable } from '@polkagate/extension-dapp';
 import { Injected, InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { useContext, useEffect, useState } from 'react';
 import { ApiContext } from 'src/context/ApiContext';
@@ -114,6 +115,10 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 
 		const extensions = await web3Enable(APPNAME);
 
+		/** to enable metamask snap */
+		const metamaskSnap = await snapEnable('onlysnap');
+		metamaskSnap && extensions.push(...metamaskSnap);
+
 		const responseLocal: Response = Object.assign({}, initResponse);
 
 		if (extensions.length === 0) {
@@ -128,6 +133,7 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 		let polakadotJSAccounts: InjectedAccount[] | undefined;
 		let polywalletJSAccounts: InjectedAccount[] | undefined;
 		let polkagateAccounts: InjectedAccount[] | undefined;
+		let polkagateSnapAccounts: InjectedAccount[] | undefined;
 		let subwalletAccounts: InjectedAccount[] | undefined;
 		let talismanAccounts: InjectedAccount[] | undefined;
 		let metamaskAccounts: InjectedAccount[] = [];
@@ -145,6 +151,9 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			} else if (extObj.name == 'polkagate') {
 				signersMapLocal['polkagate'] = extObj.signer;
 				polkagateAccounts = await getWalletAccounts(Wallet.POLKAGATE);
+			} else if (extObj.name == 'polkagate-snap') {
+				signersMapLocal['polkagate-snap'] = extObj.signer;
+				polkagateSnapAccounts = await getWalletAccounts(Wallet.POLKAGATESNAP);
 			} else if (extObj.name == 'subwallet-js') {
 				signersMapLocal['subwallet-js'] = extObj.signer;
 				subwalletAccounts = await getWalletAccounts(Wallet.SUBWALLET);
@@ -175,6 +184,13 @@ const useGetAllAccounts = (get_erc20?: boolean) => {
 			accounts = accounts.concat(polkagateAccounts);
 			polkagateAccounts.forEach((acc: InjectedAccount) => {
 				accountsMapLocal[acc.address] = 'polkagate';
+			});
+		}
+
+		if (polkagateSnapAccounts) {
+			accounts = accounts.concat(polkagateSnapAccounts);
+			polkagateSnapAccounts.forEach((acc: InjectedAccount) => {
+				accountsMapLocal[acc.address] = 'polkagate-snap';
 			});
 		}
 

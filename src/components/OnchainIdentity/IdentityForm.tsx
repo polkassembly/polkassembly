@@ -148,7 +148,7 @@ const IdentityForm = ({
 		const displayNameVal = form.getFieldValue('displayName')?.trim();
 		const legalNameVal = form.getFieldValue('legalName')?.trim();
 		const emailVal = form.getFieldValue('email')?.trim();
-		const twitterVal = form.getFieldValue('twitter').trim();
+		const twitterVal = (form.getFieldValue('twitter') || '').trim();
 
 		const okDisplay = checkIdentityFieldsValidity(displayNameVal.length > 0, displayNameVal, 1, [], [], []);
 		const okLegal = checkIdentityFieldsValidity(legalNameVal.length > 0, legalNameVal, 1, [], [], []);
@@ -175,7 +175,7 @@ const IdentityForm = ({
 				web: { [alreadySetIdentityCredentials.web.length > 0 ? 'raw' : 'none']: alreadySetIdentityCredentials.web.length > 0 ? alreadySetIdentityCredentials.web : null }
 			},
 			okAll: twitterVal.length
-				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !twitterVal
+				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
 				: okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal
 		});
 		const okSocialsBN = new BN(okSocials - 1 || BN_ONE);
@@ -201,7 +201,7 @@ const IdentityForm = ({
 			emailVal === alreadySetIdentityCredentials?.email &&
 			legalNameVal === alreadySetIdentityCredentials?.legalName;
 
-		if (alreadySetIdentityCredentials.twitter?.length) {
+		if (alreadySetIdentityCredentials.twitter?.length || twitterVal?.length) {
 			return twitterVal === alreadySetIdentityCredentials?.twitter && condition;
 		}
 		return condition;
@@ -260,8 +260,7 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
 			setOpen(true);
-			handleLocalStorageSave({ setIdentity: true });
-			handleLocalStorageSave({ identityHash: identityHash });
+			handleLocalStorageSave({ identityHash: identityHash, setIdentity: true });
 			setIsIdentityCallDone(true);
 			await handleIdentityHashSave(identityHash);
 		};
@@ -303,6 +302,18 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
+				{alreadySetIdentityCredentials.alreadyVerified && handleAllowSetIdentity() && (
+					<Alert
+						className='mb-6'
+						type='warning'
+						showIcon
+						message={
+							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
+								For judgement to be requested, one of the credentials must be updated, as this address already has judgement.
+							</p>
+						}
+					/>
+				)}
 				{!!alreadySetIdentityCredentials?.email && !!alreadySetIdentityCredentials?.displayName && !alreadySetIdentityCredentials.alreadyVerified && (
 					<Alert
 						className='mb-6'
@@ -417,7 +428,7 @@ const IdentityForm = ({
 						]}
 					>
 						<Input
-							onBlur={() => getGasFee()}
+							onBlur={() => getGasFee(false)}
 							name='displayName'
 							className='mt-0.5 h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-[#909090] dark:focus:border-[#91054F]'
 							placeholder='Enter a name for your identity '

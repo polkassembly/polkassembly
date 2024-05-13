@@ -5,6 +5,8 @@ on:
     branches:
       - test
       - main
+  schedule:
+    - cron: '0 * * * *' # Run every hour
 
 jobs:
   test:

@@ -39,6 +39,7 @@ const ForumComments = ({ comments }: any) => {
 										className='mt-[5px] text-sm'
 										md={comment.cooked}
 										theme={theme}
+										disableQuote={true}
 									/>
 								)}
 							</div>

@@ -32,14 +32,16 @@ const ForumDescription = ({ like_count, description, username }: ForumDescriptio
 
 	return (
 		<div className='mt-4'>
-			{description && (
-				<Markdown
-					className='post-content'
-					md={description}
-					theme={theme}
-					disableQuote={true}
-				/>
-			)}
+			<div>
+				{description && (
+					<Markdown
+						className=''
+						md={description}
+						theme={theme}
+						disableQuote={true}
+					/>
+				)}
+			</div>
 			<div className=' mt-6 flex items-center justify-between'>
 				<span className='flex w-min cursor-not-allowed items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
 					<span className='mt-1'>{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}</span>

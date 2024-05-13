@@ -122,6 +122,11 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 						options={options}
 						onChange={onChange}
 						value={category as string[]}
+						popupClassName={`text-blue-light-medium text-[14px] dark:bg-section-dark-overlay dark:border-separatorDark dark:rounded-lg dark:text-white hover:[&>ul>li]:text-pink_primary ${
+							theme == 'dark'
+								? '[&>ul]:bg-section-dark-garyBackground [&>ul>li]:text-blue-dark-medium [&>ul>.ant-cascader-menu-item-selected]:bg-section-dark-garyBackground [&>ul>.ant-cascader-menu-item-selected]:text-pink_primary hover:[&>ul>li]:bg-section-dark-garyBackground hover:[&>ul>li]:text-pink_secondary'
+								: 'text-blue-light-medium'
+						} z-[2000]`}
 					/>
 				</div>
 				<div>{children}</div>

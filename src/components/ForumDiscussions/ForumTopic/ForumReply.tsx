@@ -25,6 +25,7 @@ const ForumReply = ({ reply }: any) => {
 					theme={theme}
 					className='rounded-b-md bg-[#ebf0f5] px-1 py-1 text-sm dark:bg-[#141416] md:px-4'
 					md={reply.cooked}
+					disableQuote={true}
 				/>
 			)}
 		</div>

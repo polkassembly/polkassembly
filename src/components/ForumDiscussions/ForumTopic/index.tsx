@@ -72,7 +72,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 						[9, 25, 27].includes(category_id)
 							? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
 							: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
-					}  px-2 py-1 text-[10px] font-medium `}
+					}  px-2 py-1 text-[12px] font-medium `}
 				>
 					{getCategoryName(category_id)}
 				</div>
@@ -93,7 +93,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 									[9, 25, 27].includes(category_id)
 										? 'bg-[#FFEDF2] text-[#CD1F59] dark:bg-[#CD1F59] dark:text-[#FFEDF2]'
 										: 'bg-[#FFF4EB] text-[#AC6A30] dark:bg-[#AC6A30] dark:text-[#FFF4EB]'
-								}  px-2 py-1 text-[10px] font-medium sm:flex`}
+								}  px-2 py-1 text-[12px] font-medium sm:flex`}
 							>
 								{getCategoryName(category_id)}
 							</div>

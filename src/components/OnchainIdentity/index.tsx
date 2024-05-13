@@ -192,9 +192,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 		let identityForm: any = localStorage.getItem('identityForm');
 		identityForm = JSON.parse(identityForm);
 
-		if (identityForm) {
-			handleInitialStateSet(identityForm);
-		}
 		const encoded_addr = address ? getEncodedAddress(address, network) : '';
 		if (!encoded_addr) return;
 
@@ -236,6 +233,21 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					}
 				});
 
+				if (identityForm) {
+					handleInitialStateSet({
+						...identityForm,
+						displayName: identity?.display || '',
+						email: {
+							value: identity?.email || '',
+							verified: !unverified && !!identity?.email
+						},
+						legalName: identity?.legal || '',
+						twitter: {
+							value: identity?.twitter || '',
+							verified: !unverified && !!identity?.twitter
+						}
+					});
+				}
 				handleLocalStorageSave({
 					displayName: identity?.display || '',
 					email: {
@@ -248,6 +260,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 						verified: !unverified && !!identity?.twitter
 					}
 				});
+
 				setAlreadySetIdentityCredentials({
 					alreadyVerified: !unverified,
 					displayName: identity?.display || '',
@@ -258,10 +271,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 					twitter: identity?.twitter || '',
 					web: identity.web || ''
 				});
-				form.setFieldValue('displayName', identity?.display || '');
-				form?.setFieldValue('legalName', identity?.legal || '');
-				form?.setFieldValue('email', identity?.email || '');
-				form?.setFieldValue('twitter', identity?.twitter || '');
 
 				setIsIdentityUnverified(unverified);
 

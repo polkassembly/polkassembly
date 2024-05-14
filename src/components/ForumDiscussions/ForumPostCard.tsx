@@ -14,6 +14,9 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import formatAvatarUrl from './utils/FormatAvatarUrl';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 interface ForumPostCardProps {
 	topics: Topic[];
@@ -28,30 +31,25 @@ function formatCount(count: number) {
 
 const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	// const [tagsModal, setTagsModal] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
 	const [usernames, setUsernames] = useState<{ [key: number]: string }>({});
 	const [userImg, setUserImg] = useState<{ [key: number]: string }>({});
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const itemsPerPage = LISTING_LIMIT;
 
-	const fetchUsernames = async () => {
+	const fetchUsernames = async (topicsToFetch: Topic[]) => {
+		setIsLoading(true);
 		const userMap: { [key: number]: string } = {};
 		const userImgMap: { [key: number]: string } = {};
-		setIsLoading(true);
-		for (const topic of topics) {
+		for (const topic of topicsToFetch) {
 			try {
 				const { data } = await nextApiClientFetch<any>(`/api/v1/discourse/getTopicById?id=${topic.id}`);
 				const { posts } = data?.data?.post_stream || {};
-
-				if (posts?.length > 0) {
-					const username = posts[0].username || posts[0].name || 'Unknown';
-					userMap[topic.id] = username;
-
-					const avatarTemplate = posts[0].avatar_template || '/path/to/default/avatar.png';
-					userImgMap[topic.id] = avatarTemplate;
-				} else {
-					console.log(`No posts found for topic ID ${topic.id}`);
-					userMap[topic.id] = 'Unknown';
-					userImgMap[topic.id] = '/path/to/default/avatar.png';
-				}
+				const username = posts?.length > 0 ? posts[0].username || posts[0].name : 'Unknown';
+				const avatarTemplate = posts?.length > 0 ? posts[0].avatar_template : '/path/to/default/avatar.png';
+				userMap[topic.id] = username;
+				userImgMap[topic.id] = formatAvatarUrl(avatarTemplate, '22');
 			} catch (error) {
 				console.error(`Failed to fetch data for topic ID ${topic.id}:`, error);
 				userMap[topic.id] = 'Failed to load';
@@ -64,15 +62,16 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	};
 
 	useEffect(() => {
-		if (topics.length > 0) {
-			fetchUsernames();
-		}
+		const endIndex = currentPage * itemsPerPage;
+		const startIndex = endIndex - itemsPerPage;
+		const currentTopics = topics.slice(startIndex, endIndex);
+		fetchUsernames(currentTopics);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [topics]);
+	}, [currentPage]);
 
 	return (
 		<div className='mt-6'>
-			{topics.map((topic, index) => {
+			{topics.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((topic, index) => {
 				const { title, id, created_at, reply_count, like_count, tags, views, slug, category_id } = topic;
 				const date = new Date(created_at);
 				const username = usernames[id] || 'Loading...';
@@ -304,6 +303,21 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 					</div>
 				);
 			})}
+			{topics.length > 0 && (
+				<div className='m-6 flex justify-end'>
+					<Pagination
+						theme={theme}
+						size='large'
+						defaultCurrent={1}
+						current={currentPage}
+						onChange={setCurrentPage}
+						total={topics.length}
+						pageSize={itemsPerPage}
+						showSizeChanger={false}
+						responsive={true}
+					/>
+				</div>
+			)}
 		</div>
 	);
 };

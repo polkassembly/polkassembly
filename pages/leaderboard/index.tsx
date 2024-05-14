@@ -61,14 +61,14 @@ const Leaderboard = ({ network, className }: Props) => {
 				style={{ background: 'var(--Blue-Linear, linear-gradient(358deg, #262323 31.71%, #1D2182 136.54%))' }}
 			>
 				<div className='-ml-[236px] flex justify-center px-4'>
-					<TrophyIcon className='-mt-[92px] ml-[190px] md:ml-0' />
+					<TrophyIcon className='trophy-icon -mt-[92px] ml-[190px] md:ml-0' />
 					<div className='ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center'>
 						<h1 className='m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>Leaderboard</h1>
-						<p className='m-0 flex items-center justify-center p-0 text-sm text-white md:text-base'>Find your rank in {network} ecosystem</p>
+						<p className='m-0 mt-2 flex items-center justify-center p-0 text-sm text-white md:text-base'>Find your rank in {network} ecosystem</p>
 					</div>
 				</div>
 			</div>
-			<div className='rank-cards-desktop mt-8 flex w-full items-center justify-center'>
+			<div className='rank-cards-desktop -ml-1.5 mt-8 flex w-full items-center justify-center'>
 				{leaderboardData[1] && (
 					<RankCard
 						key={2}
@@ -151,6 +151,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 export default styled(Leaderboard)`
 	@media (max-width: 767px) and (min-width: 319px) {
+		.trophy-icon {
+			transform: scale(0.7);
+			// margin-left: 180px !important;
+		}
 		.rank-cards-mobile {
 			display: flex !important;
 			flex-direction: column !important;

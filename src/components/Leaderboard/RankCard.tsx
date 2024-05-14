@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import StarIcon from '~assets/icons/StarIcon.svg';
-import InfoIcon from '~assets/info.svg';
 import ImageComponent from '~src/components/ImageComponent';
 import NameLabel from '~src/ui-components/NameLabel';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
@@ -65,11 +64,10 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<div
 					className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-					style={{ border: '0.9px solid #9EA1A7' }}
+					style={{ border: '1px solid #ffffff' }}
 				>
 					<StarIcon />
 					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{data?.profile_score}</p>
-					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 				<div className={'mx-auto mt-6 flex items-center'}>
 					<div className='-mt-1 flex items-center gap-x-2'>

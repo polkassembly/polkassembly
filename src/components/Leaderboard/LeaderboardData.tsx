@@ -5,7 +5,6 @@ import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import StarIcon from '~assets/icons/StarIcon.svg';
-import InfoIcon from '~assets/info.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -130,7 +129,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				>
 					<StarIcon />
 					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{profileScore}</p>
-					<InfoIcon style={{ transform: 'scale(0.8)' }} />
 				</div>
 			),
 			sorter: (a, b) => a.profileScore - b.profileScore,

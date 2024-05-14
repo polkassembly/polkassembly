@@ -16,7 +16,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 		<section className={`${className}`}>
 			<div className='leaderboard-table-mobile rounded-xxl bg-white px-6 py-4 shadow-md dark:bg-section-dark-overlay'>
 				<div className='table-header items-center'>
-					<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
+					<p className='m-0 mt-1 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Top 50 Ranks</p>
 					<div className='search-box mr-8 flex'>
 						<Input.Search
 							placeholder='Enter username to search'

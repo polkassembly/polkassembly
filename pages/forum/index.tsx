@@ -3,30 +3,44 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import { GetServerSideProps } from 'next';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
 import { ForumData } from '~src/components/ForumDiscussions/types';
 import ForumLayout from './ForumLayout';
 import { fetchForumTopics } from 'pages/api/v1/discourse/getLatestTopics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const pageNumber = context.query.page ? parseInt(context.query.page as string) : 0;
+	const network = getNetworkFromReqHeaders(context.req.headers);
+	if (network !== 'polkadot') {
+		return {
+			props: {},
+			redirect: {
+				destination: '/opengov'
+			}
+		};
+	}
 	try {
 		const { data, error } = await fetchForumTopics(pageNumber);
 		if (data) {
 			return {
 				props: {
 					data: data || null,
-					error: null
+					error: null,
+					network: network
 				}
 			};
 		} else {
 			return {
 				props: {
 					data: null,
-					error: error
+					error: error,
+					network: network
 				}
 			};
 		}
@@ -35,7 +49,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		return {
 			props: {
 				data: null,
-				error: error.message || 'Failed to load data'
+				error: error.message || 'Failed to load data',
+				network: network
 			}
 		};
 	}
@@ -43,10 +58,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 interface ForumDiscussionsProps {
 	data: ForumData | null;
+	network: string;
 }
 
-const ForumDiscussions: React.FC<ForumDiscussionsProps> = ({ data }) => {
+const ForumDiscussions: React.FC<ForumDiscussionsProps> = ({ data, network }) => {
+	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
 	return (
 		<ForumLayout>
 			{data ? (

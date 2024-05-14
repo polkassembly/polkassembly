@@ -5,14 +5,26 @@ import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
 import { CategoryKey, fetchForumCategory } from 'pages/api/v1/discourse/getDataByCategory';
 import ForumLayout from 'pages/forum/ForumLayout';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
 import { ForumData } from '~src/components/ForumDiscussions/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const page = context.query.page ? parseInt(context.query.page as string) : 0;
 	const category = context.query.category as CategoryKey;
+	const network = getNetworkFromReqHeaders(context.req.headers);
+	if (network !== 'polkadot') {
+		return {
+			props: {},
+			redirect: {
+				destination: '/opengov'
+			}
+		};
+	}
 
 	try {
 		const { data, error } = await fetchForumCategory(category, page);
@@ -20,14 +32,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			return {
 				props: {
 					data: data || null,
-					error: null
+					error: null,
+					network: network
 				}
 			};
 		} else {
 			return {
 				props: {
 					data: null,
-					error: error
+					error: error,
+					network: network
 				}
 			};
 		}
@@ -36,7 +50,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		return {
 			props: {
 				data: null,
-				error: error.message || 'Failed to load data'
+				error: error.message || 'Failed to load data',
+				network: network
 			}
 		};
 	}
@@ -44,10 +59,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 interface ForumCategoryProps {
 	data: ForumData | null;
+	network: string;
 }
 
-const Category: FC<ForumCategoryProps> = ({ data }) => {
+const Category: FC<ForumCategoryProps> = ({ data, network }) => {
+	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 	return (
 		<ForumLayout>
 			{data ? (

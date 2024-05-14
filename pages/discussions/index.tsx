@@ -149,12 +149,6 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					className='mt-6'
 				/>
 			)}
-			<OffChainTabs
-				posts={posts}
-				defaultPage={page || 1}
-				count={count}
-				className='mt-6'
-			/>
 			<ReferendaLoginPrompts
 				modalOpen={openModal}
 				setModalOpen={setModalOpen}

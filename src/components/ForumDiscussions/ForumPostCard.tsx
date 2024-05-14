@@ -12,7 +12,8 @@ import getCategoryName from './utils/getCategoryName';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import formatAvatarUrl from './utils/FormatAvatarUrl';
-import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
+import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import SkeletonButton from 'antd/es/skeleton/Button';
 
 interface ForumPostCardProps {
 	topics: Topic[];
@@ -87,7 +88,16 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 
 								<div className='flex-1 flex-col gap-1 sm:mt-1 sm:flex sm:justify-between'>
 									{isLoading ? (
-										<SkeletonInput active />
+										<div className='flex gap-2'>
+											<SkeletonAvatar
+												active
+												size='small'
+											/>
+											<SkeletonButton
+												active
+												size='small'
+											/>
+										</div>
 									) : (
 										<div className='mb-1 flex items-center gap-2'>
 											{user_avatar && (
@@ -218,7 +228,16 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 									<div className='flex-col items-start text-xs font-medium text-bodyBlue dark:text-blue-dark-high xs:ml-2 xs:mt-1 xs:flex xs:gap-0 sm:ml-0 sm:hidden sm:gap-2.5 lg:flex-row lg:items-center'>
 										<div className='items-center xs:flex xs:justify-start sm:hidden'>
 											{isLoading ? (
-												<SkeletonInput active />
+												<div className='flex gap-2'>
+													<SkeletonAvatar
+														active
+														size='small'
+													/>
+													<SkeletonButton
+														active
+														size='small'
+													/>
+												</div>
 											) : (
 												<div className='mb-1 flex items-center gap-2'>
 													{user_avatar && (

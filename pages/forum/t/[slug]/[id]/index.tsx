@@ -1,11 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { GetServerSideProps } from 'next/types';
 import { Topic } from '~src/components/ForumDiscussions/types';
 import ForumTopicContainer from '~src/components/ForumDiscussions/ForumTopic';
 import { fetchTopicData } from 'pages/api/v1/discourse/getTopicData';
+import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { useDispatch } from 'react-redux';
+import { setNetwork } from '~src/redux/network';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { slug, id } = context.query;
@@ -16,20 +19,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const safeSlug = encodeURIComponent(slug);
 	const safeId = encodeURIComponent(id);
 
+	const network = getNetworkFromReqHeaders(context.req.headers);
+	if (network !== 'polkadot') {
+		return {
+			props: {},
+			redirect: {
+				destination: '/opengov'
+			}
+		};
+	}
+
 	try {
 		const { data, error } = await fetchTopicData(safeSlug, safeId);
 		if (data) {
 			return {
 				props: {
 					data: data || null,
-					error: null
+					error: null,
+					network: network
 				}
 			};
 		} else {
 			return {
 				props: {
 					data: null,
-					error: error
+					error: error,
+					network: network
 				}
 			};
 		}
@@ -38,7 +53,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		return {
 			props: {
 				data: null,
-				error: error.message || 'Failed to load data'
+				error: error.message || 'Failed to load data',
+				network: network
 			}
 		};
 	}
@@ -46,9 +62,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 interface TopicIdProps {
 	data: Topic | null;
+	network: string;
 }
+const TopicId: FC<TopicIdProps> = ({ data, network }) => {
+	const dispatch = useDispatch();
 
-const TopicId: FC<TopicIdProps> = ({ data }) => {
+	useEffect(() => {
+		dispatch(setNetwork(network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 	return <div>{data && <ForumTopicContainer data={data} />}</div>;
 };
 

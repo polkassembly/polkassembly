@@ -74,7 +74,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 			{topics.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((topic, index) => {
 				const { title, id, created_at, reply_count, like_count, tags, views, slug, category_id } = topic;
 				const date = new Date(created_at);
-				const username = usernames[id] || 'Loading...';
+				const username = usernames[id];
 				const user_avatar = userImg[id];
 				return (
 					<div

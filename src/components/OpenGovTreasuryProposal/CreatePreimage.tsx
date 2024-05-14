@@ -37,6 +37,7 @@ import { Bytes } from '@polkadot/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
+import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -108,7 +109,7 @@ const CreatePreimage = ({
 	enactment,
 	setEnactment,
 	setPreimage,
-	// availableBalance,
+	availableBalance,
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
 	form
@@ -466,6 +467,10 @@ const CreatePreimage = ({
 			}
 		}
 		if (!areBeneficiaryAddressesValid) return;
+
+		if (!isPreimage) {
+			if (txFee.gte(availableBalance)) return;
+		}
 
 		await form.validateFields();
 		if (isPreimage) onChangeLocalStorageSet({ preimageLinked: true }, Boolean(isPreimage), preimageCreated, true);
@@ -885,14 +890,14 @@ const CreatePreimage = ({
 					)}
 					{isPreimage === false && (
 						<>
-							{/* {txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
+							{txFee.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
 								<Alert
 									type='error'
 									className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
 									showIcon
 									message={<span className='dark:text-blue-dark-high'>Insufficient available balance.</span>}
 								/>
-							)} */}
+							)}
 							<div className='mt-6'>
 								<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium '>
 									Proposer Address
@@ -1260,7 +1265,7 @@ const CreatePreimage = ({
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
-											// !txFee.gte(availableBalance) &&
+											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
 									  )
@@ -1273,7 +1278,7 @@ const CreatePreimage = ({
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
-											// !txFee.gte(availableBalance) &&
+											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
 									  )

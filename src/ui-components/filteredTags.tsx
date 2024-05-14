@@ -29,7 +29,7 @@ const FilteredTags: FC<IFilteredTags> = (props) => {
 		<div className='flex items-center gap-x-2'>
 			{tags.length > 0 ? (
 				<div className='flex flex-wrap items-center sm:pb-4'>
-					<div className='flex h-[30px] items-center rounded bg-[#FDF0F7] px-2 py-1 dark:bg-[#33071E]'>
+					<div className='flex h-[30px] items-center rounded-lg bg-[#FDF0F7] px-2 py-1 dark:bg-pink-dark-primary'>
 						<span className='rounded-xl text-xs font-medium text-pink_primary dark:text-icon-dark-inactive'>Tags: &nbsp;</span>
 						{tags.map((tag, index) => (
 							<div

@@ -110,6 +110,28 @@ const StyledMarkdown = styled(ReactMarkdown)`
 				color: ${(props: any) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
 			}
 		}
+		&.hide-blockquote blockquote {
+			display: none !important;
+		}
+		&.hide-blockquote code {
+			word-wrap: break-word;
+			word-break: break-all;
+			font-size: 12px;
+			margin: 0;
+			border-radius: 3px;
+			white-space: pre-wrap;
+			&::before,
+			&::after {
+				letter-spacing: -0.2em;
+			}
+			padding-left: 4px;
+			padding-right: 4px;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
+			color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		}
+		&.hide-blockquote .quote {
+			display: none !important;
+		}
 
 		blockquote {
 			margin: 1rem 0;
@@ -252,6 +274,12 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			color: pink_primary !important;
 		}
 	}
+	@media (max-width: 600px) {
+		.hide-blockquote code {
+			font-size: 10px;
+			padding: 2px;
+		}
+	}
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -266,9 +294,11 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 			ref={markdownRef}
 			className='selection:bg-[#B5D7FE] selection:text-blue-light-high dark:selection:bg-[#275C98] dark:selection:text-white'
 		>
-			{!disableQuote && <HighlightMenu markdownRef={markdownRef} />}
+			<HighlightMenu markdownRef={markdownRef} />
 			<StyledMarkdown
-				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
+				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${disableQuote && 'hide-blockquote'} ${
+					isAutoComplete && 'mde-autocomplete-content'
+				} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}

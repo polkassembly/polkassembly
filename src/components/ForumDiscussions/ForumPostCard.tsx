@@ -13,7 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import formatAvatarUrl from './utils/FormatAvatarUrl';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import SkeletonButton from 'antd/es/skeleton/Button';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface ForumPostCardProps {
 	topics: Topic[];

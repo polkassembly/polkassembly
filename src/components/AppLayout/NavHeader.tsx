@@ -56,7 +56,7 @@ const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const Identity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 
@@ -81,7 +81,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -125,7 +125,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			if (address?.length) {
 				setOpen(!open);
 			} else {
-				setOpenAddressLinkedModal(true);
+				setOpenAddressModal(true);
 			}
 		}
 	};
@@ -518,11 +518,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			</nav>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
-					<OnChainIdentity
+					<Identity
 						open={open}
 						setOpen={setOpen}
-						openAddressLinkedModal={openAddressLinkedModal}
-						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+						openAddressModal={openAddressModal}
+						setOpenAddressModal={setOpenAddressModal}
 					/>
 					<RemoveIdentity />
 				</>

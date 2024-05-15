@@ -7,16 +7,16 @@ import { Modal } from 'antd';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
 import { ESocials } from '~src/types';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ESetIdentitySteps, IIdentityInProgress } from './types';
 
-const InprogressState = ({ className, open, close, changeStep, openPreModal, socials, handleVerify }: IIdentityInProgress) => {
-	const { email } = socials;
-
+const SocialVerificationInprogress = ({ className, open, close, openPreModal, handleVerify, changeStep }: IIdentityInProgress) => {
 	const { network } = useNetworkSelector();
+	const { socials } = useOnchainIdentitySelector();
+	const { email } = socials;
 
 	useEffect(() => {
 		if (!network) return;
@@ -86,4 +86,4 @@ const InprogressState = ({ className, open, close, changeStep, openPreModal, soc
 	);
 };
 
-export default InprogressState;
+export default SocialVerificationInprogress;

@@ -1,302 +1,88 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect, useState } from 'react';
-import { Form, Modal, Spin } from 'antd';
-import { poppins } from 'pages/_app';
-import { ApiContext } from '~src/context/ApiContext';
-import BN from 'bn.js';
-import { chainProperties } from '~src/global/networkConstants';
-import { formatBalance } from '@polkadot/util';
-import TotalAmountBreakdown from './TotalAmountBreakdown';
-import { CloseIcon, OnChainIdentityIcon } from '~src/ui-components/CustomIcons';
-import IdentityForm from './IdentityForm';
-import SocialVerification from './SocialVerification';
-import AddressConnectModal from '~src/ui-components/AddressConnectModal';
-import getEncodedAddress from '~src/util/getEncodedAddress';
+import React, { useEffect, useState } from 'react';
+import { useApiContext } from '~src/context';
 import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
-import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
-import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
-import { SetIdentityIcon } from '~src/ui-components/CustomIcons';
-import { ILoading, Wallet } from '~src/types';
-import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
-import { isWeb3Injected } from '@polkadot/extension-dapp';
-import { APPNAME } from '~src/global/appName';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { useDispatch } from 'react-redux';
+import { onchainIdentityActions } from '~src/redux/onchainIdentity';
+import AddressConnectModal from '~src/ui-components/AddressConnectModal';
+import { ESetIdentitySteps, IOnChainIdentity, ITxFee } from './types';
 import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { poppins } from 'pages/_app';
+import { Form, Modal, Spin } from 'antd';
+import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon } from '~src/ui-components/CustomIcons';
+import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
+import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
+import { ILoading } from '~src/types';
 import { useTheme } from 'next-themes';
-import { ESetIdentitySteps, IName, IOnChainIdentity, ISocials, ITxFee, IVerifiedFields } from './types';
+import BN from 'bn.js';
+import TotalAmountBreakdown from './TotalAmountBreakdown';
+import IdentityForm from './IdentityForm';
+import SocialVerification from './SocialVerification';
+import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
+import IdentitySuccessState from './IdentitySuccessState';
 
 const ZERO_BN = new BN(0);
 
-const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, setOpenAddressLinkedModal: openAddressModal }: IOnChainIdentity) => {
-	const { network } = useNetworkSelector();
-	const { id: userId, loginAddress } = useUserDetailsSelector();
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(addressModal || false);
-	const { api, apiReady } = useContext(ApiContext);
-	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
-	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
-	const [address, setAddress] = useState<string>(loginAddress);
-	const [name, setName] = useState<IName>({ displayName: '', legalName: '' });
-	const [socials, setSocials] = useState<ISocials>({
-		email: { value: '', verified: false },
-		riot: { value: '', verified: false },
-		twitter: { value: '', verified: false },
-		web: { value: '', verified: false }
-	});
-	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
-	const [isExitModal, setIsExitModal] = useState<boolean>(false);
-	const [form] = Form.useForm();
-	const [isIdentityCallDone, setIsIdentityCallDone] = useState<boolean>(false);
-	const [step, setStep] = useState<ESetIdentitySteps>(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
-	const [identityHash, setIdentityHash] = useState<string>('');
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
-	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
-	const [alreadySetIdentityCredentials, setAlreadySetIdentityCredentials] = useState<IVerifiedFields>({
-		alreadyVerified: false,
-		displayName: '',
-		email: '',
-		isIdentitySet: false,
-		legalName: '',
-		riot: '',
-		twitter: '',
-		web: ''
-	});
-	const [currentWallet, setCurrentWallet] = useState<any>();
-	const router = useRouter();
+const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnChainIdentity) => {
 	const { resolvedTheme: theme } = useTheme();
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
+	const { loginAddress, id: userId } = useUserDetailsSelector();
+	const identityDetails = useOnchainIdentitySelector();
+	const [form] = Form.useForm();
+	const { identityAddress, identityInfo, socials } = identityDetails;
+	const [isExitModal, setIsExitModal] = useState<boolean>(false);
+	const [openAddressSelectModal, setOpenAddressSelectModal] = useState<boolean>(false);
+	const [openJudgementSuccessModal, setOpenJudgementSuccessModal] = useState<boolean>(false);
+	const [openIdentitySuccessModal, setOpenIdentitySuccessModal] = useState<boolean>(false);
+	const [step, setStep] = useState<ESetIdentitySteps>(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 
-	const getAccounts = async (chosenWallet: Wallet, defaultWalletAddress?: string | null): Promise<void> => {
-		if (!api || !apiReady) return;
-		setLoading({ ...loading, isLoading: true });
-
-		const injectedWindow = window as Window & InjectedWindow;
-
-		const wallet = isWeb3Injected ? injectedWindow?.injectedWeb3?.[chosenWallet] : null;
-		setCurrentWallet(chosenWallet);
-
-		if (!wallet) {
-			setLoading({ ...loading, isLoading: false });
-			return;
-		}
-		let injected: Injected | undefined;
-		try {
-			injected = await new Promise((resolve, reject) => {
-				const timeoutId = setTimeout(() => {
-					reject(new Error('Wallet Timeout'));
-				}, 60000); // wait 60 sec
-
-				if (wallet && wallet.enable) {
-					wallet
-						.enable(APPNAME)
-						.then((value) => {
-							clearTimeout(timeoutId);
-							resolve(value);
-						})
-						.catch((error) => {
-							reject(error);
-						});
-				}
-			});
-		} catch (err) {
-			console.log(err?.message);
-			setLoading({ ...loading, isLoading: false });
-		}
-		if (!injected) {
-			setLoading({ ...loading, isLoading: false });
-			return;
-		}
-
-		const accounts = await injected.accounts.get();
-		if (accounts.length === 0) {
-			setLoading({ ...loading, isLoading: false });
-			return;
-		}
-
-		accounts.forEach((account) => {
-			account.address = getEncodedAddress(account.address, network) || account.address;
-		});
-
-		if (accounts.length > 0) {
-			if (api && apiReady) {
-				api.setSigner(injected.signer);
-			}
-
-			if (defaultWalletAddress) {
-				const address =
-					accounts.filter((account) => account?.address === (getEncodedAddress(defaultWalletAddress, network) || defaultWalletAddress))?.[0]?.address || accounts[0]?.address;
-				setAddress(address);
-				form.setFieldValue('address', address);
-			}
-		}
-
-		setLoading({ ...loading, isLoading: false });
-		return;
-	};
-
-	const handleInitialStateSet = (identityForm: any) => {
-		if (identityForm?.userId !== userId) return;
-		setName({ displayName: identityForm?.displayName || '', legalName: identityForm?.legalName || '' });
-		setSocials({ ...socials, email: { ...identityForm?.email, verified: false } || '', twitter: { ...identityForm?.twitter, verified: false } });
-		form.setFieldValue('displayName', identityForm?.displayName || '');
-		form.setFieldValue('legalName', identityForm?.legalName || '');
-		form.setFieldValue('email', identityForm?.email?.value || '');
-		form.setFieldValue('twitter', identityForm?.twitter?.value || '');
-		const identityHash = identityForm?.identityHash;
-		setIdentityHash(identityHash);
-		if (identityForm?.setIdentity) {
-			setIsIdentityCallDone(true);
-			setStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
-		}
-	};
-	const handleLocalStorageSave = (field: any) => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
-		}
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...data,
-				...field
-			})
-		);
-	};
+	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
+	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
+	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
-
-		if (!api || !apiReady) return;
-		setLoading({ ...loading, isLoading: true });
-
-		(async () => {
-			const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
-
-			const registerarFee: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
-			const bnRegisterarFee = new BN(registerarFee?.[(registerarFee?.length || 1) - 1].fee || ZERO_BN);
-			const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
-			setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
-			setPerSocialBondFee(bondFee as any);
-			setLoading({ ...loading, isLoading: false });
-		})();
-		const address = localStorage.getItem('identityAddress');
-		const wallet = localStorage.getItem('identityWallet');
-
-		getAccounts(wallet as Wallet, address);
-		let identityForm: any = localStorage.getItem('identityForm');
-		identityForm = JSON.parse(identityForm);
-
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-		if (!encoded_addr) return;
-
-		(async () => {
-			try {
-				const identityHash = await api?.query?.identity
-					?.identityOf(encoded_addr)
-					.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
-				if (!identityHash) {
-					console.log('Error in unwrapping identity hash');
-					return;
-				}
-
-				setIdentityHash(identityHash || '');
-				handleLocalStorageSave({ identityHash });
-			} catch (err) {
-				console.log(err);
-			}
-		})();
-
-		let unsubscribe: () => void;
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-				const unverified = judgementProvided || !info?.identity?.judgements?.length;
-				const identity = info?.identity;
-				setName({ displayName: identity?.display || '', legalName: identity?.legal || '' });
-				setSocials({
-					...socials,
-					email: {
-						value: identity?.email || '',
-						verified: !unverified && !!identity?.email
-					},
-					twitter: {
-						value: identity?.twitter || '',
-						verified: !unverified && !!identity?.twitter
-					}
-				});
-
-				if (identityForm) {
-					handleInitialStateSet({
-						...identityForm,
-						displayName: identity?.display || '',
-						email: {
-							value: identity?.email || '',
-							verified: !unverified && !!identity?.email
-						},
-						legalName: identity?.legal || '',
-						twitter: {
-							value: identity?.twitter || '',
-							verified: !unverified && !!identity?.twitter
-						}
-					});
-				}
-				handleLocalStorageSave({
-					displayName: identity?.display || '',
-					email: {
-						value: identity?.email || '',
-						verified: !unverified && !!identity?.email
-					},
-					legalName: identity?.legal || '',
-					twitter: {
-						value: identity?.twitter || '',
-						verified: !unverified && !!identity?.twitter
-					}
-				});
-
-				setAlreadySetIdentityCredentials({
-					alreadyVerified: !unverified,
-					displayName: identity?.display || '',
-					email: identity?.email || '',
-					isIdentitySet: !!identity?.display || !!identity?.legal || !!identity?.twitter || !!identity?.email,
-					legalName: identity?.legal || '',
-					riot: identity?.riot || '',
-					twitter: identity?.twitter || '',
-					web: identity.web || ''
-				});
-
-				setIsIdentityUnverified(unverified);
-
-				if (!identityForm || !identityForm?.setIdentity) return;
-
-				if (!unverified) {
-					localStorage.removeItem('identityForm');
-				}
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
-
+		const isIdentityCallDone = localStorage.getItem('isIdentityCallDone') || false;
+		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network, step, addressModal, openAddressLinkedModal]);
+	}, []);
 
-	const handleLocalStorageSetUnverified = () => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
-		}
+	const getTxFee = async () => {
+		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
+
+		const registerarFee: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
+		const bnRegisterarFee = new BN(registerarFee?.[(registerarFee?.length || 1) - 1].fee || ZERO_BN);
+		const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
+		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
+		setPerSocialBondFee(bondFee as any);
+		setLoading({ ...loading, isLoading: false });
 	};
 
+	const getIdentityHash = async () => {
+		if (!identityAddress && !loginAddress) return;
+		try {
+			const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
+
+			const identityHash = await api?.query?.identity
+				?.identityOf(encoded_addr)
+				.then((res: any) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
+			if (!identityHash) {
+				console.log('Error in unwrapping identity hash');
+				return;
+			}
+
+			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+		} catch (err) {
+			console.log(err);
+		}
+	};
 	const handleCancel = () => {
 		if (step === ESetIdentitySteps.SOCIAL_VERIFICATION) {
 			setOpen(false);
@@ -305,36 +91,88 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 			setOpen(false);
 			setStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		}
-		router.replace('?setidentity=true', '/opengov');
+		if (router.query?.setidentity) {
+			router.replace('?setidentity=true', '/opengov');
+		}
 	};
 
 	useEffect(() => {
-		const address = localStorage.getItem('identityAddress') || '';
-		setAddress(address);
-		form.setFieldValue('address', address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [txFee, step]);
+		if (!api || !apiReady || !loginAddress) return;
 
-	const handleConfirm = (address: string) => {
-		setOpen(true);
-		openAddressModal ? openAddressModal?.(false) : setOpenAddressLinkedModal(false);
-		setAddress(address);
-		form.setFieldValue('address', address);
-	};
+		if (loginAddress && !identityAddress) {
+			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
+		}
+		form.setFieldValue('address', identityAddress || loginAddress);
+
+		let unsubscribe: () => void;
+		const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
+
+		api.derive.accounts
+			.info(encoded_addr, (info: DeriveAccountInfo) => {
+				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
+				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
+				const unverified = judgementProvided || !info?.identity?.judgements?.length;
+				const identity = info?.identity;
+
+				if (identity.display) {
+					getIdentityHash();
+				}
+
+				form.setFieldValue('displayName', identity?.display || '');
+				form.setFieldValue('legalName', identity?.legal || '');
+				form.setFieldValue('email', identity?.email || '');
+				form.setFieldValue('twitter', identity?.twitter || '');
+
+				dispatch(
+					onchainIdentityActions.updateOnchainIdentityStore({
+						...identityDetails,
+						displayName: identity?.display || '',
+						identityInfo: {
+							alreadyVerified: !unverified,
+							displayName: identity.display || '',
+							email: identity.email || '',
+							isIdentitySet: !!identity.display,
+							legalName: identity.legal || '',
+							riot: identity.riot || '',
+							twitter: identity.twitter || '',
+							web: identity.web || ''
+						},
+						legalName: identity?.legal || '',
+						socials: {
+							...socials,
+							email: { ...socials.email, value: identity?.email || '' },
+							twitter: { ...socials.twitter, value: identity?.twitter || '' }
+						},
+						userId: userId || null
+					})
+				);
+			})
+			.then((unsub) => {
+				unsubscribe = unsub;
+			})
+			.catch((e) => console.error(e));
+
+		getTxFee();
+		return () => unsubscribe && unsubscribe();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, loginAddress, identityAddress]);
 
 	return (
-		<>
-			{(addressModal ? addressModal : openAddressLinkedModal) && (
-				<AddressConnectModal
-					closable
-					open={addressModal ? addressModal : openAddressLinkedModal}
-					setOpen={openAddressModal ? openAddressModal : setOpenAddressLinkedModal}
-					walletAlertTitle='On chain identity.'
-					localStorageWalletKeyName='identityWallet'
-					localStorageAddressKeyName='identityAddress'
-					onConfirm={(address: string) => handleConfirm(address)}
-				/>
-			)}
+		<div>
+			{/* address connect modal */}
+			<AddressConnectModal
+				open={openAddressModal ? openAddressModal : openAddressSelectModal}
+				setOpen={setOpenAddressModal ? setOpenAddressModal : setOpenAddressSelectModal}
+				walletAlertTitle='On chain identity.'
+				onConfirm={(address: string) => {
+					form.setFieldValue('address', address);
+					dispatch(onchainIdentityActions.setOnchainIdentityAddress(address));
+					setOpen(true);
+				}}
+				localStorageWalletKeyName='identityWallet'
+			/>
+
+			{/* exit modal */}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				maskClosable={false}
@@ -359,7 +197,6 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							onClick={() => {
 								setIsExitModal(false);
 								setOpen(false);
-								handleLocalStorageSetUnverified();
 								setLoading({ ...loading, isLoading: false });
 								router.replace('?setidentity=true', '/opengov');
 							}}
@@ -382,6 +219,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				</div>
 			</Modal>
 
+			{/* identity modal */}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				footer={false}
@@ -398,7 +236,7 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 							<OnChainIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
-						{isIdentityUnverified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
+						{!identityInfo.alreadyVerified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
 							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
 								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>
 								In Progress
@@ -414,62 +252,53 @@ const OnChainIdentity = ({ open, setOpen, openAddressLinkedModal: addressModal, 
 				>
 					{step === ESetIdentitySteps.AMOUNT_BREAKDOWN && (
 						<TotalAmountBreakdown
-							isIdentityAlreadySet={!alreadySetIdentityCredentials.alreadyVerified && alreadySetIdentityCredentials.isIdentitySet}
 							loading={loading?.isLoading}
 							txFee={txFee}
 							perSocialBondFee={perSocialBondFee}
-							changeStep={setStep}
-							alreadySetIdentityCredentials={alreadySetIdentityCredentials}
-							address={address}
 							setStartLoading={setLoading}
+							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 						/>
 					)}
 					{step === ESetIdentitySteps.SET_IDENTITY_FORM && (
 						<IdentityForm
-							alreadySetIdentityCredentials={alreadySetIdentityCredentials}
-							setIsIdentityCallDone={setIsIdentityCallDone}
 							className='mt-3'
 							txFee={txFee}
-							name={name}
 							form={form}
-							wallet={currentWallet}
-							onChangeName={setName}
-							socials={socials}
-							onChangeSocials={setSocials}
-							address={address}
 							setTxFee={setTxFee}
 							setStartLoading={setLoading}
 							onCancel={handleCancel}
 							perSocialBondFee={perSocialBondFee}
-							changeStep={(step) => setStep(step)}
 							closeModal={(open) => setOpen(!open)}
-							setIdentityHash={setIdentityHash}
-							setAddressChangeModalOpen={() => (openAddressModal ? openAddressModal(true) : setOpenAddressLinkedModal(true))}
+							setOpenIdentitySuccessModal={setOpenIdentitySuccessModal}
+							setAddressChangeModalOpen={() => (setOpenAddressModal ? setOpenAddressModal(true) : setOpenAddressSelectModal(true))}
+							changeStep={(step: ESetIdentitySteps) => setStep(step)}
 						/>
 					)}
 					{step === ESetIdentitySteps.SOCIAL_VERIFICATION && (
 						<SocialVerification
-							identityHash={identityHash}
-							socials={socials}
-							address={address}
 							startLoading={setLoading}
 							onCancel={handleCancel}
 							perSocialBondFee={perSocialBondFee}
-							changeStep={setStep}
 							closeModal={(open) => setOpen(!open)}
-							setSocials={setSocials}
-							setOpenSuccessModal={setOpenSuccessModal}
+							changeStep={(step: ESetIdentitySteps) => setStep(step)}
+							setOpenSuccessModal={setOpenJudgementSuccessModal}
 						/>
 					)}
 				</Spin>
 			</Modal>
 			<DelegationSuccessPopup
-				open={openSuccessModal}
-				setOpen={setOpenSuccessModal}
+				open={openJudgementSuccessModal}
+				setOpen={setOpenJudgementSuccessModal}
 				title='On-chain identity verified successfully'
 			/>
-		</>
+			<IdentitySuccessState
+				open={openIdentitySuccessModal}
+				close={(close) => setOpenIdentitySuccessModal(!close)}
+				openPreModal={(pre) => setOpen(pre)}
+				changeStep={(step: ESetIdentitySteps) => setStep(step)}
+			/>
+		</div>
 	);
 };
 
-export default OnChainIdentity;
+export default Identity;

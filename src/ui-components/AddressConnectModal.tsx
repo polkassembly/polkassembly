@@ -286,7 +286,7 @@ const AddressConnectModal = ({
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm?.(address);
+			onConfirm?.(address, wallet);
 			setOpen(false);
 			setLoading(false);
 			dispatch(setConnectAddress(address));

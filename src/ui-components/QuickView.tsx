@@ -17,7 +17,7 @@ import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { message } from 'antd';

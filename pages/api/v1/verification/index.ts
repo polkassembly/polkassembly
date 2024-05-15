@@ -14,6 +14,7 @@ import messages from '~src/auth/utils/messages';
 import { isValidNetwork } from '~src/api-utils';
 import { VerificationStatus } from '~src/types';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import dayjs from 'dayjs';
 
 interface IReq {
 	type: 'email' | 'twitter';
@@ -71,7 +72,8 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			}
 			if (checkingVerified) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 
-			if (emailData?.status === VerificationStatus?.VERFICATION_EMAIL_SENT) {
+			const newDate = dayjs(emailData?.last_email_sent?.toDate() || emailData?.last_email_sent);
+			if (!newDate.isBefore(dayjs().subtract(50, 'seconds'))) {
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 			}
 		}
@@ -104,7 +106,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			await tokenVerificationRef.set({
 				created_at: new Date(),
 				email: account,
-				status: VerificationStatus.VERFICATION_EMAIL_SENT,
+				last_email_sent: new Date(),
 				token: verificationToken,
 				user_id: userId,
 				verified: false

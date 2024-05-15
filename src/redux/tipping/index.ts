@@ -14,7 +14,7 @@ export const tippingStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.network
+				...(action as PayloadAction<any>).payload.tipping
 			};
 		});
 	},

@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { IVerifiedFields } from '../types';
+import { IIdentityInfo } from '../types';
 
-const getIdentitySocialsLength = (alreadySetIdentityCredentials: IVerifiedFields) => {
+const getIdentitySocialsLength = (alreadySetIdentityCredentials: IIdentityInfo) => {
 	const credentials = [alreadySetIdentityCredentials.email, alreadySetIdentityCredentials.riot, alreadySetIdentityCredentials.twitter, alreadySetIdentityCredentials.web];
 	return credentials.filter((cred: string) => !!cred.length)?.length || 0;
 };

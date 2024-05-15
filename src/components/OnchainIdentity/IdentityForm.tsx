@@ -1,36 +1,38 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useContext, useEffect, useState } from 'react';
-import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { Checkbox, Divider, Form, Spin } from 'antd';
-import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
-import { formatedBalance } from '~src/util/formatedBalance';
-import { chainProperties } from '~src/global/networkConstants';
-import styled from 'styled-components';
-import { ApiContext } from '~src/context/ApiContext';
-import BN from 'bn.js';
-import { BN_ONE } from '@polkadot/util';
-import SuccessState from './SuccessState';
-import executeTx from '~src/util/executeTx';
-import { NotificationStatus } from '~src/types';
-import queueNotification from '~src/ui-components/QueueNotification';
-import Balance from '../Balance';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import Address from '~src/ui-components/Address';
-import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
-import { trackEvent } from 'analytics';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
-import Input from '~src/basic-components/Input';
+import React, { useEffect, useState } from 'react';
+import { Checkbox, Divider, Form } from 'antd';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
-import InfoIcon from '~assets/icons/red-info-alert.svg';
-import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
-import { poppins } from 'pages/_app';
+import { trackEvent } from 'analytics';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
-import { IIdentityForm, ITxFee } from './types';
+import { useApiContext } from '~src/context';
+import { IIdentityForm, ITxFee, WHITESPACE } from './types';
+import executeTx from '~src/util/executeTx';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { useDispatch } from 'react-redux';
+import { onchainIdentityActions } from '~src/redux/onchainIdentity';
+import { NotificationStatus } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { MessageType } from '~src/auth/types';
+import messages from '~src/auth/utils/messages';
+import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Address from '~src/ui-components/Address';
+import { poppins } from 'pages/_app';
+import { EmailIcon, InfoIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import Balance from '../Balance';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import BN from 'bn.js';
+import { useTheme } from 'next-themes';
 import { checkIdentityFieldsValidity } from './utils/checkIdentityFieldsValidity';
+import { BN_ONE } from '@polkadot/util';
+import styled from 'styled-components';
+import Input from '~src/basic-components/Input';
+import IdentityTxBreakdown from './identityTxFeeBreakDown';
+import IdentityFormActionButtons from './IdentityFormActionButtons';
+import allowSetIdentity from './utils/allowSetIdentity';
 
 const ZERO_BN = new BN(0);
 
@@ -38,50 +40,34 @@ interface ValueState {
 	info: Record<string, unknown>;
 	okAll: boolean;
 }
-
-const WHITESPACE = [' ', '\t'];
-
 const IdentityForm = ({
-	className,
-	form,
-	address,
-	txFee,
-	name,
-	socials,
-	onChangeName,
-	onChangeSocials,
-	setTxFee,
-	setStartLoading,
+	closeModal,
 	onCancel,
 	perSocialBondFee,
-	alreadySetIdentityCredentials,
-	changeStep,
-	closeModal,
-	setIsIdentityCallDone,
-	setIdentityHash,
 	setAddressChangeModalOpen,
-	wallet
+	setStartLoading,
+	setTxFee,
+	txFee,
+	className,
+	form,
+	setOpenIdentitySuccessModal
 }: IIdentityForm) => {
+	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
-	const { resolvedTheme: theme } = useTheme();
-	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
-	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const [hideDetails, setHideDetails] = useState<boolean>(false);
-	const { api, apiReady } = useContext(ApiContext);
-	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
-	const { displayName, legalName } = name;
-	const { email, twitter } = socials;
-	const [open, setOpen] = useState<boolean>(false);
-	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
-	const [loading, setLoading] = useState<boolean>(false);
+	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
+	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
+	const { resolvedTheme: theme } = useTheme();
+	const { email, twitter } = socials;
+	const { bondFee, gasFee, registerarFee, minDeposite } = txFee;
+	const [{ info, okAll }, setInfo] = useState<ValueState>({ info: {}, okAll: false });
+	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState('');
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
-	const totalFee = gasFee.add(
-		bondFee?.add(registerarFee?.add(!!alreadySetIdentityCredentials?.alreadyVerified || !!alreadySetIdentityCredentials.isIdentitySet ? ZERO_BN : minDeposite))
-	);
+	const [loading, setLoading] = useState<boolean>(false);
+	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -92,24 +78,93 @@ const IdentityForm = ({
 		}
 	};
 
-	useEffect(() => {
-		getProxies(address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address]);
-
-	const handleLocalStorageSave = (field: any) => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
+	const handleIdentityHashSave = async (hash: string) => {
+		if (!hash) return;
+		const { data, error } = await nextApiClientFetch<MessageType>(`api/v1/verification/save-identity-hash?identityHash=${hash}`);
+		if (data?.message === messages.SUCCESS) {
+			console.log('Identity hash successfully save');
+		} else {
+			console.log(error);
 		}
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...data,
-				...field
-			})
-		);
 	};
+
+	const handleSetIdentity = async (requestJudgement: boolean) => {
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+			// GAEvent for request judgement button clicked
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+		} else {
+			// GAEvent for set identity button clicked
+			trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
+		}
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+		if (requestJudgement && identityInfo?.alreadyVerified) return;
+
+		let tx;
+		if (requestJudgement) {
+			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+		} else {
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			const identityTx = api.tx?.identity?.setIdentity(info);
+			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+		}
+
+		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
+
+		const onSuccess = async () => {
+			const identityHash = await api?.query?.identity
+				?.identityOf(identityAddress)
+				.then((res: any) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
+			if (!identityHash) {
+				setStartLoading({ isLoading: false, message: '' });
+				console.log('Error in unwraping identityHash');
+			}
+			setStartLoading({ isLoading: false, message: '' });
+			closeModal(true);
+			setOpenIdentitySuccessModal(true);
+			localStorage.setItem('isIdentityCallDone', 'true');
+			dispach(onchainIdentityActions.setOnchainIdentityHash(identityHash));
+			await handleIdentityHashSave(identityHash);
+		};
+		const onFailed = () => {
+			queueNotification({
+				header: 'failed!',
+				message: 'Transaction failed!',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+			setStartLoading({ isLoading: false, message: '' });
+		};
+
+		let payload: any = {
+			address: identityAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+			tx
+		};
+
+		if (selectedProxyAddress?.length && showProxyDropdown) {
+			payload = {
+				...payload,
+				proxyAddress: selectedProxyAddress || ''
+			};
+		}
+
+		await executeTx(payload);
+	};
+
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
 
@@ -125,16 +180,16 @@ const IdentityForm = ({
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
-		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email')) {
+		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !identityAddress) {
 			setTxFee({ ...txFeeVal, gasFee: ZERO_BN });
 			return;
 		}
 
 		let tx = api.tx.identity.setIdentity(info);
-		let signingAddress = address;
+		let signingAddress = identityAddress;
 		setLoading(true);
 		if (selectedProxyAddress?.length && showProxyDropdown) {
-			tx = api?.tx?.proxy.proxy(address, null, api.tx.identity.setIdentity(info));
+			tx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
 			signingAddress = selectedProxyAddress;
 		}
 
@@ -158,10 +213,10 @@ const IdentityForm = ({
 		// const okWeb = checkIdentityFieldsValidity((webVal).length > 0, (webVal), 8, ['.'], WHITESPACE, ['https://', 'http://']);
 
 		let okSocials = 1;
-		if (okEmail && emailVal.length > 0 && alreadySetIdentityCredentials?.email !== emailVal) {
+		if (okEmail && emailVal.length > 0 && identityInfo?.email !== emailVal) {
 			okSocials += 1;
 		}
-		if (okTwitter && twitterVal.length > 0 && alreadySetIdentityCredentials?.twitter !== twitterVal) {
+		if (okTwitter && twitterVal.length > 0 && identityInfo?.twitter !== twitterVal) {
 			okSocials += 1;
 		}
 
@@ -170,9 +225,9 @@ const IdentityForm = ({
 				display: { [okDisplay ? 'raw' : 'none']: displayNameVal || null },
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
-				riot: { [alreadySetIdentityCredentials.riot.length > 0 ? 'raw' : 'none']: alreadySetIdentityCredentials.riot.length > 0 ? alreadySetIdentityCredentials.riot : null },
+				riot: { [identityInfo?.riot.length > 0 ? 'raw' : 'none']: identityInfo?.riot.length > 0 ? identityInfo?.riot : null },
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
-				web: { [alreadySetIdentityCredentials.web.length > 0 ? 'raw' : 'none']: alreadySetIdentityCredentials.web.length > 0 ? alreadySetIdentityCredentials.web : null }
+				web: { [identityInfo?.web.length > 0 ? 'raw' : 'none']: identityInfo?.web.length > 0 ? identityInfo?.web : null }
 			},
 			okAll: twitterVal.length
 				? okDisplay && okEmail && okLegal && okTwitter && displayNameVal?.length > 1 && !!emailVal && !!twitterVal
@@ -188,113 +243,9 @@ const IdentityForm = ({
 
 	useEffect(() => {
 		handleInfo(true);
+		getProxies(identityAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const handleAllowSetIdentity = () => {
-		const displayNameVal = form.getFieldValue('displayName')?.trim();
-		const legalNameVal = form.getFieldValue('legalName')?.trim();
-		const emailVal = form.getFieldValue('email')?.trim();
-		const twitterVal = form.getFieldValue('twitter').trim();
-		const condition =
-			displayNameVal === alreadySetIdentityCredentials?.displayName &&
-			emailVal === alreadySetIdentityCredentials?.email &&
-			legalNameVal === alreadySetIdentityCredentials?.legalName;
-
-		if (alreadySetIdentityCredentials.twitter?.length || twitterVal?.length) {
-			return twitterVal === alreadySetIdentityCredentials?.twitter && condition;
-		}
-		return condition;
-	};
-
-	const handleIdentityHashSave = async (hash: string) => {
-		if (!hash) return;
-		const { data, error } = await nextApiClientFetch(`api/v1/verification/save-identity-hash?identityHash=${hash}`);
-		if (data) {
-			console.log('Identity hash successfully save');
-		} else {
-			console.log(error);
-		}
-	};
-
-	const handleSetIdentity = async (requestJudgement: boolean) => {
-		if (alreadySetIdentityCredentials?.email && alreadySetIdentityCredentials?.displayName && handleAllowSetIdentity()) {
-			// GAEvent for request judgement button clicked
-			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
-				userId: currentUser?.id || '',
-				userName: currentUser?.username || ''
-			});
-		} else {
-			// GAEvent for set identity button clicked
-			trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
-				userId: currentUser?.id || '',
-				userName: currentUser?.username || ''
-			});
-		}
-		const registrarIndex = getIdentityRegistrarIndex({ network: network });
-
-		if (!api || !apiReady || !okAll || registrarIndex === null) return;
-		if (requestJudgement && alreadySetIdentityCredentials.alreadyVerified) return;
-
-		let tx;
-		if (requestJudgement) {
-			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-		} else {
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-			const identityTx = api.tx?.identity?.setIdentity(info);
-			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-		}
-
-		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
-
-		const onSuccess = async () => {
-			const identityHash = await api?.query?.identity
-				?.identityOf(address)
-				.then((res) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
-			if (!identityHash) {
-				setStartLoading({ isLoading: false, message: '' });
-				console.log('Error in unwraping identityHash');
-				return;
-			}
-			setIdentityHash(identityHash);
-			setStartLoading({ isLoading: false, message: '' });
-			closeModal(true);
-			setOpen(true);
-			handleLocalStorageSave({ identityHash: identityHash, setIdentity: true });
-			setIsIdentityCallDone(true);
-			await handleIdentityHashSave(identityHash);
-		};
-		const onFailed = () => {
-			queueNotification({
-				header: 'failed!',
-				message: 'Transaction failed!',
-				status: NotificationStatus.ERROR
-			});
-			setLoading(false);
-			setStartLoading({ isLoading: false, message: '' });
-		};
-
-		let payload: any = {
-			address,
-			api,
-			apiReady,
-			errorMessageFallback: 'failed.',
-			network,
-			onFailed,
-			onSuccess,
-			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
-			tx
-		};
-
-		if (selectedProxyAddress?.length && showProxyDropdown) {
-			payload = {
-				...payload,
-				proxyAddress: selectedProxyAddress || ''
-			};
-		}
-
-		await executeTx(payload);
-	};
+	}, [identityAddress]);
 
 	return (
 		<div className={className}>
@@ -302,9 +253,17 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{alreadySetIdentityCredentials.alreadyVerified && handleAllowSetIdentity() && (
+				{(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) && availableBalance && availableBalance.lte(totalFee) && (
 					<Alert
-						className='mb-6'
+						className='mb-6 rounded-[4px]'
+						type='warning'
+						showIcon
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient Available Balance</p>}
+					/>
+				)}
+				{identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
+					<Alert
+						className='mb-6 rounded-[4px]'
 						type='warning'
 						showIcon
 						message={
@@ -314,9 +273,9 @@ const IdentityForm = ({
 						}
 					/>
 				)}
-				{!!alreadySetIdentityCredentials?.email && !!alreadySetIdentityCredentials?.displayName && !alreadySetIdentityCredentials.alreadyVerified && (
+				{!!identityInfo?.email && !!identityInfo?.displayName && !identityInfo?.alreadyVerified && (
 					<Alert
-						className='mb-6'
+						className='mb-6 rounded-[4px]'
 						type='warning'
 						showIcon
 						message={
@@ -333,8 +292,15 @@ const IdentityForm = ({
 						}
 					/>
 				)}
-
-				<div className='mt-6 flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
+				{!identityInfo.email && identityInfo.isIdentitySet && !email.value && (
+					<Alert
+						className='mb-6 rounded-[4px]'
+						type='warning'
+						showIcon
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Please provide your email for request judgement. </p>}
+					/>
+				)}
+				<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-high'>
 						Your Address{' '}
 						<HelperTooltip
@@ -342,9 +308,9 @@ const IdentityForm = ({
 							text='Please note the verification cannot be transferred to another address.'
 						/>
 					</label>
-					{address && (
+					{(!!identityAddress || !!currentUser.loginAddress) && (
 						<Balance
-							address={address}
+							address={identityAddress || currentUser.loginAddress}
 							onChange={handleOnAvailableBalanceChange}
 						/>
 					)}
@@ -352,7 +318,7 @@ const IdentityForm = ({
 				<div className='flex w-full items-end gap-2 text-sm '>
 					<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 						<Address
-							address={address || currentUser.delegationDashboardAddress}
+							address={identityAddress || currentUser.loginAddress}
 							isTruncateUsername={false}
 							displayInline
 						/>
@@ -386,7 +352,7 @@ const IdentityForm = ({
 					<ProxyAccountSelectionForm
 						proxyAddresses={proxyAddresses}
 						theme={theme as string}
-						address={address}
+						address={identityAddress || currentUser.loginAddress}
 						withBalance
 						heading={'Proxy Address'}
 						isUsedInIdentity={true}
@@ -434,9 +400,8 @@ const IdentityForm = ({
 							placeholder='Enter a name for your identity '
 							value={displayName}
 							onChange={(e) => {
-								onChangeName({ ...name, displayName: e.target.value.trim() });
+								dispach(onchainIdentityActions.setOnchainDisplayName(e.target.value.trim()));
 								handleInfo();
-								handleLocalStorageSave({ displayName: e.target.value.trim() });
 							}}
 						/>
 					</Form.Item>
@@ -469,9 +434,8 @@ const IdentityForm = ({
 							placeholder='Enter your full name'
 							value={legalName}
 							onChange={(e) => {
-								onChangeName({ ...name, legalName: e.target.value.trim() });
+								dispach(onchainIdentityActions.setOnchainLegalName(e.target.value.trim()));
 								handleInfo();
-								handleLocalStorageSave({ legalName: e.target.value.trim() });
 							}}
 						/>
 					</Form.Item>
@@ -485,24 +449,6 @@ const IdentityForm = ({
 							text='Please add your social handles that require verification.'
 						/>
 					</label>
-
-					{/* <div className='flex items-center mt-4'>
-					<span className='flex gap-2 w-[150px] items-center mb-6'>
-						<WebIcon className='bg-[#edeff3] rounded-full text-2xl p-2.5'/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Web</span>
-					</span>
-					<Form.Item className='w-full' name='web' rules={[{
-						message: 'Invalid web',
-						validator(rule, value, callback) {
-							if (callback && value.length && !checkIdentityFieldsValidity(web.length > 0, web, 8, ['.'], WHITESPACE, ['https://', 'http://']) ){
-								callback(rule?.message?.toString());
-							}else {
-								callback();
-							}
-						} }]}>
-						<Input name='web' value={web} placeholder='Enter your website address' className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high' onChange={(e) => {onChangeSocials({ ...socials, web: e.target.value }); handleInfo({ webVal: e.target.value });}}/>
-					</Form.Item>
-				</div> */}
 
 					<div className='mt-1 flex items-center  '>
 						<span className='mb-6 flex w-[150px] items-center gap-2'>
@@ -533,15 +479,14 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && alreadySetIdentityCredentials?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
+								addonAfter={email?.verified && identityInfo?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									onChangeSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } });
+									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, email: { ...email, value: e.target.value?.trim() } }));
 									handleInfo();
-									handleLocalStorageSave({ email: { ...email, value: e.target.value?.trim() } });
 								}}
 							/>
 						</Form.Item>
@@ -575,218 +520,42 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && alreadySetIdentityCredentials?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
+								addonAfter={twitter?.verified && identityInfo?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
 								value={twitter?.value}
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
 								onChange={(e) => {
-									onChangeSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } });
+									dispach(onchainIdentityActions.setOnchainSocials({ ...socials, twitter: { ...twitter, value: e.target.value?.trim() } }));
 									handleInfo();
-									handleLocalStorageSave({ twitter: { ...twitter, value: e.target.value?.trim() } });
 								}}
 							/>
 						</Form.Item>
 					</div>
-
-					{/* <div className='flex items-center mt-1'>
-					<span className='flex gap-2 items-center w-[150px] mb-6'>
-						<RiotIcon className='bg-[#edeff3] rounded-full text-xl p-2.5 text-blue-light-helper'/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-high'>Riot</span>
-					</span>
-					<Form.Item name='riot' className='w-full' rules={[{
-						message: 'Invalid riot',
-						validator(rule, value, callback) {
-							if (callback && value.length && !checkIdentityFieldsValidity(riot.length > 0, riot, 6, [':'], WHITESPACE, ['@', '~']) ){
-								callback(rule?.message?.toString());
-							}else {
-								callback();
-							}
-						} }]}>
-						<Input name='riot' value={riot} placeholder='@Yourname.matrix.org' className='h-10 rounded-[4px] text-bodyBlue dark:text-blue-dark-high' onChange={(e) => {onChangeSocials({ ...socials, riot: e.target.value }); handleInfo({ riotVal: e.target.value });}}/>
-					</Form.Item>
-				</div> */}
 				</div>
 			</Form>
-			<span className='flex items-center gap-x-2 text-sm font-semibold'>
-				<span className='text-lightBlue dark:text-blue-dark-medium '>
-					Bond
-					<HelperTooltip
-						className='mx-1'
-						text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
-					/>
-					:
-				</span>
-				<span className='rounded-2xl bg-[#edeff3] px-4 py-1 font-medium text-bodyBlue dark:text-bodyBlue'>
-					{formatedBalance(bondFee.toString(), unit)} {unit}
-				</span>
-			</span>
-			{(!gasFee.eq(ZERO_BN) || loading) && (
-				<Spin spinning={loading}>
-					<Alert
-						className='mt-6 rounded-[4px]'
-						type='info'
-						showIcon
-						message={
-							<span className='text-[13px] font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(totalFee.toString(), unit, 2)} {unit} will be required for this transaction.
-								<span
-									className='ml-1 cursor-pointer text-xs text-pink_primary'
-									onClick={() => setHideDetails(!hideDetails)}
-								>
-									{hideDetails ? 'Show Details' : 'Hide Details'}
-								</span>
-							</span>
-						}
-						description={
-							hideDetails ? (
-								''
-							) : (
-								<div className='mr-[18px] flex flex-col gap-1 text-sm'>
-									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium '>
-											Min. Deposit (Refundable){' '}
-											<HelperTooltip
-												className='ml-1'
-												text='Deposit is refundable and can be redeemed once verification is removed'
-											/>
-										</span>
-										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(minDeposite.toString(), unit, 2)} {unit}
-										</span>
-									</span>
-									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>Gas Fee</span>
-										<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(gasFee.toString(), unit)} {unit}
-										</span>
-									</span>
-									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium '>
-											Bond{' '}
-											<HelperTooltip
-												className='ml-1'
-												text={`${formatedBalance(perSocialBondFee.toString(), unit)} ${unit} per social field`}
-											/>
-										</span>
-										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(bondFee.toString(), unit)} {unit}
-										</span>
-									</span>
-									<span className='flex justify-between text-xs'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>
-											Registrar fees{' '}
-											<HelperTooltip
-												text='Fee charged for on chain verification by registrar.'
-												className='ml-1'
-											/>
-										</span>
-										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(registerarFee.toString(), unit)} {unit}
-										</span>
-									</span>
-									<span className='text-md mt-1 flex justify-between'>
-										<span className='text-lightBlue dark:text-blue-dark-medium'>Total</span>
-										<span className='dark:text-blue-dark-hi font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{formatedBalance(totalFee.toString(), unit, 2)} {unit}
-										</span>
-									</span>
-								</div>
-							)
-						}
-					/>
-				</Spin>
-			)}
-			<div className='-mx-6 mt-6 flex justify-end gap-4 rounded-[4px] border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
-				<CustomButton
-					onClick={onCancel}
-					className='rounded-[4px]'
-					text='Cancel'
-					variant='default'
-					buttonsize='xs'
-				/>
-				{!!alreadySetIdentityCredentials?.email && !!alreadySetIdentityCredentials?.displayName && handleAllowSetIdentity() && !alreadySetIdentityCredentials.alreadyVerified ? (
-					<CustomButton
-						onClick={() => handleSetIdentity(true)}
-						loading={loading}
-						className='rounded-[4px]'
-						text='Request Judgement'
-						variant='primary'
-						width={186}
-					/>
-				) : (
-					<CustomButton
-						disabled={
-							!okAll ||
-							loading ||
-							(availableBalance && availableBalance.lte(totalFee)) ||
-							gasFee.lte(ZERO_BN) ||
-							handleAllowSetIdentity() ||
-							(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)
-						}
-						onClick={() => handleSetIdentity(false)}
-						loading={loading}
-						className={`rounded-[4px] ${
-							(!okAll ||
-								loading ||
-								gasFee.lte(ZERO_BN) ||
-								(availableBalance && availableBalance.lte(totalFee)) ||
-								handleAllowSetIdentity() ||
-								(!!proxyAddresses && proxyAddresses?.length > 0 && showProxyDropdown && !isProxyExistsOnWallet)) &&
-							'opacity-50'
-						}`}
-						text='Set Identity'
-						variant='primary'
-						buttonsize='xs'
-					/>
-				)}
-			</div>
-			<SuccessState
-				open={open}
-				close={(close) => setOpen(!close)}
-				openPreModal={(pre) => closeModal(!pre)}
-				changeStep={changeStep}
+
+			{/* tx amount breakdown */}
+			<IdentityTxBreakdown
+				loading={loading}
+				perSocialBondFee={perSocialBondFee}
 				txFee={txFee}
-				name={name}
-				address={address}
-				socials={socials}
+			/>
+			<IdentityFormActionButtons
+				availableBalance={availableBalance}
+				handleSetIdentity={handleSetIdentity}
+				isProxyExistsOnWallet={isProxyExistsOnWallet}
+				loading={loading}
+				okAll={okAll}
+				onCancel={onCancel}
+				proxyAddresses={proxyAddresses}
+				showProxyDropdown={showProxyDropdown}
+				txFee={txFee}
+				key={'IdentityFormActionButtons'}
 			/>
 		</div>
 	);
 };
-
 export default styled(IdentityForm)`
-	.ant-alert-with-description .ant-alert-icon {
-		font-size: 14px !important;
-		margin-top: 6px;
-	}
-	.ant-alert {
-		padding: 12px;
-	}
-	input::placeholder {
-		font-weight: 400 !important;
-		font-size: 14px !important;
-		line-height: 21px !important;
-		letter-spacing: 0.0025em !important;
-	}
-	input {
-		height: 40px !important;
-		border-radius: 4px 0px 0px 4px;
-		background: transparent !important;
-	}
-	.ant-input-group .ant-input-group-addon {
-		border-radius: 0px 4px 4px 0px !important;
-		background: transparent !important;
-	}
-	.dark input {
-		color: white !important;
-	}
-	.ant-checkbox .ant-checkbox-inner {
-		background-color: transparent !important;
-	}
-	.ant-checkbox-checked .ant-checkbox-inner {
-		background-color: #e5007a !important;
-		border-color: #e5007a !important;
-	}
 	.change-wallet-button {
 		font-size: 10px !important;
 	}

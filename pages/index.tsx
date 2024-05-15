@@ -42,7 +42,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -328,7 +328,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</div>
 			</main>
 			{onchainIdentitySupportedNetwork.includes(network) && (
-				<OnChainIdentity
+				<OnchainIdentity
 					open={openContinuingModal}
 					setOpen={setOpenContinuingModal}
 				/>

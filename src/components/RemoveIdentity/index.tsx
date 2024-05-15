@@ -105,6 +105,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				userId: id || '',
 				userName: username || ''
 			});
+			localStorage.removeItem('isIdentityCallDone');
 			queueNotification({
 				header: 'Success!',
 				message: 'Identity remove successfully!',

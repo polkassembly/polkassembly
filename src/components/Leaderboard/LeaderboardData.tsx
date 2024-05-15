@@ -192,40 +192,44 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			fixed: 'left',
 			key: 'auction',
 			render: (text, record) => (
-				<div className='flex cursor-pointer items-center justify-start'>
-					<div
-						onClick={() => {
-							getUserProfile(record.user);
-							setOpen(true);
-						}}
-					>
-						<ImageIcon
-							src={theme === 'dark' ? '/assets/icons/auctionIcons/delegateDarkIcon.svg' : '/assets/icons/auctionIcons/delegateLightIcon.svg'}
-							alt='delegation-icon'
-							className='icon-container mr-4 cursor-pointer'
-						/>
-					</div>
-					<div
-						onClick={() => {
-							setTippingUser(record.user);
-							setOpenTipping(true);
-						}}
-						className='cursor-pointer'
-					>
-						<ImageIcon
-							src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
-							alt='monetization-icon'
-							className='icon-container mr-4'
-						/>
-					</div>
-					{/* <div className='cursor-not-allowed'>
+				<article>
+					{record.user !== username && (
+						<div className='flex cursor-pointer items-center justify-start'>
+							<div
+								onClick={() => {
+									getUserProfile(record.user);
+									setOpen(true);
+								}}
+							>
+								<ImageIcon
+									src={theme === 'dark' ? '/assets/icons/auctionIcons/delegateDarkIcon.svg' : '/assets/icons/auctionIcons/delegateLightIcon.svg'}
+									alt='delegation-icon'
+									className='icon-container mr-4 cursor-pointer'
+								/>
+							</div>
+							<div
+								onClick={() => {
+									setTippingUser(record.user);
+									setOpenTipping(true);
+								}}
+								className='cursor-pointer'
+							>
+								<ImageIcon
+									src={theme === 'dark' ? '/assets/icons/auctionIcons/monetizationDarkIcon.svg' : '/assets/icons/auctionIcons/monetizationLightIcon.svg'}
+									alt='monetization-icon'
+									className='icon-container mr-4'
+								/>
+							</div>
+							{/* <div className='cursor-not-allowed'>
 						<ImageIcon
 							src={theme === 'dark' ? '/assets/icons/auctionIcons/BookmarkDark.svg' : '/assets/icons/auctionIcons/BookmarkLight.svg'}
 							alt='bookmark-icon'
 							className='icon-container cursor-not-allowed opacity-50'
 						/>
 					</div> */}
-				</div>
+						</div>
+					)}
+				</article>
 			),
 			title: 'Actions',
 			width: 150

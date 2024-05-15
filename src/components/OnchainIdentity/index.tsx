@@ -49,7 +49,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
-		const isIdentityCallDone = localStorage.getItem('isIdentityCallDone') || false;
+		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress}`) || false;
 		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

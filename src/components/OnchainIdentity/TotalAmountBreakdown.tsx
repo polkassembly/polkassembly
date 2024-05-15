@@ -47,7 +47,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
-				localStorage.setItem('isIdentityCallDone', 'true');
+				localStorage.setItem(`isIdentityCallDone_${identityAddress}`, 'true');
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 				setStartLoading({ isLoading: false, message: 'Success!' });
 			};

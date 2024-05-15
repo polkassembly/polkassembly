@@ -175,7 +175,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		if (data) {
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityWallet');
-			localStorage.removeItem('isIdentityCallDone');
+			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
 
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 			setOpenSuccessModal(true);

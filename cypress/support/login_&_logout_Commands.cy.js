@@ -1,6 +1,9 @@
+const loadEnvVars = require('./loadEnvVars');
 
 // Custom command to handle login
 Cypress.Commands.add('login', () => {
+  const { username, password } = loadEnvVars();
+
   // Handle uncaught exceptions
   Cypress.on('uncaught:exception', (err, runnable) => {
     console.error('Uncaught Exception:', err.message);
@@ -20,10 +23,10 @@ Cypress.Commands.add('login', () => {
   cy.wait(1000);
 
   // Fill in the username/email
-  cy.get('input#username').type('paras@polkassembly.io');
+  cy.get('input#username').type(username);
 
   // Fill in the password
-  cy.get('input#password').type('Polka@123');
+  cy.get('input#password').type(password);
 
   // Submit the login form
   cy.get('button[text="Login"][type="submit"]').click();

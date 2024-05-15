@@ -574,7 +574,10 @@ const Post: FC<IPostProps> = (props) => {
 
 									{!isEditing && (
 										<>
-											<PostHeading className='mb-5' />
+											<PostHeading
+												postArguments={post?.proposed_call?.args}
+												className='mb-5'
+											/>
 											<Tabs
 												theme={theme}
 												type='card'

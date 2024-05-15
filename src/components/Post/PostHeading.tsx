@@ -10,7 +10,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
@@ -27,6 +26,8 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import Alert from '~src/basic-components/Alert';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -77,10 +78,11 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 
 interface IPostHeadingProps {
 	className?: string;
+	postArguments?: any;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className } = props;
+	const { className, postArguments } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -167,6 +169,10 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
+	const CancelledReferendaIndices = Object.entries(postArguments).map(([, value]) => {
+		return Number(value);
+	});
+
 	return (
 		<div className={className}>
 			<div className='flex items-center justify-between'>
@@ -184,6 +190,34 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
+			{CancelledReferendaIndices.map((index) => {
+				return (
+					<Alert
+						key={index}
+						message={
+							<div className='flex items-center gap-1'>
+								<a
+									href={`https://${network}.polkassembly.io/referenda/${index}`}
+									target='_blank'
+									rel='noreferrer'
+									className='flex items-center space-x-1 text-xs font-normal text-pink_primary'
+								>
+									Referendum #{index}
+									<ImageIcon
+										src='/assets/icons/redirect.svg'
+										alt='redirection-icon'
+										imgClassName='w-[14px] -mt-[2px]'
+									/>
+								</a>
+								<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>has been initiated to cancel this proposal</span>
+							</div>
+						}
+						showIcon
+						type='warning'
+						className='mb-4 mt-2'
+					/>
+				);
+			})}
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')

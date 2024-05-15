@@ -18,6 +18,7 @@ import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { formatTimestamp } from './utils';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -29,42 +30,57 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [tippingUser, setTippingUser] = useState<string>('');
+	const [currentUserData, setCurrentUserData] = useState<any>();
+	const { username } = useUserDetailsSelector();
 
 	const router = useRouter();
 
-	const getLeaderboardData = async () => {
-		let body;
-		if (searchedUsername && searchedUsername !== '') {
-			body = {
-				username: searchedUsername || ''
-			};
-		} else {
-			body = {
-				page: currentPage
-			};
+	useEffect(() => {
+		if (router.isReady) {
+			getLeaderboardData();
 		}
-		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage, router.isReady, searchedUsername]);
+	useEffect(() => {
+		currentuserData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage]);
 
+	const currentuserData = async () => {
+		if (username) {
+			const body = { username: username };
+			const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
+			if (error) {
+				console.error(error);
+				return;
+			}
+			setCurrentUserData(data?.data);
+		}
+	};
+
+	const currentUserDataSource = currentUserData?.map((item: any, index: number) => ({
+		key: item?.user_id,
+		profileScore: item?.profile_score,
+		rank: currentPage === 1 ? index + 4 : currentPage * 10 + index + 1 - 10,
+		user: item?.username,
+		userImage: item?.image,
+		userSince: formatTimestamp(item?.created_at._seconds)
+	}));
+
+	const getLeaderboardData = async () => {
+		const body = searchedUsername ? { username: searchedUsername } : { page: currentPage };
+		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
 		if (error) {
 			console.error(error);
 			return;
 		}
-
-		if (data) {
-			if (searchedUsername && searchedUsername !== '') {
-				setTableData(data.data);
-				setTotalData(1);
-			} else {
-				setTableData(currentPage === 1 ? data.data.slice(3) : data.data);
-				setTotalData(currentPage === 1 ? 47 : 50);
-			}
+		let modifiedData = data?.data || [];
+		if (!searchedUsername && currentPage === 1) {
+			modifiedData = modifiedData.slice(3);
 		}
+		setTableData(modifiedData);
+		setTotalData(searchedUsername ? 1 : currentPage === 1 ? 47 : 50);
 	};
-
-	useEffect(() => {
-		router.isReady && getLeaderboardData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, router.isReady, searchedUsername]);
 
 	const getUserProfile = async (username: string) => {
 		const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -85,7 +101,21 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			dataIndex: 'rank',
 			fixed: 'left',
 			key: 'rank',
-			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank < 10 ? `0${rank}` : rank}</p>,
+			render: (rank, record) => (
+				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>
+					{record.user === username ? (
+						<ImageIcon
+							className='-ml-2'
+							src='/assets/icons/CircleWavyQuestion.svg'
+							alt=''
+						/>
+					) : rank < 10 ? (
+						`0${rank}`
+					) : (
+						rank
+					)}
+				</p>
+			),
 			title: 'Rank',
 			width: 15
 		},
@@ -211,6 +241,8 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: formatTimestamp(item?.created_at._seconds)
 	}));
 
+	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
+
 	return (
 		<div className={theme}>
 			{address && (
@@ -235,10 +267,14 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			<Table
 				columns={columns}
 				className={`${className} w-full overflow-x-auto`}
-				dataSource={dataSource}
-				pagination={{ pageSize: 10, total: totalData }}
+				dataSource={combinedDataSource}
+				pagination={{ pageSize: 11, total: totalData }}
 				onChange={handleTableChange}
 				theme={theme}
+				rowClassName={(record, index) => {
+					// Check if this is the last row
+					return index === combinedDataSource.length - 1 ? 'last-row' : '';
+				}}
 			></Table>
 		</div>
 	);
@@ -291,5 +327,15 @@ export default styled(LeaderboardData)`
 	}
 	.ant-input {
 		background-color: transparent !important;
+	}
+	td {
+		background-color: transparent !important;
+	}
+	.ant-table-tbody > tr.last-row {
+		background-color: #e2ebff !important;
+	}
+	.ant-table-tbody > tr.last-row > td {
+		border-top: 1px solid #486ddf !important;
+		border-bottom: 1px solid #486ddf !important;
 	}
 `;

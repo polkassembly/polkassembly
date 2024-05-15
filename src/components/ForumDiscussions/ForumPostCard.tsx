@@ -70,7 +70,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	}, [currentPage]);
 
 	return (
-		<div className='mt-6'>
+		<div className='mt-4'>
 			{topics.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((topic, index) => {
 				const { title, id, created_at, reply_count, like_count, tags, views, slug, category_id } = topic;
 				const date = new Date(created_at);

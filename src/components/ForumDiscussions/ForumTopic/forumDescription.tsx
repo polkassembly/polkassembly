@@ -4,10 +4,9 @@
 import { useTheme } from 'next-themes';
 import React from 'react';
 import Markdown from '~src/ui-components/Markdown';
-import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
-import LikeOutlinedDark from '~assets/icons/reactions/LikeOutlinedDark.svg';
 import ShareIcon from '~assets/icons/reactions/ShareIcon.svg';
 import ShareIconDark from '~assets/icons/reactions/ShareIconDark.svg';
+import ForumLikeButton from '../utils/ForumLikeButton';
 
 interface ForumDescriptionProps {
 	description: string;
@@ -43,10 +42,7 @@ const ForumDescription = ({ like_count, description, username }: ForumDescriptio
 				)}
 			</div>
 			<div className=' mt-6 flex items-center justify-between'>
-				<span className='flex w-min cursor-not-allowed items-center gap-1 rounded-md bg-[#F4F6F8] px-2 py-[1.5px] hover:bg-[#ebecee] dark:bg-[#1F1F21] dark:hover:bg-[#313133]'>
-					<span className='mt-1'>{theme == 'dark' ? <LikeOutlinedDark /> : <LikeOutlined />}</span>
-					<span className='text-xs font-semibold text-lightBlue dark:text-icon-dark-inactive'>{like_count}</span>
-				</span>
+				<ForumLikeButton like_count={like_count} />
 				<div
 					onClick={share}
 					className=' cursor-pointer'

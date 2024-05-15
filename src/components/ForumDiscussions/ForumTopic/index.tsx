@@ -116,7 +116,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 					theme={theme}
 					type='card'
 					isPostTab={true}
-					className='ant-tabs-tab-bg-white my-5 font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
+					className='ant-tabs-tab-bg-white mb-2.5 mt-5 font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 					items={tabItems}
 				/>
 				<Divider className='border-l-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />

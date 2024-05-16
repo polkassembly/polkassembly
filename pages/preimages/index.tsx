@@ -93,11 +93,15 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	const { preimages, count } = data;
 
 	const onSearch = (value: string) => {
-		// Update the URL with the new search query
-		router.push({
-			pathname: router.pathname,
-			query: { ...router.query, hash_contains: value, page: 1 }
-		});
+		setSearchQuery(value);
+		router
+			.push({
+				pathname: router.pathname,
+				query: { ...router.query, hash_contains: value, page: 1 }
+			})
+			.then(() => {
+				router.reload();
+			});
 	};
 
 	const onSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {

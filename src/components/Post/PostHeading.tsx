@@ -192,7 +192,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
-			{method && method !== motion_method && (
+			{method && method !== motion_method && method == 'cancel' && (
 				<div>
 					{CancelledReferendaIndices.map((index) => {
 						return (

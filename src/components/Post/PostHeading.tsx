@@ -81,11 +81,10 @@ interface IPostHeadingProps {
 	postArguments?: any;
 	method?: string;
 	motion_method?: string;
-	origin?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className, postArguments } = props;
+	const { className, postArguments, method, motion_method } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -193,7 +192,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
-			{track_name == 'ReferendumCanceller' && (
+			{method && method !== motion_method && (
 				<div>
 					{CancelledReferendaIndices.map((index) => {
 						return (

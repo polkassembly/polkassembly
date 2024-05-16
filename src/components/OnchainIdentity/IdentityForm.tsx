@@ -273,7 +273,7 @@ const IdentityForm = ({
 						}
 					/>
 				)}
-				{!!identityInfo?.email && !!identityInfo?.displayName && !identityInfo?.alreadyVerified && (
+				{!!identityInfo?.email && !!identityInfo?.displayName && !identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
 						type='warning'

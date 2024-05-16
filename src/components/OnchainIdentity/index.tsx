@@ -54,6 +54,13 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		if (loginAddress && !identityAddress) {
+			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	const getTxFee = async () => {
 		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
 
@@ -99,9 +106,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress) return;
 
-		if (loginAddress && !identityAddress) {
-			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
-		}
 		form.setFieldValue('address', identityAddress || loginAddress);
 
 		let unsubscribe: () => void;
@@ -247,7 +251,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			>
 				<Spin
 					spinning={loading?.isLoading}
-					className='-mt-6'
+					className='-mt-5'
 					tip={loading?.message || ''}
 				>
 					{step === ESetIdentitySteps.AMOUNT_BREAKDOWN && (

@@ -183,7 +183,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<CustomButton
 							text='Cancel'
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
-							variant='primary'
+							variant='default'
 							height={40}
 							width={155}
 							disabled={loading.isLoading}

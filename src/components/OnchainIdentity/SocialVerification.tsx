@@ -237,6 +237,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					disabled={handleProceedDisabled()}
 					buttonsize='xs'
 					variant='primary'
+					className={handleProceedDisabled() ? 'opacity-50' : ''}
 				/>
 			</div>
 			<SocialVerificationInprogress

@@ -4,10 +4,11 @@
 /* eslint-disable sort-keys */
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Cascader, TabsProps } from 'antd';
+import { TabsProps } from 'antd';
 import { DiscussionsIcon } from '~src/ui-components/CustomIcons';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
+import Cascader from '~src/ui-components/Cascader';
 
 interface Option {
 	value: string;

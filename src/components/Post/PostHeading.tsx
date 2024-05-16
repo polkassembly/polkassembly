@@ -79,6 +79,9 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 interface IPostHeadingProps {
 	className?: string;
 	postArguments?: any;
+	method?: string;
+	motion_method?: string;
+	origin?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
@@ -190,34 +193,37 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
-			{CancelledReferendaIndices.map((index) => {
-				return (
-					<Alert
-						key={index}
-						message={
-							<div className='flex items-center gap-1'>
-								<a
-									href={`https://${network}.polkassembly.io/referenda/${index}`}
-									target='_blank'
-									rel='noreferrer'
-									className='flex items-center space-x-1 text-xs font-normal text-pink_primary'
-								>
-									Referendum #{index}
-									<ImageIcon
-										src='/assets/icons/redirect.svg'
-										alt='redirection-icon'
-										imgClassName='w-[14px] -mt-[2px]'
-									/>
-								</a>
-								<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>has been initiated to cancel this proposal</span>
-							</div>
-						}
-						showIcon
-						type='warning'
-						className='mb-4 mt-2'
-					/>
-				);
-			})}
+			{track_name == 'ReferendumCanceller' && (
+				<div>
+					{CancelledReferendaIndices.map((index) => {
+						return (
+							<Alert
+								key={index}
+								message={
+									<div className='flex items-center gap-1'>
+										<span className='text-xs font-normal text-[#EA0707] dark:text-blue-dark-medium'>This Referendum has been created to cancel </span>
+										<a
+											href={`https://${network}.polkassembly.io/referenda/${index}`}
+											target='_blank'
+											rel='noreferrer'
+											className='flex items-center space-x-1 text-xs font-normal text-pink_primary'
+										>
+											Referendum #{index}
+											<ImageIcon
+												src='/assets/icons/redirect.svg'
+												alt='redirection-icon'
+												imgClassName='ml-1 w-[14px] -mt-[2px]'
+											/>
+										</a>
+									</div>
+								}
+								type='error'
+								className='mb-4 mt-2'
+							/>
+						);
+					})}
+				</div>
+			)}
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')

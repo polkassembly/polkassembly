@@ -575,6 +575,9 @@ const Post: FC<IPostProps> = (props) => {
 									{!isEditing && (
 										<>
 											<PostHeading
+												method={post?.method}
+												motion_method={post?.motion_method}
+												origin={post?.origin}
 												postArguments={post?.proposed_call?.args}
 												className='mb-5'
 											/>

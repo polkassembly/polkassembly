@@ -1416,7 +1416,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://polkaholic.io',
+		externalLinks: 'https://pendulum.api.subscan.io',
 		gTag: 'G-EGV0NKCPZG',
 		rpcEndpoints: [
 			{

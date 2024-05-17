@@ -27,8 +27,6 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
-import Alert from '~src/basic-components/Alert';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -109,8 +107,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			content,
 			summary,
 			identityId,
-			hash,
-			preimageHash
+			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
@@ -119,7 +116,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
-	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
 
 	const getHistoryData = async () => {
 		try {
@@ -162,29 +158,17 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 
 	useEffect(() => {
-		if (network && track_name) {
-			const isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
-			setIsTreasuryProposal(isTreasuryProposal);
-		}
-
 		if (!identityId || proposer || curator) return;
+
 		(async () => {
 			const proposer = await getProposerFromPolkadot(identityId);
 			setPolkadotProposer(proposer as string);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network]);
+	}, [api, apiReady]);
+
 	return (
 		<div className={className}>
-			{isTreasuryProposal && !preimageHash && (
-				<Alert
-					key={preimageHash}
-					message={<div className='flex items-center gap-1'>No Preimage Found</div>}
-					type='warning'
-					className='mb-4 mt-2'
-					showIcon
-				/>
-			)}
 			<div className='flex items-center justify-between'>
 				{status && (
 					<StatusTag

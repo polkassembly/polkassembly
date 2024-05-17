@@ -133,7 +133,6 @@ export interface IPostResponse {
 	title?: string;
 	beneficiaries?: IBeneficiary[];
 	[key: string]: any;
-	preimageHash?: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -910,7 +909,6 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
-			preimageHash: preimage?.hash || '',
 			proposalHashBlock: postData?.proposalHashBlock || null,
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,

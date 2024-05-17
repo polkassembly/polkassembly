@@ -99,7 +99,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
-			fixed: 'left',
+			// fixed: 'left',
 			key: 'rank',
 			render: (rank, record) => (
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>
@@ -122,7 +122,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		{
 			dataIndex: 'user',
 			filteredValue: [searchedUsername || ''],
-			fixed: 'left',
+			// fixed: 'left',
 			key: 'user',
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
@@ -150,7 +150,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'profileScore',
-			fixed: 'left',
+			// fixed: 'left',
 			key: 'profileScore',
 			render: (profileScore) => (
 				<div
@@ -167,7 +167,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'userSince',
-			fixed: 'left',
+			// fixed: 'left',
 			key: 'userSince',
 			render: (userSince, record) => (
 				<div className='flex w-[120px] items-center justify-start gap-x-1'>
@@ -189,7 +189,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'auction',
-			fixed: 'left',
+			// fixed: 'left',
 			key: 'auction',
 			render: (text, record) => (
 				<article>
@@ -276,15 +276,21 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				onChange={handleTableChange}
 				theme={theme}
 				rowClassName={(record, index) => {
-					// Check if this is the last row
 					return index === combinedDataSource.length - 1 ? 'last-row' : '';
 				}}
-			></Table>
+			/>
 		</div>
 	);
 };
 
 export default styled(LeaderboardData)`
+	.ant-table-wrapper .ant-table-thead > tr > th,
+	.ant-table-wrapper .ant-table-thead > tr > td {
+		background: ${(props: any) => (props.theme === 'dark' ? 'black' : 'white')} !important;
+	}
+	.ant-table-row .ant-table-row-level-0 {
+		background: ${(props: any) => (props.theme === 'dark' ? '#1E1E1E' : 'white')} !important;
+	}
 	.ant-table-thead > tr > th {
 		font-size: 14px !important;
 		font-style: normal;
@@ -341,5 +347,11 @@ export default styled(LeaderboardData)`
 	.ant-table-tbody > tr.last-row > td {
 		border-top: 1px solid #486ddf !important;
 		border-bottom: 1px solid #486ddf !important;
+	}
+	.ant-table-wrapper .ant-table-cell-fix-left {
+		background-color: #fff !important;
+	}
+	.ant-table-content {
+		overflow: auto hidden !important;
 	}
 `;

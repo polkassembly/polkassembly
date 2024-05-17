@@ -1,0 +1,26 @@
+name: Feature Branch CI
+
+on:
+  push:
+    branches:
+      - test
+      - main
+  schedule:
+    - cron: '0 * * * *' # Run every hour
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Install Cypress
+        run: npm install cypress --force
+
+      - name: Run Cypress tests
+        run: npm run test:cypress

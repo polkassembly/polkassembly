@@ -136,7 +136,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 					/>
 					<NameLabel
-						usernameClassName='max-w-[9vw] 2xl:max-w-[12vw] text-sm text-bodyBlue dark:text-white'
+						className={`max-w-[9vw] text-sm text-bodyBlue 2xl:max-w-[12vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
 						// defaultAddress={proposer}
 						username={user}
 						usernameMaxLength={15}
@@ -169,14 +169,14 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			dataIndex: 'userSince',
 			fixed: 'left',
 			key: 'userSince',
-			render: (userSince) => (
+			render: (userSince, record) => (
 				<div className='flex w-[120px] items-center justify-start gap-x-1'>
 					<ImageIcon
 						src='/assets/icons/Calendar.svg'
 						alt='calenderIcon'
 						className='icon-container scale-[0.8]'
 					/>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-white'>{userSince}</p>
+					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-bodyBlue' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
 				</div>
 			),
 			sorter: (a, b) => {

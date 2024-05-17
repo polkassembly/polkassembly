@@ -176,7 +176,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	}, [api, apiReady, network]);
 	return (
 		<div className={className}>
-			{isTreasuryProposal && !preimageHash && (
+			{isTreasuryProposal && !preimageHash && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}
 					message={<div className='flex items-center gap-1'>No Preimage Found</div>}

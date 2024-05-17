@@ -78,8 +78,8 @@ export interface IPostData {
 	history?: IPostHistory[];
 	statusHistory?: any[];
 	identityId?: string | null;
+	preimageHash?: string;
 }
-
 export interface IPostDataContext {
 	postData: IPostData;
 	setPostData: React.Dispatch<React.SetStateAction<IPostData>>;

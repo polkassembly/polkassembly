@@ -13,7 +13,7 @@ export function isExplorerSupport(network: string) {
 }
 
 export function isPolkaholicSupport(network: string) {
-	return ['pendulum', 'amplitude'].includes(network);
+	return ['amplitude'].includes(network);
 }
 
 export function isCereSupport(network: string) {

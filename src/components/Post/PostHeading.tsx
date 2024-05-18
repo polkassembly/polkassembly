@@ -27,6 +27,7 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getPreimageWarning from './utils/getPreimageWarning';
 import Alert from '~src/basic-components/Alert';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 
@@ -120,6 +121,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
 	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
+	const [preimageWarning, setPreimageWarning] = useState<string | null>(null);
 
 	const getHistoryData = async () => {
 		try {
@@ -137,6 +139,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onchainId, proposalType]);
+
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
@@ -161,11 +164,20 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		}
 	};
 
+	const handlePreimageWarning = async () => {
+		if (!api || !apiReady || !(hash && preimageHash)) return;
+		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash });
+		setPreimageWarning(preimageWarning);
+	};
+
 	useEffect(() => {
 		if (network && track_name) {
 			const isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
 			setIsTreasuryProposal(isTreasuryProposal);
 		}
+
+		if (!api || !apiReady) return;
+		handlePreimageWarning();
 
 		if (!identityId || proposer || curator) return;
 		(async () => {
@@ -174,12 +186,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
+
 	return (
 		<div className={className}>
-			{isTreasuryProposal && !preimageHash && proposalType == ProposalType.REFERENDUM_V2 && (
+			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}
-					message={<div className='flex items-center gap-1'>No Preimage Found</div>}
+					message={<div className='flex items-center gap-1'>{preimageWarning}</div>}
 					type='warning'
 					className='mb-4 mt-2'
 					showIcon

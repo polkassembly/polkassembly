@@ -120,6 +120,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
+	const [cancelledReferendaIndices, setCancelledReferendaIndices] = useState<number[]>([]);
 
 	const getHistoryData = async () => {
 		try {
@@ -171,9 +172,16 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
-	const CancelledReferendaIndices = Object.entries(postArguments).map(([, value]) => {
-		return Number(value);
-	});
+	const CancelledReferendaIndices = () => {
+		if (!postArguments) return;
+		const indices = Object.entries(postArguments).map(([, value]) => Number(value));
+		setCancelledReferendaIndices(indices);
+	};
+
+	useEffect(() => {
+		CancelledReferendaIndices();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postArguments]);
 
 	return (
 		<div className={className}>
@@ -194,7 +202,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			</div>
 			{method && method !== motion_method && method == 'cancel' && (
 				<div>
-					{CancelledReferendaIndices.map((index) => {
+					{cancelledReferendaIndices.map((index) => {
 						return (
 							<Alert
 								key={index}

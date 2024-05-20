@@ -115,6 +115,20 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
 	};
+	const showButton = !!router.query.hash_contains && (router.query.hash_contains as string).trim() !== '';
+	const handleClick = () => {
+		router
+			.push({
+				pathname: '/preimages',
+				query: {
+					hash: '',
+					page: 1
+				}
+			})
+			.then(() => {
+				router.reload();
+			});
+	};
 
 	return (
 		<>
@@ -123,15 +137,27 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 				desc='Discover more about preimages of on chain governance proposals on Polkassembly'
 				network={network}
 			/>
-			<div className='flex justify-between'>
-				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>{count} Preimages</h1>
-				<Input.Search
-					placeholder='Search Hash'
-					onSearch={onSearch}
-					value={searchQuery}
-					onChange={onSearchInputChange}
-					style={{ width: 200 }}
-				/>
+			<div className='mb-2 flex items-center justify-between'>
+				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>
+					{count} {count > 1 ? 'Preimages' : 'Preimage'}
+				</h1>
+				<div className='flex items-center justify-between gap-3'>
+					<Input.Search
+						placeholder='Search Hash'
+						onSearch={onSearch}
+						value={searchQuery}
+						onChange={onSearchInputChange}
+						style={{ width: 200 }}
+					/>
+					{showButton && (
+						<button
+							onClick={handleClick}
+							className='flex cursor-pointer items-center justify-center whitespace-pre rounded-[4px] border-none  bg-pink_primary px-3 py-1.5 font-medium leading-[20px] tracking-[0.01em] text-white shadow-[0px_6px_18px_rgba(0,0,0,0.06)] outline-none sm:-mt-[1px]'
+						>
+							Show All
+						</button>
+					)}
+				</div>
 			</div>
 
 			<div className='rounded-xxl bg-white p-3 shadow-md dark:bg-section-dark-overlay md:p-8'>

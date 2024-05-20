@@ -28,7 +28,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 	}, [network]);
 
 	const handleVerified = async () => {
-		await handleVerify(ESocials.EMAIL);
+		await handleVerify(ESocials.EMAIL, true);
 	};
 
 	return (
@@ -54,7 +54,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 						alt='identity success icon'
 					/>
 					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
-					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check your email!</div>
+					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check primary inbox or spam</div>
 					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
 						<span className='flex shrink-0 dark:text-blue-dark-high'>A verification link has been sent to your mail address</span>
 						<u className='font-medium text-pink_primary'>
@@ -67,6 +67,18 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 							</a>
 						</u>
 					</div>
+					<div className='mt-4 w-full'>
+						<span className='flex  items-center justify-center gap-1 text-lightBlue dark:text-blue-dark-high'>
+							{' '}
+							Regarding any query{' '}
+							<a
+								href='mailto:hello@polkassembly.io'
+								className='text-pink_primary underline'
+							>
+								Contact us
+							</a>
+						</span>
+					</div>
 				</div>
 
 				<CustomButton
@@ -76,7 +88,7 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
-					className='mt-4 w-full'
+					className='mb-2 mt-4 w-full tracking-wide'
 					height={40}
 					variant='primary'
 					text='Verified successfully'

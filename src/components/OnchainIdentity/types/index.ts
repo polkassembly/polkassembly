@@ -76,7 +76,7 @@ export interface IIdentityInProgress {
 	open?: boolean;
 	close: (pre: boolean) => void;
 	openPreModal: (pre: boolean) => void;
-	handleVerify: (pre: ESocials) => Promise<void>;
+	handleVerify: (pre: ESocials, checkingVerified?: boolean) => Promise<void>;
 	changeStep: (pre: ESetIdentitySteps) => void;
 }
 

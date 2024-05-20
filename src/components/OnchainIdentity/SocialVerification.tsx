@@ -117,6 +117,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			checkingVerified: Boolean(checkingVerified),
 			type: fieldName
 		});
+
 		if (error) {
 			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED, false);
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
@@ -133,11 +134,17 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				} else if (ESocials.TWITTER === fieldName) {
 					handleSetStates(fieldName, false, VerificationStatus.PLEASE_VERIFY_TWITTER);
 				}
+			} else if (checkingVerified && data?.message === VerificationStatus.NOT_VERIFIED) {
+				setStatus({ ...status, email: VerificationStatus.NOT_VERIFIED });
 			} else if (!checkingVerified) {
-				setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
 				if (fieldName === ESocials.EMAIL) {
-					closeModal(true);
-					setOpen(true);
+					if (data?.message === VerificationStatus.VERFICATION_EMAIL_SENT) {
+						closeModal(true);
+						setOpen(true);
+						setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
+					} else {
+						setStatus({ ...status, email: VerificationStatus.NOT_VERIFIED });
+					}
 				}
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
@@ -194,9 +201,11 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	};
 
 	useEffect(() => {
-		(async () => {
-			await handleVerify(ESocials.TWITTER, true);
-		})();
+		if (twitter.value.length) {
+			(async () => {
+				await handleVerify(ESocials.TWITTER, true);
+			})();
+		}
 		(async () => {
 			await handleVerify(ESocials.EMAIL, true);
 		})();
@@ -224,6 +233,10 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				className='mt-8'
 				items={items}
 			/>
+
+			<div className='my-2 flex w-full items-center justify-end gap-1 text-xs text-pink_primary hover:underline'>
+				<a href='mailto:hello@polkassembly.io'> Regarding any query Contact us</a>
+			</div>
 			<div className='-ml-10 -mr-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<CustomButton
 					text='Cancel'

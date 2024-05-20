@@ -253,14 +253,17 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) && availableBalance && availableBalance.lte(totalFee) && (
-					<Alert
-						className='mb-6 rounded-[4px]'
-						type='warning'
-						showIcon
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient Available Balance</p>}
-					/>
-				)}
+				{totalFee.gt(ZERO_BN) &&
+					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					availableBalance &&
+					availableBalance.lte(totalFee) && (
+						<Alert
+							className='mb-6 rounded-[4px]'
+							type='warning'
+							showIcon
+							message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
+						/>
+					)}
 				{identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'

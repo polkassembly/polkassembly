@@ -70,8 +70,8 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			if (emailData?.verified) {
 				return res.status(200).json({ message: VerificationStatus.ALREADY_VERIFIED });
 			}
-			if (checkingVerified) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 
+			if (checkingVerified || !emailData?.last_email_sent) return res.status(200).json({ message: VerificationStatus.NOT_VERIFIED });
 			const newDate = dayjs(emailData?.last_email_sent?.toDate() || emailData?.last_email_sent);
 			if (!newDate.isBefore(dayjs().subtract(50, 'seconds'))) {
 				return res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
@@ -98,7 +98,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 			await sgMail
 				.send(message)
 				.then(() => {
-					res.status(200).json({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
+					console.log({ message: VerificationStatus.VERFICATION_EMAIL_SENT });
 				})
 				.catch((error: any) => {
 					return res.status(500).json({ message: error || 'Error sending email' });

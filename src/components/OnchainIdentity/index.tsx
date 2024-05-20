@@ -43,21 +43,16 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const [openJudgementSuccessModal, setOpenJudgementSuccessModal] = useState<boolean>(false);
 	const [openIdentitySuccessModal, setOpenIdentitySuccessModal] = useState<boolean>(false);
 	const [step, setStep] = useState<ESetIdentitySteps>(ESetIdentitySteps.AMOUNT_BREAKDOWN);
-
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
-		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress}`) || false;
-		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
 		if (loginAddress && !identityAddress) {
 			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
 		}
+		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress}`) || false;
+		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

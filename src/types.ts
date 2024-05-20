@@ -786,3 +786,8 @@ export interface IActiveProposalCount {
 			| string
 	]: number;
 }
+
+export enum EASSETS {
+	USDT = '1984',
+	USDC = '1337'
+}

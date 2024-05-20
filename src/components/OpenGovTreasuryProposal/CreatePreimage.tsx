@@ -51,6 +51,7 @@ import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -129,6 +130,7 @@ const CreatePreimage = ({
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -140,7 +142,6 @@ const CreatePreimage = ({
 		if (!preimageHash || preimageLength === null) return false;
 		return !isHex(preimageHash, 256) || !preimageLength || preimageLength === 0;
 	};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const invalidPreimageHash = useCallback(() => checkPreimageHash(preimageLength, preimageHash), [preimageHash, preimageLength]);
 
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
@@ -409,12 +410,41 @@ const CreatePreimage = ({
 
 		beneficiaryAddresses.forEach((beneficiary) => {
 			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
-			if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
+
+			if (genralIndex) {
+				txArr.push(
+					api?.tx?.treasury?.spend(
+						{
+							V3: {
+								assetId: {
+									Concrete: {
+										interior: {
+											X2: [
+												{
+													PalletInstance: '50'
+												},
+												{
+													GeneralIndex: genralIndex
+												}
+											]
+										}
+									}
+								},
+								location: { interior: { X1: { Parachain: '10000' } } }
+							}
+						} as any,
+						balance.toString(),
+						{ V3: { interior: { X1: { AccountId32: { id: getEncodedAddress(beneficiary.address, network), network: null } } } } } as any,
+						null
+					)
+				);
+			} else if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
 			}
 		});
 
 		const proposal = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
+		console.log(txArr);
 		const preimage: any = getState(api, proposal);
 		setLoading(true);
 		const onSuccess = () => {
@@ -441,7 +471,7 @@ const CreatePreimage = ({
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage?.notePreimageTx });
+		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: txArr[0] });
 	};
 
 	const handleSubmit = async () => {
@@ -469,7 +499,7 @@ const CreatePreimage = ({
 		if (!areBeneficiaryAddressesValid) return;
 
 		if (!isPreimage) {
-			if (txFee.gte(availableBalance)) return;
+			// if (txFee.gte(availableBalance)) return;
 		}
 
 		await form.validateFields();
@@ -865,7 +895,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_hash'>
 									<Input
 										name='preimage_hash'
-										className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-10 rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={preimageHash}
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
@@ -877,7 +907,7 @@ const CreatePreimage = ({
 								<Form.Item name='preimage_length'>
 									<Input
 										name='preimage_length'
-										className='h-10 rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+										className='h-10 rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										onChange={(e) => {
 											setPreimageLength(Number(e.target.value));
 											onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
@@ -982,6 +1012,7 @@ const CreatePreimage = ({
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
+												deafultAsset={genralIndex}
 											/>
 										</div>
 									</div>
@@ -1068,7 +1099,6 @@ const CreatePreimage = ({
 									}
 								/>
 							)}
-
 							<div className='-mb-6 mt-6'>
 								<div className='mb-[2px] flex items-center justify-between text-sm text-lightBlue dark:text-blue-dark-medium'>
 									<label>
@@ -1080,17 +1110,26 @@ const CreatePreimage = ({
 											/>
 										</span>
 									</label>
-									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
-										Current Value: <span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
+									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
+										Current Value:{' '}
+										{!genralIndex ? (
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
+										) : (
+											<span className='text-pink_primary'>
+												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+											</span>
+										)}
 									</span>
 								</div>
 								<BalanceInput
 									address={proposerAddress}
+									multipleAssetsAllow={isMultiassetSupportedNetwork(network)}
 									placeholder='Add funding amount'
 									formItemName='funding_amount'
 									theme={theme}
 									balance={fundingAmtToBN()}
 									disabled={true}
+									onAssetConfirm={setGenralIndex}
 								/>
 							</div>
 							<div className='mt-6'>
@@ -1181,7 +1220,7 @@ const CreatePreimage = ({
 													<Input
 														name='at_block'
 														value={String(advancedDetails.atBlockNo?.toString())}
-														className='w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+														className='w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 													/>
 												</Form.Item>
@@ -1221,7 +1260,7 @@ const CreatePreimage = ({
 												>
 													<Input
 														name='after_blocks'
-														className='w-[100px] rounded-[4px] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+														className='w-[100px] rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 														onChange={(e) => handleAdvanceDetailsChange(EEnactment.At_Block_No, e.target.value)}
 													/>
 												</Form.Item>
@@ -1249,7 +1288,7 @@ const CreatePreimage = ({
 							}
 						/>
 					)}
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-section-dark-container'>
 						<Button
 							onClick={() => setSteps({ percent: 100, step: 0 })}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
@@ -1278,7 +1317,7 @@ const CreatePreimage = ({
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
-											!txFee.gte(availableBalance) &&
+											// !txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
 									  )

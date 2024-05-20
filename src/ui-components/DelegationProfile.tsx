@@ -82,7 +82,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 			className='h-[150px]'
 		>
 			<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
-				<div className='flex w-full gap-[34px] '>
+				<div className='flex w-full gap-[34px]'>
 					<div className='w-3/10'>
 						<ImageComponent
 							src={image}

@@ -39,11 +39,6 @@ const TrendingDelegates = () => {
 	const [checkAll, setCheckAll] = useState(true);
 
 	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
 		if (!address) return;
 		if (getEncodedAddress(address, network) && address !== getEncodedAddress(address, network)) {
 			setAddressAlert(true);
@@ -52,6 +47,7 @@ const TrendingDelegates = () => {
 			setAddressAlert(false);
 		}, 5000);
 	}, [network, address]);
+
 	useEffect(() => {
 		// Modify to set checkedList based on allDataSource after fetching data
 		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
@@ -80,6 +76,7 @@ const TrendingDelegates = () => {
 		});
 		if (data) {
 			setDelegatesData(data);
+			console.log(data?.length, data);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -88,6 +85,7 @@ const TrendingDelegates = () => {
 	};
 
 	useEffect(() => {
+		console.log('heree', address, delegationDashboardAddress);
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, delegationDashboardAddress]);
@@ -122,6 +120,7 @@ const TrendingDelegates = () => {
 			setCurrentPage(totalPages);
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
+
 	const addressess = [
 		getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t'),
 		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
@@ -221,7 +220,6 @@ const TrendingDelegates = () => {
 					<CustomButton
 						variant='primary'
 						className={'ml-1 mr-1 justify-around gap-2 px-4 py-1'}
-						// className={`ml-1 mr-1 justify-around gap-2 px-4 py-1 ${disabled && 'opacity-50'}`}
 						height={40}
 						onClick={() => {
 							setOpen(true);
@@ -229,7 +227,6 @@ const TrendingDelegates = () => {
 						}}
 						disabled={
 							!address || !getEncodedAddress(address, network) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress
-							// disabled
 						}
 					>
 						<DelegatesProfileIcon />

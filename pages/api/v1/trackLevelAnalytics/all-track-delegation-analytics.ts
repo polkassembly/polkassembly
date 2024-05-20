@@ -60,9 +60,9 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 					};
 				} else {
 					totalDelegatorsObj[delegation?.from] = {
-						count: totalDelegatorsObj[delegation?.to]?.count + 1,
+						count: totalDelegatorsObj[delegation?.from]?.count + 1,
 						data: [
-							...(totalDelegatorsObj[delegation?.to]?.data || []),
+							...(totalDelegatorsObj[delegation?.from]?.data || []),
 							{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation.to, votingPower: vote.toString() }
 						]
 					};

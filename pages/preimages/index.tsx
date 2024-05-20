@@ -77,11 +77,10 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	useEffect(() => {
 		router.push({
 			pathname: router.pathname,
-			query: { ...router.query, hash_contains: '', page: 1 }
+			query: { ...router.query, page: 1 }
 		});
-		setSearchQuery('');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [searchQuery]);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -104,8 +103,8 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 			});
 	};
 
-	const onSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchQuery(event.target.value);
+	const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery((e.target.value || '').trim());
 	};
 
 	const onPaginationChange = (page: number) => {

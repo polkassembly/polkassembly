@@ -27,12 +27,12 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 		created_at,
 		like_count,
 		id,
-		reply_count,
 		participant_count,
 		category_id,
 		// tags,
 		post_stream: { posts }
 	} = data;
+
 	const { name: cName, username: cUsername, avatar_template: cImg, cooked: description, display_username: dUsername } = posts[0];
 	const { resolvedTheme: theme } = useTheme();
 	const date = new Date(created_at);
@@ -121,8 +121,8 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				/>
 				<Divider className='border-l-1 border-[#D2D8E0B2] dark:border-separatorDark md:inline-block' />
 				<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
-					{reply_count || participant_count || 0}
-					<span className='ml-1'>Comments</span>
+					{participant_count || 0}
+					<span className='ml-1'>{participant_count > 1 ? 'Comments' : 'Comment'}</span>
 				</span>
 				<ForumComments comments={allComments} />
 			</div>

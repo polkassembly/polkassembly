@@ -76,7 +76,6 @@ const TrendingDelegates = () => {
 		});
 		if (data) {
 			setDelegatesData(data);
-			console.log(data?.length, data);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -85,10 +84,9 @@ const TrendingDelegates = () => {
 	};
 
 	useEffect(() => {
-		console.log('heree', address, delegationDashboardAddress);
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, delegationDashboardAddress]);
+	}, [address, delegationDashboardAddress, network]);
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);

@@ -248,7 +248,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
-					gtag('config', ${chainProperties[network].gTag});
+					gtag('config', '${chainProperties[network].gTag}');
 				`}
 					</Script>
 				</>

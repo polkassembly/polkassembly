@@ -15,7 +15,7 @@
     "module": "commonjs", // Change to "commonjs" instead of "esnext"
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": false,
+    "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
     "noFallthroughCasesInSwitch": true,

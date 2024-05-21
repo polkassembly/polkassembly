@@ -47,10 +47,10 @@ interface Props {
 	theme?: string;
 	isBalanceUpdated?: boolean;
 	disabled?: boolean;
-	setIsBalanceSet?: any;
 	multipleAssetsAllow?: boolean;
 	onAssetConfirm?: (pre: string | null) => void;
 	deafultAsset?: string | null;
+	setIsBalanceSet?: (pre: boolean) => void;
 }
 
 const BalanceInput = ({
@@ -170,6 +170,7 @@ const BalanceInput = ({
 												(Number(value) > 0 && value?.split('.')?.[1]?.length && chainProperties[network]?.tokenDecimals < (value?.split('.')?.[1].length || 0)) ||
 												(value.length && Number(value) <= 0))
 										) {
+											setIsBalanceSet?.(false);
 											callback(rule?.message?.toString());
 										} else {
 											callback();

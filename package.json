@@ -10,7 +10,8 @@
     "lint:fix": "next lint --fix",
     "api:bump": "yarn add @polkadot/api @polkadot/api-augment @polkadot/extension-dapp @polkadot/extension-inject @polkadot/react-identicon @polkadot/ui-settings @polkadot/util @polkadot/util-crypto",
     "format": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
+    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "test:cypress": "cypress run --spec 'cypress/e2e/test/*.js'"
   },
   "engines": {
     "node": "18"
@@ -133,7 +134,8 @@
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.2.4",
+    "cypress": "^13.8.1"
   },
   "resolutions": {
     "styled-components": "^6"

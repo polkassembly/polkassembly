@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
+import { GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA, RECEIVED_DELEGATIONS_AND_VOTES_COUNT_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
@@ -118,6 +118,20 @@ export const getDelegatesData = async (network: string, address?: string) => {
 
 	const paDelegatesResults: any[] = [];
 
+	const data = await fetchSubsquid({
+		network,
+		query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA
+	});
+
+	const totalDelegatorsObj: any = {};
+	data['data']?.votingDelegations.map((delegation: { from: string }) => {
+		if (totalDelegatorsObj[delegation?.from] === undefined) {
+			totalDelegatorsObj[delegation?.from] = 1;
+		} else {
+			totalDelegatorsObj[delegation?.from] = totalDelegatorsObj[delegation?.from]?.count + 1;
+		}
+	});
+
 	const paDelegatesSnapshot = await firestore_db.collection('networks').doc(network).collection('pa_delegates').get();
 	if (!paDelegatesSnapshot.empty) {
 		const paDelegatesPromise = paDelegatesSnapshot.docs.map(async (delegate) => {
@@ -133,6 +147,9 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		});
 	}
 	const combinedDelegates = [
+		...Object.keys(totalDelegatorsObj).map((key) => {
+			return { address: key, bio: '' };
+		}),
 		...paDelegatesResults,
 		...W3fDelegates.map((item) => {
 			{
@@ -150,6 +167,12 @@ export const getDelegatesData = async (network: string, address?: string) => {
 	combinedDelegates.map((item) => {
 		const addr = getEncodedAddress(item?.address, network) || item?.address;
 		if (combinedDelegatesUniqueData[addr] === undefined) {
+			if (!item.dataSource) {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					withoutSource: { ...(combinedDelegatesUniqueData[addr]?.withoutSource || {}), ...item }
+				};
+			}
 			if (item?.dataSource === 'nova') {
 				combinedDelegatesUniqueData[addr] = {
 					...(combinedDelegatesUniqueData[addr] || {}),
@@ -176,6 +199,12 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			}
 		}
 		if (combinedDelegatesUniqueData[addr] !== undefined) {
+			if (!item.dataSource) {
+				combinedDelegatesUniqueData[addr] = {
+					...(combinedDelegatesUniqueData[addr] || {}),
+					withoutSource: { ...(combinedDelegatesUniqueData[addr]?.withoutSource || {}), ...item }
+				};
+			}
 			if (item?.dataSource === 'nova') {
 				combinedDelegatesUniqueData[addr] = {
 					...(combinedDelegatesUniqueData[addr] || {}),

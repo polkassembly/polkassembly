@@ -213,7 +213,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 											href={`https://${network}.polkassembly.io/referenda/${index}`}
 											target='_blank'
 											rel='noreferrer'
-											className='flex items-center space-x-1 text-xs font-normal text-pink_primary'
+											className='flex items-center space-x-1 text-xs font-medium text-pink_primary dark:text-pink_light'
 										>
 											Referendum #{index}
 											<ImageIcon

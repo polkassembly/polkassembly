@@ -16,7 +16,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
-import { useApiContext } from '~src/context';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
@@ -24,7 +23,6 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
@@ -66,8 +64,6 @@ const TrendingDelegates = () => {
 	}, [delegatesData, checkedList, checkAll]);
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
-
 		if (!getEncodedAddress(address, network) && address.length > 0) return;
 		setLoading(true);
 

@@ -276,25 +276,30 @@ const IdentityForm = ({
 						}
 					/>
 				)}
-				{!!identityInfo?.email && !!identityInfo?.displayName && !identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
-					<Alert
-						className='mb-6 rounded-[4px]'
-						type='warning'
-						showIcon
-						message={
-							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-								This account has already set social verification. Kindly{' '}
-								<span
-									className='cursor-pointer font-semibold text-pink_primary'
-									onClick={() => handleSetIdentity(true)}
-								>
-									Request Judgement
-								</span>{' '}
-								to complete the process
-							</p>
-						}
-					/>
-				)}
+				{!!identityInfo?.email &&
+					!!identityInfo?.displayName &&
+					!identityInfo?.alreadyVerified &&
+					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
+					availableBalance &&
+					availableBalance.gt(totalFee) && (
+						<Alert
+							className='mb-6 rounded-[4px]'
+							type='warning'
+							showIcon
+							message={
+								<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
+									This account has already set social verification. Kindly{' '}
+									<span
+										className='cursor-pointer font-semibold text-pink_primary'
+										onClick={() => handleSetIdentity(true)}
+									>
+										Request Judgement
+									</span>{' '}
+									to complete the process
+								</p>
+							}
+						/>
+					)}
 				{!identityInfo.email && identityInfo.isIdentitySet && !email.value && (
 					<Alert
 						className='mb-6 rounded-[4px]'

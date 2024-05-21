@@ -7,6 +7,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useOnchainIdentitySelector } from '~src/redux/selectors';
 import { IIdentityFormActionButtons } from './types';
 import allowSetIdentity from './utils/allowSetIdentity';
+import classNames from 'classnames';
 
 const ZERO_BN = new BN(0);
 
@@ -44,7 +45,8 @@ const IdentityFormActionButtons = ({
 				<CustomButton
 					onClick={() => handleSetIdentity(true)}
 					loading={loading}
-					className='rounded-[4px]'
+					disabled={!(availableBalance && availableBalance.gt(totalFee))}
+					className={classNames('rounded-[4px]', !(availableBalance && availableBalance.gt(totalFee)) ? 'opacity-50' : '')}
 					text='Request Judgement'
 					variant='primary'
 					width={186}

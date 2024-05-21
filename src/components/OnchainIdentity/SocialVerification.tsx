@@ -19,6 +19,7 @@ import { useDispatch } from 'react-redux';
 import { onchainIdentityActions } from '~src/redux/onchainIdentity';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SocialVerificationInprogress from './SocialVerificationInprogress';
+import Image from 'next/image';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
@@ -180,14 +181,13 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 		});
 
 		if (data) {
-			localStorage.removeItem('identityAddress');
-			localStorage.removeItem('identityWallet');
-			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
-
-			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 			setOpenSuccessModal(true);
 			closeModal(true);
 			startLoading({ isLoading: false, message: '' });
+			localStorage.removeItem('identityAddress');
+			localStorage.removeItem('identityWallet');
+			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
+			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 			router.replace(isOpenGovSupported(network) ? '/opengov' : '/');
 		} else if (error) {
 			queueNotification({
@@ -234,8 +234,16 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				items={items}
 			/>
 
-			<div className='my-2 flex w-full items-center justify-end gap-1 text-xs text-pink_primary hover:underline'>
-				<a href='mailto:hello@polkassembly.io'> Regarding any query Contact us</a>
+			<div className='-ml-4 mb-4 flex w-full items-center justify-start gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
+				Regarding any query Contact us
+				<a href='mailto:hello@polkassembly.io'>
+					<Image
+						width={16}
+						height={16}
+						src='/assets/icons/redirect.svg'
+						alt=''
+					/>
+				</a>
 			</div>
 			<div className='-ml-10 -mr-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<CustomButton

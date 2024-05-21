@@ -51,7 +51,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (loginAddress && !identityAddress) {
 			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
 		}
-		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress}`) || false;
+		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress || loginAddress}`) || false;
 		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

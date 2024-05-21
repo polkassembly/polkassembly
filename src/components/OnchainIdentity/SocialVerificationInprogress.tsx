@@ -12,6 +12,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ESetIdentitySteps, IIdentityInProgress } from './types';
+import Image from 'next/image';
 
 const SocialVerificationInprogress = ({ className, open, close, openPreModal, handleVerify, changeStep }: IIdentityInProgress) => {
 	const { network } = useNetworkSelector();
@@ -67,17 +68,16 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 							</a>
 						</u>
 					</div>
-					<div className='mt-4 w-full'>
-						<span className='flex  items-center justify-center gap-1 text-lightBlue dark:text-blue-dark-high'>
-							{' '}
-							Regarding any query{' '}
-							<a
-								href='mailto:hello@polkassembly.io'
-								className='text-pink_primary underline'
-							>
-								Contact us
-							</a>
-						</span>
+					<div className='mb-2 mt-4 flex w-full items-center justify-center gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
+						Regarding any query Contact us
+						<a href='mailto:hello@polkassembly.io'>
+							<Image
+								width={16}
+								height={16}
+								src='/assets/icons/redirect.svg'
+								alt=''
+							/>
+						</a>
 					</div>
 				</div>
 

@@ -257,7 +257,8 @@ const TrendingDelegates = () => {
 
 			<Spin spinning={loading}>
 				<div className='min-h-[200px]'>
-					{filteredDelegates.length < 1 ? (
+					{filteredDelegates.length < 1 && !loading ? (
+						//empty state
 						<ImageIcon
 							src='/assets/icons/empty-state-image.svg'
 							alt='empty icon'

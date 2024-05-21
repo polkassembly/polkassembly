@@ -72,15 +72,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
-	const [searchQuery, setSearchQuery] = useState<string | number | readonly string[] | undefined>('');
-
-	useEffect(() => {
-		router.push({
-			pathname: router.pathname,
-			query: { ...router.query, page: 1 }
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchQuery]);
+	const [searchQuery, setSearchQuery] = useState<string | number | readonly string[] | undefined>(router.query.hash_contains || '');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
@@ -121,7 +113,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 			.push({
 				pathname: '/preimages',
 				query: {
-					hash: '',
+					hash_contains: '',
 					page: 1
 				}
 			})

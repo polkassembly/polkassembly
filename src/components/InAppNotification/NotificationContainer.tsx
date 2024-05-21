@@ -36,10 +36,11 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 							target='_blank'
 						>
 							<div className='flex items-start gap-1.5'>
-								{notification.type === EInAppNotificationsType.UNREAD && (
-									<span className={classNames('aspect-square h-2 w-2 rounded-full bg-[#3B47DF]', inPage ? 'mt-[5px]' : 'mt-1')} />
-								)}
-
+								<div>
+									{notification.type === EInAppNotificationsType.UNREAD && (
+										<div className={classNames('aspect-square h-2 w-2 rounded-full bg-[#3B47DF]', inPage ? 'mt-[5px]' : 'mt-1')} />
+									)}
+								</div>
 								<div
 									className={classNames(
 										'flex flex-col items-start',

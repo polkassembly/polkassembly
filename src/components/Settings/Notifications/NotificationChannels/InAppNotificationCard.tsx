@@ -42,12 +42,15 @@ export default function InAppNotificationsCard({ handleEnableDisabled, notificat
 							onChange={(checked) => (!checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.IN_APP, true))}
 						/>
 						<label>
-							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-bodyBlue dark:text-blue-dark-medium'}`}>
+							<span className={`text-sm font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-bodyBlue dark:text-blue-dark-medium'}`}>
 								{notificationEnabled ? 'Enabled' : 'Disabled'}
 							</span>
 						</label>
 					</span>
 				}
+			</h3>
+			<h3 className='token-desktop-container m-0 ml-7 text-sm text-blue-light-high dark:text-blue-dark-high'>
+				{notificationEnabled ? 'You have already enabled your in app notifications' : 'Get Alerts for the governance events you’re interested in!'}
 			</h3>
 			<DisabledConfirmation
 				open={showModal}

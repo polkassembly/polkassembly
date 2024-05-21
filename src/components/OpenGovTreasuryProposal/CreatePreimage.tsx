@@ -499,7 +499,7 @@ const CreatePreimage = ({
 		if (!areBeneficiaryAddressesValid) return;
 
 		if (!isPreimage) {
-			// if (txFee.gte(availableBalance)) return;
+			if (txFee.gte(availableBalance)) return;
 		}
 
 		await form.validateFields();
@@ -1317,7 +1317,7 @@ const CreatePreimage = ({
 											validBeneficiaryAddress &&
 											fundingAmount &&
 											selectedTrack &&
-											// !txFee.gte(availableBalance) &&
+											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
 											!loading
 									  )

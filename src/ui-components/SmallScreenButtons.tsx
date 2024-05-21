@@ -6,13 +6,16 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+import { useRouter } from 'next/router';
 
 const SmallScreenButtons = () => {
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 	return (
-		<div className='z-2000 fixed bottom-0 -ml-2.5 w-full rounded-t-lg bg-[#FFFFFF] p-4 shadow-md dark:bg-section-dark-overlay sm:hidden'>
+		<section className='z-2000 fixed bottom-0 -ml-2.5 w-full rounded-t-lg bg-[#FFFFFF] p-4 shadow-lg dark:bg-section-dark-overlay sm:hidden'>
 			<div className='flex flex-col items-center justify-center gap-3 '>
 				<button
+					onClick={() => router.push('/notFound')}
 					className={
 						'flex h-10 w-full items-center justify-center gap-2 rounded-[8px] border-none bg-pink_primary font-medium text-white shadow-none hover:bg-pink_secondary dark:text-white'
 					}
@@ -26,6 +29,7 @@ const SmallScreenButtons = () => {
 				</button>
 				{delegationSupportedNetworks.includes(network) && (
 					<button
+						onClick={() => router.push('/delegation')}
 						className={
 							'flex h-10 w-full items-center justify-center gap-2  rounded-[8px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary shadow-none'
 						}
@@ -35,7 +39,7 @@ const SmallScreenButtons = () => {
 					</button>
 				)}
 			</div>
-		</div>
+		</section>
 	);
 };
 

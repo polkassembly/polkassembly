@@ -644,7 +644,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								</div>
 							)}
 							{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
-								<div className='flex items-center'>
+								<div className='hidden items-center sm:flex '>
 									<Divider
 										type='vertical'
 										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'

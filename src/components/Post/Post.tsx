@@ -42,6 +42,7 @@ import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useRouter } from 'next/router';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -108,6 +109,7 @@ function formatDuration(duration: any) {
 const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
+	const router = useRouter();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
@@ -631,6 +633,14 @@ const Post: FC<IPostProps> = (props) => {
 					</QuoteCommentContextProvider>
 				</CommentsDataContextProvider>
 			</PostDataContextProvider>
+			<button
+				onClick={() => router.push('/notFound/voting')}
+				className={
+					'z-2000 fixed bottom-0 -ml-[11px] flex h-14 w-full items-center justify-center gap-2 rounded-[8px] border-none bg-pink_primary font-medium text-white shadow-none hover:bg-pink_secondary dark:text-white'
+				}
+			>
+				Cast Your Vote
+			</button>
 			<VoteDataBottomDrawer />
 		</>
 	);

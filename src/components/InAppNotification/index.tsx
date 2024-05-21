@@ -159,7 +159,6 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	}, [userId]);
 
 	useEffect(() => {
-		console.log('heree');
 		getNotifications();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);

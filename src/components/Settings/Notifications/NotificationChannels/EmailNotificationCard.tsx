@@ -47,7 +47,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 					</span>
 				)}
 			</h3>
-			<div className='ml-5'>
+			<div className='ml-7'>
 				<h3 className='token-desktop-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
 					{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}
 				</h3>

@@ -718,7 +718,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										type='vertical'
 										className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden'
 									/>
-									<div className='mr-[2px] flex gap-1'>
+									<div className='mr-[2px] hidden gap-1 sm:flex'>
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
@@ -738,6 +738,29 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 												}}
 											>
 												+{tags.length - 2}
+											</span>
+										)}
+									</div>
+									<div className='mr-[2px] flex gap-1 sm:hidden'>
+										{tags?.slice(0, 1).map((tag, index) => (
+											<div
+												key={index}
+												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											>
+												{tag}
+											</div>
+										))}
+										{tags.length > 1 && (
+											<span
+												className='text-bodyBlue dark:text-blue-dark-high'
+												style={{ background: '#D2D8E080', borderRadius: '20px', padding: '4px 8px' }}
+												onClick={(e) => {
+													e.stopPropagation();
+													e.preventDefault();
+													setTagsModal(true);
+												}}
+											>
+												+{tags.length - 1}
 											</span>
 										)}
 									</div>

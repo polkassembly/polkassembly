@@ -58,7 +58,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
-import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
+
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -74,8 +74,6 @@ import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 interface IUserDropdown {
 	handleSetIdentityClick: any;
@@ -301,8 +299,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
-	const { asPath } = router;
-	const [previousRoute, setPreviousRoute] = useState(asPath);
+	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
@@ -1126,32 +1123,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								Component={Component}
 								pageProps={pageProps}
 							/>
-							<div className='z-2000 rounded-t-2 fixed bottom-0 w-full bg-[#FFFFFF] p-4'>
-								<div className='flex flex-col items-center justify-center gap-3 '>
-									{delegationSupportedNetworks.includes(network) && (
-										<button
-											className={
-												'flex h-10 w-full items-center justify-center gap-2 rounded-md border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary shadow-none'
-											}
-										>
-											<DelegatedProfileIcon className='mr-2' />
-											<span>Delegate</span>
-										</button>
-									)}
-									<CustomButton
-										className='mx-auto mb-1 flex w-full gap-1'
-										variant='primary'
-										height={40}
-									>
-										<ImageIcon
-											src='/assets/icons/create-treasury-proposal-icon.svg'
-											alt='Create Treasury Proposal icon'
-											className='-mt-[2px]'
-										/>
-										Create Proposal
-									</CustomButton>
-								</div>
-							</div>
 						</div>
 					</Layout>
 				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
@@ -1163,32 +1134,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								Component={Component}
 								pageProps={pageProps}
 							/>
-							<div className='z-2000 rounded-t-2 fixed bottom-0 w-full bg-[#FFFFFF] p-4'>
-								<div className='flex flex-col items-center justify-center gap-3 '>
-									{delegationSupportedNetworks.includes(network) && (
-										<button
-											className={
-												'flex h-10 w-full items-center justify-center gap-2 rounded-md border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary shadow-none'
-											}
-										>
-											<DelegatedProfileIcon className='mr-2' />
-											<span>Delegate</span>
-										</button>
-									)}
-									<CustomButton
-										className='mx-auto mb-1 flex w-full gap-1'
-										variant='primary'
-										height={40}
-									>
-										<ImageIcon
-											src='/assets/icons/create-treasury-proposal-icon.svg'
-											alt='Create Treasury Proposal icon'
-											className='-mt-[2px]'
-										/>
-										Create Proposal
-									</CustomButton>
-								</div>
-							</div>
 						</div>
 					</Layout>
 				) : (

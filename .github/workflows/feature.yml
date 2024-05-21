@@ -6,7 +6,7 @@ on:
       - test
       - main
   schedule:
-    - cron: '0 * * * *' # Run every hour
+    - cron: '0 */5 * * *' # Run every 5 hours
 
 jobs:
   test:

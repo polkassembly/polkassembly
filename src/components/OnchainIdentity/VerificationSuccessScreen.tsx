@@ -8,16 +8,9 @@ import { Modal } from 'antd';
 import { useRouter } from 'next/router';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { IVerificationSuccessState } from './types';
 
-interface Props {
-	className?: string;
-	socialHandle?: string;
-	social: string;
-	open: boolean;
-	onClose: (pre: boolean) => void;
-}
-
-const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose }: Props) => {
+const VerificationSuccessScreen = ({ className, open, social, socialHandle, onClose }: IVerificationSuccessState) => {
 	const router = useRouter();
 	const [loading, setLoading] = useState<boolean>(false);
 	return (
@@ -35,7 +28,6 @@ const VerificationSuccessScreen = ({ className, open, social, socialHandle, onCl
 			maskClosable={false}
 		>
 			<div className='-mt-[110px] flex flex-col items-center justify-center'>
-				{/* <SuccessIcon /> */}
 				<ImageIcon
 					src='/assets/icons/success-verification.svg'
 					alt='success verification icon'

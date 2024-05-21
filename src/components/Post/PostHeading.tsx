@@ -26,6 +26,7 @@ import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -84,6 +85,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	const {
 		postData: {
+			assetId,
 			beneficiaries,
 			created_at,
 			status,
@@ -177,7 +179,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				)}
 				{requestedAmt && (
 					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
+						Requested:{' '}
+						{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
 					</h5>
 				)}
 			</div>
@@ -198,6 +201,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			<div className='mb-3'>
 				<>
 					<CreationLabel
+						assetId={assetId}
 						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}

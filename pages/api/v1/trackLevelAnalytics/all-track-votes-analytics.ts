@@ -25,17 +25,6 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
 		const votes: IAnalyticsVoteTrends[] = [];
 
-		const dataPromise = trackNumbers.map(async (trackNumber) => {
-			const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackNumber))?.collection('votes').get();
-
-			trackSnapshot.docs.map((doc) => {
-				const data = doc.data();
-				votes.push(data as IAnalyticsVoteTrends);
-			});
-		});
-
-		await Promise.allSettled(dataPromise);
-
 		if (process.env.IS_CACHING_ALLOWED == '1') {
 			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allTrackVotesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
 			const redisData = await redisGet(redisKey);
@@ -48,6 +37,17 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 				};
 			}
 		}
+
+		const dataPromise = trackNumbers.map(async (trackNumber) => {
+			const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackNumber))?.collection('votes').get();
+
+			trackSnapshot.docs.map((doc) => {
+				const data = doc.data();
+				votes.push(data as IAnalyticsVoteTrends);
+			});
+		});
+
+		await Promise.allSettled(dataPromise);
 
 		if (process.env.IS_CACHING_ALLOWED == '1') {
 			await redisSetex(

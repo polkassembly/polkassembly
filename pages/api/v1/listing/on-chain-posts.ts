@@ -34,6 +34,7 @@ import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-conten
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
+import getAscciiFromHex from '~src/util/getAscciiFromHex';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -103,6 +104,7 @@ export interface IPostListing {
 	spam_users_count?: number;
 	beneficiaries?: string[];
 	allChildBounties?: any[];
+	assetId?: string | null;
 }
 
 export interface IPostsListingResponse {
@@ -297,8 +299,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
 				}
 				let requested = BigInt(0);
+				let assetId: null | string = null;
 				let args = preimage?.proposedCall?.args;
+
 				if (args) {
+					if (args?.assetKind?.assetId?.value?.interior) {
+						const call = args?.assetKind?.assetId?.value?.interior?.value;
+						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+					}
+
 					args = convertAnyHexToASCII(args, network);
 					if (args?.amount) {
 						requested = args.amount;
@@ -376,10 +385,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const topic_id = data?.topic_id;
 
 						return {
+							assetId: assetId || null,
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
 							curator,
-							description,
+							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 							end,
 							gov_type: data.gov_type,
 							hash,
@@ -422,10 +432,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				subsquareTitle = res?.title;
 
 				return {
+					assetId: assetId || null,
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
 					created_at: createdAt,
 					curator,
-					description,
+					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 					end: end,
 					hash: hash || null,
 					identity,
@@ -701,7 +712,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								return {
 									comments_count: commentsQuerySnapshot.data()?.count || 0,
 									created_at: createdAt,
-									description,
+									description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 									end,
 									gov_type: data.gov_type,
 									hash,
@@ -728,7 +739,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
-							description: description || '',
+							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 							end: end,
 							hash: hash || null,
 							post_id: postId,
@@ -826,9 +837,16 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const postDoc = await postDocRef.get();
 					let args = preimage?.proposedCall?.args;
 					let requested = BigInt(0);
+
 					const beneficiaries: string[] = [];
+					let assetId: null | string = null;
 
 					if (args) {
+						if (args?.assetKind?.assetId?.value?.interior) {
+							const call = args?.assetKind?.assetId?.value?.interior?.value;
+							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						}
+
 						args = convertAnyHexToASCII(args, network);
 						if (args?.amount) {
 							requested = args.amount;
@@ -863,11 +881,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const topic_id = data?.topic_id;
 
 							return {
+								assetId: assetId || null,
 								beneficiaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
 								curator,
-								description,
+								description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 								end,
 								gov_type: data.gov_type,
 								hash,
@@ -909,11 +928,12 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
 					return {
+						assetId: assetId || null,
 						beneficiaries,
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
 						curator,
-						description,
+						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 						end: end,
 						hash: hash || null,
 						identity,

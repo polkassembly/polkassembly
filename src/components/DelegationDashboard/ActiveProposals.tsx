@@ -40,7 +40,7 @@ const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, 
 		<div className={`${className} mt-5 rounded-xl bg-white px-8 py-6 dark:bg-section-dark-overlay`}>
 			<div
 				onClick={() => setExpandProposals(!expandProposals)}
-				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08] flex cursor-pointer items-center justify-between'
+				className=' shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex cursor-pointer items-center justify-between'
 			>
 				<div className='jutify-center flex items-center gap-2'>
 					<ActiveProposalsIcon className='mr-1' />

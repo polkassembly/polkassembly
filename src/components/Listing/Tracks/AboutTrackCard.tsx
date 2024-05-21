@@ -483,7 +483,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 				<Divider className='xs:block sm:hidden' />
 
-				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
+				<article className='hidden justify-end px-4 pb-4 pt-0 sm:flex md:hidden md:p-4'>
 					<div className='flex gap-x-1'>
 						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (

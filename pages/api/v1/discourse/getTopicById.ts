@@ -32,7 +32,7 @@ export const fetchTopicDataById = async (id: string): Promise<ApiResponse> => {
 const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> => {
 	storeApiKeyUsage(req);
 
-	if (req.method !== 'GET')
+	if (req.method !== 'POST')
 		return res.status(405).json({
 			data: null,
 			error: 'Invalid Method Request'

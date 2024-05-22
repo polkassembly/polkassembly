@@ -17,7 +17,7 @@ type ApiResponse = {
 
 const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
 
-export const fetchForumTopics = async (pageNumber: number): Promise<ApiResponse> => {
+export const fetchForumTopics = async ({ pageNumber = 0 }: { pageNumber: number }): Promise<ApiResponse> => {
 	const url = `${baseURL}/latest.json?page=${pageNumber}`;
 	try {
 		const response = await fetch(url);
@@ -47,7 +47,7 @@ const handler: NextApiHandler<IForumData | MessageType> = async (req, res) => {
 
 	const { page = '0' } = req.query;
 	const pageNumber = parseInt(page as string);
-	const { data, error } = await fetchForumTopics(pageNumber);
+	const { data, error } = await fetchForumTopics({ pageNumber });
 	if (data) {
 		return res.status(200).json(data);
 	} else {

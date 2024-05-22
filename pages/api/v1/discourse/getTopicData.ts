@@ -6,10 +6,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import messages from '~src/auth/utils/messages';
+import { IForumDataTopicId } from '~src/components/ForumDiscussions/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 type ApiResponse = {
-	data: any;
+	data: IForumDataTopicId | null;
 	error: string | null;
 };
 

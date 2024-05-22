@@ -100,14 +100,20 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	};
 
 	const onPaginationChange = (page: number) => {
-		router.push({
-			query: {
-				page
-			}
-		});
 		handlePaginationChange({ limit: LISTING_LIMIT, page });
+		router
+			.push({
+				query: {
+					page
+				}
+			})
+			.then(() => {
+				router.reload();
+			});
 	};
+
 	const showButton = !!router.query.hash_contains && (router.query.hash_contains as string).trim() !== '';
+
 	const handleClick = () => {
 		router
 			.push({
@@ -121,6 +127,8 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 				router.reload();
 			});
 	};
+
+	const currentPage = parseInt(router.query.page as string, 10) || 1;
 
 	return (
 		<>
@@ -163,6 +171,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 						{!!preimages && preimages.length > 0 && count && count > 0 && count > LISTING_LIMIT && (
 							<Pagination
 								theme={theme}
+								current={currentPage}
 								defaultCurrent={1}
 								pageSize={LISTING_LIMIT}
 								total={count}

@@ -8,11 +8,8 @@ import { Dropdown } from '~src/ui-components/Dropdown';
 import React, { FC, ReactNode, useState } from 'react';
 import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { poppins } from 'pages/_app';
-// import { network as AllNetworks } from '~src/global/networkConstants';
-
 import NameLabel from './NameLabel';
 import TopicTag from './TopicTag';
-// import dayjs from 'dayjs';
 import { getSentimentIcon, getSentimentTitle } from './CommentHistoryModal';
 import { CloseIcon, WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import Link from 'next/link';
@@ -85,6 +82,7 @@ interface ICreationLabelProps {
 	voteData?: any;
 	beneficiaries?: IBeneficiary[];
 	inPostHeading?: boolean;
+	assetId?: null | string;
 }
 
 const CreationLabel: FC<ICreationLabelProps> = (props) => {
@@ -106,7 +104,8 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 		votesArr = [],
 		isRow,
 		voterAddress,
-		inPostHeading
+		inPostHeading,
+		assetId
 	} = props;
 	const relativeCreatedAt = getRelativeCreatedAt(created_at);
 	const [showVotesModal, setShowVotesModal] = useState(false);
@@ -163,6 +162,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								<BeneficiariesListing
 									beneficiaries={beneficiaries}
 									inPostHeading={inPostHeading}
+									assetId={assetId}
 								/>
 							</>
 						)}

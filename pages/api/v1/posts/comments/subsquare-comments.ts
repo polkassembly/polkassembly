@@ -9,6 +9,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { getProfileWithAddress } from '../../auth/data/profileWithAddress';
 import fetchWithTimeout from '~src/api-utils/timeoutFetch';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 
 const urlMapper: any = {
 	[ProposalType.BOUNTIES]: (id: any, network: string) => `https://${network}.subsquare.io/api/treasury/bounties/${id}/comments`,
@@ -80,11 +81,19 @@ const convertReply = async (subSquareReply: any, network: any) => {
 	return res;
 };
 
-const convertDataToComment = async (data: any[], network: string | string[] | undefined) => {
+const convertDataToComment = async (data: any[], network: string | string[] | undefined, proposalType: string, id: string) => {
 	const res = [];
 	for (const comment of data) {
 		const reactionUsers = getReactionUsers(comment.reactions);
 		const replies = await convertReply(comment?.replies || [], network);
+
+		const paReplies = await postsByTypeRef(String(network), proposalType as ProposalType)
+			.doc(String(id))
+			.collection('comments')
+			.doc(comment._id)
+			.collection('replies')
+			.get();
+
 		if (comment.content.trim()) {
 			res.push({
 				comment_reactions: {
@@ -102,7 +111,14 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 				created_at: comment.createdAt,
 				id: comment._id,
 				proposer: comment.author?.address || '',
-				replies,
+				replies: [
+					...replies,
+					...(paReplies.docs || []).map((doc) => ({
+						...doc.data(),
+						created_at: doc.data().created_at?.toDate(),
+						updated_at: doc.data().updated_at?.toDate()
+					}))
+				],
 				updated_at: comment?.updatedAt,
 				user_id: uuid(),
 				username: getTrimmedUsername(comment.author?.username)
@@ -116,7 +132,7 @@ export const getSubSquareComments = async (proposalType: string, network: string
 	try {
 		const url = urlMapper[proposalType]?.(id, network);
 		const data = await (await fetchWithTimeout(url, { timeout: 5000 })).json();
-		const comments = await convertDataToComment(data.items, network);
+		const comments = await convertDataToComment(data.items, network, String(proposalType), String(id));
 		return comments;
 	} catch (error) {
 		return [];

@@ -43,6 +43,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -64,6 +65,7 @@ interface IUserVotesProps {
 }
 
 interface IGovernanceProps {
+	assetId?: null | string;
 	postReactionCount: {
 		'👍': number;
 		'👎': number;
@@ -141,7 +143,8 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		hash,
 		childBountyAmount,
 		parentBounty,
-		allChildBounties
+		allChildBounties,
+		assetId
 	} = props;
 
 	const router = useRouter();
@@ -344,7 +347,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						</div>
 						{!!requestedAmount && (
 							<div className='flex items-center justify-center'>
-								{requestedAmount > 100 ? (
+								{assetId ? (
+									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
+										{getBeneficiaryAmoutAndAsset(assetId, requestedAmount as any)}
+									</span>
+								) : requestedAmount > 100 ? (
 									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
 										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
 									</span>
@@ -363,6 +370,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Markdown
 										className='post-content'
 										md={content}
+										imgHidden={showSimilarPost}
 									/>
 								</p>
 							</h1>

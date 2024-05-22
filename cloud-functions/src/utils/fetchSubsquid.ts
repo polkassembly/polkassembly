@@ -8,7 +8,7 @@ const subsquidUrlMap = {
 	polkadot: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 	moonbeam: 'https://squid.subsquid.io/moonbeam-polkassembly/graphql',
 	moonriver: 'https://squid.subsquid.io/moonriver-polkassembly/graphql',
-	moonbase: 'wss://wss.api.moonbase.moonbeam.network',
+	moonbase: 'https://squid.subsquid.io/moonbase-polkassembly/graphql',
 	rococo: 'https://squid.subsquid.io/rococo-polkassembly/graphql',
 	picasso: 'https://squid.subsquid.io/picasso-polkassembly/graphql',
 	vara: 'https://squid.subsquid.io/vara-polkassembly/graphql',
@@ -23,22 +23,22 @@ interface Args {
 
 export default async function fetchSubsquid({ query, variables, network } : Args) {
 	const body = variables ? { query, variables } : { query };
-
 	if (!(network in subsquidUrlMap)) return;
 
 	const subsquidUrl = subsquidUrlMap[network as keyof typeof subsquidUrlMap];
-	console.log(subsquidUrl);
-	return axios.post(`${subsquidUrl}`, {
+	return axios.post(`${subsquidUrl}`, JSON.stringify({
 		...body
-	},
+	}),
 	{
 		headers: {
 			'Content-Type': 'application/json'
 		}
 	})
 		.then((result) => {
-			console.log('Success');
-			return result;
+			if (result.data) {
+				console.log('Success');
+			}
+			return result.data;
 		})
 		.catch((e) => {
 			console.error('error in fetchSubsquid : ', e);

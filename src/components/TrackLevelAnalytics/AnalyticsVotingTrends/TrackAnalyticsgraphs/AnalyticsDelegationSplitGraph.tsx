@@ -71,9 +71,11 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 		const solo = bnToIntBalance(new BN(item?.solo?.toString())) || 0;
 		return { delegated, solo };
 	};
+
 	const onChange = (value: [number, number]) => {
 		setSelectedRange(value);
 	};
+
 	const data = delegationSplitData.slice(selectedRange[0], selectedRange[1] + 1).map((item) => ({
 		index: `${item.index}`,
 		delegated: item.delegated,
@@ -204,6 +206,7 @@ const AnalyticsDelegationSplitGraph = ({ delegationSplitData, isUsedInAccounts }
 								value={selectedRange}
 								onChange={onChange}
 								marks={marks}
+								included
 								tooltip={{
 									formatter: (value) => {
 										if (value !== undefined && value >= 0 && value < delegationSplitData.length) {

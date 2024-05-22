@@ -29,27 +29,28 @@ interface IProfileData {
 }
 
 const ProfileData = ({ address, className }: IProfileData) => {
+	const { network } = useNetworkSelector();
+	const { api, apiReady } = useApiContext();
 	const [transferableBalance, setTransferableBalance] = useState<BN>(ZERO_BN);
 	const [proposalCount, setProposalCount] = useState(0);
 	const [discussionCount, setDiscussionCount] = useState(0);
 	const [messageApi, contextHolder] = message.useMessage();
 	const { resolvedTheme: theme } = useTheme();
-	const { api, apiReady } = useApiContext();
-	const { network } = useNetworkSelector();
 	const unit = chainProperties[network]?.tokenSymbol;
 	const [profileData, setProfileData] = useState<IGetProfileWithAddressResponse | undefined>();
+	const userAddress = typeof address == 'string' ? address : (address as any)?.interior?.value?.id || '';
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		(async () => {
-			const balances = await userProfileBalances({ address, api, apiReady, network });
+			const balances = await userProfileBalances({ address: userAddress, api, apiReady, network });
 			setTransferableBalance(balances?.transferableBalance || ZERO_BN);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
 	const fetchUsername = async (address: string) => {
-		const substrateAddress = getSubstrateAddress(address);
+		const substrateAddress = getSubstrateAddress(userAddress);
 		if (substrateAddress) {
 			try {
 				const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${substrateAddress}`, undefined, 'GET');
@@ -69,7 +70,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 	};
 
 	useEffect(() => {
-		fetchUsername(address);
+		fetchUsername(userAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
@@ -111,7 +112,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 				<div>
 					<div className='flex gap-x-1'>
 						<Address
-							address={address}
+							address={userAddress}
 							disableIdenticon={true}
 							isProfileView
 							isTruncateUsername={false}
@@ -120,7 +121,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							className='-ml-2 -mt-0.5 flex cursor-pointer items-center'
 							onClick={(e) => {
 								e.preventDefault();
-								copyToClipboard(address);
+								copyToClipboard(userAddress);
 								success();
 							}}
 						>
@@ -152,7 +153,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 					<div className='mt-3'>
 						<EvalutionSummary
 							isProfileView
-							address={address}
+							address={userAddress}
 						/>
 					</div>
 					{profileData?.profile?.badges && profileData?.profile?.badges?.length > 0 && (

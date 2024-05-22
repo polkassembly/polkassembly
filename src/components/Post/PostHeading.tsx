@@ -14,7 +14,7 @@ import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
-// import PostHistoryModal from '~src/ui-components/PostHistoryModal';
+import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
@@ -24,6 +24,9 @@ import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import { IPostHistory } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -82,6 +85,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	const {
 		postData: {
+			assetId,
 			beneficiaries,
 			created_at,
 			status,
@@ -99,19 +103,36 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			tags,
 			track_name,
 			cid,
-			history,
+			// history,
+			content,
 			summary,
 			identityId,
 			hash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
+	const [history, setHistory] = useState<IPostHistory[]>([]);
 
+	const getHistoryData = async () => {
+		try {
+			const { data } = await nextApiClientFetch<IPostHistory[]>(`/api/v1/posts/editHistory?postId=${onchainId}&proposalType=${proposalType}`);
+			if (data) {
+				setHistory(data);
+			}
+		} catch (error) {
+			console.error('Error fetching history data:', error);
+		}
+	};
+
+	useEffect(() => {
+		if (!onchainId && !proposalType) return;
+		getHistoryData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [onchainId, proposalType]);
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
@@ -158,7 +179,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				)}
 				{requestedAmt && (
 					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Requested: {formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
+						Requested:{' '}
+						{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
 					</h5>
 				)}
 			</div>
@@ -179,6 +201,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			<div className='mb-3'>
 				<>
 					<CreationLabel
+						assetId={assetId}
 						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}
@@ -257,7 +280,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{/* {history && history.length > 0 && (
+			{history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -265,7 +288,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)} */}
+			)}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

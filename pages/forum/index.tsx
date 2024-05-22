@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		};
 	}
 	try {
-		const { data, error } = await fetchForumTopics(pageNumber);
+		const { data, error } = await fetchForumTopics({ pageNumber });
 		if (data) {
 			return {
 				props: {

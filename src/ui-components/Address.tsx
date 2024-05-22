@@ -435,7 +435,7 @@ const Address = (props: Props) => {
 														height={20}
 														width={20}
 														alt=''
-														className='ml-1'
+														className='-mt-1 ml-1'
 													/>
 												)}
 											</div>
@@ -455,7 +455,7 @@ const Address = (props: Props) => {
 													height={20}
 													width={20}
 													alt=''
-													className='ml-1'
+													className='-mt-1 ml-1'
 												/>
 											)}
 										</div>

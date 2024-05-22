@@ -18,8 +18,6 @@ const ForumDescription = ({ like_count, description, username }: ForumDescriptio
 	const { resolvedTheme: theme } = useTheme();
 
 	const share = () => {
-		// const twitterHandle = socialsData?.twitter.substring(socialsData.twitter.lastIndexOf('/') + 1);
-
 		let message = `Check out this forum discussion ${username ? `by ${username}` : ''} \n`;
 		message += `On ${global.window.location.href}`;
 

@@ -24,6 +24,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import OffChainTabs from '~src/components/Listing/OffChain/OffChainTabs';
 import OffChainPostsContainer from '~src/components/Listing/OffChain/OffChainPostsContainer';
+import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
 
 interface IDiscussionsProps {
 	data?: IPostsListingResponse;
@@ -133,7 +134,7 @@ const Discussions: FC<IDiscussionsProps> = (props) => {
 					them.
 				</p>
 			</div>
-			{network === 'polkadot' ? (
+			{isForumSupportedNetwork(network) ? (
 				<OffChainTabs
 					posts={posts}
 					defaultPage={page || 1}

@@ -8,11 +8,13 @@ import { fetchForumSubcategory } from 'pages/api/v1/discourse/getDataBySubcatego
 import ForumLayout from 'pages/forum/ForumLayout';
 import React, { useEffect } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import { IForumData } from '~src/components/ForumDiscussions/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const page = context.query.page ? parseInt(context.query.page as string, 10) : 0;
@@ -21,12 +23,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	if (typeof category !== 'string' || typeof subcategory !== 'string') {
 		return { props: { data: null } };
 	}
+
 	const network = getNetworkFromReqHeaders(context.req.headers);
-	if (network !== 'polkadot') {
+
+	if (!isForumSupportedNetwork(network)) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
 			}
 		};
 	}
@@ -63,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface ForumSubCategoryProps {
-	data: ForumData | null;
+	data: IForumData | null;
 	network: string;
 }
 

@@ -5,11 +5,12 @@
 const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
 
 export default function formatAvatarUrl(avatarTemplate: string, size: string): string {
-	if (avatarTemplate.startsWith('/user_avatar')) {
-		return `${baseURL}${avatarTemplate.replace('{size}', size)}`;
-	} else if (avatarTemplate.startsWith('https://avatars')) {
-		return avatarTemplate.replace('{size}', size);
-	} else {
-		return avatarTemplate;
+	switch (true) {
+		case avatarTemplate.startsWith('/user_avatar'):
+			return `${baseURL}${avatarTemplate.replace('{size}', size)}`;
+		case avatarTemplate.startsWith('https://avatars'):
+			return avatarTemplate.replace('{size}', size);
+		default:
+			return avatarTemplate;
 	}
 }

@@ -4,11 +4,14 @@
 // API Handlers
 import type { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch'; // Ensure fetch is imported if running on server-side in Node environment
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import messages from '~src/auth/utils/messages';
+import { IForumData } from '~src/components/ForumDiscussions/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 type ApiResponse = {
-	data: ForumData | null;
+	data: IForumData | null;
 	error: string | null;
 };
 const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
@@ -36,9 +39,9 @@ export const fetchForumSubcategory = async (category: string, subcategory: strin
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+			throw apiErrorWithStatusCode(messages.API_FETCH_ERROR, 400);
 		}
-		const responseData: ForumData = (await response.json()) as ForumData;
+		const responseData: IForumData = (await response.json()) as IForumData;
 		return { data: responseData, error: null };
 	} catch (error: any) {
 		return { data: null, error: error.message || 'Failed to fetch topics' };
@@ -46,25 +49,26 @@ export const fetchForumSubcategory = async (category: string, subcategory: strin
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> => {
+	storeApiKeyUsage(req);
+
 	const { page = '0', category, subcategory } = req.query;
 	const pageNumber = parseInt(page as string, 10);
 
 	if (typeof category !== 'string' || typeof subcategory !== 'string') {
-		res.status(400).json({
+		return res.status(400).json({
 			data: null,
 			error: 'Invalid category or subcategory'
 		});
-		return;
 	}
 
 	const response = await fetchForumSubcategory(category, subcategory, pageNumber);
 	if (!response.data) {
-		res.status(500).json({
+		return res.status(500).json({
 			data: null,
 			error: 'Failed to fetch'
 		});
 	}
-	res.status(200).json(response);
+	return res.status(200).json(response);
 };
 
 export default withErrorHandling(handler);

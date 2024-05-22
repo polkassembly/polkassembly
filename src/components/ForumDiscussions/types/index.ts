@@ -2,14 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-export interface User {
+export interface IForumUser {
 	id: number;
 	username: string;
 	name: string;
 	avatar_template: string;
 }
 
-export interface Topic {
+export interface IForumTopic {
 	id: number;
 	title: string;
 	fancy_title: string;
@@ -40,31 +40,31 @@ export interface Topic {
 	category_id: number;
 	pinned_globally: boolean;
 	featured_link?: string;
-	posters: Poster[];
+	posters: IForumPoster[];
 }
 
-export interface Poster {
+export interface IForumPoster {
 	extras: string;
 	description: string;
 	user_id: number;
 	primary_group_id?: string;
 }
 
-export interface TopicList {
+export interface IForumTopicList {
 	can_create_topic: boolean;
 	per_page: number;
 	top_tags: string[];
-	topics: Topic[];
+	topics: IForumTopic[];
 }
 
-export interface ForumData {
-	users: User[];
+export interface IForumData {
+	users: IForumUser[];
 	primary_groups: any[];
 	flair_groups: any[];
-	topic_list: TopicList;
+	topic_list: IForumTopicList;
 }
 
-export interface ForumPost {
+export interface IForumPost {
 	id: number;
 	name: string;
 	username: string;
@@ -124,7 +124,7 @@ export interface ForumPost {
 	reply_to_user?: ReplyToUser;
 	link_counts?: LinkCount[];
 	polls?: Poll[];
-	replies?: ForumPost[];
+	replies?: IForumPost[];
 }
 
 export interface ActionSummary {
@@ -167,4 +167,31 @@ export interface PollOption {
 	id: string;
 	html: string;
 	votes: number;
+}
+
+export enum ForumCategoryKey {
+	POLKADOT_TECHNOLOGY = 'polkadot-technology',
+	AMBASSADOR_PROGRAMME = 'ambassador-programme',
+	POLKADOT_FORUM_META = 'polkadot-forum-meta',
+	ECOSYSTEM = 'ecosystem',
+	GOVERNANCE = 'governance',
+	UNCATEGORIZED = 'uncategorized'
+}
+
+export interface IOption {
+	value: string;
+	label: string;
+	children?: IOption[];
+}
+
+export enum ForumCategoryId {
+	MISCELLANEOUS = 1,
+	GOVERNANCE = 11,
+	ECOSYSTEM = 24,
+	ECOSYSTEM_DIGEST = 25,
+	POLKADOT_FORUM_META_SUGGESTIONS = 27,
+	AMBASSADOR_PROGRAMME = 30,
+	POLKADOT_FORUM_META = 5,
+	TECH_TALK = 6,
+	POLKADOT_FORUM_META_PROFILES = 9
 }

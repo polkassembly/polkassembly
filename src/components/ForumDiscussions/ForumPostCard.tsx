@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect, useState } from 'react';
-import { Topic } from './types';
+import { IForumTopic } from './types';
 import { Divider } from 'antd';
 import { ClockCircleOutlined, LikeOutlined, EyeFilled } from '@ant-design/icons';
 import { ForumCommentsIcon } from '~src/ui-components/CustomIcons';
@@ -19,7 +19,7 @@ import { useTheme } from 'next-themes';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 interface ForumPostCardProps {
-	topics: Topic[];
+	topics: IForumTopic[];
 }
 
 function formatCount(count: number) {
@@ -30,15 +30,13 @@ function formatCount(count: number) {
 }
 
 const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
-	// const [tagsModal, setTagsModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [usernames, setUsernames] = useState<{ [key: number]: string }>({});
 	const [userImg, setUserImg] = useState<{ [key: number]: string }>({});
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const itemsPerPage = LISTING_LIMIT;
 
-	const fetchUsernames = async (topicsToFetch: Topic[]) => {
+	const fetchUsernames = async (topicsToFetch: IForumTopic[]) => {
 		setIsLoading(true);
 		const userMap: { [key: number]: string } = {};
 		const userImgMap: { [key: number]: string } = {};
@@ -62,8 +60,8 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 	};
 
 	useEffect(() => {
-		const endIndex = currentPage * itemsPerPage;
-		const startIndex = endIndex - itemsPerPage;
+		const endIndex = currentPage * LISTING_LIMIT;
+		const startIndex = endIndex - LISTING_LIMIT;
 		const currentTopics = topics.slice(startIndex, endIndex);
 		fetchUsernames(currentTopics);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +69,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 
 	return (
 		<div className='mt-4'>
-			{topics.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((topic, index) => {
+			{topics.slice((currentPage - 1) * LISTING_LIMIT, currentPage * LISTING_LIMIT).map((topic, index) => {
 				const { title, id, created_at, reply_count, like_count, tags, views, slug, category_id } = topic;
 				const date = new Date(created_at);
 				const username = usernames[id];
@@ -312,7 +310,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 						current={currentPage}
 						onChange={setCurrentPage}
 						total={topics.length}
-						pageSize={itemsPerPage}
+						pageSize={LISTING_LIMIT}
 						showSizeChanger={false}
 						responsive={true}
 					/>

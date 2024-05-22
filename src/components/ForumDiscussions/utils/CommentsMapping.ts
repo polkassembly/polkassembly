@@ -2,11 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 // CommentMapping.ts
-import { ForumPost } from '../types';
+import { IForumPost } from '../types';
 
-export default function CommentMapping(posts: ForumPost[]): ForumPost[] {
-	const postMap: Record<number, ForumPost> = {};
-	const commentTree: ForumPost[] = [];
+export default function CommentMapping(posts: IForumPost[]): IForumPost[] {
+	if (!posts || posts.length === 0) {
+		return [];
+	}
+
+	const postMap: Record<number, IForumPost> = {};
+	const commentTree: IForumPost[] = [];
 
 	posts.forEach((post) => {
 		postMap[post.id] = { ...post, replies: [] };

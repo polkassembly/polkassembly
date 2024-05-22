@@ -3,33 +3,35 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable sort-keys */
 import type { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import { ForumCategoryKey, IForumData } from '~src/components/ForumDiscussions/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import messages from '~src/util/messages';
 
 type ApiResponse = {
-	data: ForumData | null;
+	data: IForumData | null;
 	error: string | null;
 };
 
-export type CategoryKey = 'polkadot-technology' | 'ambassador-programme' | 'polkadot-forum-meta' | 'ecosystem' | 'governance' | 'uncategorized';
 const baseURL = process.env.NEXT_PUBLIC_FORUM_URL;
 
-export const fetchForumCategory = async (category: CategoryKey, pageNumber: number): Promise<ApiResponse> => {
+export const fetchForumCategory = async (category: ForumCategoryKey, pageNumber: number): Promise<ApiResponse> => {
 	const categoryUrlMap = {
-		'polkadot-technology': `${baseURL}/c/polkadot-technology/6/none.json?page=${pageNumber}`,
-		'ambassador-programme': `${baseURL}/c/ambassador-programme/30/none.json?page=${pageNumber}`,
-		governance: `${baseURL}/c/governance/11/none.json?page=${pageNumber}`,
-		uncategorized: `${baseURL}/c/uncategorized/1/none.json?page=${pageNumber}`,
-		'polkadot-forum-meta': `${baseURL}/c/polkadot-forum-meta/5/none.json?page=${pageNumber}`,
-		ecosystem: `${baseURL}/c/ecosystem/24/none.json?page=${pageNumber}`
+		[ForumCategoryKey.POLKADOT_TECHNOLOGY]: `${baseURL}/c/polkadot-technology/6/none.json?page=${pageNumber}`,
+		[ForumCategoryKey.AMBASSADOR_PROGRAMME]: `${baseURL}/c/ambassador-programme/30/none.json?page=${pageNumber}`,
+		[ForumCategoryKey.GOVERNANCE]: `${baseURL}/c/governance/11/none.json?page=${pageNumber}`,
+		[ForumCategoryKey.UNCATEGORIZED]: `${baseURL}/c/uncategorized/1/none.json?page=${pageNumber}`,
+		[ForumCategoryKey.POLKADOT_FORUM_META]: `${baseURL}/c/polkadot-forum-meta/5/none.json?page=${pageNumber}`,
+		[ForumCategoryKey.ECOSYSTEM]: `${baseURL}/c/ecosystem/24/none.json?page=${pageNumber}`
 	};
 	const url = categoryUrlMap[category];
 
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+			throw apiErrorWithStatusCode(messages.API_FETCH_ERROR, 400);
 		}
 		const responseData = await response.json();
 		return {
@@ -44,10 +46,21 @@ export const fetchForumCategory = async (category: CategoryKey, pageNumber: numb
 	}
 };
 
-const handler: NextApiHandler<ForumData | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IForumData | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
 	const { page = '0', category } = req.query;
+
 	const pageNumber = parseInt(page as string);
-	const categoryKey = category as CategoryKey;
+	const categoryKey = category as ForumCategoryKey;
+
+	if (!Object.values(ForumCategoryKey).includes(categoryKey)) {
+		return res.status(400).json({ message: 'Invalid category parameter' });
+	}
+
+	if (isNaN(pageNumber) || pageNumber < 0) {
+		return res.status(400).json({ message: 'Invalid page parameter' });
+	}
 
 	const { data, error } = await fetchForumCategory(categoryKey, pageNumber);
 

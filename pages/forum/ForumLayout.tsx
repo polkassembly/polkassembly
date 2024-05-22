@@ -9,32 +9,32 @@ import { DiscussionsIcon } from '~src/ui-components/CustomIcons';
 import { Tabs } from '~src/ui-components/Tabs';
 import { useTheme } from 'next-themes';
 import Cascader from '~src/ui-components/Cascader';
-
-interface Option {
-	value: string;
-	label: string;
-	children?: Option[];
-}
+import { IOption } from '~src/components/ForumDiscussions/types';
 
 interface ForumLayoutProps {
 	children: React.ReactNode;
+}
+
+enum DiscussionsTabs {
+	PADiscussions = 'PADiscussions',
+	Forum = 'Forum'
 }
 
 const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 	const router = useRouter();
 	const [category, setCategory] = useState<string[] | undefined>(undefined);
 	const { resolvedTheme: theme } = useTheme();
-	const [activeTab, setActiveTab] = useState('Forum');
+	const [activeTab, setActiveTab] = useState<DiscussionsTabs>(DiscussionsTabs.Forum);
 
 	const tabItems: TabsProps['items'] = [
 		{
 			children: <></>,
-			key: 'PADiscussions',
+			key: DiscussionsTabs.PADiscussions,
 			label: <span className='px-1.5'>Polkassembly</span>
 		},
 		{
 			children: <></>,
-			key: 'Forum',
+			key: DiscussionsTabs.Forum,
 			label: (
 				<div className='flex items-center gap-2'>
 					Forum<span className='h-5 w-[34px] rounded-[4px] bg-[#407BFF] px-[6px] text-[10px] font-bold text-white'>NEW</span>
@@ -42,17 +42,18 @@ const ForumLayout: React.FC<ForumLayoutProps> = ({ children }) => {
 			)
 		}
 	];
+
 	const onTabClick = (key: string) => {
-		if (key === 'PADiscussions') {
+		if (key === DiscussionsTabs.PADiscussions) {
 			router.push('/discussions');
-		} else if (key === 'Forum') {
+		} else if (key === DiscussionsTabs.Forum) {
 			router.push('/forum');
 		} else {
-			setActiveTab(key);
+			setActiveTab(key as DiscussionsTabs);
 		}
 	};
 
-	const options: Option[] = [
+	const options: IOption[] = [
 		{ value: 'latest', label: 'Latest' },
 		{ value: 'polkadot-technology', label: 'Tech Talk' },
 		{ value: 'ambassador-programme', label: 'Ambassador Programme' },

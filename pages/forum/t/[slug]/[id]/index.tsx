@@ -3,12 +3,14 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useEffect } from 'react';
 import { GetServerSideProps } from 'next/types';
-import { Topic } from '~src/components/ForumDiscussions/types';
+import { IForumTopic } from '~src/components/ForumDiscussions/types';
 import ForumTopicContainer from '~src/components/ForumDiscussions/ForumTopic';
 import { fetchTopicData } from 'pages/api/v1/discourse/getTopicData';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { slug, id } = context.query;
@@ -20,11 +22,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const safeId = encodeURIComponent(id);
 
 	const network = getNetworkFromReqHeaders(context.req.headers);
-	if (network !== 'polkadot') {
+	if (!isForumSupportedNetwork(network)) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
 			}
 		};
 	}
@@ -61,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface TopicIdProps {
-	data: Topic | null;
+	data: IForumTopic | null;
 	network: string;
 }
 const TopicId: FC<TopicIdProps> = ({ data, network }) => {

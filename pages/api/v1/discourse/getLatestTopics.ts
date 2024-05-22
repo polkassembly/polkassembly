@@ -3,12 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import type { NextApiHandler } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import messages from '~src/auth/utils/messages';
+import { IForumData } from '~src/components/ForumDiscussions/types';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 type ApiResponse = {
-	data: ForumData | null;
+	data: IForumData | null;
 	error: string | null;
 };
 
@@ -19,7 +22,7 @@ export const fetchForumTopics = async (pageNumber: number): Promise<ApiResponse>
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+			throw apiErrorWithStatusCode(messages.API_FETCH_ERROR, 400);
 		}
 		const responseData = await response.json();
 		return {
@@ -34,7 +37,14 @@ export const fetchForumTopics = async (pageNumber: number): Promise<ApiResponse>
 	}
 };
 
-const handler: NextApiHandler<ForumData | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IForumData | MessageType> = async (req, res) => {
+	storeApiKeyUsage(req);
+
+	if (req.method !== 'GET')
+		return res.status(405).json({
+			message: 'Invalid Method Request'
+		});
+
 	const { page = '0' } = req.query;
 	const pageNumber = parseInt(page as string);
 	const { data, error } = await fetchForumTopics(pageNumber);

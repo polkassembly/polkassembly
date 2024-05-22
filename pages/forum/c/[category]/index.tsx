@@ -3,25 +3,29 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
-import { CategoryKey, fetchForumCategory } from 'pages/api/v1/discourse/getDataByCategory';
+import { fetchForumCategory } from 'pages/api/v1/discourse/getDataByCategory';
 import ForumLayout from 'pages/forum/ForumLayout';
 import React, { FC, useEffect } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import { ForumCategoryKey, IForumData } from '~src/components/ForumDiscussions/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const page = context.query.page ? parseInt(context.query.page as string) : 0;
-	const category = context.query.category as CategoryKey;
+	const category = context.query.category as ForumCategoryKey;
+
 	const network = getNetworkFromReqHeaders(context.req.headers);
-	if (network !== 'polkadot') {
+
+	if (!isForumSupportedNetwork(network)) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
 			}
 		};
 	}
@@ -58,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface ForumCategoryProps {
-	data: ForumData | null;
+	data: IForumData | null;
 	network: string;
 }
 

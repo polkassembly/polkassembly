@@ -2,7 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import type { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import messages from '~src/auth/utils/messages';
+import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 type ApiResponse = {
 	data: any;
@@ -17,7 +20,7 @@ export const fetchTopicDataById = async (id: string): Promise<ApiResponse> => {
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+			throw apiErrorWithStatusCode(messages.API_FETCH_ERROR, 400);
 		}
 		const responseData: any = await response.json();
 		return { data: responseData, error: null };
@@ -27,6 +30,14 @@ export const fetchTopicDataById = async (id: string): Promise<ApiResponse> => {
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): Promise<void> => {
+	storeApiKeyUsage(req);
+
+	if (req.method !== 'GET')
+		return res.status(405).json({
+			data: null,
+			error: 'Invalid Method Request'
+		});
+
 	const { id } = req.query;
 
 	if (!id || typeof id !== 'string') {
@@ -40,12 +51,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>): 
 
 	const response = await fetchTopicDataById(safeId);
 	if (!response.data) {
-		res.status(500).json({
+		return res.status(500).json({
 			data: null,
 			error: 'Failed to fetch'
 		});
 	}
-	res.status(200).json(response);
+	return res.status(200).json(response);
 };
 
 export default withErrorHandling(handler);

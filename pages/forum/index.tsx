@@ -5,7 +5,7 @@
 import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import ForumPostsContainer from '~src/components/ForumDiscussions';
-import { ForumData } from '~src/components/ForumDiscussions/types';
+import { IForumData } from '~src/components/ForumDiscussions/types';
 import ForumLayout from './ForumLayout';
 import { fetchForumTopics } from 'pages/api/v1/discourse/getLatestTopics';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -13,15 +13,17 @@ import { useTheme } from 'next-themes';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
+import { isForumSupportedNetwork } from '~src/global/ForumNetworks';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const pageNumber = context.query.page ? parseInt(context.query.page as string) : 0;
 	const network = getNetworkFromReqHeaders(context.req.headers);
-	if (network !== 'polkadot') {
+	if (!isForumSupportedNetwork(network)) {
 		return {
 			props: {},
 			redirect: {
-				destination: '/opengov'
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
 			}
 		};
 	}
@@ -57,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface ForumDiscussionsProps {
-	data: ForumData | null;
+	data: IForumData | null;
 	network: string;
 }
 

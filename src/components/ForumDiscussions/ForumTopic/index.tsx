@@ -29,7 +29,6 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 		id,
 		participant_count,
 		category_id,
-		// tags,
 		post_stream: { posts }
 	} = data;
 

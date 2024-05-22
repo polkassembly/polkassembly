@@ -2,48 +2,36 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import BN from 'bn.js';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-// import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
-import { ILoading, NotificationStatus } from '~src/types';
+import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
+import { ESetIdentitySteps, IAmountBreakDown } from './types';
+import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
 
-interface Props {
-	className?: string;
-	txFee: ITxFee;
-	changeStep: (step: ESetIdentitySteps) => void;
-	perSocialBondFee: BN;
-	loading: boolean;
-	isIdentityAlreadySet: boolean;
-	alreadyVerifiedfields: IVerifiedFields;
-	address: string;
-	setStartLoading: (pre: ILoading) => void;
-}
-const getLearnMoreRedirection = (network: string) => {
-	switch (network) {
-		case AllNetworks.POLKADOT:
-			return 'https://wiki.polkadot.network/docs/learn-identity';
-		case AllNetworks.KUSAMA:
-			return 'https://guide.kusama.network/docs/learn-identity';
-	}
-};
-
-const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields, address, setStartLoading }: Props) => {
+const TotalAmountBreakdown = ({
+	className,
+	txFee,
+	changeStep,
+	perSocialBondFee,
+	loading,
+	isIdentityAlreadySet,
+	alreadySetIdentityCredentials,
+	address,
+	setStartLoading
+}: IAmountBreakDown) => {
 	const { registerarFee, minDeposite } = txFee;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -80,12 +68,13 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 	}, [network, userId]);
 
 	const handleRequestJudgement = async () => {
+		if (alreadySetIdentityCredentials.alreadyVerified) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
+		if (isIdentityAlreadySet && !!alreadySetIdentityCredentials.email) {
 			const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
 			if (!api || !apiReady || registrarIndex === null) return;
@@ -122,9 +111,10 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			setShowAlert(true);
 		}
 	};
+
 	return (
 		<div className={className}>
-			{!isIdentityAlreadySet && showAlert && !alreadyVerifiedfields.email && !alreadyVerifiedfields.twitter && (
+			{(!isIdentityAlreadySet || alreadySetIdentityCredentials.alreadyVerified) && showAlert && !alreadySetIdentityCredentials.email && (
 				<Alert
 					showIcon
 					type='info'
@@ -132,20 +122,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{isIdentityAlreadySet && showAlert && (!alreadyVerifiedfields.email || !alreadyVerifiedfields.twitter) && (
+			{isIdentityAlreadySet && showAlert && !alreadySetIdentityCredentials.email && !alreadySetIdentityCredentials.alreadyVerified && (
 				<Alert
 					showIcon
 					type='info'
 					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue '
-					description={
-						<span className='dark:text-blue-dark-high'>
-							To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.
-						</span>
-					}
+					description={<span className='dark:text-blue-dark-high'>To request judgement from Polkassembly please provide email for verification before requesting judgement.</span>}
 				/>
 			)}
-
-			{/* <AmountBreakdownModalIcon /> */}
 			<ImageIcon
 				alt='amount breakdown identity icon'
 				src='/assets/icons/amount-breakdown-identity.svg'
@@ -160,7 +144,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					<u className='text-pink_primary'>
 						<a
 							className='ml-1 text-sm text-pink_primary'
-							href={getLearnMoreRedirection(network)}
+							href={getIdentityLearnMoreRedirection(network)}
 						>
 							Learn more
 						</a>
@@ -234,11 +218,11 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				/>
 				<button
 					onClick={handleRequestJudgement}
-					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
+					className='mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
 				>
 					Request Judgement
 					<HelperTooltip
-						className='ml-2 w-[20px]'
+						className='ml-2 w-5'
 						text={<span className='break-words'>If you have already set your identity, you can request a judgment directly from here </span>}
 					/>
 				</button>

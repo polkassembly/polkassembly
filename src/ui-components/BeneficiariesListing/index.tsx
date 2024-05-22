@@ -13,9 +13,10 @@ interface Props {
 	className?: string;
 	beneficiaries?: IBeneficiary[];
 	inPostHeading?: boolean;
+	assetId?: string | null;
 }
 
-const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props) => {
+const BeneficiariesListing = ({ className, beneficiaries, inPostHeading, assetId = null }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	if (!beneficiaries || beneficiaries.length === 0) return null;
 
@@ -26,6 +27,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 			<Beneficiary
 				beneficiary={beneficiaries[0]}
 				inPostHeading={inPostHeading}
+				assetId={assetId}
 			/>
 			{beneficiaries.length > 1 && (
 				<span className='flex items-center gap-1'>
@@ -38,6 +40,7 @@ const BeneficiariesListing = ({ className, beneficiaries, inPostHeading }: Props
 										key={index}
 										beneficiary={beneficiary}
 										inPostHeading={inPostHeading}
+										assetId={assetId}
 									/>
 								))}
 							</div>

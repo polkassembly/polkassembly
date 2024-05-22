@@ -25,6 +25,7 @@ export interface ITimelineData {
 }
 
 export interface IPostData {
+	assetId: string | null;
 	beneficiaries?: IBeneficiary[];
 	postIndex: number | string;
 	postType: ProposalType;

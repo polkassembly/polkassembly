@@ -5,44 +5,15 @@ import { useEffect, useState } from 'react';
 import { Spin, Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { ESetIdentitySteps, ISocials } from '.';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { ESocials, ILoading, NotificationStatus, VerificationStatus } from '~src/types';
+import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
-import BN from 'bn.js';
 import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
 import { useApiContext } from '~src/context';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-
-interface Props {
-	className?: string;
-	socials: ISocials;
-	setSocials: (pre: ISocials) => void;
-	address: string;
-	startLoading: (pre: ILoading) => void;
-	onCancel: () => void;
-	changeStep: (pre: ESetIdentitySteps) => void;
-	closeModal: (pre: boolean) => void;
-	perSocialBondFee: BN;
-	identityHash: string;
-	setOpenSuccessModal: (pre: boolean) => void;
-}
-interface ISocialLayout {
-	title: string;
-	description: string;
-	value: string | null;
-	onVerify: () => void;
-	verified?: boolean;
-	status?: VerificationStatus;
-	loading: boolean;
-	fieldName?: ESocials;
-}
-interface IJudgementResponse {
-	message?: string;
-	hash?: string;
-}
+import { ESetIdentitySteps, IIdentitySocialVerifications, IJudgementResponse, ISocialLayout } from './types';
 
 const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
 	return (
@@ -54,7 +25,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<span className='w-[60px] py-1.5 text-sm'>{title}</span>
 				<div className='w-full'>
 					<div
-						className={`flex h-[40px]  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
+						className={`flex h-10  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
 							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
 						}`}
 					>
@@ -87,7 +58,18 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 	);
 };
 
-const SocialVerification = ({ className, socials, onCancel, startLoading, closeModal, changeStep, setSocials, address, identityHash, setOpenSuccessModal }: Props) => {
+const SocialVerification = ({
+	className,
+	socials,
+	onCancel,
+	startLoading,
+	closeModal,
+	changeStep,
+	setSocials,
+	address,
+	identityHash,
+	setOpenSuccessModal
+}: IIdentitySocialVerifications) => {
 	const { api, apiReady } = useApiContext();
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);

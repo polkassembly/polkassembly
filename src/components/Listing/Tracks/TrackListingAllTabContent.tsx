@@ -67,6 +67,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											className={`${showSimilarPost ? 'mb-6 rounded-2xl bg-white dark:bg-section-dark-overlay' : (index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${
 												poppins.variable
 											} ${poppins.className}`}
+											assetId={post?.assetId || null}
 											postReactionCount={post?.post_reactions}
 											address={post.proposer}
 											commentsCount={post.comments_count || 0}

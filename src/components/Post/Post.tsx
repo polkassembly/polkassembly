@@ -395,6 +395,7 @@ const Post: FC<IPostProps> = (props) => {
 					children: (
 						<PostOnChainInfo
 							onChainInfo={{
+								assetId: post?.assetId || null,
 								beneficiaries: post?.beneficiaries || [],
 								bond: post?.bond,
 								cid: post?.cid,
@@ -487,6 +488,7 @@ const Post: FC<IPostProps> = (props) => {
 		<>
 			<PostDataContextProvider
 				initialPostData={{
+					assetId: post?.assetId || null,
 					beneficiaries: post?.beneficiaries || [],
 					cid: post?.cid || '',
 					comments: post?.comments || [],

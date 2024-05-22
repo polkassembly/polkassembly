@@ -60,6 +60,7 @@ const TrackListingStatusTabContent: FC<ITrackListingStatusTabContentProps> = (pr
 								{
 									<Link href={`/referenda/${post.post_id}`}>
 										<GovernanceCard
+											assetId={post?.assetId || null}
 											className={`${(index + 1) % 2 !== 0 && 'bg-[#FBFBFC] dark:bg-[#161616]'} ${poppins.variable} ${poppins.className}`}
 											postReactionCount={post.post_reactions}
 											address={post.proposer}

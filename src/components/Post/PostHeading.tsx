@@ -165,10 +165,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 
 	const handlePreimageWarning = async () => {
-		console.log('heree', { api: api || null, apiReady: apiReady || null, hash: hash || null, preimageHash: preimageHash || null });
 		if (!api || !apiReady) return;
-		console.log('heree', { api: api || null, apiReady: apiReady || null, hash: hash || null, preimageHash: preimageHash || null });
-
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
 		console.log(preimageWarning);
@@ -197,7 +194,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}
-					message={<div className='flex items-center gap-1'>{preimageWarning}</div>}
+					message={<div className='flex items-center gap-1 text-xs'>{preimageWarning}</div>}
 					type='warning'
 					className='mb-4 mt-2'
 					showIcon

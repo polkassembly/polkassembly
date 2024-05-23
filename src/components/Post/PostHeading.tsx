@@ -191,6 +191,15 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
+			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
+				<Alert
+					key={preimageHash}
+					message={<div className='flex items-center gap-1 text-xs'>{preimageWarning}</div>}
+					type='warning'
+					className='mb-4 mt-2'
+					showIcon
+				/>
+			)}
 			<div className='flex items-center justify-between'>
 				{status && (
 					<StatusTag
@@ -206,15 +215,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
-			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
-				<Alert
-					key={preimageHash}
-					message={<div className='flex items-center gap-1'>{preimageWarning}</div>}
-					type='warning'
-					className='mb-4 mt-2'
-					showIcon
-				/>
-			)}
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')

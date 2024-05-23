@@ -25,6 +25,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import dayjs from 'dayjs';
 
 interface Props {
 	className?: string;
@@ -107,6 +108,21 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 			setFormDisabled(true);
 			setLoading(true);
+			const lastCreationDetails = JSON.parse(localStorage.getItem('discussionCreated') || '');
+
+			if (lastCreationDetails && Number(lastCreationDetails.count) == 3) {
+				const lastTime = dayjs(lastCreationDetails.createdAt);
+				if (!lastTime.isBefore(dayjs().subtract(1, 'hour'))) {
+					queueNotification({
+						header: 'Max Limit Reached!',
+						message: 'Discussion Creation Limit Execced!',
+						status: NotificationStatus.INFO
+					});
+					return;
+				} else {
+					localStorage.removeItem('discussionCreated');
+				}
+			}
 
 			const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createPost', {
 				content,
@@ -129,6 +145,12 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			}
 
 			if (data && data.post_id) {
+				if (!lastCreationDetails) {
+					localStorage.setItem('discussionCreated', JSON.stringify({ count: 1, createdAt: new Date() }));
+				} else {
+					localStorage.setItem('discussionCreated', JSON.stringify({ count: Number(lastCreationDetails.count) + 1, createdAt: lastCreationDetails?.createdAt || new Date() }));
+				}
+
 				const postId = data.post_id;
 				router.push(`/${proposalType === ProposalType.GRANTS ? 'grant' : 'post'}/${postId}`);
 				queueNotification({

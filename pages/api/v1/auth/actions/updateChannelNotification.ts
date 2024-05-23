@@ -10,10 +10,11 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { CHANNEL } from '~src/components/Settings/Notifications/NotificationChannels';
 import firebaseAdmin from '~src/services/firebaseInit';
 import { IUserNotificationSettings } from '~src/types';
 
-const channelArray = ['telegram', 'discord', 'email', 'slack', 'element'];
+const channelArray = ['telegram', 'discord', 'email', 'slack', 'element', 'in_app'];
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -39,14 +40,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	const userData = userDoc.data();
 
+	let payload = {
+		...(userData?.notification_preferences?.channelPreferences?.[channel] || {}),
+		enabled: enabled
+	};
+	if (channel === CHANNEL.IN_APP) {
+		payload = {
+			...payload,
+			handle: user.id,
+			name: 'in_app',
+			verified: enabled
+		};
+	}
+
 	const newNotificationSettings: IUserNotificationSettings = {
 		...(userData?.notification_preferences || {}),
 		channelPreferences: {
 			...(userData?.notification_preferences?.channelPreferences || {}),
-			[channel]: {
-				...(userData?.notification_preferences?.channelPreferences?.[channel] || {}),
-				enabled: enabled
-			}
+			[channel]: payload
 		}
 	};
 

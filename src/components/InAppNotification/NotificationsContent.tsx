@@ -17,6 +17,7 @@ import { EInAppNotificationsType } from './types';
 import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
+import { useRouter } from 'next/router';
 
 interface INotificationsContent {
 	className?: string;
@@ -26,11 +27,12 @@ interface INotificationsContent {
 }
 
 const NotificationsContent = ({ className, inPage = false, isLoading, closePopover }: INotificationsContent) => {
-	const { resolvedTheme: theme } = useTheme();
-	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
+	const router = useRouter();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 	const { networkPreferences, id: userId } = useUserDetailsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
 
 	const handleUpdateLastSeen = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/inAppNotifications/add-last-seen', {
@@ -58,6 +60,14 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 		);
 	};
 
+	const handleViewAll = () => {
+		if (!unreadNotificationsCount) return;
+		const timeoutId = setTimeout(() => {
+			handleMarkAsRead();
+		}, 5000);
+		return () => clearTimeout(timeoutId);
+	};
+
 	return (
 		<div
 			className={classNames(className, poppins.className, poppins.variable, 'flex flex-col justify-between', inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : '')}
@@ -80,7 +90,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						)}
 					</div>
 					<div className='flex gap-4'>
-						{!!unreadNotificationsCount && (
+						{!!unreadNotificationsCount && !router.pathname.includes('/notifications') && (
 							<button
 								onClick={handleMarkAsRead}
 								className={classNames(
@@ -182,7 +192,10 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						<Link
 							href='/notifications'
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
-							onClick={() => closePopover?.(true)}
+							onClick={() => {
+								closePopover?.(true);
+								handleViewAll();
+							}}
 						>
 							View All
 						</Link>

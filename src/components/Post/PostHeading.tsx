@@ -165,11 +165,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 
 	const handlePreimageWarning = async () => {
-		console.log('heree', hash, preimageHash, api, apiReady);
-		if (!api || !apiReady || !(hash && preimageHash)) return;
-		console.log('heree', hash, preimageHash, 2, apiReady, api);
+		console.log('heree', { api: api || null, apiReady: apiReady || null, hash: hash || null, preimageHash: preimageHash || null });
+		if (!api || !apiReady) return;
+		console.log('heree', { api: api || null, apiReady: apiReady || null, hash: hash || null, preimageHash: preimageHash || null });
 
-		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash });
+		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
 		console.log(preimageWarning);
 	};
@@ -183,11 +183,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		if (!api || !apiReady) return;
 		handlePreimageWarning();
 
-		if (!identityId || proposer || curator) return;
-		(async () => {
-			const proposer = await getProposerFromPolkadot(identityId);
-			setPolkadotProposer(proposer as string);
-		})();
+		if (identityId && !proposer && !curator) {
+			(async () => {
+				const proposer = await getProposerFromPolkadot(identityId);
+				setPolkadotProposer(proposer as string);
+			})();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 

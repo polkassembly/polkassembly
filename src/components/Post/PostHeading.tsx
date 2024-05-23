@@ -165,12 +165,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 
 	const handlePreimageWarning = async () => {
-		console.log('heree', hash, preimageHash);
+		console.log('heree', hash, preimageHash, api, apiReady);
 		if (!api || !apiReady || !(hash && preimageHash)) return;
-		console.log('heree', hash, preimageHash, 2);
+		console.log('heree', hash, preimageHash, 2, apiReady, api);
 
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash });
 		setPreimageWarning(preimageWarning);
+		console.log(preimageWarning);
 	};
 
 	useEffect(() => {

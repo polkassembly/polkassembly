@@ -88,6 +88,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
 			activeKey={activeKey}
+			defaultActiveKey='1'
 			onChange={(key) => {
 				if (typeof key === 'string' || typeof key === 'number') {
 					setActiveKey(key);

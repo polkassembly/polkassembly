@@ -5,7 +5,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
-interface Props {
+interface Args {
 	api: ApiPromise;
 	apiReady: boolean;
 	network: string;
@@ -19,7 +19,7 @@ interface Props {
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
 }
-const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Props) => {
+const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Args) => {
 	if (!api || !apiReady || !tx) return;
 
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;

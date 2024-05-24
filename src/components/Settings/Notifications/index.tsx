@@ -38,7 +38,6 @@ export default function Notifications({ network }: { network: string }) {
 	const currentUser = useUserDetailsSelector();
 	const { id, networkPreferences, primaryNetwork } = currentUser;
 	const reduxDispatch = useDispatch();
-
 	const [notificationPreferences, dispatch] = useReducer(reducer, notificationInitialState(network));
 	const [selectedNetwork, setSelectedNetwork] = useState<{
 		[index: string]: Array<{ name: string; selected: boolean }>;
@@ -69,25 +68,24 @@ export default function Notifications({ network }: { network: string }) {
 			if (error) {
 				throw new Error(error);
 			}
+
+			let networkPreferences: any = {};
 			if (data?.notification_preferences?.channelPreferences) {
-				reduxDispatch(
-					setUserDetailsState({
-						...currentUser,
-						networkPreferences: {
-							...currentUser.networkPreferences,
-							channelPreferences: data?.notification_preferences?.channelPreferences
-						}
-					})
-				);
+				networkPreferences = {
+					...currentUser.networkPreferences,
+					channelPreferences: data?.notification_preferences?.channelPreferences
+				};
 			}
 			if (data?.notification_preferences?.triggerPreferences) {
+				networkPreferences = {
+					...currentUser.networkPreferences,
+					...networkPreferences,
+					triggerPreferences: data?.notification_preferences?.triggerPreferences
+				};
 				reduxDispatch(
 					setUserDetailsState({
 						...currentUser,
-						networkPreferences: {
-							...currentUser.networkPreferences,
-							triggerPreferences: data?.notification_preferences?.triggerPreferences
-						}
+						networkPreferences: networkPreferences
 					})
 				);
 				dispatch({
@@ -244,15 +242,15 @@ export default function Notifications({ network }: { network: string }) {
 	}, [networkPreferences?.triggerPreferences]);
 
 	useEffect(() => {
-		getPrimaryNetwork().catch((e) => console.log(e));
 		getNotificationSettings(network);
+		getPrimaryNetwork().catch((e) => console.log(e));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return loading ? (
 		<Loader />
 	) : (
-		<div className='flex flex-col gap-[24px] text-blue-light-high dark:text-blue-dark-high'>
+		<div className='flex flex-col gap-6 text-blue-light-high dark:text-blue-dark-high'>
 			<NotificationChannels
 				handleEnableDisabled={handleEnableDisabled}
 				handleReset={handleReset}

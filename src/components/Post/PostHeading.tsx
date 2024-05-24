@@ -28,6 +28,8 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
+import getPreimageWarning from './utils/getPreimageWarning';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -111,7 +113,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			content,
 			summary,
 			identityId,
-			hash
+			hash,
+			preimageHash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
@@ -121,6 +124,8 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
 	const [cancelledReferendaIndices, setCancelledReferendaIndices] = useState<number[]>([]);
+	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
+	const [preimageWarning, setPreimageWarning] = useState<string | null>(null);
 
 	const getHistoryData = async () => {
 		try {
@@ -138,6 +143,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onchainId, proposalType]);
+
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
@@ -162,15 +168,30 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		if (!identityId || proposer || curator) return;
+	const handlePreimageWarning = async () => {
+		if (!api || !apiReady) return;
+		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
+		setPreimageWarning(preimageWarning);
+		console.log(preimageWarning);
+	};
 
-		(async () => {
-			const proposer = await getProposerFromPolkadot(identityId);
-			setPolkadotProposer(proposer as string);
-		})();
+	useEffect(() => {
+		if (network && track_name) {
+			const isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
+			setIsTreasuryProposal(isTreasuryProposal);
+		}
+
+		if (!api || !apiReady) return;
+		handlePreimageWarning();
+
+		if (identityId && !proposer && !curator) {
+			(async () => {
+				const proposer = await getProposerFromPolkadot(identityId);
+				setPolkadotProposer(proposer as string);
+			})();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, network]);
 
 	const CancelledReferendaIndices = () => {
 		if (!postArguments) return;
@@ -185,6 +206,15 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
+			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
+				<Alert
+					key={preimageHash}
+					message={<div className='flex items-center gap-1 text-xs'>{preimageWarning}</div>}
+					type='warning'
+					className='mb-4 mt-2'
+					showIcon
+				/>
+			)}
 			{method && method !== motion_method && method == 'cancel' ? (
 				<div>
 					{cancelledReferendaIndices.map((index) => {
@@ -232,6 +262,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					)}
 				</div>
 			)}
+
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')

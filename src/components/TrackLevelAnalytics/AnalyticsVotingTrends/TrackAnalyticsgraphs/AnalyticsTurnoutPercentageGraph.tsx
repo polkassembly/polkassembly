@@ -68,6 +68,7 @@ const AnalyticsTurnoutPercentageGraph = ({ supportData }: IAnalyticsTurnoutPerce
 	const onChange = (value: [number, number]) => {
 		setSelectedRange(value);
 	};
+
 	const data = [
 		{
 			id: 'Turnout',

@@ -22,7 +22,7 @@ import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 
@@ -234,11 +234,11 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				open={openLinkMultisig}
 				dismissModal={() => setOpenLinkMultisig(false)}
 			/>
-			<OnChainIdentity
+			<OnchainIdentity
 				open={openSetIdentityModal}
 				setOpen={setOpenSetIdentityModal}
-				openAddressLinkedModal={openAddressLinkedModal}
-				setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+				openAddressModal={openAddressLinkedModal}
+				setOpenAddressModal={setOpenAddressLinkedModal}
 			/>
 		</div>
 	);

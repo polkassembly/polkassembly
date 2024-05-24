@@ -89,7 +89,7 @@ interface IUserDropdown {
 	isIdentityExists: boolean;
 }
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 const { Content, Sider } = Layout;
@@ -1149,11 +1149,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			</Layout>
 			{onchainIdentitySupportedNetwork.includes(network) && (
 				<>
-					<OnChainIdentity
+					<OnchainIdentity
 						open={open}
 						setOpen={setOpen}
-						openAddressLinkedModal={openAddressLinkedModal}
-						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+						openAddressModal={openAddressLinkedModal}
+						setOpenAddressModal={setOpenAddressLinkedModal}
 					/>
 				</>
 			)}

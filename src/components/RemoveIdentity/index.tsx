@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
-import { useNetworkSelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILoading, NotificationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
@@ -37,6 +37,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
+	const { identityAddress } = useOnchainIdentitySelector();
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
@@ -105,6 +106,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				userId: id || '',
 				userName: username || ''
 			});
+			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
 			queueNotification({
 				header: 'Success!',
 				message: 'Identity remove successfully!',
@@ -181,7 +183,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<CustomButton
 							text='Cancel'
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
-							variant='primary'
+							variant='default'
 							height={40}
 							width={155}
 							disabled={loading.isLoading}

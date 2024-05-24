@@ -185,22 +185,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
-			<div className='flex items-center justify-between'>
-				{status && (
-					<StatusTag
-						theme={theme}
-						className='mb-3'
-						status={status}
-					/>
-				)}
-				{requestedAmt && (
-					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Requested:{' '}
-						{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
-					</h5>
-				)}
-			</div>
-			{method && method !== motion_method && method == 'cancel' && (
+			{method && method !== motion_method && method == 'cancel' ? (
 				<div>
 					{cancelledReferendaIndices.map((index) => {
 						return (
@@ -229,6 +214,22 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 							/>
 						);
 					})}
+				</div>
+			) : (
+				<div className='flex items-center justify-between'>
+					{status && (
+						<StatusTag
+							theme={theme}
+							className='mb-3'
+							status={status}
+						/>
+					)}
+					{requestedAmt && (
+						<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+							Requested:{' '}
+							{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
+						</h5>
+					)}
 				</div>
 			)}
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>

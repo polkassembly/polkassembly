@@ -17,9 +17,8 @@ interface IGetPreimagesParams {
 	network: string;
 	listingLimit: number | string | string[];
 	page: number | string | string[];
-	hash_contains?: string | string[];
+	hash_contains?: string | string[] | null;
 }
-
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
 	try {
 		const { network, listingLimit, page, hash_contains } = params;
@@ -87,13 +86,13 @@ export async function getPreimages(params: IGetPreimagesParams): Promise<IApiRes
 const handler: NextApiHandler<IPreimagesListingResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { page = 1, listingLimit = LISTING_LIMIT } = req.query;
+	const { page = 1, listingLimit = LISTING_LIMIT, hash_contains = null } = req.query;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 
 	const { data, error, status } = await getPreimages({
-		hash_contains: '',
+		hash_contains: hash_contains as string | null,
 		listingLimit,
 		network,
 		page

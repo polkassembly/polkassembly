@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 	if (networkRedirect) return networkRedirect;
 
 	const { data, error } = await getPreimages({
-		hash_contains: hash_contains || null,
+		hash_contains,
 		listingLimit: LISTING_LIMIT,
 		network,
 		page
@@ -72,7 +72,7 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
-	const [searchQuery, setSearchQuery] = useState<string | number | readonly string[] | null>(router.query.hash_contains || '');
+	const [searchQuery, setSearchQuery] = useState<string | number | readonly string[] | undefined>(router.query.hash_contains || '');
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

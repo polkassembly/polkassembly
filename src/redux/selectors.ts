@@ -17,6 +17,7 @@ import { IGov1TreasuryProposalStore } from './gov1TreasuryProposal/@types';
 import { IRemoveIdentityStore } from './removeIdentity/@types';
 import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
 import { IOnChainIdentityStore } from './onchainIdentity/@types';
+import { IInAppNotificationsStore } from './inAppNotifications/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -69,6 +70,10 @@ const useOnchainIdentitySelector = () => {
 	return useSelector<TAppState, IOnChainIdentityStore>((state) => state.onchainIdentity);
 };
 
+const useInAppNotificationsSelector = () => {
+	return useSelector<TAppState, IInAppNotificationsStore>((state) => state.inAppNotifications);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -82,5 +87,6 @@ export {
 	useGov1treasuryProposal,
 	useRemoveIdentity,
 	useTrackLevelAnalytics,
-	useOnchainIdentitySelector
+	useOnchainIdentitySelector,
+	useInAppNotificationsSelector
 };

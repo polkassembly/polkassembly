@@ -506,6 +506,7 @@ const Post: FC<IPostProps> = (props) => {
 					postType: proposalType,
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
+					preimageHash: post?.preimageHash || '',
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,

@@ -124,6 +124,20 @@ const AvailableWallets = ({ className, handleWalletClick, isMetamaskWallet, wall
 							}
 						/>
 					)}
+					{availableWallets[Wallet.POLKAGATESNAP] && (
+						<WalletButton
+							className={`h-[44px] w-[70px] rounded-[7px] ${wallet === Wallet.POLKAGATESNAP && 'border border-solid border-pink_primary'}`}
+							disabled={!apiReady}
+							onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATESNAP)}
+							name='Polkagate-snap'
+							icon={
+								<WalletIcon
+									which={Wallet.POLKAGATESNAP}
+									className='h-6 w-6'
+								/>
+							}
+						/>
+					)}
 					{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
 						<WalletButton
 							disabled={!apiReady}

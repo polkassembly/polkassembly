@@ -21,6 +21,7 @@ import LoginLogo from '~assets/icons/login-logo.svg';
 import NovaWalletIcon from '~assets/wallet/nova-wallet-star.svg';
 import PolkadotJSIcon from '~assets/wallet/polkadotjs-icon.svg';
 import PolkagateIcon from '~assets/wallet/polkagate-icon.svg';
+import PolkagateSnapIcon from '~assets/wallet/polkagate-snap-icon.svg';
 import SubWalletIcon from '~assets/wallet/subwallet-icon.png';
 import TalismanIcon from '~assets/wallet/talisman-icon.svg';
 import MetamaskIcon from '~assets/wallet/metamask-icon.svg';
@@ -83,6 +84,8 @@ export const WalletIcon: FC<IWalletIconProps> = ({ which, className, isProxyAcco
 			);
 		case Wallet.POLKAGATE:
 			return <PolkagateIcon className={`h-8 w-8 ${className}`} />;
+		case Wallet.POLKAGATESNAP:
+			return <PolkagateSnapIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.NOVAWALLET:
 			return <NovaWalletIcon className={`h-8 w-8 ${className}`} />;
 		case Wallet.POLYWALLET:

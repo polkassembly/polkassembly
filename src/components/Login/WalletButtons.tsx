@@ -6,6 +6,7 @@ import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Wallet } from 'src/types';
 import { InjectedWindow } from '@polkadot/extension-inject/types';
+import { web3Enable as snapEnable } from '@polkagate/extension-dapp';
 
 import WalletButton from '../WalletButton';
 import { WalletIcon } from './MetamaskLogin';
@@ -39,6 +40,8 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	};
 
 	useEffect(() => {
+		snapEnable('onlysnap');
+
 		getWallet();
 	}, [onWalletSelect, disabled, showPolkasafe, onPolkasafeSelect, selectedWallet, isOptionalLogin, isSigningUp]);
 
@@ -123,6 +126,25 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							isLoginFlow={isLoginFlow}
 						/>
 					)}
+					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
+						<WalletButton
+							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKAGATESNAP ? 'border border-solid border-pink_primary' : ''
+								}`}
+							// disabled={!availableWallets[Wallet.POLKAGATESNAP]}
+							onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATESNAP)}
+							name='Polkagate-snap'
+							icon={
+								<WalletIcon
+									which={Wallet.POLKAGATESNAP}
+									className='h-8 w-8'
+								/>
+							}
+							isAvailable={availableWallets[Wallet.POLKAGATESNAP]}
+							isOptionalLogin={isOptionalLogin}
+							text='Metamask Snap'
+							isLoginFlow={isLoginFlow}
+						/>
+					)}
 					{showPolkasafe && onPolkasafeSelect && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
@@ -138,7 +160,13 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 									className='ml-1 mt-3 h-9 w-7'
 								/>
 							}
-							isAvailable={availableWallets[Wallet.POLKADOT] || availableWallets[Wallet.TALISMAN] || availableWallets[Wallet.POLKAGATE] || availableWallets[Wallet.SUBWALLET]}
+							isAvailable={
+								availableWallets[Wallet.POLKADOT] ||
+								availableWallets[Wallet.TALISMAN] ||
+								availableWallets[Wallet.POLKAGATE] ||
+								availableWallets[Wallet.POLKAGATESNAP] ||
+								availableWallets[Wallet.SUBWALLET]
+							}
 							isOptionalLogin={isOptionalLogin}
 							text='Polkasafe (Multisig)'
 							isLoginFlow={isLoginFlow}

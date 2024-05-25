@@ -372,6 +372,20 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 										}
 									/>
 								)}
+								{availableWallets[Wallet.POLKAGATESNAP] && (
+									<WalletButton
+										className={`${wallet === Wallet.POLKAGATESNAP ? 'h-[44px] w-[56px] border border-solid border-pink_primary' : 'h-[44px] w-[56px]'}`}
+										disabled={!apiReady}
+										onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATESNAP)}
+										name='Polkagate-snap'
+										icon={
+											<WalletIcon
+												which={Wallet.POLKAGATESNAP}
+												className='h-6 w-6'
+											/>
+										}
+									/>
+								)}
 								{['polymesh'].includes(network) && availableWallets[Wallet.POLYWALLET] && (
 									<WalletButton
 										disabled={!apiReady}

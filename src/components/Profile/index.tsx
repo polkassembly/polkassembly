@@ -5,6 +5,7 @@
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
 import { DeriveAccountFlags, DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
+import { web3Enable as snapEnable } from '@polkagate/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
 import { Col, Form, Row } from 'antd';
@@ -77,6 +78,10 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	useEffect(() => {
 		const getAccounts = async (): Promise<undefined> => {
 			const extensions = await web3Enable(APPNAME);
+
+			/** to enable metamask snap */
+			const metamaskSnap = await snapEnable('onlysnap');
+			metamaskSnap && extensions.push(...metamaskSnap);
 
 			if (extensions.length === 0) {
 				return;
@@ -173,6 +178,11 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const handleSend = async () => {
 		const extensions = await web3Enable(APPNAME);
+
+		/** to enable metamask snap */
+		const metamaskSnap = await snapEnable('onlysnap');
+		metamaskSnap && extensions.push(...metamaskSnap);
+
 		if (!address) return console.log('Missing address in query');
 
 		if (!extensions || !extensions.length) {

@@ -763,6 +763,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 												}
 											/>
 										)}
+										{availableWallets[Wallet.POLKAGATESNAP] && (
+											<WalletButton
+												className={`${wallet === Wallet.POLKAGATESNAP ? 'h-[48px] w-[64px] border border-solid border-pink_primary hover:border-pink_primary' : 'h-[48px] w-[64px]'}`}
+												disabled={!apiReady}
+												onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATESNAP)}
+												name='Polkagate-snap'
+												icon={
+													<WalletIcon
+														which={Wallet.POLKAGATESNAP}
+														className='h-6 w-6'
+													/>
+												}
+											/>
+										)}
 										{(window as any).walletExtension?.isNovaWallet && availableWallets[Wallet.NOVAWALLET] && (
 											<WalletButton
 												disabled={!apiReady}

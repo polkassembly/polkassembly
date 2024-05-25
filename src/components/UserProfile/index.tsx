@@ -7,13 +7,15 @@ import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/accounts/types';
 import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
 import ProfileCard from './ProfileCard';
 import classNames from 'classnames';
 import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
 import ProfileStatsCard from './ProfileStatsCard';
 import { IUserPostsListingResponse } from '~src/types';
+import { ApiPromise } from '@polkadot/api';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 export interface IActivitiesCounts {
 	totalActivitiesCount: number;
@@ -34,7 +36,9 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
@@ -57,6 +61,14 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+
+	useEffect(() => {
 		if (!api) {
 			return;
 		}
@@ -70,32 +82,31 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 			nickname: ''
 		};
 		const resolved: any[] = [];
-		profileDetails?.addresses.forEach((address) => {
-			api.derive.accounts
-				.info(`${address}`, (info) => {
-					const { identity } = info;
-					if (info.nickname && !onChainIdentity.nickname) {
-						onChainIdentity.nickname = info.nickname;
+		profileDetails?.addresses.forEach(async (address) => {
+			const info = await getIdentityInformation({
+				address: address,
+				api: api,
+				apiReady: apiReady,
+				network: network
+			});
+
+			if (info?.nickname && !onChainIdentity.nickname) {
+				onChainIdentity.nickname = info.nickname;
+			}
+			Object.entries(info).forEach(([key, value]) => {
+				if (value) {
+					if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
+						(onChainIdentity as any)[key] = value;
+						setAddressWithIdentity(getEncodedAddress(address, network) || '');
+					} else if (!(onChainIdentity as any)?.[key]) {
+						(onChainIdentity as any)[key] = value;
 					}
-					Object.entries(identity).forEach(([key, value]) => {
-						if (value) {
-							if (Array.isArray(value) && value.length > 0 && (onChainIdentity as any)?.[key]?.length === 0) {
-								(onChainIdentity as any)[key] = value;
-								setAddressWithIdentity(getEncodedAddress(address, network) || '');
-							} else if (!(onChainIdentity as any)?.[key]) {
-								(onChainIdentity as any)[key] = value;
-							}
-						}
-					});
-					resolved.push(true);
-					if (resolved.length === profileDetails?.addresses.length) {
-						setOnChainIdentity(onChainIdentity);
-					}
-				})
-				.then((unsub) => {
-					unsubscribes?.push(unsub);
-				})
-				.catch((e) => console.error(e));
+				}
+			});
+			resolved.push(true);
+			if (resolved.length === profileDetails?.addresses.length) {
+				setOnChainIdentity(onChainIdentity);
+			}
 		});
 		setSelectedAddresses(addresses);
 		return () => {

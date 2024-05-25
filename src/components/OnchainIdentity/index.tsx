@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { useApiContext } from '~src/context';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useDispatch } from 'react-redux';
@@ -25,6 +24,11 @@ import IdentityForm from './IdentityForm';
 import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
+import { network as AllNetworks } from 'src/global/networkConstants';
+import getPeopleKusamaRPCConnection from './utils/getPeopleKusamaRPCConnection';
+import { ApiPromise } from '@polkadot/api';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { peopleKusamaApiActions } from '~src/redux/peopleKusamaApi';
 
 const ZERO_BN = new BN(0);
 
@@ -33,7 +37,8 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
 	const [form] = Form.useForm();
@@ -56,6 +61,21 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handlePeopleKusamaRPCConnection = async () => {
+		const { api, apiReady } = await getPeopleKusamaRPCConnection(network);
+		dispatch(peopleKusamaApiActions.setPeopleKusamaApi({ peopleKusamaApi: JSON.stringify(api), peopleKusamaApiReady: apiReady }));
+		setApiDetails({ api: api || null, apiReady: apiReady || false });
+	};
+
+	useEffect(() => {
+		if (network !== AllNetworks.KUSAMA) {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		} else {
+			handlePeopleKusamaRPCConnection();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, defaultApi, defaultApiReady]);
+
 	const getTxFee = async () => {
 		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
 
@@ -74,7 +94,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 			const identityHash = await api?.query?.identity
 				?.identityOf(encoded_addr)
-				.then((res: any) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
+				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
 				console.log('Error in unwrapping identity hash');
 				return;
@@ -98,61 +118,66 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		}
 	};
 
+	const getIdentityInfo = async () => {
+		if (!api || !apiReady) return;
+
+		try {
+			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web } = await getIdentityInformation({
+				address: identityAddress || loginAddress,
+				api: api,
+				apiReady: apiReady,
+				network: network
+			});
+
+			if (display) {
+				getIdentityHash();
+			}
+
+			form.setFieldValue('displayName', display || '');
+			form.setFieldValue('legalName', legal || '');
+			form.setFieldValue('email', email || '');
+			form.setFieldValue('twitter', twitter || '');
+			console.log(isVerified, 'isVerified');
+
+			dispatch(
+				onchainIdentityActions.updateOnchainIdentityStore({
+					...identityDetails,
+					displayName: display || '',
+					identityInfo: {
+						alreadyVerified: isVerified,
+						discord: discord || '',
+						displayName: display || '',
+						email: email || '',
+						github: github || '',
+						isIdentitySet: isIdentitySet,
+						legalName: legal || '',
+						matrix: matrix || '',
+						riot: riot || '',
+						twitter: twitter || '',
+						web: web || ''
+					},
+					legalName: legal || '',
+					socials: {
+						...socials,
+						email: { ...socials.email, value: email || '' },
+						twitter: { ...socials.twitter, value: twitter || '' }
+					},
+					userId: userId || null
+				})
+			);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress) return;
+		getIdentityHash();
 
 		form.setFieldValue('address', identityAddress || loginAddress);
-
-		let unsubscribe: () => void;
-		const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-				const unverified = judgementProvided || !info?.identity?.judgements?.length;
-				const identity = info?.identity;
-
-				if (identity.display) {
-					getIdentityHash();
-				}
-
-				form.setFieldValue('displayName', identity?.display || '');
-				form.setFieldValue('legalName', identity?.legal || '');
-				form.setFieldValue('email', identity?.email || '');
-				form.setFieldValue('twitter', identity?.twitter || '');
-
-				dispatch(
-					onchainIdentityActions.updateOnchainIdentityStore({
-						...identityDetails,
-						displayName: identity?.display || '',
-						identityInfo: {
-							alreadyVerified: !unverified,
-							displayName: identity.display || '',
-							email: identity.email || '',
-							isIdentitySet: !!identity.display,
-							legalName: identity.legal || '',
-							riot: identity.riot || '',
-							twitter: identity.twitter || '',
-							web: identity.web || ''
-						},
-						legalName: identity?.legal || '',
-						socials: {
-							...socials,
-							email: { ...socials.email, value: identity?.email || '' },
-							twitter: { ...socials.twitter, value: identity?.twitter || '' }
-						},
-						userId: userId || null
-					})
-				);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
 		getTxFee();
-		return () => unsubscribe && unsubscribe();
+		getIdentityInfo();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginAddress, identityAddress]);
 

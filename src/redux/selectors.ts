@@ -18,6 +18,7 @@ import { IRemoveIdentityStore } from './removeIdentity/@types';
 import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
 import { IOnChainIdentityStore } from './onchainIdentity/@types';
 import { IInAppNotificationsStore } from './inAppNotifications/@types';
+import { IPeopleKusamaApi } from './peopleKusamaApi/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -73,6 +74,9 @@ const useOnchainIdentitySelector = () => {
 const useInAppNotificationsSelector = () => {
 	return useSelector<TAppState, IInAppNotificationsStore>((state) => state.inAppNotifications);
 };
+const usePeopleKusamaApiSelector = () => {
+	return useSelector<TAppState, IPeopleKusamaApi>((state) => state.peopleKusamaApi);
+};
 
 export {
 	useNetworkSelector,
@@ -88,5 +92,6 @@ export {
 	useRemoveIdentity,
 	useTrackLevelAnalytics,
 	useOnchainIdentitySelector,
-	useInAppNotificationsSelector
+	useInAppNotificationsSelector,
+	usePeopleKusamaApiSelector
 };

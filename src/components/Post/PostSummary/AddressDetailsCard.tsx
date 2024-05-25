@@ -3,42 +3,54 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { VerifiedIcon } from '~src/ui-components/CustomIcons';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SingleSignatoryAlertIcon from '~assets/icons/info-alert.svg';
 import NonVerifiedAlertIcon from '~assets/icons/red-info-alert.svg';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
 import { MinusCircleFilled } from '@ant-design/icons';
 import MultisigIcon from '~assets/icons/multisig-address.svg';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 import Address from '~src/ui-components/Address';
 import { shortenString } from '~src/util/shortenString';
+import { ApiPromise } from '@polkadot/api';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 interface Props {
 	address: string;
 	showAddress?: boolean;
 }
 const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
-	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
+	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));
+
 	const [isMultisigProposer, setIsMultisigProposer] = useState(false);
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleIdentityInfo = async () => {
 		if (!api || !apiReady || !address) return;
 
-		const encoded_addr = getEncodedAddress(address, network);
-
-		await api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				setIdentity(info.identity);
-			})
-			.catch((e) => console.error(e));
+		const info = await getIdentityInformation({
+			address: address,
+			api: api,
+			apiReady: apiReady,
+			network: network
+		});
+		setIdentity(info);
 	};
+
 	useEffect(() => {
 		handleIdentityInfo();
 		setIsMultisigProposer(false);

@@ -10,20 +10,20 @@ import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext } from '~src/context';
-import { useNetworkSelector, useOnchainIdentitySelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, usePeopleKusamaApiSelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILoading, NotificationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { ClearIdentityFilledIcon, ClearIdentityOutlinedIcon, CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Balance from '../Balance';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { useDispatch } from 'react-redux';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { trackEvent } from 'analytics';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
 
 const ZERO_BN = new BN(0);
 
@@ -36,7 +36,9 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { network } = useNetworkSelector();
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { identityAddress } = useOnchainIdentitySelector();
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
 	const [address, setAddress] = useState<string>(loginAddress);
@@ -45,6 +47,14 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const [isIdentityAvailable, setIsIdentityAvailable] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !address.length || !isIdentityAvailable;
 	const handleAvailableBalanceChange = (balanceStr: string) => {
@@ -64,10 +74,14 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			return;
 		}
 		setLoading({ ...loading, isLoading: true });
-		const encodedAddr = getEncodedAddress(addr, network) || '';
-		await api?.derive?.accounts?.info(encodedAddr, (info: DeriveAccountInfo) => {
-			setIsIdentityAvailable(!!info?.identity?.display);
+		const info = await getIdentityInformation({
+			address: addr,
+			api: api,
+			apiReady: apiReady,
+			network: network
 		});
+
+		setIsIdentityAvailable(!!info?.display);
 		setLoading({ ...loading, isLoading: false });
 	};
 

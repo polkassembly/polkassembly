@@ -3,11 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGov1treasuryProposal, useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import AddressInput from '~src/ui-components/AddressInput';
 import Balance from '../Balance';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
@@ -34,6 +33,8 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	className?: string;
@@ -46,7 +47,9 @@ const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
@@ -64,6 +67,14 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const getGasFee = async () => {
 		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || fundingAmount == '0' || !proposer) return;
@@ -101,9 +112,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 			return;
 		}
 
-		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
-			setShowIdentityInfoCardForBeneficiary(!info?.identity?.display);
-		});
+		const info = await getIdentityInformation({ address: address, api: api, apiReady: apiReady, network });
+		setShowIdentityInfoCardForBeneficiary(!info?.isGood);
 	};
 
 	const handleBeneficiaryChange = async (address: string) => {
@@ -191,11 +201,9 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 			setShowIdentityInfoCardForProposer(false);
 			return;
 		}
-		const encodedAddr = getEncodedAddress(address, network) || '';
 
-		await api?.derive?.accounts?.info(encodedAddr, (info: DeriveAccountInfo) => {
-			setShowIdentityInfoCardForProposer(!info?.identity?.display);
-		});
+		const info = await getIdentityInformation({ address: address, api: api, apiReady: apiReady, network });
+		setShowIdentityInfoCardForProposer(!info?.display);
 	};
 
 	useEffect(() => {

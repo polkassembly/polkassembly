@@ -10,7 +10,19 @@ import { IIdentitySocials, IIdentityInfo } from '~src/components/OnchainIdentity
 import { Wallet } from '~src/types';
 
 const initialState: IOnChainIdentityStore = {
-	identityInfo: { alreadyVerified: false, displayName: '', email: '', isIdentitySet: false, legalName: '', twitter: '', riot: '', web: '' },
+	identityInfo: {
+		alreadyVerified: false,
+		displayName: '',
+		email: '',
+		isIdentitySet: false,
+		legalName: '',
+		twitter: '',
+		riot: '',
+		web: '',
+		discord: '',
+		github: '',
+		matrix: ''
+	},
 	displayName: '',
 	identityHash: '',
 	isIdentityVerified: false,

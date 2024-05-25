@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
-import { DeriveAccountFlags, DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
+import { ApiPromise } from '@polkadot/api';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { stringToHex } from '@polkadot/util';
@@ -12,11 +13,10 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { EMembersType } from 'pages/members';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import CouncilVotes from 'src/components/Profile/CouncilVotes';
 import TitleForm from 'src/components/TitleForm';
-import { ApiContext } from 'src/context/ApiContext';
 import { APPNAME } from 'src/global/appName';
 import { NotificationStatus } from 'src/types';
 import AddressComponent from 'src/ui-components/Address';
@@ -29,9 +29,11 @@ import getEncodedAddress from 'src/util/getEncodedAddress';
 import styled from 'styled-components';
 
 import { MessageType, ProfileDetails } from '~src/auth/types';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useApiContext } from '~src/context';
+import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -59,11 +61,10 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const aboutDescription = profileDetails?.bio;
 	const aboutTitle = profileDetails?.title;
-
-	const { api, apiReady } = useContext(ApiContext);
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [flags, setFlags] = useState<DeriveAccountFlags | undefined>(undefined);
 	const [title, setTitle] = useState(aboutTitle || '');
 	const [description, setDescription] = useState(aboutDescription || '');
 	const [canEdit, setCanEdit] = useState(false);
@@ -73,6 +74,14 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const [error, setError] = useState<string>('');
 
 	const noDescription = `This page belongs to address (${address}). Only this user can edit this description and the title. If you own this address, edit this page and tell us more about yourself.`;
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const getAccounts = async (): Promise<undefined> => {
@@ -105,55 +114,26 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			return;
 		}
 
-		if (!apiReady) {
+		if (!apiReady || !address) {
 			return;
 		}
 
-		let unsubscribe: () => void;
-
-		api.derive.accounts
-			.info(`${address}`, (info: DeriveAccountInfo) => {
-				setIdentity(info.identity);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
+		(async () => {
+			const info = await getIdentityInformation({
+				address: address as string,
+				api: api,
+				apiReady: apiReady,
+				network: network
+			});
+			setIdentity(info);
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
-			return;
-		}
-
-		if (!address) {
-			return;
-		}
-
-		let unsubscribe: () => void;
-
-		api.derive.accounts
-			.flags(`${address}`, (result: DeriveAccountFlags) => {
-				setFlags(result);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
-	}, [address, api, apiReady]);
-
-	const judgements = identity ? identity.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid) : [];
+	const judgements = identity ? identity.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid) : [];
 	const displayJudgements = judgements.map(([, jud]) => jud.toString()).join(', ');
-	const isGood = judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const isBad = judgements.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));
 
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const icon = isGood ? <CheckCircleFilled style={{ color: color, verticalAlign: 'middle' }} /> : <MinusCircleFilled style={{ color: color, verticalAlign: 'middle' }} />;

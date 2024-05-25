@@ -40,14 +40,17 @@ export interface IIdentitySocials {
 	riot: { value: string; verified: boolean };
 }
 export interface IIdentityInfo {
-	email: string;
-	twitter: string;
 	displayName: string;
 	legalName: string;
 	alreadyVerified: boolean;
 	isIdentitySet: boolean;
 	riot: string;
+	email: string;
+	twitter: string;
 	web: string;
+	github: string;
+	discord: string;
+	matrix: string;
 }
 
 export interface IOnChainIdentity {

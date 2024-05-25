@@ -43,8 +43,6 @@ import {
 	ClearIdentityOutlinedIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -61,9 +59,8 @@ import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
@@ -74,6 +71,8 @@ import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
 
 interface IUserDropdown {
 	handleSetIdentityClick: any;
@@ -295,7 +294,9 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -323,6 +324,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -362,40 +371,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
-		let unsubscribe: () => void;
-		const address = localStorage.getItem('loginAddress');
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-
-		if (!encoded_addr) return;
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				if (info.identity.displayParent && info.identity.display) {
-					// when an identity is a sub identity `displayParent` is set
-					// and `display` get the sub identity
-					setMainDisplay(info.identity.displayParent);
-				} else {
-					// There should not be a `displayParent` without a `display`
-					// but we can't be too sure.
-					setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
-				}
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-				setIsGood(Boolean(isGood));
-				setIsIdentitySet(!!info.identity.display);
-				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
-
+		(async () => {
+			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
+				address: loginAddress,
+				api: api,
+				apiReady: apiReady,
+				network: network
+			});
+			setMainDisplay(displayParent || display || nickname);
+			setIsGood(isGood);
+			setIsIdentitySet(isIdentitySet);
+			setIsIdentityUnverified(!isVerified);
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress]);
+	}, [api, apiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [

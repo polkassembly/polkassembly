@@ -11,10 +11,9 @@ import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext } from '~src/context';
 import styled from 'styled-components';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
@@ -27,6 +26,8 @@ import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfieBalances';
+import { ApiPromise } from '@polkadot/api';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
 	delegate: IDelegate;
@@ -44,7 +45,9 @@ enum EDelegateSource {
 const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -55,6 +58,14 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const getData = async () => {
 		if (!delegate?.address?.length) return;
@@ -79,16 +90,23 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, delegate?.address]);
 
-	useEffect(() => {
+	const handleIdentityInfo = async () => {
 		if (!api || !apiReady || !delegate?.address) return;
 		setLoading(true);
 
-		api.derive.accounts.info(delegate?.address, (info: DeriveAccountInfo) => {
-			if (info?.identity) {
-				setIdentity(info?.identity);
-			}
+		const info = await getIdentityInformation({
+			address: delegate?.address,
+			api: api,
+			apiReady: apiReady,
+			network: network
 		});
+		setIdentity(info);
 		setLoading(false);
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady || !delegate?.address) return;
+		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, delegate]);
 

@@ -23,6 +23,7 @@ import { removeIdentityStore } from './removeIdentity';
 import { trackLevelAnalyticsStore } from './trackLevelAnalytics';
 import { onchainIdentityStore } from './onchainIdentity';
 import { inAppNotificationsStore } from './inAppNotifications';
+import { peopleKusamaApiStore } from './peopleKusamaApi';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -112,7 +113,8 @@ export const makeStore = () => {
 		[removeIdentityStore.name]: removeIdentityStore.reducer,
 		[trackLevelAnalyticsStore.name]: trackLevelAnalyticsStore.reducer,
 		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
-		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer
+		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
+		[peopleKusamaApiStore.name]: peopleKusamaApiStore.reducer
 	});
 
 	if (isServer) {

@@ -15,6 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	address: string;
@@ -24,9 +25,10 @@ interface Props {
 	classname?: string;
 	isDelegating?: boolean;
 	isVoting?: boolean;
+	defaultApi?: ApiPromise | null;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, defaultApi = null }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api, apiReady } = useApiContext();
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
@@ -57,7 +59,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		} else if (['equilibrium'].includes(network)) {
-			api.query.system
+			api?.query.system
 				.account(address)
 				.then((result: any) => {
 					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', ''));
@@ -82,7 +84,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		} else {
-			api.query.system
+			(network === 'kusama' && defaultApi ? defaultApi : api).query.system
 				.account(address)
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
@@ -110,7 +112,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				.catch((e) => console.error(e));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
+	}, [address, api, apiReady, isReferendum, isBalanceUpdated, defaultApi]);
 
 	return (
 		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium ${classname}`}>

@@ -11,7 +11,7 @@ import { Checkbox, Popover } from 'antd';
 import Address from '~src/ui-components/Address';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ClearIdentityOutlinedIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Proxy from '../Settings/Account/Proxy';
 import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
@@ -21,6 +21,8 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -38,7 +40,9 @@ interface Props {
 const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, setSelectedAddresses }: Props) => {
 	const dispatch = useDispatch();
 	const { id, loginAddress } = useUserDetailsSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
@@ -48,6 +52,14 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const [identityInfo, setIdentityInfo] = useState<{ [key: string]: boolean }>({});
 	const [openSetIdentityModal, setOpenSetIdentityModal] = useState(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const govTypeContent = (
 		<div className='flex w-[160px] flex-col gap-2'>
@@ -91,17 +103,17 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
+		if (!api || !apiReady) return;
 		let promiseArr: any[] = [];
 		for (const address of addresses) {
 			if (!address) continue;
-			const encodedAddr = getEncodedAddress(address, network);
-			promiseArr = [...promiseArr, api?.derive?.accounts.info(encodedAddr)];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: api, apiReady: apiReady, network: network })];
 		}
 		try {
 			const resolve = await Promise.all(promiseArr);
 			const info: { [key: string]: boolean } = {};
 			addresses.map((addr, index) => {
-				info[getEncodedAddress(addr, network) || addr] = !!resolve[index]?.identity?.display;
+				info[getEncodedAddress(addr, network) || addr] = !!resolve[index]?.display;
 			});
 			setIdentityInfo(info);
 		} catch (err) {

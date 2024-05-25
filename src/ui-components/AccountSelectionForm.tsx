@@ -9,6 +9,7 @@ import Balance from 'src/components/Balance';
 import AddressDropdown from './AddressDropdown';
 import HelperTooltip from './HelperTooltip';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	accounts: InjectedAccount[];
@@ -30,6 +31,7 @@ interface Props {
 	theme?: string;
 	showProxyDropdown?: boolean;
 	isVoting?: boolean;
+	defaultApi?: ApiPromise | null;
 }
 
 const AccountSelectionForm = ({
@@ -51,6 +53,7 @@ const AccountSelectionForm = ({
 	isTruncateUsername = true,
 	showProxyDropdown,
 	isVoting = false,
+	defaultApi,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	theme
 }: Props) => {
@@ -77,6 +80,7 @@ const AccountSelectionForm = ({
 						onChange={onBalanceChange}
 						isBalanceUpdated={isBalanceUpdated}
 						isVoting={isVoting}
+						defaultApi={defaultApi}
 					/>
 				)}
 			</div>
@@ -87,7 +91,7 @@ const AccountSelectionForm = ({
 				accounts={accounts}
 				defaultAddress={address}
 				onAccountChange={onAccountChange}
-				className={`border-solid border-[#D2D8E0] dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] bg-[#f6f7f9] dark:bg-transparent' : ''}`}
+				className={`border-solid border-[#D2D8E0] dark:border-separatorDark ${inputClassName} ${showProxyDropdown ? 'bg-[#f6f7f9] dark:bg-transparent' : ''}`}
 				isSwitchButton={isSwitchButton}
 				setSwitchModalOpen={setSwitchModalOpen}
 				isMultisig={isSelectedAddressMultisig}

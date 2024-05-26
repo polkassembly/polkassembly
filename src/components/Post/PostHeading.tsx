@@ -168,7 +168,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		if (!api || !apiReady) return;
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
-		console.log(preimageWarning);
 	};
 
 	useEffect(() => {

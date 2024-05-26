@@ -10,7 +10,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import Tooltip from '~src/basic-components/Tooltip';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeIconfilled from '~assets/icons/reactions/LikeIconfilled.svg';
 import LikeIconfilledDark from '~assets/icons/reactions/LikeFilledDark.svg';
@@ -23,6 +22,9 @@ import LikedGif from '~assets/icons/reactions/Liked-Colored.gif';
 import LikedGifDark from '~assets/icons/reactions/Liked-Colored-Dark.gif';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import { UserProfileImage } from 'pages/api/v1/auth/data/userImage';
+import TooltipContent from './TooltipContent';
+import Popover from '~src/basic-components/Popover';
 
 export interface IReactionButtonProps {
 	className?: string;
@@ -63,11 +65,32 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const { id, username } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const usernames = reactions?.[reaction as IReaction].usernames;
+	const userIds = reactions?.[reaction as IReaction].userIds;
 	const reacted = username && usernames?.includes(username);
 	const currentUser = useUserDetailsSelector();
 	const [showLikedGif, setShowLikedGif] = useState(false);
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const [clickQueue, setClickQueue] = useState(0);
+	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
+	const getUserProfile = async () => {
+		setIsLoading(true);
+		const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds });
+		if (data) {
+			setUserImageData(data);
+			setIsLoading(false);
+		}
+		if (!data) {
+			console.log('There is error in fetching data');
+			setIsLoading(true);
+		}
+	};
+
+	useEffect(() => {
+		getUserProfile();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [usernames.length]);
 
 	useEffect(() => {
 		if (clickQueue > 0 && !showLikedGif) {
@@ -176,14 +199,17 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 			if (reacted) {
 				newReactions[reaction as IReaction].count--;
 				newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter((name) => name !== username);
+				newReactions[reaction as IReaction].userIds = newReactions[reaction as IReaction].userIds?.filter((userId) => userId !== id);
 			} else {
 				newReactions[reaction as IReaction].count++;
 				newReactions[reaction as IReaction].usernames?.push(username || '');
+				newReactions[reaction as IReaction].userIds?.push(id);
 				setClickQueue((prev) => prev + 1);
 				Object.keys(newReactions).forEach((key) => {
 					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
 						newReactions[key as IReaction].count--;
 						newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter((name) => name !== username);
+						newReactions[reaction as IReaction].userIds = newReactions[reaction as IReaction].userIds?.filter((userId) => userId !== id);
 					}
 				});
 			}
@@ -228,22 +254,23 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 		</span>
 	);
 
-	let popupContent = '';
-	if (importedReactions) {
-		popupContent = 'Likes are disabled for imported comments.';
-	} else if (usernames?.length > 10) {
-		popupContent = `${usernames.slice(0, 10).join(', ')} and ${usernames.length - 10} others`;
-	} else {
-		popupContent = usernames?.join(', ');
-	}
-
 	return usernames?.length > 0 ? (
-		<Tooltip
-			color='#E5007A'
-			title={popupContent}
+		<Popover
+			placement='bottomLeft'
+			content={
+				importedReactions ? (
+					'Likes are disabled for imported comments.'
+				) : (
+					<TooltipContent
+						usernames={usernames}
+						users={userImageData}
+						isLoading={isLoading}
+					/>
+				)
+			}
 		>
 			{button}
-		</Tooltip>
+		</Popover>
 	) : (
 		button
 	);

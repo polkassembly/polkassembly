@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { ESocialType, ISocial } from '~src/auth/types';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useApiContext } from '~src/context';
@@ -23,7 +22,7 @@ interface ISocialsType {
 }
 interface Props {
 	className?: string;
-	onchainIdentity: DeriveAccountRegistration | null;
+	onchainIdentity: any | null;
 	socials: ISocial[];
 	address: string;
 	boxSize?: number;
@@ -32,8 +31,7 @@ interface Props {
 const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize = 24, iconSize = 14 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const judgements = onchainIdentity?.judgements.filter(([, judgement]: any[]): boolean => !judgement.FeePaid);
-	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isGood = onchainIdentity.isGood;
 	const [isKiltNameExists, setIsKiltNameExists] = useState<boolean>(false);
 	// const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [identityArr, setIdentityArr] = useState<ISocialsType[]>([

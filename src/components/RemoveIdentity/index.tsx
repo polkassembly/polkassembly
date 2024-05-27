@@ -82,7 +82,6 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			apiReady: apiReady,
 			network: network
 		});
-		console.log(info);
 		setIsIdentityAvailable(!!info?.display);
 		setLoading({ ...loading, isLoading: false });
 	};

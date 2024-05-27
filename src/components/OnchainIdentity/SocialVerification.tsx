@@ -21,6 +21,7 @@ import SocialVerificationInprogress from './SocialVerificationInprogress';
 import Image from 'next/image';
 import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
+import messages from '~src/auth/utils/messages';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
@@ -134,6 +135,13 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED, false);
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
 			startLoading({ isLoading: false, message: '' });
+			console.log(error);
+			if (error === messages.INVALID_JWT)
+				queueNotification({
+					header: 'Error!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
 		}
 		if (data) {
 			if (data?.message === VerificationStatus.ALREADY_VERIFIED) {

@@ -49,6 +49,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const [isIdentityAvailable, setIsIdentityAvailable] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
+	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
 
 	useEffect(() => {
 		if (network === 'kusama') {
@@ -58,7 +59,6 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		}
 	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
-	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !address.length || !isIdentityAvailable;
 	const handleAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
 
@@ -82,7 +82,6 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			apiReady: apiReady,
 			network: network
 		});
-
 		setIsIdentityAvailable(!!info?.display);
 		setLoading({ ...loading, isLoading: false });
 	};
@@ -104,7 +103,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const handleRemoveIdentity = () => {
-		if (!api || !apiReady || !address || !isIdentityAvailable) return;
+		if (!api || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {
@@ -135,7 +134,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		const tx = api.tx.identity.clearIdentity();
 
 		executeTx({
-			address,
+			address: address || loginAddress,
 			api,
 			apiReady,
 			errorMessageFallback: 'Error in removing Identity!',
@@ -153,7 +152,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		getBondFee();
 		checkIsIdentityAvailable(address || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, api, apiReady]);
+	}, [loginAddress, api, apiReady, address]);
 
 	return (
 		<div className={className}>

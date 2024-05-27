@@ -104,6 +104,8 @@ export type ChainPropType = {
 export interface ChainProps {
 	peopleKusamaRpcEndpoint?: string;
 	preImageBaseDeposit?: string;
+	palletInstance?: string;
+	parachain?: string;
 	blockTime: number;
 	logo?: any;
 	ss58Format: number;
@@ -786,4 +788,9 @@ export interface IActiveProposalCount {
 			| 'advisoryCommitteeMotionsCount'
 			| string
 	]: number;
+}
+
+export enum EASSETS {
+	USDT = '1984',
+	USDC = '1337'
 }

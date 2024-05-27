@@ -4,7 +4,7 @@
 
 import { Form } from 'antd';
 import BN from 'bn.js';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { chainProperties } from 'src/global/networkConstants';
 import { inputToBn } from '../util/inputToBn';
 import Balance from '~src/components/Balance';
@@ -16,6 +16,14 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import Image from 'next/image';
 import Input from '~src/basic-components/Input';
+// import Select from '~src/basic-components/Select';
+// import { ArrowDownIcon } from './CustomIcons';
+import Popover from '~src/basic-components/Popover';
+import { ArrowDownIcon } from './CustomIcons';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import getAssetFromGenralIndex from '~src/util/getAssetFromGernralndex';
+import { EASSETS } from '~src/types';
 
 const ZERO_BN = new BN(0);
 
@@ -39,6 +47,9 @@ interface Props {
 	theme?: string;
 	isBalanceUpdated?: boolean;
 	disabled?: boolean;
+	multipleAssetsAllow?: boolean;
+	onAssetConfirm?: (pre: string | null) => void;
+	deafultAsset?: string | null;
 	setIsBalanceSet?: (pre: boolean) => void;
 }
 
@@ -58,26 +69,56 @@ const BalanceInput = ({
 	tooltipMessage,
 	setInputValue,
 	onBlur,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	theme,
+	multipleAssetsAllow = false,
 	isBalanceUpdated,
 	disabled,
-	setIsBalanceSet
+	setIsBalanceSet,
+	deafultAsset,
+	onAssetConfirm
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network].tokenSymbol}`;
+	const [asset, setAsset] = useState<{ img: string; label: string; value: string | null }>({
+		img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo,
+		label: chainProperties[network]?.tokenSymbol,
+		value: null
+	});
+	const [open, setOpen] = useState<boolean>(false);
+
+	const options = [
+		{ img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: chainProperties[network]?.tokenSymbol, value: null },
+		{
+			img: '/assets/icons/usdt.svg',
+			label: 'USDT',
+			value: EASSETS.USDT
+		},
+		{
+			img: '/assets/icons/usdc.svg',
+			label: 'USDC',
+			value: EASSETS.USDC
+		}
+	];
+
 	const onBalanceChange = (value: string | null): void => {
-		const [balance, isValid] = inputToBn(`${value}`, network, false);
-		if (isValid) {
+		if (asset) {
+			const bnBalance = new BN(value || 0);
 			setInputValue?.(value || '0');
-			onChange?.(balance);
+			onChange?.(bnBalance);
 			setIsBalanceSet?.(true);
 		} else {
-			onChange?.(ZERO_BN);
-			setInputValue?.('0');
-			setIsBalanceSet?.(false);
+			const [balance, isValid] = inputToBn(`${value}`, network, false);
+			if (isValid) {
+				setInputValue?.(value || '0');
+				onChange?.(balance);
+				setIsBalanceSet?.(true);
+			} else {
+				onChange?.(ZERO_BN);
+				setInputValue?.('0');
+				setIsBalanceSet?.(false);
+			}
 		}
 	};
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -142,14 +183,75 @@ const BalanceInput = ({
 				<Input
 					onBlur={() => onBlur?.()}
 					addonAfter={
-						<div className='flex items-center justify-center gap-1 dark:text-white'>
-							<Image
-								className='h-4 w-4 rounded-full object-contain'
-								src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
-								alt='Logo'
-							/>
-							{chainProperties[network]?.tokenSymbol}
-						</div>
+						multipleAssetsAllow ? (
+							<div className='flex items-center justify-center px-2 text-bodyBlue dark:text-blue-dark-high'>
+								<Popover
+									open={open}
+									onOpenChange={setOpen}
+									trigger='click'
+									overlayClassName={classNames(poppins.className, poppins.variable, 'mt-2 px-0 py-1')}
+									placement='bottom'
+									content={
+										<div className='flex flex-col'>
+											{options.map((option) => (
+												<div
+													key={option.label}
+													className={classNames(
+														'-mx-3 flex cursor-pointer items-center gap-1.5 px-4 text-xs text-bodyBlue dark:text-blue-dark-medium',
+														asset.value == option.value ? 'bg-[#fae7ef] py-2 font-medium dark:bg-pink-dark-primary' : 'py-1.5'
+													)}
+													onClick={() => {
+														setAsset(option);
+														onAssetConfirm?.(option?.value);
+													}}
+												>
+													<Image
+														className='h-4 w-4 rounded-full object-contain'
+														src={option.img}
+														alt='Logo'
+														width={20}
+														height={20}
+													/>
+													{option.label}
+												</div>
+											))}
+										</div>
+									}
+								>
+									<div className='flex cursor-pointer items-center gap-1 text-lightBlue dark:text-blue-dark-high'>
+										<Image
+											className='h-4 w-4 rounded-full object-contain'
+											src={asset.img}
+											alt='Logo'
+											width={20}
+											height={20}
+										/>
+										{asset.label}
+										<ArrowDownIcon className={open ? 'ml-0.5 rotate-180' : 'ml-0.5'} />
+									</div>
+								</Popover>
+							</div>
+						) : deafultAsset ? (
+							<div className='flex cursor-pointer items-center gap-1 p-3'>
+								<Image
+									className='h-4 w-4 rounded-full object-contain'
+									src={options.find((option) => option.value == deafultAsset)?.img || ''}
+									alt='Logo'
+									width={20}
+									height={20}
+								/>
+								{getAssetFromGenralIndex(deafultAsset, network)}
+							</div>
+						) : (
+							<div className='flex items-center justify-center gap-1 px-3 dark:text-white'>
+								<Image
+									className='h-4 w-4 rounded-full object-contain'
+									src={chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo}
+									alt='Logo'
+								/>
+								{chainProperties[network]?.tokenSymbol}
+							</div>
+						)
 					}
 					name={formItemName || 'balance'}
 					className={`h-[39px] w-full border-[1px] ${inputClassName} suffixColor balance-input mt-0 text-sm hover:border-pink_primary dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]`}
@@ -166,11 +268,13 @@ const BalanceInput = ({
 export default styled(BalanceInput)`
 	.suffixColor .ant-input-group .ant-input-group-addon {
 		background: #edeff3;
-		color: var(--lightBlue) !important;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
 		font-size: 12px !important;
 		font-weight: 500 !important;
 		border: 0px 1px 1px 0px solid #d2d8e0;
 		border-radius: 0px 4px 4px 0px !important ;
+		padding: 0px !important;
+		cursor: pointer !important;
 	}
 	.suffixColor .ant-input {
 		background: ${(props: any) => (props.theme === 'dark' ? '#0d0d0d' : '#fff')} !important;
@@ -206,5 +310,8 @@ export default styled(BalanceInput)`
 	.ant-input-group-addon {
 		background-color: ${(props: any) => (props.theme === 'dark' ? '#e5007a' : '#edeff3')} !important;
 		border: ${(props: any) => (props.theme === 'dark' ? '1px solid #e5007a' : '1px solid #edeff3')} !important;
+	}
+	.ant-select-selection-item {
+		display: flex !important;
 	}
 `;

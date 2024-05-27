@@ -31,6 +31,7 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 const ZERO_BN = new BN(0);
 
@@ -53,6 +54,7 @@ interface Props {
 	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
+	genralIndex?: string | null;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -77,7 +79,8 @@ const CreateProposal = ({
 	setPostId,
 	availableBalance,
 	discussionLink,
-	isDiscussionLinked
+	isDiscussionLinked,
+	genralIndex = null
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -298,6 +301,7 @@ const CreateProposal = ({
 										beneficiary={beneficiary}
 										key={index}
 										disableBalanceFormatting
+										assetId={genralIndex}
 									/>
 								))}
 							</div>
@@ -311,7 +315,7 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(fundingAmount.toString(), unit)} {unit}
+								{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString()) : formatedBalance(fundingAmount.toString(), unit)} {!genralIndex && unit}
 							</span>
 						</span>
 						<span className='flex items-center'>

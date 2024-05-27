@@ -40,7 +40,8 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 		setIsLoading(true);
 		const userMap: { [key: number]: string } = {};
 		const userImgMap: { [key: number]: string } = {};
-		for (const topic of topicsToFetch) {
+
+		const fetchPromises = topicsToFetch.map(async (topic) => {
 			try {
 				const { data } = await nextApiClientFetch<any>(`/api/v1/discourse/getTopicById?id=${topic.id}`);
 				const { posts } = data?.data?.post_stream || {};
@@ -53,7 +54,10 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 				userMap[topic.id] = 'Failed to load';
 				userImgMap[topic.id] = '/path/to/default/avatar.png';
 			}
-		}
+		});
+
+		await Promise.allSettled(fetchPromises);
+
 		setUsernames(userMap);
 		setUserImg(userImgMap);
 		setIsLoading(false);

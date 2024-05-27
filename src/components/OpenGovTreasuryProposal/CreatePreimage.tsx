@@ -84,8 +84,6 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
-	setGenralIndex: (pre: string | null) => void;
-	genralIndex: string | null;
 }
 
 export interface IAdvancedDetails {
@@ -115,9 +113,7 @@ const CreatePreimage = ({
 	availableBalance,
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
-	form,
-	genralIndex,
-	setGenralIndex
+	form
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -134,6 +130,7 @@ const CreatePreimage = ({
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -212,22 +209,17 @@ const CreatePreimage = ({
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
-		const bnBalance = new BN(createPreimageForm?.fundingAmount).mul(new BN('1000000'));
-		if (genralIndex) {
-			setFundingAmount(bnBalance);
-		} else {
-			if (isValid) {
-				if (createPreimageForm.isPreimage) {
-					const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
-					setFundingAmount(bnBalance);
-				} else {
-					setFundingAmount(balance);
-				}
-			} else {
-				setFundingAmount(ZERO_BN);
-			}
-		}
 
+		if (isValid) {
+			if (createPreimageForm.isPreimage) {
+				const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+				setFundingAmount(bnBalance);
+			} else {
+				setFundingAmount(balance);
+			}
+		} else {
+			setFundingAmount(ZERO_BN);
+		}
 		setInputAmountValue(createPreimageForm?.fundingAmount);
 		setPreimageHash(createPreimageForm?.preimageHash || '');
 		setPreimageLength(createPreimageForm?.preimageLength || null);

@@ -296,16 +296,14 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Beneficiary Address:</span>
 							<div className='flex flex-col gap-2'>
-								{beneficiaryAddresses.map((beneficiary, index) => {
-									return (
-										<Beneficiary
-											beneficiary={beneficiary}
-											key={index}
-											disableBalanceFormatting
-											assetId={genralIndex}
-										/>
-									);
-								})}
+								{beneficiaryAddresses.map((beneficiary, index) => (
+									<Beneficiary
+										beneficiary={beneficiary}
+										key={index}
+										disableBalanceFormatting
+										assetId={genralIndex}
+									/>
+								))}
 							</div>
 						</span>
 						<span className='flex'>

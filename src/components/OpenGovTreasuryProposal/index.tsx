@@ -168,7 +168,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
-	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const { resolvedTheme: theme } = useTheme();
 
 	const handleClose = () => {
@@ -397,7 +396,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					setOpenSuccess(false);
 					handleClose();
 				}}
-				genralIndex={genralIndex}
 				selectedTrack={selectedTrack}
 				proposerAddress={proposerAddress}
 				beneficiaryAddresses={beneficiaryAddresses}
@@ -485,8 +483,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							enactment={enactment}
 							setEnactment={setEnactment}
 							isUpdatedAvailableBalance={isUpdatedAvailableBalance}
-							genralIndex={genralIndex}
-							setGenralIndex={setGenralIndex}
 						/>
 					)}
 					{steps.step === 2 && (
@@ -508,7 +504,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
 							isDiscussionLinked={isDiscussionLinked as boolean}
-							genralIndex={genralIndex}
 						/>
 					)}
 				</div>

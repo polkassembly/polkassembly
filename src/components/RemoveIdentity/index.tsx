@@ -251,7 +251,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<div>
 							<div className='flex items-center justify-between'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address </label>
-								{!!address && (
+								{(!!address || !!loginAddress) && (
 									<Balance
 										address={address || loginAddress}
 										onChange={handleAvailableBalanceChange}

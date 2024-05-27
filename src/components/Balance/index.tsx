@@ -6,7 +6,7 @@ import BN from 'bn.js';
 
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePostDataContext } from 'src/context';
+import { useApiContext, usePeopleKusamaApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
@@ -25,12 +25,13 @@ interface Props {
 	classname?: string;
 	isDelegating?: boolean;
 	isVoting?: boolean;
-	defaultApi?: ApiPromise | null;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, defaultApi = null }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
@@ -45,6 +46,14 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 			unit: chainProperties[network]?.tokenSymbol
 		});
 	}, [network]);
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;

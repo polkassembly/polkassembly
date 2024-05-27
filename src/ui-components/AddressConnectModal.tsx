@@ -286,7 +286,7 @@ const AddressConnectModal = ({
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
 			setMultisig('');
-			onConfirm?.(address);
+			onConfirm?.(address, wallet);
 			setOpen(false);
 			setLoading(false);
 			dispatch(setConnectAddress(address));
@@ -434,7 +434,6 @@ const AddressConnectModal = ({
 				<div className='flex flex-col'>
 					{linkAddressNeeded && accounts?.length > 0 && isUnlinkedAddress && (
 						<div className='mb-2 mt-6 flex flex-col items-center justify-center px-4'>
-							{/* <ConnectAddressIcon /> */}
 							<ImageIcon
 								src='/assets/icons/connect-address.svg'
 								imgWrapperClassName='ml-10 -mt-4'

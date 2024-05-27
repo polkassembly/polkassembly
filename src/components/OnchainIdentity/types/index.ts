@@ -2,12 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { ApiPromise } from '@polkadot/api';
 import { FormInstance } from 'antd';
 import BN from 'bn.js';
 import { ESocials, ILoading, VerificationStatus } from '~src/types';
 
 export interface IAmountBreakDown {
 	className?: string;
+	api: ApiPromise | null;
+	apiReady: boolean;
 	txFee: ITxFee;
 	changeStep: (step: ESetIdentitySteps) => void;
 	perSocialBondFee: BN;
@@ -80,6 +83,8 @@ export interface IIdentityForm {
 	setAddressChangeModalOpen: () => void;
 	alreadySetIdentityCredentials: IVerifiedFields;
 	wallet?: any;
+	api: ApiPromise | null;
+	apiReady: boolean;
 }
 
 export interface IIdentityInProgress {
@@ -93,6 +98,8 @@ export interface IIdentityInProgress {
 }
 
 export interface IIdentitySocialVerifications {
+	api: ApiPromise | null;
+	apiReady: boolean;
 	className?: string;
 	socials: ISocials;
 	setSocials: (pre: ISocials) => void;

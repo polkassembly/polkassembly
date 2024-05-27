@@ -23,7 +23,7 @@ import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
-import { blake2AsHex } from '@polkadot/util-crypto';
+import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { LoadingOutlined } from '@ant-design/icons';
 import { chainProperties } from '~src/global/networkConstants';
@@ -84,6 +84,8 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
+	setGenralIndex: (pre: string | null) => void;
+	genralIndex: string | null;
 }
 
 export interface IAdvancedDetails {
@@ -113,7 +115,9 @@ const CreatePreimage = ({
 	availableBalance,
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
-	form
+	form,
+	genralIndex,
+	setGenralIndex
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -130,7 +134,6 @@ const CreatePreimage = ({
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -209,17 +212,22 @@ const CreatePreimage = ({
 
 		setAdvancedDetails({ ...advancedDetails, atBlockNo: currentBlock?.add(BN_THOUSAND) || BN_ONE });
 		const [balance, isValid] = inputToBn(`${isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount}`, network, false);
-
-		if (isValid) {
-			if (createPreimageForm.isPreimage) {
-				const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
-				setFundingAmount(bnBalance);
-			} else {
-				setFundingAmount(balance);
-			}
+		const bnBalance = new BN(createPreimageForm?.fundingAmount).mul(new BN('1000000'));
+		if (genralIndex) {
+			setFundingAmount(bnBalance);
 		} else {
-			setFundingAmount(ZERO_BN);
+			if (isValid) {
+				if (createPreimageForm.isPreimage) {
+					const bnBalance = new BN(isNaN(Number(createPreimageForm?.fundingAmount)) ? 0 : createPreimageForm?.fundingAmount);
+					setFundingAmount(bnBalance);
+				} else {
+					setFundingAmount(balance);
+				}
+			} else {
+				setFundingAmount(ZERO_BN);
+			}
 		}
+
 		setInputAmountValue(createPreimageForm?.fundingAmount);
 		setPreimageHash(createPreimageForm?.preimageHash || '');
 		setPreimageLength(createPreimageForm?.preimageLength || null);
@@ -408,43 +416,50 @@ const CreatePreimage = ({
 
 		const txArr: any[] = [];
 
-		beneficiaryAddresses.forEach((beneficiary) => {
-			const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
+		//mutibeneficiary not suppported    >>
+		if (genralIndex && beneficiaryAddresses.length === 1) {
+			const beneficiary = beneficiaryAddresses?.[0];
+			let balance = new BN(`${beneficiary?.amount || '0'}`);
 
-			if (genralIndex) {
-				txArr.push(
-					api?.tx?.treasury?.spend(
-						{
-							V3: {
-								assetId: {
-									Concrete: {
-										interior: {
-											X2: [
-												{
-													PalletInstance: '50'
-												},
-												{
-													GeneralIndex: genralIndex
-												}
-											]
-										}
+			//USDT or USDT denominated 10^6   >>
+			balance = balance.mul(new BN('1000000'));
+			txArr.push(
+				api?.tx?.treasury?.spend(
+					{
+						V3: {
+							assetId: {
+								Concrete: {
+									interior: {
+										X2: [
+											{
+												PalletInstance: chainProperties?.[network]?.palletInstance
+											},
+											{
+												GeneralIndex: genralIndex
+											}
+										]
 									}
-								},
-								location: { interior: { X1: { Parachain: '10000' } } }
-							}
-						} as any,
-						balance.toString(),
-						{ V3: { interior: { X1: { AccountId32: { id: getEncodedAddress(beneficiary.address, network), network: null } } } } } as any,
-						null
-					)
-				);
-			} else if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
-				txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
-			}
-		});
+								}
+							},
+							location: { interior: { X1: { Parachain: chainProperties?.[network]?.parachain } } }
+						}
+					} as any,
+					balance.toString(),
+					{ V3: { interior: { X1: { AccountId32: { id: decodeAddress(beneficiary.address), network: null } } } } } as any,
+					null
+				)
+			);
+		} else {
+			beneficiaryAddresses.forEach((beneficiary) => {
+				const balance = new BN(`${beneficiary.amount}`);
+
+				if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
+					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
+				}
+			});
+		}
 
 		const proposal = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
-		console.log(txArr);
 		const preimage: any = getState(api, proposal);
 		setLoading(true);
 		const onSuccess = () => {
@@ -471,7 +486,7 @@ const CreatePreimage = ({
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: txArr[0] });
+		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
 	};
 
 	const handleSubmit = async () => {
@@ -1019,27 +1034,29 @@ const CreatePreimage = ({
 								);
 							})}
 
-							<div className='flex items-center justify-between'>
-								<Button
-									type='text'
-									className='mt-2 flex items-center text-xs text-[#407BFF]'
-									size='small'
-									onClick={addBeneficiary}
-								>
-									<PlusCircleOutlined />
-									Add Beneficiary
-								</Button>
+							{!genralIndex && (
+								<div className='flex items-center justify-between'>
+									<Button
+										type='text'
+										className='mt-2 flex items-center text-xs text-[#407BFF]'
+										size='small'
+										onClick={addBeneficiary}
+									>
+										<PlusCircleOutlined />
+										Add Beneficiary
+									</Button>
 
-								<Button
-									type='text'
-									className='mt-2 flex items-center text-xs text-red-light-text dark:text-red-dark-text'
-									size='small'
-									onClick={removeAllBeneficiaries}
-								>
-									<MinusCircleOutlined />
-									Remove All
-								</Button>
-							</div>
+									<Button
+										type='text'
+										className='mt-2 flex items-center text-xs text-red-light-text dark:text-red-dark-text'
+										size='small'
+										onClick={removeAllBeneficiaries}
+									>
+										<MinusCircleOutlined />
+										Remove All
+									</Button>
+								</div>
+							)}
 
 							{addressAlert && (
 								<Alert

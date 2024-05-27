@@ -21,6 +21,7 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 interface Props {
 	className?: string;
@@ -36,6 +37,7 @@ interface Props {
 	isCancelReferendaForm?: boolean;
 	isKillReferendumForm?: boolean;
 	isCreateReferendumForm?: boolean;
+	genralIndex?: string | null;
 }
 
 const getDefaultTrackMetaData = () => {
@@ -65,7 +67,8 @@ const TreasuryProposalSuccessPopup = ({
 	postId,
 	isCreateReferendumForm,
 	isKillReferendumForm,
-	isCancelReferendaForm
+	isCancelReferendaForm,
+	genralIndex
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -143,13 +146,16 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Beneficiary Address:</span>
 								<div className='flex flex-col gap-2'>
-									{beneficiaryAddresses?.map((beneficiary, index) => (
-										<Beneficiary
-											beneficiary={beneficiary}
-											key={index}
-											disableBalanceFormatting
-										/>
-									))}
+									{beneficiaryAddresses?.map((beneficiary, index) => {
+										return (
+											<Beneficiary
+												beneficiary={beneficiary}
+												key={index}
+												disableBalanceFormatting
+												assetId={genralIndex}
+											/>
+										);
+									})}
 								</div>
 							</span>
 
@@ -163,7 +169,8 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Funding Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{fundingAmount && formatedBalance(fundingAmount.toString(), unit)} {unit}
+									{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, (fundingAmount || 0).toString()) : formatedBalance((fundingAmount || 0).toString(), unit)}{' '}
+									{!genralIndex && unit}
 								</span>
 							</span>
 							<span className='flex items-center'>

@@ -24,10 +24,10 @@
     "@nivo/line": "^0.84.0",
     "@nivo/pie": "^0.84.0",
     "@nivo/treemap": "^0.84.0",
-    "@polkadot/api": "^11.0.3",
-    "@polkadot/api-augment": "^11.0.3",
-    "@polkadot/extension-dapp": "^0.47.4",
-    "@polkadot/extension-inject": "^0.47.4",
+    "@polkadot/api": "^11.1.1",
+    "@polkadot/api-augment": "^11.1.1",
+    "@polkadot/extension-dapp": "^0.47.5",
+    "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/react-identicon": "^3.6.6",
     "@polkadot/ui-settings": "^3.6.6",
     "@polkadot/util": "^12.6.2",
@@ -127,6 +127,7 @@
     "@types/showdown": "^2.0.1",
     "@types/styled-components": "^5.1.26",
     "autoprefixer": "^10.4.13",
+    "cypress": "^13.8.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
@@ -134,8 +135,7 @@
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "tailwindcss": "^3.2.4",
-    "cypress": "^13.8.1"
+    "tailwindcss": "^3.2.4"
   },
   "resolutions": {
     "styled-components": "^6"

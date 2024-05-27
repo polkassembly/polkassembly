@@ -103,6 +103,8 @@ export type ChainPropType = {
 
 export interface ChainProps {
 	preImageBaseDeposit?: string;
+	palletInstance?: string;
+	parachain?: string;
 	blockTime: number;
 	logo?: any;
 	ss58Format: number;

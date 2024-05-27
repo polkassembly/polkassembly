@@ -12,7 +12,7 @@ import Image from 'next/image';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import dynamic from 'next/dynamic';
 import { useDispatch } from 'react-redux';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';

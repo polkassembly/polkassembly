@@ -9,21 +9,22 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useApiContext } from '~src/context';
-import { useNetworkSelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useNetworkSelector, useOnchainIdentitySelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILoading, NotificationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
 import { ClearIdentityFilledIcon, ClearIdentityOutlinedIcon, CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Balance from '../Balance';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { useDispatch } from 'react-redux';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { trackEvent } from 'analytics';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
+import { useRouter } from 'next/router';
 
 const ZERO_BN = new BN(0);
 
@@ -34,9 +35,13 @@ export interface IRemoveIdentity {
 
 const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { identityAddress } = useOnchainIdentitySelector();
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
@@ -44,8 +49,16 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const [isIdentityAvailable, setIsIdentityAvailable] = useState<boolean>(false);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
+	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
 
-	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !address.length || !isIdentityAvailable;
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+
 	const handleAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
 
@@ -63,10 +76,13 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			return;
 		}
 		setLoading({ ...loading, isLoading: true });
-		const encodedAddr = getEncodedAddress(addr, network) || '';
-		await api?.derive?.accounts?.info(encodedAddr, (info: DeriveAccountInfo) => {
-			setIsIdentityAvailable(!!info?.identity?.display);
+		const info = await getIdentityInformation({
+			address: addr,
+			api: api,
+			apiReady: apiReady,
+			network: network
 		});
+		setIsIdentityAvailable(!!info?.display);
 		setLoading({ ...loading, isLoading: false });
 	};
 
@@ -87,7 +103,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const handleRemoveIdentity = () => {
-		if (!api || !apiReady || !address || !isIdentityAvailable) return;
+		if (!api || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {
@@ -105,6 +121,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				userId: id || '',
 				userName: username || ''
 			});
+			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
 			queueNotification({
 				header: 'Success!',
 				message: 'Identity remove successfully!',
@@ -112,11 +129,12 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			});
 			setLoading({ isLoading: false, message: '' });
 			dispatch(setOpenRemoveIdentityModal(false));
+			router.reload();
 		};
 		const tx = api.tx.identity.clearIdentity();
 
 		executeTx({
-			address,
+			address: address || loginAddress,
 			api,
 			apiReady,
 			errorMessageFallback: 'Error in removing Identity!',
@@ -134,7 +152,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		getBondFee();
 		checkIsIdentityAvailable(address || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, api, apiReady]);
+	}, [loginAddress, api, apiReady, address]);
 
 	return (
 		<div className={className}>
@@ -162,6 +180,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				}}
 				walletAlertTitle='Remove Identity'
 				accountAlertTitle='Please install a wallet and create an address to start removing identity.'
+				usedInIdentityFlow
 			/>
 
 			<Modal
@@ -181,7 +200,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<CustomButton
 							text='Cancel'
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
-							variant='primary'
+							variant='default'
 							height={40}
 							width={155}
 							disabled={loading.isLoading}
@@ -235,10 +254,11 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 						<div>
 							<div className='flex items-center justify-between'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address </label>
-								{!!address && (
+								{(!!address || !!loginAddress) && (
 									<Balance
 										address={address || loginAddress}
 										onChange={handleAvailableBalanceChange}
+										usedInIdentityFlow
 									/>
 								)}
 							</div>

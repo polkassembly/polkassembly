@@ -12,13 +12,10 @@ export interface IAmountBreakDown {
 	api: ApiPromise | null;
 	apiReady: boolean;
 	txFee: ITxFee;
-	changeStep: (step: ESetIdentitySteps) => void;
 	perSocialBondFee: BN;
 	loading: boolean;
-	isIdentityAlreadySet: boolean;
-	alreadySetIdentityCredentials: IVerifiedFields;
-	address: string;
 	setStartLoading: (pre: ILoading) => void;
+	changeStep: (pre: ESetIdentitySteps) => void;
 }
 
 export enum ESetIdentitySteps {
@@ -39,78 +36,66 @@ export interface IName {
 	displayName: string;
 }
 
-export interface ISocials {
+export interface IIdentitySocials {
 	web: { value: string; verified: boolean };
 	email: { value: string; verified: boolean };
 	twitter: { value: string; verified: boolean };
 	riot: { value: string; verified: boolean };
 }
-export interface IVerifiedFields {
-	email: string;
-	twitter: string;
+export interface IIdentityInfo {
 	displayName: string;
 	legalName: string;
 	alreadyVerified: boolean;
 	isIdentitySet: boolean;
 	riot: string;
+	email: string;
+	twitter: string;
 	web: string;
+	github: string;
+	discord: string;
+	matrix: string;
 }
 
 export interface IOnChainIdentity {
 	open: boolean;
 	setOpen: (pre: boolean) => void;
-	openAddressLinkedModal?: boolean;
-	setOpenAddressLinkedModal?: (pre: boolean) => void;
+	openAddressModal?: boolean;
+	setOpenAddressModal?: (pre: boolean) => void;
 }
 
 export interface IIdentityForm {
 	className?: string;
-	address: string;
 	txFee: ITxFee;
-	name: IName;
-	onChangeName: (pre: IName) => void;
-	socials: ISocials;
-	onChangeSocials: (pre: ISocials) => void;
 	setTxFee: (pre: ITxFee) => void;
 	setStartLoading: (pre: ILoading) => void;
 	onCancel: () => void;
 	perSocialBondFee: BN;
-	changeStep: (pre: ESetIdentitySteps) => void;
 	closeModal: (pre: boolean) => void;
-	form: FormInstance;
-	setIsIdentityCallDone: (pre: boolean) => void;
-	setIdentityHash: (pre: string) => void;
 	setAddressChangeModalOpen: () => void;
-	alreadySetIdentityCredentials: IVerifiedFields;
-	wallet?: any;
-	api: ApiPromise | null;
-	apiReady: boolean;
+	form: FormInstance;
+	setOpenIdentitySuccessModal: (pre: boolean) => void;
+	changeStep: (pre: ESetIdentitySteps) => void;
 }
 
 export interface IIdentityInProgress {
 	className?: string;
-	socials: ISocials;
 	open?: boolean;
-	changeStep: (step: ESetIdentitySteps) => void;
 	close: (pre: boolean) => void;
 	openPreModal: (pre: boolean) => void;
-	handleVerify: (pre: ESocials) => Promise<void>;
+	handleVerify: (pre: ESocials, checkingVerified?: boolean) => Promise<void>;
+	changeStep: (pre: ESetIdentitySteps) => void;
 }
 
 export interface IIdentitySocialVerifications {
 	api: ApiPromise | null;
 	apiReady: boolean;
 	className?: string;
-	socials: ISocials;
-	setSocials: (pre: ISocials) => void;
-	address: string;
 	startLoading: (pre: ILoading) => void;
 	onCancel: () => void;
-	changeStep: (pre: ESetIdentitySteps) => void;
 	closeModal: (pre: boolean) => void;
 	perSocialBondFee: BN;
-	identityHash: string;
 	setOpenSuccessModal: (pre: boolean) => void;
+	changeStep: (pre: ESetIdentitySteps) => void;
 }
 export interface ISocialLayout {
 	title: string;
@@ -129,14 +114,10 @@ export interface IJudgementResponse {
 
 export interface IIdentitySuccessState {
 	className?: string;
-	socials: ISocials;
-	name: IName;
-	txFee: ITxFee;
 	open?: boolean;
-	address: string;
-	changeStep: (step: ESetIdentitySteps) => void;
 	close: (pre: boolean) => void;
 	openPreModal: (pre: boolean) => void;
+	changeStep: (pre: ESetIdentitySteps) => void;
 }
 
 export interface IVerificationSuccessState {
@@ -148,3 +129,23 @@ export interface IVerificationSuccessState {
 }
 
 export const WHITESPACE = [' ', '\t'];
+
+export interface IIdentityFormActionButtons {
+	txFee: ITxFee;
+	onCancel: () => void;
+	handleSetIdentity: (requestJudgement: boolean) => void;
+	loading: boolean;
+	availableBalance: BN | null;
+	okAll: boolean;
+	proxyAddresses: string[];
+	showProxyDropdown: boolean;
+	isProxyExistsOnWallet: boolean;
+}
+
+export interface IAllowSetIdentity {
+	identityInfo: IIdentityInfo;
+	displayName: string;
+	email: { value: string; verified: boolean };
+	legalName: string;
+	twitter: { value: string; verified: boolean };
+}

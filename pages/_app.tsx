@@ -27,6 +27,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { ThemeProvider } from 'next-themes';
 import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
+import { PeopleKusamaApiContextProvider } from '~src/context/PeopleKusamaApiContext';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -120,17 +121,19 @@ function App({ Component, pageProps }: AppProps) {
 						<ModalProvider>
 							<ErrorBoundary>
 								<ApiContextProvider network={network}>
-									<>
-										{showSplashScreen && <SplashLoader />}
-										<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
-											<NextNProgress color='#E5007A' />
-											{/* <CMDK /> */}
-											<AppLayout
-												Component={Component}
-												pageProps={pageProps}
-											/>
-										</main>
-									</>
+									<PeopleKusamaApiContextProvider network={network}>
+										<>
+											{showSplashScreen && <SplashLoader />}
+											<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
+												<NextNProgress color='#E5007A' />
+												{/* <CMDK /> */}
+												<AppLayout
+													Component={Component}
+													pageProps={pageProps}
+												/>
+											</main>
+										</>
+									</PeopleKusamaApiContextProvider>
 								</ApiContextProvider>
 							</ErrorBoundary>
 						</ModalProvider>

@@ -246,6 +246,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 0,
 		parachain: '10000',
+		peopleKusamaRpcEndpoint: 'wss://kusama-people-rpc.polkadot.io',
 		logo: kusamaLogo,
 		palletInstance: '50',
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',

@@ -2,11 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Divider, Form, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { EAddressOtherTextType, NotificationStatus, Wallet } from '~src/types';
-import { ApiContext } from '~src/context/ApiContext';
 import WalletButton from '~src/components/WalletButton';
 import { LoadingOutlined } from '@ant-design/icons';
 import { WalletIcon } from '~src/components/Login/MetamaskLogin';
@@ -40,6 +39,8 @@ import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	className?: string;
@@ -57,6 +58,7 @@ interface Props {
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
 	isUsedInDelegationModal?: boolean;
+	usedInIdentityFlow?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -75,10 +77,13 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
-	isBalanceUpdated
+	isBalanceUpdated,
+	usedInIdentityFlow
 }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useContext(ApiContext);
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const currentUser = useUserDetailsSelector();
 	const { loginWallet, loginAddress, addresses } = currentUser;
 	const dispatch = useDispatch();
@@ -101,6 +106,15 @@ const AddressConnectModal = ({
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (network === 'kusama' || !usedInIdentityFlow) {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady, usedInIdentityFlow]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -558,6 +572,7 @@ const AddressConnectModal = ({
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
 									inputClassName='rounded-[4px] px-3 py-1'
+									usedInIdentityFlow={usedInIdentityFlow}
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

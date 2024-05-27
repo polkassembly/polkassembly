@@ -2,75 +2,34 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { useEffect, useState } from 'react';
-import { Spin, Timeline, TimelineItemProps } from 'antd';
+import { Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
-import { EmailIcon, TwitterIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
+import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { ESocials, NotificationStatus, VerificationStatus } from '~src/types';
 import { IVerificationResponse } from 'pages/api/v1/verification';
-import InprogressState from './InprogressState';
 import { useRouter } from 'next/router';
-import { useApiContext } from '~src/context';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { ESetIdentitySteps, IIdentitySocialVerifications, IJudgementResponse, ISocialLayout } from './types';
+import { ESetIdentitySteps, IIdentitySocialVerifications, IJudgementResponse } from './types';
+import SocialsLayout from './SocialLayout';
+import { useNetworkSelector, useOnchainIdentitySelector } from '~src/redux/selectors';
+import { useDispatch } from 'react-redux';
+import { onchainIdentityActions } from '~src/redux/onchainIdentity';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import SocialVerificationInprogress from './SocialVerificationInprogress';
+import Image from 'next/image';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
+import messages from '~src/auth/utils/messages';
 
-const SocialsLayout = ({ title, description, value, onVerify, verified, status, loading, fieldName }: ISocialLayout) => {
-	return (
-		<Spin
-			spinning={loading}
-			className='-mt-4'
-		>
-			<div className='ml-2 flex h-[70px] gap-5 text-lightBlue dark:text-blue-dark-medium'>
-				<span className='w-[60px] py-1.5 text-sm'>{title}</span>
-				<div className='w-full'>
-					<div
-						className={`flex h-10  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
-							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
-						}`}
-					>
-						<span>{value}</span>
-						{verified ? (
-							<span className='flex items-center justify-center gap-2 text-xs text-[#8d99a9]'>
-								<VerifiedIcon className='text-xl' />
-								Verified
-							</span>
-						) : (
-							<CustomButton
-								onClick={onVerify}
-								className={`text-xs ${
-									[VerificationStatus.VERFICATION_EMAIL_SENT, VerificationStatus.PLEASE_VERIFY_TWITTER]?.includes(status as VerificationStatus) ? 'w-[120px]' : 'w-[68px]'
-								}`}
-								height={30}
-								width={144}
-								variant='primary'
-							>
-								{status === VerificationStatus.VERFICATION_EMAIL_SENT || (fieldName === ESocials.TWITTER && status === VerificationStatus.PLEASE_VERIFY_TWITTER)
-									? 'Confirm'
-									: 'Verify'}
-							</CustomButton>
-						)}
-					</div>
-					{!verified && <span className='text-xs'>{description}</span>}
-				</div>
-			</div>
-		</Spin>
-	);
-};
-
-const SocialVerification = ({
-	className,
-	socials,
-	onCancel,
-	startLoading,
-	closeModal,
-	changeStep,
-	setSocials,
-	address,
-	identityHash,
-	setOpenSuccessModal
-}: IIdentitySocialVerifications) => {
-	const { api, apiReady } = useApiContext();
+const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
+	const dispach = useDispatch();
+	const { network } = useNetworkSelector();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { socials, identityAddress, identityHash } = useOnchainIdentitySelector();
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
 	const [status, setStatus] = useState({ email: '', twitter: '' });
@@ -80,6 +39,14 @@ const SocialVerification = ({
 
 	const items: TimelineItemProps[] = [];
 
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+
 	const handleTwitterVerificationClick = async () => {
 		if (twitterVerificationStart) {
 			await handleVerify(ESocials.TWITTER, true);
@@ -88,7 +55,7 @@ const SocialVerification = ({
 			await handleTwitterVerification();
 		}
 	};
-	if (email?.value) {
+	if (email?.value.length) {
 		items.push({
 			children: (
 				<SocialsLayout
@@ -101,11 +68,11 @@ const SocialVerification = ({
 					loading={fieldLoading.email}
 				/>
 			),
-			dot: <EmailIcon className={` ${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
+			dot: <EmailIcon className={`${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
 			key: 1
 		});
 	}
-	if (twitter?.value) {
+	if (twitter?.value.length) {
 		items.push({
 			children: (
 				<SocialsLayout
@@ -125,34 +92,27 @@ const SocialVerification = ({
 			key: 2
 		});
 	}
-	const handleLocalStorageSave = (field: any, socialsChanging?: boolean) => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
+	const handleNewStateUpdation = (field: any, socialsChanging?: boolean) => {
+		const newData = { ...email, ...field };
+
+		if (socialsChanging) {
+			dispach(
+				onchainIdentityActions.setOnchainSocials({
+					...socials,
+					email: { ...email, ...newData?.email },
+					twitter: { ...twitter, ...newData?.twitter }
+				})
+			);
 		}
-		const newData = { ...data, ...field };
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...data,
-				...newData
-			})
-		);
-		socialsChanging &&
-			setSocials({
-				...socials,
-				email: { ...email, ...newData?.email },
-				twitter: { ...twitter, ...newData?.twitter }
-			});
 	};
 
 	const handleSetStates = (fieldName: ESocials, verifiedField: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if (ESocials.EMAIL === fieldName) {
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
-			handleLocalStorageSave({ email: { ...email, verified: verifiedField } }, true);
+			handleNewStateUpdation({ email: { ...email, verified: verifiedField } }, true);
 		} else {
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
-			handleLocalStorageSave({ twitter: { ...twitter, verified: verifiedField } }, true);
+			handleNewStateUpdation({ twitter: { ...twitter, verified: verifiedField } }, true);
 		}
 	};
 
@@ -170,10 +130,18 @@ const SocialVerification = ({
 			checkingVerified: Boolean(checkingVerified),
 			type: fieldName
 		});
+
 		if (error) {
 			handleSetStates(fieldName, false, VerificationStatus.NOT_VERIFIED, false);
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
 			startLoading({ isLoading: false, message: '' });
+			console.log(error);
+			if (error === messages.INVALID_JWT)
+				queueNotification({
+					header: 'Error!',
+					message: error,
+					status: NotificationStatus.ERROR
+				});
 		}
 		if (data) {
 			if (data?.message === VerificationStatus.ALREADY_VERIFIED) {
@@ -186,11 +154,17 @@ const SocialVerification = ({
 				} else if (ESocials.TWITTER === fieldName) {
 					handleSetStates(fieldName, false, VerificationStatus.PLEASE_VERIFY_TWITTER);
 				}
+			} else if (checkingVerified && data?.message === VerificationStatus.NOT_VERIFIED) {
+				setStatus({ ...status, email: VerificationStatus.NOT_VERIFIED });
 			} else if (!checkingVerified) {
-				setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
 				if (fieldName === ESocials.EMAIL) {
-					closeModal(true);
-					setOpen(true);
+					if (data?.message === VerificationStatus.VERFICATION_EMAIL_SENT) {
+						closeModal(true);
+						setOpen(true);
+						setStatus({ ...status, email: VerificationStatus?.VERFICATION_EMAIL_SENT });
+					} else {
+						setStatus({ ...status, email: VerificationStatus.NOT_VERIFIED });
+					}
 				}
 			}
 			setFieldLoading({ ...fieldLoading, [fieldName]: false });
@@ -222,21 +196,20 @@ const SocialVerification = ({
 		startLoading({ isLoading: true, message: 'Awaiting Judgement from Polkassembly' });
 		const { data, error } = await nextApiClientFetch<IJudgementResponse>('api/v1/verification/judgement-call', {
 			identityHash,
-			userAddress: address
+			userAddress: identityAddress
 		});
 
 		if (data) {
-			localStorage.removeItem('identityForm');
-			localStorage.removeItem('identityAddress');
-			localStorage.removeItem('identityWallet');
 			setOpenSuccessModal(true);
 			closeModal(true);
 			startLoading({ isLoading: false, message: '' });
-			setOpenSuccessModal(true);
-			closeModal(true);
-
+			localStorage.removeItem('identityAddress');
+			localStorage.removeItem('identityWallet');
+			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
-			router.replace('/');
+			router.replace(isOpenGovSupported(network) ? '/opengov' : '/').finally(() => {
+				router.reload();
+			});
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',
@@ -249,9 +222,11 @@ const SocialVerification = ({
 	};
 
 	useEffect(() => {
-		(async () => {
-			await handleVerify(ESocials.TWITTER, true);
-		})();
+		if (twitter.value.length) {
+			(async () => {
+				await handleVerify(ESocials.TWITTER, true);
+			})();
+		}
 		(async () => {
 			await handleVerify(ESocials.EMAIL, true);
 		})();
@@ -262,7 +237,7 @@ const SocialVerification = ({
 		let socialsCount = 0;
 		let verifiedCount = 0;
 		Object?.values(socials).forEach((value) => {
-			if (value?.value) {
+			if (value?.value?.length) {
 				socialsCount += 1;
 			}
 			if (value?.verified) {
@@ -279,6 +254,18 @@ const SocialVerification = ({
 				className='mt-8'
 				items={items}
 			/>
+
+			<div className='-ml-4 mb-4 flex w-full items-center justify-start gap-1 text-xs text-lightBlue dark:text-blue-dark-medium'>
+				Regarding any query Contact us
+				<a href='mailto:hello@polkassembly.io'>
+					<Image
+						width={16}
+						height={16}
+						src='/assets/icons/redirect.svg'
+						alt=''
+					/>
+				</a>
+			</div>
 			<div className='-ml-10 -mr-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#E1E6EB] px-6 pt-5 dark:border-separatorDark'>
 				<CustomButton
 					text='Cancel'
@@ -292,15 +279,15 @@ const SocialVerification = ({
 					disabled={handleProceedDisabled()}
 					buttonsize='xs'
 					variant='primary'
+					className={handleProceedDisabled() ? 'opacity-50' : ''}
 				/>
 			</div>
-			<InprogressState
+			<SocialVerificationInprogress
 				open={open}
-				close={(close) => setOpen(!close)}
-				openPreModal={(pre) => closeModal(!pre)}
-				socials={socials}
-				changeStep={changeStep}
+				close={(close: boolean) => setOpen(!close)}
+				openPreModal={(pre: boolean) => closeModal(!pre)}
 				handleVerify={handleVerify}
+				changeStep={changeStep}
 			/>
 		</div>
 	);

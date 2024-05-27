@@ -28,7 +28,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 						<Link
 							className={classNames(
 								'flex flex-col',
-								inPage ? 'px-8 pt-5 max-sm:px-3' : 'px-5 pt-3',
+								inPage ? 'px-7 pt-5 max-sm:px-3' : 'px-4 pt-3',
 								notification.type === EInAppNotificationsType.UNREAD ? 'bg-[#f7f8ff] dark:bg-[#1a1b34]' : ''
 							)}
 							key={`${notification.id}_${index}`}
@@ -65,7 +65,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 								</div>
 							</div>
 
-							<div className={classNames('flex items-center px-3 pb-3 text-lightBlue dark:text-blue-dark-medium', inPage ? 'text-sm' : 'text-xs')}>
+							<div className={classNames('flex items-center px-4 pb-3 text-lightBlue dark:text-blue-dark-medium', inPage ? 'text-sm' : 'text-xs')}>
 								<ClockCircleOutlined className='mr-1' /> <span className='whitespace-nowrap'>{getRelativeCreatedAt(notification.createdAt)}</span>
 							</div>
 						</Link>

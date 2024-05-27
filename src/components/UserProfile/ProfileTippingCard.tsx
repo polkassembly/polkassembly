@@ -19,7 +19,7 @@ import BN from 'bn.js';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import styled from 'styled-components';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';

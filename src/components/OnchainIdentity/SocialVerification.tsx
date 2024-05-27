@@ -207,8 +207,9 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			localStorage.removeItem('identityWallet');
 			localStorage.removeItem(`isIdentityCallDone_${identityAddress}`);
 			changeStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
-			router.replace(isOpenGovSupported(network) ? '/opengov' : '/');
-			router.reload();
+			router.replace(isOpenGovSupported(network) ? '/opengov' : '/').finally(() => {
+				router.reload();
+			});
 		} else if (error) {
 			queueNotification({
 				header: 'Error!',

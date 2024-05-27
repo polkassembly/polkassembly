@@ -27,6 +27,7 @@ import IdentitySuccessState from './IdentitySuccessState';
 import { network as AllNetworks } from 'src/global/networkConstants';
 import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 
 const ZERO_BN = new BN(0);
 
@@ -49,6 +50,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const [step, setStep] = useState<ESetIdentitySteps>(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [perSocialBondFee, setPerSocialBondFee] = useState<BN>(ZERO_BN);
+	const [isRequestedJudgmentFromPolkassembly, setIsRequestedJudgmentFromPolkassembly] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState<ITxFee>({ bondFee: ZERO_BN, gasFee: ZERO_BN, minDeposite: ZERO_BN, registerarFee: ZERO_BN });
 
 	useEffect(() => {
@@ -56,9 +58,9 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
 		}
 		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress || loginAddress}`) || false;
-		setStep(isIdentityCallDone ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
+		setStep(isIdentityCallDone || isRequestedJudgmentFromPolkassembly ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isRequestedJudgmentFromPolkassembly]);
 
 	useEffect(() => {
 		if (network !== AllNetworks.KUSAMA) {
@@ -67,7 +69,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady]);
+	}, [network, defaultApi, defaultApiReady, peopleKusamaApi, peopleKusamaApiReady]);
 
 	const getTxFee = async () => {
 		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
@@ -90,9 +92,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
 				console.log('Error in unwrapping identity hash');
-				return;
 			}
-
 			dispatch(onchainIdentityActions.setOnchainIdentityHash(identityHash));
 		} catch (err) {
 			console.log(err);
@@ -115,7 +115,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (!api || !apiReady) return;
 
 		try {
-			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web } = await getIdentityInformation({
+			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
 				api: api,
 				apiReady: apiReady,
@@ -130,6 +130,18 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			form.setFieldValue('legalName', legal || '');
 			form.setFieldValue('email', email || '');
 			form.setFieldValue('twitter', twitter || '');
+
+			const infoCall = judgements?.filter(([, judgement]: any[]): boolean => {
+				return !!judgement?.FeePaid;
+			});
+
+			if (infoCall?.length) {
+				const isRegistrarIndex = infoCall.some(([index]) => {
+					return Number(index) == getIdentityRegistrarIndex({ network });
+				});
+				console.log(isRegistrarIndex);
+				setIsRequestedJudgmentFromPolkassembly(!!isRegistrarIndex || false);
+			}
 
 			dispatch(
 				onchainIdentityActions.updateOnchainIdentityStore({
@@ -164,7 +176,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 	useEffect(() => {
 		if (!api || !apiReady || !loginAddress) return;
-		getIdentityHash();
 
 		form.setFieldValue('address', identityAddress || loginAddress);
 		getTxFee();

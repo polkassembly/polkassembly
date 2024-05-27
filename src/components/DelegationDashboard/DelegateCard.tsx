@@ -26,7 +26,6 @@ import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfieBalances';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
@@ -45,9 +44,8 @@ enum EDelegateSource {
 const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -58,14 +56,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
 	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const getData = async () => {
 		if (!delegate?.address?.length) return;
@@ -91,13 +81,15 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	}, [network, delegate?.address]);
 
 	const handleIdentityInfo = async () => {
-		if (!api || !apiReady || !delegate?.address) return;
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !delegate?.address) return;
 		setLoading(true);
 
 		const info = await getIdentityInformation({
 			address: delegate?.address,
-			api: api,
-			apiReady: apiReady,
+			api: apiPromise,
+			apiReady: apiPromiseReady,
 			network: network
 		});
 		setIdentity(info);

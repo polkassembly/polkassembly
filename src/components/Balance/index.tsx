@@ -41,13 +41,13 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		if (network !== 'kusama' && !usedInIdentityFlow) {
+		if (network !== 'kusama' || !usedInIdentityFlow) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady]);
+	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow]);
 
 	useEffect(() => {
 		if (!network) return;

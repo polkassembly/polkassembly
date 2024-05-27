@@ -108,13 +108,13 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama' && !usedInIdentityFlow) {
+		if (network === 'kusama' || !usedInIdentityFlow) {
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady, usedInIdentityFlow]);
 
 	useEffect(() => {
 		if (!network) return;

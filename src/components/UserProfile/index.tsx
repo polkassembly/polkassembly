@@ -14,7 +14,6 @@ import ProfileTabs from './ProfileTabs';
 import { useTheme } from 'next-themes';
 import ProfileStatsCard from './ProfileStatsCard';
 import { IUserPostsListingResponse } from '~src/types';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 export interface IActivitiesCounts {
@@ -36,9 +35,8 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 
 const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
@@ -61,21 +59,17 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
 
-	useEffect(() => {
-		if (!api) {
+		if (!apiPromise) {
 			return;
 		}
 
-		if (!apiReady) {
+		if (!apiPromiseReady) {
 			return;
 		}
+
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
 			judgements: [],
@@ -85,8 +79,8 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 		profileDetails?.addresses.forEach(async (address) => {
 			const info = await getIdentityInformation({
 				address: address,
-				api: api,
-				apiReady: apiReady,
+				api: apiPromise,
+				apiReady: apiPromiseReady,
 				network: network
 			});
 
@@ -113,7 +107,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileDetails?.addresses, api, apiReady]);
+	}, [profileDetails?.addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		const { email, twitter, riot, web } = onChainIdentity;

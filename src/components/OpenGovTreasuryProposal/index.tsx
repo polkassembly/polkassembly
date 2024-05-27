@@ -32,7 +32,6 @@ import {
 } from '~src/redux/treasuryProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
@@ -137,9 +136,8 @@ export const INIT_BENEFICIARIES = [
 ];
 
 const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent }: Props) => {
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const dispatch = useDispatch();
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
 	const currentUser = useUserDetailsSelector();
@@ -196,25 +194,19 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		setCloseConfirm(false);
 	};
 
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
-
 	const handleBeneficiaryIdentityInfo = async () => {
 		if (beneficiaries.filter((item) => !!item).length === 0) {
 			dispatch(setShowIdentityInfoCardForBeneficiary(false));
 			return;
 		}
-		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
 
 		let promiseArr: any[] = [];
 		for (const address of [...beneficiaries.map((addr) => addr)]) {
 			if (!address) continue;
-			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: api, apiReady: apiReady, network })];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network })];
 		}
 		try {
 			dispatch(setIdentityCardLoading(true));

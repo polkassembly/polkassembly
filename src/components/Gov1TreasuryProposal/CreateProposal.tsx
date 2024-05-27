@@ -34,7 +34,6 @@ import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	className?: string;
@@ -47,9 +46,8 @@ const ZERO_BN = new BN(0);
 const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpenSuccessModal }: Props) => {
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
@@ -67,14 +65,6 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const unit = network ? chainProperties[network]?.tokenSymbol : null;
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const getGasFee = async () => {
 		if (!api || !apiReady || !beneficiary || !getEncodedAddress(beneficiary, network) || fundingAmount == '0' || !proposer) return;
@@ -197,12 +187,13 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		if (!api || !apiReady || !address) {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !address) {
 			setShowIdentityInfoCardForProposer(false);
 			return;
 		}
-
-		const info = await getIdentityInformation({ address: address, api: api, apiReady: apiReady, network });
+		const info = await getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network });
 		setShowIdentityInfoCardForProposer(!info?.display);
 	};
 

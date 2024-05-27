@@ -15,10 +15,8 @@ import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
 import DelegationTabs from './DelegationTabs';
 import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
@@ -32,9 +30,8 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
@@ -42,14 +39,6 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
 	const [isMobile, setIsMobile] = useState<boolean>(false);
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		if (!window) return;
@@ -61,14 +50,14 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [isMobile, userDetails]);
 
 	const handleIdentityInfo = async () => {
-		if (!api || !apiReady) return;
-
-		const encodedAddr = userDetails.delegationDashboardAddress ? getEncodedAddress(userDetails.delegationDashboardAddress, network) || '' : '';
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady) return;
 
 		const info = await getIdentityInformation({
-			address: encodedAddr,
-			api: api,
-			apiReady: apiReady,
+			address: userDetails.delegationDashboardAddress || '',
+			api: apiPromise,
+			apiReady: apiPromiseReady,
 			network: network
 		});
 		setIdentity(info);

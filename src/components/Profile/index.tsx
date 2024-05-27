@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { CheckCircleFilled, MinusCircleFilled } from '@ant-design/icons';
-import { ApiPromise } from '@polkadot/api';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
@@ -61,9 +60,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	const aboutDescription = profileDetails?.bio;
 	const aboutTitle = profileDetails?.title;
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const [title, setTitle] = useState(aboutTitle || '');
 	const [description, setDescription] = useState(aboutDescription || '');
@@ -74,14 +72,6 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const [error, setError] = useState<string>('');
 
 	const noDescription = `This page belongs to address (${address}). Only this user can edit this description and the title. If you own this address, edit this page and tell us more about yourself.`;
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const getAccounts = async (): Promise<undefined> => {
@@ -110,25 +100,27 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	}, [address, network]);
 
 	useEffect(() => {
-		if (!api) {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise) {
 			return;
 		}
 
-		if (!apiReady || !address) {
+		if (!apiPromiseReady || !address) {
 			return;
 		}
 
 		(async () => {
 			const info = await getIdentityInformation({
 				address: address as string,
-				api: api,
-				apiReady: apiReady,
+				api: apiPromise,
+				apiReady: apiPromiseReady,
 				network: network
 			});
 			setIdentity(info);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady]);
+	}, [address, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
 
 	const judgements = identity ? identity.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid) : [];
 	const displayJudgements = judgements.map(([, jud]) => jud.toString()).join(', ');

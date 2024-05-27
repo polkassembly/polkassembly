@@ -22,7 +22,6 @@ import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -40,9 +39,8 @@ interface Props {
 const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, setSelectedAddresses }: Props) => {
 	const dispatch = useDispatch();
 	const { id, loginAddress } = useUserDetailsSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
@@ -52,14 +50,6 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const [identityInfo, setIdentityInfo] = useState<{ [key: string]: boolean }>({});
 	const [openSetIdentityModal, setOpenSetIdentityModal] = useState(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const govTypeContent = (
 		<div className='flex w-[160px] flex-col gap-2'>
@@ -103,11 +93,14 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
-		if (!api || !apiReady) return;
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady) return;
+
 		let promiseArr: any[] = [];
 		for (const address of addresses) {
 			if (!address) continue;
-			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: api, apiReady: apiReady, network: network })];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network: network })];
 		}
 		try {
 			const resolve = await Promise.all(promiseArr);
@@ -124,7 +117,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, api, apiReady]);
+	}, [addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady]);
 
 	const handleRemoveIdentity = () => {
 		if (loginAddress) {

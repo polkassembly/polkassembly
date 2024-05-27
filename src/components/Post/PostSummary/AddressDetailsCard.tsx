@@ -13,7 +13,6 @@ import MultisigIcon from '~assets/icons/multisig-address.svg';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 import Address from '~src/ui-components/Address';
 import { shortenString } from '~src/util/shortenString';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 interface Props {
 	address: string;
@@ -21,9 +20,8 @@ interface Props {
 }
 const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
@@ -31,21 +29,15 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 
 	const [isMultisigProposer, setIsMultisigProposer] = useState(false);
 
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
-
 	const handleIdentityInfo = async () => {
-		if (!api || !apiReady || !address) return;
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !address) return;
 
 		const info = await getIdentityInformation({
 			address: address,
-			api: api,
-			apiReady: apiReady,
+			api: apiPromise,
+			apiReady: apiPromiseReady,
 			network: network
 		});
 		setIdentity(info);

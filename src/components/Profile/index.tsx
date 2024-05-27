@@ -32,8 +32,8 @@ import { MessageType, ProfileDetails } from '~src/auth/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useApiContext } from '~src/context';
-import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -62,7 +62,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const aboutDescription = profileDetails?.bio;
 	const aboutTitle = profileDetails?.title;
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const [title, setTitle] = useState(aboutTitle || '');
@@ -77,7 +77,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

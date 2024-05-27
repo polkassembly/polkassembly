@@ -6,8 +6,8 @@ import { VerifiedIcon } from '~src/ui-components/CustomIcons';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SingleSignatoryAlertIcon from '~assets/icons/info-alert.svg';
 import NonVerifiedAlertIcon from '~assets/icons/red-info-alert.svg';
-import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
-import { useApiContext } from '~src/context';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { MinusCircleFilled } from '@ant-design/icons';
 import MultisigIcon from '~assets/icons/multisig-address.svg';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
@@ -22,7 +22,7 @@ interface Props {
 const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
@@ -33,7 +33,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

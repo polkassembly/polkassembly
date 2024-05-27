@@ -11,7 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { useApiContext } from 'src/context';
+import { useApiContext, usePeopleKusamaApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -60,7 +60,7 @@ import { poppins } from 'pages/_app';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PaLogo from './PaLogo';
-import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
@@ -295,7 +295,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -327,7 +327,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

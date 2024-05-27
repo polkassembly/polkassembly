@@ -7,7 +7,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import styled from 'styled-components';
-import { useNetworkSelector, useOnchainIdentitySelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
@@ -19,14 +19,14 @@ import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { registerarFee, minDeposite } = txFee;
@@ -36,7 +36,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

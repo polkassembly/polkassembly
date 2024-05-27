@@ -13,20 +13,20 @@ import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ESetIdentitySteps, IIdentitySocialVerifications, IJudgementResponse } from './types';
 import SocialsLayout from './SocialLayout';
-import { useNetworkSelector, useOnchainIdentitySelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { onchainIdentityActions } from '~src/redux/onchainIdentity';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SocialVerificationInprogress from './SocialVerificationInprogress';
 import Image from 'next/image';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { socials, identityAddress, identityHash } = useOnchainIdentitySelector();
 	const { email, twitter } = socials;
@@ -40,7 +40,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Form, Input, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useGov1treasuryProposal, useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import AddressInput from '~src/ui-components/AddressInput';
 import Balance from '../Balance';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -18,7 +18,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
@@ -48,7 +48,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
@@ -70,7 +70,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

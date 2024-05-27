@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Divider, Form } from 'antd';
-import { useNetworkSelector, useOnchainIdentitySelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
 import { trackEvent } from 'analytics';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
@@ -33,7 +33,7 @@ import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 
 const ZERO_BN = new BN(0);
@@ -58,7 +58,7 @@ const IdentityForm = ({
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -75,7 +75,7 @@ const IdentityForm = ({
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

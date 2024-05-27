@@ -9,8 +9,8 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useApiContext } from '~src/context';
-import { useNetworkSelector, useOnchainIdentitySelector, usePeopleKusamaApiSelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useNetworkSelector, useOnchainIdentitySelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILoading, NotificationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
 import AddressConnectModal from '~src/ui-components/AddressConnectModal';
@@ -37,7 +37,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { identityAddress } = useOnchainIdentitySelector();
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
@@ -50,7 +50,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

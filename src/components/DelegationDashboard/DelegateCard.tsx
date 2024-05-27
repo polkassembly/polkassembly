@@ -9,11 +9,11 @@ import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
-import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
@@ -46,7 +46,7 @@ const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -61,7 +61,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

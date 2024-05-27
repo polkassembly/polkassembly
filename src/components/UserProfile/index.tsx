@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import ProfileHeader from './ProfileHeader';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/accounts/types';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import ProfileCard from './ProfileCard';
 import classNames from 'classnames';
 import ProfileTabs from './ProfileTabs';
@@ -37,7 +37,7 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
@@ -62,7 +62,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

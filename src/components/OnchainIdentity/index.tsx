@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useDispatch } from 'react-redux';
@@ -25,10 +25,8 @@ import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import getPeopleKusamaRPCConnection from './utils/getPeopleKusamaRPCConnection';
 import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { peopleKusamaApiActions } from '~src/redux/peopleKusamaApi';
 
 const ZERO_BN = new BN(0);
 
@@ -38,6 +36,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
@@ -61,17 +60,11 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handlePeopleKusamaRPCConnection = async () => {
-		const { api, apiReady } = await getPeopleKusamaRPCConnection(network);
-		dispatch(peopleKusamaApiActions.setPeopleKusamaApi({ peopleKusamaApi: JSON.stringify(api), peopleKusamaApiReady: apiReady }));
-		setApiDetails({ api: api || null, apiReady: apiReady || false });
-	};
-
 	useEffect(() => {
 		if (network !== AllNetworks.KUSAMA) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
-			handlePeopleKusamaRPCConnection();
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, defaultApi, defaultApiReady]);
@@ -137,7 +130,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			form.setFieldValue('legalName', legal || '');
 			form.setFieldValue('email', email || '');
 			form.setFieldValue('twitter', twitter || '');
-			console.log(isVerified, 'isVerified');
 
 			dispatch(
 				onchainIdentityActions.updateOnchainIdentityStore({

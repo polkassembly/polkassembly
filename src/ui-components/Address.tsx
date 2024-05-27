@@ -21,7 +21,7 @@ import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
 import { Space } from 'antd';
 import dynamic from 'next/dynamic';
-import { useNetworkSelector, usePeopleKusamaApiSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { ISocial } from '~src/auth/types';
 import QuickView, { TippingUnavailableNetworks } from './QuickView';
@@ -32,6 +32,7 @@ import { isAddress } from 'ethers';
 import { poppins } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { usePeopleKusamaApiContext } from '~src/context';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -116,7 +117,7 @@ const Address = (props: Props) => {
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise | null>(null);
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
@@ -170,7 +171,7 @@ const Address = (props: Props) => {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
 		} else if (network === 'kusama') {
-			setApi((JSON.parse(peopleKusamaApi || '') as ApiPromise) || null);
+			setApi(peopleKusamaApi || null);
 			setApiReady(peopleKusamaApiReady);
 		} else {
 			if (!apiContext.api || !apiContext.apiReady) return;

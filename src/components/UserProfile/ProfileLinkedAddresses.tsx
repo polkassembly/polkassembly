@@ -11,12 +11,12 @@ import { Checkbox, Popover } from 'antd';
 import Address from '~src/ui-components/Address';
 import styled from 'styled-components';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { useNetworkSelector, usePeopleKusamaApiSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { ClearIdentityOutlinedIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Proxy from '../Settings/Account/Proxy';
 import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -41,7 +41,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const dispatch = useDispatch();
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiSelector();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
@@ -55,7 +55,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 
 	useEffect(() => {
 		if (network === 'kusama') {
-			setApiDetails({ api: (JSON.parse(peopleKusamaApi || '') as ApiPromise) || null, apiReady: peopleKusamaApiReady });
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}

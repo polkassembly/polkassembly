@@ -25,13 +25,14 @@ interface Props {
 	classname?: string;
 	isDelegating?: boolean;
 	isVoting?: boolean;
+	usedInIdentityFlow?: boolean;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
@@ -40,20 +41,21 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
+		if (network !== 'kusama' && !usedInIdentityFlow) {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		} else {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, defaultApi, defaultApiReady]);
+
+	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
 			decimals: chainProperties[network]?.tokenDecimals,
 			unit: chainProperties[network]?.tokenSymbol
 		});
 	}, [network]);
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
@@ -93,7 +95,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		} else {
-			(network === 'kusama' && defaultApi ? defaultApi : api).query.system
+			api.query.system
 				.account(address)
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);

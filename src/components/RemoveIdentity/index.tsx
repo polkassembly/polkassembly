@@ -178,6 +178,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				}}
 				walletAlertTitle='Remove Identity'
 				accountAlertTitle='Please install a wallet and create an address to start removing identity.'
+				usedInIdentityFlow
 			/>
 
 			<Modal
@@ -255,6 +256,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 									<Balance
 										address={address || loginAddress}
 										onChange={handleAvailableBalanceChange}
+										usedInIdentityFlow
 									/>
 								)}
 							</div>

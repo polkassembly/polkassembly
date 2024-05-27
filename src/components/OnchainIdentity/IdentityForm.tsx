@@ -335,6 +335,7 @@ const IdentityForm = ({
 						<Balance
 							address={identityAddress || currentUser.loginAddress}
 							onChange={handleOnAvailableBalanceChange}
+							usedInIdentityFlow
 						/>
 					)}
 				</div>

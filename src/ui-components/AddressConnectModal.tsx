@@ -58,6 +58,7 @@ interface Props {
 	isProposalCreation?: boolean;
 	isBalanceUpdated?: boolean;
 	isUsedInDelegationModal?: boolean;
+	usedInIdentityFlow?: boolean;
 }
 
 const ZERO_BN = new BN(0);
@@ -76,7 +77,8 @@ const AddressConnectModal = ({
 	accountAlertTitle = 'Wallet extension not detected.',
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
-	isBalanceUpdated
+	isBalanceUpdated,
+	usedInIdentityFlow
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
@@ -106,11 +108,12 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama') {
+		if (network === 'kusama' && !usedInIdentityFlow) {
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
@@ -569,6 +572,7 @@ const AddressConnectModal = ({
 									onBalanceChange={handleOnBalanceChange}
 									className='mt-4 text-sm text-lightBlue dark:text-blue-dark-medium'
 									inputClassName='rounded-[4px] px-3 py-1'
+									usedInIdentityFlow={usedInIdentityFlow}
 								/>
 							)
 						) : !wallet && Object.keys(availableWallets || {}).length !== 0 ? (

@@ -186,6 +186,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 					setOpen(true);
 				}}
 				localStorageWalletKeyName='identityWallet'
+				usedInIdentityFlow
 			/>
 
 			{/* exit modal */}

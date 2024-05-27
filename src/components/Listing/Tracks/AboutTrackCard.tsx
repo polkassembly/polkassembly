@@ -63,7 +63,7 @@ export const getDefaultTrackMetaData = () => {
 };
 const groups: any = {
 	Admin: ['staking_admin', 'lease_admin', 'fellowship_admin', 'general_admin', 'auction_admin'],
-	Governance: ['referendum_killer', 'referendum_canceller'],
+	Governance: ['referendum_killer', 'referendum_canceller', 'fast_general_admin'],
 	Root: ['whitelisted_caller', 'root', 'wish_for_change'],
 	Treasury: ['small_spender', 'medium_spender', 'big_spender', 'small_tipper', 'big_tipper', 'treasurer']
 };
@@ -295,9 +295,11 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
-						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange'].includes(trackName) && (
+						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
 							<ProposalActionButtons
-								isCreateProposal={trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin' || trackName === 'WishForChange'}
+								isCreateProposal={
+									trackName === 'root' || trackName === 'StakingAdmin' || trackName === 'AuctionAdmin' || trackName === 'WishForChange' || trackName === 'FastGeneralAdmin'
+								}
 								isCancelProposal={trackName === 'ReferendumCanceller'}
 								isKillProposal={trackName === 'ReferendumKiller'}
 							/>

@@ -1697,6 +1697,32 @@ export const networkTrackInfo: INetworkTrackInfo = {
 					yOffset: -862069
 				}
 			}
+		},
+		[PostOrigin.FAST_GENERAL_ADMIN]: {
+			trackId: 5,
+			description: 'Origin ',
+			group: 'Governance',
+			name: 'fast_general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 500000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 100800,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				reciprocal: {
+					factor: 999999999,
+					xOffset: 999999999,
+					yOffset: 0
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 5799702,
+					xOffset: 11467891,
+					yOffset: -5733946
+				}
+			}
 		}
 	},
 	moonbeam: {
@@ -1827,6 +1853,32 @@ export const networkTrackInfo: INetworkTrackInfo = {
 					factor: 869501,
 					xOffset: 8620680,
 					yOffset: -862069
+				}
+			}
+		},
+		[PostOrigin.FAST_GENERAL_ADMIN]: {
+			trackId: 5,
+			description: 'Origin ',
+			group: 'Governance',
+			name: 'fast_general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 10000000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 100800,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				reciprocal: {
+					factor: 999999999,
+					xOffset: 999999999,
+					yOffset: 0
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 5799702,
+					xOffset: 11467891,
+					yOffset: -5733946
 				}
 			}
 		}

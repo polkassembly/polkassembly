@@ -117,7 +117,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
 
 	const handleRemoveIdentity = () => {
 		if (loginAddress) {

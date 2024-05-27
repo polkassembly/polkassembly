@@ -45,6 +45,11 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 
 	useEffect(() => {
 		handleIdentityInfo();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, address, peopleKusamaApi, peopleKusamaApiReady]);
+
+	useEffect(() => {
 		setIsMultisigProposer(false);
 		if (address) {
 			checkIsAddressMultisig(address).then((isMulti) => setIsMultisigProposer(isMulti));

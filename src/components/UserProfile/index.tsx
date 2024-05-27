@@ -107,7 +107,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileDetails?.addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [profileDetails?.addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
 
 	useEffect(() => {
 		const { email, twitter, riot, web } = onChainIdentity;

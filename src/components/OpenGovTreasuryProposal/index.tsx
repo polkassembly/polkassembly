@@ -245,9 +245,12 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			console.log(err);
 		}
 	};
-
 	useEffect(() => {
 		handleBeneficiaryIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, peopleKusamaApi, peopleKusamaApiReady]);
+
+	useEffect(() => {
 		handleBeneficiariesMultisigCheck();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, window, beneficiaries, api, apiReady]);

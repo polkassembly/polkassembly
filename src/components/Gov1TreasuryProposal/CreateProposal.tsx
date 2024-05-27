@@ -227,7 +227,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		checkProposerIdentity(proposer || loginAddress);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, proposer, api, apiReady]);
+	}, [loginAddress, proposer, api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];

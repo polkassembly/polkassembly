@@ -100,7 +100,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		if (!api || !apiReady || !delegate?.address) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, delegate]);
+	}, [address, api, apiReady, delegate, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	const handleClick = () => {
 		// GAEvent for delegate CTA clicked

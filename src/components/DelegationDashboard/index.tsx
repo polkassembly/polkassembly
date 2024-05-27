@@ -67,7 +67,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		if (!api || !apiReady) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {

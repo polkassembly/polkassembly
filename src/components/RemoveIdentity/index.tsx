@@ -24,6 +24,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
+import { useRouter } from 'next/router';
 
 const ZERO_BN = new BN(0);
 
@@ -34,6 +35,7 @@ export interface IRemoveIdentity {
 
 const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { network } = useNetworkSelector();
+	const router = useRouter();
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
@@ -128,6 +130,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			});
 			setLoading({ isLoading: false, message: '' });
 			dispatch(setOpenRemoveIdentityModal(false));
+			router.reload();
 		};
 		const tx = api.tx.identity.clearIdentity();
 

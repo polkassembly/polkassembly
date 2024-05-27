@@ -48,9 +48,9 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 			value: onchainIdentity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
 		},
 		{
-			isVerified: (!!onchainIdentity?.riot && isGood) || false,
+			isVerified: ((!!onchainIdentity?.riot || !!onchainIdentity?.matrix) && isGood) || false,
 			key: ESocialType.RIOT,
-			value: onchainIdentity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
+			value: onchainIdentity?.riot || onchainIdentity?.matrix || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
 		},
 		{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' }
 	]);
@@ -68,9 +68,9 @@ const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize =
 				value: onchainIdentity?.email || socials?.find((social) => social.type === ESocialType.EMAIL)?.link || ''
 			},
 			{
-				isVerified: (!!onchainIdentity?.riot && isGood) || false,
+				isVerified: ((!!onchainIdentity?.riot || !!onchainIdentity?.matrix) && isGood) || false,
 				key: ESocialType.RIOT,
-				value: onchainIdentity?.riot || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
+				value: onchainIdentity?.riot || onchainIdentity?.matrix || socials?.find((social) => social.type === ESocialType.RIOT)?.link || ''
 			},
 			{ isVerified: false, key: ESocialType.TELEGRAM, value: socials?.find((social) => social.type === ESocialType.TELEGRAM)?.link || '' }
 		]);

@@ -33,7 +33,7 @@ export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProv
 	const provider = useRef<ScProvider | WsProvider | null>(null);
 
 	useEffect(() => {
-		if (!wsProvider && !props.network && props.network !== 'kusama') return;
+		if ((!wsProvider && !props.network) || props.network !== 'kusama') return;
 		provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.peopleKusamaRpcEndpoint);
 
 		setPeopleKusamaApiReady(false);
@@ -46,6 +46,7 @@ export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProv
 	}, [props.network, wsProvider]);
 
 	useEffect(() => {
+		if (props.network !== 'kusama') return;
 		if (peopleKusamaApi) {
 			const timer = setTimeout(async () => {
 				queueNotification({

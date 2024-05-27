@@ -22,9 +22,9 @@ export interface INetworkWalletErr {
 }
 
 const IdentityBadge = ({ className, identity, flags }: Props) => {
-	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
+	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));
 	const color: 'brown' | 'green' | 'grey' = isGood ? 'green' : isBad ? 'brown' : 'grey';
 	const CouncilEmoji = () => (
 		<span

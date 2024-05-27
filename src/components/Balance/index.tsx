@@ -6,7 +6,7 @@ import BN from 'bn.js';
 
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePostDataContext } from 'src/context';
+import { useApiContext, usePeopleKusamaApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
@@ -15,6 +15,7 @@ import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { ApiPromise } from '@polkadot/api';
 
 interface Props {
 	address: string;
@@ -24,17 +25,29 @@ interface Props {
 	classname?: string;
 	isDelegating?: boolean;
 	isVoting?: boolean;
+	usedInIdentityFlow?: boolean;
 }
 const ZERO_BN = new BN(0);
-const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false }: Props) => {
+const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
+
+	useEffect(() => {
+		if (network !== 'kusama' || !usedInIdentityFlow) {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		} else {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -57,7 +70,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		} else if (['equilibrium'].includes(network)) {
-			api.query.system
+			api?.query.system
 				.account(address)
 				.then((result: any) => {
 					const locked = new BN(result.toHuman().data?.V0?.lock?.toString().replaceAll(',', ''));

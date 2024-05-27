@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
@@ -9,7 +9,6 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import styled from 'styled-components';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -20,16 +19,28 @@ import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
 		if (identityInfo?.alreadyVerified) return;

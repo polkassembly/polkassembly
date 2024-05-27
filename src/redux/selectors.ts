@@ -73,7 +73,6 @@ const useOnchainIdentitySelector = () => {
 const useInAppNotificationsSelector = () => {
 	return useSelector<TAppState, IInAppNotificationsStore>((state) => state.inAppNotifications);
 };
-
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,

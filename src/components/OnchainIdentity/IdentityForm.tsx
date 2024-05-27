@@ -7,7 +7,6 @@ import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector 
 import Alert from '~src/basic-components/Alert';
 import { trackEvent } from 'analytics';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
-import { useApiContext } from '~src/context';
 import { IIdentityForm, ITxFee, WHITESPACE } from './types';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -33,6 +32,9 @@ import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
+import { network as AllNetworks } from 'src/global/networkConstants';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
 
 const ZERO_BN = new BN(0);
 
@@ -54,8 +56,10 @@ const IdentityForm = ({
 }: IIdentityForm) => {
 	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { email, twitter } = socials;
@@ -68,6 +72,14 @@ const IdentityForm = ({
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(false);
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -121,7 +133,7 @@ const IdentityForm = ({
 		const onSuccess = async () => {
 			const identityHash = await api?.query?.identity
 				?.identityOf(identityAddress)
-				.then((res: any) => (network == 'polkadot' ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
+				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 			if (!identityHash) {
 				setStartLoading({ isLoading: false, message: '' });
 				console.log('Error in unwraping identityHash');
@@ -222,9 +234,12 @@ const IdentityForm = ({
 
 		setInfo({
 			info: {
+				discord: { [identityInfo?.discord.length > 0 ? 'raw' : 'none']: identityInfo?.discord.length > 0 ? identityInfo?.discord : null },
 				display: { [okDisplay ? 'raw' : 'none']: displayNameVal || null },
 				email: { [okEmail && emailVal.length > 0 ? 'raw' : 'none']: okEmail && emailVal.length > 0 ? emailVal : null },
+				github: { [identityInfo?.github.length > 0 ? 'raw' : 'none']: identityInfo?.github.length > 0 ? identityInfo?.github : null },
 				legal: { [okLegal && legalNameVal.length > 0 ? 'raw' : 'none']: okLegal && legalNameVal.length > 0 ? legalNameVal : null },
+				matrix: { [identityInfo?.matrix.length > 0 ? 'raw' : 'none']: identityInfo?.matrix.length > 0 ? identityInfo?.matrix : null },
 				riot: { [identityInfo?.riot.length > 0 ? 'raw' : 'none']: identityInfo?.riot.length > 0 ? identityInfo?.riot : null },
 				twitter: { [okTwitter && twitterVal.length > 0 ? 'raw' : 'none']: okTwitter && twitterVal.length > 0 ? twitterVal : null },
 				web: { [identityInfo?.web.length > 0 ? 'raw' : 'none']: identityInfo?.web.length > 0 ? identityInfo?.web : null }
@@ -320,6 +335,7 @@ const IdentityForm = ({
 						<Balance
 							address={identityAddress || currentUser.loginAddress}
 							onChange={handleOnAvailableBalanceChange}
+							usedInIdentityFlow
 						/>
 					)}
 				</div>

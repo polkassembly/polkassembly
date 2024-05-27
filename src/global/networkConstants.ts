@@ -243,6 +243,7 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
+		peopleKusamaRpcEndpoint: 'wss://kusama-people-rpc.polkadot.io',
 		logo: kusamaLogo,
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
 		ss58Format: 2,

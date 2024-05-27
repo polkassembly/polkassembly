@@ -94,7 +94,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 					{!!address && !!username && (
 						<div className='w-7/10 gap-1 text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex gap-1'>
-								<span className='text-2xl font-semibold'>{username}</span>
+								<span className='text-2xl font-semibold'>{identity?.display || identity?.legal || username}</span>
 								<div className='flex items-center gap-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 									(
 									<Address

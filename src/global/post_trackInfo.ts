@@ -1700,7 +1700,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.FAST_GENERAL_ADMIN]: {
 			trackId: 5,
-			description: 'Origin ',
+			description: 'Origin for managing the registrar. ',
 			group: 'Governance',
 			name: 'fast_general_admin',
 			maxDeciding: 10,
@@ -1858,7 +1858,7 @@ export const networkTrackInfo: INetworkTrackInfo = {
 		},
 		[PostOrigin.FAST_GENERAL_ADMIN]: {
 			trackId: 5,
-			description: 'Origin ',
+			description: 'Origin for managing the registrar. ',
 			group: 'Governance',
 			name: 'fast_general_admin',
 			maxDeciding: 10,

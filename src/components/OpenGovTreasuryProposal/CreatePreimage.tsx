@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { IBeneficiary, NotificationStatus } from '~src/types';
+import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -311,6 +311,20 @@ const CreatePreimage = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
+	useEffect(() => {
+		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+
+		dispatchBeneficiaryAddresses({
+			payload: {
+				address: beneficiaryAddresses?.[0].address,
+				amount: beneficiaryAddresses?.[0].amount,
+				index: 0
+			},
+			type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [genralIndex]);
+
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
 		setTxFee(ZERO_BN);
 		let data: any = localStorage.getItem('treasuryProposalData');
@@ -446,7 +460,7 @@ const CreatePreimage = ({
 			);
 		} else {
 			beneficiaryAddresses.forEach((beneficiary) => {
-				const balance = new BN(`${beneficiary.amount}`);
+				const [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 				if (beneficiary.address && !isNaN(Number(beneficiary.amount)) && getEncodedAddress(beneficiary.address, network) && Number(beneficiary.amount) > 0) {
 					txArr.push(api?.tx?.treasury?.spendLocal(balance.toString(), beneficiary.address));
@@ -481,7 +495,7 @@ const CreatePreimage = ({
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
+		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: txArr[0] });
 	};
 
 	const handleSubmit = async () => {
@@ -840,10 +854,6 @@ const CreatePreimage = ({
 	};
 
 	const fundingAmtToBN = () => {
-		if (genralIndex) {
-			fundingAmount = new BN(inputAmountValue).mul(new BN('1000000'));
-			return fundingAmount;
-		}
 		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
 		return fundingAmt;
 	};

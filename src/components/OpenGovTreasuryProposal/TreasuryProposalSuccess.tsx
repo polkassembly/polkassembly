@@ -152,6 +152,7 @@ const TreasuryProposalSuccessPopup = ({
 											key={index}
 											disableBalanceFormatting
 											assetId={genralIndex}
+											isProposalCreationFlow
 										/>
 									))}
 								</div>
@@ -167,7 +168,11 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Funding Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, (fundingAmount || 0).toString()) : formatedBalance((fundingAmount || 0).toString(), unit)}{' '}
+									{fundingAmount
+										? genralIndex
+											? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)
+											: formatedBalance(fundingAmount.toString(), unit)
+										: null}
 									{!genralIndex && unit}
 								</span>
 							</span>

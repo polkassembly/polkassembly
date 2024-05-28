@@ -78,7 +78,7 @@ const AddressConnectModal = ({
 	accountSelectionFormTitle = 'Select an address',
 	isProposalCreation = false,
 	isBalanceUpdated,
-	usedInIdentityFlow
+	usedInIdentityFlow = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
@@ -330,11 +330,13 @@ const AddressConnectModal = ({
 	};
 
 	const handleOnBalanceChange = async (balanceStr: string) => {
-		if (!api || !apiReady) {
-			return;
-		}
-		if (multisig && api.query?.system?.account) {
-			balanceStr = (await api.query.system.account(multisig)).data.free.toString();
+		if (multisig) {
+			if (!api || !apiReady) {
+				return;
+			}
+			if (api.query?.system?.account) {
+				balanceStr = (await api.query.system.account(multisig)).data.free.toString();
+			}
 		}
 		const availableBalance = new BN(balanceStr);
 		setAvailableBalance(availableBalance);

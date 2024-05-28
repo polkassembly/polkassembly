@@ -100,7 +100,7 @@ const BalanceInput = ({
 	];
 
 	const onBalanceChange = (value: string | null): void => {
-		if (asset) {
+		if (['USDC', 'USDT'].includes(asset.label)) {
 			const bnBalance = new BN(value || 0);
 			setInputValue?.(value || '0');
 			onChange?.(bnBalance);

@@ -100,22 +100,15 @@ const BalanceInput = ({
 	];
 
 	const onBalanceChange = (value: string | null): void => {
-		if (['USDC', 'USDT'].includes(asset.label)) {
-			const bnBalance = new BN(value || 0);
+		const [balance, isValid] = inputToBn(`${value}`, network, false);
+		if (isValid) {
 			setInputValue?.(value || '0');
-			onChange?.(bnBalance);
+			onChange?.(balance);
 			setIsBalanceSet?.(true);
 		} else {
-			const [balance, isValid] = inputToBn(`${value}`, network, false);
-			if (isValid) {
-				setInputValue?.(value || '0');
-				onChange?.(balance);
-				setIsBalanceSet?.(true);
-			} else {
-				onChange?.(ZERO_BN);
-				setInputValue?.('0');
-				setIsBalanceSet?.(false);
-			}
+			onChange?.(ZERO_BN);
+			setInputValue?.('0');
+			setIsBalanceSet?.(false);
 		}
 	};
 

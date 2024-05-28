@@ -72,7 +72,7 @@ const AccountSelectionForm = ({
 						text='You can choose an account from the extension.'
 					/>
 				)}
-				{address && withBalance && (
+				{!!address && withBalance && (
 					<Balance
 						address={address}
 						onChange={onBalanceChange}

@@ -4,15 +4,22 @@
 
 import { Switch as AntdSwitch, SwitchProps } from 'antd';
 import { FC, PropsWithChildren } from 'react';
+import styled from 'styled-components';
 
 interface Props extends SwitchProps {
 	className?: string;
 }
 
+const StyledSwitch = styled(AntdSwitch)`
+	&.ant-switch .ant-switch-inner .ant-switch-inner-unchecked {
+		background-color: #d2d8e0;
+	}
+`;
+
 const Switch: FC<PropsWithChildren<Props>> = (props) => {
 	const { className } = props;
 	return (
-		<AntdSwitch
+		<StyledSwitch
 			{...props}
 			className={`${className}`}
 		/>

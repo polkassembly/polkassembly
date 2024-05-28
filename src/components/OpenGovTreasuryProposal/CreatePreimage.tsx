@@ -313,7 +313,6 @@ const CreatePreimage = ({
 
 	useEffect(() => {
 		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
-
 		dispatchBeneficiaryAddresses({
 			payload: {
 				address: beneficiaryAddresses?.[0].address,
@@ -322,6 +321,9 @@ const CreatePreimage = ({
 			},
 			type: EBeneficiaryAddressesActionType.REPLACE_ALL_WITH_ONE
 		});
+		form.setFieldValue('funding_amount', beneficiaryAddresses?.[0].amount);
+		handleFundingAmountChange(new BN(beneficiaryAddresses?.[0].amount || 0));
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [genralIndex]);
 
@@ -495,7 +497,7 @@ const CreatePreimage = ({
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: txArr[0] });
+		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
 	};
 
 	const handleSubmit = async () => {

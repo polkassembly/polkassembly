@@ -302,6 +302,7 @@ const CreateProposal = ({
 										key={index}
 										disableBalanceFormatting
 										assetId={genralIndex}
+										isProposalCreationFlow
 									/>
 								))}
 							</div>
@@ -315,7 +316,8 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString()) : formatedBalance(fundingAmount.toString(), unit)} {!genralIndex && unit}
+								{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network) : formatedBalance(fundingAmount.toString(), unit)}
+								{!genralIndex && unit}
 							</span>
 						</span>
 						<span className='flex items-center'>

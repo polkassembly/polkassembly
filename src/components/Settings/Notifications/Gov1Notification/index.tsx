@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider, Switch } from 'antd';
+import { Divider } from 'antd';
 import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import OverallPostsNotification from '~assets/icons/gov-icon.svg';
@@ -13,6 +13,7 @@ import { ACTIONS } from '../Reducer/action';
 import { Collapse } from '../common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import { BountiesIcon, ReferendumsIcon, TechComIconListing, TipsIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
+import Switch from '~src/basic-components/Switch';
 
 const { Panel } = Collapse;
 type Props = {

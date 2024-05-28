@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Divider, Image, Switch, Tag } from 'antd';
+import { Divider, Image, Tag } from 'antd';
 import SmallParachainIcon from '~assets/icons/parachain-small.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -11,6 +11,7 @@ import { ISelectedNetwork } from '../types';
 import Modal from '~src/ui-components/Modal';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Switch from '~src/basic-components/Switch';
 
 const AddNetworkModal = ({
 	open,

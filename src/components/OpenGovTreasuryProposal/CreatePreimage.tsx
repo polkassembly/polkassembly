@@ -1315,7 +1315,10 @@ const CreatePreimage = ({
 					)}
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-section-dark-container'>
 						<Button
-							onClick={() => setSteps({ percent: 100, step: 0 })}
+							onClick={() => {
+								setSteps({ percent: 100, step: 0 });
+								setGenralIndex(null);
+							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
 							Back

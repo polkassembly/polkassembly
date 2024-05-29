@@ -108,7 +108,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 			setFormDisabled(true);
 			setLoading(true);
-			const lastCreationDetails = JSON.parse(localStorage.getItem('discussionCreated') || '');
+			const details = localStorage.getItem('discussionCreated');
+			const lastCreationDetails = details ? JSON.parse(details || '') : null;
 
 			if (lastCreationDetails && Number(lastCreationDetails.count) == 3) {
 				const lastTime = dayjs(lastCreationDetails.createdAt);
@@ -118,6 +119,8 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						message: 'Discussion Creation Limit Execced!',
 						status: NotificationStatus.INFO
 					});
+					setLoading(false);
+					setFormDisabled(false);
 					return;
 				} else {
 					localStorage.removeItem('discussionCreated');

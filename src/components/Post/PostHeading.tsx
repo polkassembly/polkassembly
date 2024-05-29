@@ -164,21 +164,22 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		}
 	};
 
-	const handlePreimageWarning = async () => {
-		if (!api || !apiReady) return;
+	const handlePreimageWarning = async (isTreasuryProposal: boolean) => {
+		if (!api || !apiReady || !isTreasuryProposal) return;
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
 		console.log(preimageWarning);
 	};
 
 	useEffect(() => {
+		let isTreasuryProposal = false;
 		if (network && track_name) {
-			const isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
+			isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
 			setIsTreasuryProposal(isTreasuryProposal);
 		}
 
 		if (!api || !apiReady) return;
-		handlePreimageWarning();
+		handlePreimageWarning(isTreasuryProposal);
 
 		if (identityId && !proposer && !curator) {
 			(async () => {

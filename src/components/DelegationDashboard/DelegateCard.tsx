@@ -115,9 +115,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	return (
 		<Spin spinning={loading}>
 			<div
-				className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
-					delegate?.dataSource.includes(EDelegateSource.NOVA) ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
-				} ${className}`}
+				className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-pink_primary  dark:border-[#3B444F] 
+					dark:border-separatorDark
+			${className}`}
 			>
 				{delegate?.dataSource.length > 1 ? (
 					<div

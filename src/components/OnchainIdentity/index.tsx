@@ -57,8 +57,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (loginAddress && !identityAddress) {
 			dispatch(onchainIdentityActions.setOnchainIdentityAddress(loginAddress));
 		}
-		const isIdentityCallDone = localStorage.getItem(`isIdentityCallDone_${identityAddress || loginAddress}`) || false;
-		setStep(isIdentityCallDone || isRequestedJudgmentFromPolkassembly ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
+		setStep(isRequestedJudgmentFromPolkassembly ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRequestedJudgmentFromPolkassembly]);
 
@@ -72,10 +71,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [network, defaultApi, defaultApiReady, peopleKusamaApi, peopleKusamaApiReady]);
 
 	const getTxFee = async () => {
+		if (!api || !apiReady || !network) return;
 		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
 
-		const registerarFee: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
-		const bnRegisterarFee = new BN(registerarFee?.[(registerarFee?.length || 1) - 1].fee || ZERO_BN);
+		const registerars: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
+		const registerarIndex = getIdentityRegistrarIndex({ network });
+		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
 		const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
 		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 		setPerSocialBondFee(bondFee as any);
@@ -175,14 +176,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady || !loginAddress) return;
+		if (!api || !apiReady) return;
 
 		form.setFieldValue('address', identityAddress || loginAddress);
 		getTxFee();
 		getIdentityInfo();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, identityAddress]);
+	}, [api, apiReady, loginAddress, identityAddress, network]);
 
 	return (
 		<div>

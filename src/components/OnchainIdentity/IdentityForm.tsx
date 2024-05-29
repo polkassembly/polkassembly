@@ -141,7 +141,6 @@ const IdentityForm = ({
 			setStartLoading({ isLoading: false, message: '' });
 			closeModal(true);
 			setOpenIdentitySuccessModal(true);
-			localStorage.setItem(`isIdentityCallDone_${identityAddress}`, 'true');
 			dispach(onchainIdentityActions.setOnchainIdentityHash(identityHash));
 			await handleIdentityHashSave(identityHash);
 		};

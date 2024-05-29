@@ -53,10 +53,10 @@ const getIdentityInformation = async ({ api, apiReady, address, network }: Args)
 	const identityInfo: any = await api?.query.identity.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
 
 	const infoCall = identityInfo?.judgements.filter(([, judgement]: any[]): boolean => {
-		return !!judgement?.FeePaid;
+		return ['KnownGood', 'Reasonable'].includes(judgement);
 	});
 
-	const unverified = !!infoCall?.length || !identityInfo?.judgements?.length;
+	const unverified = !infoCall?.length || !identityInfo?.judgements?.length;
 	const isGood = identityInfo?.judgements.some(([, judgement]: any[]): boolean => {
 		return ['KnownGood', 'Reasonable'].includes(judgement);
 	});

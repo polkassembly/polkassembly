@@ -8,29 +8,22 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
 import AboutNetwork from 'src/components/Home/AboutNetwork';
 import News from 'src/components/Home/News';
 import UpcomingEvents from 'src/components/Home/UpcomingEvents';
-
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import { useApiContext } from '~src/context';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { IApiResponse, NetworkSocials } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import styled from 'styled-components';
 import { redisGet, redisSet } from '~src/auth/redis';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
@@ -119,39 +112,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
-	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsSelector();
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<Boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
-		if (!api || !apiReady) return;
-
-		let unsubscribe: () => void;
-		const address = localStorage.getItem('identityAddress');
-		const identityForm = localStorage.getItem('identityForm');
-
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-		if (!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
-				if (!(judgementProvided || !info?.identity?.judgements?.length)) {
-					localStorage.removeItem('identityForm');
-				}
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady, userId]);
+	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
 
@@ -165,12 +131,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			<div className='mt-3 flex items-center justify-between'>
 				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
 				<div className='mr-[6px] flex justify-between'>
-					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-						<div className='mr-4 flex items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
-							<IdentityCaution />
-							<span className='ml-2'>Social verification incomplete</span>
-						</div>
-					)}
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>

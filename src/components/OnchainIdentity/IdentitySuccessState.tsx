@@ -5,21 +5,20 @@ import React, { useEffect } from 'react';
 import { poppins } from 'pages/_app';
 import { Modal } from 'antd';
 import Address from '~src/ui-components/Address';
-// import SuccessIcon from '~assets/icons/identity-success.svg';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ESetIdentitySteps, IIdentitySuccessState } from './types';
 
-const SuccessState = ({ className, open, close, changeStep, openPreModal, name, socials, address }: IIdentitySuccessState) => {
+const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep }: IIdentitySuccessState) => {
 	const { network } = useNetworkSelector();
-	const { displayName } = name;
+	const { socials, displayName, identityAddress } = useOnchainIdentitySelector();
 	const { email, web, twitter, riot } = socials;
-	const { id, username } = useUserDetailsSelector();
+	const { id, username, loginAddress } = useUserDetailsSelector();
 
 	useEffect(() => {
 		if (!network) return;
@@ -58,7 +57,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 							<span className='w-[80px] text-sm tracking-[0.015em] text-lightBlue dark:text-blue-dark-medium'>Address:</span>
 							<span>
 								<Address
-									address={address}
+									address={identityAddress || loginAddress}
 									displayInline
 									isTruncateUsername={false}
 								/>
@@ -100,6 +99,7 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 							userName: username || ''
 						});
 						close(true);
+
 						changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 						openPreModal(true);
 					}}
@@ -112,4 +112,4 @@ const SuccessState = ({ className, open, close, changeStep, openPreModal, name, 
 	);
 };
 
-export default SuccessState;
+export default IdentitySuccessState;

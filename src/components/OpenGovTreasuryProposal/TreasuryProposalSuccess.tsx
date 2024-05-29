@@ -21,6 +21,7 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 
 interface Props {
 	className?: string;
@@ -36,6 +37,7 @@ interface Props {
 	isCancelReferendaForm?: boolean;
 	isKillReferendumForm?: boolean;
 	isCreateReferendumForm?: boolean;
+	genralIndex?: string | null;
 }
 
 const getDefaultTrackMetaData = () => {
@@ -65,7 +67,8 @@ const TreasuryProposalSuccessPopup = ({
 	postId,
 	isCreateReferendumForm,
 	isKillReferendumForm,
-	isCancelReferendaForm
+	isCancelReferendaForm,
+	genralIndex
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -148,6 +151,8 @@ const TreasuryProposalSuccessPopup = ({
 											beneficiary={beneficiary}
 											key={index}
 											disableBalanceFormatting
+											assetId={genralIndex}
+											isProposalCreationFlow
 										/>
 									))}
 								</div>
@@ -163,7 +168,12 @@ const TreasuryProposalSuccessPopup = ({
 							<span className='flex'>
 								<span className='w-[172px]'>Funding Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{fundingAmount && formatedBalance(fundingAmount.toString(), unit)} {unit}
+									{fundingAmount
+										? genralIndex
+											? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)
+											: formatedBalance(fundingAmount.toString(), unit)
+										: null}
+									{!genralIndex && unit}
 								</span>
 							</span>
 							<span className='flex items-center'>

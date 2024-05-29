@@ -31,7 +31,7 @@ interface Props {
 const SocialsHandle = ({ className, onchainIdentity, socials, address, boxSize = 24, iconSize = 14 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const isGood = onchainIdentity.isGood;
+	const isGood = onchainIdentity?.isGood;
 	const [isKiltNameExists, setIsKiltNameExists] = useState<boolean>(false);
 	// const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
 	const [identityArr, setIdentityArr] = useState<ISocialsType[]>([

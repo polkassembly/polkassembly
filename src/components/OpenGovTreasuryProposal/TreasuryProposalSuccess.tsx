@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import Link from 'next/link';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
@@ -23,7 +23,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 interface Props {
 	className?: string;
@@ -77,10 +76,7 @@ const TreasuryProposalSuccessPopup = ({
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, selectedTrack));
@@ -92,7 +88,6 @@ const TreasuryProposalSuccessPopup = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -180,21 +175,34 @@ const TreasuryProposalSuccessPopup = ({
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{fundingAmount ? (
 										genralIndex ? (
-											<div className='flex gap-1'>
+											<div className='flex items-center gap-1'>
 												{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)}
 												<HelperTooltip
 													text={
-														<div className='flex items-center gap-1 text-pink_primary'>
+														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 															<span>Current value:</span>
 															<span>
-																{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+																{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
 															</span>
 														</div>
 													}
 												/>
 											</div>
 										) : (
-											formatedBalance(fundingAmount.toString(), unit)
+											<div className='flex items-center gap-1'>
+												<span className='flex items-center gap-1'>
+													{formatedBalance(fundingAmount.toString(), unit)}
+													{unit}
+												</span>
+												<HelperTooltip
+													text={
+														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+															<span>Current value:</span>
+															<span>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD </span>
+														</div>
+													}
+												/>
+											</div>
 										)
 									) : null}
 									{!genralIndex && unit}

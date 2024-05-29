@@ -39,8 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -137,10 +136,8 @@ const CreatePreimage = ({
 	const [validBeneficiaryAddress, setValidBeneficiaryAddress] = useState<boolean>(false);
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
+
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -310,7 +307,6 @@ const CreatePreimage = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
@@ -498,18 +494,6 @@ const CreatePreimage = ({
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
-
-			setPreimage(preimage);
-			setPreimageHash(preimage.preimageHash);
-			setPreimageLength(preimage.preimageLength);
-			setPreimageCreated(true);
-			onChangeLocalStorageSet(
-				{ beneficiaryAddresses: INIT_BENEFICIARIES, preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
-				Boolean(isPreimage),
-				true
-			);
-			setLoading(false);
-			setSteps({ percent: 100, step: 2 });
 		};
 
 		setLoading(true);
@@ -1157,10 +1141,10 @@ const CreatePreimage = ({
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
 										Current Value:{' '}
 										{!genralIndex ? (
-											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
 										) : (
 											<span className='text-pink_primary'>
-												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
 											</span>
 										)}
 									</span>

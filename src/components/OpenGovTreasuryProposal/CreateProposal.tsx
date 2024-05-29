@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
@@ -32,7 +32,6 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ZERO_BN = new BN(0);
@@ -98,10 +97,8 @@ const CreateProposal = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id: userId } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
+
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -119,7 +116,6 @@ const CreateProposal = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit
 		});
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -323,26 +319,38 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 								{genralIndex ? (
-									<div className='flex gap-1'>
+									<div className='flex items-center gap-1'>
 										{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)}
 										<HelperTooltip
 											text={
-												<div className='flex items-center gap-1 text-pink_primary'>
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 													<span>Current value:</span>
 													<span>
-														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
 													</span>
 												</div>
 											}
 										/>
 									</div>
 								) : (
-									formatedBalance(fundingAmount.toString(), unit)
+									<div className='flex items-center gap-1'>
+										<span className='flex items-center gap-1'>
+											{formatedBalance(fundingAmount.toString(), unit)}
+											{unit}
+										</span>
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+													<span>Current value:</span>
+													<span>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD </span>
+												</div>
+											}
+										/>
+									</div>
 								)}
-								{!genralIndex && unit}
-							</span>
+							</div>
 						</span>
 						<span className='flex items-center'>
 							<span className='w-[150px]'>Preimage Hash:</span>

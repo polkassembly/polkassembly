@@ -439,73 +439,78 @@ export async function getComments(
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
-			for (const doc of repliesSnapshot.docs) {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					if (data) {
-						const { created_at, id, username, comment_id, content, user_id } = data;
-						if (id) {
-							replyIds.push(id);
-						}
-						if (typeof user_id === 'number') {
-							userIds.add(user_id);
-						} else {
-							const numUserId = Number(user_id);
-							if (!isNaN(numUserId)) {
-								userIds.add(numUserId);
+
+			await Promise.all(
+				repliesSnapshot.docs.map(async (doc) => {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						if (data) {
+							const { created_at, id, username, comment_id, content, user_id } = data;
+							if (id) {
+								replyIds.push(id);
 							}
+							if (typeof user_id === 'number') {
+								userIds.add(user_id);
+							} else {
+								const numUserId = Number(user_id);
+								if (!isNaN(numUserId)) {
+									userIds.add(numUserId);
+								}
+							}
+							const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
+							comment.replies.push({
+								comment_id,
+								content: data.isDeleted ? '[Deleted]' : content,
+								created_at: created_at?.toDate ? created_at.toDate() : created_at,
+								id: id,
+								isDeleted: data.isDeleted || false,
+								is_custom_username: false,
+								post_index: postIndex,
+								post_type: postType,
+								proposer: '',
+								reply_reactions: getReactions(replyReactionSnapshot),
+								spam_users_count: 0,
+								updated_at: getUpdatedAt(data),
+								user_id: user_id,
+								username
+							});
 						}
-						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
-						comment.replies.push({
-							comment_id,
-							content: data.isDeleted ? '[Deleted]' : content,
-							created_at: created_at?.toDate ? created_at.toDate() : created_at,
-							id: id,
-							isDeleted: data.isDeleted || false,
-							is_custom_username: false,
-							post_index: postIndex,
-							post_type: postType,
-							proposer: '',
-							reply_reactions: getReactions(replyReactionSnapshot),
-							spam_users_count: 0,
-							updated_at: getUpdatedAt(data),
-							user_id: user_id,
-							username
-						});
 					}
-				}
-			}
+				})
+			);
 
 			if (replyIds.length > 0) {
 				const chunkSize = 30;
 				const totalChunks = Math.ceil(replyIds.length / chunkSize);
-				for (let i = 0; i < totalChunks; i++) {
-					const startIndex = i * chunkSize;
-					const endIndex = startIndex + chunkSize;
-					const slice = replyIds.slice(startIndex, endIndex);
-					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network)
-							.collection('reports')
-							.where('type', '==', 'reply')
-							.where('proposal_type', '==', postType)
-							.where('content_id', 'in', slice)
-							.get();
-						reportsQuery.docs.map((doc) => {
-							if (doc && doc.exists) {
-								const data = doc.data();
-								comment.replies = comment.replies.map((v: any) => {
-									if (v && v.id == data.content_id) {
-										return {
-											...v,
-											spam_users_count: Number(v.spam_users_count) + 1
-										};
-									}
-									return v;
-								});
-							}
-						});
-					}
-				}
+				await Promise.all(
+					Array.from({ length: totalChunks }).map(async (_, i) => {
+						const startIndex = i * chunkSize;
+						const endIndex = startIndex + chunkSize;
+						const slice = replyIds.slice(startIndex, endIndex);
+						if (slice.length > 0) {
+							const reportsQuery = await networkDocRef(network)
+								.collection('reports')
+								.where('type', '==', 'reply')
+								.where('proposal_type', '==', postType)
+								.where('content_id', 'in', slice)
+								.get();
+							reportsQuery.docs.map((doc) => {
+								if (doc && doc.exists) {
+									const data = doc.data();
+									comment.replies = comment.replies.map((v: any) => {
+										if (v && v.id == data.content_id) {
+											return {
+												...v,
+												spam_users_count: Number(v.spam_users_count) + 1
+											};
+										}
+										return v;
+									});
+								}
+							});
+						}
+					})
+				);
 			}
 			return {
 				...comment,
@@ -544,67 +549,71 @@ export async function getComments(
 	if (newIds.length > 0) {
 		const chunkSize = 30;
 		const totalChunks = Math.ceil(newIds.length / chunkSize);
-		for (let i = 0; i < totalChunks; i++) {
-			const startIndex = i * chunkSize;
-			const endIndex = startIndex + chunkSize;
-			const slice = newIds.slice(startIndex, endIndex);
-			if (slice.length > 0) {
-				const usersQuery = await firestore_db.collection('users').where('id', 'in', slice).get();
-				usersQuery.docs.forEach((doc) => {
-					if (doc && doc.exists) {
-						const data = doc.data();
-						userIdToUserMap[data.id] = {
-							is_custom_username: MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25,
-							proposer: userIdToUserMap?.[data.user_id]?.proposer || '',
-							username: data.username || ''
-						};
-					}
-				});
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
-				addressesQuery.docs.forEach((doc) => {
-					if (doc && doc.exists) {
-						const data = doc.data();
-						userIdToUserMap[data.user_id] = {
-							is_custom_username: userIdToUserMap?.[data.user_id]?.is_custom_username,
-							proposer: data.address,
-							username: userIdToUserMap?.[data.user_id]?.username || ''
-						};
-					}
-				});
-			}
-		}
+		await Promise.all(
+			Array.from({ length: totalChunks }).map(async (_, i) => {
+				const startIndex = i * chunkSize;
+				const endIndex = startIndex + chunkSize;
+				const slice = newIds.slice(startIndex, endIndex);
+				if (slice.length > 0) {
+					const usersQuery = await firestore_db.collection('users').where('id', 'in', slice).get();
+					usersQuery.docs.forEach((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							userIdToUserMap[data.id] = {
+								is_custom_username: MANUAL_USERNAME_25_CHAR.includes(data.username) || data.custom_username || data.username.length !== 25,
+								proposer: userIdToUserMap?.[data.user_id]?.proposer || '',
+								username: data.username || ''
+							};
+						}
+					});
+					const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+					addressesQuery.docs.forEach((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							userIdToUserMap[data.user_id] = {
+								is_custom_username: userIdToUserMap?.[data.user_id]?.is_custom_username,
+								proposer: data.address,
+								username: userIdToUserMap?.[data.user_id]?.username || ''
+							};
+						}
+					});
+				}
+			})
+		);
 	}
 
 	if (commentIds.length > 0) {
 		const chunkSize = 30;
 		const totalChunks = Math.ceil(commentIds.length / chunkSize);
-		for (let i = 0; i < totalChunks; i++) {
-			const startIndex = i * chunkSize;
-			const endIndex = startIndex + chunkSize;
-			const slice = commentIds.slice(startIndex, endIndex);
-			if (slice.length > 0) {
-				const reportsQuery = await networkDocRef(network)
-					.collection('reports')
-					.where('type', '==', 'comment')
-					.where('proposal_type', '==', postType)
-					.where('content_id', 'in', slice)
-					.get();
-				reportsQuery.docs.map((doc) => {
-					if (doc && doc.exists) {
-						const data = doc.data();
-						comments = comments.map((v) => {
-							if (v && v.id == data.content_id) {
-								return {
-									...v,
-									spam_users_count: Number(v.spam_users_count) + 1
-								};
-							}
-							return v;
-						});
-					}
-				});
-			}
-		}
+		await Promise.all(
+			Array.from({ length: totalChunks }).map(async (_, i) => {
+				const startIndex = i * chunkSize;
+				const endIndex = startIndex + chunkSize;
+				const slice = commentIds.slice(startIndex, endIndex);
+				if (slice.length > 0) {
+					const reportsQuery = await networkDocRef(network)
+						.collection('reports')
+						.where('type', '==', 'comment')
+						.where('proposal_type', '==', postType)
+						.where('content_id', 'in', slice)
+						.get();
+					reportsQuery.docs.map((doc) => {
+						if (doc && doc.exists) {
+							const data = doc.data();
+							comments = comments.map((v) => {
+								if (v && v.id == data.content_id) {
+									return {
+										...v,
+										spam_users_count: Number(v.spam_users_count) + 1
+									};
+								}
+								return v;
+							});
+						}
+					});
+				}
+			})
+		);
 	}
 
 	const commentsPromiseWithVote = comments.map(async (comment) => {

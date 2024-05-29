@@ -86,6 +86,8 @@ interface Props {
 	isUpdatedAvailableBalance: boolean;
 	setGenralIndex: (pre: string | null) => void;
 	genralIndex: string | null;
+	setInputAmountValue: (pre: string) => void;
+	inputAmountValue: string;
 }
 
 export interface IAdvancedDetails {
@@ -117,7 +119,9 @@ const CreatePreimage = ({
 	isUpdatedAvailableBalance,
 	form,
 	genralIndex,
-	setGenralIndex
+	setGenralIndex,
+	inputAmountValue,
+	setInputAmountValue
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -131,7 +135,6 @@ const CreatePreimage = ({
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [validBeneficiaryAddress, setValidBeneficiaryAddress] = useState<boolean>(false);
-	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
@@ -313,6 +316,7 @@ const CreatePreimage = ({
 
 	useEffect(() => {
 		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
 			payload: {
 				address: beneficiaryAddresses?.[0].address,
@@ -494,6 +498,18 @@ const CreatePreimage = ({
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
+
+			setPreimage(preimage);
+			setPreimageHash(preimage.preimageHash);
+			setPreimageLength(preimage.preimageLength);
+			setPreimageCreated(true);
+			onChangeLocalStorageSet(
+				{ beneficiaryAddresses: INIT_BENEFICIARIES, preimageCreated: true, preimageHash: preimage.preimageHash, preimageLength: preimage.preimageLength },
+				Boolean(isPreimage),
+				true
+			);
+			setLoading(false);
+			setSteps({ percent: 100, step: 2 });
 		};
 
 		setLoading(true);
@@ -1032,12 +1048,13 @@ const CreatePreimage = ({
 										<div className='-mb-[69px]'>
 											<BalanceInput
 												formItemName={`balance-${index}`}
+												multipleAssetsAllow={index == 0 && isMultiassetSupportedNetwork(network)}
 												address={proposerAddress}
 												placeholder='Split amount'
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												deafultAsset={genralIndex}
+												onAssetConfirm={setGenralIndex}
 											/>
 										</div>
 									</div>
@@ -1150,13 +1167,12 @@ const CreatePreimage = ({
 								</div>
 								<BalanceInput
 									address={proposerAddress}
-									multipleAssetsAllow={isMultiassetSupportedNetwork(network)}
 									placeholder='Add funding amount'
 									formItemName='funding_amount'
 									theme={theme}
 									balance={fundingAmtToBN()}
 									disabled={true}
-									onAssetConfirm={setGenralIndex}
+									deafultAsset={genralIndex}
 								/>
 							</div>
 							<div className='mt-6'>

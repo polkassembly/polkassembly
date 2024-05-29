@@ -32,6 +32,8 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ZERO_BN = new BN(0);
 
@@ -55,6 +57,7 @@ interface Props {
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
 	genralIndex?: string | null;
+	inputAmountValue: string;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -80,9 +83,11 @@ const CreateProposal = ({
 	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
-	genralIndex = null
+	genralIndex = null,
+	inputAmountValue
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -91,10 +96,12 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsSelector();
+	const { id: userId } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-	const currentUser = useUserDetailsSelector();
-
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
+	});
 	const success = (message: string) => {
 		messageApi.open({
 			content: message,
@@ -112,6 +119,7 @@ const CreateProposal = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit
 		});
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
@@ -316,7 +324,23 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network) : formatedBalance(fundingAmount.toString(), unit)}
+								{genralIndex ? (
+									<div className='flex gap-1'>
+										{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)}
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 text-pink_primary'>
+													<span>Current value:</span>
+													<span>
+														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+													</span>
+												</div>
+											}
+										/>
+									</div>
+								) : (
+									formatedBalance(fundingAmount.toString(), unit)
+								)}
 								{!genralIndex && unit}
 							</span>
 						</span>

@@ -39,7 +39,7 @@ interface Props {
 	isKillReferendumForm?: boolean;
 	isCreateReferendumForm?: boolean;
 	genralIndex?: string | null;
-	inputAmountValue: string;
+	inputAmountValue?: string;
 }
 
 const getDefaultTrackMetaData = () => {

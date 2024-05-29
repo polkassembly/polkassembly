@@ -9,6 +9,6 @@ describe('Login and Logout functionality', () => {
     cy.login();
 
     // Use custom logout command
-    // cy.logout();
+     cy.logout();
   });
 });

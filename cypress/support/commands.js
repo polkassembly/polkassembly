@@ -31,7 +31,7 @@ Cypress.Commands.add('login', () => {
 
   // Submit the login form
   cy.get('button[text="Login"][type="submit"]').click();
-  cy.wait(1000);
+  cy.wait(5000);
 });
 
 
@@ -44,9 +44,10 @@ Cypress.Commands.add('logout', () => {
   });
 
   // Wait for the user dropdown to appear and click it
-  cy.get('.navbar-user-dropdown').click();
-
+  cy.get('.normal-case').click();
+  cy.wait(3000);
 
   // Wait for the dropdown menu to become visible
   cy.get('.ant-dropdown-menu-title-content > .mt-1').click();
+  cy.wait(2000);
 });

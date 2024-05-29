@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
 import { shortenString } from '~src/util/shortenString';
 import { MailFilledIcon } from '~src/ui-components/CustomIcons';
+import Switch from '~src/basic-components/Switch';
 type Props = {
 	verifiedEmail: string;
 	handleEnableDisabled: any;

@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import { Switch } from 'antd';
 import DisabledConfirmation from './Modals/Confirmation';
 import { CHANNEL } from '.';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import classNames from 'classnames';
+import Switch from '~src/basic-components/Switch';
 
 type Props = {
 	handleEnableDisabled: any;

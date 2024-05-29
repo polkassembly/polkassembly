@@ -5,9 +5,9 @@ import React, { useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { CHANNEL } from '.';
 import DisabledConfirmation from './Modals/Confirmation';
-import { Switch } from 'antd';
 import ResetIcon from '~assets/icons/reset.svg';
 import ResetConfirmation from './Modals/ResetConfirmation';
+import Switch from '~src/basic-components/Switch';
 
 type Props = {
 	title: string;

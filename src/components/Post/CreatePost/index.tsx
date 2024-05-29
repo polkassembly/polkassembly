@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Form, Switch } from 'antd';
+import { Form } from 'antd';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
@@ -25,6 +25,7 @@ import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import Switch from '~src/basic-components/Switch';
 
 interface Props {
 	className?: string;

@@ -117,7 +117,7 @@ const IdentityForm = ({
 		const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
 		if (!api || !apiReady || !okAll || registrarIndex === null) return;
-		if (requestJudgement && identityInfo?.alreadyVerified) return;
+		if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
 
 		let tx;
 		if (requestJudgement) {
@@ -278,21 +278,17 @@ const IdentityForm = ({
 							message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
 						/>
 					)}
-				{identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
+				{identityInfo.verifiedByPolkassembly && identityInfo?.alreadyVerified && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
-						type='warning'
+						type='success'
 						showIcon
-						message={
-							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-								For judgement to be requested, one of the credentials must be updated, as this address already has judgement.
-							</p>
-						}
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Congratulations, you have been successfully verified by polkassembly!</p>}
 					/>
 				)}
 				{!!identityInfo?.email &&
 					!!identityInfo?.displayName &&
-					!identityInfo?.alreadyVerified &&
+					!identityInfo.verifiedByPolkassembly &&
 					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
 					availableBalance &&
 					availableBalance.gt(totalFee) && (
@@ -302,14 +298,14 @@ const IdentityForm = ({
 							showIcon
 							message={
 								<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-									This account has already set social verification. Kindly{' '}
+									This account has already set socials. Kindly{' '}
 									<span
 										className='cursor-pointer font-semibold text-pink_primary'
 										onClick={() => handleSetIdentity(true)}
 									>
 										Request Judgement
 									</span>{' '}
-									to complete the process
+									from polkassembly to complete the process
 								</p>
 							}
 						/>
@@ -502,7 +498,7 @@ const IdentityForm = ({
 						>
 							<Input
 								onBlur={() => getGasFee()}
-								addonAfter={email?.verified && identityInfo?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
+								addonAfter={!!identityInfo?.email && !!identityInfo.alreadyVerified && identityInfo?.email === form?.getFieldValue('email') && <VerifiedIcon className='text-xl' />}
 								name='email'
 								value={email?.value}
 								placeholder='Enter your email address'
@@ -543,7 +539,9 @@ const IdentityForm = ({
 							<Input
 								onBlur={() => getGasFee()}
 								name='twitter'
-								addonAfter={twitter?.verified && identityInfo?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />}
+								addonAfter={
+									!!identityInfo?.twitter && !!identityInfo.alreadyVerified && identityInfo?.twitter === form?.getFieldValue('twitter') && <VerifiedIcon className='text-xl' />
+								}
 								value={twitter?.value}
 								placeholder='Enter your twitter handle (case sensitive)'
 								className={`h-10 rounded-[4px] text-bodyBlue dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F] ${theme}`}
@@ -581,5 +579,9 @@ const IdentityForm = ({
 export default styled(IdentityForm)`
 	.change-wallet-button {
 		font-size: 10px !important;
+	}
+	.dark .ant-input {
+		background: transparent !important;
+		color: white;
 	}
 `;

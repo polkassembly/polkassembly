@@ -21,7 +21,8 @@ const initialState: IOnChainIdentityStore = {
 		web: '',
 		discord: '',
 		github: '',
-		matrix: ''
+		matrix: '',
+		verifiedByPolkassembly: false
 	},
 	displayName: '',
 	identityHash: '',

@@ -4,6 +4,7 @@
 import { ApiPromise } from '@polkadot/api';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 
 interface Args {
 	api: ApiPromise;
@@ -27,6 +28,7 @@ interface IIdentityInfo {
 	isVerified: boolean;
 	isGood: boolean;
 	judgements: RegistrationJudgement[];
+	verifiedByPolkassembly: boolean;
 }
 const result: IIdentityInfo = {
 	discord: '',
@@ -43,6 +45,7 @@ const result: IIdentityInfo = {
 	nickname: '',
 	riot: '',
 	twitter: '',
+	verifiedByPolkassembly: false,
 	web: ''
 };
 
@@ -52,9 +55,16 @@ const getIdentityInformation = async ({ api, apiReady, address, network }: Args)
 
 	const identityInfo: any = await api?.query.identity.identityOf(encodedAddress).then((res: any) => res?.toHuman()?.[0]);
 
-	const infoCall = identityInfo?.judgements.filter(([, judgement]: any[]): boolean => {
-		return ['KnownGood', 'Reasonable'].includes(judgement);
-	});
+	const infoCall = identityInfo?.judgements
+		? identityInfo?.judgements.filter(([, judgement]: any[]): boolean => {
+				return ['KnownGood', 'Reasonable'].includes(judgement);
+		  })
+		: [];
+	const verifiedByPolkassembly = infoCall
+		? infoCall.some(([index, judgement]: any[]) => {
+				return Number(getIdentityRegistrarIndex({ network })) == index && ['KnownGood', 'Reasonable'].includes(judgement);
+		  })
+		: false;
 
 	const unverified = !infoCall?.length || !identityInfo?.judgements?.length;
 	const isGood = identityInfo?.judgements.some(([, judgement]: any[]): boolean => {
@@ -77,6 +87,7 @@ const getIdentityInformation = async ({ api, apiReady, address, network }: Args)
 		nickname: identity?.nickname?.Raw || '',
 		riot: identity?.riot?.Raw || '',
 		twitter: identity?.twitter?.Raw || '',
+		verifiedByPolkassembly: verifiedByPolkassembly || false,
 		web: identity?.web?.Raw || ''
 	};
 };

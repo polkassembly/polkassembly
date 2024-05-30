@@ -5,10 +5,10 @@
 import { IAllowSetIdentity } from '../types';
 
 const allowSetIdentity = ({ identityInfo, displayName, email, legalName, twitter }: IAllowSetIdentity) => {
-	const condition = displayName === identityInfo?.displayName && email?.value === identityInfo?.email && legalName === identityInfo?.legalName;
+	const condition = displayName === identityInfo?.displayName && email?.value.toLowerCase() === identityInfo?.email.toLowerCase() && legalName === identityInfo?.legalName;
 
 	if (identityInfo.twitter?.length || twitter.value?.length) {
-		return twitter.value === identityInfo?.twitter && condition;
+		return twitter.value.toLowerCase() === identityInfo?.twitter.toLowerCase() && condition;
 	}
 	return condition;
 };

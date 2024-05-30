@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { poppins } from 'pages/_app';
 import { Form, Modal, Spin } from 'antd';
-import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon } from '~src/ui-components/CustomIcons';
+import { CloseIcon, OnChainIdentityIcon, SetIdentityIcon, VerifiedIcon } from '~src/ui-components/CustomIcons';
 import IdentityProgressIcon from '~assets/icons/identity-progress.svg';
 import IdentityProgressDarkIcon from '~assets/icons/identity-progress-dark.svg';
 import { ILoading } from '~src/types';
@@ -28,6 +28,7 @@ import { network as AllNetworks } from 'src/global/networkConstants';
 import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
+import Alert from '~src/basic-components/Alert';
 
 const ZERO_BN = new BN(0);
 
@@ -116,7 +117,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		if (!api || !apiReady) return;
 
 		try {
-			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements } = await getIdentityInformation({
+			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
 				api: api,
 				apiReady: apiReady,
@@ -140,7 +141,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				const isRegistrarIndex = infoCall.some(([index]) => {
 					return Number(index) == getIdentityRegistrarIndex({ network });
 				});
-				console.log(isRegistrarIndex);
 				setIsRequestedJudgmentFromPolkassembly(!!isRegistrarIndex || false);
 			}
 
@@ -159,6 +159,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 						matrix: matrix || '',
 						riot: riot || '',
 						twitter: twitter || '',
+						verifiedByPolkassembly: verifiedByPolkassembly || false,
 						web: web || ''
 					},
 					legalName: legal || '',
@@ -265,6 +266,17 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							<OnChainIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						)}
 						<span className='text-bodyBlue dark:text-blue-dark-high'>{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? 'On-chain identity' : 'Socials Verification'}</span>
+						{step === ESetIdentitySteps.SET_IDENTITY_FORM && identityInfo.verifiedByPolkassembly ? (
+							<div>
+								<Alert
+									className='h-7 rounded-[4px]'
+									type='success'
+									showIcon
+									icon={<VerifiedIcon className='text-base' />}
+									message={<p className='m-0 p-0 text-xs text-[#51D36E]'>Verified</p>}
+								/>
+							</div>
+						) : null}
 						{!identityInfo.alreadyVerified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
 							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
 								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>

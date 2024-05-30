@@ -69,10 +69,7 @@ export interface ITrackRowData {
 }
 
 export const handleTrack = (track: string) => {
-	const firstPart = track.split('-')[0];
-	const secondPart = track.split('-')[1] ? track.split('-')[1] : '';
-	const trackName = `${firstPart.charAt(0).toUpperCase() + firstPart.slice(1)} ${secondPart.length > 0 ? secondPart.charAt(0).toUpperCase() + secondPart.slice(1) : ''}`;
-
+	const trackName = track.replace(/-/g, ' ');
 	return trackName.trim();
 };
 
@@ -169,7 +166,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 					<RightOutlined className='text-xs' />
 				</span>
 				<span
-					className='cursor-pointer text-sm text-pink_primary'
+					className='cursor-pointer text-sm capitalize text-pink_primary'
 					onClick={() => router.push(`/delegation/${String(track)}`)}
 				>
 					{handleTrack(String(track))}
@@ -177,7 +174,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 			</div>
 			{status ? (
 				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
-					<div className='flex items-center gap-3 text-2xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+					<div className='flex items-center gap-3 text-xl font-semibold capitalize tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
 						{status &&

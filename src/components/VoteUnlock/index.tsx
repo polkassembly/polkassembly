@@ -86,6 +86,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 			setAddress(data?.account || '');
 		})();
 	}, [network, loginAddress, loginWallet, unit, api, apiReady]);
+
 	const getAllLockData = (api: ApiPromise, votes: [track: BN, refIds: BN[], casting: any][], referendas: [BN, any][]): IUnlockTokenskData[] => {
 		const convictionMultipliers = [0, 1, 2, 4, 8, 16, 32];
 		const lockPeriod = api?.consts?.convictionVoting?.voteLockingPeriod as BN;
@@ -217,15 +218,18 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 					})
 					.filter((vote) => !!vote)
 			: null;
+
 		const refParams = customizeVotes ? getReferendaParams(customizeVotes as any[]) : null;
+
 		const referendas = refParams ? await api?.query?.referenda?.referendumInfoFor?.multi(refParams as BN[]) : null;
 		const customizeReferenda = referendas
 			? referendas
 					?.map((ref, index) => {
-						return ref?.isSome ? [refParams?.[index], ref.unwrap()] : null;
+						return ref?.isSome ? [refParams?.[index], ref.unwrapOr(null)] : null;
 					})
 					.filter((ref) => !!ref)
 			: null;
+
 		const data = customizeReferenda ? getAllLockData(api, customizeVotes as any[], customizeReferenda as [BN, any][]) : null;
 		const currentBlockNumber = await api.derive.chain.bestNumber();
 		await handleLockUnlockData(data, currentBlockNumber);

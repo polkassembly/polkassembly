@@ -298,7 +298,7 @@ const IdentityForm = ({
 							showIcon
 							message={
 								<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-									This account has already set social verification. Kindly{' '}
+									This account has already set socials. Kindly{' '}
 									<span
 										className='cursor-pointer font-semibold text-pink_primary'
 										onClick={() => handleSetIdentity(true)}

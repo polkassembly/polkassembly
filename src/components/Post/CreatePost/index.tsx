@@ -111,8 +111,9 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			const details = localStorage.getItem('discussionCreated');
 			const lastCreationDetails = details ? JSON.parse(details || '') : null;
 
-			if (lastCreationDetails && Number(lastCreationDetails.count) == 3) {
-				const lastTime = dayjs(lastCreationDetails.createdAt);
+			if (lastCreationDetails && Number(lastCreationDetails.count) >= 3) {
+				const lastTime = dayjs(JSON.parse(lastCreationDetails.createdAt));
+
 				if (!lastTime.isBefore(dayjs().subtract(1, 'hour'))) {
 					queueNotification({
 						header: 'Max Limit Reached!',
@@ -148,10 +149,12 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			}
 
 			if (data && data.post_id) {
+				const details = localStorage.getItem('discussionCreated');
+				const lastCreationDetails = details ? JSON.parse(details || '') : null;
 				if (!lastCreationDetails) {
-					localStorage.setItem('discussionCreated', JSON.stringify({ count: 1, createdAt: new Date() }));
+					localStorage.setItem('discussionCreated', JSON.stringify({ count: 1, createdAt: JSON.stringify(new Date()) }));
 				} else {
-					localStorage.setItem('discussionCreated', JSON.stringify({ count: Number(lastCreationDetails.count) + 1, createdAt: lastCreationDetails?.createdAt || new Date() }));
+					localStorage.setItem('discussionCreated', JSON.stringify({ count: Number(lastCreationDetails.count || 0) + 1, createdAt: lastCreationDetails?.createdAt || new Date() }));
 				}
 
 				const postId = data.post_id;

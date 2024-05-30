@@ -10,7 +10,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
@@ -27,8 +26,9 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
-import getPreimageWarning from './utils/getPreimageWarning';
+import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
+import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
@@ -80,10 +80,13 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 
 interface IPostHeadingProps {
 	className?: string;
+	postArguments?: any;
+	method?: string;
+	motion_method?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className } = props;
+	const { className, postArguments, method, motion_method } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -120,6 +123,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
+	const [cancelledReferendaIndices, setCancelledReferendaIndices] = useState<number[]>([]);
 	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
 	const [preimageWarning, setPreimageWarning] = useState<string | null>(null);
 
@@ -190,6 +194,17 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network]);
 
+	const CancelledReferendaIndices = () => {
+		if (!postArguments) return;
+		const indices = Object.entries(postArguments).map(([, value]) => Number(value));
+		setCancelledReferendaIndices(indices);
+	};
+
+	useEffect(() => {
+		CancelledReferendaIndices();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postArguments]);
+
 	return (
 		<div className={className}>
 			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
@@ -201,21 +216,54 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					showIcon
 				/>
 			)}
-			<div className='flex items-center justify-between'>
-				{status && (
-					<StatusTag
-						theme={theme}
-						className='mb-3'
-						status={status}
-					/>
-				)}
-				{requestedAmt && (
-					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Requested:{' '}
-						{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
-					</h5>
-				)}
-			</div>
+			{method && method !== motion_method && method == 'cancel' ? (
+				<div>
+					{cancelledReferendaIndices.map((index) => {
+						return (
+							<Alert
+								key={index}
+								message={
+									<div className='flex items-center gap-1'>
+										<span className='text-xs font-normal text-[#EA0707] dark:text-blue-dark-medium'>This Referendum has been created to cancel </span>
+										<a
+											href={`https://${network}.polkassembly.io/referenda/${index}`}
+											target='_blank'
+											rel='noreferrer'
+											className='flex items-center space-x-1 text-xs font-medium text-pink_primary dark:text-pink_light'
+										>
+											Referendum #{index}
+											<ImageIcon
+												src='/assets/icons/redirect.svg'
+												alt='redirection-icon'
+												imgClassName='ml-1 w-[14px] -mt-[2px]'
+											/>
+										</a>
+									</div>
+								}
+								type='error'
+								className='mb-4 mt-2'
+							/>
+						);
+					})}
+				</div>
+			) : (
+				<div className='flex items-center justify-between'>
+					{status && (
+						<StatusTag
+							theme={theme}
+							className='mb-3'
+							status={status}
+						/>
+					)}
+					{requestedAmt && (
+						<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+							Requested:{' '}
+							{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
+						</h5>
+					)}
+				</div>
+			)}
+
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')

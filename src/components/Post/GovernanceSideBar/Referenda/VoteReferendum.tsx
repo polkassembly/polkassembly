@@ -402,7 +402,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setIsBalanceErr(false);
 		}
 		setVote(value as EVoteDecisionType);
-		handleModalReset();
+		// handleModalReset();
 	};
 
 	const handleSubmit = async () => {

@@ -38,7 +38,8 @@ export const PostOrigin = {
 	STAKING_ADMIN: 'StakingAdmin',
 	TREASURER: 'Treasurer',
 	WHITELISTED_CALLER: 'WhitelistedCaller',
-	WISH_FOR_CHANGE: 'WishForChange'
+	WISH_FOR_CHANGE: 'WishForChange',
+	FAST_GENERAL_ADMIN: 'FastGeneralAdmin'
 };
 
 type TrackInfoType = {

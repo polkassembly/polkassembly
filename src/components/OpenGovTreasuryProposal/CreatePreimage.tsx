@@ -39,8 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -86,6 +85,8 @@ interface Props {
 	isUpdatedAvailableBalance: boolean;
 	setGenralIndex: (pre: string | null) => void;
 	genralIndex: string | null;
+	setInputAmountValue: (pre: string) => void;
+	inputAmountValue: string;
 }
 
 export interface IAdvancedDetails {
@@ -117,7 +118,9 @@ const CreatePreimage = ({
 	isUpdatedAvailableBalance,
 	form,
 	genralIndex,
-	setGenralIndex
+	setGenralIndex,
+	inputAmountValue,
+	setInputAmountValue
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -131,13 +134,10 @@ const CreatePreimage = ({
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [validBeneficiaryAddress, setValidBeneficiaryAddress] = useState<boolean>(false);
-	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [currentTokenPrice, setCurrentTokenPrice] = useState({
-		isLoading: true,
-		value: ''
-	});
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
+
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -307,12 +307,12 @@ const CreatePreimage = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit: chainProperties[network].tokenSymbol
 		});
-		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	useEffect(() => {
 		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
 			payload: {
 				address: beneficiaryAddresses?.[0].address,
@@ -1032,12 +1032,13 @@ const CreatePreimage = ({
 										<div className='-mb-[69px]'>
 											<BalanceInput
 												formItemName={`balance-${index}`}
+												multipleAssetsAllow={index == 0 && isMultiassetSupportedNetwork(network)}
 												address={proposerAddress}
 												placeholder='Split amount'
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												deafultAsset={genralIndex}
+												onAssetConfirm={setGenralIndex}
 											/>
 										</div>
 									</div>
@@ -1140,23 +1141,22 @@ const CreatePreimage = ({
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
 										Current Value:{' '}
 										{!genralIndex ? (
-											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice.value) || 0)} USD</span>
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
 										) : (
 											<span className='text-pink_primary'>
-												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice.value) || 0)} {chainProperties[network].tokenSymbol}
+												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
 											</span>
 										)}
 									</span>
 								</div>
 								<BalanceInput
 									address={proposerAddress}
-									multipleAssetsAllow={isMultiassetSupportedNetwork(network)}
 									placeholder='Add funding amount'
 									formItemName='funding_amount'
 									theme={theme}
 									balance={fundingAmtToBN()}
 									disabled={true}
-									onAssetConfirm={setGenralIndex}
+									deafultAsset={genralIndex}
 								/>
 							</div>
 							<div className='mt-6'>

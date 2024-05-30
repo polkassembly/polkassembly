@@ -51,6 +51,7 @@ export interface IIdentityInfo {
 	github: string;
 	discord: string;
 	matrix: string;
+	verifiedByPolkassembly: boolean;
 }
 
 export interface IOnChainIdentity {

@@ -43,7 +43,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
-		if (identityInfo?.alreadyVerified) return;
+		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
@@ -88,7 +88,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 
 	return (
 		<div className={className}>
-			{(!identityInfo.isIdentitySet || identityInfo?.alreadyVerified) && showAlert && !identityInfo?.email && (
+			{(!identityInfo.isIdentitySet || identityInfo?.verifiedByPolkassembly) && showAlert && !identityInfo?.email && (
 				<Alert
 					showIcon
 					type='info'
@@ -96,7 +96,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.alreadyVerified && (
+			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
 					type='info'

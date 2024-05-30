@@ -29,7 +29,7 @@ import { IPeriod, IVotesHistoryResponse } from '~src/types';
 import { getPeriodData } from '~src/util/getPeriodData';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { getTrackData } from './Listing/Tracks/AboutTrackCard';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -44,6 +44,8 @@ import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import classNames from 'classnames';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -187,6 +189,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		no: 'NAY',
 		yes: 'AYE'
 	};
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
@@ -229,6 +232,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		if (!apiReady) {
 			return;
 		}
+
 		const encoded = getEncodedAddress(loginAddress || defaultAddress || '', network);
 
 		const fetchHistory = async () => {
@@ -348,17 +352,36 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						{!!requestedAmount && (
 							<div className='flex items-center justify-center'>
 								{assetId ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{getBeneficiaryAmoutAndAsset(assetId, requestedAmount as any)}
-									</span>
-								) : requestedAmount > 100 ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
+									<div className={classNames('flex items-center gap-1', requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+										<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
+											{getBeneficiaryAmoutAndAsset(assetId, requestedAmount.toString())}
+										</span>
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+													<span>Current value:</span>
+													<span>
+														{Math.floor(Number(new BN(requestedAmount).div(new BN('1000000')).toString()) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+													</span>
+												</div>
+											}
+										/>
+									</div>
 								) : (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
+									<div className={classNames('flex items-center gap-1', requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+										<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
+											{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
+										</span>
+
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+													<span>Current value:</span>
+													<span>{Math.floor(Number(requestedAmountFormatted) * Number(currentTokenPrice) || 0)} USD </span>
+												</div>
+											}
+										/>
+									</div>
 								)}
 							</div>
 						)}

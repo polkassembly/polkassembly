@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
@@ -32,6 +32,7 @@ import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 
 const ZERO_BN = new BN(0);
 
@@ -55,6 +56,7 @@ interface Props {
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
 	genralIndex?: string | null;
+	inputAmountValue: string;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -80,9 +82,11 @@ const CreateProposal = ({
 	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
-	genralIndex = null
+	genralIndex = null,
+	inputAmountValue
 }: Props) => {
 	const { network } = useNetworkSelector();
+	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [messageApi, contextHolder] = message.useMessage();
@@ -91,9 +95,9 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsSelector();
+	const { id: userId } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-	const currentUser = useUserDetailsSelector();
+	const { currentTokenPrice } = useCurrentTokenDataSelector();
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -315,10 +319,38 @@ const CreateProposal = ({
 						</span>
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{genralIndex ? getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network) : formatedBalance(fundingAmount.toString(), unit)}
-								{!genralIndex && unit}
-							</span>
+							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{genralIndex ? (
+									<div className='flex items-center gap-1'>
+										{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)}
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+													<span>Current value:</span>
+													<span>
+														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+													</span>
+												</div>
+											}
+										/>
+									</div>
+								) : (
+									<div className='flex items-center gap-1'>
+										<span className='flex items-center gap-1'>
+											{formatedBalance(fundingAmount.toString(), unit)}
+											{unit}
+										</span>
+										<HelperTooltip
+											text={
+												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+													<span>Current value:</span>
+													<span>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD </span>
+												</div>
+											}
+										/>
+									</div>
+								)}
+							</div>
 						</span>
 						<span className='flex items-center'>
 							<span className='w-[150px]'>Preimage Hash:</span>

@@ -170,6 +170,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [genralIndex, setGenralIndex] = useState<string | null>(null);
+	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -393,6 +394,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 				</div>
 			</Modal>
 			<TreasuryProposalSuccessPopup
+				inputAmountValue={inputAmountValue}
 				genralIndex={genralIndex}
 				open={openSuccess}
 				onCancel={() => {
@@ -464,6 +466,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 
 					{steps?.step === 1 && (
 						<CreatePreimage
+							inputAmountValue={inputAmountValue}
+							setInputAmountValue={setInputAmountValue}
 							setGenralIndex={setGenralIndex}
 							genralIndex={genralIndex}
 							availableBalance={availableBalance}
@@ -492,6 +496,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					)}
 					{steps.step === 2 && (
 						<CreateProposal
+							inputAmountValue={inputAmountValue}
 							genralIndex={genralIndex}
 							discussionLink={discussionLink}
 							availableBalance={availableBalance}

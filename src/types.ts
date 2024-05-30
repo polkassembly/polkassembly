@@ -205,6 +205,7 @@ export const PostOrigin = {
 	BIG_TIPPER: 'BigTipper',
 	CANDIDATES: 'Candidates',
 	EXPERTS: 'Experts',
+	FAST_GENERAL_ADMIN: 'FastGeneralAdmin',
 	FELLOWS: 'Fellows',
 	FELLOWSHIP_ADMIN: 'FellowshipAdmin',
 	GENERAL_ADMIN: 'GeneralAdmin',

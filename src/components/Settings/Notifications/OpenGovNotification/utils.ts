@@ -304,5 +304,8 @@ export const iconMapper = (origin: string) => {
 		case PostOrigin.WISH_FOR_CHANGE: {
 			return WishForChangeIcon;
 		}
+		case PostOrigin.FAST_GENERAL_ADMIN: {
+			return ReferandumCancellorIcon;
+		}
 	}
 };

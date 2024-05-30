@@ -62,7 +62,7 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 							allTimelineComments[key][index].created_at = matchingSubsquareComment.created_at;
 							allTimelineComments[key][index].user_id = matchingSubsquareComment.user_id;
 							allTimelineComments[key][index].proposer = matchingSubsquareComment.proposer;
-							allTimelineComments[key][index].username = 'SubsquareUser';
+							// allTimelineComments[key][index].username = 'SubsquareUser';
 						}
 					});
 				});

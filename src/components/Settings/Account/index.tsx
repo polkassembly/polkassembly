@@ -20,10 +20,10 @@ const Address = dynamic(() => import('./Address'), {
 	ssr: false
 });
 
-const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+// const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
+// loading: () => <Skeleton active />,
+// ssr: false
+// });
 
 const Proxy = dynamic(() => import('./Proxy'), {
 	loading: () => <Skeleton active />,
@@ -64,7 +64,7 @@ interface Props {
 const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
 	const [isLinkViaRemark, setIsLinkViaRemark] = useState(false);
-	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
+	// const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
 	const [active, setActive] = useState(false);
 	const { resolvedTheme: theme } = useTheme();

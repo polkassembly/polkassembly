@@ -5,6 +5,7 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { TooltipPlacement } from 'antd/es/tooltip';
+import classNames from 'classnames';
 import React, { ReactNode } from 'react';
 
 interface Props {
@@ -12,17 +13,19 @@ interface Props {
 	text: string | ReactNode;
 	bgColor?: string;
 	placement?: TooltipPlacement;
+	overlayClassName?: string;
 }
 
-const HelperTooltip = ({ className, text, bgColor = '#E5007A', placement }: Props) => {
+const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overlayClassName }: Props) => {
 	return (
 		<Tooltip
 			placement={placement}
 			color={bgColor}
 			title={text}
+			overlayClassName={overlayClassName}
 			getPopupContainer={(triggerNode) => triggerNode}
 		>
-			<InfoCircleOutlined className={className} />
+			<InfoCircleOutlined className={classNames(className)} />
 		</Tooltip>
 	);
 };

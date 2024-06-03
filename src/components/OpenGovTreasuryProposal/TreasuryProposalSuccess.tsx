@@ -176,7 +176,7 @@ const TreasuryProposalSuccessPopup = ({
 									{fundingAmount ? (
 										genralIndex ? (
 											<div className='flex items-center gap-1'>
-												{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), true, network)}
+												{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>

@@ -190,7 +190,7 @@ const BalanceInput = ({
 												<div
 													key={option.label}
 													className={classNames(
-														'-mx-3 flex cursor-pointer items-center gap-1.5 px-4 text-xs text-bodyBlue dark:text-blue-dark-medium',
+														'-mx-3 flex cursor-pointer items-center gap-1.5 px-4 text-sm text-bodyBlue dark:text-blue-dark-medium',
 														asset.value == option.value ? 'bg-[#fae7ef] py-2 font-medium dark:bg-pink-dark-primary' : 'py-1.5'
 													)}
 													onClick={() => {

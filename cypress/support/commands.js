@@ -24,11 +24,11 @@ Cypress.Commands.add('login', () => {
   cy.wait(3000);
 
   // Fill in the username/email
-  cy.get('input#username').type(username);
+  cy.get('input#username').type("paras@polkassembly.io");
   cy.wait(3000);
 
   // Fill in the password
-  cy.get('input#password').type(password);
+  cy.get('input#password').type("Polka@123");
   cy.wait(3000);
 
   // Submit the login form

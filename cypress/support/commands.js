@@ -17,17 +17,19 @@ Cypress.Commands.add('login', () => {
 
   // Click on the login button
   cy.get('button[text="Login"]').click()
-  cy.wait(1000);
+  cy.wait(3000);
 
   // Wait for the login popup to appear
   cy.get('span.font-semibold').contains('Login with Username/Email').click()
-  cy.wait(1000);
+  cy.wait(3000);
 
   // Fill in the username/email
   cy.get('input#username').type(username);
+  cy.wait(3000);
 
   // Fill in the password
   cy.get('input#password').type(password);
+  cy.wait(3000);
 
   // Submit the login form
   cy.get('button[text="Login"][type="submit"]').click();

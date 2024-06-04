@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import BeneficiaryAmoutTooltip from '../BeneficiaryAmoutTooltip';
+import classNames from 'classnames';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -255,12 +256,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						/>
 					)}
 					{requestedAmt && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<div className='-mt-5 flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}
 								requestedAmt={requestedAmt.toString()}
-								className='flex '
+								className={classNames(className, 'flex')}
 								postId={onchainId ? Number(onchainId) : (onchainId as any)}
 								proposalCreatedAt={created_at as any}
 								timeline={timeline || []}

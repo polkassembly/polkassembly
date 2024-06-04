@@ -7,6 +7,7 @@ import { Tooltip } from 'antd';
 import { TooltipPlacement } from 'antd/es/tooltip';
 import classNames from 'classnames';
 import React, { ReactNode } from 'react';
+import styled from 'styled-components';
 
 interface Props {
 	className?: string;
@@ -20,6 +21,7 @@ const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overla
 	return (
 		<Tooltip
 			placement={placement}
+			className={className}
 			color={bgColor}
 			title={text}
 			overlayClassName={overlayClassName}
@@ -30,4 +32,8 @@ const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overla
 	);
 };
 
-export default HelperTooltip;
+export default styled(HelperTooltip)`
+	.ant-tooltip-placement-top {
+		top: -50px !important;
+	}
+`;

@@ -265,6 +265,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 								postId={onchainId ? Number(onchainId) : (onchainId as any)}
 								proposalCreatedAt={created_at as any}
 								timeline={timeline || []}
+								usedInPostPage
 							/>
 						</div>
 					)}

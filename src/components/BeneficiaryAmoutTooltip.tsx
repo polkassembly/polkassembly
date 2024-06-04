@@ -22,10 +22,11 @@ interface Args {
 	proposalCreatedAt: Date | null;
 	timeline: any[];
 	postId: number;
+	usedInPostPage?: boolean;
 }
 const ZERO_BN = new BN(0);
 
-const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId }: Args) => {
+const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
@@ -83,6 +84,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 						{getBeneficiaryAmoutAndAsset(assetId, requestedAmt.toString(), network)}
 					</span>
 					<HelperTooltip
+						usedInPostPage={usedInPostPage}
 						overlayClassName='w-96 mb-5'
 						text={
 							<Spin spinning={loading}>
@@ -127,6 +129,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 					</span>
 
 					<HelperTooltip
+						usedInPostPage={usedInPostPage}
 						overlayClassName='w-96 mb-10'
 						text={
 							<Spin spinning={loading}>

@@ -15,6 +15,7 @@ interface Props {
 	bgColor?: string;
 	placement?: TooltipPlacement;
 	overlayClassName?: string;
+	usedInPostPage?: boolean;
 }
 
 const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overlayClassName }: Props) => {
@@ -34,6 +35,6 @@ const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overla
 
 export default styled(HelperTooltip)`
 	.ant-tooltip-placement-top {
-		top: -50px !important;
+		top: ${(props: any) => (props.usedInPostPage ? '-50px' : '55px')} !important;
 	}
 `;

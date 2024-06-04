@@ -256,7 +256,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						/>
 					)}
 					{requestedAmt && (
-						<div className='-mt-5 flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}

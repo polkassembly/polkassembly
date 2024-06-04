@@ -18,14 +18,14 @@ interface Props {
 	usedInPostPage?: boolean;
 }
 
-const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overlayClassName }: Props) => {
+const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overlayClassName, usedInPostPage }: Props) => {
 	return (
 		<Tooltip
 			placement={placement}
-			className={className}
+			className={classNames(className, usedInPostPage ? '' : '')}
 			color={bgColor}
 			title={text}
-			overlayClassName={overlayClassName}
+			overlayClassName={classNames(overlayClassName, usedInPostPage ? 'top-fix' : '')}
 			getPopupContainer={(triggerNode) => triggerNode}
 		>
 			<InfoCircleOutlined className={classNames(className)} />
@@ -34,7 +34,7 @@ const HelperTooltip = ({ className, text, bgColor = '#363636', placement, overla
 };
 
 export default styled(HelperTooltip)`
-	.ant-tooltip-placement-top {
+	.top-fix {
 		top: ${(props: any) => (props.usedInPostPage ? '-50px' : '55px')} !important;
 	}
 `;

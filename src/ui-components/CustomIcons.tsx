@@ -120,6 +120,7 @@ import VoteHistoryIcon from '~assets/icons/history.svg';
 import ArchivedSVG from '~assets/icons/archived.svg';
 import NoTagsFoundSVG from '~assets/icons/no-tag.svg';
 import Comments from '~assets/icons/chat-icon.svg';
+import ForumComments from '~assets/icons/forum-chat-icon.svg';
 import RiotSVG from '~assets/icons/riot.svg';
 import LegalSVG from '~assets/icons/legal-icon.svg';
 import JudgementSVG from '~assets/icons/judgement-icon.svg';
@@ -646,6 +647,12 @@ export const LikeDislikeIcon = (props: Partial<CustomIconComponentProps>) => (
 export const CommentsIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={Comments}
+		{...props}
+	/>
+);
+export const ForumCommentsIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ForumComments}
 		{...props}
 	/>
 );

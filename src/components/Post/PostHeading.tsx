@@ -28,7 +28,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import BeneficiaryAmoutTooltip from '../BeneficiaryAmoutTooltip';
 import classNames from 'classnames';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
@@ -38,6 +37,10 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 			<SkeletonInput active />
 		</div>
 	),
+	ssr: false
+});
+const BeneficiaryAmoutTooltip = dynamic(() => import('../BeneficiaryAmoutTooltip'), {
+	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
 

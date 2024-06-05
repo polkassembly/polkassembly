@@ -173,7 +173,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 				{status && (
 					<StatusTag
 						theme={theme}
-						className='mb-3'
+						className='mb-2 sm:mb-3'
 						status={status}
 					/>
 				)}
@@ -184,7 +184,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					</h5>
 				)}
 			</div>
-			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-[6px] text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')

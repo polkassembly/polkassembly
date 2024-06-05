@@ -258,12 +258,14 @@ const Footer = ({ className }: { className?: string }) => {
 					</div>
 				</div>
 			</div>
-			<AiBot
-				isAIChatBotOpen={isAIChatBotOpen}
-				setIsAIChatBotOpen={setIsAIChatBotOpen}
-				floatButtonOpen={floatButtonOpen}
-				setFloatButtonOpen={setFloatButtonOpen}
-			/>
+			<div className='hidden sm:flex'>
+				<AiBot
+					isAIChatBotOpen={isAIChatBotOpen}
+					setIsAIChatBotOpen={setIsAIChatBotOpen}
+					floatButtonOpen={floatButtonOpen}
+					setFloatButtonOpen={setFloatButtonOpen}
+				/>
+			</div>
 		</footer>
 	);
 };

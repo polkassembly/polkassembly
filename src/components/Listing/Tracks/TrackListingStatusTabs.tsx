@@ -143,37 +143,39 @@ const TrackListingStatusTabs = ({ className, posts, trackName }: ITrackListingCa
 						isUsedInTrackListing={true}
 					/>
 				</div>
-				<Radio.Group
-					onChange={onRadioChange}
-					value={selectedRadio}
-					className={`my-auto flex gap-1 sm:gap-[2px] ${poppins.variable} ${poppins.className} flex-wrap`}
-					style={{ marginBottom: 16 }}
-				>
-					<Radio
-						value='All'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+				<div className='scroll-hidden flex overflow-x-auto whitespace-nowrap max-sm:pb-3'>
+					<Radio.Group
+						onChange={onRadioChange}
+						value={selectedRadio}
+						className={`my-auto inline-flex sm:gap-[2px] ${poppins.variable} ${poppins.className} flex-nowrap`}
+						style={{ marginBottom: 16 }}
 					>
-						All({initialCountForAll || 0}){' '}
-					</Radio>
-					<Radio
-						value='Submitted'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
-					>
-						Submitted({initialCountForSubmitted || 0})
-					</Radio>
-					<Radio
-						value='Voting'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
-					>
-						Voting({initialCountForVoting || 0})
-					</Radio>
-					<Radio
-						value='Closed'
-						className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
-					>
-						Closed({initialCountForClosed || 0})
-					</Radio>
-				</Radio.Group>
+						<Radio
+							value='All'
+							className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						>
+							All({initialCountForAll || 0}){' '}
+						</Radio>
+						<Radio
+							value='Submitted'
+							className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						>
+							Submitted({initialCountForSubmitted || 0})
+						</Radio>
+						<Radio
+							value='Voting'
+							className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						>
+							Voting({initialCountForVoting || 0})
+						</Radio>
+						<Radio
+							value='Closed'
+							className='text-xs font-medium text-blue-light-high dark:text-blue-dark-high'
+						>
+							Closed({initialCountForClosed || 0})
+						</Radio>
+					</Radio.Group>
+				</div>
 			</div>
 			{/* <FilterByTags className='xs:mb-2 xs:mr-1 xs:mt-1 sm:hidden' /> */}
 			{getContent()}

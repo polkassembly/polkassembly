@@ -34,7 +34,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		let usdValueOnCreation = null;
 		let usdValueOnClosed = null;
 		const postData: any = postRef?.data() || {};
-		if (postData?.usdValueOnCreation && postData?.usdValueOnCreation) {
+		if (postData?.usdValueOnCreation) {
 			usdValueOnCreation = postData?.usdValueOnCreation;
 		} else {
 			const date = dayjs(proposalCreatedAt).format('YYYY-MM-DD');
@@ -60,7 +60,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		}
 		if (closedStatus) {
 			if (closedStatus?.status && getStatusesFromCustomStatus(CustomStatus.Closed).includes(closedStatus?.status)) {
-				if (postData?.usdValueOnClosed && postData?.usdValueOnCreation) {
+				if (postData?.usdValueOnClosed) {
 					usdValueOnClosed = postData?.usdValueOnClosed;
 				} else {
 					const date = dayjs(closedStatus?.timeStamp).format('YYYY-MM-DD');

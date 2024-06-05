@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { LeftOutlined } from '@ant-design/icons';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
@@ -32,7 +33,7 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 		post_stream: { posts }
 	} = data;
 
-	const { name: cName, username: cUsername, avatar_template: cImg, cooked: description, display_username: dUsername } = posts[0];
+	const { name: cName, username: cUsername, avatar_template: cImg, cooked: description, display_username: dUsername, topic_id, topic_slug } = posts[0];
 	const { resolvedTheme: theme } = useTheme();
 	const date = new Date(created_at);
 	const allComments = CommentMapping(posts);
@@ -63,9 +64,23 @@ const ForumTopicContainer = ({ data }: ForumTopicProps) => {
 				</div>
 			</Link>
 			<div className='my-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:w-[67%] lg:p-6 '>
-				<h2 className={'mb-1 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3'}>
-					#{id} {fancy_title ? fancy_title : title}
-				</h2>
+				<div className='flex items-center space-x-1'>
+					<h2 className={'mb-1 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3'}>
+						#{id} {fancy_title ? fancy_title : title}
+					</h2>
+					<Link
+						href={`https://forum.polkadot.network/t/${topic_slug}/${topic_id}`}
+						target='_blank'
+					>
+						<Image
+							src='/assets/icons/redirect.svg'
+							alt='redirection-icon'
+							width={16}
+							height={16}
+							className='-mt-3'
+						/>
+					</Link>
+				</div>
 				<div
 					className={`mb-3 inline-block rounded-[4px] sm:hidden ${
 						[9, 25, 27].includes(category_id)

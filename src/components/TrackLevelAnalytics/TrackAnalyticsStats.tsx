@@ -49,7 +49,7 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 		<Spin spinning={loading}>
 			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col lg:max-w-[55%]'>
 				{/* Proposal Created */}
-				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
+				<div className='flex items-start space-x-2 max-sm:w-full max-sm:justify-start'>
 					<ImageIcon
 						src='/assets/icons/analytics/proposal-created.svg'
 						alt='proposal created icon'
@@ -58,15 +58,6 @@ const TrackAnalyticsStats: FC<IProps> = (props) => {
 					<div className='flex flex-col'>
 						<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Proposal Created</span>
 						<span className='text-2xl font-semibold text-blue-light-high dark:text-blue-dark-high'>{allProposals?.total}</span>
-						<div className='flex items-center space-x-1'>
-							<ImageIcon
-								src='/assets/icons/analytics/green-arrow-top.svg'
-								alt='proposal created icon'
-								imgClassName='-mt-1'
-							/>
-							<span className='text-xs font-bold text-[#00AC4F]'>{isNaN(Number(allProposals?.diff)) ? 0 : Number(allProposals?.diff)}%</span>
-							<span className='text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>this week</span>
-						</div>
 					</div>
 				</div>
 

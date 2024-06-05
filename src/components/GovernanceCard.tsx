@@ -44,7 +44,6 @@ import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import classNames from 'classnames';
-import BeneficiaryAmoutTooltip from './BeneficiaryAmoutTooltip';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -56,6 +55,10 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 });
 const ListingChildBountyChart = dynamic(() => import('~src/ui-components/ListingChildBountyChart'), {
 	loading: () => <SkeletonButton active />,
+	ssr: false
+});
+const BeneficiaryAmoutTooltip = dynamic(() => import('./BeneficiaryAmoutTooltip'), {
+	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
 

@@ -7,13 +7,14 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
-import { formatedBalance } from '~src/util/formatedBalance';
 import dayjs from 'dayjs';
 import { CustomStatus } from './Listing/Tracks/TrackListingCard';
 import { getStatusesFromCustomStatus } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
+import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import { formatedBalance } from '~src/util/formatedBalance';
 
 interface Args {
 	className?: string;
@@ -92,27 +93,29 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 										<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
 										<span>
-											{formatedBalance(
+											{parseBalance(
 												new BN(requestedAmt)
 													.div(new BN(String(1000000 * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1))))
 													.mul(new BN(String(10 ** (chainProperties[network]?.tokenDecimals || 0))))
 													.toString(),
-												chainProperties[network]?.tokenSymbol,
-												1
+												0,
+												false,
+												network
 											)}{' '}
 											{chainProperties[network]?.tokenSymbol}
 										</span>
 									</div>
 									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<span>Value on day of creation:</span>
+										<span className='flex'>Value on day of creation:</span>
 										<span>
-											{formatedBalance(
+											{parseBalance(
 												new BN(requestedAmt)
 													.div(new BN(String(1000000 * Number(usdValueOnCreation || currentTokenPrice || 1))))
 													.mul(new BN(String(10 ** (chainProperties[network]?.tokenDecimals || 0))))
 													.toString(),
-												chainProperties[network]?.tokenSymbol,
-												1
+												0,
+												false,
+												network
 											)}{' '}
 											{chainProperties[network]?.tokenSymbol}
 										</span>
@@ -130,26 +133,27 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 
 					<HelperTooltip
 						usedInPostPage={usedInPostPage}
-						overlayClassName='w-96 mb-10'
+						overlayClassName='mb-10'
 						text={
 							<Spin spinning={loading}>
 								<div className='flex flex-col gap-1 text-xs'>
 									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
+										<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
 										<span>
-											{formatedBalance(
+											{parseBalance(
 												requestedAmountFormatted
 													.mul(!isProposalClosed ? new BN(Number(currentTokenPrice) * 10 ** chainProperties[network].tokenDecimals) : bnUsdValueOnClosed)
 													.toString(),
-												chainProperties[network]?.tokenSymbol,
-												1
+												0,
+												false,
+												network
 											)}{' '}
 											USD{' '}
 										</span>
 									</div>
 									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 										<span>Value on day of creation:</span>
-										<span>{formatedBalance(requestedAmountFormatted.mul(bnUsdValueOnCreation).toString(), chainProperties[network]?.tokenSymbol, 1)} USD </span>
+										<span>{parseBalance(requestedAmountFormatted.mul(bnUsdValueOnCreation).toString(), 0, false, network)} USD </span>
 									</div>
 								</div>
 							</Spin>

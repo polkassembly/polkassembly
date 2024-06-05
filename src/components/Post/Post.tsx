@@ -636,7 +636,7 @@ const Post: FC<IPostProps> = (props) => {
 			<button
 				onClick={() => router.push('/notFound/voting')}
 				className={
-					'z-2000 fixed bottom-0 -ml-[11px] flex h-14 w-full items-center justify-center gap-2 rounded-[8px] border-none bg-pink_primary font-medium text-white shadow-none hover:bg-pink_secondary dark:text-white'
+					'z-2000 fixed bottom-0 -ml-[11px] flex h-14 w-full items-center justify-center gap-2 rounded-[8px] border-none bg-pink_primary font-medium text-white shadow-none hover:bg-pink_secondary dark:text-white sm:hidden'
 				}
 			>
 				Cast Your Vote

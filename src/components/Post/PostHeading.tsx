@@ -14,7 +14,6 @@ import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -25,11 +24,12 @@ import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import BeneficiaryAmoutTooltip from '../BeneficiaryAmoutTooltip';
+import classNames from 'classnames';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -108,6 +108,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			reward,
 			tags,
 			track_name,
+			timeline,
 			cid,
 			// history,
 			content,
@@ -172,7 +173,6 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		if (!api || !apiReady || !isTreasuryProposal) return;
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
-		console.log(preimageWarning);
 	};
 
 	useEffect(() => {
@@ -256,10 +256,18 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						/>
 					)}
 					{requestedAmt && (
-						<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-							Requested:{' '}
-							{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
-						</h5>
+						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+							<span> Requested: </span>
+							<BeneficiaryAmoutTooltip
+								assetId={assetId}
+								requestedAmt={requestedAmt.toString()}
+								className={classNames(className, 'flex')}
+								postId={onchainId ? Number(onchainId) : (onchainId as any)}
+								proposalCreatedAt={created_at as any}
+								timeline={timeline || []}
+								usedInPostPage
+							/>
+						</div>
 					)}
 				</div>
 			)}

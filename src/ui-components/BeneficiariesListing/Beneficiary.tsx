@@ -43,10 +43,10 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 						? getBeneficiaryAmoutAndAsset(
 								assetId,
 								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
-								isProposalCreationFlow,
-								network
+								network,
+								isProposalCreationFlow
 						  )
-						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString())
+						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString(), network)
 					: disableBalanceFormatting
 					? beneficiary.amount.toString()
 					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}

@@ -4,10 +4,11 @@
 
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
+import { formatedBalance } from './formatedBalance';
 
-const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, isProposalCreationFlow?: boolean, network?: string) => {
+const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
 	const bnAmount = new BN(amount || 0);
-	if (isProposalCreationFlow && network) {
+	if (isProposalCreationFlow) {
 		const divBn = new BN(`${10 ** chainProperties[network]?.tokenDecimals}`);
 		switch (assetId) {
 			case '1984':
@@ -18,9 +19,17 @@ const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, isProposal
 	} else {
 		switch (assetId) {
 			case '1984':
-				return `${bnAmount.div(new BN('1000000')).toString()} USDT`;
+				return `${formatedBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN('1000000'))).toString(),
+					chainProperties[network]?.tokenSymbol,
+					0
+				)} USDT`;
 			case '1337':
-				return `${bnAmount.div(new BN('1000000')).toString()} USDC`;
+				return `${formatedBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN('1000000'))).toString(),
+					chainProperties[network]?.tokenSymbol,
+					0
+				)} USDC`;
 		}
 	}
 };

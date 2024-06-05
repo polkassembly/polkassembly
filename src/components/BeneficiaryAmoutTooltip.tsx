@@ -105,8 +105,8 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											{chainProperties[network]?.tokenSymbol}
 										</span>
 									</div>
-									<div className='flex flex-shrink-0 items-center gap-1 dark:text-blue-dark-high'>
-										<span className='flex flex-shrink-0'>Value on day of creation:</span>
+									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+										<span className='flex'>Value on day of creation:</span>
 										<span>
 											{parseBalance(
 												new BN(requestedAmt)
@@ -137,8 +137,8 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 						text={
 							<Spin spinning={loading}>
 								<div className='flex flex-col gap-1 text-xs'>
-									<div className='flex flex-shrink-0 items-center gap-1 dark:text-blue-dark-high'>
-										<div className='flex flex-shrink-0'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
+									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+										<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
 										<span>
 											{parseBalance(
 												requestedAmountFormatted

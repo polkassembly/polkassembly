@@ -511,6 +511,19 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
+							{isOpenGovSupported(network) ? (
+								<>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<TopicTag
+										theme={theme as any}
+										className='sm:mx-1 sm:mt-0'
+										topic={formatTrackName(getTrackNameFromId(network, trackNumber))}
+									/>
+								</>
+							) : null}
 							{!isOpenGovSupported(network) && topic ? (
 								<div className='flex items-center sm:-mt-1'>
 									<Divider

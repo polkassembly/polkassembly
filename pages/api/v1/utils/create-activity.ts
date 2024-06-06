@@ -6,6 +6,8 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EActivityAction, EUserActivityType } from '~src/types';
+import changeProfileScore from './changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface IDeletedCommentReply {
 	id: string;

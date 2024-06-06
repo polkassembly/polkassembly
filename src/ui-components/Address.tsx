@@ -467,7 +467,9 @@ const Address = (props: Props) => {
 													!disableAddressClick && 'cursor-pointer hover:underline'
 												} text-base hover:text-bodyBlue dark:text-blue-dark-high`}
 											>
-												{!!addressPrefix && <span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{addressPrefix}</span>}
+												{!!addressPrefix && (
+													<span className={`${usernameClassName} ${isTruncateUsername && !usernameMaxLength && 'w-[95px] truncate'}`}>{username || addressPrefix}</span>
+												)}
 											</div>
 										</Space>
 									</div>

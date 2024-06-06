@@ -17,6 +17,7 @@ interface Props {
 	md: string;
 	imgHidden?: boolean;
 	theme?: string;
+	disableQuote?: boolean;
 }
 
 const StyledMarkdown = styled(ReactMarkdown)`
@@ -108,6 +109,28 @@ const StyledMarkdown = styled(ReactMarkdown)`
 				text-decoration: none;
 				color: ${(props: any) => (props.theme == 'dark' ? '#FF60B5' : '#c40061')} !important;
 			}
+		}
+		&.hide-blockquote blockquote {
+			display: none !important;
+		}
+		&.hide-blockquote code {
+			word-wrap: break-word;
+			word-break: break-all;
+			font-size: 12px;
+			margin: 0;
+			border-radius: 3px;
+			white-space: pre-wrap;
+			&::before,
+			&::after {
+				letter-spacing: -0.2em;
+			}
+			padding-left: 4px;
+			padding-right: 4px;
+			background-color: ${(props: any) => (props.theme === 'dark' ? '#222' : '#fbfbfd')} !important;
+			color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#000')} !important;
+		}
+		&.hide-blockquote .quote {
+			display: none !important;
 		}
 
 		blockquote {
@@ -251,10 +274,16 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			color: pink_primary !important;
 		}
 	}
+	@media (max-width: 600px) {
+		.hide-blockquote code {
+			font-size: 10px;
+			padding: 2px;
+		}
+	}
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
@@ -267,7 +296,9 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 		>
 			<HighlightMenu markdownRef={markdownRef} />
 			<StyledMarkdown
-				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isAutoComplete && 'mde-autocomplete-content'} dark-text-white w-full`}
+				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${disableQuote && 'hide-blockquote'} ${
+					isAutoComplete && 'mde-autocomplete-content'
+				} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}

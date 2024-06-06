@@ -7,9 +7,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import styled from 'styled-components';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -20,70 +19,45 @@ import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
 
-const TotalAmountBreakdown = ({
-	className,
-	txFee,
-	changeStep,
-	perSocialBondFee,
-	loading,
-	isIdentityAlreadySet,
-	alreadySetIdentityCredentials,
-	address,
-	setStartLoading
-}: IAmountBreakDown) => {
-	const { registerarFee, minDeposite } = txFee;
+const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const currentUser = useUserDetailsSelector();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const currentUser = useUserDetailsSelector();
 
-	const handleLocalStorageSave = (field: any) => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
-		}
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...data,
-				...field
-			})
-		);
-	};
 	useEffect(() => {
-		let identityForm: any = localStorage.getItem('identityForm');
-		identityForm = JSON.parse(identityForm);
-
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...identityForm,
-				userId
-			})
-		);
-	}, [network, userId]);
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
-		if (alreadySetIdentityCredentials.alreadyVerified) return;
+		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		if (isIdentityAlreadySet && !!alreadySetIdentityCredentials.email) {
+		if (identityInfo.isIdentitySet && !!identityInfo?.email) {
 			const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
-			if (!api || !apiReady || registrarIndex === null) return;
+			if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
 
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
-				handleLocalStorageSave({ setIdentity: true });
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 				setStartLoading({ isLoading: false, message: 'Success!' });
 			};
@@ -97,7 +71,7 @@ const TotalAmountBreakdown = ({
 			};
 
 			await executeTx({
-				address,
+				address: identityAddress,
 				api,
 				apiReady,
 				errorMessageFallback: 'failed.',
@@ -114,7 +88,7 @@ const TotalAmountBreakdown = ({
 
 	return (
 		<div className={className}>
-			{(!isIdentityAlreadySet || alreadySetIdentityCredentials.alreadyVerified) && showAlert && !alreadySetIdentityCredentials.email && (
+			{(!identityInfo.isIdentitySet || identityInfo?.verifiedByPolkassembly) && showAlert && !identityInfo?.email && (
 				<Alert
 					showIcon
 					type='info'
@@ -122,7 +96,7 @@ const TotalAmountBreakdown = ({
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{isIdentityAlreadySet && showAlert && !alreadySetIdentityCredentials.email && !alreadySetIdentityCredentials.alreadyVerified && (
+			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
 					type='info'

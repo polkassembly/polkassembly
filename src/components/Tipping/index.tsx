@@ -32,7 +32,7 @@ import Address from '~src/ui-components/Address';
 import { useTheme } from 'next-themes';
 import DownArrow from '~assets/icons/down-icon.svg';
 import { getKiltDidLinkedAccounts } from '~src/util/kiltDid';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';

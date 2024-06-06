@@ -4,7 +4,6 @@
 
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -20,7 +19,6 @@ interface IGetPreimagesParams {
 	page: number | string | string[];
 	hash_contains?: string | string[];
 }
-
 export async function getPreimages(params: IGetPreimagesParams): Promise<IApiResponse<IPreimagesListingResponse>> {
 	try {
 		const { network, listingLimit, page, hash_contains } = params;

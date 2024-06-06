@@ -16,13 +16,14 @@ import { ClearIdentityOutlinedIcon, DownArrowIcon } from '~src/ui-components/Cus
 import Proxy from '../Settings/Account/Proxy';
 import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 
@@ -39,6 +40,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const dispatch = useDispatch();
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
@@ -91,17 +93,20 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady) return;
+
 		let promiseArr: any[] = [];
 		for (const address of addresses) {
 			if (!address) continue;
-			const encodedAddr = getEncodedAddress(address, network);
-			promiseArr = [...promiseArr, api?.derive?.accounts.info(encodedAddr)];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network: network })];
 		}
 		try {
 			const resolve = await Promise.all(promiseArr);
 			const info: { [key: string]: boolean } = {};
 			addresses.map((addr, index) => {
-				info[getEncodedAddress(addr, network) || addr] = !!resolve[index]?.identity?.display;
+				info[getEncodedAddress(addr, network) || addr] = !!resolve[index]?.display;
 			});
 			setIdentityInfo(info);
 		} catch (err) {
@@ -112,7 +117,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, api, apiReady]);
+	}, [addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
 
 	const handleRemoveIdentity = () => {
 		if (loginAddress) {
@@ -234,11 +239,11 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				open={openLinkMultisig}
 				dismissModal={() => setOpenLinkMultisig(false)}
 			/>
-			<OnChainIdentity
+			<OnchainIdentity
 				open={openSetIdentityModal}
 				setOpen={setOpenSetIdentityModal}
-				openAddressLinkedModal={openAddressLinkedModal}
-				setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+				openAddressModal={openAddressLinkedModal}
+				setOpenAddressModal={setOpenAddressLinkedModal}
 			/>
 		</div>
 	);

@@ -43,7 +43,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import classNames from 'classnames';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -55,6 +55,10 @@ const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesPro
 });
 const ListingChildBountyChart = dynamic(() => import('~src/ui-components/ListingChildBountyChart'), {
 	loading: () => <SkeletonButton active />,
+	ssr: false
+});
+const BeneficiaryAmoutTooltip = dynamic(() => import('./BeneficiaryAmoutTooltip'), {
+	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
 
@@ -229,6 +233,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		if (!apiReady) {
 			return;
 		}
+
+		if (!loginAddress) return;
+
 		const encoded = getEncodedAddress(loginAddress || defaultAddress || '', network);
 
 		const fetchHistory = async () => {
@@ -295,9 +302,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	return (
 		<>
 			<div
-				className={`${className} ${
-					ownProposal && 'border-l-4 border-l-pink_primary'
-				} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
+				className={`${className} ${ownProposal && 'border-l-4 border-l-pink_primary'} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary ${
+					theme === 'dark' ? 'hover:text-white' : 'hover:text-bodyBlue'
+				} hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
 			>
 				<div className='w-full flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
@@ -346,20 +353,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							)}
 						</div>
 						{!!requestedAmount && (
-							<div className='flex items-center justify-center'>
-								{assetId ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{getBeneficiaryAmoutAndAsset(assetId, requestedAmount as any)}
-									</span>
-								) : requestedAmount > 100 ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
-								) : (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
-								)}
+							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								<BeneficiaryAmoutTooltip
+									assetId={assetId || null}
+									requestedAmt={requestedAmount.toString()}
+									className='flex items-center justify-center'
+									proposalCreatedAt={created_at || null}
+									timeline={timeline || []}
+									postId={onchainId as any}
+								/>
 							</div>
 						)}
 					</div>

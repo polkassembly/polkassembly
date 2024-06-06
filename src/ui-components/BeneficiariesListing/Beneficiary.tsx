@@ -9,6 +9,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatedBalance } from '~src/util/formatedBalance';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import BN from 'bn.js';
 
 interface Props {
 	className?: string;
@@ -16,9 +17,10 @@ interface Props {
 	inPostHeading?: boolean;
 	disableBalanceFormatting?: boolean;
 	assetId?: null | string;
+	isProposalCreationFlow?: boolean;
 }
 
-const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading, assetId = null }: Props) => {
+const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading, assetId = null, isProposalCreationFlow }: Props) => {
 	const { network } = useNetworkSelector();
 	return (
 		<div className={`${className} flex items-center gap-1`}>
@@ -37,7 +39,14 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 			<span className='text-blue-light-high dark:text-blue-dark-high'>
 				(
 				{assetId
-					? getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString())
+					? isProposalCreationFlow
+						? getBeneficiaryAmoutAndAsset(
+								assetId,
+								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
+								network,
+								isProposalCreationFlow
+						  )
+						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString(), network)
 					: disableBalanceFormatting
 					? beneficiary.amount.toString()
 					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}

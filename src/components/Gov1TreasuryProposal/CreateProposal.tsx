@@ -7,7 +7,6 @@ import { useGov1treasuryProposal, useNetworkSelector, useUserDetailsSelector } f
 import AddressInput from '~src/ui-components/AddressInput';
 import Balance from '../Balance';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
@@ -19,7 +18,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
@@ -34,6 +33,7 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
 	className?: string;
@@ -47,6 +47,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
@@ -101,9 +102,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 			return;
 		}
 
-		await api?.derive?.accounts?.info(address, (info: DeriveAccountInfo) => {
-			setShowIdentityInfoCardForBeneficiary(!info?.identity?.display);
-		});
+		const info = await getIdentityInformation({ address: address, api: api, apiReady: apiReady, network });
+		setShowIdentityInfoCardForBeneficiary(!info?.isGood);
 	};
 
 	const handleBeneficiaryChange = async (address: string) => {
@@ -187,15 +187,14 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		if (!api || !apiReady || !address) {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !address) {
 			setShowIdentityInfoCardForProposer(false);
 			return;
 		}
-		const encodedAddr = getEncodedAddress(address, network) || '';
-
-		await api?.derive?.accounts?.info(encodedAddr, (info: DeriveAccountInfo) => {
-			setShowIdentityInfoCardForProposer(!info?.identity?.display);
-		});
+		const info = await getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network });
+		setShowIdentityInfoCardForProposer(!info?.display);
 	};
 
 	useEffect(() => {
@@ -228,7 +227,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		checkProposerIdentity(proposer || loginAddress);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, proposer, api, apiReady]);
+	}, [loginAddress, proposer, api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];

@@ -9,13 +9,15 @@ import { IUserDetailsStore } from './userDetails/@types';
 import { IUnlockTokenskDataStore } from './tokenUnlocksData/@types';
 import { ICurrentTokenPriceStore } from './currentTokenPrice/@types';
 import { ICurvesInformationStore } from './curvesInformation/@types';
-import { ITippingStore } from './Tipping/@types';
+import { ITippingStore } from './tipping/@types';
 import { ITreasuryProposalStore } from './treasuryProposal/@types';
 import { IVoteDataStore } from './voteData/@types';
 import { IinitialConnectAddress } from './initialConnectAddress/@types';
 import { IGov1TreasuryProposalStore } from './gov1TreasuryProposal/@types';
 import { IRemoveIdentityStore } from './removeIdentity/@types';
 import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
+import { IOnChainIdentityStore } from './onchainIdentity/@types';
+import { IInAppNotificationsStore } from './inAppNotifications/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -64,7 +66,13 @@ const useRemoveIdentity = () => {
 const useTrackLevelAnalytics = () => {
 	return useSelector<TAppState, ITrackLevelAnalyticsStore>((state) => state.trackLevelAnalytics);
 };
+const useOnchainIdentitySelector = () => {
+	return useSelector<TAppState, IOnChainIdentityStore>((state) => state.onchainIdentity);
+};
 
+const useInAppNotificationsSelector = () => {
+	return useSelector<TAppState, IInAppNotificationsStore>((state) => state.inAppNotifications);
+};
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -77,5 +85,7 @@ export {
 	useInitialConnectAddress,
 	useGov1treasuryProposal,
 	useRemoveIdentity,
-	useTrackLevelAnalytics
+	useTrackLevelAnalytics,
+	useOnchainIdentitySelector,
+	useInAppNotificationsSelector
 };

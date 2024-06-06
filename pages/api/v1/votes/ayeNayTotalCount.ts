@@ -21,22 +21,30 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 	const { proposalType, postId } = req.body as unknown as Props;
 
-	const network = String(req.headers['x-network']);
-	if (network === 'undefined' || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
-	if (isNaN(Number(postId)) || isProposalTypeValid(proposalType)) return res.status(400).json({ message: messages.INVALID_PARAMS });
-	const query = GET_AYE_NAY_TOTAL_COUNT;
+	try {
+		const network = String(req.headers['x-network']);
+		if (network === 'undefined' || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
+		if (isNaN(Number(postId)) || isProposalTypeValid(proposalType)) return res.status(400).json({ message: messages.INVALID_PARAMS });
+		const query = GET_AYE_NAY_TOTAL_COUNT;
 
-	const variables: any = {
-		proposalIndex_eq: postId,
-		type_eq: proposalType
-	};
+		const variables: any = {
+			proposalIndex_eq: postId,
+			type_eq: proposalType
+		};
 
-	const data = await fetchSubsquid({
-		network,
-		query,
-		variables
-	});
-	res.json(data['data']);
+		const data = await fetchSubsquid({
+			network,
+			query,
+			variables
+		});
+		if (data) {
+			return res.json(data['data'] || []);
+		} else {
+			return res.json({ data: [] });
+		}
+	} catch (error) {
+		return res.json({ messages: error });
+	}
 };
 
 export default withErrorHandling(handler);

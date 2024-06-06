@@ -82,7 +82,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 			className='h-[150px]'
 		>
 			<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
-				<div className='flex w-full gap-[34px] '>
+				<div className='flex w-full gap-[34px]'>
 					<div className='w-3/10'>
 						<ImageComponent
 							src={image}
@@ -94,7 +94,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 					{!!address && !!username && (
 						<div className='w-7/10 gap-1 text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex gap-1'>
-								<span className='text-2xl font-semibold'>{username}</span>
+								<span className='text-2xl font-semibold'>{identity?.display || identity?.legal || username}</span>
 								<div className='flex items-center gap-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 									(
 									<Address

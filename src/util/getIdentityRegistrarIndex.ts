@@ -2,10 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { network as AllNetworks } from '~src/global/networkConstants';
-interface Args {
+interface IArgs {
 	network: string;
 }
-const getIdentityRegistrarIndex = ({ network }: Args) => {
+const getIdentityRegistrarIndex = ({ network }: IArgs) => {
 	switch (network) {
 		case AllNetworks.POLKADOT:
 			return 3;

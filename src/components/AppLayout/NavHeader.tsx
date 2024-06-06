@@ -51,12 +51,14 @@ const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import InAppNotification from '../InAppNotification';
+import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const Identity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 
@@ -81,7 +83,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
 	const isClicked = useRef(false);
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
-	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
+	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -125,7 +127,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			if (address?.length) {
 				setOpen(!open);
 			} else {
-				setOpenAddressLinkedModal(true);
+				setOpenAddressModal(true);
 			}
 		}
 	};
@@ -370,7 +372,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
-
+					{AVAILABLE_NETWORK.includes(network) && <InAppNotification />}
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
@@ -518,11 +520,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			</nav>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
-					<OnChainIdentity
+					<Identity
 						open={open}
 						setOpen={setOpen}
-						openAddressLinkedModal={openAddressLinkedModal}
-						setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+						openAddressModal={openAddressModal}
+						setOpenAddressModal={setOpenAddressModal}
 					/>
 					<RemoveIdentity />
 				</>

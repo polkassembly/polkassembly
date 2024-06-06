@@ -10,12 +10,10 @@ import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
-
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -26,7 +24,11 @@ import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import ImageIcon from '~src/ui-components/ImageIcon';
+import Alert from '~src/basic-components/Alert';
+import getPreimageWarning from './utils/getPreimageWarning';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import classNames from 'classnames';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -35,6 +37,10 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 			<SkeletonInput active />
 		</div>
 	),
+	ssr: false
+});
+const BeneficiaryAmoutTooltip = dynamic(() => import('../BeneficiaryAmoutTooltip'), {
+	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
 
@@ -77,10 +83,13 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 
 interface IPostHeadingProps {
 	className?: string;
+	postArguments?: any;
+	method?: string;
+	motion_method?: string;
 }
 const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const router = useRouter();
-	const { className } = props;
+	const { className, postArguments, method, motion_method } = props;
 	const { resolvedTheme: theme } = useTheme();
 
 	const {
@@ -102,12 +111,14 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			reward,
 			tags,
 			track_name,
+			timeline,
 			cid,
 			// history,
 			content,
 			summary,
 			identityId,
-			hash
+			hash,
+			preimageHash
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
@@ -116,6 +127,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
 	const [history, setHistory] = useState<IPostHistory[]>([]);
+	const [cancelledReferendaIndices, setCancelledReferendaIndices] = useState<number[]>([]);
+	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
+	const [preimageWarning, setPreimageWarning] = useState<string | null>(null);
 
 	const getHistoryData = async () => {
 		try {
@@ -133,6 +147,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onchainId, proposalType]);
+
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
@@ -157,34 +172,110 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		}
 	};
 
-	useEffect(() => {
-		if (!identityId || proposer || curator) return;
+	const handlePreimageWarning = async (isTreasuryProposal: boolean) => {
+		if (!api || !apiReady || !isTreasuryProposal) return;
+		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
+		setPreimageWarning(preimageWarning);
+	};
 
-		(async () => {
-			const proposer = await getProposerFromPolkadot(identityId);
-			setPolkadotProposer(proposer as string);
-		})();
+	useEffect(() => {
+		let isTreasuryProposal = false;
+		if (network && track_name) {
+			isTreasuryProposal = networkTrackInfo?.[network]?.[track_name].group === 'Treasury';
+			setIsTreasuryProposal(isTreasuryProposal);
+		}
+
+		if (!api || !apiReady) return;
+		handlePreimageWarning(isTreasuryProposal);
+
+		if (identityId && !proposer && !curator) {
+			(async () => {
+				const proposer = await getProposerFromPolkadot(identityId);
+				setPolkadotProposer(proposer as string);
+			})();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, network]);
+
+	const CancelledReferendaIndices = () => {
+		if (!postArguments) return;
+		const indices = Object.entries(postArguments).map(([, value]) => Number(value));
+		setCancelledReferendaIndices(indices);
+	};
+
+	useEffect(() => {
+		CancelledReferendaIndices();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postArguments]);
 
 	return (
 		<div className={className}>
-			<div className='flex items-center justify-between'>
-				{status && (
-					<StatusTag
-						theme={theme}
-						className='mb-2 sm:mb-3'
-						status={status}
-					/>
-				)}
-				{requestedAmt && (
-					<h5 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
-						Requested:{' '}
-						{assetId ? getBeneficiaryAmoutAndAsset(assetId, String(requestedAmt)) : formatBnBalance(String(requestedAmt), { numberAfterComma: 2, withUnit: true }, network)}
-					</h5>
-				)}
-			</div>
-			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-[6px] text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high sm:mb-3`}>
+			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
+				<Alert
+					key={preimageHash}
+					message={<div className='flex items-center gap-1 text-xs'>{preimageWarning}</div>}
+					type='warning'
+					className='mb-4 mt-2'
+					showIcon
+				/>
+			)}
+			{method && method !== motion_method && method == 'cancel' ? (
+				<div>
+					{cancelledReferendaIndices.map((index) => {
+						return (
+							<Alert
+								key={index}
+								message={
+									<div className='flex items-center gap-1'>
+										<span className='text-xs font-normal text-[#EA0707] dark:text-blue-dark-medium'>This Referendum has been created to cancel </span>
+										<a
+											href={`https://${network}.polkassembly.io/referenda/${index}`}
+											target='_blank'
+											rel='noreferrer'
+											className='flex items-center space-x-1 text-xs font-medium text-pink_primary dark:text-pink_light'
+										>
+											Referendum #{index}
+											<ImageIcon
+												src='/assets/icons/redirect.svg'
+												alt='redirection-icon'
+												imgClassName='ml-1 w-[14px] -mt-[2px]'
+											/>
+										</a>
+									</div>
+								}
+								type='error'
+								className='mb-4 mt-2'
+							/>
+						);
+					})}
+				</div>
+			) : (
+				<div className='flex items-center justify-between'>
+					{status && (
+						<StatusTag
+							theme={theme}
+							className='mb-3'
+							status={status}
+						/>
+					)}
+					{requestedAmt && (
+						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+							<span> Requested: </span>
+							<BeneficiaryAmoutTooltip
+								assetId={assetId}
+								requestedAmt={requestedAmt.toString()}
+								className={classNames(className, 'flex')}
+								postId={onchainId ? Number(onchainId) : (onchainId as any)}
+								proposalCreatedAt={created_at as any}
+								timeline={timeline || []}
+								usedInPostPage
+							/>
+						</div>
+					)}
+				</div>
+			)}
+
+			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')

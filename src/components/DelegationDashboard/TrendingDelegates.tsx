@@ -16,7 +16,6 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
-import { useApiContext } from '~src/context';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
@@ -24,7 +23,6 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
@@ -39,11 +37,6 @@ const TrendingDelegates = () => {
 	const [checkAll, setCheckAll] = useState(true);
 
 	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
 		if (!address) return;
 		if (getEncodedAddress(address, network) && address !== getEncodedAddress(address, network)) {
 			setAddressAlert(true);
@@ -52,6 +45,7 @@ const TrendingDelegates = () => {
 			setAddressAlert(false);
 		}, 5000);
 	}, [network, address]);
+
 	useEffect(() => {
 		// Modify to set checkedList based on allDataSource after fetching data
 		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
@@ -70,8 +64,6 @@ const TrendingDelegates = () => {
 	}, [delegatesData, checkedList, checkAll]);
 
 	const getData = async () => {
-		if (!api || !apiReady) return;
-
 		if (!getEncodedAddress(address, network) && address.length > 0) return;
 		setLoading(true);
 
@@ -90,7 +82,7 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, delegationDashboardAddress]);
+	}, [address, delegationDashboardAddress, network]);
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
@@ -122,7 +114,9 @@ const TrendingDelegates = () => {
 			setCurrentPage(totalPages);
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
+
 	const addressess = [
+		getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t'),
 		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
 		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
 		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
@@ -220,7 +214,6 @@ const TrendingDelegates = () => {
 					<CustomButton
 						variant='primary'
 						className={'ml-1 mr-1 justify-around gap-2 px-4 py-1'}
-						// className={`ml-1 mr-1 justify-around gap-2 px-4 py-1 ${disabled && 'opacity-50'}`}
 						height={40}
 						onClick={() => {
 							setOpen(true);
@@ -228,7 +221,6 @@ const TrendingDelegates = () => {
 						}}
 						disabled={
 							!address || !getEncodedAddress(address, network) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress
-							// disabled
 						}
 					>
 						<DelegatesProfileIcon />
@@ -259,13 +251,14 @@ const TrendingDelegates = () => {
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
 					type='info'
-					message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to Kusama address.</span>}
+					message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
 				/>
 			)}
 
 			<Spin spinning={loading}>
 				<div className='min-h-[200px]'>
-					{filteredDelegates.length < 1 ? (
+					{filteredDelegates.length < 1 && !loading ? (
+						//empty state
 						<ImageIcon
 							src='/assets/icons/empty-state-image.svg'
 							alt='empty icon'

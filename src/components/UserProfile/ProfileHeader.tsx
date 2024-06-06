@@ -12,11 +12,12 @@ import Image from 'next/image';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import dynamic from 'next/dynamic';
 import { useDispatch } from 'react-redux';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { DollarIcon } from '~src/ui-components/CustomIcons';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -134,7 +135,7 @@ const ProfileHeader = ({ className, userProfile, profileDetails, setProfileDetai
 					username={userProfile.username || ''}
 				/>
 			)}
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
+			{delegationSupportedNetworks.includes(network) && (
 				<DelegateModal
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}

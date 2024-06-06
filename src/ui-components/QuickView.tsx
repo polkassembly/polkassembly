@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
-import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { poppins } from 'pages/_app';
@@ -18,7 +17,7 @@ import ShareScreenIcon from '~assets/icons/share-icon-new.svg';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { CopyIcon, VerifiedIcon } from './CustomIcons';
 import { useDispatch } from 'react-redux';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import { message } from 'antd';
@@ -69,9 +68,9 @@ const QuickView = ({
 	isW3FDelegate
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
-	const judgements = identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-	const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-	const isBad = judgements?.some(([, judgement]): boolean => judgement.isErroneous || judgement.isLowQuality);
+	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
+	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
+	const isBad = judgements?.some(([, judgement]: any[]): boolean => ['Erroneous', 'LowQuality'].includes(judgement));
 	const [messageApi, contextHolder] = message.useMessage();
 	const [openTooltip, setOpenTooltip] = useState<boolean>(false);
 	const dispatch = useDispatch();
@@ -97,6 +96,16 @@ const QuickView = ({
 		setOpen(false);
 	};
 
+	const getUserRedirection = (username: string, address: string) => {
+		if (!network) return null;
+		if (username?.length) {
+			return `https://${network}.polkassembly.io/user/${polkassemblyUsername}`;
+		} else if (address?.length) {
+			return `https://${network}.polkassembly.io/address/${address}`;
+		}
+		return null;
+	};
+
 	return (
 		<div
 			className={`${poppins.variable} ${poppins.className} flex flex-col gap-1.5 ${className} border-solid pb-2 dark:border-none`}
@@ -118,7 +127,7 @@ const QuickView = ({
 						<div className='flex items-center justify-center '>{isGood ? <VerifiedIcon className='text-xl' /> : <MinusCircleFilled style={{ color }} />}</div>
 						{isW3FDelegate && (
 							<Tooltip
-								title='Web3 foundation member'
+								title='Web3 foundation delegate'
 								className={classNames(poppins.className, poppins.variable)}
 							>
 								<Image
@@ -133,19 +142,17 @@ const QuickView = ({
 							target='_blank'
 							rel='noreferrer'
 							className='flex text-pink_primary'
-							onClick={() => {
-								const substrateAddress = address?.length ? getSubstrateAddress(address) : '';
-								if (!polkassemblyUsername?.length) {
-									window.open(`https://${network}.polkassembly.io/address/${substrateAddress || address}`, '_blank');
-								} else {
-									window.open(`https://${network}.polkassembly.io/user/${polkassemblyUsername}`, '_blank');
-								}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								window.open(getUserRedirection(polkassemblyUsername || '', address) || '', '_blank');
 							}}
+							// href={`${getUserRedirection(polkassemblyUsername || '', address)}` || ''}
 						>
 							<ShareScreenIcon />
 						</a>
 					</div>
-					<div className={`flex  gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
+					<div className={`flex gap-1.5 ${profileCreatedAt ? 'flex-col' : 'justify-between'}`}>
 						{!!address && (
 							<div className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 								<Address
@@ -212,7 +219,7 @@ const QuickView = ({
 							variant='primary'
 							text='Tip'
 							height={32}
-							className={`w-full p-5 ${(!id || !enableTipping) && 'cursor-not-allowed opacity-50'}`}
+							className={`w-full p-5 ${!id || !enableTipping ? 'cursor-not-allowed opacity-50' : ''}`}
 						/>
 					</div>
 				</Tooltip>

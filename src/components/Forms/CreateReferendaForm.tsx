@@ -220,8 +220,9 @@ export default function CreateReferendaForm({
 
 		setLoadingStatus({ isLoading: true, message: 'Waiting for signature' });
 		try {
-			const proposalTx = api.tx.referenda.submit(
-				selectedTrack,
+			const origin = { Origins: selectedTrack };
+			const proposalTx: any = api.tx.referenda.submit(
+				origin as any,
 				{ Lookup: { hash: preimageHash, len: preimageLength } },
 				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
 			);
@@ -728,8 +729,8 @@ export default function CreateReferendaForm({
 								value={EEnactment.At_Block_No}
 								className='text-sm font-normal text-bodyBlue dark:text-blue-dark-high'
 							>
-								<div className='flex h-10 items-center gap-2'>
-									<span className='w-[150px]'>
+								<div className='flex h-10 items-center gap-4'>
+									<span>
 										At Block no.
 										<HelperTooltip
 											className='ml-1'

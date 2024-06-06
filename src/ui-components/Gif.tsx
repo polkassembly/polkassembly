@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import { Tabs } from './Tabs';
 import { Pagination } from '~src/ui-components/Pagination';
+import { useTheme } from 'next-themes';
 
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY || '');
 const { Search } = Input;
@@ -29,7 +30,7 @@ const Gif: FC<IGifProps> = (props) => {
 	const [tab, setTab] = useState('trending');
 	const [query, setQuery] = useState<string>('');
 	const timeout = useRef<NodeJS.Timeout>();
-	const { theme } = props;
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (tab === 'trending' || query.length === 0) {

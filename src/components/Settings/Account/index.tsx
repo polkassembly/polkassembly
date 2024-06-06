@@ -11,6 +11,7 @@ import AccountIcon from '~assets/icons/account-icon.svg';
 import { Collapse } from '../Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
+import LinkViaRemarkModal from './LinkViaRemarkModal';
 
 const { Panel } = Collapse;
 
@@ -19,10 +20,10 @@ const Address = dynamic(() => import('./Address'), {
 	ssr: false
 });
 
-const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
+// const MultiSignatureAddress = dynamic(() => import('./MultiSignatureAddress'), {
+// loading: () => <Skeleton active />,
+// ssr: false
+// });
 
 const Proxy = dynamic(() => import('./Proxy'), {
 	loading: () => <Skeleton active />,
@@ -62,7 +63,8 @@ interface Props {
 
 const Account: FC<Props> = ({ className }) => {
 	const [isLinkAddress, setIsLinkAddress] = useState(false);
-	const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
+	const [isLinkViaRemark, setIsLinkViaRemark] = useState(false);
+	// const [isMultiSigAddress, setIsMultiSigAddress] = useState(false);
 	const [isLinkProxy, setIsLinkProxy] = useState(false);
 	const [active, setActive] = useState(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -105,7 +107,8 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
+						{/* Currently blocked due to multisig apis not being available */}
+						{/* <Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -120,7 +123,7 @@ const Account: FC<Props> = ({ className }) => {
 									/>
 								}
 							/>
-						</section>
+						</section> */}
 						<Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
@@ -133,6 +136,22 @@ const Account: FC<Props> = ({ className }) => {
 									<Proxy
 										open={isLinkProxy}
 										dismissModal={() => setIsLinkProxy(false)}
+									/>
+								}
+							/>
+						</section>
+						<Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
+						<section>
+							<AddressHeader
+								checked={isLinkViaRemark}
+								header='Link Address via Remark'
+								id='link_address_remark'
+								onChange={setIsLinkViaRemark}
+								subHeading='For participating in governance activities via ledger accounts'
+								modal={
+									<LinkViaRemarkModal
+										open={isLinkViaRemark}
+										dismissModal={() => setIsLinkViaRemark(false)}
 									/>
 								}
 							/>

@@ -11,6 +11,7 @@ import amplitudeLogo from '~assets/parachain-logos/amplitude-logo.png';
 import astarLogo from '~assets/parachain-logos/astar-logo.png';
 import automataLogo from '~assets/parachain-logos/automata-logo.jpg';
 import basiliskLogo from '~assets/parachain-logos/basilisk-logo.jpg';
+import curioLogo from '~assets/parachain-logos/curio-logo.jpg';
 import pioneerLogo from '~assets/parachain-logos/bitcountrypioneer-logo.jpg';
 import calamariLogo from '~assets/parachain-logos/calamari-logo.png';
 import centrifugeLogo from '~assets/parachain-logos/centrifuge-logo.png';
@@ -119,7 +120,8 @@ export const network = {
 	WESTENDCOLLECTIVES: 'westend-collectives',
 	XX: 'xx',
 	ZEITGEIST: 'zeitgeist',
-	MANDALA: 'mandala'
+	MANDALA: 'mandala',
+	CURIO: 'curio'
 };
 
 export const tokenSymbol = {
@@ -176,7 +178,8 @@ export const tokenSymbol = {
 	VARA: 'VARA',
 	XX: 'XX',
 	ZTG: 'ZTG',
-	KPGT: 'KPGT'
+	KPGT: 'KPGT',
+	CGT: 'CGT'
 };
 
 export const chainProperties: types.ChainPropType = {
@@ -185,7 +188,9 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
+		parachain: '10000',
 		logo: polkadotLogo,
+		palletInstance: '50',
 		rpcEndpoint: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
@@ -240,7 +245,10 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
+		parachain: '10000',
+		peopleKusamaRpcEndpoint: 'wss://kusama-people-rpc.polkadot.io',
 		logo: kusamaLogo,
+		palletInstance: '50',
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
 		ss58Format: 2,
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
@@ -478,6 +486,29 @@ export const chainProperties: types.ChainPropType = {
 			}
 		]
 	},
+	[network.CURIO]: {
+		blockTime: 12000,
+		category: 'kusama',
+		chainId: 3339,
+		logo: curioLogo,
+		rpcEndpoint: 'wss://archive.parachain.curioinvest.com/',
+		ss58Format: 777,
+		subsquidUrl: '',
+		tokenDecimals: 18,
+		tokenSymbol: tokenSymbol.CGT,
+		treasuryProposalBondPercent: '5%',
+		treasuryProposalMinBond: '1',
+		treasuryProposalMaxBond: '5',
+		externalLinks: '',
+		gTag: null,
+		rpcEndpoints: [
+			{
+				label: 'via Curio',
+				key: 'wss://archive.parachain.curioinvest.com/'
+			}
+		]
+	},
+
 	[network.PIONEER]: {
 		blockTime: 12000,
 		category: 'solo',
@@ -676,7 +707,7 @@ export const chainProperties: types.ChainPropType = {
 			{ key: 'wss://dot-rpc.stakeworld.io', label: 'Stakeworld' }
 		],
 		ss58Format: 0,
-		subsquidUrl: 'https://squid.subsquid.io/collectives-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/collectives-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
 		treasuryProposalBondPercent: null,
@@ -1390,7 +1421,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
-		externalLinks: 'https://polkaholic.io',
+		externalLinks: 'https://pendulum.api.subscan.io',
 		gTag: 'G-EGV0NKCPZG',
 		rpcEndpoints: [
 			{
@@ -1414,7 +1445,7 @@ export const chainProperties: types.ChainPropType = {
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.PDEX,
 		treasuryProposalBondPercent: '5%',
-		treasuryProposalMinBond: null,
+		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '100',
 		externalLinks: 'https://polkadex.api.subscan.io',
 		gTag: 'G-EB50MSH198',
@@ -1438,7 +1469,7 @@ export const chainProperties: types.ChainPropType = {
 		ss58Format: 12,
 		tokenDecimals: 6,
 		tokenSymbol: tokenSymbol.POLYX,
-		subsquidUrl: 'https://squid.subsquid.io/polymesh-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/polymesh-polkassembly/graphql',
 		treasuryProposalBondPercent: null,
 		treasuryProposalMinBond: null,
 		treasuryProposalMaxBond: null,
@@ -1538,9 +1569,9 @@ export const chainProperties: types.ChainPropType = {
 		category: 'kusama',
 		chainId: 2048,
 		logo: robonomicsLogo,
-		rpcEndpoint: 'wss://robonomics.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://kusama.rpc.robonomics.network/',
 		ss58Format: 32,
-		subsquidUrl: 'https://squid.subsquid.io/robonomics-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/robonomics-polkassembly/graphql',
 		tokenDecimals: 9,
 		tokenSymbol: tokenSymbol.XRT,
 		treasuryProposalBondPercent: '5%',
@@ -1761,9 +1792,9 @@ export const chainProperties: types.ChainPropType = {
 		category: 'test',
 		chainId: 0,
 		logo: westendLogo,
-		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
+		rpcEndpoint: 'wss://westend-rpc.dwellir.com',
 		ss58Format: 0,
-		subsquidUrl: '',
+		subsquidUrl: 'https://polkassembly.squids.live/westend-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.WND,
 		treasuryProposalBondPercent: null,
@@ -1917,5 +1948,6 @@ export const addressPrefix: Record<string, number> = {
 	moonbeam: 1284,
 	moonriver: 1285,
 	moonbase: 1287,
-	polkadot: 0
+	polkadot: 0,
+	curio: 777
 };

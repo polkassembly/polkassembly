@@ -17,6 +17,6 @@ export default async function getOnChainUsername(api: ApiPromise, address: strin
 		if (web3Name) return `w3n:${web3Name}`;
 	}
 
-	const accountInfo = await api.derive.accounts.info(address);
-	return accountInfo?.identity?.displayParent || accountInfo?.identity?.display || '';
+	const accountInfo = await api.query.identity.identityOf(address).then((res: any) => res?.toHuman()?.[0]);
+	return accountInfo?.displayParent || accountInfo?.display || '';
 }

@@ -338,7 +338,6 @@ const Web3Signup: FC<Props> = ({
 			{!showOptionalFields && (
 				<div>
 					<div className='mt-1 flex items-center'>
-						<LoginLogo className='ml-6 mr-2' />
 						{theme === 'dark' ? <LoginLogoDark className='ml-6 mr-2' /> : <LoginLogo className='ml-6 mr-2' />}
 						<h3 className='mt-3 text-[20px] font-semibold text-[#243A57] dark:text-blue-dark-high'>{withPolkasafe ? <PolkasafeWithIcon /> : 'Sign Up'}</h3>
 					</div>

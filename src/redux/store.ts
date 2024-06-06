@@ -11,13 +11,18 @@ import { userDetailsStore } from './userDetails';
 import { userUnlockTokensDataStore } from './tokenUnlocksData';
 import { currentTokenPriceStore } from './currentTokenPrice';
 import { curvesInformationStore } from './curvesInformation';
-import { tippingStore } from './Tipping';
+import { tippingStore } from './tipping';
 import { treasuryProposalStore } from './treasuryProposal';
 import { IUserDetailsStore } from './userDetails/@types';
 import { deleteLocalStorageToken, getLocalStorageToken } from '~src/services/auth.service';
 import { isExpired } from 'react-jwt';
 import { voteDataStore } from './voteData';
 import { initialConnectAddressStore } from './initialConnectAddress';
+import { gov1TreasuryProposalStore } from './gov1TreasuryProposal';
+import { removeIdentityStore } from './removeIdentity';
+import { trackLevelAnalyticsStore } from './trackLevelAnalytics';
+import { onchainIdentityStore } from './onchainIdentity';
+import { inAppNotificationsStore } from './inAppNotifications';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -102,7 +107,12 @@ export const makeStore = () => {
 		[tippingStore.name]: tippingStore.reducer,
 		[treasuryProposalStore.name]: treasuryProposalStore.reducer,
 		[voteDataStore.name]: voteDataStore.reducer,
-		[initialConnectAddressStore.name]: initialConnectAddressStore.reducer
+		[initialConnectAddressStore.name]: initialConnectAddressStore.reducer,
+		[gov1TreasuryProposalStore.name]: gov1TreasuryProposalStore.reducer,
+		[removeIdentityStore.name]: removeIdentityStore.reducer,
+		[trackLevelAnalyticsStore.name]: trackLevelAnalyticsStore.reducer,
+		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
+		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer
 	});
 
 	if (isServer) {
@@ -122,7 +132,7 @@ export const makeStore = () => {
 			key: 'polkassembly',
 			storage,
 			transforms: [userDetailsTransform],
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

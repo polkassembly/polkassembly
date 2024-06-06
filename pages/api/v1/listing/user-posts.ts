@@ -12,12 +12,13 @@ import messages from '~src/auth/utils/messages';
 import { getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_ONCHAIN_POSTS_BY_PROPOSER_ADDRESSES } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse } from '~src/types';
+import { IApiResponse, IUserPost, IUserPostsListingResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IReaction } from '../posts/on-chain-post';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 
 export const getTimeline = (
 	proposals: any,
@@ -52,97 +53,6 @@ export const getTimeline = (
 		}) || []
 	);
 };
-
-export interface IUserPost {
-	content: string;
-	created_at: Date;
-	id: string;
-	post_reactions: {
-		'👍': number;
-		'👎': number;
-	};
-	proposer: string;
-	title: string;
-	type: ProposalType;
-	username?: string;
-	track_number?: number;
-	tally?: {
-		ayes: string;
-		nays: string;
-	} | null;
-	status?: string;
-	status_history?: {
-		status: string;
-		block: any;
-	};
-	timeline?: any;
-	tags?: string[];
-	comments_count?: number;
-}
-
-export interface IUserPostsListingResponse {
-	gov1: {
-		discussions: {
-			posts: IUserPost[];
-			total: number;
-		};
-		democracy: {
-			referenda: IUserPost[];
-			proposals: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-		treasury: {
-			treasury_proposals: IUserPost[];
-			bounties: IUserPost[];
-			tips: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-		collective: {
-			council_motions: IUserPost[];
-			tech_comm_proposals: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-	};
-	open_gov: {
-		discussions: {
-			posts: IUserPost[];
-			total: number;
-		};
-		root: IUserPost[];
-		staking_admin: IUserPost[];
-		auction_admin: IUserPost[];
-		governance: {
-			lease_admin: IUserPost[];
-			general_admin: IUserPost[];
-			referendum_canceller: IUserPost[];
-			referendum_killer: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-		treasury: {
-			treasurer: IUserPost[];
-			small_tipper: IUserPost[];
-			big_tipper: IUserPost[];
-			small_spender: IUserPost[];
-			medium_spender: IUserPost[];
-			big_spender: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-		fellowship: {
-			member_referenda: IUserPost[];
-			whitelisted_caller: IUserPost[];
-			fellowship_admin: IUserPost[];
-			total: number;
-			posts: IUserPost[];
-		};
-	};
-	gov1_total: number;
-	open_gov_total: number;
-}
 
 export const getDefaultUserPosts: () => IUserPostsListingResponse = () => {
 	return {
@@ -343,9 +253,35 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 					} else {
 						proposalTimeline = getTimeline(group?.proposals, isStatus) || [];
 					}
+
+					let requested = BigInt(0);
+					let args = preimage?.proposedCall?.args;
+					let assetId: null | string = null;
+
+					if (args) {
+						if (args?.assetKind?.assetId?.value?.interior) {
+							const call = args?.assetKind?.assetId?.value?.interior?.value;
+							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						}
+						args = convertAnyHexToASCII(args, network);
+						if (args?.amount) {
+							requested = args.amount;
+						} else {
+							const calls = args.calls;
+							if (calls && Array.isArray(calls) && calls.length > 0) {
+								calls.forEach((call) => {
+									if (call && (call.amount || call?.value?.amount)) {
+										requested += BigInt(call.amount || call?.value?.amount);
+									}
+								});
+							}
+						}
+					}
+
 					const proposalType = getFirestoreProposalType(type);
 					const id = type === 'Tip' ? hash : index;
 					const newData: IUserPost = {
+						assetId: assetId || null,
 						content: description || (proposalArguments && proposalArguments.description ? proposalArguments.description : ''),
 						created_at: createdAt || null,
 						id: id,
@@ -354,6 +290,7 @@ export const getUserPosts: TGetUserPosts = async (params) => {
 							'👎': 0
 						},
 						proposer: proposer || (preimage && preimage.proposer ? preimage.proposer : ''),
+						requestedAmount: requested ? requested.toString() : null,
 						status: status || '',
 						status_history: statusHistory || null,
 						tally: tally || null,

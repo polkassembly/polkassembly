@@ -9,9 +9,8 @@ import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import styled from 'styled-components';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -27,6 +26,7 @@ import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfieBalances';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
 	delegate: IDelegate;
@@ -45,6 +45,7 @@ const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const { api, apiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -79,18 +80,27 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, delegate?.address]);
 
-	useEffect(() => {
-		if (!api || !apiReady || !delegate?.address) return;
+	const handleIdentityInfo = async () => {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !delegate?.address) return;
 		setLoading(true);
 
-		api.derive.accounts.info(delegate?.address, (info: DeriveAccountInfo) => {
-			if (info?.identity) {
-				setIdentity(info?.identity);
-			}
+		const info = await getIdentityInformation({
+			address: delegate?.address,
+			api: apiPromise,
+			apiReady: apiPromiseReady,
+			network: network
 		});
+		setIdentity(info);
 		setLoading(false);
+	};
+
+	useEffect(() => {
+		if (!api || !apiReady || !delegate?.address) return;
+		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, delegate]);
+	}, [address, api, apiReady, delegate, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	const handleClick = () => {
 		// GAEvent for delegate CTA clicked
@@ -105,9 +115,9 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	return (
 		<Spin spinning={loading}>
 			<div
-				className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] dark:border-[#3B444F]  dark:border-separatorDark  ${
-					delegate?.dataSource.includes(EDelegateSource.NOVA) ? 'hover:border-[#3C74E1]' : 'hover:border-pink_primary'
-				} ${className}`}
+				className={`rounded-[6px] border-[1px] border-solid border-[#D2D8E0] hover:border-pink_primary  dark:border-[#3B444F] 
+					dark:border-separatorDark
+			${className}`}
 			>
 				{delegate?.dataSource.length > 1 ? (
 					<div

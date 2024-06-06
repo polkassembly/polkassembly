@@ -25,7 +25,8 @@ import {
 	SmallTipperTrackIcon,
 	StakingAdminTrackTrackIcon,
 	TreasurerTrackIcon,
-	WhitelistedCallerTrackIcon
+	WhitelistedCallerTrackIcon,
+	WishForChangeIcon
 } from '~src/ui-components/CustomIcons';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
@@ -134,6 +135,13 @@ export const handleTracksIcon = (index: string, size: number) => {
 		case 'Referendum Canceller':
 			return (
 				<ReferendumCancellerTrackIcon
+					className='text-lightBlue dark:text-icon-dark-inactive'
+					style={{ fontSize: `${size}px` }}
+				/>
+			);
+		case 'Wish For Change':
+			return (
+				<WishForChangeIcon
 					className='text-lightBlue dark:text-icon-dark-inactive'
 					style={{ fontSize: `${size}px` }}
 				/>

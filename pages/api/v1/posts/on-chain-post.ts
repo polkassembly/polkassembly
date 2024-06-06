@@ -40,6 +40,7 @@ import { getStatus } from '~src/components/Post/Comment/CommentsContainer';
 import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import getAscciiFromHex from '~src/util/getAscciiFromHex';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -107,6 +108,7 @@ export interface IPIPsVoting {
 }
 
 export interface IPostResponse {
+	assetId?: string | null;
 	post_reactions: IReactions;
 	timeline: any[];
 	comments: any;
@@ -131,6 +133,7 @@ export interface IPostResponse {
 	title?: string;
 	beneficiaries?: IBeneficiary[];
 	[key: string]: any;
+	preimageHash?: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -715,12 +718,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			(proposalType === ProposalType.ADVISORY_COMMITTEE && AllNetworks.ZEITGEIST === network && strPostId.toLowerCase() !== strPostId.toUpperCase())
 		) {
 			postVariables = {
-				hash_eq: strPostId,
+				proposalHashBlock_eq: strPostId,
 				type_eq: subsquidProposalType
 			};
-			if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
-				postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
-			}
+		}
+		if (network === AllNetworks.ZEITGEIST && proposalType === ProposalType.ADVISORY_COMMITTEE) {
+			postVariables['vote_type_eq'] = VoteType.ADVISORY_MOTION;
 		} else if (proposalType === ProposalType.DEMOCRACY_PROPOSALS) {
 			postVariables['vote_type_eq'] = VoteType.DEMOCRACY_PROPOSAL;
 		} else if (network === 'polymesh') {
@@ -737,6 +740,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				query: postQuery,
 				variables: postVariables
 			});
+
+			if (!subsquidRes?.data?.proposals?.length) {
+				console.log('Failed to fetch from subsquid, fetching from subsquare instead');
+				// this will make the control flow to the catch block to fetch from subsquare
+				throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
+			}
 		} catch (error) {
 			const data = await fetchSubsquare(network, strPostId);
 			if (data) {
@@ -801,34 +810,42 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let remark = '';
 		let requested = BigInt(0);
 		const beneficiaries: IBeneficiary[] = [];
+		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-			if (proposedCall.args.amount) {
-				requested = proposedCall.args.amount;
-				if (proposedCall.args.beneficiary) {
-					beneficiaries.push({
-						address: proposedCall.args.beneficiary as string,
-						amount: proposedCall.args.amount
-					});
+			if (proposedCall?.args) {
+				if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+					const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 				}
-			} else {
-				const calls = proposedCall.args.calls;
-				if (calls && Array.isArray(calls) && calls.length > 0) {
-					calls.forEach((call) => {
-						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-							remark += call.remark + '\n';
-						}
-						if (call && call.amount) {
-							requested += BigInt(call.amount);
-							if (call.beneficiary) {
-								beneficiaries.push({
-									address: call.beneficiary as string,
-									amount: call.amount
-								});
+
+				proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+				if (proposedCall.args.amount) {
+					requested = proposedCall.args.amount;
+					if (proposedCall.args.beneficiary) {
+						beneficiaries.push({
+							address: proposedCall.args.beneficiary as string,
+							amount: proposedCall.args.amount
+						});
+					}
+				} else {
+					const calls = proposedCall.args.calls;
+					if (calls && Array.isArray(calls) && calls.length > 0) {
+						calls.forEach((call) => {
+							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+								remark += call.remark + '\n';
 							}
-						}
-					});
+							if (call && call.amount) {
+								requested += BigInt(call.amount);
+								if (call.beneficiary) {
+									beneficiaries.push({
+										address: call.beneficiary as string,
+										amount: call.amount
+									});
+								}
+							}
+						});
+					}
 				}
 			}
 		}
@@ -858,6 +875,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const post: IPostResponse = {
 			announcement: postData?.announcement,
+			assetId: assetId || null,
 			beneficiaries,
 			bond: postData?.bond,
 			cid: postData?.cid,
@@ -872,7 +890,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			decision_deposit_amount: postData?.decisionDeposit?.amount,
 			delay: postData?.delay,
 			deposit: postData?.deposit,
-			description: postData?.description,
+			description: network == AllNetworks.POLYMESH ? getAscciiFromHex(postData?.description) : postData?.description,
 			enactment_after_block: postData?.enactmentAfterBlock,
 			enactment_at_block: postData?.enactmentAtBlock,
 			end: postData?.end,
@@ -892,6 +910,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			pips_voters: postData?.voting || [],
 			post_id: postData?.index,
 			post_reactions: getDefaultReactionObj(),
+			preimageHash: preimage?.hash || '',
 			proposalHashBlock: postData?.proposalHashBlock || null,
 			proposal_arguments: proposalArguments,
 			proposed_call: proposedCall,
@@ -1033,13 +1052,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		const firestorePost = await postDocRef.get();
 		if (firestorePost) {
 			let data = firestorePost.data();
-			// traverse the group, get and set the data.
-			const history = data?.history
-				? data?.history.map((item: any) => {
-						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
-				  })
-				: [];
-			post.history = history;
+			post.history = [];
 			try {
 				data = await getAndSetNewData({
 					data,

@@ -12,7 +12,6 @@ import AboutNetwork from '~src/components/Home/AboutNetwork';
 import LatestActivity from '~src/components/Home/LatestActivity';
 import News from '~src/components/Home/News';
 import UpcomingEvents from '~src/components/Home/UpcomingEvents';
-import { useApiContext } from '~src/context';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { LATEST_POSTS_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -28,21 +27,16 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import Gov2LatestActivity from '~src/components/Gov2Home/Gov2LatestActivity';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import Script from 'next/script';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-
 // @ts-ignore
-import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { useRouter } from 'next/router';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { setNetwork } from '~src/redux/network';
 import { useDispatch } from 'react-redux';
-import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -223,41 +217,15 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 });
 
 const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
-	const { api, apiReady } = useApiContext();
-	const { id: userId } = useUserDetailsSelector();
 	const router = useRouter();
 	const dispatch = useDispatch();
-	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(false);
 	const [openContinuingModal, setOpenContinuingModal] = useState<boolean>(Boolean(router.query.identityVerification) || false);
 	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
-		if (!api || !apiReady) return;
-		let unsubscribe: () => void;
-		const address = localStorage.getItem('identityAddress');
-		const identityForm = localStorage.getItem('identityForm');
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-		if (!identityForm || !JSON.parse(identityForm)?.setIdentity) return;
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-
-				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
-				if (!(judgementProvided || !info?.identity?.judgements?.length)) {
-					localStorage.removeItem('identityForm');
-				}
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady, userId]);
+	}, [network]);
 
 	return (
 		<>
@@ -276,7 +244,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 					function gtag(){dataLayer.push(arguments);}
 					gtag('js', new Date());
 
-					gtag('config', ${chainProperties[network].gTag});
+					gtag('config', '${chainProperties[network].gTag}');
 				`}
 					</Script>
 				</>
@@ -290,12 +258,6 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 			<main>
 				<div className='mr-2 flex justify-between'>
 					<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
-					{isIdentityUnverified && onchainIdentitySupportedNetwork.includes(network) && (
-						<div className='flex  items-center rounded-md border-[1px] border-solid border-[#FFACAC] bg-[#FFF1EF] py-2 pl-3 pr-8 text-sm text-[#E91C26] max-sm:hidden '>
-							<IdentityCaution />
-							<span className='ml-2'>Social verification incomplete</span>
-						</div>
-					)}
 				</div>
 				<div className='mx-1 mt-6'>{networkSocialsData && <AboutNetwork networkSocialsData={networkSocialsData.data} />}</div>
 				{network !== AllNetworks.COLLECTIVES && network !== AllNetworks.WESTENDCOLLECTIVES && (
@@ -328,7 +290,7 @@ const Home: FC<IHomeProps> = ({ latestPosts, network, networkSocialsData }) => {
 				</div>
 			</main>
 			{onchainIdentitySupportedNetwork.includes(network) && (
-				<OnChainIdentity
+				<OnchainIdentity
 					open={openContinuingModal}
 					setOpen={setOpenContinuingModal}
 				/>

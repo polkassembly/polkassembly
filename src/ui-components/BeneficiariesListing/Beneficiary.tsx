@@ -8,27 +8,50 @@ import Address from '../Address';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatedBalance } from '~src/util/formatedBalance';
+import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import BN from 'bn.js';
 
 interface Props {
 	className?: string;
 	beneficiary: IBeneficiary;
 	inPostHeading?: boolean;
 	disableBalanceFormatting?: boolean;
+	assetId?: null | string;
+	isProposalCreationFlow?: boolean;
 }
 
-const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading }: Props) => {
+const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostHeading, assetId = null, isProposalCreationFlow }: Props) => {
 	const { network } = useNetworkSelector();
 	return (
 		<div className={`${className} flex items-center gap-1`}>
 			<Address
 				displayInline
 				iconSize={20}
-				address={typeof beneficiary.address === 'string' ? beneficiary.address : ((beneficiary.address as any)?.value as string)}
+				address={
+					typeof beneficiary.address === 'string'
+						? beneficiary.address
+						: (beneficiary.address as any)?.value?.length
+						? (beneficiary.address as any)?.value
+						: ((beneficiary?.address as any)?.value?.interior?.value?.id as string) || ''
+				}
 				inPostHeading={inPostHeading}
 			/>
 			<span className='text-blue-light-high dark:text-blue-dark-high'>
-				({disableBalanceFormatting ? beneficiary.amount.toString() : formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}&nbsp;
-				{chainProperties[network]?.tokenSymbol})
+				(
+				{assetId
+					? isProposalCreationFlow
+						? getBeneficiaryAmoutAndAsset(
+								assetId,
+								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
+								network,
+								isProposalCreationFlow
+						  )
+						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString(), network)
+					: disableBalanceFormatting
+					? beneficiary.amount.toString()
+					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}
+				&nbsp;
+				{!assetId && chainProperties[network]?.tokenSymbol})
 			</span>
 		</div>
 	);

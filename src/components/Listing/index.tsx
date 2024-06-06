@@ -80,7 +80,8 @@ const Listing: FC<IListingProps> = (props) => {
 					tally,
 					spam_users_count,
 					votesData,
-					proposalHashBlock
+					proposalHashBlock,
+					allChildBounties
 				} = post;
 				const id = isTip ? hash : post_id;
 				return (
@@ -113,6 +114,9 @@ const Listing: FC<IListingProps> = (props) => {
 									votesData={votesData}
 									identityId={identity || null}
 									hash={hash}
+									childBountyAmount={post?.parent_bounty_requested_amount}
+									parentBounty={post?.parent_bounty_index}
+									allChildBounties={allChildBounties || []}
 								/>
 							</Link>
 						}

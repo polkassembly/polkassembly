@@ -14,13 +14,11 @@ import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_whi
 import { BN_HUNDRED } from '@polkadot/util';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { useApiContext } from '~src/context';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-import { IBeneficiary } from '~src/types';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { ESteps, IBeneficiary } from '~src/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
@@ -34,6 +32,7 @@ import {
 } from '~src/redux/treasuryProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -63,12 +62,6 @@ export interface ISteps {
 export enum EEnactment {
 	At_Block_No = 'at_block_number',
 	After_No_Of_Blocks = 'after_no_of_Blocks'
-}
-
-enum ESteps {
-	Write_Proposal = 'Write a Proposal',
-	Create_Preimage = 'Create Preimage',
-	Create_Proposal = 'Create Proposal'
 }
 
 export interface IEnactment {
@@ -144,6 +137,7 @@ export const INIT_BENEFICIARIES = [
 
 const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent }: Props) => {
 	const { api, apiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const dispatch = useDispatch();
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
 	const currentUser = useUserDetailsSelector();
@@ -175,6 +169,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const [genralIndex, setGenralIndex] = useState<string | null>(null);
+	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -198,29 +194,30 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		setSteps({ percent: 0, step: 0 });
 		setOpenModal(false);
 		setCloseConfirm(false);
+		setGenralIndex(null);
 	};
+
 	const handleBeneficiaryIdentityInfo = async () => {
 		if (beneficiaries.filter((item) => !!item).length === 0) {
 			dispatch(setShowIdentityInfoCardForBeneficiary(false));
 			return;
 		}
-		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
 
 		let promiseArr: any[] = [];
 		for (const address of [...beneficiaries.map((addr) => addr)]) {
 			if (!address) continue;
-			const encodedAddr = getEncodedAddress(address, network);
-			promiseArr = [...promiseArr, api?.derive?.accounts.info(encodedAddr)];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network })];
 		}
 		try {
 			dispatch(setIdentityCardLoading(true));
 			const resolve = await Promise.all(promiseArr);
 			dispatch(
 				setShowIdentityInfoCardForBeneficiary(
-					!!resolve.find((info: DeriveAccountInfo) => {
-						const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-						const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-						return !isGood;
+					!!resolve.find((info: any) => {
+						return !info?.isGood;
 					})
 				)
 			);
@@ -238,7 +235,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		if (!api || !apiReady || beneficiaries.find((beneficiary) => !beneficiary)?.length) return;
 
 		let promiseArr: any[] = [];
-		for (const address of [...beneficiaries.map((addr) => addr)]) {
+		for (const address of [...beneficiaries.map((addr) => (addr as any)?.value || addr)]) {
 			if (!address) continue;
 			promiseArr = [...promiseArr, checkIsAddressMultisig(address)];
 		}
@@ -251,33 +248,32 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			console.log(err);
 		}
 	};
-
 	useEffect(() => {
 		handleBeneficiaryIdentityInfo();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, beneficiaryAddresses]);
+
+	useEffect(() => {
 		handleBeneficiariesMultisigCheck();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, window, beneficiaries, api, apiReady]);
 
+	const handleIdentityInfo = async () => {
+		if (!api || !apiReady || !proposerAddress) return;
+
+		const { isGood } = await getIdentityInformation({
+			address: proposerAddress,
+			api: api,
+			apiReady: apiReady,
+			network: network
+		});
+		dispatch(setShowIdentityInfoCardForProposer(!isGood));
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady || !proposerAddress) return;
 
-		let unsubscribe: () => void;
-		const encodedAddr = getEncodedAddress(proposerAddress, network);
-
-		api.derive.accounts
-			.info(encodedAddr, (info: DeriveAccountInfo) => {
-				const judgements = info.identity?.judgements.filter(([, judgement]): boolean => !judgement.isFeePaid);
-				const isGood = judgements?.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-				dispatch(setShowIdentityInfoCardForProposer(!isGood));
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => {
-				console.error(e);
-			});
-
-		return () => unsubscribe && unsubscribe();
+		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress]);
 
@@ -386,6 +382,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						<CustomButton
 							onClick={() => {
 								setCloseConfirm(false);
+								setGenralIndex(null);
 								setOpenModal(true);
 							}}
 							height={40}
@@ -397,6 +394,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 				</div>
 			</Modal>
 			<TreasuryProposalSuccessPopup
+				inputAmountValue={inputAmountValue}
+				genralIndex={genralIndex}
 				open={openSuccess}
 				onCancel={() => {
 					setOpenSuccess(false);
@@ -467,6 +466,10 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 
 					{steps?.step === 1 && (
 						<CreatePreimage
+							inputAmountValue={inputAmountValue}
+							setInputAmountValue={setInputAmountValue}
+							setGenralIndex={setGenralIndex}
+							genralIndex={genralIndex}
 							availableBalance={availableBalance}
 							setAvailableBalance={setAvailableBalance}
 							preimageLength={preimageLength}
@@ -493,6 +496,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					)}
 					{steps.step === 2 && (
 						<CreateProposal
+							inputAmountValue={inputAmountValue}
+							genralIndex={genralIndex}
 							discussionLink={discussionLink}
 							availableBalance={availableBalance}
 							title={title}

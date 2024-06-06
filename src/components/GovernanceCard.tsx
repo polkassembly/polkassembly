@@ -43,6 +43,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import classNames from 'classnames';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -50,6 +51,14 @@ const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 });
 const VotesProgressInListing = dynamic(() => import('~src/ui-components/VotesProgressInListing'), {
 	loading: () => <SkeletonButton active />,
+	ssr: false
+});
+const ListingChildBountyChart = dynamic(() => import('~src/ui-components/ListingChildBountyChart'), {
+	loading: () => <SkeletonButton active />,
+	ssr: false
+});
+const BeneficiaryAmoutTooltip = dynamic(() => import('./BeneficiaryAmoutTooltip'), {
+	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });
 
@@ -60,6 +69,7 @@ interface IUserVotesProps {
 }
 
 interface IGovernanceProps {
+	assetId?: null | string;
 	postReactionCount: {
 		'👍': number;
 		'👎': number;
@@ -96,6 +106,9 @@ interface IGovernanceProps {
 	type?: string;
 	description?: string;
 	hash?: string;
+	childBountyAmount?: any;
+	parentBounty?: number;
+	allChildBounties?: any[];
 }
 
 const GovernanceCard: FC<IGovernanceProps> = (props) => {
@@ -131,7 +144,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		truncateUsername = false,
 		showSimilarPost,
 		description,
-		hash
+		hash,
+		childBountyAmount,
+		parentBounty,
+		allChildBounties,
+		assetId
 	} = props;
 
 	const router = useRouter();
@@ -180,7 +197,6 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
 	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
-
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
@@ -196,6 +212,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		}
 		return `${diffDays}d  : ${diffHours}hrs : ${diffMinutes}mins `;
 	};
+	const childBountyRequestedAmount = new BN(allChildBounties?.filter((bounty) => bounty.index === onchainId)[0]?.reward || 0);
 
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
@@ -216,12 +233,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		if (!apiReady) {
 			return;
 		}
+
+		if (!loginAddress) return;
+
 		const encoded = getEncodedAddress(loginAddress || defaultAddress || '', network);
 
 		const fetchHistory = async () => {
 			const { data = null, error } = await nextApiClientFetch<IVotesHistoryResponse>('api/v1/votes/history', {
 				proposalIndex: onchainId,
-				proposalType: getFirestoreProposalType(`${proposalType}`),
+				proposalType: getFirestoreProposalType(`${proposalType}`) || proposalType,
 				voterAddress: encoded
 			});
 
@@ -282,9 +302,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	return (
 		<>
 			<div
-				className={`${className} ${
-					ownProposal && 'border-l-4 border-l-pink_primary'
-				} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
+				className={`${className} ${ownProposal && 'border-l-4 border-l-pink_primary'} min-h-[120px] border-[#DCDFE350] transition-all duration-200 hover:border-pink_primary ${
+					theme === 'dark' ? 'hover:text-white' : 'hover:text-bodyBlue'
+				} hover:shadow-xl dark:border-separatorDark xs:hidden sm:flex sm:p-3`}
 			>
 				<div className='w-full flex-1 flex-col sm:mt-2.5 sm:flex sm:justify-between'>
 					<div className='flex items-center justify-between'>
@@ -328,18 +348,20 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								<span className='break-all text-sm font-medium text-bodyBlue dark:text-white'>{mainTitle}</span>
 							</h1>
 							<h2 className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{subTitle}</h2>
+							{proposalType === ProposalType.CHILD_BOUNTIES && (
+								<p className='mb-0 ml-auto mr-10 mt-2 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
+							)}
 						</div>
-						{requestedAmount && (
-							<div className='flex items-center justify-center'>
-								{requestedAmount > 100 ? (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.63rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
-								) : (
-									<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high sm:mr-[2.65rem]'>
-										{Number(requestedAmountFormatted).toLocaleString()} {chainProperties[network]?.tokenSymbol}
-									</span>
-								)}
+						{!!requestedAmount && (
+							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								<BeneficiaryAmoutTooltip
+									assetId={assetId || null}
+									requestedAmt={requestedAmount.toString()}
+									className='flex items-center justify-center'
+									proposalCreatedAt={created_at || null}
+									timeline={timeline || []}
+									postId={onchainId as any}
+								/>
 							</div>
 						)}
 					</div>
@@ -350,6 +372,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<Markdown
 										className='post-content'
 										md={content}
+										imgHidden={showSimilarPost}
 									/>
 								</p>
 							</h1>
@@ -510,6 +533,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									<p className='m-0 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>
 								</>
 							) : null}
+							{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
+								<>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<ListingChildBountyChart
+										parentBounty={parentBounty}
+										childBounties={allChildBounties || []}
+									/>
+								</>
+							)}
 						</div>
 
 						{!!end && !!currentBlock && (
@@ -549,7 +584,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 								/>
 							</div>
 						)}
-						{requestedAmount && (
+						{!!requestedAmount && (
 							<div className='xs:mr-5 sm:m-0'>
 								{requestedAmount > 100 ? (
 									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
@@ -597,6 +632,18 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										<ClockCircleOutlined className='mr-1' /> <span> {relativeCreatedAt}</span>
 									</div>
 								</>
+							)}
+							{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyAmount && (
+								<div className='ml-3'>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<ListingChildBountyChart
+										parentBounty={parentBounty}
+										childBounties={allChildBounties || []}
+									/>
+								</div>
 							)}
 							{decision && decidingStatusBlock && !confirmedStatusBlock && !isProposalFailed && (
 								<div className='flex items-center'>
@@ -656,11 +703,16 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 						)}
 
 						<div className='mb-1 items-center xs:flex xs:gap-x-2'>
-							{status && (
-								<StatusTag
-									theme={theme}
-									status={status}
-								/>
+							{!!status && (
+								<div className='flex items-center gap-x-2'>
+									{proposalType === ProposalType.CHILD_BOUNTIES && !!childBountyRequestedAmount && (
+										<p className='m-0 p-0 text-bodyBlue dark:text-white'>{parseBalance(childBountyRequestedAmount.toString() || '0', 2, true, network)}</p>
+									)}
+									<StatusTag
+										theme={theme}
+										status={status}
+									/>
+								</div>
 							)}
 							{tags && tags.length > 0 && (
 								<div className='flex'>

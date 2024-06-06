@@ -7,7 +7,6 @@ import styled from 'styled-components';
 import dynamic from 'next/dynamic';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { Button } from 'antd';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
@@ -15,16 +14,14 @@ import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
 import DelegationTabs from './DelegationTabs';
-import { useApiContext } from '~src/context';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { DeriveAccountRegistration, DeriveAccountInfo } from '@polkadot/api-derive/types';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
 	className?: string;
 }
-
-export const delegationSupportedNetworks = [AllNetworks.KUSAMA, AllNetworks.POLKADOT];
 
 const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 	loading: () => <SkeletonAvatar active />,
@@ -34,6 +31,7 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { network } = useNetworkSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
@@ -51,32 +49,25 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMobile, userDetails]);
 
-	const handleIdentityInfo = () => {
-		if (!api || !apiReady) return;
+	const handleIdentityInfo = async () => {
+		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
+		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady) return;
 
-		let unsubscribe: () => void;
-
-		const encodedAddr = userDetails.delegationDashboardAddress ? getEncodedAddress(userDetails.delegationDashboardAddress, network) || '' : '';
-
-		api.derive.accounts
-			.info(encodedAddr, (info: DeriveAccountInfo) => {
-				setIdentity(info.identity);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => {
-				console.error(e);
-			});
-
-		return () => unsubscribe && unsubscribe();
+		const info = await getIdentityInformation({
+			address: userDetails.delegationDashboardAddress || '',
+			api: apiPromise,
+			apiReady: apiPromiseReady,
+			network: network
+		});
+		setIdentity(info);
 	};
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {

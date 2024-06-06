@@ -25,6 +25,7 @@ export interface ITimelineData {
 }
 
 export interface IPostData {
+	assetId: string | null;
 	beneficiaries?: IBeneficiary[];
 	postIndex: number | string;
 	postType: ProposalType;
@@ -47,7 +48,7 @@ export interface IPostData {
 	description?: string;
 	status: string;
 	requested?: string | number | BN;
-	reward?: string | number | BN;
+	reward?: string;
 	post_reactions?: IReactions;
 	marketMetadata: any | null;
 	comments: { [index: string]: Array<IComment> };
@@ -77,8 +78,8 @@ export interface IPostData {
 	history?: IPostHistory[];
 	statusHistory?: any[];
 	identityId?: string | null;
+	preimageHash?: string;
 }
-
 export interface IPostDataContext {
 	postData: IPostData;
 	setPostData: React.Dispatch<React.SetStateAction<IPostData>>;

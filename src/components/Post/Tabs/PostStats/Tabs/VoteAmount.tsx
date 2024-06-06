@@ -16,16 +16,18 @@ import { IAllVotesType } from 'pages/api/v1/votes/total';
 import { Divider } from 'antd';
 import VoteDistribution from '../VoteDistribution';
 import Nudge from './Nudge';
+import { usePostDataContext } from '~src/context';
 
 interface IVotesAmountProps {
 	allVotes: IAllVotesType | undefined;
 	activeIssuance: BN;
 	support: BN;
 	turnout: BN | null;
+	elapsedPeriod: number;
 }
 
 const ZERO = new BN(0);
-const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmountProps) => {
+const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod }: IVotesAmountProps) => {
 	const { network } = useNetworkSelector();
 
 	const [tallyData, setTallyData] = useState({
@@ -43,6 +45,10 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmount
 		ayes: [],
 		nays: []
 	});
+
+	const {
+		postData: { created_at: createdAt }
+	} = usePostDataContext();
 
 	const bnToIntBalance = function (bn: BN): number {
 		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
@@ -96,7 +102,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmount
 
 		const votesByTimeSplit = allVotes?.data.reduce(
 			(acc, vote) => {
-				const proposalCreatedAt = new Date(vote.proposal.createdAt);
+				const proposalCreatedAt = new Date(createdAt);
 				const voteCreatedAt = new Date(vote.createdAt);
 				const voteBalance = new BN(vote.balance);
 				const timeSplit = Math.floor((voteCreatedAt.getTime() - proposalCreatedAt.getTime()) / (24 * 60 * 60 * 1000));
@@ -177,6 +183,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance }: IVotesAmount
 				<TimeSplit
 					votesByTimeSplit={votesByTimeSplit}
 					axisLabel='Voting Power'
+					elapsedPeriod={elapsedPeriod}
 				/>
 				<Divider
 					dashed

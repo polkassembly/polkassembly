@@ -18,6 +18,7 @@ import { Collapse } from '../common-ui/Collapse';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { DiscordFilledIcon, ElementIcon, MailFilledIcon, SlackIcon, TelegramFilledIcon } from '~src/ui-components/CustomIcons';
+import InAppNotificationsCard from './InAppNotificationCard';
 
 const { Panel } = Collapse;
 type Props = { handleEnableDisabled: any; handleReset: any };
@@ -27,7 +28,8 @@ export enum CHANNEL {
 	DISCORD = 'discord',
 	EMAIL = 'email',
 	SLACK = 'slack',
-	ELEMENT = 'element'
+	ELEMENT = 'element',
+	IN_APP = 'in_app'
 }
 
 // eslint-disable-next-line no-empty-pattern
@@ -122,6 +124,14 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 					<p className='mb-[22px] text-[16px] font-medium leading-[21px] text-blue-light-high dark:text-blue-dark-high'>
 						Please select the socials where you would like to receive notifications:
 					</p>
+					<InAppNotificationsCard
+						notificationEnabled={!!networkPreferences.channelPreferences?.[CHANNEL.IN_APP]?.enabled}
+						handleEnableDisabled={handleEnableDisabled}
+					/>
+					<Divider
+						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						dashed
+					/>
 					<EmailNotificationCard
 						verifiedEmail={networkPreferences?.channelPreferences?.[CHANNEL.EMAIL]?.handle || email || ''}
 						verified={email_verified || false}

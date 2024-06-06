@@ -4,13 +4,12 @@
 import React, { useEffect, useState } from 'react';
 import { Checkbox, Empty, Popover } from 'antd';
 import classNames from 'classnames';
-import { IUserPost, IUserPostsListingResponse } from 'pages/api/v1/listing/user-posts';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import Address from '~src/ui-components/Address';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { EGovType } from '~src/types';
+import { EGovType, IUserPost, IUserPostsListingResponse } from '~src/types';
 import { CheckboxValueType } from 'antd/es/checkbox/Group';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -19,6 +18,9 @@ import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import { useTheme } from 'next-themes';
 
 interface Props {
 	className?: string;
@@ -61,6 +63,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 	const [posts, setPosts] = useState<IUserPost[]>(getPosts(selectedFilter, selectedGov, userPosts, checkedAddressList as string[], network));
 	const [selectedSubFilters, setSelectedSubFilters] = useState((userPosts as any)?.[selectedGov === EGovType.OPEN_GOV ? 'open_gov' : 'gov1']?.[selectedFilter]);
 	const [checkedSelectedSubFilters, setCheckedSelectedSubFilters] = useState<CheckboxValueType[]>(Object.keys(selectedSubFilters));
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		setCheckedAddressList(addresses);
@@ -266,7 +269,9 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 												index={index}
 												proposalType={post?.type}
 												trackNumber={post?.track_number}
+												assetId={post?.assetId || null}
 												truncateUsername={false}
+												requestedAmount={(post.requestedAmount || null) as any}
 											/>
 										</Link>
 									}
@@ -275,8 +280,10 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						})
 					) : (
 						<Empty
-							className='mt-8'
-							description={<div className='text-lightBlue dark:text-blue-dark-high'>No post found</div>}
+							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+							imageStyle={{ height: 300 }}
+							description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No posts found</p>}
+							className='my-6 dark:text-[#9e9e9e]'
 						/>
 					)}
 				</div>

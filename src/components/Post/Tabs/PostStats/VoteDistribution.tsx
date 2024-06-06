@@ -87,7 +87,6 @@ const VoteDistribution = ({ votesDistribution }: IVoteDistributionProps) => {
 		aye: theme === 'dark' ? '#64A057' : '#2ED47A',
 		nay: theme === 'dark' ? '#BD2020' : '#E84865'
 	};
-
 	return (
 		<Card className='mx-auto h-fit w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white md:max-h-[500px]'>
 			<div className='flex items-center justify-between gap-5'>

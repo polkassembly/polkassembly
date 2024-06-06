@@ -11,7 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { useApiContext } from 'src/context';
+import { useApiContext, usePeopleKusamaApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -35,19 +35,19 @@ import {
 	TechComProposalIcon,
 	DelegatedIcon,
 	RootIcon,
+	WishForChangeIcon,
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ApplayoutIdentityIcon,
-	ArchivedIcon
+	ArchivedIcon,
+	ClearIdentityOutlinedIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
-import { DeriveAccountInfo } from '@polkadot/api-derive/types';
-
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
 import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { PostOrigin } from '~src/types';
+import { IActiveProposalCount, PostOrigin } from '~src/types';
 
 import Footer from './Footer';
 import NavHeader from './NavHeader';
@@ -59,8 +59,6 @@ import { poppins } from 'pages/_app';
 
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-// import DelegationDashboardEmptyState from '~assets/icons/delegation-empty-state.svg';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -71,8 +69,26 @@ import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
 
-const OnChainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+interface IUserDropdown {
+	handleSetIdentityClick: any;
+	isIdentityUnverified: boolean;
+	isGood: boolean;
+	handleLogout: any;
+	network: string;
+	handleRemoveIdentity: (pre?: any) => void;
+	img?: string | null;
+	username?: string;
+	identityUsername?: string;
+	className?: string;
+	isIdentityExists: boolean;
+}
+
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 const { Content, Sider } = Layout;
@@ -109,17 +125,19 @@ function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.R
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
-const getUserDropDown = (
-	handleSetIdentityClick: any,
-	isIdentityUnverified: boolean,
-	isGood: boolean,
-	handleLogout: any,
-	network: string,
-	img?: string | null,
-	username?: string,
-	identityUsername?: string,
-	className?: string
-): MenuItem => {
+const getUserDropDown = ({
+	handleLogout,
+	handleRemoveIdentity,
+	handleSetIdentityClick,
+	isGood,
+	isIdentityExists,
+	isIdentityUnverified,
+	network,
+	className,
+	identityUsername,
+	img,
+	username
+}: IUserDropdown): MenuItem => {
 	const profileUsername = identityUsername || username || '';
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -166,30 +184,55 @@ const getUserDropDown = (
 	];
 
 	if (onchainIdentitySupportedNetwork.includes(network)) {
-		dropdownMenuItems.splice(1, 0, {
-			key: 'set on-chain identity',
-			label: (
-				<Link
-					className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
-					href={''}
-					onClick={(e) => {
-						e.stopPropagation();
-						e.preventDefault();
-						handleSetIdentityClick();
-					}}
-				>
-					<span className='ml-[2px] text-lg'>
-						<ApplayoutIdentityIcon />
-					</span>
-					<span>Set on-chain identity</span>
-					{isIdentityUnverified && (
-						<span className='flex items-center'>
-							<IdentityCaution />
+		const options = [
+			{
+				key: 'set on-chain identity',
+				label: (
+					<Link
+						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							handleSetIdentityClick();
+						}}
+					>
+						<span className='ml-0.5 text-lg'>
+							<ApplayoutIdentityIcon />
 						</span>
-					)}
-				</Link>
-			)
-		});
+						<span>Set on-chain identity</span>
+						{isIdentityUnverified && (
+							<span className='flex items-center'>
+								<IdentityCaution />
+							</span>
+						)}
+					</Link>
+				)
+			}
+		];
+
+		if (isIdentityExists) {
+			options.push({
+				key: 'remove identity',
+				label: (
+					<Link
+						className={`-ml-1 flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive ${className}`}
+						href={''}
+						onClick={(e) => {
+							e.stopPropagation();
+							e.preventDefault();
+							handleRemoveIdentity?.();
+						}}
+					>
+						<span className='ml-0.5 text-[22px]'>
+							<ClearIdentityOutlinedIcon />
+						</span>
+						<span>Remove Identity</span>
+					</Link>
+				)
+			});
+		}
+		dropdownMenuItems.splice(1, 0, ...options);
 	}
 
 	const AuthDropdown = ({ children }: { children: ReactNode }) => {
@@ -251,7 +294,9 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -266,8 +311,28 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
-
 	// const [notificationVisible, setNotificationVisible] = useState(true);
+	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
+
+	const getTotalActiveProposalsCount = async () => {
+		if (!network) return;
+
+		const { data, error } = await nextApiClientFetch<IActiveProposalCount>('/api/v1/posts/active-proposals-count');
+		if (data) {
+			setTotalActiveProposalsCount(data);
+		} else if (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
@@ -300,41 +365,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
-
-		let unsubscribe: () => void;
-		const address = localStorage.getItem('loginAddress');
-		const encoded_addr = address ? getEncodedAddress(address, network) : '';
-
-		if (!encoded_addr) return;
-
-		api.derive.accounts
-			.info(encoded_addr, (info: DeriveAccountInfo) => {
-				if (info.identity.displayParent && info.identity.display) {
-					// when an identity is a sub identity `displayParent` is set
-					// and `display` get the sub identity
-					setMainDisplay(info.identity.displayParent);
-				} else {
-					// There should not be a `displayParent` without a `display`
-					// but we can't be too sure.
-					setMainDisplay(info.identity.displayParent || info.identity.display || info.nickname || '');
-				}
-				const infoCall = info.identity?.judgements.filter(([, judgement]): boolean => judgement.isFeePaid);
-				const judgementProvided = infoCall?.some(([, judgement]): boolean => judgement.isFeePaid);
-				const isGood = info.identity?.judgements.some(([, judgement]): boolean => judgement.isKnownGood || judgement.isReasonable);
-				setIsGood(Boolean(isGood));
-				setIsIdentitySet(!!(info.identity.display && !info?.identity?.judgements?.length));
-				setIsIdentityUnverified(judgementProvided || !info?.identity?.judgements?.length);
-			})
-			.then((unsub) => {
-				unsubscribe = unsub;
-			})
-			.catch((e) => console.error(e));
-
-		return () => unsubscribe && unsubscribe();
-
+		getTotalActiveProposalsCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress]);
+	}, [network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		(async () => {
+			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
+				address: loginAddress,
+				api: api,
+				apiReady: apiReady,
+				network: network
+			});
+			setMainDisplay(displayParent || display || nickname);
+			setIsGood(isGood);
+			setIsIdentitySet(isIdentitySet);
+			setIsIdentityUnverified(!isVerified);
+		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [
@@ -371,24 +421,78 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/proposals', <DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Referenda', '/referenda', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.democracyProposalsCount ? `[${totalActiveProposalsCount['democracyProposalsCount']}]` : ''}
+							</span>
+						</div>,
+						'/proposals',
+						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Referenda
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.referendumsCount ? `[${totalActiveProposalsCount['referendumsCount']}]` : ''}
+							</span>
+						</div>,
+						'/referenda',
+						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
 			  ]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Motions', '/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Motions
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.councilMotionsCount ? `[${totalActiveProposalsCount['councilMotionsCount']}]` : ''}
+							</span>
+						</div>,
+						'/motions',
+						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
 					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
 			: [],
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
-					getSiderMenuItem('Proposals', '/treasury-proposals', <TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Tips', '/tips', <TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.treasuryProposalsCount ? `[${totalActiveProposalsCount['treasuryProposalsCount']}]` : ''}
+							</span>
+						</div>,
+						'/treasury-proposals',
+						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Tips
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.tips ? `[${totalActiveProposalsCount['tips']}]` : ''}</span>
+						</div>,
+						'/tips',
+						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
 			  ]
 			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl
-			? [getSiderMenuItem('Proposals', '/tech-comm-proposals', <TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)]
+			? [
+					getSiderMenuItem(
+						<div className='flex items-center gap-1.5'>
+							Proposals
+							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `[${totalActiveProposalsCount['techCommetteeProposalsCount']}]` : ''}
+							</span>
+						</div>,
+						'/tech-comm-proposals',
+						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
+			  ]
 			: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -401,15 +505,51 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
-						getSiderMenuItem('Technical Committee', '/technical', <RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Upgrade Committee', '/upgrade', <UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-						getSiderMenuItem('Community', '/community', <CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+						getSiderMenuItem(
+							<div className='flex items-center gap-1.5'>
+								Technical Committee
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.technicalPipsCount ? `[${totalActiveProposalsCount['technicalPipsCount']}]` : ''}
+								</span>
+							</div>,
+							'/technical',
+							<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem(
+							<div className='flex items-center gap-1.5'>
+								Upgrade Committee
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.upgradePipsCount ? `[${totalActiveProposalsCount['upgradePipsCount']}]` : ''}{' '}
+								</span>
+							</div>,
+							'/upgrade',
+							<UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem(
+							<div className='flex items-center gap-1.5'>
+								Community
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.communityPipsCount ? `[${totalActiveProposalsCount['communityPipsCount']}]` : ''}{' '}
+								</span>
+							</div>,
+							'/community',
+							<CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						)
 				  ]
 				: [],
 		AdvisoryCommittee:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
-						getSiderMenuItem('Motions', '/advisory-committee/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+						getSiderMenuItem(
+							<div className='flex items-center gap-1.5'>
+								Motions
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `[${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}]` : ''}
+								</span>
+							</div>,
+							'/advisory-committee/motions',
+							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 				  ]
 				: []
@@ -440,9 +580,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							: network === AllNetworks.MOONBEAM
 							? [
 									...[
-										getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 										getSiderMenuItem(
-											'Child Bounties',
+											<div className='flex items-center gap-1.5'>
+												Bounties
+												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+													{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+												</span>
+											</div>,
+											'/bounties',
+											<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+										),
+										getSiderMenuItem(
+											<div className='flex items-center gap-1.5'>
+												Child Bounties
+												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+													{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+												</span>
+											</div>,
 											'/child_bounties',
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 										)
@@ -450,9 +604,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							  ]
 							: [
 									...gov1Items.treasuryItems,
-									getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 									getSiderMenuItem(
-										'Child Bounties',
+										<div className='flex items-center gap-1.5'>
+											Bounties
+											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+												{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+											</span>
+										</div>,
+										'/bounties',
+										<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+									),
+									getSiderMenuItem(
+										<div className='flex items-center gap-1.5'>
+											Child Bounties
+											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+												{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+											</span>
+										</div>,
 										'/child_bounties',
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
@@ -461,9 +629,23 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? [...gov1Items.treasuryItems.slice(0, 1)]
 						: [
 								...gov1Items.treasuryItems,
-								getSiderMenuItem('Bounties', '/bounties', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 								getSiderMenuItem(
-									'Child Bounties',
+									<div className='flex items-center gap-1.5'>
+										Bounties
+										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+											{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+										</span>
+									</div>,
+									'/bounties',
+									<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+								),
+								getSiderMenuItem(
+									<div className='flex items-center gap-1.5'>
+										Child Bounties
+										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+											{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+										</span>
+									</div>,
 									'/child_bounties',
 									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)
@@ -530,13 +712,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (network && networkTrackInfo[network]) {
-		gov2TrackItems.mainItems.push(getSiderMenuItem('All', '/all-posts', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
-
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				<div className='flex items-center gap-1.5'>
+					All
+					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.allCount ? `[${totalActiveProposalsCount?.allCount}]` : ''}</span>
+				</div>,
+				'/all-posts',
+				<OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+			)
+		);
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
 			if (!networkTrackInfo[network][trackName] || !('group' in networkTrackInfo[network][trackName])) continue;
 
+			const activeProposal = totalActiveProposalsCount?.[networkTrackInfo[network][trackName]?.trackId];
+
 			const menuItem = getSiderMenuItem(
-				trackName.split(/(?=[A-Z])/).join(' '),
+				<div className='flex gap-1.5'>
+					{trackName.split(/(?=[A-Z])/).join(' ')}
+					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+				</div>,
 				`/${trackName
 					.split(/(?=[A-Z])/)
 					.join('-')
@@ -550,7 +745,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -561,7 +759,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -572,17 +773,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				default: {
 					const icon =
 						trackName === 'all' ? (
-							<RootIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+							<RootIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.ROOT ? (
-							<RootIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+							<RootIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
+							<WishForChangeIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<AuctionAdminIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
-							<StakingAdminIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+							<StakingAdminIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						);
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
-							trackName.split(/(?=[A-Z])/).join(' '),
+							<div className='flex gap-1.5'>
+								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
@@ -681,7 +887,28 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
 		if (isOpenGovSupported(network)) {
-			items = items.concat(getSiderMenuItem('Bounties', '/bounties', null), getSiderMenuItem('Child Bounties', '/child_bounties', null));
+			items = items.concat(
+				getSiderMenuItem(
+					<div className='flex items-center gap-1.5'>
+						Bounties
+						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+						</span>
+					</div>,
+					'/bounties',
+					null
+				),
+				getSiderMenuItem(
+					<div className='flex items-center gap-1.5'>
+						Child Bounties
+						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+							{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+						</span>
+					</div>,
+					'/child_bounties',
+					null
+				)
+			);
 		}
 		gov2Items.splice(
 			-1,
@@ -747,25 +974,49 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		];
 	}
 
-	if (network !== AllNetworks.POLYMESH) {
-		gov2Items = [
-			...gov2Items,
-			getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
-		];
+	if (![AllNetworks.POLYMESH].includes(network)) {
+		if (AllNetworks.WESTEND.includes(network)) {
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+					getSiderMenuItem(
+						'Treasury',
+						'treasury_group',
+						<TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						gov1Items.treasuryItems.slice(0, 1)
+					)
+				])
+			];
+		} else {
+			gov2Items = [
+				...gov2Items,
+				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+			];
+		}
 		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
 	}
 
-	const userDropdown = getUserDropDown(
-		handleIdentityButtonClick,
-		isIdentityUnverified,
-		isGood,
-		handleLogout,
-		network,
-		picture,
-		username!,
-		mainDisplay!,
-		`${className} ${poppins.className} ${poppins.variable}`
-	);
+	const handleRemoveIdentity = () => {
+		if (loginAddress) {
+			dispatch(setOpenRemoveIdentityModal(true));
+		} else {
+			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
+		}
+	};
+
+	const userDropdown = getUserDropDown({
+		handleLogout: handleLogout,
+		handleRemoveIdentity: handleRemoveIdentity,
+		handleSetIdentityClick: handleIdentityButtonClick,
+		isGood: isGood,
+		isIdentityExists: isIdentitySet,
+		isIdentityUnverified: isIdentityUnverified,
+		network: network,
+		className: `${className} ${poppins.className} ${poppins.variable}`,
+		identityUsername: mainDisplay,
+		img: picture,
+		username: username || ''
+	});
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
 
@@ -775,7 +1026,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	if (isMobile) {
-		sidebarItems = [getSiderMenuItem('', '', <div className='mt-[60px]' />), username && isMobile ? userDropdown : null, ...sidebarItems];
+		sidebarItems = [username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
 
 	return (
@@ -787,6 +1038,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				previousRoute={previousRoute}
 				displayName={mainDisplay}
 				isVerified={isGood && !isIdentityUnverified}
+				isIdentityExists={isIdentitySet}
 			/>
 
 			{userId && (
@@ -885,12 +1137,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				)}
 			</Layout>
 			{onchainIdentitySupportedNetwork.includes(network) && (
-				<OnChainIdentity
-					open={open}
-					setOpen={setOpen}
-					openAddressLinkedModal={openAddressLinkedModal}
-					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-				/>
+				<>
+					<OnchainIdentity
+						open={open}
+						setOpen={setOpen}
+						openAddressModal={openAddressLinkedModal}
+						setOpenAddressModal={setOpenAddressLinkedModal}
+					/>
+				</>
 			)}
 			<Footer theme={theme as any} />
 			<Modal

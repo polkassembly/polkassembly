@@ -40,7 +40,7 @@ import ScrollToCommentsButton from '~src/ui-components/ScrollToComment';
 import LoadingState from '~src/basic-components/Loading/LoadingState';
 import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
-import { AnalyticsSupportedNetworks } from './Tabs/PostStats/util/constants';
+import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -329,6 +329,7 @@ const Post: FC<IPostProps> = (props) => {
 						className={`${!isOffchainPost}`}
 						pipsVoters={post?.pips_voters || []}
 						hash={hash}
+						bountyIndex={post.parent_bounty_index}
 					/>
 				</StickyBox>
 
@@ -394,6 +395,7 @@ const Post: FC<IPostProps> = (props) => {
 					children: (
 						<PostOnChainInfo
 							onChainInfo={{
+								assetId: post?.assetId || null,
 								beneficiaries: post?.beneficiaries || [],
 								bond: post?.bond,
 								cid: post?.cid,
@@ -438,7 +440,7 @@ const Post: FC<IPostProps> = (props) => {
 					key: 'onChainInfo',
 					label: 'On Chain Info'
 				},
-				AnalyticsSupportedNetworks.includes(network) &&
+				isAnalyticsSupportedNetwork(network) &&
 					[ProposalType.OPEN_GOV, ProposalType.REFERENDUMS].includes(proposalType) && {
 						children: (
 							<PostStats
@@ -447,6 +449,7 @@ const Post: FC<IPostProps> = (props) => {
 								tally={post?.tally}
 								proposalId={onchainId as number}
 								statusHistory={post?.statusHistory}
+								proposalCreatedAt={post?.created_at || ''}
 							/>
 						),
 						key: 'stats',
@@ -480,10 +483,12 @@ const Post: FC<IPostProps> = (props) => {
 		},
 		...getOnChainTabs()
 	];
+
 	return (
 		<>
 			<PostDataContextProvider
 				initialPostData={{
+					assetId: post?.assetId || null,
 					beneficiaries: post?.beneficiaries || [],
 					cid: post?.cid || '',
 					comments: post?.comments || [],
@@ -501,6 +506,7 @@ const Post: FC<IPostProps> = (props) => {
 					postType: proposalType,
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
+					preimageHash: post?.preimageHash || '',
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,
@@ -569,7 +575,12 @@ const Post: FC<IPostProps> = (props) => {
 
 									{!isEditing && (
 										<>
-											<PostHeading className='mb-5' />
+											<PostHeading
+												method={post?.method}
+												motion_method={post?.motion_method}
+												postArguments={post?.proposed_call?.args}
+												className='mb-5'
+											/>
 											<Tabs
 												theme={theme}
 												type='card'

@@ -19,12 +19,15 @@ import BN from 'bn.js';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import styled from 'styled-components';
-import { setReceiver } from '~src/redux/Tipping';
+import { setReceiver } from '~src/redux/tipping';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import { useTheme } from 'next-themes';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -42,7 +45,8 @@ export enum ETipType {
 	RECEIVED = 'Received'
 }
 const ZERO_BN = new BN(0);
-const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, addressWithIdentity }: Props) => {
+const ProfileTippingCard = ({ className, selectedAddresses, userProfile, addressWithIdentity }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const { id: loginId, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
@@ -275,8 +279,10 @@ const ProfileTippingCard = ({ className, theme, selectedAddresses, userProfile, 
 						))
 					) : (
 						<Empty
-							className=''
+							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+							imageStyle={{ height: 300 }}
 							description={<p className='m-0 p-0 text-lightBlue dark:text-blue-dark-high'>No tip Found</p>}
+							className='my-6 dark:text-[#9e9e9e]'
 						/>
 					)}
 				</div>

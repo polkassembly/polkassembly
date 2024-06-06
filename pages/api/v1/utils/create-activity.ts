@@ -36,6 +36,8 @@ interface Args {
 interface UserActivity {
 	by: number;
 	comment_author_id?: number;
+	created_at?: Date;
+	updated_at?: Date;
 	comment_id?: string;
 	network: string;
 	post_author_id: number;
@@ -169,17 +171,6 @@ const deleteCommentOrReply = async ({ id, type, network, userId, postId }: IDele
 	}
 };
 
-const createReactions = async (activityPayload: UserActivity) => {
-	const ref = firestore_db.collection('user_activities').doc();
-	try {
-		await ref.set(activityPayload, { merge: true });
-		await changeProfileScore(activityPayload.by, REPUTATION_SCORES.reaction.value);
-		console.log('Success');
-	} catch (err) {
-		console.log(err);
-	}
-};
-
 const deleteReactions = async (network: string, userId: number, reactionId: string) => {
 	const batch = firestore_db.batch();
 	const refs = await firestore_db
@@ -207,23 +198,38 @@ const deleteReactions = async (network: string, userId: number, reactionId: stri
 	}
 };
 
+const createReactions = async (activityPayload: UserActivity) => {
+	const ref = firestore_db.collection('user_activities').doc();
+	try {
+		await deleteReactions(activityPayload.network, activityPayload?.by, activityPayload.reaction_id || '');
+		await ref.set(activityPayload as any, { merge: true });
+		await changeProfileScore(activityPayload.by, REPUTATION_SCORES.reaction.value);
+		console.log('Success');
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const postMentions = async (content: string, userId: number | null, network: string, postAuthorId: number, postId: number | string, postType: ProposalType) => {
 	const payloads = [];
 	const batch = firestore_db.batch();
 	const snapshot = firestore_db.collection('user_activities');
+	const date = new Date();
 
 	const mentions = await getMentionsUserIds(content);
 
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
 
@@ -251,6 +257,7 @@ const editPostMentions = async (content: string, userId: number | null, network:
 	const batch = firestore_db.batch();
 	const payloads = [];
 	const mentions = await getMentionsUserIds(content);
+	const date = new Date();
 
 	if (mentions?.length) {
 		payloads.push({
@@ -261,7 +268,8 @@ const editPostMentions = async (content: string, userId: number | null, network:
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			update_at: date
 		});
 	}
 
@@ -311,31 +319,36 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 	const payloads = [];
 
 	const mentions = await getMentionsUserIds(content);
+	const date = new Date();
 
 	if (mentions?.length) {
 		payloads.push({
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
 			post_author_id: postAuthorId,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
 	payloads.push({
 		by: userId || null,
 		comment_author_id: userId || null,
 		comment_id: commentId || null,
+		created_at: date,
 		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
 		post_id: postId || null,
 		post_type: postType as ProposalType,
-		type: EUserActivityType.COMMENTED
+		type: EUserActivityType.COMMENTED,
+		updated_at: date
 	});
 	try {
 		const batch = firestore_db.batch();
@@ -362,6 +375,7 @@ const createCommentMentions = async ({ commentAuthorId, commentId, content, netw
 };
 
 const editCommentMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, userId }: IComment) => {
+	const date = new Date();
 	const oldActivitiesRefs = await firestore_db
 		.collection('user_activities')
 		.where('network', '==', network)
@@ -386,7 +400,8 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 			post_author_id: postAuthorId || null,
 			post_id: postId || null,
 			post_type: postType as ProposalType,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: date
 		});
 	}
 	if (payloads?.length) {
@@ -412,6 +427,7 @@ const editCommentMentions = async ({ commentAuthorId, commentId, content, networ
 const createReplyMentions = async ({ commentAuthorId, commentId, content, network, postAuthorId, postId, postType, replyAuthorId, replyId, userId }: IReply) => {
 	const batch = firestore_db.batch();
 
+	const date = new Date();
 	const payloads = [];
 
 	const mentions = (await getMentionsUserIds(content)) || [];
@@ -421,6 +437,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			by: userId || null,
 			comment_author_id: commentAuthorId || null,
 			comment_id: commentId || null,
+			created_at: date,
 			is_deleted: false,
 			mentions: mentions || [],
 			network,
@@ -429,7 +446,8 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 			post_type: postType as ProposalType,
 			reply_author_id: replyAuthorId,
 			reply_id: replyId || null,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			update_at: date
 		});
 	}
 
@@ -437,6 +455,7 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		by: userId || null,
 		comment_author_id: commentAuthorId || null,
 		comment_id: commentId || null,
+		created_at: date,
 		is_deleted: false,
 		network,
 		post_author_id: postAuthorId || null,
@@ -444,7 +463,8 @@ const createReplyMentions = async ({ commentAuthorId, commentId, content, networ
 		post_type: postType as ProposalType,
 		reply_author_id: replyAuthorId,
 		reply_id: replyId || null,
-		type: EUserActivityType.REPLIED
+		type: EUserActivityType.REPLIED,
+		updated_at: date
 	});
 
 	if (payloads?.length) {
@@ -498,7 +518,8 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 			post_type: postType as ProposalType,
 			reply_author_id: replyAuthorId || null,
 			reply_id: replyId || null,
-			type: EUserActivityType.MENTIONED
+			type: EUserActivityType.MENTIONED,
+			updated_at: new Date()
 		});
 	}
 
@@ -536,11 +557,13 @@ const createUserActivity = async ({
 	replyId,
 	action
 }: Args) => {
+	const date = new Date();
 	if (reactionId) {
 		if (reactionId && userId && !isNaN(userId)) {
 			if (action === EActivityAction.CREATE) {
 				let activityPayload: UserActivity = {
 					by: userId,
+					created_at: date,
 					is_deleted: false,
 					network,
 					post_author_id: postAuthorId as number,
@@ -548,7 +571,8 @@ const createUserActivity = async ({
 					post_type: postType as ProposalType,
 					reaction_author_id: reactionAuthorId as number,
 					reaction_id: reactionId as string,
-					type: EUserActivityType.REACTED
+					type: EUserActivityType.REACTED,
+					updated_at: date
 				};
 				if (commentAuthorId && commentId && typeof commentAuthorId == 'number') {
 					activityPayload = { ...activityPayload, comment_author_id: commentAuthorId, comment_id: commentId };

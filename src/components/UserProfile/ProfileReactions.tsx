@@ -15,6 +15,8 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
+import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
+import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 interface Props {
 	className?: string;
@@ -83,6 +85,7 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 					<div className='flex items-center gap-2 text-xl font-medium max-md:justify-start'>
 						<ProfileReactionsIcon className='text-2xl text-lightBlue dark:text-[#9e9e9e]' />
 						<div className='flex items-center gap-1 text-bodyBlue dark:text-white'>Reactions</div>
+						<span className='text-sm font-normal'>({count})</span>
 					</div>
 				</div>
 				<div className='mt-2 flex flex-col pb-6'>
@@ -138,22 +141,31 @@ const ProfileReactions = ({ className, userProfile, count }: Props) => {
 									</div>
 								);
 						  })
-						: !loading && <Empty className='my-6 dark:text-[#9e9e9e]' />}
+						: !loading && (
+								<Empty
+									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
+									imageStyle={{ height: 300 }}
+									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No reactions found</p>}
+									className='my-6 dark:text-[#9e9e9e]'
+								/>
+						  )}
 				</div>
-				{!!userReactions?.length && (
-					<Pagination
-						theme={theme}
-						defaultCurrent={1}
-						pageSize={LISTING_LIMIT}
-						total={count}
-						showSizeChanger={false}
-						hideOnSinglePage={true}
-						onChange={(page: number) => {
-							setPage(page);
-						}}
-						responsive={true}
-					/>
-				)}
+				<div className='flex items-center justify-center'>
+					{!!userReactions?.length && (
+						<Pagination
+							theme={theme}
+							defaultCurrent={1}
+							pageSize={LISTING_LIMIT}
+							total={count}
+							showSizeChanger={false}
+							hideOnSinglePage={true}
+							onChange={(page: number) => {
+								setPage(page);
+							}}
+							responsive={true}
+						/>
+					)}
+				</div>
 			</div>
 		</Spin>
 	);

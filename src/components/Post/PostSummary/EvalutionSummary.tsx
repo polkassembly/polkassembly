@@ -17,7 +17,7 @@ const EvalutionSummary = ({ isProfileView, address }: Props) => {
 		<div>
 			<BeneficiaryCard
 				key={address}
-				address={address}
+				address={typeof address == 'string' ? address : (address as any).interior?.value?.id || ''}
 			/>
 		</div>
 	) : (

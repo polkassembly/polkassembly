@@ -20,6 +20,7 @@ import useHandleMetaMask from '~src/hooks/useHandleMetaMask';
 import ExtensionNotDetected from '../../ExtensionNotDetected';
 import { tipStatus } from '../Tabs/PostOnChainInfo';
 import BountyChildBounties from './Bounty/BountyChildBounties';
+import ChildBounties from './ChildBounty/ChildBounties';
 import MotionVoteInfo from './Motions/MotionVoteInfo';
 import VoteMotion from './Motions/VoteMotion';
 import ProposalDisplay from './Proposals';
@@ -89,6 +90,7 @@ interface IGovernanceSidebarProps {
 	trackName?: string;
 	pipsVoters?: IPIPsVoting[];
 	hash: string;
+	bountyIndex?: any;
 }
 
 type TOpenGov = ProposalType.REFERENDUM_V2 | ProposalType.FELLOWSHIP_REFERENDUMS;
@@ -129,7 +131,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 }
 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
-	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters } = props;
+	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex } = props;
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 
 	const { network } = useNetworkSelector();
@@ -913,7 +915,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								className=''
 							>
 								<span>
-									<MoneyIcon className='mr-1' />
+									{theme === 'dark' ? <DarkMoneyIcon className='mr-1' /> : <MoneyIcon className='mr-1' />}
 									{formatedBalance(balance?.toString(), unit)}
 									{` ${unit}`}
 								</span>
@@ -1066,7 +1068,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															onAccountChange={onAccountChange}
 															referendumId={onchainId as number}
 															proposalType={proposalType}
-															track_number={trackNumber as any}
+															trackNumber={trackNumber as any}
 														/>
 														{RenderLastVote}
 													</div>
@@ -1128,7 +1130,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																onAccountChange={onAccountChange}
 																referendumId={onchainId as number}
 																proposalType={proposalType}
-																track_number={trackNumber as any}
+																trackNumber={trackNumber as any}
 															/>
 														)}
 														{RenderLastVote}
@@ -1282,6 +1284,14 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						{proposalType === ProposalType.BOUNTIES && (
 							<>
 								<BountyChildBounties bountyId={onchainId} />
+							</>
+						)}
+						{proposalType === ProposalType.CHILD_BOUNTIES && (
+							<>
+								<ChildBounties
+									bountyIndex={bountyIndex}
+									status={status as string}
+								/>
 							</>
 						)}
 						{postType === ProposalType.REFERENDUM_V2 && postIndex == 502 && network === 'polkadot' && <PredictionCard />}

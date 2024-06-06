@@ -18,16 +18,16 @@ import VoterIcon from '~assets/icons/vote-small-icon.svg';
 import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
 import { DownArrowIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import { delegationSupportedNetworks } from '../DelegationDashboard';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import dynamic from 'next/dynamic';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
+import Markdown from '~src/ui-components/Markdown';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false
@@ -315,7 +315,11 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 								setOpenBecomeDelegateModal(true);
 							}}
 						>
-							{delegationMandate}
+							<Markdown
+								isPreview={true}
+								md={delegationMandate}
+								className={'max-h-32 overflow-y-auto'}
+							/>
 						</span>
 					</div>
 				)}
@@ -332,7 +336,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 									<div className='flex h-full items-end justify-end'>
 										{!!Object.keys(item?.data || {})?.length && (
 											<DownArrowIcon className={`${!!item?.data?.length && 'cursor-pointer'} text-2xl ${isActive && 'pink-color rotate-180'}`} />
-										)}{' '}
+										)}
 									</div>
 								);
 							}}
@@ -509,7 +513,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 					))}
 				</div>
 			</div>
-			{!['moonbeam', 'moonbase', 'moonriver'].includes(network) && isOpenGovSupported(network) && (
+			{delegationSupportedNetworks.includes(network) && (
 				<DelegateModal
 					open={openDelegateModal}
 					setOpen={setOpenDelegateModal}

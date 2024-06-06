@@ -17,6 +17,7 @@ import { ProposalType } from '~src/global/proposalType';
 import { noTitle } from '~src/global/noTitle';
 import { isSupportedNestedVoteNetwork } from '~src/components/Post/utils/isSupportedNestedVotes';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 export interface IVerificationResponse {
 	message: VerificationStatus;
 }
@@ -146,12 +147,17 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			const postDocRef = postsByTypeRef(network, ProposalType.REFERENDUM_V2).doc(String(vote?.proposal?.id));
 			const postData: any = (await postDocRef.get()).data();
 			if (postData) {
+				let postTitle;
+				if (!postData?.title) {
+					const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, vote?.proposal?.id);
+					postTitle = res?.title;
+				}
 				return {
 					...vote,
 					proposal: {
 						...vote?.proposal,
 						description: postData?.description || '',
-						title: postData?.title || noTitle
+						title: postData?.title || postTitle || noTitle
 					}
 				};
 			} else {

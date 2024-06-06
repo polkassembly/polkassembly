@@ -2,95 +2,62 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import BN from 'bn.js';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
-import { ESetIdentitySteps, ITxFee, IVerifiedFields } from '.';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-// import { AmountBreakdownModalIcon } from '~src/ui-components/CustomIcons';
 import styled from 'styled-components';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
-import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
-import { ILoading, NotificationStatus } from '~src/types';
+import { NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { DownArrowIcon } from '~src/ui-components/CustomIcons';
 import Alert from '~src/basic-components/Alert';
+import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
+import { ESetIdentitySteps, IAmountBreakDown } from './types';
+import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
+import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { ApiPromise } from '@polkadot/api';
 
-interface Props {
-	className?: string;
-	txFee: ITxFee;
-	changeStep: (step: ESetIdentitySteps) => void;
-	perSocialBondFee: BN;
-	loading: boolean;
-	isIdentityAlreadySet: boolean;
-	alreadyVerifiedfields: IVerifiedFields;
-	address: string;
-	setStartLoading: (pre: ILoading) => void;
-}
-const getLearnMoreRedirection = (network: string) => {
-	switch (network) {
-		case AllNetworks.POLKADOT:
-			return 'https://wiki.polkadot.network/docs/learn-identity';
-		case AllNetworks.KUSAMA:
-			return 'https://guide.kusama.network/docs/learn-identity';
-	}
-};
-
-const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, loading, isIdentityAlreadySet, alreadyVerifiedfields, address, setStartLoading }: Props) => {
-	const { registerarFee, minDeposite } = txFee;
+const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const currentUser = useUserDetailsSelector();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
-	const { id: userId } = useUserDetailsSelector();
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const currentUser = useUserDetailsSelector();
 
-	const handleLocalStorageSave = (field: any) => {
-		let data: any = localStorage.getItem('identityForm');
-		if (data) {
-			data = JSON.parse(data);
-		}
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...data,
-				...field
-			})
-		);
-	};
 	useEffect(() => {
-		let identityForm: any = localStorage.getItem('identityForm');
-		identityForm = JSON.parse(identityForm);
-
-		localStorage.setItem(
-			'identityForm',
-			JSON.stringify({
-				...identityForm,
-				userId
-			})
-		);
-	}, [network, userId]);
+		if (network === 'kusama') {
+			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
+		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
-		if (isIdentityAlreadySet && !!alreadyVerifiedfields.email && !!alreadyVerifiedfields.twitter) {
-			if (!api || !apiReady) return;
+		if (identityInfo.isIdentitySet && !!identityInfo?.email) {
+			const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+			if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
+
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(3, txFee.registerarFee.toString());
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 
 			const onSuccess = async () => {
-				handleLocalStorageSave({ setIdentity: true });
 				changeStep(ESetIdentitySteps.SOCIAL_VERIFICATION);
 				setStartLoading({ isLoading: false, message: 'Success!' });
 			};
@@ -104,7 +71,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			};
 
 			await executeTx({
-				address,
+				address: identityAddress,
 				api,
 				apiReady,
 				errorMessageFallback: 'failed.',
@@ -118,9 +85,10 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 			setShowAlert(true);
 		}
 	};
+
 	return (
 		<div className={className}>
-			{!isIdentityAlreadySet && showAlert && !alreadyVerifiedfields.email && !alreadyVerifiedfields.twitter && (
+			{(!identityInfo.isIdentitySet || identityInfo?.verifiedByPolkassembly) && showAlert && !identityInfo?.email && (
 				<Alert
 					showIcon
 					type='info'
@@ -128,20 +96,14 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{isIdentityAlreadySet && showAlert && (!alreadyVerifiedfields.email || !alreadyVerifiedfields.twitter) && (
+			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
 					type='info'
 					className='mt-4 rounded-[4px] text-[13px] text-bodyBlue '
-					description={
-						<span className='dark:text-blue-dark-high'>
-							To request judgement from Polkassembly please provide both twitter and email credentials for verification before requesting judgement.
-						</span>
-					}
+					description={<span className='dark:text-blue-dark-high'>To request judgement from Polkassembly please provide email for verification before requesting judgement.</span>}
 				/>
 			)}
-
-			{/* <AmountBreakdownModalIcon /> */}
 			<ImageIcon
 				alt='amount breakdown identity icon'
 				src='/assets/icons/amount-breakdown-identity.svg'
@@ -156,7 +118,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 					<u className='text-pink_primary'>
 						<a
 							className='ml-1 text-sm text-pink_primary'
-							href={getLearnMoreRedirection(network)}
+							href={getIdentityLearnMoreRedirection(network)}
 						>
 							Learn more
 						</a>
@@ -171,7 +133,7 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 							className='flex justify-end'
 							onClick={() => setAmountBreakup(!amountBreakup)}
 						>
-							{formatedBalance(perSocialBondFee.add(registerarFee.add(minDeposite)).toString(), unit, 2)} {unit}
+							{formatedBalance(perSocialBondFee?.add(registerarFee?.add(minDeposite)).toString(), unit, 2)} {unit}
 							{amountBreakup ? <DownArrowIcon className='ml-2 text-2xl' /> : <UpArrowIcon className='ml-2 text-xl' />}
 						</span>
 						<span className='mr-1 mt-[-2px] text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>{amountBreakup ? 'Hide' : 'View'} Amount Breakup</span>
@@ -230,11 +192,11 @@ const TotalAmountBreakdown = ({ className, txFee, changeStep, perSocialBondFee, 
 				/>
 				<button
 					onClick={handleRequestJudgement}
-					className='mt-2 h-[40px] w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
+					className='mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
 				>
 					Request Judgement
 					<HelperTooltip
-						className='ml-2 w-[20px]'
+						className='ml-2 w-5'
 						text={<span className='break-words'>If you have already set your identity, you can request a judgment directly from here </span>}
 					/>
 				</button>

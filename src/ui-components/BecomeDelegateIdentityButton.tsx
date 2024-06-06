@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import ImageIcon from './ImageIcon';
-import OnChainIdentity from '~src/components/OnchainIdentity';
+import OnchainIdentity from '~src/components/OnchainIdentity';
 import { onchainIdentitySupportedNetwork } from '~src/components/AppLayout';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 
@@ -44,11 +44,11 @@ const BecomeDelegateIdentiyButton = ({ closeModal }: Props) => {
 				with Polkassembly
 			</span>
 			{onchainIdentitySupportedNetwork.includes(network) && (
-				<OnChainIdentity
+				<OnchainIdentity
 					open={open}
 					setOpen={setOpen}
-					openAddressLinkedModal={openAddressLinkedModal}
-					setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+					openAddressModal={openAddressLinkedModal}
+					setOpenAddressModal={setOpenAddressLinkedModal}
 				/>
 			)}
 		</>

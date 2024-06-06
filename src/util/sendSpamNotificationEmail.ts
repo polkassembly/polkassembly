@@ -19,7 +19,7 @@ const sendSpamNotificationEmail = async (content: string, network: string, newID
 		from: FROM.email,
 		subject: 'Spam Detected',
 		text: `Spam content detected:\n\n $ Click on the link -> https://${network}.polkassembly.io/post/${newID} \n\n
-        content is -> {content}`,
+        content is -> ${content}`,
 		to: ['manish@polkassembly.io', 'paras@polkassembly.io']
 	};
 

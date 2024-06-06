@@ -20,6 +20,8 @@ import { EActivityAction, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
+import { isSpamDetected } from '~src/util/getPostContentAiSummary';
+import sendSpamNotificationEmail from '~src/util/sendSpamNotificationEmail';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -118,6 +120,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 			console.error('Error saving post: ', error);
 			return res.status(500).json({ message: 'Error saving post' });
 		});
+
+	const isSpam = await isSpamDetected(content);
+	if (isSpam) {
+		await sendSpamNotificationEmail(content, network, newID);
+	}
+
 	try {
 		await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
 		return;

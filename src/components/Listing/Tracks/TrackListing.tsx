@@ -7,6 +7,7 @@ import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
 import TrackListingTabs from './TrackListingTabs';
+import SmallScreenButtons from '~src/ui-components/SmallScreenButtons';
 
 const AboutTrackCard = dynamic(() => import('~src/components/Listing/Tracks/AboutTrackCard'), {
 	loading: () => <Skeleton active />,
@@ -20,15 +21,17 @@ interface ITrackListingProps {
 
 const TrackListing: FC<ITrackListingProps> = (props) => {
 	const { posts, trackName } = props;
+
 	return (
-		<>
+		<div className=''>
 			<AboutTrackCard trackName={trackName} />
 			<TrackListingTabs
 				className='mt-12'
 				posts={posts}
 				trackName={trackName}
 			/>
-		</>
+			<SmallScreenButtons />
+		</div>
 	);
 };
 

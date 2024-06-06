@@ -1123,15 +1123,17 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																hash={hash}
 															/>
 														) : (
-															<VoteReferendum
-																address={address}
-																lastVote={lastVote as any}
-																setLastVote={setLastVote}
-																onAccountChange={onAccountChange}
-																referendumId={onchainId as number}
-																proposalType={proposalType}
-																trackNumber={trackNumber as any}
-															/>
+															<div className='hidden sm:block'>
+																<VoteReferendum
+																	address={address}
+																	lastVote={lastVote as any}
+																	setLastVote={setLastVote}
+																	onAccountChange={onAccountChange}
+																	referendumId={onchainId as number}
+																	proposalType={proposalType}
+																	trackNumber={trackNumber as any}
+																/>
+															</div>
 														)}
 														{RenderLastVote}
 													</div>

@@ -175,6 +175,7 @@ const createReactions = async (activityPayload: UserActivity) => {
 	try {
 		await deleteReactions(activityPayload.network, activityPayload?.by, activityPayload.reaction_id || '');
 		await ref.set(activityPayload as any, { merge: true });
+		await changeProfileScore(activityPayload.by, REPUTATION_SCORES.reaction.value);
 		console.log('Success');
 	} catch (err) {
 		console.log(err);

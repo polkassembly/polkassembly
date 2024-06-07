@@ -16,7 +16,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EActivityAction, ECommentor, IPostTag, Post } from '~src/types';
+import { EActivityAction, EAllowedCommentor, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
@@ -43,7 +43,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	}
 
 	if ((allowedCommentors || []).length > 0) {
-		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(ECommentor).includes(String(commentor) as ECommentor));
+		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(EAllowedCommentor).includes(String(commentor) as EAllowedCommentor));
 		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
 	}
 
@@ -73,7 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const last_comment_at = new Date();
 	const newPost: Post = {
-		allowedCommentors: allowedCommentors || [ECommentor.ALL],
+		allowedCommentors: allowedCommentors || [EAllowedCommentor.ALL],
 		content,
 		created_at: new Date(),
 		gov_type: gov_type,

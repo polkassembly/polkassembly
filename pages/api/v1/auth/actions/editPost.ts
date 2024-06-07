@@ -25,7 +25,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EActivityAction, ECommentor, IPostHistory, IPostTag, Post } from '~src/types';
+import { EActivityAction, EAllowedCommentor, IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -45,7 +45,7 @@ export interface IEditPostResponse {
 		name: string;
 	};
 	last_edited_at: Date;
-	allowedCommentors: ECommentor[];
+	allowedCommentors: EAllowedCommentor[];
 }
 
 const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res) => {
@@ -63,7 +63,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	}
 
 	if ((allowedCommentors || []).length > 0) {
-		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(ECommentor).includes(String(commentor) as ECommentor));
+		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(EAllowedCommentor).includes(String(commentor) as EAllowedCommentor));
 		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
 	}
 
@@ -98,10 +98,10 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	let isAuthor = false;
 	let proposerAddress = post?.proposer_address || '';
 
-	let allowedCommentorsArr = allowedCommentors || [ECommentor.ALL];
+	let allowedCommentorsArr = allowedCommentors || [EAllowedCommentor.ALL];
 
 	if (postDoc.exists && !isNaN(post?.user_id)) {
-		allowedCommentorsArr = allowedCommentors || post?.allowedCommentors || [ECommentor.ALL];
+		allowedCommentorsArr = allowedCommentors || post?.allowedCommentors || [EAllowedCommentor.ALL];
 
 		if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);

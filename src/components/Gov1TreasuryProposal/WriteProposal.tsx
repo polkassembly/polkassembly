@@ -248,7 +248,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							</div>
 						</div>
 					)}
-					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'
 							text='Next'

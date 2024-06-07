@@ -50,7 +50,7 @@ const VotesTurnoutCard: FC<IVotesTurnoutProps> = ({ turnout, support, activeIssu
 		}
 	];
 	return (
-		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
+		<Card className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white lg:max-w-[512px]'>
 			<h2 className='flex items-center gap-1 text-base font-semibold'>
 				{theme === 'dark' ? <TurnoutDarkIcon /> : <TurnoutIcon />} {turnout ? 'Turnout' : 'Support'} Percentage
 			</h2>

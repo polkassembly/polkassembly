@@ -201,7 +201,7 @@ const TrendingDelegates = () => {
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
 			<div className='flex items-center gap-2'>
-				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-[#D2D8E0] text-[14px] font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
+				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-section-light-container text-sm font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
 					{/* Input Component */}
 					<Input
 						// disabled={disabled}
@@ -232,7 +232,7 @@ const TrendingDelegates = () => {
 					placement='bottomRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-[#D2D8E0] dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'

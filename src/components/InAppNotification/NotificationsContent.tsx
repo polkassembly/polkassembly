@@ -86,7 +86,9 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						)}
 						Notifications
 						{!!unreadNotificationsCount && (
-							<span className='flex items-center justify-center rounded-full bg-[#3B47DF] p-1 text-sm font-medium text-white dark:bg-[#5B67FF]'>{unreadNotificationsCount}</span>
+							<span className='flex min-h-[26px] min-w-[26px] items-center justify-center rounded-full bg-[#3B47DF] p-1 text-xs font-medium text-white dark:bg-[#5B67FF]'>
+								{unreadNotificationsCount}
+							</span>
 						)}
 					</div>
 					<div className='flex gap-4'>

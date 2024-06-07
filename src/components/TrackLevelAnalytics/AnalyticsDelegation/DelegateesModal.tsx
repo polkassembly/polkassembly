@@ -47,7 +47,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 			className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
 			footer={false}
 			title={
-				<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					Vote Details
 				</div>
 			}
@@ -82,7 +82,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 					</div>
 					{delegateeData?.count && (
 						<>
-							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
+							<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
 							<div className='mr-3 flex w-[200px] flex-col gap-1'>
 								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 								<div className='flex justify-between'>
@@ -109,7 +109,7 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 				</div>
 				<Divider
 					dashed
-					className='mt-6 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+					className='mt-6 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 				/>
 				<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
 					{totalData?.count > 1 && (

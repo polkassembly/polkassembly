@@ -59,7 +59,7 @@ const SetPrimaryNetworkSettingModal = ({ open, onConfirm, onCancel, network }: {
 				icon={<InfoCircleOutlined />}
 				showIcon
 				type='info'
-				className='bg-[#4E75FF] text-[14px] text-[#fff] '
+				className='bg-[#4E75FF] text-sm text-[#fff] '
 				message={'Primary Network Settings allow you to copy settings to other networks by just one click. You can also change the Primary Network later.'}
 			/>
 			<div className='ml-[-24px] mr-[-24px]'>

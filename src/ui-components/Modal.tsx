@@ -32,7 +32,7 @@ const Modal = ({ title, titleIcon, open, onConfirm, onCancel, footer, className,
 						{' '}
 						{titleIcon} {title}{' '}
 					</h3>
-					<Divider className='text-[#D2D8E0] dark:text-separatorDark' />
+					<Divider className='text-section-light-container dark:text-separatorDark' />
 				</div>
 			}
 			open={open}

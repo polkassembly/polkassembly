@@ -161,7 +161,7 @@ const ProfileData = ({ address, className }: IProfileData) => {
 							<div className='flex gap-x-2'>
 								{profileData?.profile?.badges.map((badge: string, index: number) => (
 									<div
-										className='border-grey_stroke flex border px-3.5 py-0.5 text-[12px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-[#D2D8E0]'
+										className='border-grey_stroke flex border px-3.5 py-0.5 text-[12px] text-lightBlue hover:border-pink_primary hover:text-pink_primary dark:text-section-light-container'
 										style={{ border: '1px solid #D2D8E0', borderRadius: '50px' }}
 										key={index}
 									>

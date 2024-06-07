@@ -11,7 +11,7 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
-import { EActivityAction, PostComment } from '~src/types';
+import { EActivityAction, EAllowedCommentor, PostComment } from '~src/types';
 import { FIREBASE_FUNCTIONS_URL, firebaseFunctionsHeader } from '~src/components/Settings/Notifications/utils';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import { deleteKeys } from '~src/auth/redis';
@@ -47,6 +47,19 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
+	const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+
+	// check for allowedCommentors
+	if (postData?.allowedCommentors && (postData.allowedCommentors || []).length > 0) {
+		if (postData.allowedCommentors.includes(EAllowedCommentor.NONE)) {
+			return res.status(403).json({ message: 'User has disabled comments on this post.' });
+		}
+
+		// TODO: check if allowedCommentors does not include 'all' that means there is some condition
+		// if (!postData.allowedCommentors.includes(ECommentor.ALL)) {
+		// // loop through and check if user qualifies for any of the conditions (ex: is verified onchain)
+		// }
+	}
 
 	const last_comment_at = new Date();
 	const newCommentRef = postRef.collection('comments').doc();
@@ -111,7 +124,6 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
 	try {
-		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 		const postAuthorId = postData?.user_id || null;
 
 		if (typeof postAuthorId == 'number') {

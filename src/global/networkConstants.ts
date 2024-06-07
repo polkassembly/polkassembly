@@ -211,10 +211,6 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://polkadot.api.onfinality.io/public-ws'
 			},
 			{
-				label: 'via On-finality',
-				key: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156'
-			},
-			{
 				label: 'via Dwellir',
 				key: 'wss://polkadot-rpc.dwellir.com'
 			},

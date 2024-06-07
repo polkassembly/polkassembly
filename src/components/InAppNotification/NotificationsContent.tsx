@@ -61,17 +61,17 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 		);
 	};
 
-	const handleViewAll = () => {
+	const handleViewAll = (timeLimit: number) => {
 		if (!unreadNotificationsCount) return;
 		const timeoutId = setTimeout(() => {
 			handleMarkAsRead();
-		}, 5000);
+		}, timeLimit);
 		return () => clearTimeout(timeoutId);
 	};
 
 	useEffect(() => {
 		if (!isPage) return;
-		handleViewAll();
+		handleViewAll(10000);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [inPage]);
 
@@ -203,7 +203,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
 							onClick={() => {
 								closePopover?.(true);
-								handleViewAll();
+								handleViewAll(5000);
 							}}
 						>
 							View All

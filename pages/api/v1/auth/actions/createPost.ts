@@ -16,7 +16,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EActivityAction, IPostTag, Post } from '~src/types';
+import { EActivityAction, ECommentor, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address } = req.body;
+	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address, allowedCommentors } = req.body;
 	if (!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(title) || isContentBlacklisted(content)) {
@@ -37,6 +37,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	}
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
+
+	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
+		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
+	}
+
+	if ((allowedCommentors || []).length > 0) {
+		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(ECommentor).includes(String(commentor) as ECommentor));
+		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
+	}
 
 	const substrate_inductee_address = getSubstrateAddress(inductee_address);
 
@@ -64,6 +73,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const last_comment_at = new Date();
 	const newPost: Post = {
+		allowedCommentors: allowedCommentors || [ECommentor.ALL],
 		content,
 		created_at: new Date(),
 		gov_type: gov_type,

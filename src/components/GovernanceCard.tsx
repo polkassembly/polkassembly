@@ -224,6 +224,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			return key;
 		}
 	};
+	const isAllRefPage = router.pathname.includes('all-posts');
 
 	useEffect(() => {
 		if (!api) {
@@ -511,7 +512,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
-							{isOpenGovSupported(network) ? (
+							{isOpenGovSupported(network) && isAllRefPage ? (
 								<>
 									<Divider
 										type='vertical'

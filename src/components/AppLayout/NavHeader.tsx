@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Space } from 'antd';
+import { Divider, Space, Tooltip } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -86,6 +86,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [openTooltip, setOpenTooltip] = useState<boolean>(true);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -372,7 +373,29 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
-					{AVAILABLE_NETWORK.includes(network) && <InAppNotification />}
+					{AVAILABLE_NETWORK.includes(network) && (
+						<Tooltip
+							open={openTooltip}
+							arrow
+							placement='bottomLeft'
+							overlayClassName='rounded-xxl'
+							title={
+								<div className='p-[6px]'>
+									<div className='flex items-center space-x-1'>
+										<span className='rounded-[4px] bg-white px-1 py-[2px] text-[12px] font-bold text-blue-light-high'>NEW</span>
+										<span className=' text-sm font-semibold text-white'>Notifications</span>
+									</div>
+									<div className='mt-1 text-[11px]'>Keep track of latest governance activities!</div>
+								</div>
+							}
+							color='#3C74E1'
+							zIndex={3000}
+						>
+							<div onClick={() => setOpenTooltip(false)}>
+								<InAppNotification />
+							</div>
+						</Tooltip>
+					)}
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 

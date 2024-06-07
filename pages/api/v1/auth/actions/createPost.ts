@@ -38,7 +38,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
 
-	if (allowedCommentors && !Array.isArray(allowedCommentors)) return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
+	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
+		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
+	}
+
+	if (allowedCommentors && Array.isArray(allowedCommentors)) {
+		const invalidCommentors = allowedCommentors.filter((commentor) => !Object.values(ECommentors).includes(commentor));
+		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
+	}
 
 	const substrate_inductee_address = getSubstrateAddress(inductee_address);
 

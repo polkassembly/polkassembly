@@ -4,7 +4,7 @@
 
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -60,13 +60,18 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 		);
 	};
 
-	const handleViewAll = () => {
+	const handleViewAll = (timeout: number) => {
 		if (!unreadNotificationsCount) return;
 		const timeoutId = setTimeout(() => {
 			handleMarkAsRead();
-		}, 5000);
+		}, timeout);
 		return () => clearTimeout(timeoutId);
 	};
+
+	useEffect(() => {
+		handleViewAll(10000);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [inPage]);
 
 	return (
 		<div
@@ -196,7 +201,7 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
 							onClick={() => {
 								closePopover?.(true);
-								handleViewAll();
+								handleViewAll(5000);
 							}}
 						>
 							View All

@@ -4,7 +4,7 @@
 
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import { useRouter } from 'next/router';
+import { isPage } from 'react-pdf/dist/cjs/shared/propTypes';
 
 interface INotificationsContent {
 	className?: string;
@@ -68,6 +69,12 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 		return () => clearTimeout(timeoutId);
 	};
 
+	useEffect(() => {
+		if (!isPage) return;
+		handleViewAll();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [inPage]);
+
 	return (
 		<div
 			className={classNames(className, poppins.className, poppins.variable, 'flex flex-col justify-between', inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : '')}
@@ -86,7 +93,9 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						)}
 						Notifications
 						{!!unreadNotificationsCount && (
-							<span className='flex items-center justify-center rounded-full bg-[#3B47DF] p-1 text-sm font-medium text-white dark:bg-[#5B67FF]'>{unreadNotificationsCount}</span>
+							<span className='flex min-h-[26px] min-w-[26px] items-center justify-center rounded-full bg-[#3B47DF] p-1 text-xs font-medium text-white dark:bg-[#5B67FF]'>
+								{unreadNotificationsCount}
+							</span>
 						)}
 					</div>
 					<div className='flex gap-4'>

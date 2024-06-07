@@ -51,7 +51,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 									<div className={classNames('flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high', inPage ? 'text-sm' : 'text-xs')}>{notification.title}</div>
 									<div className='w-full'>
 										<Markdown
-											md={notification.message}
+											md={inPage ? notification.message : notification.message.split('Thanks')[0]}
 											className={classNames(
 												'w-full text-lightBlue dark:text-blue-dark-medium',
 												inPage && notification.type === EInAppNotificationsType.UNREAD ? 'container font-semibold' : 'font-normal',

@@ -203,20 +203,20 @@ export const chainProperties: types.ChainPropType = {
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{
-				label: 'via On-finality (recommended)',
-				key: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156'
+				label: 'via Parity (recommended)',
+				key: 'wss://rpc.polkadot.io'
 			},
 			{
 				label: 'via On-finality',
 				key: 'wss://polkadot.api.onfinality.io/public-ws'
 			},
 			{
-				label: 'via Dwellir',
-				key: 'wss://polkadot-rpc.dwellir.com'
+				label: 'via On-finality',
+				key: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156'
 			},
 			{
-				label: 'via Parity',
-				key: 'wss://rpc.polkadot.io'
+				label: 'via Dwellir',
+				key: 'wss://polkadot-rpc.dwellir.com'
 			},
 			{
 				label: 'via Pinknode',

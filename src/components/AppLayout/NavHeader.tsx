@@ -382,10 +382,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							title={
 								<div className='p-[6px]'>
 									<div className='flex items-center space-x-1'>
-										<span className='rounded-[4px] bg-white px-1 py-[2px] text-[12px] font-bold text-blue-light-high'>NEW</span>
+										<span className='rounded-[4px] bg-white px-1 py-[2px] text-[12px] font-semibold text-blue-light-high'>NEW</span>
 										<span className=' text-sm font-semibold text-white'>Notifications</span>
 									</div>
-									<div className='mt-1 text-[11px]'>Keep track of latest governance activities!</div>
+									<div className='mt-1 text-[11px] font-normal'>Keep track of latest governance activities!</div>
 								</div>
 							}
 							color='#3C74E1'

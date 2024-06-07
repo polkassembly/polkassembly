@@ -239,12 +239,12 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpenModal(false)}
 			title={
-				<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					Pay Decision Deposit
 				</div>
 			}
 			footer={
-				<div className='flex items-center justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
+				<div className='flex items-center justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						buttonsize='xs'

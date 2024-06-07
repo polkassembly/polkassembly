@@ -63,7 +63,7 @@ const TotalDelegationData = () => {
 		<Spin spinning={loading}>
 			<div className=' flex flex-wrap gap-6 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 				{/* Total Supply */}
-				<div className='flex space-x-3 border-2 border-[#D2D8E0]'>
+				<div className='flex space-x-3 border-2 border-section-light-container'>
 					<ImageIcon
 						src='/assets/delegation-tracks/polkadot-delegation.svg'
 						alt='polkadot delegation icon'

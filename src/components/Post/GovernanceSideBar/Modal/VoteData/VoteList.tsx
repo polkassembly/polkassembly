@@ -441,7 +441,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 						)}
 					</div>
 					{/* {thresholdData && (
-						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-[#D2D8E0] dark:border-[#3B444F] pl-4'>
+						<Container className='flex flex-col gap-5 border border-x-0 border-y-0 border-l-2 border-dashed border-section-light-container dark:border-[#3B444F] pl-4'>
 							{thresholdData.progress.approval >= thresholdData.progress.approvalThreshold.toFixed(1) &&
 							thresholdData.progress.support >= thresholdData.progress.supportThreshold.toFixed(1) ? (
 								<p className='row m-0 flex gap-1 text-sm font-medium'>
@@ -486,7 +486,7 @@ const VotersList: FC<IVotersListProps> = (props) => {
 								<VoteDataIcon className='text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Delegation Data</span>
 							</h3>
-							<Divider className='my-2 mb-5 text-[#D2D8E0] dark:text-separatorDark' />
+							<Divider className='my-2 mb-5 text-section-light-container dark:text-separatorDark' />
 						</div>
 					}
 					open={delegationVoteModal.isOpen}

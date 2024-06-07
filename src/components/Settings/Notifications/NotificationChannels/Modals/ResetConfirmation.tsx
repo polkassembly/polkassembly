@@ -58,7 +58,7 @@ const ResetConfirmation = ({ open, onConfirm, onCancel, channel }: { open: boole
 				icon={<InfoCircleOutlined />}
 				showIcon
 				type='info'
-				className='bg-[#4E75FF] text-[14px] text-[#fff] '
+				className='bg-[#4E75FF] text-sm text-[#fff] '
 				message={`Removing bot means no more notifications for ${channel} channel chat, Stay connected and informed by keeping the bot.`}
 			/>
 			<div className='ml-[-24px] mr-[-24px]'>

@@ -139,7 +139,7 @@ const Disable2FA: FC<{ className?: string }> = ({ className }) => {
 				<span className='align-center flex text-[16px] font-medium'>
 					Disable Two Factor Authentication <KeyboardDownIcon />
 				</span>
-				<span className='block text-[14px]'>Disabling two-factor authentication may compromise the security of your account.</span>
+				<span className='block text-sm'>Disabling two-factor authentication may compromise the security of your account.</span>
 			</CustomButton>
 		</>
 	);

@@ -369,7 +369,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 						totalUnlockableBalance={totalUnlockableBalance}
 					/>
 					{![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network) && (
-						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 dark:border-[#3B444F] dark:border-separatorDark'>
+						<div className='-mx-6 mt-8 flex items-center border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-[#3B444F] dark:border-separatorDark'>
 							<CustomButton
 								variant='primary'
 								icon={<WhiteUnlockIcon className='mr-1' />}

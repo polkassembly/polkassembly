@@ -188,13 +188,13 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-2 text-lg text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
+					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium'>
 						<ClearIdentityFilledIcon />
 						Remove Identity
 					</div>
 				}
 				footer={
-					<div className='-mx-6 mt-6 flex  justify-end gap-2 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 mt-6 flex  justify-end gap-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							text='Cancel'
 							onClick={() => dispatch(setOpenRemoveIdentityModal(false))}
@@ -260,7 +260,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 									/>
 								)}
 							</div>
-							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
 									address={address || loginAddress}
 									isTruncateUsername={false}

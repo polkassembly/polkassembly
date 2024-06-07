@@ -230,7 +230,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 				}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				footer={
-					<div className='-mx-6 mt-8 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 mt-8 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							variant='default'
 							key='cancel'

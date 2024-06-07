@@ -192,7 +192,7 @@ const AddNetworkModal = ({
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (
 									<Divider
-										className='border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
+										className='border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
 										dashed
 									/>
 								)}

@@ -27,7 +27,7 @@ import { chainProperties, network as AllNetworks } from '~src/global/networkCons
 import { fetchLatestSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { hexToString, isHex } from '@polkadot/util';
 
 interface IGetLatestActivityAllPostsParams {
 	listingLimit?: string | string[] | number;
@@ -103,7 +103,7 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 					.join(' ');
 				const singlePost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+					description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 					hash: hash,
 					method: '',
 					origin: '',
@@ -237,7 +237,8 @@ export async function getLatestActivityAllPosts(params: IGetLatestActivityAllPos
 				}
 				const onChainPost = {
 					created_at: createdAt,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || (proposalArguments ? proposalArguments?.description : null),
+					description:
+						network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || (proposalArguments ? proposalArguments?.description : null),
 					hash,
 					method: method || preimage?.method || (proposalArguments ? proposalArguments?.method : proposalArguments?.method),
 					origin,

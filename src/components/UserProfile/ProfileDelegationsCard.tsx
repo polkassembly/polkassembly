@@ -237,7 +237,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 			<div
 				className={classNames(
 					className,
-					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className='flex items-center justify-between'>
@@ -329,7 +329,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 						<Collapse
 							key={item?.status}
 							size='small'
-							className={'my-custom-collapse border-[#D2D8E0] bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
+							className={'my-custom-collapse border-section-light-container bg-white dark:border-separatorDark dark:bg-section-dark-overlay'}
 							expandIconPosition='end'
 							expandIcon={({ isActive }) => {
 								return (
@@ -362,7 +362,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							>
 								<div className='-mx-3 -my-3 flex flex-col p-[1px] text-bodyBlue'>
 									{!!Object.keys(item?.data || {}).length && (
-										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-[#D2D8E0] px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
+										<div className='flex h-12 items-center justify-between border-0 border-b-[1px] border-solid border-section-light-container px-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-lg:text-xs'>
 											<span className='flex items-center justify-center gap-1'>
 												index <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
@@ -385,7 +385,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 													onClick={() => handleExpand(address, item?.status)}
 												>
 													<div
-														className={`flex justify-between border-0 border-y-[1px] border-solid border-[#D2D8E0] px-3 py-4 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${
+														className={`flex justify-between border-0 border-y-[1px] border-solid border-section-light-container px-3 py-4 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high ${
 															(value?.expand || idx === value?.delegations.length - 1) && 'border-b-0 border-t-[1px]'
 														}`}
 														onClick={() => {
@@ -410,7 +410,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 														</span>
 													</div>
 													{value?.expand && (
-														<div className='border-0 border-t-[1px] border-dashed border-[#D2D8E0] px-3 pb-3 dark:border-separatorDark'>
+														<div className='border-0 border-t-[1px] border-dashed border-section-light-container px-3 pb-3 dark:border-separatorDark'>
 															<div className='justify-start'>
 																<div className='mt-2 flex flex-col gap-2'>
 																	<div className='flex justify-between'>

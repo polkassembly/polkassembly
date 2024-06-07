@@ -423,7 +423,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -724,7 +724,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
-												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+												className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 											>
 												{tag}
 											</div>

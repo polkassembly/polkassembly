@@ -21,8 +21,8 @@ import messages from '~src/util/messages';
 import { fetchSubsquare, getSpamUsersCountForPosts } from '../listing/on-chain-posts';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { hexToString, isHex } from '@polkadot/util';
 
 export interface ILatestActivityPostsListingResponse {
 	count: number;
@@ -151,7 +151,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 					}
 					return {
 						created_at: createdAt,
-						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+						description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 						hash,
 						isSpam: data?.isSpam || false,
 						isSpamReportInvalid: data?.isSpamReportInvalid || false,
@@ -176,7 +176,7 @@ export async function getLatestActivityOnChainPosts(params: IGetLatestActivityOn
 
 			return {
 				created_at: createdAt,
-				description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+				description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 				hash,
 				method: method || preimage?.method,
 				origin,

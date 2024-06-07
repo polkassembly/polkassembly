@@ -26,7 +26,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-
 import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
@@ -34,7 +33,7 @@ import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-conten
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
-import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { hexToString, isHex } from '@polkadot/util';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {
@@ -389,7 +388,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
 							curator,
-							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+							description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 							end,
 							gov_type: data.gov_type,
 							hash,
@@ -436,7 +435,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
 					created_at: createdAt,
 					curator,
-					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+					description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 					end: end,
 					hash: hash || null,
 					identity,
@@ -712,7 +711,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								return {
 									comments_count: commentsQuerySnapshot.data()?.count || 0,
 									created_at: createdAt,
-									description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+									description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 									end,
 									gov_type: data.gov_type,
 									hash,
@@ -739,7 +738,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
 							created_at: createdAt,
-							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+							description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 							end: end,
 							hash: hash || null,
 							post_id: postId,
@@ -886,7 +885,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
 								created_at: createdAt,
 								curator,
-								description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+								description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 								end,
 								gov_type: data.gov_type,
 								hash,
@@ -933,7 +932,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
 						created_at: createdAt,
 						curator,
-						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
+						description: network === AllNetworks.POLYMESH && isHex(description) ? hexToString(description) : description || '',
 						end: end,
 						hash: hash || null,
 						identity,

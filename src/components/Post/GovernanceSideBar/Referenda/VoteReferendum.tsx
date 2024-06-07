@@ -668,7 +668,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						showMultisig ? (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<ArrowLeft
 									onClick={() => {
 										setShowMultisig(false);
@@ -690,7 +690,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>
@@ -795,7 +795,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											<div className='flex-col'>
 												<div className='flex w-full justify-center'>
 													<WalletButton
-														className='h-[50px] w-[64px] !border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+														className='h-[50px] w-[64px] !border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 														onClick={() => {
 															setShowMultisig(!showMultisig);
 														}}
@@ -941,7 +941,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
+									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
 									size='large'
 									value={vote}
 									onChange={(value) => {

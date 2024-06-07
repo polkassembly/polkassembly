@@ -33,7 +33,7 @@ const ImageViewer: FC<IImageViewerProps> = (props) => {
 
 	return (
 		<button
-			className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] dark:border-[#3B444F] ${className}`}
+			className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-section-light-container dark:border-[#3B444F] ${className}`}
 			onClick={() => downloadImage(item.download_url, 'image.png')}
 		>
 			<div>
@@ -47,7 +47,7 @@ const ImageViewer: FC<IImageViewerProps> = (props) => {
 						height={100}
 					/>
 				</div>
-				<div className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
+				<div className='flex items-center gap-x-2 border-0 border-t border-solid border-t-section-light-container bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
 					{/* <PdfIcon /> */}
 					<ImageIcon
 						src='/assets/icons/pdfs.svg'

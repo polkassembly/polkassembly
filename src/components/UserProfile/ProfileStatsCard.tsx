@@ -71,19 +71,19 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 			<div
 				className={classNames(
 					className,
-					'flex gap-10 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 dark:border-separatorDark dark:bg-section-dark-overlay max-md:flex-col max-md:gap-4 max-md:py-4 md:h-[100px]'
+					'flex gap-10 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 dark:border-separatorDark dark:bg-section-dark-overlay max-md:flex-col max-md:gap-4 max-md:py-4 md:h-[100px]'
 				)}
 			>
 				{statsArr.map((item, index) => (
 					<div
 						className={`flex gap-2  ${
 							statsArr.length - 1 !== index &&
-							'border-[#D2D8E0] dark:border-separatorDark max-md:w-full max-md:flex-col max-md:border-0 max-md:border-b-[1px] max-md:border-solid max-md:pb-4'
+							'border-section-light-container dark:border-separatorDark max-md:w-full max-md:flex-col max-md:border-0 max-md:border-b-[1px] max-md:border-solid max-md:pb-4'
 						} max-md:py-2`}
 						key={item?.label}
 					>
 						<div className='flex gap-2 px-2 max-md:items-center max-md:px-0'>
-							<span className='flex h-full items-center justify-center rounded-xl border-[1px] border-solid border-[#D2D8E0] bg-[#F3F4F6] px-2.5 text-lightBlue dark:border-separatorDark dark:bg-transparent dark:text-[#9E9E9E]'>
+							<span className='flex h-full items-center justify-center rounded-xl border-[1px] border-solid border-section-light-container bg-[#F3F4F6] px-2.5 text-lightBlue dark:border-separatorDark dark:bg-transparent dark:text-[#9E9E9E]'>
 								{getIcon(item?.label)}
 							</span>
 							<div className='flex flex-col justify-center'>
@@ -94,7 +94,7 @@ const ProfileStatsCard = ({ className, userProfile, addressWithIdentity, statsAr
 						{!isMobile && statsArr.length - 1 !== index && (
 							<Divider
 								type={'vertical'}
-								className='ml-10 h-full bg-[#D2D8E0] dark:bg-separatorDark max-lg:ml-0'
+								className='ml-10 h-full bg-section-light-container dark:bg-separatorDark max-lg:ml-0'
 							/>
 						)}
 					</div>

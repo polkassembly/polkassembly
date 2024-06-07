@@ -96,7 +96,7 @@ const Gov1TreasuryProposal = ({ className, isUsedInTreasuryPage }: Props) => {
 				wrapClassName={`${className} dark:bg-modalOverlayDark ${theme} gov1proposal`}
 				footer={false}
 				title={
-					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+					<div className='-mx-6 flex items-center gap-1.5 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<Image
 							alt=''
 							src={theme === 'dark' ? '/assets/openGovProposals/create_proposal_white.svg' : '/assets/openGovProposals/create_proposal.svg'}

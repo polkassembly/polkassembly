@@ -108,7 +108,7 @@ const Account: FC<Props> = ({ className }) => {
 							/>
 						</section>
 						{/* Currently blocked due to multisig apis not being available */}
-						{/* <Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
+						{/* <Divider className='m-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isMultiSigAddress}
@@ -124,7 +124,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section> */}
-						<Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
+						<Divider className='m-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isLinkProxy}
@@ -140,7 +140,7 @@ const Account: FC<Props> = ({ className }) => {
 								}
 							/>
 						</section>
-						<Divider className='m-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark' />
+						<Divider className='m-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark' />
 						<section>
 							<AddressHeader
 								checked={isLinkViaRemark}

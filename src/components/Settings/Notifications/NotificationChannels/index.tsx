@@ -129,7 +129,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						className='my-[30px] border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 						dashed
 					/>
 					<EmailNotificationCard
@@ -139,7 +139,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 						handleEnableDisabled={handleEnableDisabled}
 					/>
 					<Divider
-						className='my-[30px] border-2 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+						className='my-[30px] border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 						dashed
 					/>
 					{botsArr.map((bot, i) => (
@@ -154,7 +154,7 @@ export default function NotificationChannels({ handleEnableDisabled, handleReset
 							/>
 							{botsArr.length - 1 > i && (
 								<Divider
-									className='my-[30px] border-[2px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+									className='my-[30px] border-[2px] border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 									dashed
 								/>
 							)}

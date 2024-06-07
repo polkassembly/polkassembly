@@ -86,13 +86,13 @@ export default function ProfileSettings() {
 						data={username || ''}
 						handleEdit={() => setShowModal(ModalType.USERNAME)}
 					/>
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-section-light-container' />
 					<Row
 						label='Email'
 						data={email || ''}
 						handleEdit={() => setShowModal(ModalType.EMAIL)}
 					/>
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-section-light-container' />
 					{!web3signup && (
 						<Row
 							label='Password'

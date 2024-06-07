@@ -372,7 +372,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							{!['polymesh', 'polymesh-test'].includes(network) && (
 								<>
 									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
+										<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
 											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 										</span>
@@ -444,7 +444,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								</div>
 								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
+									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
 										{priceWeeklyChange.value === 'N/A' ? (
 											'N/A'
@@ -525,7 +525,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									</div>
 								</div>
 								<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
-									<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
+									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
 								</div>
 							</>
@@ -614,7 +614,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 										</div>
 										{
 											<div className='flex flex-col justify-center gap-y-3 font-medium'>
-												<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
+												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 												<span className='flex items-center'>
 													<ProgressBar
 														className='m-0 flex items-center p-0'

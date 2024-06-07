@@ -30,17 +30,17 @@ const OpenGovOverviewBanner = () => {
 						<span className='text-6  font-medium leading-9 text-white md:text-5xl md:leading-[72px]'>{days}</span>
 						<span className='text-xs font-medium leading-[18px] text-[rgba(255,255,255,0.8)] md:text-[18px] md:leading-[27px]'>Days</span>
 					</p>
-					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-[#D2D8E0]'></span>
+					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-section-light-container'></span>
 					<p className='m-0 flex flex-col items-center justify-center'>
 						<span className='text-6  font-medium leading-9 text-white md:text-5xl md:leading-[72px]'>{hrs}</span>
 						<span className='text-xs font-medium leading-[18px] text-[rgba(255,255,255,0.8)] md:text-[18px] md:leading-[27px]'>Hours</span>
 					</p>
-					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-[#D2D8E0]'></span>
+					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-section-light-container'></span>
 					<p className='m-0 flex flex-col items-center justify-center'>
 						<span className='text-6  font-medium leading-9 text-white md:text-5xl md:leading-[72px]'>{mins}</span>
 						<span className='text-xs font-medium leading-[18px] text-[rgba(255,255,255,0.8)] md:text-[18px] md:leading-[27px]'>Minutes</span>
 					</p>
-					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-[#D2D8E0]'></span>
+					<span className='flex h-[46px] w-[0.75px] items-center justify-center bg-section-light-container'></span>
 					<p className='m-0 flex flex-col items-center justify-center'>
 						<span className='text-6  font-medium leading-9 text-white md:text-5xl md:leading-[72px]'>{secs}</span>
 						<span className='text-xs font-medium leading-[18px] text-[rgba(255,255,255,0.8)] md:text-[18px] md:leading-[27px]'>Seconds</span>

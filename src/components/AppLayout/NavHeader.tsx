@@ -46,6 +46,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import { poppins } from 'pages/_app';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -382,10 +383,10 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							title={
 								<div className='p-[6px]'>
 									<div className='flex items-center space-x-1'>
-										<span className='rounded-[4px] bg-white px-1 py-[2px] text-[12px] font-semibold text-blue-light-high'>NEW</span>
-										<span className=' text-sm font-semibold text-white'>Notifications</span>
+										<span className={`rounded-[4px] bg-white px-2 py-[2px]  ${poppins.className} ${poppins.variable} text-[12px] font-semibold text-blue-light-high`}>NEW</span>
+										<span className={`text-sm ${poppins.className} ${poppins.variable} font-semibold text-white`}>Notifications</span>
 									</div>
-									<div className='mt-1 text-[11px] font-normal'>Keep track of latest governance activities!</div>
+									<div className={`mt-1 ${poppins.className} ${poppins.variable} text-xs font-normal`}>Keep track of latest governance activities!</div>
 								</div>
 							}
 							color='#3C74E1'

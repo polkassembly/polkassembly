@@ -50,7 +50,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
 
 	// check for allowedCommentors
-	if (postData?.allowedCommentors && (postData.allowedCommentors || []).length > 0) {
+	if (String(user.id) !== String(postData.user_id) && postData?.allowedCommentors && (postData.allowedCommentors || []).length > 0) {
 		if (postData.allowedCommentors.includes(EAllowedCommentor.NONE)) {
 			return res.status(403).json({ message: 'User has disabled comments on this post.' });
 		}

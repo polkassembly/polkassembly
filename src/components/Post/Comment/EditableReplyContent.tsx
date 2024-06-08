@@ -81,7 +81,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 	} = usePostDataContext();
 
 	useEffect(() => {
-		setCommentAllowed(userId === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress]);
 

@@ -524,6 +524,7 @@ const Post: FC<IPostProps> = (props) => {
 					topic: post?.topic || '',
 					track_name: trackName,
 					track_number: post?.track_number,
+					userId: post?.user_id,
 					username: post?.username
 				}}
 			>

@@ -42,6 +42,7 @@ export interface IPostData {
 	proposalHashBlock?: string | null;
 	curator: string;
 	username: string;
+	userId: number;
 	topic?: {
 		id: number;
 		name: string;

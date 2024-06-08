@@ -103,7 +103,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { loginAddress, isUserOnchainVerified } = useUserDetailsSelector();
 	const {
-		postData: { postType, timeline, created_at, allowedCommentors }
+		postData: { postType, timeline, created_at, allowedCommentors, userId }
 	} = usePostDataContext();
 	const targetOffset = 10;
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
@@ -266,7 +266,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	useEffect(() => {
 		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!loginAddress && isUserOnchainVerified));
-		setCommentAllowed(getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress]);
 

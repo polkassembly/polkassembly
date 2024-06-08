@@ -97,7 +97,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const currentContent = useRef<string>(content);
 
 	const {
-		postData: { postType, postIndex, track_number, allowedCommentors }
+		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
 	} = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -632,7 +632,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	}, [canEditComment]);
 
 	useEffect(() => {
-		setCommentAllowed(getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress]);
 

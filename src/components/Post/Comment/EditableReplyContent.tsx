@@ -77,11 +77,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 	const toggleEdit = () => setIsEditing(!isEditing);
 
 	const {
-		postData: { postType, postIndex, track_number, allowedCommentors }
+		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
 	} = usePostDataContext();
 
 	useEffect(() => {
-		setCommentAllowed(getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress]);
 

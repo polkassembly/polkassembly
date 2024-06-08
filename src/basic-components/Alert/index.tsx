@@ -12,13 +12,13 @@ interface Props extends AlertProps {
 const Alert: FC<Props> = ({ type = 'info', showIcon = false, className, ...props }) => {
 	const typeClasses =
 		type === 'info'
-			? 'dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+			? 'dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark rounded-[4px]'
 			: type === 'error'
-			? 'dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark'
+			? 'dark:border-errorAlertBorderDark dark:bg-errorAlertBgDark rounded-[4px]'
 			: type === 'success'
-			? 'dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high'
+			? 'dark:border-[#026630] dark:bg-[#063E20] dark:text-blue-dark-high rounded-[4px]'
 			: type === 'warning'
-			? 'dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark'
+			? 'dark:border-warningAlertBorderDark dark:bg-warningAlertBgDark rounded-[4px]'
 			: '';
 	return (
 		<AntdAlert

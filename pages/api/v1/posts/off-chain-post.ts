@@ -10,7 +10,7 @@ import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { getFirestoreProposalType, getSubsquidProposalType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
 import { GET_PROPOSAL_BY_INDEX_AND_TYPE_FOR_LINKING } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse } from '~src/types';
+import { EAllowedCommentor, IApiResponse } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
@@ -112,6 +112,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 			: [];
 		const proposer = getProposerAddressFromFirestorePostData(data, network);
 		const post: IPostResponse = {
+			allowedCommentors: data?.allowedCommentors?.[0] || EAllowedCommentor.ALL,
 			comments: [],
 			content: data?.content,
 			created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,

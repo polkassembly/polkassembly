@@ -341,6 +341,12 @@ export enum EReferendumType {
 	OTHER = 'other'
 }
 
+export enum EAllowedCommentor {
+	ALL = 'all',
+	ONCHAIN_VERIFIED = 'onchain_verified',
+	NONE = 'none'
+}
+
 export interface Post {
 	user_id: number;
 	content: string;
@@ -363,6 +369,7 @@ export interface Post {
 	createdOnPolkassembly?: boolean;
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
+	allowedCommentors?: EAllowedCommentor[];
 }
 
 export interface IPostTag {

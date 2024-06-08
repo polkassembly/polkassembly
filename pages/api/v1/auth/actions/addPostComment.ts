@@ -56,7 +56,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 		}
 
 		// TODO: check if allowedCommentors does not include 'all' that means there is some condition
-		// if (!postData.allowedCommentors.includes(ECommentor.ALL)) {
+		// if (!postData.allowedCommentors.includes(EAllowedCommentor.ALL)) {
 		// // loop through and check if user qualifies for any of the conditions (ex: is verified onchain)
 		// }
 	}

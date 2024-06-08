@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import ContentForm from 'src/components/ContentForm';
 import { PostCategory } from 'src/global/post_categories';
 import { usePollEndBlock } from 'src/hooks';
-import { EGovType, NotificationStatus } from 'src/types';
+import { EAllowedCommentor, EGovType, NotificationStatus } from 'src/types';
 import BackToListingView from 'src/ui-components/BackToListingView';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
@@ -26,6 +26,7 @@ import { trackEvent } from 'analytics';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import dayjs from 'dayjs';
+import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
 
 interface Props {
 	className?: string;
@@ -48,6 +49,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 	const [error, setError] = useState('');
 	const [govType, setGovType] = useState<EGovType>(isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1);
 	const [tags, setTags] = useState<string[]>([]);
+	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
 	useEffect(() => {
 		if (!currentUser?.id) {
@@ -129,6 +131,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 			}
 
 			const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createPost', {
+				allowedCommentors: [allowedCommentors],
 				content,
 				gov_type: govType,
 				proposalType,
@@ -159,6 +162,7 @@ const CreatePost = ({ className, proposalType }: Props) => {
 
 				const postId = data.post_id;
 				router.push(`/${proposalType === ProposalType.GRANTS ? 'grant' : 'post'}/${postId}`);
+				setAllowedCommentors(EAllowedCommentor.ALL);
 				queueNotification({
 					header: 'Thanks for sharing!',
 					message: 'Post created successfully.',
@@ -283,6 +287,13 @@ const CreatePost = ({ className, proposalType }: Props) => {
 						tags={tags}
 						setTags={setTags}
 						onChange={(arr) => savePostFormCacheValue('tags', JSON.stringify(arr))}
+					/>
+					{/* who can comment */}
+					<AllowedCommentorsRadioButtons
+						className='mt-8 gap-2'
+						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
+						isLoading={loading}
+						allowedCommentors={allowedCommentors}
 					/>
 					<Form.Item>
 						<CustomButton

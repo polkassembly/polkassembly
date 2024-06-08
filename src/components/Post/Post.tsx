@@ -42,6 +42,7 @@ import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
+import { EAllowedCommentor } from '~src/types';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -488,6 +489,7 @@ const Post: FC<IPostProps> = (props) => {
 		<>
 			<PostDataContextProvider
 				initialPostData={{
+					allowedCommentors: post?.allowedCommentors || EAllowedCommentor.ALL,
 					assetId: post?.assetId || null,
 					beneficiaries: post?.beneficiaries || [],
 					cid: post?.cid || '',

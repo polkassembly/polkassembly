@@ -10,13 +10,14 @@ import { useGov1treasuryProposal, useNetworkSelector } from '~src/redux/selector
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { EAllowedCommentor, NotificationStatus } from '~src/types';
 import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
-import { updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
+import { gov1TreasuryProposalActions, updateGov1TreasuryProposal } from '~src/redux/gov1TreasuryProposal';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Alert from '~src/basic-components/Alert';
+import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 
 interface Props {
 	className?: string;
@@ -27,7 +28,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 	const gov1ProposalData = useGov1treasuryProposal();
 	const dispatch = useDispatch();
 	const [form] = Form.useForm();
-	const { isDiscussionLinked: discussionLinked, discussionLink, title, content, tags } = gov1ProposalData;
+	const { isDiscussionLinked: discussionLinked, discussionLink, title, content, tags, allowedCommentors } = gov1ProposalData;
 	const [loading, setLoading] = useState<boolean>(false);
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(discussionLinked);
 
@@ -103,6 +104,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							form.setFieldValue('content', '');
 							form.setFieldValue('title', '');
 							form.setFieldValue('tags', []);
+							dispatch(gov1TreasuryProposalActions.setAllowedCommentors(EAllowedCommentor.ALL));
 						}}
 						size='small'
 						className='mt-1.5'
@@ -228,6 +230,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 								<label className='mb-0.5'>
 									Description <span className='text-nay_red'>*</span>
 								</label>
+
 								{isDiscussionLinked ? (
 									<Markdown
 										imgHidden
@@ -248,6 +251,13 @@ const WriteProposal = ({ setStep, className }: Props) => {
 							</div>
 						</div>
 					)}
+					{/* who can comment */}
+					<AllowedCommentorsRadioButtons
+						className={isDiscussionLinked ? 'mt-6 ' : '-mt-8'}
+						onChange={(value) => dispatch(gov1TreasuryProposalActions.setAllowedCommentors(value as EAllowedCommentor))}
+						isLoading={loading}
+						allowedCommentors={allowedCommentors}
+					/>
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'

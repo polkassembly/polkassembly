@@ -18,7 +18,7 @@ import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-import { ESteps, IBeneficiary } from '~src/types';
+import { EAllowedCommentor, ESteps, IBeneficiary } from '~src/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
@@ -171,6 +171,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const { resolvedTheme: theme } = useTheme();
 	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
+	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -461,6 +462,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							setTags={setTags}
 							setContent={setContent}
 							setTitle={setTitle}
+							setAllowedCommentors={setAllowedCommentors}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 
@@ -515,6 +518,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
 							isDiscussionLinked={isDiscussionLinked as boolean}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 				</div>

@@ -10,15 +10,27 @@ interface ICommentsProps {
 	disableEdit?: boolean;
 	comments: IComment[];
 }
+const handleUniqueReplies = (repliesArr: any[]) => {
+	if (repliesArr.length < 2) return repliesArr;
+	const uniqueReplies: Array<{ id: string }> = Object.values(
+		repliesArr.reduce((acc: any, obj) => {
+			acc[obj.id] = obj;
+			return acc;
+		}, {})
+	);
+	return uniqueReplies;
+};
 
 const Comments: FC<ICommentsProps> = (props) => {
 	const { className, comments } = props;
 	const uniqueComments: Array<IComment> = Object.values(
 		comments.reduce((acc: any, obj) => {
-			acc[obj.id] = obj;
+			const repliesArr = handleUniqueReplies([...(obj?.replies || []), ...(acc?.[obj?.id]?.replies || [])]) || [];
+			acc[obj.id] = { ...obj, replies: repliesArr };
 			return acc;
 		}, {})
 	);
+
 	return (
 		<div className={className}>
 			{uniqueComments.map((comment) => (

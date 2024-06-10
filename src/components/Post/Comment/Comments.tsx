@@ -15,7 +15,9 @@ const Comments: FC<ICommentsProps> = (props) => {
 	const { className, comments } = props;
 	const uniqueComments: Array<IComment> = Object.values(
 		comments.reduce((acc: any, obj) => {
-			acc[obj.id] = obj;
+			const repliesArr = [...(obj?.replies || []), ...(acc?.[obj.id]?.replies || [])];
+
+			acc[obj.id] = { ...obj, replies: repliesArr };
 			return acc;
 		}, {})
 	);

@@ -13,11 +13,15 @@ import { Divider, Spin } from 'antd';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 interface Props {
 	className?: string;
 	userProfile: ProfileDetailsResponse;
 }
+const removeSpaces = (text: string) => {
+	return text.replace(/&nbsp;|&lt;|&gt;|&amp;|&quot;|&#39;/g, '');
+};
 
 const ProfileSubscriptions = ({ className, userProfile }: Props) => {
 	const { network } = useNetworkSelector();
@@ -55,10 +59,10 @@ const ProfileSubscriptions = ({ className, userProfile }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
-				<div className='flex items-center space-x-1'>
+				<div className='mb-4 flex items-center space-x-1 px-6'>
 					<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
 					<span className='ml-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Subscriptions</span>
 					{/* <span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>(02)</span> */}
@@ -70,9 +74,9 @@ const ProfileSubscriptions = ({ className, userProfile }: Props) => {
 					return (
 						<div
 							key={index}
-							className='p-2'
+							className='mt-4 px-2'
 						>
-							<div className='my-3'>
+							<div className='mb-3 px-6'>
 								<div className='flex items-center justify-between'>
 									<div className='flex items-center space-x-1'>
 										<span className='text-sm font-semibold text-blue-light-high dark:to-blue-dark-high'>{item.reacted_by}</span>
@@ -87,7 +91,9 @@ const ProfileSubscriptions = ({ className, userProfile }: Props) => {
 									)}
 								</div>
 								<div>
-									<span className='mr-1 text-xs font-semibold text-blue-light-medium dark:text-blue-dark-medium'>{item.postContent.slice(0, 140)}...</span>
+									<span className='mr-1 text-xs font-semibold text-blue-light-medium dark:text-blue-dark-medium'>
+										{removeSpaces(removeSymbols(item.postContent)).slice(0, 140)}...
+									</span>
 									<Link
 										href={`https://${network}.polkassembly.io/${item.postType}/${item.postId}`}
 										target='_blank'

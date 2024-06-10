@@ -56,7 +56,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	});
 	try {
 		if (typeof postAuthorId == 'number' && Number(post_id) && strProposalType !== 'undefined') {
-			await createUserActivity({ action: EActivityAction.SUBSCRIBED, network, postAuthorId, postId: post_id, postType: strProposalType, userId: user.id });
+			await createUserActivity({ action: EActivityAction.SUBSCRIBED, is_deleted: false, network, postAuthorId, postId: post_id, postType: strProposalType, userId: user.id });
 		}
 	} catch (err) {
 		console.log(err);

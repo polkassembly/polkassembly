@@ -28,6 +28,7 @@ interface Args {
 	content?: any;
 	action: EActivityAction;
 	type?: EUserActivityType;
+	is_deleted?: boolean;
 }
 
 interface UserActivity {
@@ -475,17 +476,19 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 	}
 };
 
-const createSubscribePost = async ({ userId, network, postAuthorId, postId, postType }: Args) => {
+const createSubscribePost = async (activityPayload: UserActivity) => {
+	const { by, network, post_author_id, post_id, post_type, is_deleted = false } = activityPayload;
+
 	const date = new Date();
 
 	const payload = {
-		by: userId,
+		by,
 		created_at: date,
-		is_deleted: false,
+		is_deleted,
 		network,
-		post_author_id: postAuthorId,
-		post_id: postId,
-		post_type: postType,
+		post_author_id,
+		post_id,
+		post_type,
 		type: EUserActivityType.SUBSCRIBED,
 		updated_at: date
 	};
@@ -500,6 +503,7 @@ const createSubscribePost = async ({ userId, network, postAuthorId, postId, post
 
 const createUserActivity = async ({
 	network,
+	is_deleted,
 	postAuthorId,
 	postId,
 	postType,
@@ -609,21 +613,40 @@ const createUserActivity = async ({
 			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
 		}
 		if (action === EActivityAction.SUBSCRIBED) {
-			await createSubscribePost({
-				action,
-				commentAuthorId,
-				commentId,
-				content,
-				network,
-				postAuthorId: postAuthorId as number,
-				postId: postId as string | number,
-				postType: postType as ProposalType,
-				reactionAuthorId,
-				reactionId,
-				replyAuthorId,
-				replyId,
-				userId: userId as number
-			});
+			if (userId && typeof is_deleted == 'boolean') {
+				try {
+					const activityRef = firestore_db
+						.collection('user_activities')
+						.where('network', '==', network)
+						.where('post_id', '==', postId)
+						.where('post_type', '==', postType)
+						.where('by', '==', userId)
+						.limit(1);
+
+					const activitySnapshot = await activityRef.get();
+
+					if (!activitySnapshot.empty) {
+						const existingActivityDoc = activitySnapshot.docs[0];
+						const currentIsDeleted = existingActivityDoc.data().is_deleted;
+						await existingActivityDoc.ref.update({ is_deleted: !currentIsDeleted, updated_at: date });
+					} else {
+						const activityPayload: UserActivity = {
+							by: userId,
+							created_at: date,
+							is_deleted: false,
+							network,
+							post_author_id: postAuthorId as number,
+							post_id: postId as string | number,
+							post_type: postType as ProposalType,
+							type: EUserActivityType.SUBSCRIBED,
+							updated_at: date
+						};
+						await createSubscribePost(activityPayload);
+					}
+				} catch (err) {
+					console.log(err);
+				}
+			}
 		}
 	}
 };

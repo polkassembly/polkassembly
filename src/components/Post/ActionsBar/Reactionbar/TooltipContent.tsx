@@ -6,6 +6,8 @@ import React from 'react';
 import { UserProfileImage } from 'pages/api/v1/auth/data/userImage';
 import ImageComponent from '~src/components/ImageComponent';
 import Loader from '~src/ui-components/Loader';
+import Link from 'next/link';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 interface TooltipContentProps {
 	users: UserProfileImage[];
@@ -14,6 +16,7 @@ interface TooltipContentProps {
 }
 
 const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoading }) => {
+	const { network } = useNetworkSelector();
 	const allUsers = users.map((user, index) => ({
 		id: user.id,
 		image: user.image,
@@ -27,7 +30,8 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 			) : (
 				<div>
 					{allUsers.map((user) => (
-						<div
+						<Link
+							href={`https://${network}/polkkassembly.io/user/${user.username}`}
 							key={user.id}
 							className='mb-[6px] flex items-center gap-[6px]'
 						>
@@ -38,7 +42,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 								iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 							/>
 							<span className='mr-2 text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{user.username}</span>
-						</div>
+						</Link>
 					))}
 				</div>
 			)}

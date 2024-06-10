@@ -76,7 +76,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 
 	const getUserProfile = async () => {
 		setIsLoading(true);
-		const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds });
+		const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds: userIds || [] });
 		if (data) {
 			setUserImageData(data);
 			setIsLoading(false);

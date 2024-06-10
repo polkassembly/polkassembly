@@ -640,18 +640,6 @@ export async function getComments(
 				});
 			}
 		}
-		if (comment && !userIdToUserMap[comment?.user_id]) {
-			if (comment.replies && Array.isArray(comment.replies) && comment.replies.length > 0) {
-				comment.replies = comment.replies.map((reply) => {
-					if (reply) {
-						reply.proposer = userIdToUserMap[reply.user_id].proposer || reply.proposer;
-						reply.username = userIdToUserMap[reply.user_id].username || reply.username;
-						reply.is_custom_username = userIdToUserMap[reply.user_id].is_custom_username || false;
-					}
-					return reply;
-				});
-			}
-		}
 		return {
 			...comment,
 			spam_users_count: checkReportThreshold(Number(comment?.spam_users_count))

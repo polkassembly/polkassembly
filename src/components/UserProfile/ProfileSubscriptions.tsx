@@ -79,7 +79,7 @@ const ProfileSubscriptions = ({ className, userProfile }: Props) => {
 							<div className='mb-3 px-6'>
 								<div className='flex items-center justify-between'>
 									<div className='flex items-center space-x-1'>
-										<span className='text-sm font-semibold text-blue-light-high dark:to-blue-dark-high'>{item.reacted_by}</span>
+										<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{item.reacted_by}</span>
 										<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>subscribed to</span>
 									</div>
 									{item.createdAt && (

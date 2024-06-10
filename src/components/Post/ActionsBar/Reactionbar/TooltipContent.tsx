@@ -31,7 +31,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 				<div>
 					{allUsers.map((user) => (
 						<Link
-							href={`https://${network}/polkkassembly.io/user/${user.username}`}
+							href={`https://${network}.polkassembly.io/user/${user.username}`}
 							key={user.id}
 							className='mb-[6px] flex items-center gap-[6px]'
 						>

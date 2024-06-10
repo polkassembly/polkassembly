@@ -187,16 +187,18 @@ const ProfileTabs = ({
 			)
 		});
 	}
-	tabItems.push({
-		children: <ProfileSubscriptions />,
-		key: 'Subscriptions',
-		label: (
-			<div className='flex items-center'>
-				<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
-				Subscriptions<span className='ml-[2px]'>({totals?.votes})</span>
-			</div>
-		)
-	});
+	if (userProfile.user_id == userId) {
+		tabItems.push({
+			children: <ProfileSubscriptions userProfile={userProfile} />,
+			key: 'Subscriptions',
+			label: (
+				<div className='flex items-center'>
+					<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
+					Subscriptions
+				</div>
+			)
+		});
+	}
 	return (
 		<div className={classNames(className, 'rounded-[18px]')}>
 			<Tabs

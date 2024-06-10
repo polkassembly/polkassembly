@@ -475,6 +475,29 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 	}
 };
 
+const createSubscribePost = async ({ userId, network, postAuthorId, postId, postType }: Args) => {
+	const date = new Date();
+
+	const payload = {
+		by: userId,
+		created_at: date,
+		is_deleted: false,
+		network,
+		post_author_id: postAuthorId,
+		post_id: postId,
+		post_type: postType,
+		type: EUserActivityType.SUBSCRIBED,
+		updated_at: date
+	};
+
+	try {
+		const ref = firestore_db.collection('user_activities').doc();
+		await ref.set(payload, { merge: true });
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const createUserActivity = async ({
 	network,
 	postAuthorId,
@@ -584,6 +607,23 @@ const createUserActivity = async ({
 		}
 		if (action === EActivityAction.DELETE) {
 			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
+		}
+		if (action === EActivityAction.SUBSCRIBED) {
+			await createSubscribePost({
+				action,
+				commentAuthorId,
+				commentId,
+				content,
+				network,
+				postAuthorId: postAuthorId as number,
+				postId: postId as string | number,
+				postType: postType as ProposalType,
+				reactionAuthorId,
+				reactionId,
+				replyAuthorId,
+				replyId,
+				userId: userId as number
+			});
 		}
 	}
 };

@@ -621,7 +621,8 @@ export enum EUserActivityType {
 	REACTED = 'REACTED',
 	COMMENTED = 'COMMENTED',
 	REPLIED = 'REPLIED',
-	MENTIONED = 'MENTIONED'
+	MENTIONED = 'MENTIONED',
+	SUBSCRIBED = 'SUBSCRIBED'
 }
 
 export enum EUserActivityIn {
@@ -633,7 +634,8 @@ export enum EUserActivityIn {
 export enum EActivityAction {
 	CREATE = 'CREATE',
 	EDIT = 'EDIT',
-	DELETE = 'DELETE'
+	DELETE = 'DELETE',
+	SUBSCRIBED = 'SUBSCRIBED'
 }
 
 export enum ESteps {

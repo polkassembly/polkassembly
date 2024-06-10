@@ -12,6 +12,8 @@ import authServiceInstance from '~src/auth/auth';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import createUserActivity from '../../utils/create-activity';
+import { EActivityAction } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -23,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const { post_id = null, proposalType } = req.body;
 
-	const strProposalType = String(proposalType);
+	const strProposalType = proposalType && String(proposalType);
 	if (!isFirestoreProposalTypeValid(strProposalType)) {
 		return res.status(400).json({ message: `The proposal type "${proposalType}" is invalid.` });
 	}
@@ -52,7 +54,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		console.error(e);
 		return res.status(500).json({ message: messages.INTERNAL });
 	});
-
+	try {
+		if (typeof postAuthorId == 'number' && Number(post_id) && strProposalType !== 'undefined') {
+			await createUserActivity({ action: EActivityAction.SUBSCRIBED, network, postAuthorId, postId: post_id, postType: strProposalType, userId: user.id });
+		}
+	} catch (err) {
+		console.log(err);
+	}
 	return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
 }
 

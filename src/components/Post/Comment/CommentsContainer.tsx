@@ -39,10 +39,13 @@ import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
 import { getAllCommentsByTimeline } from './utils/getAllCommentsByTimeline';
-import { useNetworkSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import Tooltip from '~src/basic-components/Tooltip';
 import Alert from '~src/basic-components/Alert';
+import getIsCommentAllowed from './utils/getIsCommentAllowed';
+import getCommentDisabledMessage from './utils/getCommentDisabledMessage';
+import classNames from 'classnames';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -98,8 +101,9 @@ export const getSortedComments = (comments: { [index: string]: Array<IComment> }
 
 const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
+	const { loginAddress, isUserOnchainVerified } = useUserDetailsSelector();
 	const {
-		postData: { postType, timeline, created_at }
+		postData: { postType, timeline, created_at, allowedCommentors, userId }
 	} = usePostDataContext();
 	const targetOffset = 10;
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
@@ -113,6 +117,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const router = useRouter();
 	let allComments = Object.values(comments)?.flat() || [];
 	const { resolvedTheme: theme } = useTheme();
+	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
+	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -258,13 +264,25 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		}
 	];
 
+	useEffect(() => {
+		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allowedCommentors, loginAddress]);
+
 	return (
 		<div className={className}>
 			{id ? (
 				<>
 					{isGrantClosed ? (
 						<Alert
-							message={<span className='dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
+							message={<span className='mb-6 dark:text-blue-dark-high'>Grant closed, no comments can be added or edited.</span>}
+							type='info'
+							showIcon
+						/>
+					) : !isCommentAllowed ? (
+						<Alert
+							message={<span className='mb-10 dark:text-blue-dark-high'>{reasonForNoComment}</span>}
 							type='info'
 							showIcon
 						/>
@@ -278,7 +296,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			) : (
 				<div
 					id='comment-login-prompt'
-					className='mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-sm bg-[#E6F4FF] shadow-md dark:bg-alertColorDark'
+					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'mb-8 mt-4 flex h-12 items-center justify-center gap-3 rounded-sm bg-[#E6F4FF] shadow-md dark:bg-alertColorDark')}
 				>
 					<Image
 						src='/assets/icons/alert-login.svg'
@@ -303,7 +321,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'
-					className='tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1'
+					className={classNames(!isCommentAllowed ? ' mt-6' : '', 'tooltip-design mb-5 flex items-center justify-between max-sm:flex-col max-sm:items-start max-sm:gap-1')}
 				>
 					<span className='text-lg font-medium text-bodyBlue dark:font-normal dark:text-blue-dark-high'>
 						{allComments.length || 0}
@@ -339,7 +357,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					)}
 				</div>
 			)}
-			<div className={'block grid-cols-12 xl:grid'}>
+			<div className={classNames(!isCommentAllowed ? 'mt-6' : '', 'block grid-cols-12 xl:grid')}>
 				{!!allComments?.length && timelines.length >= 1 && (
 					<div className='sticky top-[110px] col-start-1 col-end-2 mb-[65px] ml-1 hidden h-min min-w-[100px] xl:block'>
 						<Anchor

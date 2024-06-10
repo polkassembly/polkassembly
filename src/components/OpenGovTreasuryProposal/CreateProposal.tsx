@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -57,6 +57,7 @@ interface Props {
 	isDiscussionLinked: boolean;
 	genralIndex?: string | null;
 	inputAmountValue: string;
+	allowedCommentors?: EAllowedCommentor;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -83,7 +84,8 @@ const CreateProposal = ({
 	discussionLink,
 	isDiscussionLinked,
 	genralIndex = null,
-	inputAmountValue
+	inputAmountValue,
+	allowedCommentors
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -151,6 +153,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,

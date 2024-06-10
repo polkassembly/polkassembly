@@ -25,7 +25,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EActivityAction, IPostHistory, IPostTag, Post } from '~src/types';
+import { EActivityAction, EAllowedCommentor, IPostHistory, IPostTag, Post } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -45,6 +45,7 @@ export interface IEditPostResponse {
 		name: string;
 	};
 	last_edited_at: Date;
+	allowedCommentors: EAllowedCommentor[];
 }
 
 const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res) => {
@@ -55,7 +56,17 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, postId, proposalType, title, timeline, tags, topicId } = req.body;
+	const { content, postId, proposalType, title, timeline, tags, topicId, allowedCommentors } = req.body;
+
+	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
+		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
+	}
+
+	if ((allowedCommentors || []).length > 0) {
+		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(EAllowedCommentor).includes(String(commentor) as EAllowedCommentor));
+		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
+	}
+
 	if (proposalType === ProposalType.ANNOUNCEMENT) {
 		if (!postId || !title || !content || !proposalType || !topicId) return res.status(400).json({ message: 'Missing parameters in request body' });
 	} else {
@@ -86,7 +97,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const post = postDoc.data();
 	let isAuthor = false;
 	let proposerAddress = post?.proposer_address || '';
+
+	let allowedCommentorsArr = allowedCommentors || [EAllowedCommentor.ALL];
+
 	if (postDoc.exists && !isNaN(post?.user_id)) {
+		allowedCommentorsArr = allowedCommentors || post?.allowedCommentors || [EAllowedCommentor.ALL];
+
 		if (![ProposalType.DISCUSSIONS, ProposalType.GRANTS].includes(proposalType)) {
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 			let postQuery =
@@ -277,6 +293,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const { data: postUser } = await getUserWithAddress(proposer_address);
 
 	const newPostDoc: Omit<Post, 'last_comment_at'> = {
+		allowedCommentors: allowedCommentorsArr,
 		content,
 		created_at,
 		history,
@@ -345,6 +362,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 	const { last_edited_at, topic_id } = newPostDoc;
 
 	res.status(200).json({
+		allowedCommentors: allowedCommentorsArr,
 		content,
 		last_edited_at: last_edited_at,
 		proposer: proposer_address,

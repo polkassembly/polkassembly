@@ -4,8 +4,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IGov1TreasuryProposalStore } from './@types';
+import { EAllowedCommentor } from '~src/types';
 
 const initialState: IGov1TreasuryProposalStore = {
+	allowedCommentors: EAllowedCommentor.ALL,
 	beneficiary: '',
 	content: '',
 	discussionId: null,
@@ -34,6 +36,7 @@ export const gov1TreasuryProposalStore = createSlice({
 	reducers: {
 		resetGov1TreasuryProposal: (state) => {
 			(state.beneficiary = ''), (state.content = '');
+			state.allowedCommentors = EAllowedCommentor.ALL;
 			state.discussionLink = '';
 			state.discussionId = null;
 			state.fundingAmount = '0';
@@ -44,6 +47,9 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.secondStepPercentage = 0;
 			state.proposalIndex = null;
 			state.title = '';
+		},
+		setAllowedCommentors: (state, action: PayloadAction<EAllowedCommentor>) => {
+			state.allowedCommentors = action.payload;
 		},
 		updateGov1TreasuryProposal: (state, action: PayloadAction<IGov1TreasuryProposalStore>) => {
 			state.beneficiary = action?.payload?.beneficiary;
@@ -58,6 +64,7 @@ export const gov1TreasuryProposalStore = createSlice({
 			state.proposalIndex = action?.payload?.proposalIndex;
 			state.firstStepPercentage = action.payload.firstStepPercentage;
 			state.secondStepPercentage = action.payload.secondStepPercentage;
+			state.allowedCommentors = action.payload.allowedCommentors || EAllowedCommentor.ALL;
 		}
 	}
 });

@@ -17,7 +17,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -108,6 +108,7 @@ export interface IPIPsVoting {
 }
 
 export interface IPostResponse {
+	allowedCommentors: EAllowedCommentor;
 	assetId?: string | null;
 	post_reactions: IReactions;
 	timeline: any[];
@@ -886,6 +887,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		const post: IPostResponse = {
+			allowedCommentors: EAllowedCommentor.ALL,
 			announcement: postData?.announcement,
 			assetId: assetId || null,
 			beneficiaries,
@@ -1079,6 +1081,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
+				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
 				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;

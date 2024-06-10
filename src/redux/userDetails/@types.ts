@@ -22,4 +22,5 @@ export interface IUserDetailsStore {
 	primaryNetwork: string;
 	is2FAEnabled?: boolean;
 	coverImage?: string;
+	isUserOnchainVerified: boolean;
 }

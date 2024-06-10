@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 
 const messages = {
 	ABOUT_INVALID_SIGNATURE: 'Profile update failed. Invalid signature',
@@ -117,7 +118,9 @@ const messages = {
 	USERNAME_CHANGE_SUCCESSFUL: 'Username successfully changed.',
 	USERNAME_INVALID_ERROR: 'Username must be between 3 to 30 characters long, letters and numbers are allowed.',
 	USER_EMAIL_ALREADY_EXISTS: 'A user with this email already exists.',
-	USER_NOT_FOUND: 'User not found.'
+	USER_NOT_FOUND: 'User not found.',
+	DISABLE_COMMENTS: 'Comments have been disabled for this post.',
+	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.'
 };
 
 export default messages;

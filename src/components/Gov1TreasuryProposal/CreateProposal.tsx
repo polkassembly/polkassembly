@@ -52,7 +52,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
-	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags } = gov1proposalData;
+	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags, allowedCommentors } = gov1proposalData;
 
 	const [{ minBond, proposalBond }, setTreasuryData] = useState<{ proposalBond: string | null; minBond: string | null }>({
 		minBond: '',
@@ -115,6 +115,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			allowedCommentors: [allowedCommentors],
 			content,
 			discussionId: isDiscussionLinked ? discussionId : null,
 			postId,

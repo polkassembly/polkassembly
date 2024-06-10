@@ -15,7 +15,7 @@ export interface UserProfileImage {
 async function handler(req: NextApiRequest, res: NextApiResponse<UserProfileImage[] | MessageType>) {
 	storeApiKeyUsage(req);
 
-	const { userIds = [15489, 21393, 5013] } = req.body;
+	const { userIds } = req.body;
 
 	if (!userIds || !Array.isArray(userIds) || userIds.some((id) => isNaN(Number(id)))) {
 		return res.status(400).json({ message: 'Invalid ids.' });

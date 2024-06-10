@@ -33,6 +33,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 						<Link
 							href={`https://${network}.polkassembly.io/user/${user.username}`}
 							key={user.id}
+							target='_blank'
 							className='mb-[6px] flex items-center gap-[6px]'
 						>
 							<ImageComponent

@@ -15,12 +15,16 @@ interface TooltipContentProps {
 	isLoading: boolean;
 }
 
+const encodeUsername = (username: string) => {
+	return encodeURIComponent(username);
+};
+
 const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoading }) => {
 	const { network } = useNetworkSelector();
 	const allUsers = users.map((user, index) => ({
 		id: user.id,
 		image: user.image,
-		username: usernames[index]
+		username: encodeUsername(usernames[index])
 	}));
 
 	return (

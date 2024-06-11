@@ -47,9 +47,11 @@ const UploadImage = ({ className, updateProfile, imageInside, defaultImage, name
 			xhr.withCredentials = false;
 			xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMG_BB_API_KEY);
 
-			xhr.upload.onprogress = () => {
-				if (loading) {
-					setLoading(false);
+			xhr.upload.onprogress = (e) => {
+				if (Number(((e.loaded / e.total) * 100).toFixed(1)) == 100) {
+					if (loading) {
+						setLoading(false);
+					}
 				}
 			};
 
@@ -57,13 +59,11 @@ const UploadImage = ({ className, updateProfile, imageInside, defaultImage, name
 				setLoading(false);
 				if (xhr.status === 403) {
 					message.error('HTTP Error: ' + xhr.status);
-					setLoading(false);
 					return;
 				}
 
 				if (xhr.status < 200 || xhr.status >= 300) {
 					message.error('HTTP Error: ' + xhr.status);
-					setLoading(false);
 					return;
 				}
 

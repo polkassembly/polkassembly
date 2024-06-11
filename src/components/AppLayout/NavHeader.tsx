@@ -89,6 +89,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const { resolvedTheme: theme } = useTheme();
 	const [openTooltip, setOpenTooltip] = useState<boolean>(true);
 
+	useEffect(() => {
+		const tooltipState = localStorage.getItem('tooltipState');
+		setOpenTooltip(tooltipState !== 'close');
+	}, []);
+
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
 		if (!router.query?.username) return;
@@ -392,7 +397,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 							color='#3C74E1'
 							zIndex={3000}
 						>
-							<div onClick={() => setOpenTooltip(false)}>
+							<div
+								onClick={() => {
+									setOpenTooltip(false);
+									localStorage.setItem('tooltipState', 'close');
+								}}
+							>
 								<InAppNotification />
 							</div>
 						</Tooltip>

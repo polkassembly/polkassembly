@@ -60,7 +60,16 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			.offset((Number(page) - 1) * LISTING_LIMIT)
 			.get();
 
+		const countRef = await firestore_db
+			.collection('user_activities')
+			.where('network', '==', network)
+			.where('type', '==', EUserActivityType.SUBSCRIBED)
+			.where('post_author_id', '==', userId)
+			.where('is_deleted', '==', false)
+			.get();
+
 		const activitiesDocs = activitiesSnapshot.docs;
+		const totalCount = countRef.docs.length;
 
 		const dataPromises = activitiesDocs.map(async (activity) => {
 			const activityData = activity.data() as IUserActivity;
@@ -89,7 +98,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 
 		const data = await Promise.all(dataPromises);
 
-		return res.status(200).json({ data });
+		return res.status(200).json({ data, totalCount });
 	} catch (error) {
 		console.error('Error fetching subscribed activities:', error);
 		return res.status(500).json({ message: 'Internal Server Error' });

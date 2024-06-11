@@ -189,7 +189,7 @@ const ProfileTabs = ({
 	}
 	if (userProfile.user_id == userId) {
 		tabItems.push({
-			children: <ProfileSubscriptions userProfile={userProfile} />,
+			children: <ProfileSubscriptions />,
 			key: 'Subscriptions',
 			label: (
 				<div className='flex items-center'>

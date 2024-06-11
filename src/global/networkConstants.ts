@@ -191,7 +191,7 @@ export const chainProperties: types.ChainPropType = {
 		parachain: '1000',
 		logo: polkadotLogo,
 		palletInstance: '50',
-		rpcEndpoint: 'wss://rpc.polkadot.io',
+		rpcEndpoint: 'wss://polkadot.api.onfinality.io/public-ws',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,

@@ -63,7 +63,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { logout } from '~src/redux/userDetails';
+import { logout, userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
@@ -379,6 +379,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				apiReady: apiReady,
 				network: network
 			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
 			setMainDisplay(displayParent || display || nickname);
 			setIsGood(isGood);
 			setIsIdentitySet(isIdentitySet);

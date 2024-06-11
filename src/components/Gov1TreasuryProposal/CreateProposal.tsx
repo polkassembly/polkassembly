@@ -52,7 +52,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 	const gov1proposalData = useGov1treasuryProposal();
-	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags } = gov1proposalData;
+	const { beneficiary, proposer, fundingAmount, title, content, discussionId, isDiscussionLinked, tags, allowedCommentors } = gov1proposalData;
 
 	const [{ minBond, proposalBond }, setTreasuryData] = useState<{ proposalBond: string | null; minBond: string | null }>({
 		minBond: '',
@@ -115,6 +115,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			allowedCommentors: [allowedCommentors],
 			content,
 			discussionId: isDiscussionLinked ? discussionId : null,
 			postId,
@@ -284,7 +285,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								)}
 							</div>
 							<div className='flex w-full items-end gap-2 text-sm '>
-								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+								<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 									<Address
 										address={proposer || ''}
 										isTruncateUsername={false}
@@ -429,7 +430,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 									/>
 								</label>
 								<Input
-									className='hide-pointer h-10 rounded-[4px] border-[#D2D8E0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high'
+									className='hide-pointer h-10 rounded-[4px] border-section-light-container dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high'
 									value={proposalBond}
 									disabled
 								/>
@@ -448,7 +449,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 								</label>
 
 								<Input
-									className='hide-pointer h-10 rounded-[4px] border-[#D2D8E0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high'
+									className='hide-pointer h-10 rounded-[4px] border-section-light-container dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high'
 									value={minBond}
 									disabled
 								/>
@@ -468,7 +469,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 						}
 					/>
 				)}
-				<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+				<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<CustomButton
 						text='Create Proposal'
 						onClick={handleCreateProposal}

@@ -40,7 +40,7 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 							onChange={(checked) => (!checked ? handleToggleClick() : handleEnableDisabled(CHANNEL.EMAIL, true))}
 						/>
 						<label>
-							<span className={`text-[14px] font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>
+							<span className={`text-sm font-medium  ${notificationEnabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>
 								{notificationEnabled ? 'Enabled' : 'Disabled'}
 							</span>
 						</label>
@@ -48,10 +48,10 @@ export default function EmailNotificationCard({ verifiedEmail, handleEnableDisab
 				)}
 			</h3>
 			<div className='ml-7'>
-				<h3 className='token-desktop-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+				<h3 className='token-desktop-container m-0 text-sm text-blue-light-high dark:text-blue-dark-high'>
 					{verifiedEmail ? verifiedEmail : 'Please add your email on account page.'}
 				</h3>
-				<h3 className='token-mobile-container m-0 text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+				<h3 className='token-mobile-container m-0 text-sm text-blue-light-high dark:text-blue-dark-high'>
 					{verifiedEmail ? shortenString(verifiedEmail, 10) : 'Please add your email on account page.'}
 				</h3>
 			</div>

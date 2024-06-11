@@ -18,7 +18,7 @@ import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
-import { ESteps, IBeneficiary } from '~src/types';
+import { EAllowedCommentor, ESteps, IBeneficiary } from '~src/types';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import dynamic from 'next/dynamic';
 import CreateProposalWhiteIcon from '~assets/icons/CreateProposalWhite.svg';
@@ -171,6 +171,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const { resolvedTheme: theme } = useTheme();
 	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
+	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -363,7 +364,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Exit Treasury Proposal Creation
 					</div>
 				}
@@ -372,7 +373,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 						Your treasury proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleClose}
 							buttonsize='sm'
@@ -422,7 +423,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
-					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
 						Create Treasury Proposal
 					</div>
@@ -461,6 +462,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							setTags={setTags}
 							setContent={setContent}
 							setTitle={setTitle}
+							setAllowedCommentors={setAllowedCommentors}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 
@@ -515,6 +518,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							preimageHash={preimageHash}
 							preimageLength={preimageLength}
 							isDiscussionLinked={isDiscussionLinked as boolean}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 				</div>

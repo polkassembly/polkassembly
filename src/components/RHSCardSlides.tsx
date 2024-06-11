@@ -331,7 +331,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						{RHSCards.map((_, index) => (
 							<div
 								key={index}
-								className={`indicator h-2 w-2 rounded-full  ${index === currentIndex ? 'bg-rhs-indicator-gradient' : 'bg-[#D2D8E0]'}`}
+								className={`indicator h-2 w-2 rounded-full  ${index === currentIndex ? 'bg-rhs-indicator-gradient' : 'bg-section-light-container'}`}
 							></div>
 						))}
 						{RHSCards.length > 1 && (

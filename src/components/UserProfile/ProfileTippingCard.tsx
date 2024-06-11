@@ -124,7 +124,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 				className={classNames(
 					className,
 					theme,
-					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-lg:overflow-x-auto max-md:flex-col'
+					'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-lg:overflow-x-auto max-md:flex-col'
 				)}
 			>
 				<div className='flex justify-between'>
@@ -173,7 +173,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 						return (
 							<span
 								className={`flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid max-md:px-5 md:px-8 ${
-									tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+									tipBalance.eq(tipBn) ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-section-light-container dark:border-[#3B444F]'
 								}
               `}
 								key={tip.key}
@@ -194,7 +194,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 					})}
 					<span
 						className={`flex h-[36px] cursor-pointer items-center justify-center gap-1 rounded-[28px] border-[1px] border-solid px-3 ${
-							tipAmount === null ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-[#D2D8E0] dark:border-[#3B444F]'
+							tipAmount === null ? 'border-pink_primary bg-[#FAE7EF] dark:bg-pink-dark-primary' : 'border-section-light-container dark:border-[#3B444F]'
 						}`}
 						key={'custom'}
 						onClick={() => {
@@ -216,7 +216,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 					{!!tipsData.length && !loading ? (
 						tipsData.map((tip, index) => (
 							<div
-								className={`flex w-full gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] py-2 font-normal dark:border-separatorDark ${
+								className={`flex w-full gap-2 border-0 border-b-[1px] border-solid border-section-light-container py-2 font-normal dark:border-separatorDark ${
 									tipsData.length - 1 === index && 'border-none'
 								} ${isMobile ? 'flex-col items-start justify-start' : 'items-center'}`}
 								key={index}
@@ -232,7 +232,7 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 										<div className='flex h-full flex-shrink-0 items-center gap-2'>
 											<Divider
 												type='vertical'
-												className=' bg-[#D2D8E0] dark:bg-separatorDark'
+												className=' bg-section-light-container dark:bg-separatorDark'
 											/>
 											<div className='flex gap-1'>
 												<ClockCircleOutlined />

@@ -114,7 +114,7 @@ const Delete: FC<{ className?: string }> = ({ className }) => {
 						setIsFormValid(!!allValues.reason && !!allValues.password);
 					}}
 				>
-					<p className='text-[14px] text-blue-light-high dark:text-blue-dark-high'>
+					<p className='text-sm text-blue-light-high dark:text-blue-dark-high'>
 						Please note that this action is irreversible and all the data associated with your account will be permanently deleted.
 					</p>
 					<Modal

@@ -59,7 +59,7 @@ const ProfileOverview = ({
 				<div className='flex w-full gap-6'>
 					<div className='flex w-[60%] flex-col gap-6 max-lg:w-full'>
 						{!!bio?.length && (
-							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
 								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 									<Image
 										src='/assets/profile/about.svg'
@@ -133,7 +133,7 @@ const ProfileOverview = ({
 					<div className='flex w-[60%] flex-col gap-5 py-1 max-md:w-full'>
 						{/* About card */}
 						{(!!bio?.length || username === userProfile.username) && (
-							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
 								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 									<Image
 										src='/assets/profile/about.svg'

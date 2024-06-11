@@ -15,7 +15,7 @@ import { IInAppNotification } from '~src/components/InAppNotification/types';
 
 export const getUserNotifications = async ({ userId }: { userId: number }) => {
 	try {
-		const notificationsSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').get();
+		const notificationsSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').orderBy('created_at', 'desc').get();
 
 		const userSnapshot = await firestore_db.collection('users').doc(String(userId)).get();
 		let lastSeen = null;

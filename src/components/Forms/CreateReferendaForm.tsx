@@ -613,7 +613,7 @@ export default function CreateReferendaForm({
 									}}
 									className={'border border-white'}
 								>
-									<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
+									<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-section-light-container bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high '>
 										<span className='flex items-center gap-x-2'>{palletRpc || <span className='text-lightBlue dark:text-blue-dark-medium'>Pallet</span>}</span>
 										<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
 									</div>
@@ -630,7 +630,7 @@ export default function CreateReferendaForm({
 											onClick: (e: any) => onPalletCallableParamChange(e, 'callable')
 										}}
 									>
-										<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
+										<div className='flex items-center justify-between gap-x-2 rounded-md border border-solid border-section-light-container bg-[#f6f7f9] px-4 py-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high'>
 											<span className='flex items-center gap-x-2'>{callable || <span className='text-lightBlue dark:text-blue-dark-medium'>Method</span>}</span>
 											<ArrowDownIcon className='text-[#90A0B7] dark:text-blue-dark-medium' />
 										</div>

@@ -19,7 +19,7 @@ const SocialsLayout = ({ title, description, value, onVerify, verified, status, 
 				<span className='w-16 py-1.5 text-sm'>{title}</span>
 				<div className='w-full'>
 					<div
-						className={`flex h-10  items-center justify-between rounded-[4px] border-[1px] border-solid border-[#D2D8E0] pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
+						className={`flex h-10  items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container pl-3 pr-2 tracking-wide dark:border-[#3B444F] dark:bg-transparent ${
 							verified ? 'bg-[#f6f7f9] text-[#8d99a9]' : 'bg-white text-bodyBlue dark:text-blue-dark-high'
 						}`}
 					>

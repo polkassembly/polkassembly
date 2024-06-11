@@ -98,7 +98,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 			className={classNames(
 				theme,
 				className,
-				'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
@@ -111,7 +111,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				Balance
 			</span>
 			{userProfile?.user_id === id && selectedAddresses.length > 0 && !votesUnlockUnavailableNetworks.includes(network) && <VoteUnlock addresses={selectedAddresses} />}
-			<div className='my-0 flex items-center gap-2 overflow-x-auto rounded-xl bg-[#D2D8E0] px-4 py-3 text-xs dark:bg-[#191919] max-md:gap-0.5 max-md:px-2'>
+			<div className='my-0 flex items-center gap-2 overflow-x-auto rounded-xl bg-section-light-container px-4 py-3 text-xs dark:bg-[#191919] max-md:gap-0.5 max-md:px-2'>
 				<Image
 					src={'/assets/profile/green-votes.svg'}
 					height={34}
@@ -166,7 +166,7 @@ const TotalProfileBalances = ({ className, selectedAddresses, userProfile, theme
 				</span>
 				<Divider
 					type='horizontal'
-					className='my-0 bg-[#D2D8E0] dark:bg-separatorDark'
+					className='my-0 bg-section-light-container dark:bg-separatorDark'
 				/>
 				<span className='flex justify-between'>
 					<span className='flex gap-2'>

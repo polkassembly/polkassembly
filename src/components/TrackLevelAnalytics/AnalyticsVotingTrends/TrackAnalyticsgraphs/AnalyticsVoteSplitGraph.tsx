@@ -102,7 +102,7 @@ const AnalyticsVoteSplitGraph = ({ votesSplitData, isUsedInAccounts, isSmallScre
 	};
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-base font-semibold sm:text-xl'>Vote Split</h2>
 				<div className='-mt-2 hidden items-center gap-2 sm:flex sm:gap-[14px]'>

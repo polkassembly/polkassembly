@@ -85,7 +85,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 	return (
 		<Modal
 			title={
-				<div className='flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-5 py-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					{isEditMode ? 'Edit Delegate Details' : 'Become A Delegate'}
 				</div>
 			}
@@ -135,7 +135,7 @@ const BecomeDelegateModal = ({ isModalOpen, setIsModalOpen, className, profileDe
 							className='border-none dark:bg-infoAlertBgDark'
 						/>
 					</div>
-					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
+					<div className='mt-5 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-5 py-4 dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-medium'>
 						<Button
 							className={`flex h-10 w-full items-center justify-center space-x-2 rounded-[4px] border-none bg-pink_primary text-sm font-medium tracking-wide text-white dark:bg-pink_primary ${
 								newBio || loading ? '' : 'opacity-60'

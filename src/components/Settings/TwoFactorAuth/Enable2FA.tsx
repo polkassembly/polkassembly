@@ -260,7 +260,7 @@ const Enable2FA: FC<{ className?: string }> = ({ className }) => {
 						<KeyboardDownIcon />
 					</span>
 				</span>
-				<p className='mt-2 hidden flex-1 text-[14px] md:mt-[10px] md:block'>
+				<p className='mt-2 hidden flex-1 text-sm md:mt-[10px] md:block'>
 					Enhance account security with two factor authentication. Verify your identity with an extra step for added protection.
 				</p>
 			</div>

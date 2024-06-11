@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Space } from 'antd';
+import { Divider, Space, Tooltip } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -46,6 +46,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import { poppins } from 'pages/_app';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -86,6 +87,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const [openTooltip, setOpenTooltip] = useState<boolean>(true);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -372,7 +374,29 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
-					{AVAILABLE_NETWORK.includes(network) && <InAppNotification />}
+					{AVAILABLE_NETWORK.includes(network) && (
+						<Tooltip
+							open={openTooltip}
+							arrow
+							placement='bottomLeft'
+							overlayClassName='rounded-xxl'
+							title={
+								<div className='p-[6px]'>
+									<div className='flex items-center space-x-1'>
+										<span className={`rounded-[4px] bg-white px-2 py-[2px]  ${poppins.className} ${poppins.variable} text-[12px] font-semibold text-blue-light-high`}>NEW</span>
+										<span className={`text-sm ${poppins.className} ${poppins.variable} font-semibold text-white`}>Notifications</span>
+									</div>
+									<div className={`mt-1 ${poppins.className} ${poppins.variable} text-xs font-normal`}>Keep track of latest governance activities!</div>
+								</div>
+							}
+							color='#3C74E1'
+							zIndex={3000}
+						>
+							<div onClick={() => setOpenTooltip(false)}>
+								<InAppNotification />
+							</div>
+						</Tooltip>
+					)}
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
@@ -394,7 +418,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						) : (
 							<AuthDropdown>
 								{!web3signup ? (
-									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-section-light-container bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
 										{theme === 'dark' ? <MailWhite /> : <Mail />}
 										<div className='flex items-center justify-between gap-x-1'>
 											<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
@@ -439,7 +463,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px] dark:text-white' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
@@ -469,7 +493,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
+													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
 												>
 													Sign Up
 												</button>
@@ -478,7 +502,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/login');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 												>
 													Log In
 												</button>
@@ -494,7 +518,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								setSidedrawer(false);
 								setOpen(true);
 							}}
-							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
+							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
 						>
 							<Image
 								className='h-[20px] w-[20px] rounded-full'

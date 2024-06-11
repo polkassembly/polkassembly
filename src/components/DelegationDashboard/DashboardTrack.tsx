@@ -173,7 +173,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 				</span>
 			</div>
 			{status ? (
-				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
+				<div className='shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-9 py-6 dark:border-separatorDark dark:bg-section-dark-overlay'>
 					<div className='flex items-center gap-3 text-xl font-semibold capitalize tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
 						{handleTracksIcon(handleTrack(String(track)), 28)}
 						<span>{handleTrack(String(track))}</span>
@@ -200,7 +200,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 									<span className='ml-[1px] text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>
 										{item === ETrackDelegationStatus.RECEIVED_DELEGATION ? 'Received Delegation(s)' : 'Delegated'}
 									</span>
-									<div className='mt-0 rounded-md border-[1px] border-solid border-[#D2D8E0] bg-transparent bg-white px-1 dark:border-separatorDark dark:bg-section-dark-overlay'>
+									<div className='mt-0 rounded-md border-[1px] border-solid border-section-light-container bg-transparent bg-white px-1 dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<Table
 											className='column'
 											theme={theme}

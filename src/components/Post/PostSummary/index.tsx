@@ -67,7 +67,7 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 								</span>
 								<span className='text-lg font-semibold leading-7 tracking-[0.03px] text-bodyBlue dark:text-blue-dark-high md:text-xl md:leading-6'>AI Summary</span>
 							</h3>
-							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] dark:border-[#3B444F] md:py-[6px] md:pl-[10px] md:pr-3'>
+							<div className='flex items-center gap-x-1 rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.20)] py-1 pl-[6px] pr-[8px] dark:border-[#3B444F] md:py-[6px] md:pl-[10px] md:pr-3'>
 								{/* <OpenAiIcon className='text-base md:text-2xl' /> */}
 								<ImageIcon
 									src='/assets/icons/openai.svg'
@@ -93,7 +93,7 @@ const PostSummary: FC<IPostSummaryProps> = (props: any) => {
 						className='md text-sm font-normal leading-[26px] tracking-[0.14px] text-bodyBlue dark:text-blue-dark-high'
 						md={sanitizeSummary(summary || '')}
 					/>
-					<div className='mt-4 border-0 border-t-[1.5px] border-dashed border-[#D2D8E0]' />
+					<div className='mt-4 border-0 border-t-[1.5px] border-dashed border-section-light-container' />
 					<EvalutionSummary />
 				</div>
 			</Modal>

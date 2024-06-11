@@ -53,9 +53,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 									onChange={(checked) => (!checked ? handleClick() : handleEnableDisabled(channel, true))}
 								/>
 								<label>
-									<span className={`text-[14px] font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>
-										{enabled ? 'Enabled' : 'Disabled'}
-									</span>
+									<span className={`text-sm font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>{enabled ? 'Enabled' : 'Disabled'}</span>
 								</label>
 							</span>
 						)}
@@ -63,7 +61,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 					{description && !isBotSetup && (
 						<p className='m-0 text-[12px] font-normal leading-[18px]'>
 							<span
-								className='cursor-pointer text-[14px] font-medium leading-[21px] text-pink_primary'
+								className='cursor-pointer text-sm font-medium leading-[21px] text-pink_primary'
 								onClick={() => onClick(channel)}
 							>
 								<PlusCircleOutlined /> ADD THE POLKASSEMBLY BOT

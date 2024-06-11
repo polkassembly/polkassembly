@@ -74,23 +74,27 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
-	const getUserProfile = async () => {
-		setIsLoading(true);
-		const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds: userIds || [] });
-		if (data) {
-			setUserImageData(data);
-			setIsLoading(false);
-		}
-		if (!data) {
-			console.log('There is error in fetching data');
+	const getUserProfile = async (userIds: string[]) => {
+		if (userIds?.length) {
 			setIsLoading(true);
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds });
+			if (data) {
+				setUserImageData(data);
+				setIsLoading(false);
+			} else {
+				console.log('There is error in fetching data');
+				setIsLoading(false);
+			}
+		} else {
+			setUserImageData([]);
 		}
 	};
 
 	useEffect(() => {
-		getUserProfile();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [usernames.length]);
+		if (userIds) {
+			getUserProfile(userIds.map(String));
+		}
+	}, [userIds]);
 
 	useEffect(() => {
 		if (clickQueue > 0 && !showLikedGif) {
@@ -169,7 +173,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 								!id && setDislikeModalOpen && setDislikeModalOpen(true);
 								const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
 								trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
-									contentType: isReactionButtonInPost ? dislikedItem : 'commenDistLiked',
+									contentType: isReactionButtonInPost ? dislikedItem : 'commentDisliked',
 									userId: currentUser?.id || '',
 									userName: currentUser?.username || ''
 								});
@@ -209,7 +213,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
 						newReactions[key as IReaction].count--;
 						newReactions[key as IReaction].usernames = newReactions[key as IReaction].usernames?.filter((name) => name !== username);
-						newReactions[reaction as IReaction].userIds = newReactions[reaction as IReaction].userIds?.filter((userId) => userId !== id);
+						newReactions[key as IReaction].userIds = newReactions[key as IReaction].userIds?.filter((userId) => userId !== id);
 					}
 				});
 			}
@@ -228,6 +232,8 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 
 			if (error || !data) {
 				console.error('Error while reacting', error);
+			} else {
+				await getUserProfile(newReactions[reaction as IReaction].userIds?.map(String) || []); // Fetch user profiles again after reaction change
 			}
 		}
 	};

@@ -144,6 +144,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					boxHeight={100}
 					boxWidth={100}
 					borderRadius={100}
+					borderStyle={'dashed'}
 					defaultImage={profile?.image || ''}
 					imageInside
 					className='relative'

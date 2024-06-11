@@ -19,6 +19,7 @@ interface Props {
 	rules: any[];
 	borderRadius?: number;
 	imageInside?: boolean;
+	borderStyle?: 'dashed' | 'solid' | 'dotted';
 }
 
 const beforeUpload = (file: RcFile) => {
@@ -154,6 +155,6 @@ export default styled(UploadImage)`
 		height: ${(props: any) => props.boxHeight}px !important;
 		width: ${(props: any) => props.boxWidth}px !important;
 		border-radius: ${(props: any) => props?.borderRadius || 4}px !important;
-		border-style: solid !important;
+		border-style: ${(props: any) => props?.borderStyle || 'solid'} !important;
 	}
 `;

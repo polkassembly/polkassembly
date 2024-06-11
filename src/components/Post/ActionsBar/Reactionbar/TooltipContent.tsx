@@ -46,7 +46,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 								className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 								iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
 							/>
-							<span className='mr-2 text-xs font-medium text-blue-light-high dark:text-blue-dark-high'>{user.username}</span>
+							<span className='mr-2 text-xs font-medium text-blue-light-high hover:text-pink_primary dark:text-blue-dark-high'>{user.username}</span>
 						</Link>
 					))}
 				</div>

@@ -44,6 +44,7 @@ import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import classNames from 'classnames';
+import TrackTag from '~src/ui-components/TrackTag';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -518,10 +519,10 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										type='vertical'
 										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
 									/>
-									<TopicTag
+									<TrackTag
 										theme={theme as any}
 										className='sm:mx-1 sm:mt-0'
-										topic={formatTrackName(getTrackNameFromId(network, trackNumber))}
+										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
 									/>
 								</>
 							) : null}

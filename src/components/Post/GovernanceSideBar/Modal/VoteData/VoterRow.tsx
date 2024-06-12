@@ -39,6 +39,7 @@ import {
 	setDelegatorLoadingTrue
 } from '~src/redux/voteData';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { usePostDataContext } from '~src/context';
 
 interface IVoterRow {
 	className?: string;
@@ -114,6 +115,9 @@ const VoterRow: FC<IVoterRow> = ({
 	decision,
 	isReferendum2
 }) => {
+	const {
+		postData: { postIndex }
+	} = usePostDataContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
 	// const [delegatorLoading, setDelegatorLoading] = useState<boolean>(true);
@@ -131,7 +135,7 @@ const VoterRow: FC<IVoterRow> = ({
 		if (delegatedData === null) {
 			(async () => {
 				dispatch(setDelegatorLoadingTrue());
-				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
+				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId || postIndex}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
 				const { data, error } = await nextApiClientFetch<any>(url);
 
 				if (error) {
@@ -292,7 +296,7 @@ const VoterRow: FC<IVoterRow> = ({
 				);
 			}}
 			activeKey={currentKey === index ? 1 : 0}
-			onChange={() => setActiveKey(currentKey === index ? null : index)}
+			onChange={() => setActiveKey?.(currentKey === index ? null : index)}
 			theme={theme as any}
 			// isSmallScreen={isSmallScreen}
 		>

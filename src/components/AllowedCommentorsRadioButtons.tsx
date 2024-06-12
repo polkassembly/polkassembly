@@ -35,15 +35,7 @@ const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading
 					disabled={isLoading}
 					className='capitalize text-lightBlue dark:text-white'
 				>
-					Allowed everyone
-				</Radio>
-				<Radio
-					value={EAllowedCommentor.NONE}
-					checked={allowedCommentors === EAllowedCommentor.NONE}
-					disabled={isLoading}
-					className='capitalize text-lightBlue dark:text-white'
-				>
-					Disable comments
+					All Users
 				</Radio>
 				<Radio
 					value={EAllowedCommentor.ONCHAIN_VERIFIED}
@@ -51,7 +43,15 @@ const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading
 					disabled={isLoading}
 					className='capitalize text-lightBlue dark:text-white'
 				>
-					Onchain Verified{' '}
+					Verified Identities
+				</Radio>
+				<Radio
+					value={EAllowedCommentor.NONE}
+					checked={allowedCommentors === EAllowedCommentor.NONE}
+					disabled={isLoading}
+					className='capitalize text-lightBlue dark:text-white'
+				>
+					Disable Comments
 				</Radio>
 			</Radio.Group>
 		</div>

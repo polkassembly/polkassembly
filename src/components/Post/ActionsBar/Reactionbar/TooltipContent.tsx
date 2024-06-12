@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-/* eslint-disable @next/next/no-img-element */
+
 import React from 'react';
 import { UserProfileImage } from 'pages/api/v1/auth/data/userImage';
 import ImageComponent from '~src/components/ImageComponent';
@@ -21,7 +21,10 @@ const encodeUsername = (username: string) => {
 
 const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoading }) => {
 	const { network } = useNetworkSelector();
-	const allUsers = users.map((user, index) => ({
+
+	const filteredUsers = users.filter((_, index) => usernames[index] !== undefined);
+
+	const allUsers = filteredUsers.map((user, index) => ({
 		id: user.id,
 		image: user.image,
 		username: encodeUsername(usernames[index])

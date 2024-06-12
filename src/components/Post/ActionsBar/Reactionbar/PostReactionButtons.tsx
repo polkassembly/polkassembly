@@ -67,7 +67,6 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const userIds = reactions?.[reaction as IReaction].userIds;
 	const reacted = username && usernames?.includes(username);
-	const currentUser = useUserDetailsSelector();
 	const [showLikedGif, setShowLikedGif] = useState(false);
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const [clickQueue, setClickQueue] = useState(0);
@@ -92,9 +91,9 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 
 	useEffect(() => {
 		if (userIds) {
-			getUserProfile(userIds.map(String));
+			getUserProfile([...userIds, id].map(String));
 		}
-	}, [userIds]);
+	}, [userIds, id]);
 
 	useEffect(() => {
 		if (clickQueue > 0 && !showLikedGif) {
@@ -134,8 +133,8 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 								const likedItem = isReactionOnReply ? 'replyLiked' : 'postLiked';
 								trackEvent('like_icon_clicked', 'liked_icon_clicked', {
 									contentType: isReactionButtonInPost ? likedItem : 'commentLiked',
-									userId: currentUser?.id || '',
-									userName: currentUser?.username || ''
+									userId: id || '',
+									userName: username || ''
 								});
 							}}
 							className='cursor-pointer'
@@ -174,8 +173,8 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 								const dislikedItem = isReactionOnReply ? 'replyDisliked' : 'postDisliked';
 								trackEvent('dislike_icon_clicked', 'disliked_icon_clicked', {
 									contentType: isReactionButtonInPost ? dislikedItem : 'commentDisliked',
-									userId: currentUser?.id || '',
-									userName: currentUser?.username || ''
+									userId: id || '',
+									userName: username || ''
 								});
 							}}
 							className='mt-[1.5px] cursor-pointer'
@@ -233,7 +232,13 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 			if (error || !data) {
 				console.error('Error while reacting', error);
 			} else {
-				await getUserProfile(newReactions[reaction as IReaction].userIds?.map(String) || []); // Fetch user profiles again after reaction change
+				setUserImageData((prevData) => {
+					if (reacted) {
+						return prevData.filter((user) => user.id !== id);
+					} else {
+						return prevData;
+					}
+				});
 			}
 		}
 	};

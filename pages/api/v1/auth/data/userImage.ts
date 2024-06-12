@@ -11,6 +11,7 @@ import messages from '~src/util/messages';
 export interface UserProfileImage {
 	id: number;
 	image: string | null;
+	username: string;
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<UserProfileImage[] | MessageType>) {
@@ -31,7 +32,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<UserProfileImag
 			const data = doc.data();
 			return {
 				id: data.id,
-				image: data.profile?.image || null
+				image: data.profile?.image || null,
+				username: data.username
 			};
 		});
 

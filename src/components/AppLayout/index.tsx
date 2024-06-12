@@ -67,7 +67,6 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -297,7 +296,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
-	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
+	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -1042,13 +1041,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				isIdentityExists={isIdentitySet}
 			/>
 
-			{userId && (
-				<TopNudges
-					handleSetIdentityClick={handleIdentityButtonClick}
-					isIdentitySet={isIdentitySet}
-					isIdentityUnverified={isIdentityUnverified}
-				/>
-			)}
+			{/* {userId && <TopNudges />} */}
 			<Layout hasSider>
 				<Sider
 					trigger={null}

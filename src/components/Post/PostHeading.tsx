@@ -144,7 +144,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	useEffect(() => {
 		if (!onchainId && !proposalType) return;
-		if (onchainId === 866 && network === 'polkadot') return; //TODO: just a hotfix, remove later
+		if (String(onchainId) === '866' && network === 'polkadot') return; //TODO: just a hotfix, remove later
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onchainId, proposalType]);

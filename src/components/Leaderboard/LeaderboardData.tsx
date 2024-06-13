@@ -69,11 +69,13 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 
 	const getLeaderboardData = async () => {
 		const body = searchedUsername ? { username: searchedUsername } : { page: currentPage };
+		console.log(body);
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
 		if (error) {
 			console.error(error);
 			return;
 		}
+		console.log(data);
 		let modifiedData = data?.data || [];
 		if (!searchedUsername && currentPage === 1) {
 			modifiedData = modifiedData.slice(3);
@@ -203,6 +205,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 							</div>
 							<div
 								onClick={() => {
+									getUserProfile(record.user);
 									setTippingUser(record.user);
 									setOpenTipping(true);
 								}}

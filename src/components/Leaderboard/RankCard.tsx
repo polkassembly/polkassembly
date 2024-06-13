@@ -101,6 +101,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 						</div>
 						<div
 							onClick={() => {
+								getUserProfile(data?.username);
 								setOpenTipping(true);
 							}}
 						>

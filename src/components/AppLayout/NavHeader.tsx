@@ -6,7 +6,7 @@
 import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import { Divider, Space, Tooltip } from 'antd';
+import { Divider, Space } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { Header } from 'antd/lib/layout/layout';
 import dynamic from 'next/dynamic';
@@ -46,14 +46,12 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
-import { poppins } from 'pages/_app';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import InAppNotification from '../InAppNotification';
-import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -87,7 +85,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-	const [openTooltip, setOpenTooltip] = useState<boolean>(true);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());
@@ -374,29 +371,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
-					{AVAILABLE_NETWORK.includes(network) && (
-						<Tooltip
-							open={openTooltip}
-							arrow
-							placement='bottomLeft'
-							overlayClassName='rounded-xxl'
-							title={
-								<div className='p-[6px]'>
-									<div className='flex items-center space-x-1'>
-										<span className={`rounded-[4px] bg-white px-2 py-[2px]  ${poppins.className} ${poppins.variable} text-[12px] font-semibold text-blue-light-high`}>NEW</span>
-										<span className={`text-sm ${poppins.className} ${poppins.variable} font-semibold text-white`}>Notifications</span>
-									</div>
-									<div className={`mt-1 ${poppins.className} ${poppins.variable} text-xs font-normal`}>Keep track of latest governance activities!</div>
-								</div>
-							}
-							color='#3C74E1'
-							zIndex={3000}
-						>
-							<div onClick={() => setOpenTooltip(false)}>
-								<InAppNotification />
-							</div>
-						</Tooltip>
-					)}
+					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 

@@ -2,22 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { CloseOutlined, PlusOutlined, LinkOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Input, Tag } from 'antd';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import { ProfileDetails } from '~src/auth/types';
 import Alert from '~src/basic-components/Alert';
-import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useNetworkSelector } from '~src/redux/selectors';
-
-const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
-	loading: () => <SkeletonAvatar active />,
-	ssr: false
-});
+import UploadImage from './UploadImage';
 
 interface IBasicInformationProps {
 	profile?: ProfileDetails;
@@ -31,8 +24,13 @@ interface IBasicInformationProps {
 	isValidCoverImage?: boolean;
 }
 
+const defaultCoverImagesData = [
+	{ key: 1, url: 'https://polkadot.polkassembly.io/assets/profile/cover-image1.svg' },
+	{ key: 2, url: 'https://polkadot.polkassembly.io/assets/profile/cover-image2.svg' },
+	{ key: 3, url: 'https://polkadot.polkassembly.io/assets/profile/cover-image3.svg' }
+];
+
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
-	const { network } = useNetworkSelector();
 	const { profile, loading, setProfile, setUsername, username, className, errorCheck, isValidCoverImage } = props;
 	const [newBadge, setNewBadge] = useState<string>('');
 
@@ -75,10 +73,10 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	}
 	return (
 		<div className={`flex max-h-[479px] flex-col justify-between overflow-y-auto ${className}`}>
-			<div className='mb-6 flex flex-col gap-1'>
+			<div className='mb-0 flex flex-col gap-1'>
 				<label className='text-base text-bodyBlue dark:text-blue-dark-medium '>Cover Photo</label>
 				<span>Choose from below or Upload a file with 1600px dimension or above</span>
-				<div className='h-[150px]'>
+				<div className='h-[100px]'>
 					{/* eslint-disable-next-line @next/next/no-img-element */}
 					<img
 						src={isValidCoverImage && !!profile?.cover_image?.length ? profile?.cover_image : '/assets/profile/cover-image1.svg'}
@@ -88,138 +86,83 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 						alt='loading ...'
 					/>
 				</div>
-				<div className='mt-3 flex h-14 justify-between'>
-					<div
-						className={`w-[32%] ${
-							profile?.cover_image?.split('.')?.[1] === '.polkassembly.io/assets/profile/cover-image1.svg' && 'rounded-xl border-[1px] border-solid border-pink-dark-primary'
-						}`}
-						onClick={() =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									cover_image: `https://${network}.polkassembly.io/assets/profile/cover-image1.svg`
-								};
-							})
-						}
-					>
-						<Image
-							src={'/assets/profile/cover-image1.svg'}
-							width={100}
-							className='h-full w-full rounded-xl object-cover'
-							height={150}
-							alt='loading ...'
-						/>
-					</div>
-					<div
-						className={`w-[32%] ${
-							profile?.cover_image?.split('.')?.[1] === '.polkassembly.io/assets/profile/cover-image2.svg' && 'rounded-xl border-[1px] border-solid border-pink-dark-primary'
-						}`}
-						onClick={() =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									cover_image: `https://${network}.polkassembly.io/assets/profile/cover-image2.svg`
-								};
-							})
-						}
-					>
-						<Image
-							src={'/assets/profile/cover-image2.svg'}
-							width={100}
-							className='h-full w-full rounded-xl object-cover'
-							height={150}
-							alt='loading ...'
-						/>
-					</div>
-					<div
-						className={`w-[32%] ${
-							profile?.cover_image?.split('.')?.[1] === '.polkassembly.io/assets/profile/cover-image3.svg' && 'rounded-xl border-[1px] border-solid border-pink-dark-primary'
-						}`}
-						onClick={() =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									cover_image: `https://${network}.polkassembly.io/assets/profile/cover-image3.svg`
-								};
-							})
-						}
-					>
-						<Image
-							src={'/assets/profile/cover-image3.svg'}
-							width={100}
-							className='h-full w-full rounded-xl object-cover'
-							height={150}
-							alt='loading ...'
-						/>
-					</div>
+				<div className='mb-2 mt-3 flex h-14 justify-between gap-2'>
+					{defaultCoverImagesData?.map((image) => (
+						<div
+							key={image.key}
+							className={`w-1/3 ${profile?.cover_image == image.url ? 'rounded-xl border-[2px] border-solid border-white' : ''}`}
+							onClick={() =>
+								setProfile((prev) => {
+									return {
+										...prev,
+										cover_image: image.url
+									};
+								})
+							}
+						>
+							<Image
+								src={image.url}
+								width={100}
+								className='h-full w-full rounded-xl object-cover'
+								height={150}
+								alt='loading ...'
+							/>
+						</div>
+					))}
 				</div>
-				<Input
-					placeholder='Cover Photo URL'
-					className='mt-2 h-10 w-full rounded-[4px] border border-solid border-[#d2d8e0] text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-					size='large'
-					type='url'
-					prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
-					onChange={(e) =>
+				<UploadImage
+					name='coverImage'
+					rules={[
+						{
+							message: 'Cover image is required.',
+							required: true
+						}
+					]}
+					className='mt-2'
+					boxHeight={30}
+					boxWidth={530}
+					defaultImage={profile?.cover_image || ''}
+					updateProfile={(image) =>
 						setProfile((prev) => {
 							return {
 								...prev,
-								cover_image: e.target.value
+								cover_image: image
 							};
 						})
 					}
-					value={profile?.cover_image}
-					disabled={loading}
-					classNames={{
-						input: 'dark:placeholder:text-borderColorDark dark:text-white'
-					}}
 				/>
 			</div>
-			<div className='flex flex-col items-start gap-x-6 pr-2'>
-				<h4 className='text-base font-medium text-lightBlue dark:text-blue-dark-medium '>Profile Image</h4>
-				<p className='-mt-1 text-sm font-normal'>
-					Please provide a url of your profile photo using a service such as
-					<a
-						href='https://postimages.org/'
-						target='_blank'
-						rel='noreferrer'
-					>
-						{' '}
-						postimages.org{' '}
-					</a>
-					to upload and generate a direct link.
-				</p>
-				<div className='flex w-full items-center gap-4'>
-					<div className='relative flex items-center justify-center'>
-						<ImageComponent
-							src={profile?.image}
-							alt='User Picture'
-							className='flex h-[90px] w-[90px] items-center justify-center bg-white dark:bg-section-dark-overlay'
-							iconClassName='flex items-center justify-center text-[#A0A6AE] text-5xl w-full h-full rounded-full'
-						/>
-					</div>
-					<Input
-						placeholder='Profile Picture URL'
-						className='mt-2 h-10 w-full rounded-[4px] border border-solid border-[#d2d8e0] text-sm text-[#7788a0] dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-						size='large'
-						type='url'
-						prefix={<LinkOutlined className='mr-1.5 text-base text-[rgba(72,95,125,0.2)] dark:text-borderColorDark' />}
-						onChange={(e) =>
-							setProfile((prev) => {
-								return {
-									...prev,
-									image: e.target.value
-								};
-							})
+			<div className='flex items-start gap-x-8 pr-2'>
+				<UploadImage
+					name='profileImage'
+					rules={[
+						{
+							message: 'Profile image is required.',
+							required: true
 						}
-						value={profile?.image}
-						disabled={loading}
-						classNames={{
-							input: 'dark:placeholder:text-borderColorDark dark:text-white'
-						}}
-					/>
+					]}
+					boxHeight={100}
+					boxWidth={100}
+					borderRadius={100}
+					borderStyle={'dashed'}
+					defaultImage={profile?.image || ''}
+					imageInside
+					className='relative'
+					updateProfile={(image) =>
+						setProfile((prev) => {
+							return {
+								...prev,
+								image: image
+							};
+						})
+					}
+				/>
+				<div className='mt-6 flex flex-col justify-start'>
+					<h4 className='text-base font-medium text-lightBlue dark:text-blue-dark-medium '>Profile Image</h4>
+					<p className='-mt-1 text-sm font-normal'>Upload a file with 1600px dimension or above</p>
 				</div>
 			</div>
-			<div className='mt-4 flex flex-col gap-6 pr-2'>
+			<div className='mt-0 flex flex-col gap-6 pr-2'>
 				<div className='cursor-pointer text-sm text-lightBlue dark:text-blue-dark-medium'>
 					<label className='mb-0 text-sm font-medium text-lightBlue dark:text-blue-dark-medium'>Display Name</label>
 					<Input

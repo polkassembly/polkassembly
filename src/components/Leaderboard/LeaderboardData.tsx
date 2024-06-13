@@ -135,13 +135,17 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
 					/>
-					<NameLabel
-						className={`max-w-[9vw] text-sm text-bodyBlue 2xl:max-w-[12vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
-						username={user}
-						usernameMaxLength={15}
-						truncateUsername={false}
-						isUsedInLeadership={true}
-					/>
+					{user === username ? (
+						<p className='m-0 p-0'>{username}</p>
+					) : (
+						<NameLabel
+							className={`max-w-[9vw] text-sm text-bodyBlue 2xl:max-w-[12vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
+							username={user}
+							usernameMaxLength={15}
+							truncateUsername={false}
+							isUsedInLeadership={true}
+						/>
+					)}
 				</div>
 			),
 			title: 'User',

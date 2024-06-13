@@ -236,7 +236,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		rank: currentPage === 1 ? index + 4 : currentPage * 10 + index + 1 - 10,
 		user: item?.username,
 		userImage: item?.image,
-		userSince: formatTimestamp(item?.created_at._seconds)
+		userSince: dayjs(item?.created_at._seconds * 1000).format("DD[th] MMM 'YY")
 	}));
 
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];

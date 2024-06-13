@@ -137,6 +137,13 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 				</div>
 			</div>
 			{address && (
+				<DelegateModal
+					defaultTarget={address}
+					open={open}
+					setOpen={setOpen}
+				/>
+			)}
+			{address && (
 				<Tipping
 					username={data?.username || ''}
 					open={openTipping}
@@ -145,13 +152,6 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					paUsername={data?.username as any}
 					setOpenAddressChangeModal={setOpenAddressChangeModal}
 					openAddressChangeModal={openAddressChangeModal}
-				/>
-			)}
-			{address && (
-				<DelegateModal
-					defaultTarget={address}
-					open={open}
-					setOpen={setOpen}
 				/>
 			)}
 		</div>

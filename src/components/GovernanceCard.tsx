@@ -521,7 +521,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 									<TrackTag
 										theme={theme as any}
-										className='sm:mx-1 sm:mt-0'
+										className='sm:mt-0'
 										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
 									/>
 								</>

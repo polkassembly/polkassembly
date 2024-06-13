@@ -11,6 +11,9 @@ export const getTrackNameFromId = (network: string, trackId: any) => {
 			if (value?.trackId === trackId && !value?.fellowshipOrigin) {
 				trackName = value?.name;
 			}
+			if (value?.trackId === 0) {
+				trackName = value?.name;
+			}
 		});
 	}
 	return trackName;

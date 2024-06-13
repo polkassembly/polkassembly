@@ -92,10 +92,12 @@ export const getTimeline = (
 export interface IReactions {
 	'👍': {
 		count: number;
+		userIds: number[];
 		usernames: string[];
 	};
 	'👎': {
 		count: number;
+		userIds: number[];
 		usernames: string[];
 	};
 }
@@ -152,14 +154,29 @@ export function getDefaultReactionObj(): IReactions {
 	return {
 		'👍': {
 			count: 0,
+			userIds: [],
 			usernames: []
 		},
 		'👎': {
 			count: 0,
+			userIds: [],
 			usernames: []
 		}
 	};
 }
+
+export const getUserProfileData = async (ids: number[]) => {
+	try {
+		const querySnapshot = await firestore_db.collection('users').where('id', 'array-contains', ids).get();
+
+		const userData = querySnapshot.docs.map((doc) => doc.data());
+
+		return userData;
+	} catch (error) {
+		console.error('Error fetching user profiles:', error);
+		throw error;
+	}
+};
 
 export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>): IReactions {
 	const reactions = getDefaultReactionObj();
@@ -167,10 +184,11 @@ export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnap
 		if (doc && doc.exists) {
 			const data = doc.data();
 			if (data) {
-				const { reaction, username } = data;
+				const { reaction, username, user_id } = data;
 				if (['👍', '👎'].includes(reaction)) {
 					reactions[reaction as IReaction].count++;
 					reactions[reaction as IReaction].usernames.push(username);
+					reactions[reaction as IReaction].userIds.push(user_id);
 				}
 			}
 		}

@@ -21,7 +21,7 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
 import { isSpamDetected } from '~src/util/getPostContentAiSummary';
-import sendSpamNotificationEmail from '~src/util/sendSpamNotificationEmail';
+import { sendSpamNotificationEmail } from '~src/auth/email';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);

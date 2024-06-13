@@ -22,7 +22,7 @@ import LikedGif from '~assets/icons/reactions/Liked-Colored.gif';
 import LikedGifDark from '~assets/icons/reactions/Liked-Colored-Dark.gif';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { UserProfileImage } from 'pages/api/v1/auth/data/userImage';
+import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import TooltipContent from './TooltipContent';
 import Popover from '~src/basic-components/Popover';
 
@@ -76,7 +76,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const getUserProfile = async (userIds: string[]) => {
 		if (userIds?.length) {
 			setIsLoading(true);
-			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/userImage', { userIds });
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
 			if (data) {
 				setUserImageData(data);
 				setIsLoading(false);

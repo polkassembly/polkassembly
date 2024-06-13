@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
-import { UserProfileImage } from 'pages/api/v1/auth/data/userImage';
+import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import ImageComponent from '~src/components/ImageComponent';
 import Loader from '~src/ui-components/Loader';
 import Link from 'next/link';

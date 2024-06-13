@@ -16,6 +16,7 @@ import { CloseIcon } from './CustomIcons';
 import { GenerateDiffHtml, removeSymbols } from '~src/util/htmlDiff';
 import { diffChars } from 'diff';
 import { useTheme } from 'next-themes';
+import Loader from './Loader';
 interface Props {
 	className?: string;
 	open: boolean;
@@ -24,6 +25,7 @@ interface Props {
 	defaultAddress?: string | null;
 	username: string;
 	user_id?: number | null | undefined;
+	isLoading?: boolean;
 }
 interface IHistoryData extends IPostHistory {
 	expandedContent?: boolean;
@@ -34,7 +36,7 @@ enum EExpandType {
 	ExpandedContent = 'expandedContent'
 }
 
-const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id }: Props) => {
+const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, username, user_id, isLoading }: Props) => {
 	const [historyData, setHistoryData] = useState<IHistoryData[]>([]);
 	const { resolvedTheme: theme } = useTheme();
 
@@ -184,9 +186,7 @@ const PostHistoryModal = ({ className, open, setOpen, history, defaultAddress, u
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			title={<label className='-mt-2 pr-3 text-[20px] font-semibold text-[#334D6E] dark:text-white'>Proposal Edit History</label>}
 		>
-			<div className='post-history-timeline -mb-6 mt-9 flex flex-col px-4'>
-				<Timeline items={items} />
-			</div>
+			<div className='post-history-timeline -mb-6 mt-9 flex flex-col px-4'>{isLoading ? <Loader size='large' /> : <Timeline items={items} />}</div>
 		</Modal>
 	);
 };

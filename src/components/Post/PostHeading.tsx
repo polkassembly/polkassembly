@@ -9,11 +9,10 @@ import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
 import StatusTag from 'src/ui-components/StatusTag';
-import UpdateLabel from 'src/ui-components/UpdateLabel';
+import UpdateLabelPost from 'src/ui-components/UpdateLabelPost';
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
-import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import PostSummary from './PostSummary';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -22,8 +21,6 @@ import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import { IPostHistory } from '~src/types';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
@@ -122,31 +119,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 		}
 	} = usePostDataContext();
 	const { api, apiReady } = useApiContext();
-	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
 	const [openTagsModal, setOpenTagsModal] = useState<boolean>(false);
 	const { network } = useNetworkSelector();
-	const [history, setHistory] = useState<IPostHistory[]>([]);
 	const [cancelledReferendaIndices, setCancelledReferendaIndices] = useState<number[]>([]);
 	const [isTreasuryProposal, setIsTreasuryProposal] = useState<boolean>(false);
 	const [preimageWarning, setPreimageWarning] = useState<string | null>(null);
-
-	const getHistoryData = async () => {
-		try {
-			const { data } = await nextApiClientFetch<IPostHistory[]>(`/api/v1/posts/editHistory?postId=${onchainId}&proposalType=${proposalType}`);
-			if (data) {
-				setHistory(data);
-			}
-		} catch (error) {
-			console.error('Error fetching history data:', error);
-		}
-	};
-
-	useEffect(() => {
-		if (!onchainId && !proposalType) return;
-		getHistoryData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onchainId, proposalType]);
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
@@ -303,16 +281,17 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						beneficiaries={beneficiaries}
 						inPostHeading={true}
 					>
-						{history && history?.length > 0 && (
-							<div
-								className='-ml-1 mr-1 mt-2 cursor-pointer md:mt-0'
-								onClick={() => setOpenModal(true)}
-							>
-								<UpdateLabel
+						{onchainId && last_edited_at && (
+							<div className='-ml-1 mr-1 mt-2 cursor-pointer md:mt-0'>
+								<UpdateLabelPost
 									className='md'
+									content={content}
 									created_at={created_at}
 									updated_at={last_edited_at}
-									isHistory={history && history?.length > 0}
+									username={username}
+									onchainId={onchainId}
+									proposalType={proposalType}
+									proposer={proposer}
 								/>
 							</div>
 						)}
@@ -371,7 +350,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{history && history.length > 0 && (
+			{/* {history && history.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}
@@ -379,7 +358,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 					username={username}
 					defaultAddress={proposer}
 				/>
-			)}
+			)} */}
 			<TagsModal
 				tags={tags}
 				track_name={track_name}

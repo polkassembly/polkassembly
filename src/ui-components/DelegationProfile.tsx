@@ -50,8 +50,8 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	const handleData = async () => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
-		if (data && data[0]?.bio && data[0]?.dataSource.includes('polkassembly')) {
-			setUserBio(data[0]?.bio);
+		if (data && data[0]?.bio && data[0]?.dataSource?.includes('polkassembly')) {
+			setUserBio(data[0]?.bio || '');
 			setLoading(false);
 		} else {
 			console.log(error);

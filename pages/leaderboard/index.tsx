@@ -150,6 +150,28 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 };
 
 export default styled(Leaderboard)`
+	@media (max-width: 1290px) and (min-width: 768px) {
+		.rank-cards-mobile {
+			display: flex !important;
+			flex-direction: column !important;
+			transform: scale(1.2) !important;
+			margin-top: 100px !important;
+			margin-bottom: 60px !important;
+			margin-left: -4px !important;
+		}
+		.secondary-rank-card {
+			transform: scale(1.15) !important;
+			margin-bottom: 40px !important;
+			margin-left: 0px !important;
+		}
+		.primary-rank-card {
+			margin-left: 0px !important;
+			margin-bottom: 24px !important;
+		}
+		.rank-cards-desktop {
+			display: none !important;
+		}
+	}
 	@media (max-width: 767px) and (min-width: 319px) {
 		.trophy-icon {
 			transform: scale(0.7);

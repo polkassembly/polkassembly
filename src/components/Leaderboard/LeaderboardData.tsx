@@ -99,7 +99,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
-			// fixed: 'left',
 			key: 'rank',
 			render: (rank, record) => (
 				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>
@@ -122,7 +121,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		{
 			dataIndex: 'user',
 			filteredValue: [searchedUsername || ''],
-			// fixed: 'left',
 			key: 'user',
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
@@ -137,7 +135,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					/>
 					<NameLabel
 						className={`max-w-[9vw] text-sm text-bodyBlue 2xl:max-w-[12vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
-						// defaultAddress={proposer}
 						username={user}
 						usernameMaxLength={15}
 						truncateUsername={false}
@@ -150,7 +147,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'profileScore',
-			// fixed: 'left',
 			key: 'profileScore',
 			render: (profileScore) => (
 				<div
@@ -167,7 +163,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'userSince',
-			// fixed: 'left',
 			key: 'userSince',
 			render: (userSince, record) => (
 				<div className='flex w-[120px] items-center justify-start gap-x-1'>
@@ -189,7 +184,6 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		},
 		{
 			dataIndex: 'auction',
-			// fixed: 'left',
 			key: 'auction',
 			render: (text, record) => (
 				<article>

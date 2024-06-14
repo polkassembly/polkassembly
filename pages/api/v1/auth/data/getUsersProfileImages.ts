@@ -10,7 +10,7 @@ import messages from '~src/util/messages';
 
 export interface UserProfileImage {
 	id: number;
-	image: string | null;
+	image: string | null | undefined;
 	username: string;
 }
 

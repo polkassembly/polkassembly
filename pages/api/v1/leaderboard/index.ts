@@ -27,20 +27,28 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 				.offset(username ? 0 : (Number(page) - 1) * LISTING_LIMIT)
 				.limit(username ? 1 : LISTING_LIMIT)
 				.get()
-		).docs.map((doc) => {
-			const userData = doc.data() as User;
+		).docs.map((doc) => doc.data() as User);
+
+		const leaderBoardDataPromise = users.map(async (userData) => {
+			//calculate rank based on profile score
+			const rank = (await firestore_db.collection('users').where('profile_score', '>', userData.profile_score).count().get()).data().count + 1;
+
 			return {
 				addresses: [],
 				created_at: userData.created_at,
 				profile_score: userData.profile_score,
 				user_id: userData.id,
 				username: userData.username,
-				...userData.profile
+				...userData.profile,
+				rank
 			} as LeaderboardEntry;
 		});
 
+		const leaderBoardDataResponse = await Promise.allSettled(leaderBoardDataPromise);
+		const leaderBoardData = leaderBoardDataResponse.map((entry) => (entry.status === 'fulfilled' ? entry.value : null)).filter(Boolean) as LeaderboardEntry[];
+
 		return {
-			data: { count: totalUsers, data: users } as LeaderboardResponse,
+			data: { count: totalUsers, data: leaderBoardData } as LeaderboardResponse,
 			error: null,
 			status: 200
 		};

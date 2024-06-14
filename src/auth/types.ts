@@ -85,6 +85,7 @@ export interface LeaderboardEntry extends ProfileDetailsResponse {
 	addresses: string[];
 	created_at?: Date | null;
 	profile_score: number;
+	rank: number;
 }
 
 export interface IAddressProxyForEntry {

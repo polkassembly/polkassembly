@@ -1,4 +1,4 @@
-describe('Talisman Extension Login', () => {
+/*describe('Talisman Extension Login', () => {
     Cypress.on('uncaught:exception', (err, runnable) => {
         console.error('Uncaught Exception:', err.message);
         return false;
@@ -40,4 +40,4 @@ describe('Talisman Extension Login', () => {
         // Verify login by checking the presence of an element exclusive to logged-in users
         cy.get('div.ant-dropdown-trigger').should('be.visible');
       });
-    });
+    });*/

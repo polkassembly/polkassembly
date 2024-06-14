@@ -90,9 +90,8 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	};
 
 	useEffect(() => {
-		if (userIds && userIds.length > 0) {
-			const idsToFetch = id ? [...userIds, id] : [...userIds];
-			getUserProfile(idsToFetch.map(String));
+		if (userIds) {
+			getUserProfile([...userIds, id].map(String));
 		}
 	}, [userIds, id]);
 

@@ -62,7 +62,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
-	const { id, username, picture: image } = useUserDetailsSelector();
+	const { id, username, picture: image= null } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const userIds = reactions?.[reaction as IReaction].userIds;

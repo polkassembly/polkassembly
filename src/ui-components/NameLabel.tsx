@@ -46,6 +46,7 @@ const NameLabel = ({
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const [leaderboardAstrals, setLeaderboardAstrals] = useState<number | null | undefined>(null);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -55,6 +56,7 @@ const NameLabel = ({
 			if (data?.addresses) {
 				setAddress(data?.addresses[0]);
 			}
+			setLeaderboardAstrals(data?.profile_score);
 		}
 	};
 	useEffect(() => {
@@ -86,6 +88,7 @@ const NameLabel = ({
 								enableTipping={!!address}
 								setOpenAddressChangeModal={setOpenAddressChangeModal}
 								setOpenTipping={setOpenTipping}
+								leaderboardAstrals={leaderboardAstrals}
 							/>
 						}
 						open={!defaultAddress ? open : false}

@@ -4,6 +4,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
@@ -19,6 +20,11 @@ import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { formatTimestamp } from './utils';
 import { useUserDetailsSelector } from '~src/redux/selectors';
+import { MenuProps } from 'antd';
+import { Dropdown } from '~src/ui-components/Dropdown';
+import { poppins } from 'pages/_app';
+import Link from 'next/link';
+import Image from 'next/image';
 
 const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -96,6 +102,60 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		setCurrentPage(pagination.current);
 	};
 
+	const items: MenuProps['items'] = [
+		{
+			key: '1',
+			label: (
+				<div className=' flex w-[260px] flex-col '>
+					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
+						<ImageIcon
+							src='/assets/icons/astrals-icon.svg'
+							alt='astrals icon'
+							className=''
+						/>
+						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
+					</div>
+					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
+						<div className=''>
+							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
+							<a
+								className='ml-[2px] text-pink_primary'
+								href=''
+							>
+								Learn more{' '}
+								<Image
+									src='/assets/icons/redirect.svg'
+									alt='redirection-icon'
+									width={13}
+									height={13}
+									className='-mt-[3px]'
+								/>
+							</a>
+						</div>
+						<span className='my-1 flex'>
+							The more points you earn, the higher your rank in the leaderboard!
+							{/* <ImageIcon
+								src='/assets/icons/profile-icon.svg'
+								alt='medal icon'
+								imgWrapperClassName='self-end'
+							/> */}
+						</span>
+						<div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
+							To view detailed off-chain and on-chain activity{' '}
+							<Link
+								className='text-xs font-medium text-pink_primary'
+								href={`/user/${username}`}
+								target='_blank'
+							>
+								Visit Profile
+							</Link>
+						</div>
+					</div>
+				</div>
+			)
+		}
+	];
+
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
@@ -115,7 +175,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					)}
 				</p>
 			),
-			title: 'Rank',
+			title: <span className={`${poppins.className} ${poppins.variable}`}>Rank</span>,
 			width: 15
 		},
 		{
@@ -146,7 +206,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					)}
 				</div>
 			),
-			title: 'User',
+			title: <span className={`${poppins.className} ${poppins.variable}`}>User</span>,
 			width: 250
 		},
 		{
@@ -154,15 +214,33 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			key: 'profileScore',
 			render: (profileScore) => (
 				<div
-					className='flex h-7 w-[93px] items-center justify-center gap-x-0.5 rounded-md px-2 py-2'
+					className={`${poppins.className} ${poppins.variable} flex h-7 w-[93px] items-center justify-start gap-x-0.5 rounded-md px-2 py-2`}
 					style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
 				>
-					<StarIcon />
-					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{profileScore}</p>
+					<span className='ml-1.5 mt-[5.5px]'>
+						<StarIcon />
+					</span>
+					<p className='m-0 ml-1 p-0 text-sm font-medium text-[#534930]'>{profileScore}</p>
 				</div>
 			),
 			sorter: (a, b) => a.profileScore - b.profileScore,
-			title: 'Profile Score',
+			title: (
+				<div className='flex items-center gap-1 text-sm font-medium'>
+					<span>Astrals</span>
+					<Dropdown
+						theme={theme}
+						className={'cursor-pointer rounded-md border-none bg-none'}
+						overlayClassName='z-[1056]'
+						placement='topRight'
+						menu={{ items }}
+						arrow
+					>
+						<span className='ml-[2px]'>
+							<InfoCircleOutlined style={{ color: '#485F7D' }} />
+						</span>
+					</Dropdown>
+				</div>
+			),
 			width: 150
 		},
 		{
@@ -183,7 +261,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();
 				return timestampA - timestampB;
 			},
-			title: 'User Since',
+			title: <span className={`${poppins.className} ${poppins.variable}`}>User Since</span>,
 			width: 150
 		},
 		{
@@ -230,7 +308,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					)}
 				</article>
 			),
-			title: 'Actions',
+			title: <span className={`${poppins.className} ${poppins.variable}`}>Actions</span>,
 			width: 150
 		}
 	];
@@ -322,7 +400,7 @@ export default styled(LeaderboardData)`
 		color: #9e9e9e !important;
 	}
 	.ant-table-tbody > tr {
-		heigth: 56px !important;
+		height: 56px !important;
 	}
 	.ant-table-wrapper .ant-table-pagination-right {
 		justify-content: center !important;

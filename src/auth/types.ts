@@ -77,6 +77,7 @@ export interface ProfileDetailsResponse extends ProfileDetails {
 	username: string;
 	addresses: string[];
 	created_at?: Date | null;
+	profile_score?: number;
 }
 
 export interface LeaderboardEntry extends ProfileDetailsResponse {

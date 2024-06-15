@@ -67,7 +67,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					style={{ border: '1px solid #ffffff' }}
 				>
 					<StarIcon />
-					<p className='m-0 ml-1.5 p-0 text-sm text-[#534930]'>{data?.profile_score}</p>
+					<p className='m-0 ml-1.5 p-0 text-sm font-medium text-[#534930]'>{data?.profile_score}</p>
 				</div>
 				<div className={'mx-auto mt-6 flex items-center'}>
 					<div className='-mt-1 flex items-center gap-x-2'>

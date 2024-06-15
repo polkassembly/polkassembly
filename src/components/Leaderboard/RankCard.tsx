@@ -12,6 +12,7 @@ import { Divider } from 'antd';
 import { formatTimestamp } from './utils';
 import Tipping from '~src/components/Tipping';
 import { IRankCardProps } from './types';
+import { poppins } from 'pages/_app';
 
 const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, className }) => {
 	const [open, setOpen] = useState<boolean>(false);
@@ -60,7 +61,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
 			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
 		>
-			<div className={`${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
+			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<div
 					className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
@@ -125,7 +126,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 						className='dark:bg-separatorDark'
 					/>
 				</div>
-				<div className={`mx-auto ${type === 'primary' ? '-mt-1' : '-mt-3'} flex  items-center`}>
+				<div className={`${poppins.className} ${poppins.variable}mx-auto ${type === 'primary' ? '-mt-1' : '-mt-3'} flex  items-center`}>
 					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-[#909090]'>User Since: </p>
 					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue dark:text-white'>
 						<ImageIcon

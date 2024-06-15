@@ -42,32 +42,33 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const router = useRouter();
 
 	useEffect(() => {
-		if (router.isReady) {
-			getLeaderboardData();
-		}
+		const fetchData = async () => {
+			if (router.isReady) {
+				await getLeaderboardData();
+				await currentuserData();
+			}
+		};
+		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady, searchedUsername]);
-	useEffect(() => {
-		currentuserData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage]);
 
 	const currentuserData = async () => {
 		if (username) {
-			const body = { username: username };
-			const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
-			if (error) {
-				console.error(error);
-				return;
+			try {
+				const response = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
+				if (response?.data) {
+					setCurrentUserData(response?.data?.data);
+				}
+			} catch (error) {
+				console.error('Failed to fetch current user data:', error);
 			}
-			setCurrentUserData(data?.data);
 		}
 	};
 
-	const currentUserDataSource = currentUserData?.map((item: any, index: number) => ({
+	const currentUserDataSource = currentUserData?.map((item: any) => ({
 		key: item?.user_id,
 		profileScore: item?.profile_score,
-		rank: currentPage === 1 ? index + 4 : currentPage * 10 + index + 1 - 10,
+		rank: item?.rank,
 		user: item?.username,
 		userImage: item?.image,
 		userSince: formatTimestamp(item?.created_at._seconds)
@@ -349,7 +350,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				columns={columns}
 				className={`${className} w-full overflow-x-auto`}
 				dataSource={combinedDataSource}
-				pagination={{ pageSize: 11, total: totalData }}
+				pagination={{ pageSize: searchedUsername ? 1 : 11, total: totalData }}
 				onChange={handleTableChange}
 				theme={theme}
 				rowClassName={(record, index) => {

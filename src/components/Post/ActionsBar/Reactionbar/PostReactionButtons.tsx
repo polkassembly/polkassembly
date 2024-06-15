@@ -62,7 +62,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
-	const { id, username, picture: image = null } = useUserDetailsSelector();
+	const { id, username } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const usernames = reactions?.[reaction as IReaction].usernames;
 	const userIds = reactions?.[reaction as IReaction].userIds;
@@ -90,11 +90,11 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	};
 
 	useEffect(() => {
-		if (userIds.length > 0) {
-			getUserProfile([...userIds].map(String));
+		if (userIds && userIds.length > 0) {
+			const idsToFetch = id ? [...userIds, id] : [...userIds];
+			getUserProfile(idsToFetch.map(String));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [userIds, id]);
 
 	useEffect(() => {
 		if (clickQueue > 0 && !showLikedGif) {
@@ -204,12 +204,10 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 				newReactions[reaction as IReaction].count--;
 				newReactions[reaction as IReaction].usernames = newReactions[reaction as IReaction].usernames?.filter((name) => name !== username);
 				newReactions[reaction as IReaction].userIds = newReactions[reaction as IReaction].userIds?.filter((userId) => userId !== id);
-				setUserImageData((prev) => prev.filter((user) => user.id !== id));
 			} else {
 				newReactions[reaction as IReaction].count++;
 				newReactions[reaction as IReaction].usernames?.push(username || '');
 				newReactions[reaction as IReaction].userIds?.push(id);
-				setUserImageData((prev) => [...prev, { id, image, username }]);
 				setClickQueue((prev) => prev + 1);
 				Object.keys(newReactions).forEach((key) => {
 					if (key !== reaction && newReactions[key as IReaction].usernames?.includes(username)) {
@@ -234,6 +232,14 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 
 			if (error || !data) {
 				console.error('Error while reacting', error);
+			} else {
+				setUserImageData((prevData) => {
+					if (reacted) {
+						return prevData.filter((user) => user.id !== id);
+					} else {
+						return prevData;
+					}
+				});
 			}
 		}
 	};

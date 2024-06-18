@@ -2081,6 +2081,32 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		},
+		[PostOrigin.FAST_GENERAL_ADMIN]: {
+			trackId: 5,
+			description: 'Fast origin for managing the registrar. ',
+			group: 'Governance',
+			name: 'fast_general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 500000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 100800,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				reciprocal: {
+					factor: 999999999,
+					xOffset: 999999999,
+					yOffset: 0
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 5799702,
+					xOffset: 11467891,
+					yOffset: -5733946
+				}
+			}
+		},
 		[PostOrigin.REFERENDUM_CANCELLER]: {
 			trackId: 3,
 			description: 'Origin able to cancel referenda.',
@@ -2210,6 +2236,32 @@ export const networkTrackInfo: INetworkTrackInfo = {
 					factor: 222222224,
 					xOffset: 333333335,
 					yOffset: -166666668
+				}
+			}
+		},
+		[PostOrigin.FAST_GENERAL_ADMIN]: {
+			trackId: 5,
+			description: 'Fast origin for managing the registrar. ',
+			group: 'Governance',
+			name: 'fast_general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 10000000000000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 100800,
+			confirmPeriod: 900,
+			minEnactmentPeriod: 50,
+			minApproval: {
+				reciprocal: {
+					factor: 999999999,
+					xOffset: 999999999,
+					yOffset: 0
+				}
+			},
+			minSupport: {
+				Reciprocal: {
+					factor: 5799702,
+					xOffset: 11467891,
+					yOffset: -5733946
 				}
 			}
 		},

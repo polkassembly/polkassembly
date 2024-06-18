@@ -8,6 +8,8 @@ import ImageComponent from '~src/components/ImageComponent';
 import Loader from '~src/ui-components/Loader';
 import Link from 'next/link';
 import { useNetworkSelector } from '~src/redux/selectors';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
 
 interface TooltipContentProps {
 	users: UserProfileImage[];
@@ -15,23 +17,19 @@ interface TooltipContentProps {
 	isLoading: boolean;
 }
 
-const encodeUsername = (username: string) => {
-	return encodeURIComponent(username);
-};
-
 const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoading }) => {
 	const { network } = useNetworkSelector();
 
 	const filteredUsers = users.filter((_, index) => usernames[index] !== undefined);
 
-	const allUsers = filteredUsers.map((user, index) => ({
-		id: user.id,
-		image: user.image,
-		username: encodeUsername(usernames[index])
+	const allUsers = filteredUsers.map((user) => ({
+		id: user?.id,
+		image: user?.image || '',
+		username: user?.username || ''
 	}));
 
 	return (
-		<div className='max-h-24 w-min overflow-auto'>
+		<div className={classNames('max-h-24 w-min overflow-y-auto', poppins.className, poppins.variable)}>
 			{isLoading ? (
 				<Loader className='h-7 w-7' />
 			) : (
@@ -44,7 +42,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({ users, usernames, isLoa
 							className='mb-[6px] flex items-center gap-[6px]'
 						>
 							<ImageComponent
-								src={user.image}
+								src={user?.image}
 								alt='User Picture'
 								className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
 								iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'

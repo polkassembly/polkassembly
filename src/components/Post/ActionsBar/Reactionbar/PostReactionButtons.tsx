@@ -8,7 +8,7 @@ import React, { FC, useState, useRef, useEffect } from 'react';
 import { MessageType } from '~src/auth/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { usePostDataContext } from '~src/context';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import LikeOutlined from '~assets/icons/reactions/LikeOutlined.svg';
 import LikeIconfilled from '~assets/icons/reactions/LikeIconfilled.svg';
@@ -62,6 +62,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 	const {
 		postData: { postIndex, postType, track_number }
 	} = usePostDataContext();
+	const { network } = useNetworkSelector();
 	const { id, username, picture: image = '' } = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const usernames = reactions?.[reaction as IReaction].usernames;
@@ -94,7 +95,7 @@ const PostReactionButtons: FC<IReactionButtonProps> = ({
 			getUserProfile([...userIds].map(String));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	useEffect(() => {
 		if (clickQueue > 0 && !showLikedGif) {

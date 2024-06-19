@@ -56,7 +56,8 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 	const userAddress = (await firestore_db.collection('addresses').where('user_id', '==', user.id).get()).docs.map((doc) => doc.data());
 	const isAuthor = await checkIsProposer(
 		replyUserAddress?.[0]?.address,
-		userAddress.map((a) => a.address)
+		userAddress.map((a) => a.address),
+		network
 	);
 	if (!isAuthor && user.id !== replyDoc.data()?.user_id) return res.status(403).json({ message: messages.UNAUTHORISED });
 

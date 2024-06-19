@@ -565,7 +565,7 @@ const CreatePreimage = ({
 			let proposal: Proposal | undefined;
 
 			try {
-				proposal = api.registry.createType('Proposal', bytes.toU8a(true));
+				proposal = api.registry.createType('Proposal', bytes.toU8a(true)) as unknown as any;
 			} catch (error) {
 				console.log(error);
 			}

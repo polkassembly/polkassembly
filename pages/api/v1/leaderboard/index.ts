@@ -5,7 +5,7 @@
 import { NextApiHandler } from 'next';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import messages from '~src/util/messages';
-import { MessageType, LeaderboardEntry, User } from '~src/auth/types';
+import { MessageType, LeaderboardEntry } from '~src/auth/types';
 import { firestore_db } from '~src/services/firebaseInit';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
@@ -27,7 +27,7 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 				.offset(username ? 0 : (Number(page) - 1) * LISTING_LIMIT)
 				.limit(username ? 1 : LISTING_LIMIT)
 				.get()
-		).docs.map((doc) => doc.data() as User);
+		).docs.map((doc) => doc.data());
 
 		const leaderBoardDataPromise = users.map(async (userData) => {
 			//calculate rank based on profile score
@@ -35,7 +35,7 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 
 			return {
 				addresses: [],
-				created_at: userData.created_at,
+				created_at: userData?.created_at?.toDate?.() || new Date(),
 				profile_score: userData.profile_score,
 				user_id: userData.id,
 				username: userData.username,

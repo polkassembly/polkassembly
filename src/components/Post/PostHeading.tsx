@@ -144,9 +144,11 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	useEffect(() => {
 		if (!onchainId && !proposalType) return;
+		if (String(onchainId) === '866' && proposalType === 'referendums_v2' && window.location.href.includes('polkadot')) return; //TODO: just a hotfix, remove later, network selector returns empty please check
+
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [onchainId, proposalType]);
+	}, [onchainId, proposalType, network]);
 
 	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 

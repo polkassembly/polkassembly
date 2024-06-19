@@ -5,10 +5,10 @@
 import { getOnChainAddressDetails } from '~src/util/getOnChainAddressDetails';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
-// of the Apache-2.0 license. See the LICENSE file for details.
-export const checkIsProposer = async (address: string, currentUserAddresses: Array<string>) => {
-	const { data: addressDetail } = await getOnChainAddressDetails(address);
+export const checkIsProposer = async (address: string, currentUserAddresses: Array<string>, network: string) => {
+	const { data: addressDetail } = await getOnChainAddressDetails(address, network);
 	const signatories = addressDetail?.account?.multisig?.multi_account_member;
+
 	if (signatories) {
 		const allSignatories = signatories.map((user: { address: string }) => getSubstrateAddress(user.address));
 		for (const userAddress of currentUserAddresses) {

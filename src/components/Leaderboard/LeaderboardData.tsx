@@ -18,7 +18,6 @@ import { useTheme } from 'next-themes';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
-import { formatTimestamp } from './utils';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { MenuProps } from 'antd';
 import { Dropdown } from '~src/ui-components/Dropdown';
@@ -71,7 +70,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		rank: item?.rank,
 		user: item?.username,
 		userImage: item?.image,
-		userSince: formatTimestamp(item?.created_at._seconds)
+		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
 	const getLeaderboardData = async () => {
@@ -320,7 +319,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		rank: item?.rank,
 		user: item?.username,
 		userImage: item?.image,
-		userSince: dayjs(item?.created_at._seconds * 1000).format("DD[th] MMM 'YY")
+		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];

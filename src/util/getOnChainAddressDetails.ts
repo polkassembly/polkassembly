@@ -2,23 +2,18 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { SubscanAPIResponseType } from '~src/auth/types';
-import nextApiClientFetch from './nextApiClientFetch';
+import { getSubscanData } from 'pages/api/v1/subscanApi';
 
-export const getOnChainAddressDetails = async (address: string | string[] | undefined) => {
+export const getOnChainAddressDetails = async (address: string | string[] | undefined, network: string) => {
 	try {
-		const { data, error } = await nextApiClientFetch<SubscanAPIResponseType>('api/v1/subscanApi', {
-			body: {
-				key: address,
-				row: 1
-			},
-			url: '/api/v2/scan/search'
+		const data = await getSubscanData('/api/v2/scan/search', network, {
+			key: address,
+			row: 1
 		});
-		if (error || !data) {
-			console.log('error fetching events : ', error);
-		}
-		if (data) {
+		if (data.message === 'Success') {
 			return data;
+		} else {
+			console.log(data.message);
 		}
 	} catch (error) {
 		return error;

@@ -30,7 +30,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const { resolvedTheme: theme } = useTheme();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [address, setAddress] = useState<string>('');
-	const [tableData, setTableData] = useState<any>();
+	const [tableData, setTableData] = useState<any>([]);
 	const [totalData, setTotalData] = useState<number>(0);
 	const [open, setOpen] = useState<boolean>(false);
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
@@ -75,7 +75,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	}));
 
 	const getLeaderboardData = async () => {
-		const body = searchedUsername ? { username: searchedUsername } : { page: currentPage };
+		const body = searchedUsername ? { page: 1, username: searchedUsername } : { page: currentPage };
 		const { data, error } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', body);
 		if (error) {
 			console.error(error);
@@ -314,10 +314,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		}
 	];
 
-	const dataSource = tableData?.map((item: any, index: number) => ({
+	const dataSource = tableData?.map((item: any) => ({
 		key: item?.user_id,
 		profileScore: item?.profile_score,
-		rank: currentPage === 1 ? index + 4 : currentPage * 10 + index + 1 - 10,
+		rank: item?.rank,
 		user: item?.username,
 		userImage: item?.image,
 		userSince: dayjs(item?.created_at._seconds * 1000).format("DD[th] MMM 'YY")

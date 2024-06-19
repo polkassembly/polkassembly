@@ -9,10 +9,10 @@ import NameLabel from '~src/ui-components/NameLabel';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Divider } from 'antd';
-import { formatTimestamp } from './utils';
 import Tipping from '~src/components/Tipping';
 import { IRankCardProps } from './types';
 import { poppins } from 'pages/_app';
+import dayjs from 'dayjs';
 
 const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, className }) => {
 	const [open, setOpen] = useState<boolean>(false);
@@ -134,7 +134,7 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 							alt='calenderIcon'
 							className='icon-container -mt-0.5 scale-75'
 						/>
-						{formatTimestamp(data?.created_at._seconds)}
+						{dayjs(data?.created_at).format("DD[th] MMM 'YY")}
 					</span>
 				</div>
 			</div>

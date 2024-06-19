@@ -203,8 +203,8 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 				</div>
 			</div>
 			<div className='flex flex-col gap-8 overflow-x-auto'>
-				<div className='flex justify-between gap-2'>
-					<div className='flex flex-shrink-0 gap-2'>
+				<div className='justify-between gap-2 sm:flex'>
+					<div className='scroll-hidden flex w-auto gap-2 overflow-auto sm:w-auto sm:flex-shrink-0'>
 						{Object.entries(selectedGov === EGovType.OPEN_GOV ? userPosts?.open_gov : userPosts?.gov1)?.map(([key, value]) => (
 							<div
 								key={key}
@@ -225,7 +225,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						))}
 					</div>
 					{!!subFilterContent && selectedFilter !== 'discussions' && (
-						<div className=''>
+						<div className='mt-3 sm:mt-0'>
 							<Popover
 								zIndex={1056}
 								content={subFilterContent}

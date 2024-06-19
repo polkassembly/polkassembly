@@ -160,7 +160,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			if (!isAuthor) {
 				isAuthor = await checkIsProposer(
 					proposerAddress,
-					userAddresses.map((a) => a.address)
+					userAddresses.map((a) => a.address),
+					network
 				);
 			}
 
@@ -182,7 +183,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		} else {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address)
+				userAddresses.map((a) => a.address),
+				network
 			); // true
 		}
 		if (process.env.IS_CACHING_ALLOWED == '1') {
@@ -258,7 +260,8 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 		if (!isAuthor) {
 			isAuthor = await checkIsProposer(
 				proposerAddress,
-				userAddresses.map((a) => a.address)
+				userAddresses.map((a) => a.address),
+				network
 			);
 		}
 

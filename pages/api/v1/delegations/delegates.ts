@@ -278,29 +278,29 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		const dataSource = [];
 		if (combinedDelegatesUniqueData[address]?.nova) {
 			if (combinedDelegatesUniqueData[address]?.nova?.longDescription?.length) {
-				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
-				username = combinedDelegatesUniqueData[address]?.nova?.name;
+				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription || '';
+				username = combinedDelegatesUniqueData[address]?.nova?.name || '';
 			}
 			dataSource.push('nova');
 		}
 		if (combinedDelegatesUniqueData[address]?.w3f) {
 			if (combinedDelegatesUniqueData[address]?.w3f?.longDescription?.length) {
-				bio = combinedDelegatesUniqueData[address]?.w3f?.longDescription;
-				username = combinedDelegatesUniqueData[address]?.w3f?.name;
+				bio = combinedDelegatesUniqueData[address]?.w3f?.longDescription || '';
+				username = combinedDelegatesUniqueData[address]?.w3f?.name || '';
 			}
 			dataSource.push('w3f');
 		}
 		if (combinedDelegatesUniqueData[address]?.parity) {
 			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {
-				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto;
+				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto || '';
 				username = combinedDelegatesUniqueData[address]?.parity?.name;
 			}
 			dataSource.push('parity');
 		}
 		if (combinedDelegatesUniqueData[address]?.polkassembly) {
 			if (combinedDelegatesUniqueData[address]?.polkassembly?.bio?.length) {
-				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio;
-				username = combinedDelegatesUniqueData[address]?.polkassembly?.name;
+				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio || '';
+				username = combinedDelegatesUniqueData[address]?.polkassembly?.name || '';
 			}
 			dataSource.push('polkassembly');
 		}
@@ -308,7 +308,7 @@ export const getDelegatesData = async (network: string, address?: string) => {
 			const newDelegate: IDelegate = {
 				active_delegation_count: Object.keys(receivedDelgations)?.length || 0,
 				address,
-				bio,
+				bio: bio || '',
 				dataSource,
 				name: username,
 				voted_proposals_count: votesCount

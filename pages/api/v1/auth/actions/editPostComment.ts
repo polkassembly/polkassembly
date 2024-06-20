@@ -87,7 +87,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		return res.status(500).json({ message: 'Error saving comment' });
 	}
 	try {
-		const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+		const postData: IDocumentPost = (await postRef.get())?.data() as IDocumentPost;
 		const postAuthorId = postData?.user_id || null;
 		if (typeof postAuthorId == 'number') {
 			await createUserActivity({ action: EActivityAction.EDIT, commentAuthorId: userId, commentId, content, network, postAuthorId, postId, postType, userId });

@@ -47,7 +47,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 	if (!user || user.id !== Number(userId)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postRef = postsByTypeRef(network, strProposalType as ProposalType).doc(String(postId));
-	const postData: IDocumentPost = (await postRef.get()).data() as IDocumentPost;
+	const postData: IDocumentPost = (await postRef.get())?.data() as IDocumentPost;
 
 	// check for allowedCommentors
 	if (String(user.id) !== String(postData.user_id) && postData?.allowedCommentors && (postData.allowedCommentors || []).length > 0) {

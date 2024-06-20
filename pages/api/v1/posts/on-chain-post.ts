@@ -393,148 +393,150 @@ export async function getComments(
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
 		if (doc && doc.exists) {
-			const data = doc.data();
-			const history = data?.history
-				? data.history.map((item: any) => {
-						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
-				  })
-				: [];
-			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
-			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
-			const comment_reactions = getReactions(commentsReactionsSnapshot);
-			const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
+			const data = doc?.data();
+			if (data) {
+				const history = data?.history
+					? data.history.map((item: any) => {
+							return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
+					  })
+					: [];
+				const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
+				const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
+				const comment_reactions = getReactions(commentsReactionsSnapshot);
+				const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
 
-			if (typeof data.user_id === 'number') {
-				userIds.add(data.user_id);
-			} else {
-				const numUserId = Number(data.user_id);
-				if (!isNaN(numUserId)) {
-					userIds.add(numUserId);
+				if (typeof data.user_id === 'number') {
+					userIds.add(data.user_id);
+				} else {
+					const numUserId = Number(data.user_id);
+					if (!isNaN(numUserId)) {
+						userIds.add(numUserId);
+					}
 				}
-			}
 
-			// Send empty comment data with username and userid if comment is deleted (for replies)
-			const comment = data.isDeleted
-				? {
-						comment_reactions: getDefaultReactionObj(),
-						comment_source: 'polkassembly',
-						content: '[Deleted]',
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
-						history: [],
-						id: data.id,
-						is_custom_username: false,
-						post_index: postIndex,
-						post_type: postType,
-						profile: user?.profile || null,
-						proposer: data.proposer || '',
-						replies: data.replies || ([] as any[]),
-						sentiment: 0,
-						spam_users_count: 0,
-						updated_at: getUpdatedAt(data),
-						user_id: data.user_id,
-						username: data.username,
-						votes: [] as any[]
-				  }
-				: {
-						comment_reactions: comment_reactions,
-						comment_source: data.comment_source || 'polkassembly',
-						content: data.content,
-						created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
-						history: history,
-						id: data.id,
-						is_custom_username: false,
-						post_index: postIndex,
-						post_type: postType,
-						profile: user?.profile || null,
-						proposer: data.proposer || '',
-						replies: data.replies || ([] as any[]),
-						sentiment: data.sentiment || 0,
-						spam_users_count: 0,
-						updated_at: getUpdatedAt(data),
-						user_id: data.user_id,
-						username: data.username,
-						votes: [] as any[]
-				  };
-
-			const replyIds: string[] = [];
-			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
-			for (const doc of repliesSnapshot.docs) {
-				if (doc && doc.exists) {
-					const data = doc.data();
-					if (data) {
-						const { created_at, id, username, comment_id, content, user_id } = data;
-						if (id) {
-							replyIds.push(id);
-						}
-						if (typeof user_id === 'number') {
-							userIds.add(user_id);
-						} else {
-							const numUserId = Number(user_id);
-							if (!isNaN(numUserId)) {
-								userIds.add(numUserId);
-							}
-						}
-						const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
-						comment.replies.push({
-							comment_id,
-							content: data.isDeleted ? '[Deleted]' : content,
-							created_at: created_at?.toDate ? created_at.toDate() : created_at,
-							id: id,
-							isDeleted: data.isDeleted || false,
+				// Send empty comment data with username and userid if comment is deleted (for replies)
+				const comment = data.isDeleted
+					? {
+							comment_reactions: getDefaultReactionObj(),
+							comment_source: 'polkassembly',
+							content: '[Deleted]',
+							created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+							history: [],
+							id: data.id,
 							is_custom_username: false,
 							post_index: postIndex,
 							post_type: postType,
-							proposer: '',
-							reply_reactions: getReactions(replyReactionSnapshot),
+							profile: user?.profile || null,
+							proposer: data.proposer || '',
+							replies: data.replies || ([] as any[]),
+							sentiment: 0,
 							spam_users_count: 0,
 							updated_at: getUpdatedAt(data),
-							user_id: user_id,
-							username
-						});
-					}
-				}
-			}
+							user_id: data.user_id,
+							username: data.username,
+							votes: [] as any[]
+					  }
+					: {
+							comment_reactions: comment_reactions,
+							comment_source: data.comment_source || 'polkassembly',
+							content: data.content,
+							created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+							history: history,
+							id: data.id,
+							is_custom_username: false,
+							post_index: postIndex,
+							post_type: postType,
+							profile: user?.profile || null,
+							proposer: data.proposer || '',
+							replies: data.replies || ([] as any[]),
+							sentiment: data.sentiment || 0,
+							spam_users_count: 0,
+							updated_at: getUpdatedAt(data),
+							user_id: data.user_id,
+							username: data.username,
+							votes: [] as any[]
+					  };
 
-			if (replyIds.length > 0) {
-				const chunkSize = 30;
-				const totalChunks = Math.ceil(replyIds.length / chunkSize);
-				for (let i = 0; i < totalChunks; i++) {
-					const startIndex = i * chunkSize;
-					const endIndex = startIndex + chunkSize;
-					const slice = replyIds.slice(startIndex, endIndex);
-					if (slice.length > 0) {
-						const reportsQuery = await networkDocRef(network)
-							.collection('reports')
-							.where('type', '==', 'reply')
-							.where('proposal_type', '==', postType)
-							.where('content_id', 'in', slice)
-							.get();
-						reportsQuery.docs.map((doc) => {
-							if (doc && doc.exists) {
-								const data = doc.data();
-								comment.replies = comment.replies.map((v: any) => {
-									if (v && v.id == data.content_id) {
-										return {
-											...v,
-											spam_users_count: Number(v.spam_users_count) + 1
-										};
-									}
-									return v;
-								});
+				const replyIds: string[] = [];
+				const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
+				for (const doc of repliesSnapshot.docs) {
+					if (doc && doc.exists) {
+						const data = doc.data();
+						if (data) {
+							const { created_at, id, username, comment_id, content, user_id } = data;
+							if (id) {
+								replyIds.push(id);
 							}
-						});
+							if (typeof user_id === 'number') {
+								userIds.add(user_id);
+							} else {
+								const numUserId = Number(user_id);
+								if (!isNaN(numUserId)) {
+									userIds.add(numUserId);
+								}
+							}
+							const replyReactionSnapshot = await doc.ref.collection('reply_reactions').get();
+							comment.replies.push({
+								comment_id,
+								content: data.isDeleted ? '[Deleted]' : content,
+								created_at: created_at?.toDate ? created_at.toDate() : created_at,
+								id: id,
+								isDeleted: data.isDeleted || false,
+								is_custom_username: false,
+								post_index: postIndex,
+								post_type: postType,
+								proposer: '',
+								reply_reactions: getReactions(replyReactionSnapshot),
+								spam_users_count: 0,
+								updated_at: getUpdatedAt(data),
+								user_id: user_id,
+								username
+							});
+						}
 					}
 				}
+
+				if (replyIds.length > 0) {
+					const chunkSize = 30;
+					const totalChunks = Math.ceil(replyIds.length / chunkSize);
+					for (let i = 0; i < totalChunks; i++) {
+						const startIndex = i * chunkSize;
+						const endIndex = startIndex + chunkSize;
+						const slice = replyIds.slice(startIndex, endIndex);
+						if (slice.length > 0) {
+							const reportsQuery = await networkDocRef(network)
+								.collection('reports')
+								.where('type', '==', 'reply')
+								.where('proposal_type', '==', postType)
+								.where('content_id', 'in', slice)
+								.get();
+							reportsQuery.docs.map((doc) => {
+								if (doc && doc.exists) {
+									const data = doc.data();
+									comment.replies = comment.replies.map((v: any) => {
+										if (v && v.id == data.content_id) {
+											return {
+												...v,
+												spam_users_count: Number(v.spam_users_count) + 1
+											};
+										}
+										return v;
+									});
+								}
+							});
+						}
+					}
+				}
+				return {
+					...comment,
+					replies: comment.replies.map((reply: any) => {
+						return {
+							...reply,
+							spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
+						};
+					})
+				};
 			}
-			return {
-				...comment,
-				replies: comment.replies.map((reply: any) => {
-					return {
-						...reply,
-						spam_users_count: checkReportThreshold(Number(reply?.spam_users_count))
-					};
-				})
-			};
 		}
 	});
 

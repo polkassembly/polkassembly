@@ -6,8 +6,8 @@ import { getOnChainAddressDetails } from '~src/util/getOnChainAddressDetails';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 
 export const checkIsProposer = async (address: string, currentUserAddresses: Array<string>, network: string) => {
-	const { data: addressDetail } = await getOnChainAddressDetails(address, network);
-	const signatories = addressDetail?.account?.multisig?.multi_account_member;
+	const result = await getOnChainAddressDetails(address, network);
+	const signatories = result?.data?.account?.multisig?.multi_account_member;
 
 	if (signatories) {
 		const allSignatories = signatories.map((user: { address: string }) => getSubstrateAddress(user.address));

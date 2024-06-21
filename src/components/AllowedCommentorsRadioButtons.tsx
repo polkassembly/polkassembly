@@ -15,7 +15,7 @@ interface Props {
 const AllowedCommentorsRadioButtons = ({ className, allowedCommentors, isLoading, onChange }: Props) => {
 	return (
 		<div className={className}>
-			<div className='flex items-center gap-1.5 text-sm font-medium text-bodyBlue dark:text-white'>
+			<div className='flex items-center gap-1.5 text-sm font-medium text-lightBlue dark:text-white'>
 				Who can comment{' '}
 				<HelperTooltip
 					text='Choose who can comment and reply to this post'

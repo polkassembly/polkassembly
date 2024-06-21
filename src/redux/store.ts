@@ -23,6 +23,7 @@ import { removeIdentityStore } from './removeIdentity';
 import { trackLevelAnalyticsStore } from './trackLevelAnalytics';
 import { onchainIdentityStore } from './onchainIdentity';
 import { inAppNotificationsStore } from './inAppNotifications';
+import { ambassadorSeedingStore } from './ambassadorSeeding';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -114,7 +115,8 @@ export const makeStore = () => {
 		[removeIdentityStore.name]: removeIdentityStore.reducer,
 		[trackLevelAnalyticsStore.name]: trackLevelAnalyticsStore.reducer,
 		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
-		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer
+		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
+		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer
 	});
 
 	if (isServer) {
@@ -134,7 +136,7 @@ export const makeStore = () => {
 			key: 'polkassembly',
 			storage,
 			transforms: [userDetailsTransform],
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications', 'ambassadorSeeding'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

@@ -688,7 +688,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: collectivesLogo,
-		rpcEndpoint: 'wss://sys.dotters.network/collectives-polkadot',
+		rpcEndpoint: 'wss://rpc-collectives-polkadot.luckyfriday.io',
 		relayRpcEndpoints: [
 			{ key: 'wss://1rpc.io/dot', label: 'Automata 1RPC' },
 			{ key: 'wss://polkadot-public-rpc.blockops.network/ws', label: 'BlockOps' },

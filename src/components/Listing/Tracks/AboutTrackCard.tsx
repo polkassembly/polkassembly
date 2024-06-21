@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -35,6 +35,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
+import AmbassadorSeeding from '~src/components/AmbassadorSeeding';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -160,6 +161,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [showDetails, setShowDetails] = useState(false);
 	const [trackNum, setTrackNum] = useState<number | null>(null);
+	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
 
 	const [data, setData] = useState<any>({
 		datasets: [],
@@ -294,6 +296,20 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
+						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
+							<div>
+								<Button
+									className='h-10 border-pink_primary bg-transparent text-pink_primary'
+									onClick={() => setOpenAmbassadorModal(true)}
+								>
+									Create Ambassador
+								</Button>
+								<AmbassadorSeeding
+									open={openAmbassadorModal}
+									setOpen={setOpenAmbassadorModal}
+								/>
+							</div>
+						)}
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
 							<ProposalActionButtons

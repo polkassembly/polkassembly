@@ -73,6 +73,12 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	ssr: false
+});
+const AmbossadorSeeding = dynamic(() => import('../AmbassadorSeeding'), {
+	ssr: false
+});
 interface IUserDropdown {
 	handleSetIdentityClick: any;
 	isIdentityUnverified: boolean;
@@ -87,9 +93,6 @@ interface IUserDropdown {
 	isIdentityExists: boolean;
 }
 
-const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	ssr: false
-});
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -1140,6 +1143,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</>
 			)}
+			<AmbossadorSeeding />
 			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}

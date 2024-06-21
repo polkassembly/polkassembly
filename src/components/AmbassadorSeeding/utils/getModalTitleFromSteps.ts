@@ -7,11 +7,11 @@ import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 const getModalTitleFromSteps = (step: EAmbassadorSeedingSteps) => {
 	switch (step) {
 		case EAmbassadorSeedingSteps.PROMOTES_CALL:
-			return 'Add Rank';
+			return 'Create Applicant';
 		case EAmbassadorSeedingSteps.CREATE_PREIMAGE:
-			return ' Create Amabassador Preimage';
+			return ' Create Preimage';
 		case EAmbassadorSeedingSteps.CREATE_PROPOSAL:
-			return ' Create Amabassador Proposal';
+			return ' Create Proposal';
 	}
 };
 export default getModalTitleFromSteps;

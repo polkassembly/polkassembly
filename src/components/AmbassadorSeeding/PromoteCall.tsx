@@ -35,6 +35,14 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	const handleInductAddressChange = (address: string) => {
 		dispatch(ambassadorSeedingActions.updateApplicantAddress(address));
 	};
+	const checkDisabled = () => {
+		let check = false;
+		check = !applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady;
+		if (applicantAddress) {
+			check = !getEncodedAddress(applicantAddress, network);
+		}
+		return check;
+	};
 
 	const handlePromotesCall = async () => {
 		if (!collectivesApi || !collectivesApiReady || !applicantAddress || !api || !apiReady) return;
@@ -212,11 +220,8 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 						<Button
-							disabled={!applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady}
-							className={classNames(
-								'mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white',
-								!applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady ? 'opacity-50' : ''
-							)}
+							disabled={checkDisabled()}
+							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
 							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>
 							Next

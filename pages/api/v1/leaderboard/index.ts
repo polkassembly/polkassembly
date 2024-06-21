@@ -23,7 +23,6 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 		const users = (
 			await usersQuery
 				.orderBy('profile_score', 'desc')
-				.orderBy('created_at', 'asc')
 				.offset(username ? 0 : (Number(page) - 1) * LISTING_LIMIT)
 				.limit(username ? 1 : LISTING_LIMIT)
 				.get()
@@ -31,7 +30,7 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 
 		const leaderBoardDataPromise = users.map(async (userData) => {
 			//calculate rank based on profile score
-			const rank = (await firestore_db.collection('users').where('profile_score', '>', userData.profile_score).count().get()).data().count + 1;
+			const rank = (await firestore_db.collection('users').where('profile_score', '>', Number(userData.profile_score)).count().get()).data().count + 1;
 
 			return {
 				addresses: [],

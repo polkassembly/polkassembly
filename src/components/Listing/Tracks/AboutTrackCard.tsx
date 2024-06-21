@@ -295,7 +295,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
-					<div className='flex gap-x-4 max-md:flex-col'>
+					<div className='flex gap-x-4'>
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
@@ -502,7 +502,21 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<Divider className='xs:block sm:hidden' />
 
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
-					<div className='flex gap-x-1'>
+					<div className='flex gap-x-2'>
+						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
+							<div>
+								<Button
+									className='h-10 border-pink_primary bg-transparent text-pink_primary'
+									onClick={() => setOpenAmbassadorModal(true)}
+								>
+									Create Ambassador Application
+								</Button>
+								<AmbassadorSeeding
+									open={openAmbassadorModal}
+									setOpen={setOpenAmbassadorModal}
+								/>
+							</div>
+						)}
 						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton

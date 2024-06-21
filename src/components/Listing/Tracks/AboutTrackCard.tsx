@@ -295,14 +295,14 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
-					<div className='flex gap-x-4'>
+					<div className='flex gap-x-4 max-md:flex-col'>
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
 									className='h-10 border-pink_primary bg-transparent text-pink_primary'
 									onClick={() => setOpenAmbassadorModal(true)}
 								>
-									Create Ambassador
+									Create Ambassador Application
 								</Button>
 								<AmbassadorSeeding
 									open={openAmbassadorModal}

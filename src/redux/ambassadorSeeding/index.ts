@@ -8,8 +8,8 @@ import { EAmbassadorSeedingSteps, IAmbassadorProposalContent, IAmbassadorSeeding
 const initialState: IAmbassadorSeedingStore = {
 	ambassadorPostIndex: null,
 	ambassadorPreimage: { hash: '', length: 0 },
+	applicantAddress: '',
 	discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
-	inductAddress: '',
 	promoteCallData: '',
 	proposer: '',
 	rank: 3,
@@ -35,7 +35,7 @@ export const ambassadorSeedingStore = createSlice({
 				discussionTags: [],
 				discussionTitle: ''
 			};
-			state.inductAddress = '';
+			state.applicantAddress = '';
 			state.promoteCallData = '';
 			state.proposer = '';
 			state.xcmCallData = '';
@@ -55,6 +55,9 @@ export const ambassadorSeedingStore = createSlice({
 		updateAmbassadorSteps: (state, action: PayloadAction<EAmbassadorSeedingSteps>) => {
 			state.step = action.payload;
 		},
+		updateApplicantAddress: (state, action: PayloadAction<string>) => {
+			state.applicantAddress = action.payload;
+		},
 		updateDiscussionContent: (state, action: PayloadAction<string>) => {
 			state.discussion.discussionContent = action.payload;
 		},
@@ -64,9 +67,7 @@ export const ambassadorSeedingStore = createSlice({
 		updateDiscussionTitle: (state, action: PayloadAction<string>) => {
 			state.discussion.discussionTitle = action.payload;
 		},
-		updateInductAddress: (state, action: PayloadAction<string>) => {
-			state.inductAddress = action.payload;
-		},
+
 		updatePromoteCallData: (state, action: PayloadAction<string>) => {
 			state.promoteCallData = action.payload;
 		},

@@ -29,7 +29,7 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
-	const { inductAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
+	const { applicantAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 
 	const getState = (api: ApiPromise, encodedProposal: HexString): IPreimage => {
@@ -112,10 +112,10 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 					</div>
 
 					<div className='flex items-start justify-start gap-5'>
-						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Induct Address:</span>
+						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Applicant Address:</span>
 						<Address
 							iconSize={22}
-							address={inductAddress}
+							address={applicantAddress}
 							displayInline
 							isTruncateUsername={false}
 							disableTooltip

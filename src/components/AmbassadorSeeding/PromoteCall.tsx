@@ -26,29 +26,29 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
-	const { inductAddress, rank, proposer, promoteCallData, xcmCallData } = useAmbassadorSeedingSelector();
+	const { applicantAddress, rank, proposer, promoteCallData, xcmCallData } = useAmbassadorSeedingSelector();
 	const [form] = Form.useForm();
 	const [collectivesApi, setCollectivesApi] = useState<ApiPromise | null>(null);
 	const [collectivesApiReady, setCollectivesApiReady] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleInductAddressChange = (address: string) => {
-		dispatch(ambassadorSeedingActions.updateInductAddress(address));
+		dispatch(ambassadorSeedingActions.updateApplicantAddress(address));
 	};
 
 	const handlePromotesCall = async () => {
-		if (!collectivesApi || !collectivesApiReady || !inductAddress || !api || !apiReady) return;
-		if (!getEncodedAddress(inductAddress, network)) return;
+		if (!collectivesApi || !collectivesApiReady || !applicantAddress || !api || !apiReady) return;
+		if (!getEncodedAddress(applicantAddress, network)) return;
 
 		dispatch(ambassadorSeedingActions.updatePromoteCallData(''));
 		dispatch(ambassadorSeedingActions.updateXcmCallData(''));
 
 		setLoading(true);
 
-		const inductCall = collectivesApi.tx.ambassadorCore.induct(inductAddress);
+		const inductCall = collectivesApi.tx.ambassadorCore.induct(applicantAddress);
 		const payload: any = [];
 		for (let i = 1; i <= rank; i++) {
-			const promoteCall = collectivesApi.tx.ambassadorCore.promote(inductAddress, i);
+			const promoteCall = collectivesApi.tx.ambassadorCore.promote(applicantAddress, i);
 			payload.push(promoteCall);
 		}
 		const collectivePreimage = collectivesApi.tx.utility.forceBatch([inductCall, ...payload]);
@@ -97,7 +97,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	useEffect(() => {
 		handlePromotesCall();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collectivesApi, collectivesApiReady, inductAddress, rank, api, apiReady]);
+	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {
 		(async () => {
@@ -128,7 +128,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 			<div className={className}>
 				<Form
 					form={form}
-					initialValues={{ inductAddress: inductAddress || '' }}
+					initialValues={{ applicantAddress: applicantAddress || '' }}
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -158,14 +158,14 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 						</div>
 					</div>
 					<div className='mt-4'>
-						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Induct Address</div>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Applicant Address</div>
 						<div className='flex w-full items-end gap-2 text-sm'>
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
-								defaultAddress={inductAddress || ''}
-								name={'inductAddress'}
-								placeholder='Enter Promote Address'
+								defaultAddress={applicantAddress || ''}
+								name={'applicantAddress'}
+								placeholder='Enter Applicant Address'
 								iconClassName={'ml-[10px]'}
 								identiconSize={26}
 								onChange={(address) => handleInductAddressChange(getEncodedAddress(address, network) || address)}
@@ -212,10 +212,10 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 
 					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 						<Button
-							disabled={!inductAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady}
+							disabled={!applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady}
 							className={classNames(
 								'mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white',
-								!inductAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady ? 'opacity-50' : ''
+								!applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady ? 'opacity-50' : ''
 							)}
 							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>

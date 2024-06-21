@@ -19,7 +19,7 @@ export interface IAmbassadorSeedingStore {
 	ambassadorPostIndex: number | null;
 	rank: number;
 	proposer: string;
-	inductAddress: string;
+	applicantAddress: string;
 	promoteCallData: string;
 	xcmCallData: string;
 	ambassadorPreimage: { hash: string; length: number };

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
-import { Modal, message } from 'antd';
+import { Button, Modal, message } from 'antd';
 import { poppins } from 'pages/_app';
 import { useDispatch } from 'react-redux';
 import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
@@ -56,7 +56,14 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 			}}
 			footer={
 				isPreimageSuccess ? (
-					false
+					<div>
+						<Button
+							className='h-10 w-full border-none bg-pink_primary text-white'
+							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL))}
+						>
+							Create Proposal
+						</Button>
+					</div>
 				) : (
 					<Link
 						href={`https://${network}.polkassembly.io/referenda/${ambassadorPostIndex}`}

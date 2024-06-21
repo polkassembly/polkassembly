@@ -16,6 +16,9 @@ import { BN_HUNDRED } from '@polkadot/util';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import classNames from 'classnames';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { CreatePostResponseType } from '~src/auth/types';
+import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	className?: string;
@@ -27,10 +30,35 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const { discussion, proposer, ambassadorPreimage } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [allowedCommentor, setAllowedCommentor] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
+
+	const handleSaveProposal = async (postId: number) => {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			allowedCommentors: [allowedCommentor] || [EAllowedCommentor.ALL],
+			content: discussion.discussionContent,
+			discussionId: null,
+			postId,
+			proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
+			proposerAddress: proposer || loginAddress,
+			tags: discussion.discussionTags,
+			title: discussion.discussionTitle,
+			userId: userId
+		});
+
+		if (apiError || !data?.post_id) {
+			queueNotification({
+				header: 'Error',
+				message: apiError,
+				status: NotificationStatus.ERROR
+			});
+			console.error(apiError);
+		}
+
+		setLoading({ isLoading: false, message: '' });
+	};
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !proposer) return;
@@ -44,6 +72,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 			setOpen(false);
 			openSuccessModal();
 			setLoading({ isLoading: false, message: '' });
+			handleSaveProposal(postId);
 		};
 
 		const onFailed = () => {

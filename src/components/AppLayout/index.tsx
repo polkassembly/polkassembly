@@ -76,9 +76,6 @@ import { ApiPromise } from '@polkadot/api';
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
-const AmbossadorSeeding = dynamic(() => import('../AmbassadorSeeding'), {
-	ssr: false
-});
 interface IUserDropdown {
 	handleSetIdentityClick: any;
 	isIdentityUnverified: boolean;
@@ -1143,7 +1140,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</>
 			)}
-			<AmbossadorSeeding />
+
 			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}

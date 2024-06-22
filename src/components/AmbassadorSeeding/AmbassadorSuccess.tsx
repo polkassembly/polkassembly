@@ -59,7 +59,11 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 					<div>
 						<Button
 							className='h-10 w-full border-none bg-pink_primary text-white'
-							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL))}
+							onClick={() => {
+								dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL));
+								setOpen(false);
+								openPrevModal();
+							}}
 						>
 							Create Proposal
 						</Button>

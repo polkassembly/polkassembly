@@ -199,22 +199,6 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 							>
 								{getRankNameByRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR)}
 							</Radio>
-							<Radio
-								value={EAmbassadorSeedingRanks.SENIOR_AMBASSADOR}
-								checked={rank === EAmbassadorSeedingRanks.SENIOR_AMBASSADOR}
-								className='capitalize text-lightBlue dark:text-white'
-								key={EAmbassadorSeedingRanks.SENIOR_AMBASSADOR}
-							>
-								{getRankNameByRank(EAmbassadorSeedingRanks.SENIOR_AMBASSADOR)}
-							</Radio>
-							<Radio
-								value={EAmbassadorSeedingRanks.AMBASSADOR}
-								checked={rank === EAmbassadorSeedingRanks.AMBASSADOR}
-								className='capitalize text-lightBlue dark:text-white'
-								key={EAmbassadorSeedingRanks.AMBASSADOR}
-							>
-								{getRankNameByRank(EAmbassadorSeedingRanks.AMBASSADOR)}
-							</Radio>
 						</Radio.Group>
 					</div>
 

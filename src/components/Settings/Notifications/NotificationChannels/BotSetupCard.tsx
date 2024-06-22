@@ -46,16 +46,26 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 							</div>
 						)}
 						{!!isBotSetup && (
-							<span className='flex items-center gap-1'>
-								<Switch
-									checked={!!enabled}
-									size='small'
-									onChange={(checked) => (!checked ? handleClick() : handleEnableDisabled(channel, true))}
-								/>
-								<label>
-									<span className={`text-sm font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>{enabled ? 'Enabled' : 'Disabled'}</span>
-								</label>
-							</span>
+							<div className='flex flex-col gap-1'>
+								<span className='flex items-center gap-1'>
+									<Switch
+										checked={!!enabled}
+										size='small'
+										onChange={(checked) => (!checked ? handleClick() : handleEnableDisabled(channel, true))}
+									/>
+									<label>
+										<span className={`text-sm font-medium ${enabled ? 'text-pink_primary' : 'text-[#485F7D] dark:text-blue-dark-medium'}`}>{enabled ? 'Enabled' : 'Disabled'}</span>
+									</label>
+								</span>
+								{isBotSetup && (
+									<span
+										className='flex cursor-pointer items-center gap-1 text-[16px] font-medium text-pink_primary underline md:hidden'
+										onClick={handleResetClick}
+									>
+										<ResetIcon /> Reset
+									</span>
+								)}
+							</div>
 						)}
 					</h3>
 					{description && !isBotSetup && (
@@ -91,7 +101,7 @@ export default function BotSetupCard({ title, description, Icon, onClick, channe
 			</div>
 			{isBotSetup && (
 				<span
-					className='flex cursor-pointer items-center gap-1 text-[16px] font-medium text-pink_primary underline'
+					className='hidden cursor-pointer items-center gap-1 text-[16px] font-medium text-pink_primary underline md:flex'
 					onClick={handleResetClick}
 				>
 					<ResetIcon /> Reset

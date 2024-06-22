@@ -64,7 +64,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 		if (!api || !apiReady || !proposer) return;
 		const origin: any = { Origins: 'FellowshipAdmin' };
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
-		const tx = api.tx.referenda.submit(origin, { Lookup: { hash: ambassadorPreimage?.hash, len: ambassadorPreimage?.length } }, { After: BN_HUNDRED });
+		const tx = api.tx.referenda.submit(origin, { Lookup: { hash: ambassadorPreimage?.hash, len: String(ambassadorPreimage?.length) } }, { After: BN_HUNDRED });
 		const postId = Number(await api.query.referenda.referendumCount());
 
 		const onSuccess = () => {

@@ -19,9 +19,7 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) =
 		lastSeen: null,
 		notifications: {
 			readNotifications: [],
-			readNotificationsCount: 0,
-			unreadNotifications: [],
-			unreadNotificationsCount: 0
+			unreadNotifications: []
 		}
 	};
 
@@ -30,12 +28,10 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) =
 			lastSeen: null,
 			notifications: {
 				readNotifications: [],
-				readNotificationsCount: 0,
 				unreadNotifications:
 					notifications.map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.UNREAD };
-					}) || [],
-				unreadNotificationsCount: notifications?.length || 0
+					}) || []
 			}
 		};
 	} else {
@@ -52,9 +48,7 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) =
 			lastSeen: lastSeen,
 			notifications: {
 				readNotifications: read || [],
-				readNotificationsCount: read.length || 0,
-				unreadNotifications: unread || [],
-				unreadNotificationsCount: unread?.length || 0
+				unreadNotifications: unread || []
 			}
 		};
 	}

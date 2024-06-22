@@ -51,9 +51,9 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 			inAppNotificationsActions.updateInAppNotifications({
 				lastReadTime: lastReadTime,
 				recentNotifications: notifications?.readNotifications,
-				recentNotificationsCount: notifications?.readNotificationsCount,
+				recentNotificationsCount: notifications?.readNotifications?.length || 0,
 				unreadNotifications: notifications?.unreadNotifications,
-				unreadNotificationsCount: notifications?.unreadNotificationsCount
+				unreadNotificationsCount: notifications?.unreadNotifications?.length || 0
 			})
 		);
 	};

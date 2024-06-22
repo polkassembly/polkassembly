@@ -18,6 +18,7 @@ import { IRemoveIdentityStore } from './removeIdentity/@types';
 import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
 import { IOnChainIdentityStore } from './onchainIdentity/@types';
 import { IInAppNotificationsStore } from './inAppNotifications/@types';
+import { IAmbassadorSeedingStore } from './ambassadorSeeding/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -73,6 +74,10 @@ const useOnchainIdentitySelector = () => {
 const useInAppNotificationsSelector = () => {
 	return useSelector<TAppState, IInAppNotificationsStore>((state) => state.inAppNotifications);
 };
+
+const useAmbassadorSeedingSelector = () => {
+	return useSelector<TAppState, IAmbassadorSeedingStore>((state) => state.ambassadorSeeding);
+};
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -87,5 +92,6 @@ export {
 	useRemoveIdentity,
 	useTrackLevelAnalytics,
 	useOnchainIdentitySelector,
-	useInAppNotificationsSelector
+	useInAppNotificationsSelector,
+	useAmbassadorSeedingSelector
 };

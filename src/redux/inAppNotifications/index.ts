@@ -10,7 +10,8 @@ const initialState: IInAppNotificationsStore = {
 	recentNotifications: [],
 	recentNotificationsCount: 0,
 	unreadNotifications: [],
-	unreadNotificationsCount: 0
+	unreadNotificationsCount: 0,
+	viewAllClicked: false
 };
 
 export const inAppNotificationsStore = createSlice({
@@ -31,25 +32,20 @@ export const inAppNotificationsStore = createSlice({
 			state.recentNotificationsCount = action.payload.recentNotificationsCount;
 			state.unreadNotifications = action.payload.unreadNotifications;
 			state.unreadNotificationsCount = action.payload.unreadNotificationsCount;
+			state.viewAllClicked = action.payload?.viewAllClicked || false;
 		},
 		updateNotificationReadTime: (state, action: PayloadAction<string>) => {
 			state.lastReadTime = action.payload;
+		},
+		updateUnreadNotificationsCount: (state, action: PayloadAction<number>) => {
+			state.unreadNotificationsCount = action.payload;
+		},
+		updateViewAllClicked: (state, action: PayloadAction<boolean>) => {
+			state.viewAllClicked = action.payload;
 		}
 	}
 });
 const inAppNotificationsActions = inAppNotificationsStore.actions;
 
-const updateInAppNotifications: any = (payload: IInAppNotificationsStore) => {
-	return (dispatch: any) => {
-		dispatch(inAppNotificationsActions.updateInAppNotifications(payload));
-	};
-};
-
-const updateNotificationReadTime: any = (payload: string) => {
-	return (dispatch: any) => {
-		dispatch(inAppNotificationsActions.updateNotificationReadTime(payload));
-	};
-};
-
 export default inAppNotificationsStore.reducer;
-export { updateInAppNotifications, inAppNotificationsActions, updateNotificationReadTime };
+export { inAppNotificationsActions };

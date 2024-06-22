@@ -6,15 +6,12 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Popover from '~src/basic-components/Popover';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { EInAppNotificationsType, IInAppNotification } from './types';
 import { useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
-import dayjs from 'dayjs';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import NotificationsContent from './NotificationsContent';
-import { Spin } from 'antd';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { ACTIONS } from '../Settings/Notifications/Reducer/action';
@@ -26,8 +23,6 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const currentUser = useUserDetailsSelector();
 	const { id: userId } = currentUser;
 	const { unreadNotificationsCount } = useInAppNotificationsSelector();
-	const [loading, setLoading] = useState<boolean>(false);
-	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [open, setOpen] = useState(false);
@@ -69,70 +64,29 @@ const InAppNotification = ({ className }: { className?: string }) => {
 					type: ACTIONS.GET_NOTIFICATION_OBJECT
 				});
 			}
-			setLoading(false);
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
-	const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
-		if (!lastSeen) {
-			dispatch(
-				inAppNotificationsActions.updateInAppNotifications({
-					lastReadTime: null,
-					recentNotifications: [],
-					recentNotificationsCount: 0,
-					unreadNotifications: notifications.map((notification) => {
-						return { ...notification, type: EInAppNotificationsType.UNREAD };
-					}),
-					unreadNotificationsCount: notifications?.length
-				})
-			);
-		} else {
-			const lastReadTime = dayjs(lastSeen).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-
-			const recent: IInAppNotification[] = [];
-			const unread: IInAppNotification[] = [];
-			notifications.map((notification) => {
-				if (dayjs(notification.createdAt).isAfter(lastSeen)) {
-					unread.push({ ...notification, type: EInAppNotificationsType.UNREAD });
-				} else {
-					recent.push({ ...notification, type: EInAppNotificationsType.RECENT });
-				}
-			});
-
-			dispatch(
-				inAppNotificationsActions.updateInAppNotifications({
-					lastReadTime: lastReadTime,
-					recentNotifications: recent,
-					recentNotificationsCount: recent.length,
-					unreadNotifications: unread,
-					unreadNotificationsCount: unread?.length
-				})
-			);
-		}
-	};
-
-	const getNotifications = async () => {
+	const getUnreadNotificationsCount = async () => {
 		if (typeof userId !== 'number') return;
-		setLoadingTime(loadingTime + 1);
-		setLoading(true);
-		const { data, error } = await nextApiClientFetch<{ notifications: IInAppNotification[]; lastSeen: Date }>('/api/v1/inAppNotifications/get-notifications', {
+
+		const { data, error } = await nextApiClientFetch<{ unread: number; lastSeen: Date }>('/api/v1/inAppNotifications/get-unread-notifications-count', {
 			userId: userId
 		});
 		if (data) {
-			handleModifyData(data.notifications, data?.lastSeen);
+			dispatch(inAppNotificationsActions.updateUnreadNotificationsCount(data?.unread || 0));
 		} else if (error) {
 			console.log(error);
 		}
-		setLoading(false);
 	};
 
 	useEffect(() => {
 		if (!userId) return;
 		let intervalId: any = null;
 		const startInterval = () => {
-			intervalId = setInterval(getNotifications, 30000); // 50000 ms is 50 secs
+			intervalId = setInterval(getUnreadNotificationsCount, 30000); // 30000 ms is 30 secs
 		};
 
 		const stopInterval = () => {
@@ -159,7 +113,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	}, [userId]);
 
 	useEffect(() => {
-		getNotifications();
+		getUnreadNotificationsCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 
@@ -175,17 +129,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				<Popover
 					onOpenChange={(open: boolean) => setOpen(open)}
 					open={open}
-					content={
-						<Spin
-							spinning={loading && !loadingTime}
-							className='h-[200px]'
-						>
-							<NotificationsContent
-								isLoading={loading && !loadingTime}
-								closePopover={(open: boolean) => setOpen(!open)}
-							/>
-						</Spin>
-					}
+					content={<NotificationsContent closePopover={(open: boolean) => setOpen(!open)} />}
 					overlayClassName={classNames('h-[600px] mt-1.5 max-sm:w-full', className, !userId ? 'w-[400px]' : 'w-[480px]')}
 					trigger={'click'}
 					className={classNames(className, '')}

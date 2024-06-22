@@ -3,9 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 export enum ENotificationFilters {
 	ALL = 'all',
-	PROPOSALS = 'proposals',
-	MENTIONS = 'mentions',
-	COMMENTS = 'comments'
+	PROPOSALS_CREATED = 'newProposalCreated',
+	MENTIONED = 'newMention',
+	COMMENTED = 'newCommentAdded',
+	REPLIED = 'newReplyAdded',
+	PROPOSALS_STATUS_CHANGED = 'proposalStatusChanged',
+	CONTENT_DELETED_BY_MOD = 'contentDeletedByMod'
 }
 
 export interface IInAppNotification {
@@ -22,4 +25,9 @@ export interface IInAppNotification {
 export enum EInAppNotificationsType {
 	RECENT = 'recent',
 	UNREAD = 'unread'
+}
+
+export interface IInAppNotificationResponse {
+	notifications: { unreadNotifications: IInAppNotification[]; readNotifications: IInAppNotification[] };
+	lastSeen: Date | null;
 }

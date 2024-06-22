@@ -11,7 +11,50 @@ import messages from '~src/auth/utils/messages';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IInAppNotification } from '~src/components/InAppNotification/types';
+import { EInAppNotificationsType, IInAppNotification, IInAppNotificationResponse } from '~src/components/InAppNotification/types';
+import dayjs from 'dayjs';
+
+const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
+	let modifiedNotifications: IInAppNotificationResponse = {
+		lastSeen: null,
+		notifications: {
+			readNotifications: [],
+			unreadNotifications: []
+		}
+	};
+
+	if (!lastSeen) {
+		modifiedNotifications = {
+			lastSeen: null,
+			notifications: {
+				readNotifications: [],
+				unreadNotifications:
+					notifications.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.UNREAD };
+					}) || []
+			}
+		};
+	} else {
+		const read: IInAppNotification[] = [];
+		const unread: IInAppNotification[] = [];
+		notifications.map((notification) => {
+			if (dayjs(notification.createdAt).isAfter(lastSeen)) {
+				unread.push({ ...notification, type: EInAppNotificationsType.UNREAD });
+			} else {
+				read.push({ ...notification, type: EInAppNotificationsType.RECENT });
+			}
+		});
+		modifiedNotifications = {
+			lastSeen: lastSeen,
+			notifications: {
+				readNotifications: read || [],
+				unreadNotifications: unread || []
+			}
+		};
+	}
+
+	return modifiedNotifications;
+};
 
 export const getUserNotifications = async ({ userId }: { userId: number }) => {
 	try {
@@ -45,7 +88,7 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 		}
 
 		return {
-			data: { lastSeen: lastSeen || null, notifications: response },
+			data: handleModifyData(response, lastSeen),
 			error: null,
 			status: 200
 		};
@@ -58,7 +101,7 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 	}
 };
 
-const handler: NextApiHandler<{ notifications: IInAppNotification[]; lastSeen: Date } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IInAppNotificationResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 	const network = String(req.headers['x-network']);
 

@@ -10,4 +10,5 @@ export interface IInAppNotificationsStore {
 	recentNotificationsCount: number;
 	unreadNotificationsCount: number;
 	lastReadTime: string | null;
+	viewAllClicked?: boolean;
 }

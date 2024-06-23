@@ -11,7 +11,7 @@ import PromoteCall from './PromoteCall';
 import { useDispatch } from 'react-redux';
 import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import { IAmbassadorSeeding } from './types';
+import { EAmbassadorSeedingRanks, IAmbassadorSeeding } from './types';
 import CreateAmassadorPreimge from './CreateAmassadorPreimge';
 import getModalTitleFromSteps from './utils/getModalTitleFromSteps';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -39,6 +39,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 	useEffect(() => {
 		dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
 		dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL));
+		dispatch(ambassadorSeedingActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

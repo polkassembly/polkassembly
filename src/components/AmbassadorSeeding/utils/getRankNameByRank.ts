@@ -7,11 +7,11 @@ import { EAmbassadorSeedingRanks } from '../types';
 const getRankNameByRank = (rank: number) => {
 	switch (rank) {
 		case EAmbassadorSeedingRanks.AMBASSADOR:
-			return 'Amabassador';
+			return 'Ambassador';
 		case EAmbassadorSeedingRanks.SENIOR_AMBASSADOR:
-			return 'Senior Amabassador';
+			return 'Senior Ambassador';
 		case EAmbassadorSeedingRanks.HEAD_AMBASSADOR:
-			return 'Head Amabassador';
+			return 'Head Ambassador';
 	}
 };
 export default getRankNameByRank;

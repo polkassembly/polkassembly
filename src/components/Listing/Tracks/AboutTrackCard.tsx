@@ -299,6 +299,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
+									disabled={!loginAddress}
 									className='h-10 border-pink_primary bg-transparent text-pink_primary'
 									onClick={() => setOpenAmbassadorModal(true)}
 								>
@@ -506,6 +507,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
+									disabled={!loginAddress}
 									className='h-10 border-pink_primary bg-transparent text-pink_primary'
 									onClick={() => setOpenAmbassadorModal(true)}
 								>

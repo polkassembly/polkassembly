@@ -13,18 +13,21 @@ import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
 import { EInAppNotificationsType, IInAppNotification, IInAppNotificationResponse } from '~src/components/InAppNotification/types';
 import dayjs from 'dayjs';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 
-const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
+const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date, totalNotificationsCount: number) => {
 	let modifiedNotifications: IInAppNotificationResponse = {
 		lastSeen: null,
 		notifications: {
 			readNotifications: [],
 			unreadNotifications: []
-		}
+		},
+		totalNotificationsCount: totalNotificationsCount
 	};
 
 	if (!lastSeen) {
 		modifiedNotifications = {
+			...modifiedNotifications,
 			lastSeen: null,
 			notifications: {
 				readNotifications: [],
@@ -45,6 +48,7 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) =
 			}
 		});
 		modifiedNotifications = {
+			...modifiedNotifications,
 			lastSeen: lastSeen,
 			notifications: {
 				readNotifications: read || [],
@@ -56,11 +60,21 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) =
 	return modifiedNotifications;
 };
 
-export const getUserNotifications = async ({ userId }: { userId: number }) => {
+export const getUserNotifications = async ({ userId, page }: { userId: number; page: number }) => {
 	try {
-		const notificationsSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').orderBy('created_at', 'desc').get();
+		const notificationsSnapshot = await firestore_db
+			.collection('users')
+			.doc(String(userId))
+			.collection('notifications')
+			.orderBy('created_at', 'desc')
+			.limit(LISTING_LIMIT)
+			.offset(Number(page - 1) * LISTING_LIMIT)
+			.get();
 
 		const userSnapshot = await firestore_db.collection('users').doc(String(userId)).get();
+		const notificationsCountSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').orderBy('created_at', 'desc').count().get();
+
+		const totalNotificationsCount = notificationsCountSnapshot.data().count;
 		let lastSeen = null;
 		if (userSnapshot.exists) {
 			const userData = userSnapshot.data();
@@ -88,7 +102,7 @@ export const getUserNotifications = async ({ userId }: { userId: number }) => {
 		}
 
 		return {
-			data: handleModifyData(response, lastSeen),
+			data: handleModifyData(response, lastSeen, totalNotificationsCount || 0),
 			error: null,
 			status: 200
 		};
@@ -105,15 +119,20 @@ const handler: NextApiHandler<IInAppNotificationResponse | MessageType> = async 
 	storeApiKeyUsage(req);
 	const network = String(req.headers['x-network']);
 
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	const { page = 1 } = req.body;
+
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Missing user token' });
+	if (!token) return res.status(400).json({ message: messages.INVALID_JWT });
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
+	if (isNaN(page)) return res.status(400).json({ message: messages.INVALID_PARAMS });
+
 	const { data, error, status } = await getUserNotifications({
+		page: Number(page) || 1,
 		userId: user.id
 	});
 

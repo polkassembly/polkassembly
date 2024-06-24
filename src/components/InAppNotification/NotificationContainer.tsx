@@ -11,15 +11,23 @@ import { Divider } from 'antd';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { useInAppNotificationsSelector } from '~src/redux/selectors';
 
 const NotificationsContainer = ({ title, count, data, inPage, className }: { title?: string; count: number; data: IInAppNotification[]; inPage: boolean; className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { unreadNotificationsCount, totalNotificationsCount } = useInAppNotificationsSelector();
 
 	return (
 		<div>
-			{!inPage && (
+			{!inPage && !!unreadNotificationsCount && (
 				<div className={classNames('container mt-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium', inPage ? 'px-11' : 'px-8', className)}>
 					{title} ({count})
+				</div>
+			)}
+
+			{!inPage && !unreadNotificationsCount && (
+				<div className={classNames('container mt-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium', inPage ? 'px-11' : 'px-8', className)}>
+					Recent ({totalNotificationsCount})
 				</div>
 			)}
 			<div className='mt-1 flex w-full flex-col'>

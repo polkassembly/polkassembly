@@ -30,4 +30,5 @@ export enum EInAppNotificationsType {
 export interface IInAppNotificationResponse {
 	notifications: { unreadNotifications: IInAppNotification[]; readNotifications: IInAppNotification[] };
 	lastSeen: Date | null;
+	totalNotificationsCount: number;
 }

@@ -60,7 +60,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		}
 		setStep(isRequestedJudgmentFromPolkassembly ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isRequestedJudgmentFromPolkassembly]);
+	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	useEffect(() => {
 		if (network !== AllNetworks.KUSAMA) {

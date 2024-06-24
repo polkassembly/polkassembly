@@ -430,10 +430,10 @@ const CreatePreimage = ({
 		//mutibeneficiary not suppported    >>
 		if (genralIndex && beneficiaryAddresses.length === 1) {
 			const beneficiary = beneficiaryAddresses?.[0];
-			let balance = new BN(`${beneficiary?.amount || '0'}`);
+			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 			//USDT or USDT denominated 10^6   >>
-			balance = balance.mul(new BN('1000000'));
+			balance = balance.mul(new BN('1000000')).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -565,7 +565,7 @@ const CreatePreimage = ({
 			let proposal: Proposal | undefined;
 
 			try {
-				proposal = api.registry.createType('Proposal', bytes.toU8a(true));
+				proposal = api.registry.createType('Proposal', bytes.toU8a(true)) as unknown as any;
 			} catch (error) {
 				console.log(error);
 			}

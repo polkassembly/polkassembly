@@ -135,6 +135,11 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 	.padding .ant-slider .ant-slider-rail {
 		background-color: #fce5f2;
 	}
+	.dark & {
+		.padding .ant-slider .ant-slider-rail {
+			background-color: #3a162b;
+		}
+	}
 	.padding .ant-slider .ant-slider-handle:focus::after {
 		box-shadow: none;
 	}
@@ -149,6 +154,14 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-color: transparent;
 			margin-left: -10px;
 		}
+		.dark & {
+			.ant-slider-handle::after {
+				background-image: url('/assets/icons/against-dark.svg') !important;
+				background-repeat: no-repeat;
+				height: 32px;
+				width: 32px;
+			}
+		}
 	}
 	.sentiment_${ESentiment.SlightlyAgainst} {
 		.ant-slider-handle::after {
@@ -159,6 +172,14 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			box-shadow: none;
 			background-color: transparent;
 			margin-left: -10px;
+		}
+		.dark & {
+			.ant-slider-handle::after {
+				background-image: url('/assets/icons/slightly-against-dark.svg') !important;
+				background-repeat: no-repeat;
+				height: 32px;
+				width: 32px;
+			}
 		}
 	}
 
@@ -172,6 +193,14 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-color: transparent;
 			margin-left: -10px;
 		}
+		.dark & {
+			.ant-slider-handle::after {
+				background-image: url('/assets/icons/neutral-dark.svg') !important;
+				background-repeat: no-repeat;
+				height: 32px;
+				width: 32px;
+			}
+		}
 	}
 
 	.sentiment_${ESentiment.SlightlyFor} {
@@ -184,6 +213,14 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			background-color: transparent;
 			margin-left: -10px;
 		}
+		.dark & {
+			.ant-slider-handle::after {
+				background-image: url('/assets/icons/slightly-for-dark.svg') !important;
+				background-repeat: no-repeat;
+				height: 32px;
+				width: 32px;
+			}
+		}
 	}
 
 	.sentiment_${ESentiment.For} {
@@ -195,6 +232,13 @@ export default styled(CommentSentimentModal).attrs(({ sentiment }: any) => ({
 			box-shadow: none;
 			background-color: transparent;
 			margin-left: -10px;
+		}
+		.dark & {
+			.ant-slider-handle::after {
+				background-image: url('/assets/icons/for-dark.svg') !important;
+				height: 32px;
+				width: 32px;
+			}
 		}
 	}
 `;

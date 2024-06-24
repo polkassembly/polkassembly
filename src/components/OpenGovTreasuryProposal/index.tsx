@@ -52,6 +52,7 @@ interface Props {
 	theme?: string;
 	isUsedInTreasuryTrack?: boolean;
 	isUsedInReferedumComponent?: boolean;
+	onClick?: () => void;
 }
 
 export interface ISteps {
@@ -135,7 +136,7 @@ export const INIT_BENEFICIARIES = [
 	}
 ];
 
-const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent }: Props) => {
+const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent, onClick }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const dispatch = useDispatch();
@@ -291,6 +292,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
+		onClick?.();
 
 		if (id) {
 			proposerAddress.length > 0 ? setOpenModal(!openModal) : setOpenAddressLinkedModal(true);

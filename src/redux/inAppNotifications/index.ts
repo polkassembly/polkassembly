@@ -4,11 +4,14 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IInAppNotificationsStore } from './@types';
+import { IInAppNotification } from '~src/components/InAppNotification/types';
 
 const initialState: IInAppNotificationsStore = {
 	lastReadTime: null,
+	popupNotifications: [],
 	recentNotifications: [],
 	recentNotificationsCount: 0,
+	totalNotificationsCount: 0,
 	unreadNotifications: [],
 	unreadNotificationsCount: 0,
 	viewAllClicked: false
@@ -31,11 +34,16 @@ export const inAppNotificationsStore = createSlice({
 			state.recentNotifications = action.payload.recentNotifications;
 			state.recentNotificationsCount = action.payload.recentNotificationsCount;
 			state.unreadNotifications = action.payload.unreadNotifications;
-			state.unreadNotificationsCount = action.payload.unreadNotificationsCount;
 			state.viewAllClicked = action.payload?.viewAllClicked || false;
+			state.totalNotificationsCount = action.payload.totalNotificationsCount;
+			state.popupNotifications = action.payload.popupNotifications;
 		},
+
 		updateNotificationReadTime: (state, action: PayloadAction<string>) => {
 			state.lastReadTime = action.payload;
+		},
+		updatePopupNotifications: (state, action: PayloadAction<IInAppNotification[]>) => {
+			state.popupNotifications = action.payload;
 		},
 		updateUnreadNotificationsCount: (state, action: PayloadAction<number>) => {
 			state.unreadNotificationsCount = action.payload;

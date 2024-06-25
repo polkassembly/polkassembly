@@ -241,7 +241,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 
 				<div className={'mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm font-normal tracking-[0.015em] text-[#243A57] dark:text-blue-dark-high'}>
 					<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
-					{delegate?.bio.length > 100 && (
+					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
 							className='mt-1 flex cursor-pointer items-center justify-center text-xs font-medium leading-3 text-[#1B61FF]'

@@ -219,8 +219,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 		setDelegationMandate('');
 		if (!checkedAddress.length) return;
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: checkedAddress });
-		if (data && data[0]?.bio && data[0]?.dataSource.includes('polkassembly')) {
-			setDelegationMandate(data[0]?.bio);
+		if (data?.length) {
+			if (data?.[0]?.bio && data?.[0]?.dataSource?.includes('polkassembly')) {
+				setDelegationMandate(data?.[0]?.bio || '');
+			}
 		} else {
 			console.log(error);
 		}

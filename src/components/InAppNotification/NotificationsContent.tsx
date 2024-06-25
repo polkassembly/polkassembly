@@ -61,7 +61,6 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
 				lastReadTime: lastReadTime,
-				popupNotifications: popupNotifications || [],
 				recentNotifications: notifications?.readNotifications,
 				recentNotificationsCount: notifications?.readNotifications?.length || 0,
 				totalNotificationsCount: totalNotificationsCount || 0,
@@ -71,6 +70,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 	};
 
 	const getPopupNotifications = async () => {
+		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IInAppNotificationResponse>('/api/v1/inAppNotifications/get-notifications', {
 			page: 1
 		});
@@ -81,6 +81,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 			console.log(error);
 		}
 		setLoadingTime(loadingTime + 1);
+		setLoading(false);
 	};
 
 	const getNotifications = async (pageNum?: number) => {
@@ -104,12 +105,15 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		setStopInterval(true);
 		dispatch(inAppNotificationsActions.updateUnreadNotificationsCount(0));
 		dispatch(
+			inAppNotificationsActions.updatePopupNotifications(
+				popupNotifications?.map((notification) => {
+					return { ...notification, type: EInAppNotificationsType.RECENT };
+				}) || []
+			)
+		);
+		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
 				lastReadTime: JSON.stringify(new Date()),
-				popupNotifications:
-					popupNotifications?.map((notification) => {
-						return { ...notification, type: EInAppNotificationsType.RECENT };
-					}) || [],
 				recentNotifications: [
 					...unreadNotifications.map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.RECENT };
@@ -324,7 +328,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 						</Link>
 						{totalNotificationsCount > 0 && (
 							<Link
-								href='/notifications'
+								href={`/notifications?page${page}`}
 								className='font-medium text-pink_primary dark:text-blue-dark-helper'
 								onClick={() => {
 									closePopover?.(true);

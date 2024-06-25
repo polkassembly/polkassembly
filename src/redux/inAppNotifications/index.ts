@@ -36,7 +36,6 @@ export const inAppNotificationsStore = createSlice({
 			state.unreadNotifications = action.payload.unreadNotifications;
 			state.viewAllClicked = action.payload?.viewAllClicked || false;
 			state.totalNotificationsCount = action.payload.totalNotificationsCount;
-			state.popupNotifications = action.payload.popupNotifications;
 		},
 
 		updateNotificationReadTime: (state, action: PayloadAction<string>) => {

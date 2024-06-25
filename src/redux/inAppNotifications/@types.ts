@@ -12,5 +12,5 @@ export interface IInAppNotificationsStore {
 	lastReadTime: string | null;
 	viewAllClicked?: boolean;
 	totalNotificationsCount: number;
-	popupNotifications: IInAppNotification[];
+	popupNotifications?: IInAppNotification[];
 }

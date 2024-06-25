@@ -15,9 +15,8 @@ import { useInAppNotificationsSelector } from '~src/redux/selectors';
 
 const NotificationsContainer = ({ title, count, data, inPage, className }: { title?: string; count: number; data: IInAppNotification[]; inPage: boolean; className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { unreadNotificationsCount, totalNotificationsCount, popupNotifications } = useInAppNotificationsSelector();
+	const { unreadNotificationsCount, totalNotificationsCount } = useInAppNotificationsSelector();
 
-	console.log(data, popupNotifications, 'popupNotifications');
 	return (
 		<div>
 			{!inPage && !!unreadNotificationsCount && (

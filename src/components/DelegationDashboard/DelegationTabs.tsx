@@ -55,7 +55,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 			setProfileDetails({
 				bio: data?.profile?.bio || '',
 				image: data?.profile?.image || '',
-				social_links: data.profile.social_links || [],
+				social_links: data?.profile?.social_links || [],
 				user_id: data?.user_id,
 				username: data?.username
 			});

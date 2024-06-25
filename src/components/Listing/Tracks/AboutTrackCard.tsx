@@ -296,11 +296,12 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-x-4'>
+						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
 									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-transparent text-pink_primary'
+									className='h-10 border-pink_primary bg-pink_primary text-white'
 									onClick={() => setOpenAmbassadorModal(true)}
 								>
 									Create Ambassador Application
@@ -311,7 +312,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								/>
 							</div>
 						)}
-						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
 							<ProposalActionButtons
 								isCreateProposal={

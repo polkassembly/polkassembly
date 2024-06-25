@@ -503,12 +503,13 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 				<Divider className='xs:block sm:hidden' />
 
 				<article className='justify-end px-4 pb-4 pt-0 xs:flex md:hidden md:p-4'>
-					<div className='flex gap-x-2'>
+					<div className='flex flex-wrap gap-2'>
+						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
 								<Button
 									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-transparent text-pink_primary'
+									className='h-10 border-pink_primary bg-pink_primary text-white'
 									onClick={() => setOpenAmbassadorModal(true)}
 								>
 									Create Ambassador Application
@@ -519,7 +520,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								/>
 							</div>
 						)}
-						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (
 							<CustomButton
 								className='delegation-buttons'

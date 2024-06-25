@@ -8,7 +8,9 @@ export interface IInAppNotificationsStore {
 	recentNotifications: IInAppNotification[];
 	unreadNotifications: IInAppNotification[];
 	recentNotificationsCount: number;
-	unreadNotificationsCount: number;
+	unreadNotificationsCount?: number;
 	lastReadTime: string | null;
 	viewAllClicked?: boolean;
+	totalNotificationsCount: number;
+	popupNotifications?: IInAppNotification[];
 }

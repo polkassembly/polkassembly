@@ -18,6 +18,8 @@ import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { userDetailsActions } from '~src/redux/userDetails';
+import { useDispatch } from 'react-redux';
 
 interface Props {
 	className?: string;
@@ -30,6 +32,7 @@ const ProfileBalances = dynamic(() => import('./ProfileBalance'), {
 
 const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const { network } = useNetworkSelector();
@@ -73,8 +76,11 @@ const DelegationDashboardHome = ({ className }: Props) => {
 		if (window.innerWidth < 768) {
 			setIsMobile(true);
 		}
+		if (!userDetails.delegationDashboardAddress && !!userDetails.loginAddress) {
+			dispatch(userDetailsActions.updateDelegationDashboardAddress(userDetails.loginAddress));
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails?.username, userDetails?.delegationDashboardAddress, isMobile]);
+	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);
 
 	return (
 		<div className={`${className} delegation-dashboard`}>

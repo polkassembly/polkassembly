@@ -862,3 +862,7 @@ z-index: 105 !important;
 .dark-icons{
   filter: invert(56%) sepia(0%) saturate(15%) hue-rotate(141deg) brightness(101%) contrast(93%)  !important;
 }
+
+.bounty-button {
+  background: linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%);
+}

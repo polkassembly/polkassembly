@@ -33,7 +33,6 @@ const NotificationsLayout = ({ inPage, onPageChange }: { inPage: boolean; onPage
 				data={[...unreadNotifications, ...recentNotifications]}
 				inPage={inPage}
 				key={EInAppNotificationsType.RECENT}
-				className='min-h-[300px]'
 			/>
 			<div className='mt-4 flex justify-end px-8'>
 				{totalNotificationsCount > 10 && (

@@ -328,7 +328,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 						</Link>
 						{totalNotificationsCount > 0 && (
 							<Link
-								href={`/notifications?page${page}`}
+								href={`/notifications?page=${page}`}
 								className='font-medium text-pink_primary dark:text-blue-dark-helper'
 								onClick={() => {
 									closePopover?.(true);

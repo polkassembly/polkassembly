@@ -9,7 +9,7 @@ import BecomeDelegate from './BecomeDelegate';
 import TotalDelegationData from './TotalDelegationData';
 import TrendingDelegates from './TrendingDelegates';
 import { TabsProps } from 'antd';
-import DelegationProfile from '~src/ui-components/DelegationProfile';
+import DelegationProfile from '~src/components/DelegationDashboard/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';

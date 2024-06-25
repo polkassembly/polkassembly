@@ -98,6 +98,9 @@ export const userDetailsStore = createSlice({
 		},
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;
+		},
+		updateDelegationDashboardAddress: (state, action: PayloadAction<string>) => {
+			state.delegationDashboardAddress = action.payload;
 		}
 	}
 });

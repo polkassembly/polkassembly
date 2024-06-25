@@ -147,11 +147,11 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 	};
 
 	const sentimentsIcons: any = {
-		[ESentiment.Against]: <SadDizzyIcon style={{ border: 'none' }} />,
-		[ESentiment.SlightlyAgainst]: <SadIcon style={{ border: 'none' }} />,
-		[ESentiment.Neutral]: <NeutralIcon style={{ border: 'none' }} />,
-		[ESentiment.SlightlyFor]: <SmileIcon style={{ border: 'none' }} />,
-		[ESentiment.For]: <SmileDizzyIcon style={{ border: 'none' }} />
+		[ESentiment.Against]: theme === 'dark' ? <DarkSentiment1 style={{ border: 'none' }} /> : <SadDizzyIcon style={{ border: 'none' }} />,
+		[ESentiment.SlightlyAgainst]: theme === 'dark' ? <DarkSentiment2 style={{ border: 'none' }} /> : <SadIcon style={{ border: 'none' }} />,
+		[ESentiment.Neutral]: theme === 'dark' ? <DarkSentiment3 style={{ border: 'none' }} /> : <NeutralIcon style={{ border: 'none' }} />,
+		[ESentiment.SlightlyFor]: theme === 'dark' ? <DarkSentiment4 style={{ border: 'none' }} /> : <SmileIcon style={{ border: 'none' }} />,
+		[ESentiment.For]: theme === 'dark' ? <DarkSentiment5 style={{ border: 'none' }} /> : <SmileDizzyIcon style={{ border: 'none' }} />
 	};
 
 	const onContentChange = (content: string) => {

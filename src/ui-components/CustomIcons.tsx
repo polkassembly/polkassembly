@@ -168,6 +168,12 @@ import StackingAdminSVG from '~assets/icons/stacking-admin.svg';
 import ReferendumsSVG from '~assets/icons/referndums.svg';
 import ClearIdentityOutlinedSVG from '~assets/icons/outlined-clear-identity.svg';
 import ClearIdentityFilledSVG from '~assets/icons/filled-clear-identity.svg';
+import CalenderIconSVG from '~assets/icons/calender-icon.svg';
+import PowerIconSVG from '~assets/icons/body-part-muscle.svg';
+import VoterIconSVG from '~assets/icons/vote-small-icon.svg';
+import ConvictionIconSVG from '~assets/icons/conviction-small-icon.svg';
+import CapitalIconSVG from '~assets/icons/capital-small-icom.svg';
+import EmailIconSVG from '~assets/icons/email_icon.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1256,6 +1262,43 @@ export const ClearIdentityOutlinedIcon = (props: Partial<CustomIconComponentProp
 export const ClearIdentityFilledIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ClearIdentityFilledSVG}
+		{...props}
+	/>
+);
+
+export const CalenderIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CalenderIconSVG}
+		{...props}
+	/>
+);
+export const PowerIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={PowerIconSVG}
+		{...props}
+	/>
+);
+export const VoterIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={VoterIconSVG}
+		{...props}
+	/>
+);
+export const ConvictionIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={ConvictionIconSVG}
+		{...props}
+	/>
+);
+export const CapitalIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CapitalIconSVG}
+		{...props}
+	/>
+);
+export const EmailIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={EmailIconSVG}
 		{...props}
 	/>
 );

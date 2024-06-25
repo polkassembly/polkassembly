@@ -3,11 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Modal } from 'antd';
 import React, { useState } from 'react';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
-import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
-import CapitalIcon from '~assets/icons/capital-small-icom.svg';
-import EmailIcon from '~assets/icons/email_icon.svg';
+import { CapitalIcon, CloseIcon, ConvictionIcon, EmailIconNew, VoterIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
@@ -63,19 +59,19 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 						<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<VoterIcon /> Voting Power
+								<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.votingPower || 0).toString(), 2, true, network)}</span>
 						</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<ConvictionIcon /> Conviction
+								<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> Conviction
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{Number(convictionPower.toFixed(1))}x</span>
 						</div>
 						<div className='flex justify-between'>
 							<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-								<CapitalIcon /> Capital
+								<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
 							</span>
 							<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData.capital || 0).toString(), 2, true, network)}</span>
 						</div>
@@ -87,19 +83,19 @@ const DelegateesModal = ({ className, open, setOpen, delegateesData, index }: ID
 								<div className='mb-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<VoterIcon /> Voting Power
+										<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.votingPower || '0').toString(), 2, true, network)}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<EmailIcon /> Delegators
+										<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> Delegators
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{totalData?.count}</span>
 								</div>
 								<div className='flex justify-between'>
 									<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-										<CapitalIcon /> Capital
+										<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
 									</span>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((totalData?.capital || '0').toString(), 2, true, network)}</span>
 								</div>

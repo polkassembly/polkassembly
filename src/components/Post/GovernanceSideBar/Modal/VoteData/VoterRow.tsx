@@ -9,12 +9,6 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import CollapseDownIcon from '~assets/icons/keyboard_arrow_down.svg';
 import CollapseUpIcon from '~assets/icons/keyboard_arrow_up.svg';
-import CalenderIcon from '~assets/icons/calender-icon.svg';
-import PowerIcon from '~assets/icons/body-part-muscle.svg';
-import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
-import CapitalIcon from '~assets/icons/capital-small-icom.svg';
-import EmailIcon from '~assets/icons/email_icon.svg';
 import styled from 'styled-components';
 import { Divider } from 'antd';
 import DelegationListRow from './DelegationListRow';
@@ -40,6 +34,7 @@ import {
 } from '~src/redux/voteData';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import { usePostDataContext } from '~src/context';
+import { CalenderIcon, CapitalIcon, ConvictionIcon, EmailIconNew, PowerIcon, VoterIcon } from '~src/ui-components/CustomIcons';
 
 interface IVoterRow {
 	className?: string;
@@ -311,11 +306,11 @@ const VoterRow: FC<IVoterRow> = ({
 					<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
 						<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-								<CalenderIcon /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
+								<CalenderIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 							</span>
 							{voteData?.decision !== 'abstain' && isReferendum2 && (
 								<span className='flex items-center gap-1 text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>
-									<PowerIcon />
+									<PowerIcon className='text-blue-light-mediume dark:text-blue-dark-medium' />
 									Voting Power:{' '}
 									<span className='text-bodyBlue dark:text-blue-dark-high'>
 										{getPercentage(voteData?.totalVotingPower || (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value) || 0, tally)}%
@@ -330,13 +325,13 @@ const VoterRow: FC<IVoterRow> = ({
 									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<VoterIcon /> Voting Power
+											<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData.selfVotingPower || 0).toString(), 2, true, network)}</span>
 									</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<ConvictionIcon /> Conviction
+											<ConvictionIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Conviction
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 											{voteData.lockPeriod ? `${voteData.lockPeriod}x${voteData?.delegatedVotes?.length > 0 ? '/d' : ''}` : '0.1x'}
@@ -344,7 +339,7 @@ const VoterRow: FC<IVoterRow> = ({
 									</div>
 									<div className='flex justify-between'>
 										<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-											<CapitalIcon /> Capital
+											<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
 										</span>
 										<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 											{parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network)}
@@ -358,19 +353,19 @@ const VoterRow: FC<IVoterRow> = ({
 											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<VoterIcon /> Voting Power
+													<VoterIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Voting Power
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{parseBalance((voteData?.delegatedVotingPower || '0').toString(), 2, true, network)}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<EmailIcon /> Delegators
+													<EmailIconNew className='text-blue-light-medium dark:text-blue-dark-medium' /> Delegators
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>{delegatorLoading ? <Loader size='small' /> : delegatedData?.delegator}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-xs text-blue-light-helper dark:text-blue-dark-medium'>
-													<CapitalIcon /> Capital
+													<CapitalIcon className='text-blue-light-medium dark:text-blue-dark-medium' /> Capital
 												</span>
 												<span className='text-xs text-bodyBlue dark:text-blue-dark-high'>
 													{delegatorLoading ? <Loader size='small' /> : parseBalance((delegatedData?.delegatedVotesCapital || '0').toString(), 2, true, network)}

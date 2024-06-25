@@ -3,15 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Modal, Spin } from 'antd';
 import React, { useEffect } from 'react';
-import { CloseIcon, SubscanIcon } from './CustomIcons';
+import { CalenderIcon, CapitalIcon, CloseIcon, ConvictionIcon, EmailIconNew, SubscanIcon, VoterIcon } from './CustomIcons';
 import { poppins } from 'pages/_app';
 import Address from './Address';
-import CalenderIcon from '~assets/icons/calender-icon.svg';
 import dayjs from 'dayjs';
-import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
-import CapitalIcon from '~assets/icons/capital-small-icom.svg';
-import EmailIcon from '~assets/icons/email_icon.svg';
 import { IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
 import { noTitle } from '~src/global/noTitle';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -66,7 +61,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 					<div>
 						<span className='dark:text-white'>
 							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-								<CalenderIcon />{' '}
+								<CalenderIcon className='text-lightBlue dark:text-blue-dark-medium' />{' '}
 								{dayjs(expandViewVote?.proposal?.createdAt)
 									.format('MM/DD/YYYY h:mm A')
 									.toString()}
@@ -113,7 +108,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 										<div className='mt-2 flex flex-col gap-2 pr-6 max-md:pr-0'>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<VoterIcon /> Voting Power
+													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Voting Power
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{Number(formatedBalance((expandViewVote?.balance?.toString() || '0').toString(), unit, 2).replaceAll(',', '')) *
@@ -123,7 +118,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<ConvictionIcon /> Conviction
+													<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> Conviction
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{expandViewVote?.lockPeriod || 0.1}x{expandViewVote?.isDelegatedVote && '/d'}
@@ -131,7 +126,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<CapitalIcon /> Capital
+													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.balance?.toString() || '0').toString(), unit, 2)} {unit}
@@ -144,7 +139,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 										<div className='mt-2 flex flex-col gap-2 lg:pr-4'>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<VoterIcon /> Votes
+													<VoterIcon className='text-lightBlue dark:text-blue-dark-medium' /> Votes
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.delegatedVotingPower || '0')?.toString(), unit, 2)} {unit}
@@ -152,13 +147,13 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<EmailIcon /> Delegators
+													<EmailIconNew className='text-lightBlue dark:text-blue-dark-medium' /> Delegators
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>{expandViewVote?.delegatorsCount || 0}</span>
 											</div>
 											<div className='flex justify-between'>
 												<span className='flex items-center gap-1 text-sm text-[#576D8B] dark:text-icon-dark-inactive'>
-													<CapitalIcon /> Capital
+													<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
 												</span>
 												<span className='text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 													{formatedBalance((expandViewVote?.delegateCapital || '0')?.toString(), unit, 2)} {unit}

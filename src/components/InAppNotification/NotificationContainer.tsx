@@ -15,8 +15,9 @@ import { useInAppNotificationsSelector } from '~src/redux/selectors';
 
 const NotificationsContainer = ({ title, count, data, inPage, className }: { title?: string; count: number; data: IInAppNotification[]; inPage: boolean; className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
-	const { unreadNotificationsCount, totalNotificationsCount } = useInAppNotificationsSelector();
+	const { unreadNotificationsCount, totalNotificationsCount, popupNotifications } = useInAppNotificationsSelector();
 
+	console.log(data, popupNotifications, 'popupNotifications');
 	return (
 		<div>
 			{!inPage && !!unreadNotificationsCount && (
@@ -32,14 +33,13 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 			)}
 			<div className='mt-1 flex w-full flex-col'>
 				{data?.map((notification, index) => (
-					<>
+					<div key={`${notification.id}_${index}`}>
 						<Link
 							className={classNames(
 								'flex flex-col',
 								inPage ? 'px-7 pt-5 max-sm:px-3' : 'px-4 pt-3',
 								notification.type === EInAppNotificationsType.UNREAD ? 'bg-[#f7f8ff] dark:bg-[#1a1b34]' : ''
 							)}
-							key={`${notification.id}_${index}`}
 							href={notification.url}
 							target='_blank'
 						>
@@ -79,7 +79,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 						</Link>
 
 						{index !== data?.length - 1 && <Divider className='m-0 bg-section-light-container dark:bg-separatorDark' />}
-					</>
+					</div>
 				))}
 			</div>
 		</div>

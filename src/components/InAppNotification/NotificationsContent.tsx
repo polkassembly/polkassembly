@@ -75,10 +75,12 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 			page: 1
 		});
 		if (data) {
-			dispatch(inAppNotificationsActions.updatePopupNotifications([...(data?.notifications?.unreadNotifications || []), ...(data?.notifications?.unreadNotifications || [])]));
+			dispatch(inAppNotificationsActions.updatePopupNotifications([...(data?.notifications?.unreadNotifications || []), ...(data?.notifications?.readNotifications || [])]));
+			dispatch(inAppNotificationsActions.updateTotalNotificationsCount(data?.totalNotificationsCount || 0));
 		} else if (error) {
 			console.log(error);
 		}
+		setLoadingTime(loadingTime + 1);
 	};
 
 	const getNotifications = async (pageNum?: number) => {

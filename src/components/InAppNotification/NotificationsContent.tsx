@@ -19,6 +19,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import dayjs from 'dayjs';
 import { Spin } from 'antd';
+import { useRouter } from 'next/router';
 
 interface INotificationsContent {
 	className?: string;
@@ -28,12 +29,22 @@ interface INotificationsContent {
 
 const NotificationsContent = ({ className, inPage = false, closePopover }: INotificationsContent) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
+	const page = Number(router.query.page as string) || 1;
 	const { resolvedTheme: theme } = useTheme();
 	const { networkPreferences, id: userId } = useUserDetailsSelector();
-	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications, viewAllClicked = false } = useInAppNotificationsSelector();
+	const {
+		unreadNotificationsCount,
+		recentNotifications,
+		unreadNotifications,
+		viewAllClicked = false,
+		totalNotificationsCount,
+		popupNotifications
+	} = useInAppNotificationsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingTime, setLoadingTime] = useState<number>(0);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [isStopInterval, setStopInterval] = useState(false);
 
 	const handleUpdateLastSeen = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/inAppNotifications/add-last-seen', {
@@ -44,7 +55,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 	};
 
 	const handleModifyData = (data: IInAppNotificationResponse) => {
-		const { lastSeen, notifications } = data;
+		const { lastSeen, notifications, totalNotificationsCount } = data;
 		const lastReadTime = dayjs(lastSeen).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
 
 		dispatch(
@@ -52,18 +63,33 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 				lastReadTime: lastReadTime,
 				recentNotifications: notifications?.readNotifications,
 				recentNotificationsCount: notifications?.readNotifications?.length || 0,
-				unreadNotifications: notifications?.unreadNotifications,
-				unreadNotificationsCount: notifications?.unreadNotifications?.length || 0
+				totalNotificationsCount: totalNotificationsCount || 0,
+				unreadNotifications: notifications?.unreadNotifications
 			})
 		);
 	};
 
-	const getNotifications = async () => {
+	const getPopupNotifications = async () => {
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<IInAppNotificationResponse>('/api/v1/inAppNotifications/get-notifications', {
+			page: 1
+		});
+		if (data) {
+			dispatch(inAppNotificationsActions.updatePopupNotifications([...(data?.notifications?.unreadNotifications || []), ...(data?.notifications?.readNotifications || [])]));
+			dispatch(inAppNotificationsActions.updateTotalNotificationsCount(data?.totalNotificationsCount || 0));
+		} else if (error) {
+			console.log(error);
+		}
+		setLoadingTime(loadingTime + 1);
+		setLoading(false);
+	};
+
+	const getNotifications = async (pageNum?: number) => {
 		if (typeof userId !== 'number') return;
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IInAppNotificationResponse>('/api/v1/inAppNotifications/get-notifications', {
-			userId: userId
+			page: pageNum || page || 1
 		});
 		if (data) {
 			handleModifyData(data);
@@ -72,9 +98,19 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		}
 		setLoadingTime(loadingTime + 1);
 		setLoading(false);
+		setStopInterval(false);
 	};
 
 	const handleMarkAsRead = (isViewAllClicked?: boolean) => {
+		setStopInterval(true);
+		dispatch(inAppNotificationsActions.updateUnreadNotificationsCount(0));
+		dispatch(
+			inAppNotificationsActions.updatePopupNotifications(
+				popupNotifications?.map((notification) => {
+					return { ...notification, type: EInAppNotificationsType.RECENT };
+				}) || []
+			)
+		);
 		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
 				lastReadTime: JSON.stringify(new Date()),
@@ -84,17 +120,18 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 					}),
 					...recentNotifications
 				],
-				recentNotificationsCount: unreadNotificationsCount + recentNotificationsCount,
+				recentNotificationsCount: totalNotificationsCount || 0,
+				totalNotificationsCount: totalNotificationsCount || 0,
 				unreadNotifications: [],
-				unreadNotificationsCount: 0,
 				viewAllClicked: isViewAllClicked || false
 			})
 		);
+		handleUpdateLastSeen();
+		setStopInterval(false);
 	};
 
 	const handleViewAll = () => {
 		if (!unreadNotificationsCount) return;
-		handleUpdateLastSeen();
 		handleMarkAsRead(true);
 	};
 
@@ -105,7 +142,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 			if (viewAllClicked) {
 				dispatch(inAppNotificationsActions.updateViewAllClicked(false));
 			}
-			intervalId = setInterval(getNotifications, 30000); // 30000 ms is 30 secs
+			intervalId = setInterval(inPage ? getNotifications : getPopupNotifications, 30000); // 30000 ms is 30 secs
 		};
 
 		const stopInterval = () => {
@@ -121,6 +158,9 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 				stopInterval();
 			}
 		};
+		if (isStopInterval) {
+			stopInterval();
+		}
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -129,11 +169,15 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userId]);
+	}, [userId, isStopInterval]);
 
 	useEffect(() => {
 		if (viewAllClicked) return;
-		getNotifications();
+		if (inPage) {
+			getNotifications();
+		} else {
+			getPopupNotifications();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 
@@ -215,8 +259,15 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 					{/* <div className='border-solid border-white px-6'>fil</div> */}
 
 					{/* content */}
-					{unreadNotificationsCount + recentNotificationsCount > 0 ? (
-						<NotificationsLayout inPage={inPage} />
+					{totalNotificationsCount > 0 ? (
+						<NotificationsLayout
+							inPage={inPage}
+							onPageChange={(page: number) => {
+								getNotifications(page);
+								setStopInterval(true);
+								setLoadingTime(0);
+							}}
+						/>
 					) : !loading ? (
 						<div className='flex h-[350px] flex-col items-center gap-2 py-8'>
 							<Image
@@ -275,9 +326,9 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 							/>
 							Manage Settings
 						</Link>
-						{unreadNotificationsCount + recentNotificationsCount > 0 && (
+						{totalNotificationsCount > 0 && (
 							<Link
-								href='/notifications'
+								href={`/notifications?page${page}`}
 								className='font-medium text-pink_primary dark:text-blue-dark-helper'
 								onClick={() => {
 									closePopover?.(true);

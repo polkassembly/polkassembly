@@ -228,7 +228,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((!checkedTrack?.length && !checkedList?.length) || !getEncodedAddress(target, network)) return;
+		if ((isNaN(checkedTrack.trackId) && !checkedList?.length) || !getEncodedAddress(target, network)?.length) return;
 		setLoading(true);
 
 		const checkedArr =
@@ -284,6 +284,12 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [open, delegationDashboardAddress, api, apiReady]);
+
+	useEffect(() => {
+		if (!network || !api || !apiReady) return;
+		getTxFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, api, apiReady]);
 
 	const content = (
 		<div className='flex flex-col'>
@@ -404,7 +410,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									onChange={(address) => {
 										setTarget(address);
 										handleSubstrateAddressChangeAlert(address);
-										getTxFee();
 									}}
 									helpText='The amount requested in the proposal will be received in this address.'
 									size='large'
@@ -448,7 +453,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								</div>
 
 								<BalanceInput
-									onBlur={getTxFee}
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
 									address={delegationDashboardAddress}

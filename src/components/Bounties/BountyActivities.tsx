@@ -1,15 +1,18 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import Image from 'next/image';
 
 const BountyActivities = () => {
 	const activities = [
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' },
-		{ name: 'Marsha Fisher', amount: '$50', time: '2 days ago' }
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' },
+		{ amount: '$50', name: 'Marsha Fisher', time: '2 days ago' }
 	];
 
 	return (

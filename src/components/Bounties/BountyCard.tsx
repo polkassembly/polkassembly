@@ -44,7 +44,7 @@ const BountyCard = ({ isUsedInBountyProposals }: { isUsedInBountyProposals?: boo
 					<ImageIcon
 						src='/assets/bounty-icons/bounty-image.svg'
 						alt='bounty icon'
-						imgClassName='my-3'
+						imgClassName='my-6'
 						imgWrapperClassName=''
 					/>
 					<div className=''>

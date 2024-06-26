@@ -1,19 +1,33 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import BountiesHeader from './BountiesHeader';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BountyCard from './BountyCard';
 import Image from 'next/image';
 import BountyActivities from './BountyActivities';
+import { Carousel } from 'antd';
 
 const BountiesContainer = () => {
+	const carouselRef1 = useRef<any>(null);
+	const carouselRef2 = useRef<any>(null);
+	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
+	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
+
+	const handleBeforeChange1 = (next: number) => {
+		setCurrentSlide1(next);
+	};
+
+	const handleBeforeChange2 = (next: number) => {
+		setCurrentSlide2(next);
+	};
+
 	return (
 		<div>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
-				<button className='bounty-button rounded-[20px] border-none px-[22px] py-[11px] font-bold text-white'>Create Bounty Proposal</button>
+				<button className='bounty-button cursor-pointer rounded-[20px] border-none px-[22px] py-[11px] font-bold text-white'>Create Bounty Proposal</button>
 			</div>
 			<BountiesHeader />
 
@@ -27,13 +41,52 @@ const BountiesContainer = () => {
 					/>
 					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Hot Bounties</h2>
 				</div>
-				<button className='rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary'>View All</button>
+				<button className='cursor-pointer rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary'>View All</button>
 			</div>
 
-			<div className='grid grid-cols-3 justify-between'>
-				<BountyCard />
-				<BountyCard />
-				<BountyCard />
+			<div className='relative '>
+				{currentSlide1 > 0 && (
+					<span
+						onClick={() => carouselRef1?.current?.prev()}
+						className='rotate-180 cursor-pointer'
+						style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10 }}
+					>
+						<ImageIcon
+							src='/assets/bounty-icons/carousel-icon.svg'
+							alt='carousel icon'
+						/>
+					</span>
+				)}
+				<Carousel
+					ref={carouselRef1}
+					arrows
+					infinite={false}
+					dots={false}
+					beforeChange={handleBeforeChange1}
+				>
+					{[...Array(4)].map((_, index) => (
+						<div
+							key={index}
+							className='flex justify-between space-x-4'
+						>
+							<BountyCard />
+							<BountyCard />
+							<BountyCard />
+						</div>
+					))}
+				</Carousel>
+				{currentSlide1 < 3 && (
+					<span
+						onClick={() => carouselRef1?.current?.next()}
+						className='cursor-pointer'
+						style={{ position: 'absolute', right: -46, top: '35%', zIndex: 10 }}
+					>
+						<ImageIcon
+							src='/assets/bounty-icons/carousel-icon.svg'
+							alt='carousel icon'
+						/>
+					</span>
+				)}
 			</div>
 
 			{/* Bounty Proposals */}
@@ -48,10 +101,49 @@ const BountiesContainer = () => {
 				</div>
 				<button className='rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary'>View All</button>
 			</div>
-			<div className='grid grid-cols-3 justify-between'>
-				<BountyCard isUsedInBountyProposals={true} />
-				<BountyCard isUsedInBountyProposals={true} />
-				<BountyCard isUsedInBountyProposals={true} />
+			<div className='relative '>
+				{currentSlide2 > 0 && (
+					<span
+						onClick={() => carouselRef2?.current?.prev()}
+						className='rotate-180 cursor-pointer'
+						style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10 }}
+					>
+						<ImageIcon
+							src='/assets/bounty-icons/carousel-icon.svg'
+							alt='carousel icon'
+						/>
+					</span>
+				)}
+				<Carousel
+					ref={carouselRef2}
+					arrows
+					infinite={false}
+					dots={false}
+					beforeChange={handleBeforeChange2}
+				>
+					{[...Array(4)].map((_, index) => (
+						<div
+							key={index}
+							className='flex justify-between space-x-4'
+						>
+							<BountyCard isUsedInBountyProposals={true} />
+							<BountyCard isUsedInBountyProposals={true} />
+							<BountyCard isUsedInBountyProposals={true} />
+						</div>
+					))}
+				</Carousel>
+				{currentSlide2 < 3 && (
+					<span
+						onClick={() => carouselRef2?.current?.next()}
+						className='cursor-pointer'
+						style={{ position: 'absolute', right: -46, top: '40%', zIndex: 10 }}
+					>
+						<ImageIcon
+							src='/assets/bounty-icons/carousel-icon.svg'
+							alt='carousel icon'
+						/>
+					</span>
+				)}
 			</div>
 
 			{/* Footer */}

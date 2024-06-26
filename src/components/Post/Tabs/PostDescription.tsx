@@ -25,7 +25,7 @@ import EditIconDark from '~assets/icons/reactions/EditIconDark.svg';
 import ThreeDots from '~assets/icons/reactions/ThreeDots.svg';
 import ThreeDotsDark from '~assets/icons/reactions/ThreeDotsdark.svg';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { MenuProps } from 'antd';
+import { Divider, MenuProps } from 'antd';
 
 const CommentsContainer = dynamic(() => import('../Comment/CommentsContainer'), {
 	loading: () => (
@@ -208,6 +208,8 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				</div>
 				{/* <div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div> */}
 			</div>
+
+			<Divider className='border-1 -mr-4 bg-section-dark-container dark:bg-separatorDark' />
 
 			{!isEditing && (
 				<div className='mx-2 mb-8 flex xl:hidden'>

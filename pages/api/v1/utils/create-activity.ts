@@ -30,6 +30,7 @@ interface Args {
 	content?: any;
 	action: EActivityAction;
 	type?: EUserActivityType;
+	is_deleted?: boolean;
 }
 
 interface UserActivity {
@@ -478,8 +479,34 @@ const editReplyMentions = async ({ commentAuthorId, commentId, content, network,
 	}
 };
 
+const createSubscribePost = async (activityPayload: UserActivity) => {
+	const { by, network, post_author_id, post_id, post_type, is_deleted = false } = activityPayload;
+
+	const date = new Date();
+
+	const payload = {
+		by,
+		created_at: date,
+		is_deleted,
+		network,
+		post_author_id,
+		post_id,
+		post_type,
+		type: EUserActivityType.SUBSCRIBED,
+		updated_at: date
+	};
+
+	try {
+		const ref = firestore_db.collection('user_activities').doc();
+		await ref.set(payload, { merge: true });
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const createUserActivity = async ({
 	network,
+	is_deleted,
 	postAuthorId,
 	postId,
 	postType,
@@ -587,6 +614,42 @@ const createUserActivity = async ({
 		}
 		if (action === EActivityAction.DELETE) {
 			await deleteCommentOrReply({ id: replyId as string, network, type: EUserActivityType.REPLIED, userId: userId as number });
+		}
+		if (action === EActivityAction.SUBSCRIBED) {
+			if (userId && typeof is_deleted == 'boolean') {
+				try {
+					const activityRef = firestore_db
+						.collection('user_activities')
+						.where('network', '==', network)
+						.where('post_id', '==', postId)
+						.where('post_type', '==', postType)
+						.where('by', '==', userId)
+						.limit(1);
+
+					const activitySnapshot = await activityRef.get();
+
+					if (!activitySnapshot.empty) {
+						const existingActivityDoc = activitySnapshot.docs[0];
+						const currentIsDeleted = existingActivityDoc.data().is_deleted;
+						await existingActivityDoc.ref.update({ is_deleted: !currentIsDeleted, updated_at: date });
+					} else {
+						const activityPayload: UserActivity = {
+							by: userId,
+							created_at: date,
+							is_deleted: false,
+							network,
+							post_author_id: postAuthorId as number,
+							post_id: postId as string | number,
+							post_type: postType as ProposalType,
+							type: EUserActivityType.SUBSCRIBED,
+							updated_at: date
+						};
+						await createSubscribePost(activityPayload);
+					}
+				} catch (err) {
+					console.log(err);
+				}
+			}
 		}
 	}
 };

@@ -281,7 +281,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				columns={columns}
 				className={`${className} w-full overflow-x-auto`}
 				dataSource={combinedDataSource}
-				pagination={{ pageSize: searchedUsername ? 1 : 11, total: totalData }}
+				pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
 				onChange={handleTableChange}
 				theme={theme}
 				rowClassName={(record, index) => {

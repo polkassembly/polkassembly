@@ -49,7 +49,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		};
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, router.isReady, searchedUsername]);
+	}, [currentPage, router.isReady, searchedUsername, username]);
 
 	const currentuserData = async () => {
 		if (username) {
@@ -160,21 +160,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		{
 			dataIndex: 'rank',
 			key: 'rank',
-			render: (rank, record) => (
-				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>
-					{record.user === username ? (
-						<ImageIcon
-							className='-ml-2'
-							src='/assets/icons/CircleWavyQuestion.svg'
-							alt=''
-						/>
-					) : rank < 10 ? (
-						`0${rank}`
-					) : (
-						rank
-					)}
-				</p>
-			),
+			render: (rank, record) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
 			title: <span className={`${poppins.className} ${poppins.variable}`}>Rank</span>,
 			width: 15
 		},
@@ -227,7 +213,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			title: (
 				<div className='flex items-center gap-1 text-sm font-medium'>
 					<span>Astrals</span>
-					<Dropdown
+					{/* <Dropdown
 						theme={theme}
 						className={'cursor-pointer rounded-md border-none bg-none'}
 						overlayClassName='z-[1056]'
@@ -238,7 +224,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						<span className='ml-[2px]'>
 							<InfoCircleOutlined style={{ color: '#485F7D' }} />
 						</span>
-					</Dropdown>
+					</Dropdown> */}
 				</div>
 			),
 			width: 150
@@ -253,7 +239,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						alt='calenderIcon'
 						className='icon-container scale-[0.8]'
 					/>
-					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-bodyBlue' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
+					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-white' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
 				</div>
 			),
 			sorter: (a, b) => {
@@ -353,7 +339,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				onChange={handleTableChange}
 				theme={theme}
 				rowClassName={(record, index) => {
-					return index === combinedDataSource.length - 1 ? 'last-row' : '';
+					return index === combinedDataSource.length - 1 && username ? 'last-row' : '';
 				}}
 			/>
 		</div>
@@ -419,11 +405,12 @@ export default styled(LeaderboardData)`
 		background-color: transparent !important;
 	}
 	.ant-table-tbody > tr.last-row {
-		background-color: #e2ebff !important;
+		background-color: ${(props: any) => (props.theme === 'light' ? '#e2ebff' : '#141C2D')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '#243A57' : '#FFFFFF')} !important;
 	}
 	.ant-table-tbody > tr.last-row > td {
-		border-top: 1px solid #486ddf !important;
-		border-bottom: 1px solid #486ddf !important;
+		border-top: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
 	}
 	.ant-table-wrapper .ant-table-cell-fix-left {
 		background-color: #fff !important;

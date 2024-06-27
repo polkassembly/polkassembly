@@ -87,7 +87,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		isTargetAddressSame ||
 		loading ||
 		availableBalance.lte(txFee.add(bnBalance)) ||
-		(checkedTrack?.trackId == null && !checkedList?.length);
+		(checkedTrack == null && !checkedList?.length);
 
 	useEffect(() => {
 		if (!network) return;
@@ -229,7 +229,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((checkedTrack?.trackId == null && !checkedList?.length) || !getEncodedAddress(target, network)?.length) return;
+		if ((checkedTrack == null && !checkedList?.length) || !getEncodedAddress(target, network)?.length) return;
 		setLoading(true);
 
 		const checkedArr =

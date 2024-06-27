@@ -22,6 +22,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 // import { MenuProps } from 'antd';
 // import { Dropdown } from '~src/ui-components/Dropdown';
 import { poppins } from 'pages/_app';
+import { Spin } from 'antd';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -37,14 +38,21 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [tippingUser, setTippingUser] = useState<string>('');
 	const [currentUserData, setCurrentUserData] = useState<any>();
 	const { username } = useUserDetailsSelector();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
 
 	useEffect(() => {
 		const fetchData = async () => {
 			if (router.isReady) {
+				setLoading(true);
 				await getLeaderboardData();
+				setLoading(false);
+
+				setLoadingCurrentUser(true);
 				await currentuserData();
+				setLoadingCurrentUser(false);
 			}
 		};
 		fetchData();
@@ -257,38 +265,40 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
 
 	return (
-		<div className={theme}>
-			{address && (
-				<DelegateModal
-					// trackNum={trackDetails?.trackId}
-					defaultTarget={address}
-					open={open}
-					setOpen={setOpen}
+		<Spin spinning={loading || loadingCurrentUser}>
+			<div className={theme}>
+				{address && (
+					<DelegateModal
+						// trackNum={trackDetails?.trackId}
+						defaultTarget={address}
+						open={open}
+						setOpen={setOpen}
+					/>
+				)}
+				{address && (
+					<Tipping
+						username={tippingUser || ''}
+						open={openTipping}
+						setOpen={setOpenTipping}
+						key={address}
+						paUsername={tippingUser as any}
+						setOpenAddressChangeModal={setOpenAddressChangeModal}
+						openAddressChangeModal={openAddressChangeModal}
+					/>
+				)}
+				<Table
+					columns={columns}
+					className={`${className} w-full overflow-x-auto`}
+					dataSource={combinedDataSource}
+					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
+					onChange={handleTableChange}
+					theme={theme}
+					rowClassName={(record, index) => {
+						return index === combinedDataSource.length - 1 && username ? 'last-row' : '';
+					}}
 				/>
-			)}
-			{address && (
-				<Tipping
-					username={tippingUser || ''}
-					open={openTipping}
-					setOpen={setOpenTipping}
-					key={address}
-					paUsername={tippingUser as any}
-					setOpenAddressChangeModal={setOpenAddressChangeModal}
-					openAddressChangeModal={openAddressChangeModal}
-				/>
-			)}
-			<Table
-				columns={columns}
-				className={`${className} w-full overflow-x-auto`}
-				dataSource={combinedDataSource}
-				pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
-				onChange={handleTableChange}
-				theme={theme}
-				rowClassName={(record, index) => {
-					return index === combinedDataSource.length - 1 && username ? 'last-row' : '';
-				}}
-			/>
-		</div>
+			</div>
+		</Spin>
 	);
 };
 

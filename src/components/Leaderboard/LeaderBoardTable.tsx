@@ -18,7 +18,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	useEffect(() => {
 		const debouncedSearch = debounce((value: string) => {
 			setSearchedUsername(value);
-		}, 400);
+		}, 300);
 		debouncedSearch(inputValue);
 		return () => {
 			debouncedSearch.cancel();

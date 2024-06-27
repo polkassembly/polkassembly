@@ -18,6 +18,7 @@ import { poppins } from 'pages/_app';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import ImageComponent from '../ImageComponent';
 
 interface Props {
 	className?: string;
@@ -75,7 +76,7 @@ const ProfileSubscriptions = ({ className }: Props) => {
 				<div className={`mb-4 ${poppins.className} ${poppins.variable} flex items-center space-x-1 px-6`}>
 					<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
 					<span className='ml-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Subscriptions</span>
-					<span className='ml-2 mt-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>({totalCount})</span>
+					<span className='ml-2 mt-1 text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>({totalCount})</span>
 				</div>
 				{totalCount == 0 ? (
 					<div className='mx-auto my-10'>
@@ -96,7 +97,11 @@ const ProfileSubscriptions = ({ className }: Props) => {
 								>
 									<div className='mb-3 px-6'>
 										<div className='flex items-center justify-between'>
-											<div className={`flex ${poppins.className} ${poppins.variable} items-center space-x-1`}>
+											<div className={`flex ${poppins.className} ${poppins.variable} items-center space-x-2`}>
+												<ImageComponent
+													src={item.image}
+													alt='user icon'
+												/>
 												<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>{item.reacted_by}</span>
 												<span className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>subscribed to</span>
 											</div>
@@ -107,8 +112,8 @@ const ProfileSubscriptions = ({ className }: Props) => {
 											)}
 										</div>
 										<div>
-											<span className={`mr-1 ${poppins.className} ${poppins.variable} text-xs font-semibold text-blue-light-medium dark:text-blue-dark-medium`}>
-												{removeSpaces(removeSymbols(item.postContent)).slice(0, 140)}...
+											<span className='ml-10 text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>
+												#{item?.postId} {item?.postTitle.length > 95 ? `${item?.postTitle?.slice(0, 95)}...` : item?.postTitle}
 											</span>
 											<Link
 												href={`https://${network}.polkassembly.io/${getSinglePostLinkFromProposalType(item.postType)}/${item.postId}`}
@@ -119,12 +124,17 @@ const ProfileSubscriptions = ({ className }: Props) => {
 													alt='redirection-icon'
 													width={16}
 													height={16}
-													className='ml-[2px]'
+													className='ml-1'
 												/>
 											</Link>
 										</div>
+										{item?.postContent?.length > 0 && (
+											<div className='ml-10 mt-2 items-center rounded-sm border-0 border-l-[1.5px] border-solid border-pink_primary bg-[#FAFAFC] px-4 pb-2.5 pt-2 text-bodyBlue dark:bg-[#191919] dark:text-blue-dark-high'>
+												{removeSpaces(removeSymbols(item.postContent)).slice(0, 400)}...
+											</div>
+										)}
 									</div>
-									<Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />
+									{index !== data.length - 1 && <Divider className='m-0 bg-[#D2D8E0] p-0 dark:bg-separatorDark' />}
 								</div>
 							);
 						})}

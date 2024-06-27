@@ -86,10 +86,12 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				by: activityData.by,
 				createdAt: activityData.created_at,
 				id: activity.id,
+				image: userDoc?.profile?.image,
 				network: activityData.network,
 				postAuthorId: activityData.post_author_id,
 				postContent: postData ? postData.content : null,
 				postId: activityData.post_id,
+				postTitle: postData ? postData?.title : null,
 				postType: activityData.post_type,
 				reacted_by: userDoc.username,
 				type: activityData.type

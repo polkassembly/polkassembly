@@ -233,14 +233,14 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		setLoading(true);
 
 		const checkedArr =
-			checkedTrack && checkedTrack.name && checkedList.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList] : [...checkedList];
+			checkedTrack && checkedTrack?.name && checkedList?.filter((item) => item === checkedTrack?.name).length === 0 ? [checkedTrack?.name, ...checkedList] : [...checkedList];
 		setCheckedTrackArr(checkedArr);
 		if (checkedArr?.length === 0) return;
 
 		const txArr = checkedArr?.map((trackName) =>
 			api.tx.convictionVoting.delegate(networkTrackInfo[network][trackName.toString()].trackId, target, conviction, bnBalance.toString())
 		);
-		const delegateTxn = api.tx.utility.batchAll(txArr);
+		const delegateTxn = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
 
 		await executeTx({ address: delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};

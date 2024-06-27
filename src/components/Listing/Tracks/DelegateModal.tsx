@@ -71,7 +71,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const [trackArr, setTrackArr] = useState<any[]>([]);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [defaultOpen, setDefaultOpen] = useState<boolean>(false);
-	const [checkedTrack, setCheckedTrack] = useState<any>();
+	const [checkedTrack, setCheckedTrack] = useState<any>(null);
 	const router = useRouter();
 	const [checkedTrackArr, setCheckedTrackArr] = useState<string[]>([]);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
@@ -86,7 +86,8 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		isNaN(conviction) ||
 		isTargetAddressSame ||
 		loading ||
-		availableBalance.lte(txFee.add(bnBalance));
+		availableBalance.lte(txFee.add(bnBalance)) ||
+		(checkedTrack?.trackId == null && !checkedList?.length);
 
 	useEffect(() => {
 		if (!network) return;
@@ -228,7 +229,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 	const handleSubmit = async () => {
 		if (!api || !apiReady || !bnBalance || bnBalance.lte(ZERO_BN) || bnBalance.eq(ZERO_BN) || !target) return;
-		if ((isNaN(checkedTrack.trackId) && !checkedList?.length) || !getEncodedAddress(target, network)?.length) return;
+		if ((checkedTrack?.trackId == null && !checkedList?.length) || !getEncodedAddress(target, network)?.length) return;
 		setLoading(true);
 
 		const checkedArr =

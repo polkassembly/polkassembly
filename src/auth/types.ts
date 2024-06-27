@@ -77,6 +77,16 @@ export interface ProfileDetailsResponse extends ProfileDetails {
 	username: string;
 	addresses: string[];
 	created_at?: Date | null;
+	profile_score?: number;
+}
+
+export interface LeaderboardEntry extends ProfileDetailsResponse {
+	user_id: number;
+	username: string;
+	addresses: string[];
+	created_at?: Date | null;
+	profile_score: number;
+	rank: number;
 }
 
 export interface IAddressProxyForEntry {
@@ -155,6 +165,7 @@ export interface User {
 	notification_preferences?: IUserNotificationSettings;
 	two_factor_auth?: IUser2FADetails;
 	roles?: Role[];
+	profile_score: number;
 }
 
 export interface Roles {

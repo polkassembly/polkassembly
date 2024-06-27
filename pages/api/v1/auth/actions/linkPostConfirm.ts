@@ -22,6 +22,8 @@ import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { isDataExist } from '../../posts/on-chain-post';
 import { deleteKeys, redisDel } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import changeProfileScore from '../../utils/changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 interface IUpdatePostLinkInGroupParams {
 	currPostData: any;
@@ -360,9 +362,15 @@ const handler: NextApiHandler<ILinkPostConfirmResponse | MessageType> = async (r
 			};
 		}
 		const data = await updatePostLinkInGroup(params);
-		return res.status(200).json(data);
+		res.status(200).json(data);
 	} catch (error) {
 		return res.status(error.name && !isNaN(Number(error.name)) ? Number(error.name) : 500).json({ message: error.message });
+	}
+
+	try {
+		await changeProfileScore(user.id, REPUTATION_SCORES.add_context.value);
+	} catch (error) {
+		console.error('Error while updating user profile score', error);
 	}
 };
 

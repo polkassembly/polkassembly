@@ -187,7 +187,7 @@ const VoteAmount = ({ allVotes, turnout, support, activeIssuance, elapsedPeriod 
 				/>
 				<Divider
 					dashed
-					className='my-2 border-[#D2D8E0]'
+					className='my-2 border-section-light-container'
 				/>
 				<div className='flex flex-col items-center gap-5 md:flex-row'>
 					<VoteConvictions votesByConviction={votesByConviction} />

@@ -168,7 +168,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 														<div
 															key={index}
 															style={{ fontSize: '10px' }}
-															className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-medium'
+															className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-medium'
 														>
 															{tag}
 														</div>
@@ -277,7 +277,7 @@ const ForumPostCard: FC<ForumPostCardProps> = ({ topics }) => {
 														<div
 															key={index}
 															style={{ fontSize: '10px' }}
-															className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
+															className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
 														>
 															{tag}
 														</div>

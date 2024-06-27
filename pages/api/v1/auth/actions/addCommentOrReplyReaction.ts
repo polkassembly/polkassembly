@@ -13,7 +13,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import createUserActivity from '../../utils/create-activity';
 import { IComment } from '~src/components/Post/Comment/Comment';
-import { EActivityAction } from '~src/types';
+import { EActivityAction, EAllowedCommentor } from '~src/types';
 
 export interface IDocumentReply {
 	content: string;
@@ -22,6 +22,7 @@ export interface IDocumentReply {
 	username: string;
 }
 export interface IDocumentPost {
+	allowedCommentors?: EAllowedCommentor[];
 	content: string;
 	user_id: number;
 }

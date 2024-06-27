@@ -153,6 +153,7 @@ const DelegationVotersList: FC<IVotersListProps> = (props) => {
 										voteType={voteType}
 										voteData={voteData}
 										index={index}
+										referendumId={referendumId}
 										isReferendum2={isReferendum2}
 										setDelegationVoteModal={() => {}}
 									/>

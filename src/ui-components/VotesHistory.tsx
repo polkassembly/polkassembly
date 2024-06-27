@@ -416,7 +416,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 																	<span
 																		className={classNames(
 																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))
-																				? 'cursor-not-allowed text-[#D2D8E0] dark:text-[#4A4A4A]'
+																				? 'cursor-not-allowed text-section-light-container dark:text-[#4A4A4A]'
 																				: 'cursor-pointer text-lightBlue dark:text-[#9E9E9E]'
 																		)}
 																		onClick={() => {
@@ -431,8 +431,8 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 														</div>
 													</span>
 												</div>
-												<div className='flex justify-between px-6 py-4 md:hidden'>
-													<div className='flex w-[50%] items-center justify-between gap-2 max-sm:w-[70%]'>
+												<div className='flex justify-between px-3 py-2 md:hidden'>
+													<div className='flex w-[50%] items-center justify-around gap-2 max-sm:w-[70%]'>
 														{vote?.decision === 'yes' ? (
 															<span className='flex items-center justify-end text-[#2ED47A]'>
 																<AyeIcon className='mr-1' />

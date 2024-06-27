@@ -6,8 +6,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 export const getTrackNameFromId = (network: string, trackId: any) => {
 	let trackName = '';
 	if (networkTrackInfo?.[network] && Object?.entries(networkTrackInfo[network])) {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		Object?.entries(networkTrackInfo?.[network]).forEach(([key, value]) => {
+		Object?.entries(networkTrackInfo?.[network]).forEach(([, value]) => {
 			if (value?.trackId === trackId && !value?.fellowshipOrigin) {
 				trackName = value?.name;
 			}

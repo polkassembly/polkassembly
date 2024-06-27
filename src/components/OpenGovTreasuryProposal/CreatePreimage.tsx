@@ -430,10 +430,10 @@ const CreatePreimage = ({
 		//mutibeneficiary not suppported    >>
 		if (genralIndex && beneficiaryAddresses.length === 1) {
 			const beneficiary = beneficiaryAddresses?.[0];
-			let balance = new BN(`${beneficiary?.amount || '0'}`);
+			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 			//USDT or USDT denominated 10^6   >>
-			balance = balance.mul(new BN('1000000'));
+			balance = balance.mul(new BN('1000000')).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -511,10 +511,16 @@ const CreatePreimage = ({
 		//validate beneficiaryAddresses and fundingAmount for each beneficiary
 		let areBeneficiaryAddressesValid = true;
 		for (const beneficiary in beneficiaryAddresses) {
+			const beneficiaryAddress =
+				typeof beneficiaryAddresses?.[beneficiary]?.address === 'string'
+					? beneficiaryAddresses?.[beneficiary]?.address
+					: (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.length
+					? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
+					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) || '';
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
 				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
-				!getEncodedAddress(beneficiaryAddresses[beneficiary].address, network) ||
+				!getEncodedAddress(beneficiaryAddress, network) ||
 				Number(beneficiaryAddresses[beneficiary].amount) <= 0
 			) {
 				areBeneficiaryAddressesValid = false;
@@ -565,7 +571,7 @@ const CreatePreimage = ({
 			let proposal: Proposal | undefined;
 
 			try {
-				proposal = api.registry.createType('Proposal', bytes.toU8a(true));
+				proposal = api.registry.createType('Proposal', bytes.toU8a(true)) as unknown as any;
 			} catch (error) {
 				console.log(error);
 			}
@@ -653,7 +659,7 @@ const CreatePreimage = ({
 					console.log('fetching data from subsquid');
 					form.setFieldValue('preimage_length', data?.length);
 
-					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
+					let balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
 
 					const args = convertAnyHexToASCII(data?.proposedCall?.args, network);
 
@@ -662,6 +668,21 @@ const CreatePreimage = ({
 						amount: balance.toString()
 					};
 
+					if (args?.assetKind?.assetId?.value?.interior) {
+						const call = args?.assetKind?.assetId?.value?.interior?.value;
+						const assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						setGenralIndex(assetId);
+
+						const beneficiaryAddress =
+							typeof args?.beneficiary === 'string'
+								? args?.beneficiary
+								: (args?.beneficiary as any)?.value?.length
+								? (args?.beneficiary as any)?.value
+								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '';
+
+						newBeneficiaryAddress.address = beneficiaryAddress;
+						balance = balance.div(new BN('1000000')).mul(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+					}
 					dispatchBeneficiaryAddresses({
 						payload: {
 							address: newBeneficiaryAddress.address,
@@ -1315,7 +1336,7 @@ const CreatePreimage = ({
 							}
 						/>
 					)}
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-section-dark-container'>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-section-dark-container'>
 						<Button
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });

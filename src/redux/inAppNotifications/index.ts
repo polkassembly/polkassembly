@@ -4,13 +4,17 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import { IInAppNotificationsStore } from './@types';
+import { IInAppNotification } from '~src/components/InAppNotification/types';
 
 const initialState: IInAppNotificationsStore = {
 	lastReadTime: null,
+	popupNotifications: [],
 	recentNotifications: [],
 	recentNotificationsCount: 0,
+	totalNotificationsCount: 0,
 	unreadNotifications: [],
-	unreadNotificationsCount: 0
+	unreadNotificationsCount: 0,
+	viewAllClicked: false
 };
 
 export const inAppNotificationsStore = createSlice({
@@ -30,26 +34,30 @@ export const inAppNotificationsStore = createSlice({
 			state.recentNotifications = action.payload.recentNotifications;
 			state.recentNotificationsCount = action.payload.recentNotificationsCount;
 			state.unreadNotifications = action.payload.unreadNotifications;
-			state.unreadNotificationsCount = action.payload.unreadNotificationsCount;
+			state.viewAllClicked = action.payload?.viewAllClicked || false;
+			state.totalNotificationsCount = action.payload.totalNotificationsCount;
 		},
+
 		updateNotificationReadTime: (state, action: PayloadAction<string>) => {
 			state.lastReadTime = action.payload;
+		},
+
+		updatePopupNotifications: (state, action: PayloadAction<IInAppNotification[]>) => {
+			state.popupNotifications = action.payload;
+		},
+		updateTotalNotificationsCount: (state, action: PayloadAction<number>) => {
+			state.totalNotificationsCount = action.payload;
+		},
+		updateUnreadNotificationsCount: (state, action: PayloadAction<number>) => {
+			state.unreadNotificationsCount = action.payload;
+		},
+
+		updateViewAllClicked: (state, action: PayloadAction<boolean>) => {
+			state.viewAllClicked = action.payload;
 		}
 	}
 });
 const inAppNotificationsActions = inAppNotificationsStore.actions;
 
-const updateInAppNotifications: any = (payload: IInAppNotificationsStore) => {
-	return (dispatch: any) => {
-		dispatch(inAppNotificationsActions.updateInAppNotifications(payload));
-	};
-};
-
-const updateNotificationReadTime: any = (payload: string) => {
-	return (dispatch: any) => {
-		dispatch(inAppNotificationsActions.updateNotificationReadTime(payload));
-	};
-};
-
 export default inAppNotificationsStore.reducer;
-export { updateInAppNotifications, inAppNotificationsActions, updateNotificationReadTime };
+export { inAppNotificationsActions };

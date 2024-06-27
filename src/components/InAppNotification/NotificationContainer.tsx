@@ -11,27 +11,34 @@ import { Divider } from 'antd';
 import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
+import { useInAppNotificationsSelector } from '~src/redux/selectors';
 
 const NotificationsContainer = ({ title, count, data, inPage, className }: { title?: string; count: number; data: IInAppNotification[]; inPage: boolean; className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { unreadNotificationsCount, totalNotificationsCount } = useInAppNotificationsSelector();
 
 	return (
 		<div>
-			{!inPage && (
+			{!inPage && !!unreadNotificationsCount && (
 				<div className={classNames('container mt-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium', inPage ? 'px-11' : 'px-8', className)}>
 					{title} ({count})
 				</div>
 			)}
+
+			{!inPage && !unreadNotificationsCount && (
+				<div className={classNames('container mt-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium', inPage ? 'px-11' : 'px-8', className)}>
+					Recent ({totalNotificationsCount})
+				</div>
+			)}
 			<div className='mt-1 flex w-full flex-col'>
 				{data?.map((notification, index) => (
-					<>
+					<div key={`${notification.id}_${index}`}>
 						<Link
 							className={classNames(
 								'flex flex-col',
 								inPage ? 'px-7 pt-5 max-sm:px-3' : 'px-4 pt-3',
 								notification.type === EInAppNotificationsType.UNREAD ? 'bg-[#f7f8ff] dark:bg-[#1a1b34]' : ''
 							)}
-							key={`${notification.id}_${index}`}
 							href={notification.url}
 							target='_blank'
 						>
@@ -51,7 +58,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 									<div className={classNames('flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high', inPage ? 'text-sm' : 'text-xs')}>{notification.title}</div>
 									<div className='w-full'>
 										<Markdown
-											md={notification.message}
+											md={inPage ? notification.message : notification.message.split('Thanks')?.[0] || notification.message}
 											className={classNames(
 												'w-full text-lightBlue dark:text-blue-dark-medium',
 												inPage && notification.type === EInAppNotificationsType.UNREAD ? 'container font-semibold' : 'font-normal',
@@ -71,7 +78,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 						</Link>
 
 						{index !== data?.length - 1 && <Divider className='m-0 bg-section-light-container dark:bg-separatorDark' />}
-					</>
+					</div>
 				))}
 			</div>
 		</div>

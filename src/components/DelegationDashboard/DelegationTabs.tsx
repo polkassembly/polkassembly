@@ -9,7 +9,7 @@ import BecomeDelegate from './BecomeDelegate';
 import TotalDelegationData from './TotalDelegationData';
 import TrendingDelegates from './TrendingDelegates';
 import { TabsProps } from 'antd';
-import DelegationProfile from '~src/ui-components/DelegationProfile';
+import DelegationProfile from '~src/components/DelegationDashboard/DelegationProfile';
 import DashboardTrackListing from './TracksListing';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useUserDetailsSelector } from '~src/redux/selectors';
@@ -53,11 +53,11 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 				return;
 			}
 			setProfileDetails({
-				bio: data.profile.bio || '',
-				image: data.profile.image || '',
-				social_links: data.profile.social_links || [],
-				user_id: data.user_id,
-				username: data.username
+				bio: data?.profile?.bio || '',
+				image: data?.profile?.image || '',
+				social_links: data?.profile?.social_links || [],
+				user_id: data?.user_id,
+				username: data?.username
 			});
 		} catch (error) {
 			console.log(error);

@@ -198,10 +198,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			comment_reactions: {
 				'👍': {
 					count: 0,
+					userIds: [],
 					usernames: []
 				},
 				'👎': {
 					count: 0,
+					userIds: [],
 					usernames: []
 				}
 			},

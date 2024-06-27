@@ -32,7 +32,7 @@ const DelegationStats = () => {
 					</div>
 					{index < stats.length - 1 && (
 						<Divider
-							className='h-[60px] bg-[#D2D8E0] dark:bg-separatorDark max-sm:hidden'
+							className='h-[60px] bg-section-light-container dark:bg-separatorDark max-sm:hidden'
 							type='vertical'
 						/>
 					)}

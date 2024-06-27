@@ -6,7 +6,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Form } from 'antd';
 import { IEditPostResponse } from 'pages/api/v1/auth/actions/editPost';
 import React, { useState } from 'react';
-import { NotificationStatus } from 'src/types';
+import { EAllowedCommentor, NotificationStatus } from 'src/types';
 import ErrorAlert from 'src/ui-components/ErrorAlert';
 import queueNotification from 'src/ui-components/QueueNotification';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -24,6 +24,7 @@ import styled from 'styled-components';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { ProposalType } from '~src/global/proposalType';
 import Input from '~src/basic-components/Input';
+import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
 
 interface Props {
 	className?: string;
@@ -36,9 +37,11 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 	const [error, setError] = useState('');
 	const [loading, setLoading] = useState(false);
 	const {
-		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic, proposalHashBlock },
+		postData: { title, content, postType: proposalType, postIndex, cid, timeline, tags: oldTags, topic: currentTopic, proposalHashBlock, allowedCommentors },
 		setPostData
 	} = usePostDataContext();
+
+	const [modifiedAllowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(allowedCommentors);
 
 	const [topicId, setTopicId] = useState<number>(currentTopic?.id || 5);
 	const { network } = useNetworkSelector();
@@ -52,6 +55,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 		setFormDisabled(true);
 		setLoading(true);
 		const { data, error: editError } = await nextApiClientFetch<IEditPostResponse>('api/v1/auth/actions/editPost', {
+			allowedCommentors: [modifiedAllowedCommentors] || [allowedCommentors] || [EAllowedCommentor.ALL],
 			content,
 			postId: proposalType === ProposalType.ADVISORY_COMMITTEE ? proposalHashBlock : postIndex || postIndex === 0 ? postIndex : cid,
 			proposalType,
@@ -82,6 +86,7 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 			const { content, proposer, title, topic, last_edited_at, summary } = data;
 			setPostData((prev) => ({
 				...prev,
+				allowedCommentors: modifiedAllowedCommentors,
 				content,
 				history: [{ content: prev?.content, created_at: prev?.last_edited_at || '', title: prev?.title }, ...(prev?.history || [])],
 				last_edited_at,
@@ -160,11 +165,19 @@ const PostContentForm = ({ className, toggleEdit }: Props) => {
 						</>
 					</Form.Item>
 				)}
+
 				<h5 className='text-color mt-8 text-sm font-normal dark:text-separatorDark'>Tags</h5>
 				<AddTags
 					tags={tags}
 					setTags={setTags}
 					className='mb-8'
+				/>
+				{/* who can comment */}
+				<AllowedCommentorsRadioButtons
+					className='mb-6 mt-8 gap-2'
+					onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
+					isLoading={loading}
+					allowedCommentors={modifiedAllowedCommentors || allowedCommentors}
 				/>
 				<Form.Item>
 					<div className='flex items-center justify-between'>

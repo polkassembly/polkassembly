@@ -161,7 +161,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 		<div
 			className={classNames(
 				className,
-				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -203,8 +203,8 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 				</div>
 			</div>
 			<div className='flex flex-col gap-8 overflow-x-auto'>
-				<div className='flex justify-between gap-2'>
-					<div className='flex flex-shrink-0 gap-2'>
+				<div className='justify-between gap-2 sm:flex'>
+					<div className='scroll-hidden flex w-auto gap-2 overflow-auto sm:w-auto sm:flex-shrink-0'>
 						{Object.entries(selectedGov === EGovType.OPEN_GOV ? userPosts?.open_gov : userPosts?.gov1)?.map(([key, value]) => (
 							<div
 								key={key}
@@ -225,7 +225,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						))}
 					</div>
 					{!!subFilterContent && selectedFilter !== 'discussions' && (
-						<div className=''>
+						<div className='mt-3 sm:mt-0'>
 							<Popover
 								zIndex={1056}
 								content={subFilterContent}

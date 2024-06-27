@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -57,6 +57,7 @@ interface Props {
 	isDiscussionLinked: boolean;
 	genralIndex?: string | null;
 	inputAmountValue: string;
+	allowedCommentors?: EAllowedCommentor;
 }
 const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -83,7 +84,8 @@ const CreateProposal = ({
 	discussionLink,
 	isDiscussionLinked,
 	genralIndex = null,
-	inputAmountValue
+	inputAmountValue,
+	allowedCommentors
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -151,6 +153,7 @@ const CreateProposal = ({
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
 			postId,
@@ -306,7 +309,7 @@ const CreateProposal = ({
 										key={index}
 										disableBalanceFormatting
 										assetId={genralIndex}
-										isProposalCreationFlow
+										isProposalCreationFlow={!isPreimage}
 									/>
 								))}
 							</div>
@@ -431,7 +434,7 @@ const CreateProposal = ({
 						}
 					/>
 				)}
-				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F]'>
+				<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
 						text='Create Proposal'
 						variant='primary'

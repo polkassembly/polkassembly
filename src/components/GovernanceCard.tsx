@@ -44,6 +44,7 @@ import { getFirestoreProposalType } from '~src/global/proposalType';
 import Tooltip from '~src/basic-components/Tooltip';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import classNames from 'classnames';
+import TrackTag from '~src/ui-components/TrackTag';
 
 const BlockCountdown = dynamic(() => import('src/components/BlockCountdown'), {
 	loading: () => <SkeletonButton active />,
@@ -224,6 +225,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			return key;
 		}
 	};
+	const isAllRefPage = router.pathname.includes('all-posts');
 
 	useEffect(() => {
 		if (!api) {
@@ -423,7 +425,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									{tags?.slice(0, 2).map((tag, index) => (
 										<div
 											key={index}
-											className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 										>
 											{tag}
 										</div>
@@ -511,6 +513,19 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									/>
 								</>
 							)}
+							{isOpenGovSupported(network) && isAllRefPage ? (
+								<>
+									<Divider
+										type='vertical'
+										className='border-l-1 border-lightBlue dark:border-icon-dark-inactive max-sm:hidden'
+									/>
+									<TrackTag
+										theme={theme as any}
+										className='sm:mt-0'
+										track={formatTrackName(getTrackNameFromId(network, trackNumber))}
+									/>
+								</>
+							) : null}
 							{!isOpenGovSupported(network) && topic ? (
 								<div className='flex items-center sm:-mt-1'>
 									<Divider
@@ -724,7 +739,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 										{tags?.slice(0, 2).map((tag, index) => (
 											<div
 												key={index}
-												className='rounded-xl border-[1px] border-solid border-[#D2D8E0] px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+												className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 											>
 												{tag}
 											</div>

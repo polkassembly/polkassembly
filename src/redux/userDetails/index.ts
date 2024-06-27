@@ -18,6 +18,7 @@ const initialState: IUserDetailsStore = {
 	email_verified: false,
 	id: null,
 	is2FAEnabled: false,
+	isUserOnchainVerified: false,
 	loginAddress: '',
 	loginWallet: null,
 	multisigAssociatedAddress: '',
@@ -44,6 +45,9 @@ export const userDetailsStore = createSlice({
 	initialState,
 	name: 'userDetails',
 	reducers: {
+		setIsUserOnchainVerified: (state, action: PayloadAction<boolean>) => {
+			state.isUserOnchainVerified = action.payload || false;
+		},
 		setLogout: (state) => {
 			deleteCookie('refresh_token');
 			deleteLocalStorageToken();
@@ -58,6 +62,7 @@ export const userDetailsStore = createSlice({
 			state.allowed_roles = [];
 			state.defaultAddress = null;
 			state.delegationDashboardAddress = '';
+			state.isUserOnchainVerified = false;
 			state.email = null;
 			state.email_verified = false;
 			state.id = null;
@@ -93,6 +98,9 @@ export const userDetailsStore = createSlice({
 		},
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;
+		},
+		updateDelegationDashboardAddress: (state, action: PayloadAction<string>) => {
+			state.delegationDashboardAddress = action.payload;
 		}
 	}
 });

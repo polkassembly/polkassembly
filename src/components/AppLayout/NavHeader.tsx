@@ -52,7 +52,6 @@ const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import InAppNotification from '../InAppNotification';
-import { AVAILABLE_NETWORK } from '~src/util/notificationsAvailableChains';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -372,7 +371,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 
 				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
-					{AVAILABLE_NETWORK.includes(network) && <InAppNotification />}
+					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 
@@ -394,7 +393,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						) : (
 							<AuthDropdown>
 								{!web3signup ? (
-									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-[#D2D8E0] bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
+									<div className='flex items-center justify-between gap-x-2 rounded-3xl border border-solid border-section-light-container bg-[#f6f7f9] px-3 dark:border-[#3B444F] dark:border-separatorDark dark:bg-[#29323C33] dark:text-blue-dark-high  '>
 										{theme === 'dark' ? <MailWhite /> : <Mail />}
 										<div className='flex items-center justify-between gap-x-1'>
 											<span className='w-[85%] truncate text-xs font-semibold normal-case'>{displayName || username || ''}</span>
@@ -439,7 +438,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								}
 								isClicked.current = false;
 							}}
-							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
+							className='ml-auto flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] outline-none dark:border-[#3B444F] dark:bg-section-dark-overlay md:hidden'
 						>
 							<CloseOutlined className='h-[15px] w-[15px] dark:text-white' />
 							<div className={`absolute left-0 top-[60px] h-[calc(100vh-60px)] w-screen overflow-hidden bg-black bg-opacity-50 ${!sidedrawer && open ? 'block' : 'hidden'}`}>
@@ -469,7 +468,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/signup');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
+													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
 												>
 													Sign Up
 												</button>
@@ -478,7 +477,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 														setOpen(false);
 														router.push('/login');
 													}}
-													className='flex h-10 items-center justify-center rounded-[6px] border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
 												>
 													Log In
 												</button>
@@ -494,7 +493,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								setSidedrawer(false);
 								setOpen(true);
 							}}
-							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
+							className='flex h-8 w-8 items-center justify-center rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] p-[6px] outline-none dark:border-[#3B444F] md:hidden'
 						>
 							<Image
 								className='h-[20px] w-[20px] rounded-full'

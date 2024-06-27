@@ -10,7 +10,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { NotificationStatus } from '~src/types';
+import { EAllowedCommentor, NotificationStatus } from '~src/types';
 import _ from 'lodash';
 import styled from 'styled-components';
 import ContentForm from '../ContentForm';
@@ -18,6 +18,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -32,6 +33,8 @@ interface Props {
 	setTags: (pre: string[]) => void;
 	setSteps: (pre: ISteps) => void;
 	form: FormInstance;
+	allowedCommentors?: EAllowedCommentor;
+	setAllowedCommentors?: (pre: EAllowedCommentor) => void;
 }
 
 const WriteProposal = ({
@@ -46,7 +49,9 @@ const WriteProposal = ({
 	setContent,
 	tags,
 	setTags,
-	form
+	form,
+	allowedCommentors,
+	setAllowedCommentors
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
@@ -158,6 +163,7 @@ const WriteProposal = ({
 		setIsDiscussionLinked(value);
 		handleChangeIsDiscussion();
 		onChangeLocalStorageSet({ isDiscussionLinked: value }, value, true);
+		setAllowedCommentors?.(EAllowedCommentor.ALL);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -330,7 +336,16 @@ const WriteProposal = ({
 							</div>
 						</div>
 					)}
-					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+
+					{/* who can comment */}
+					<AllowedCommentorsRadioButtons
+						className={isDiscussionLinked ? 'mt-6 ' : '-mt-4'}
+						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
+						isLoading={loading}
+						allowedCommentors={allowedCommentors || EAllowedCommentor.ALL}
+					/>
+
+					<div className='-mx-6 mt-6 flex justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							htmlType='submit'
 							text='Next'

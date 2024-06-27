@@ -35,12 +35,12 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 	return (
 		<>
 			<button
-				className={`flex items-center justify-center overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] bg-transparent outline-none dark:border-[#3B444F] ${className}`}
+				className={`flex items-center justify-center overflow-hidden rounded-sm border border-solid border-section-light-container bg-transparent outline-none dark:border-[#3B444F] ${className}`}
 				onClick={() => setOpen(true)}
 			>
 				<div className='w-full flex-1'>
 					<article className='relative p-2'>
-						<div className='relative h-[300px] overflow-hidden rounded-md border border-solid border-[#D2D8E0] dark:border-[#3B444F]'>
+						<div className='relative h-[300px] overflow-hidden rounded-md border border-solid border-section-light-container dark:border-[#3B444F]'>
 							<Document
 								file={item.download_url}
 								loading={
@@ -63,7 +63,7 @@ const PdfViewer: FC<IPdfViewerProps> = (props) => {
 							</Document>
 						</div>
 					</article>
-					<article className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
+					<article className='flex items-center gap-x-2 border-0 border-t border-solid border-t-section-light-container bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
 						<span className='flex items-center justify-center'>
 							<PdfIcon />
 						</span>

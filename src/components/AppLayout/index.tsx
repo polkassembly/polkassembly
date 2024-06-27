@@ -24,6 +24,7 @@ import {
 	MotionsIcon,
 	NewsIcon,
 	OverviewIcon,
+	LeaderboardOverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
@@ -62,18 +63,20 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { logout } from '~src/redux/userDetails';
+import { logout, userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	ssr: false
+});
 interface IUserDropdown {
 	handleSetIdentityClick: any;
 	isIdentityUnverified: boolean;
@@ -88,9 +91,6 @@ interface IUserDropdown {
 	isIdentityExists: boolean;
 }
 
-const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	ssr: false
-});
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -297,7 +297,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
-	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
+	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -378,6 +378,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				apiReady: apiReady,
 				network: network
 			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
 			setMainDisplay(displayParent || display || nickname);
 			setIsGood(isGood);
 			setIsIdentitySet(isIdentitySet);
@@ -414,6 +415,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  )
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+			getSiderMenuItem('Leaderboard', '/leaderboard', <LeaderboardOverviewIcon className='scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
@@ -828,6 +830,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			  )
 			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+		getSiderMenuItem(
+			'Leaderboard',
+			'/leaderboard',
+			<LeaderboardOverviewIcon className='-ml-0.5 -mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+		),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
@@ -1041,13 +1048,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				isIdentityExists={isIdentitySet}
 			/>
 
-			{userId && (
-				<TopNudges
-					handleSetIdentityClick={handleIdentityButtonClick}
-					isIdentitySet={isIdentitySet}
-					isIdentityUnverified={isIdentityUnverified}
-				/>
-			)}
+			{/* {userId && <TopNudges />} */}
 			<Layout hasSider>
 				<Sider
 					trigger={null}
@@ -1146,6 +1147,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</>
 			)}
+
 			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}

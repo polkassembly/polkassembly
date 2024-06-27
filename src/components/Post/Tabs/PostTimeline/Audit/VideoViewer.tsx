@@ -15,7 +15,7 @@ interface IVideoViewerProps {
 const VideoViewer: FC<IVideoViewerProps> = (props) => {
 	const { item, className } = props;
 	return (
-		<section className={`flex flex-col overflow-hidden rounded-[6px] border border-solid border-[#D2D8E0] dark:border-[#3B444F] ${className}`}>
+		<section className={`flex flex-col overflow-hidden rounded-sm border border-solid border-section-light-container dark:border-[#3B444F] ${className}`}>
 			<div>
 				<article className='flex items-center justify-center pt-6 '>
 					<ReactPlayer
@@ -23,7 +23,7 @@ const VideoViewer: FC<IVideoViewerProps> = (props) => {
 						controls={true}
 					/>
 				</article>
-				<article className='flex items-center gap-x-2 border-0 border-t border-solid border-t-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
+				<article className='flex items-center gap-x-2 border-0 border-t border-solid border-t-section-light-container bg-[rgba(210,216,224,0.2)] px-4 py-[10px]'>
 					<span className='flex items-center justify-center'>
 						{/* <YouTubeIcon /> */}
 						<ImageIcon

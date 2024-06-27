@@ -148,6 +148,7 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 			bio: '',
 			created_at: dayjs((userDoc.created_at as any)?.toDate?.() || userDoc.created_at).toDate(),
 			image: '',
+			profile_score: userDoc.profile_score,
 			title: '',
 			user_id: userDoc.id,
 			username: userDoc.username,

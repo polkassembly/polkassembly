@@ -78,7 +78,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			} else {
 				const totalIssuance = await api.query.balances.totalIssuance();
 				const inactiveIssuance = await api.query.balances.inactiveIssuance();
-				setActiveIssuance(totalIssuance.sub(inactiveIssuance));
+				setActiveIssuance(totalIssuance.sub(inactiveIssuance) as any);
 			}
 		})();
 

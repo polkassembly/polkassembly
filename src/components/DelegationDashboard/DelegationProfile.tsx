@@ -11,12 +11,12 @@ import { CopyIcon, EditIcon } from '~src/ui-components/CustomIcons';
 import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
-import SocialsHandle from './SocialsHandle';
+import SocialsHandle from '../../ui-components/SocialsHandle';
 import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
-import Markdown from './Markdown';
+import Markdown from '../../ui-components/Markdown';
 
 const ImageComponent = dynamic(() => import('src/components/ImageComponent'), {
 	loading: () => <SkeletonAvatar active />,
@@ -50,8 +50,10 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	const handleData = async () => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
-		if (data && data[0]?.bio && data[0]?.dataSource.includes('polkassembly')) {
-			setUserBio(data[0]?.bio);
+		if (data?.length) {
+			if (data?.[0]?.bio && data?.[0]?.dataSource?.includes('polkassembly')) {
+				setUserBio(data?.[0]?.bio || '');
+			}
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -94,32 +96,27 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 					{!!address && !!username && (
 						<div className='w-7/10 gap-1 text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex gap-1'>
-								<span className='text-2xl font-semibold'>{identity?.display || identity?.legal || username}</span>
-								<div className='flex items-center gap-1 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-									(
-									<Address
-										address={address}
-										disableIdenticon
-										destroyTooltipOnHide
-										className='mr-0 flex items-center'
-										addressClassName='items-center text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
-										disableHeader
-										passedUsername={identity?.display || identity?.legal || username}
-										addressMaxLength={5}
-									/>
-									)
-									<span
-										className='flex cursor-pointer items-center text-base'
-										onClick={(e) => {
-											isSearch && e.preventDefault();
-											copyLink(getEncodedAddress(address, network) || '');
-											success();
-										}}
-									>
-										{contextHolder}
-										<CopyIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
-									</span>
-								</div>
+								<Address
+									address={address}
+									disableIdenticon
+									isProfileView
+									destroyTooltipOnHide
+									className='flex gap-1'
+									usernameClassName='text-2xl'
+									isTruncateUsername={false}
+									passedUsername={identity?.display || identity?.legal || username}
+								/>
+								<span
+									className='flex cursor-pointer items-center text-base'
+									onClick={(e) => {
+										isSearch && e.preventDefault();
+										copyLink(getEncodedAddress(address, network) || '');
+										success();
+									}}
+								>
+									{contextHolder}
+									<CopyIcon className='text-xl text-lightBlue dark:text-icon-dark-inactive' />
+								</span>
 							</div>
 							{userBio || bio ? (
 								<h2 className={'mt-1.5 cursor-pointer text-sm font-normal tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high'}>
@@ -130,7 +127,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 									/>
 								</h2>
 							) : null}
-							{identity && social_links && (
+							{!!identity && social_links && (
 								<SocialsHandle
 									className='mt-3 gap-3 max-md:mr-0 max-md:mt-4 max-md:gap-2'
 									socials={social_links}

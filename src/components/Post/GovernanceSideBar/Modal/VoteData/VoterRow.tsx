@@ -39,6 +39,7 @@ import {
 	setDelegatorLoadingTrue
 } from '~src/redux/voteData';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { usePostDataContext } from '~src/context';
 
 interface IVoterRow {
 	className?: string;
@@ -114,6 +115,9 @@ const VoterRow: FC<IVoterRow> = ({
 	decision,
 	isReferendum2
 }) => {
+	const {
+		postData: { postIndex }
+	} = usePostDataContext();
 	const [active, setActive] = useState<boolean | undefined>(false);
 	const { network } = useNetworkSelector();
 	// const [delegatorLoading, setDelegatorLoading] = useState<boolean>(true);
@@ -131,7 +135,7 @@ const VoterRow: FC<IVoterRow> = ({
 		if (delegatedData === null) {
 			(async () => {
 				dispatch(setDelegatorLoadingTrue());
-				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
+				const url = `api/v1/votes/delegationVoteCountAndPower?postId=${referendumId || postIndex}&decision=${decision || 'yes'}&type=${voteType}&voter=${voteData.voter}`;
 				const { data, error } = await nextApiClientFetch<any>(url);
 
 				if (error) {
@@ -264,7 +268,7 @@ const VoterRow: FC<IVoterRow> = ({
 	return voteData?.decision !== 'abstain' ? (
 		<StyledCollapse
 			className={`${
-				active && !isSmallScreen ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+				active && !isSmallScreen ? 'border-t-2 border-pink_primary' : 'border-t-[1px] border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 			} w-full gap-[0px]  rounded-none border-0 sm:w-[550px] ${className}`}
 			size='large'
 			expandIconPosition='end'
@@ -292,7 +296,7 @@ const VoterRow: FC<IVoterRow> = ({
 				);
 			}}
 			activeKey={currentKey === index ? 1 : 0}
-			onChange={() => setActiveKey(currentKey === index ? null : index)}
+			onChange={() => setActiveKey?.(currentKey === index ? null : index)}
 			theme={theme as any}
 			// isSmallScreen={isSmallScreen}
 		>
@@ -305,7 +309,7 @@ const VoterRow: FC<IVoterRow> = ({
 			>
 				{!isSmallScreen && (
 					<div className='flex flex-col gap-4 dark:bg-section-dark-overlay'>
-						<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+						<div className='flex items-center gap-[60px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 								<CalenderIcon /> {dayjs(voteData.createdAt).format('MM/DD/YYYY, h:mm A').toString()}
 							</span>
@@ -349,7 +353,7 @@ const VoterRow: FC<IVoterRow> = ({
 								</div>
 								{voteData?.delegatedVotes?.length > 0 && (
 									<>
-										<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'></div>
+										<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'></div>
 										<div className='mr-3 flex w-[200px] flex-col gap-1'>
 											<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 											<div className='flex justify-between'>
@@ -381,7 +385,7 @@ const VoterRow: FC<IVoterRow> = ({
 							<>
 								<Divider
 									dashed
-									className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+									className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 								/>
 								<div>
 									<p className='mb-4 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>
@@ -421,7 +425,7 @@ const VoterRow: FC<IVoterRow> = ({
 		</StyledCollapse>
 	) : (
 		<div
-			className={`w-full border-x-0 border-y-0 border-t border-solid border-[#D2D8E0] px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:w-[550px] ${
+			className={`w-full border-x-0 border-y-0 border-t border-solid border-section-light-container px-[10px] py-4 text-sm text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high sm:w-[550px] ${
 				isUsedInVotedModal ? '' : `${className}`
 			}`}
 		>

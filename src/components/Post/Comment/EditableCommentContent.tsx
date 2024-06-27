@@ -58,6 +58,8 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
+import getIsCommentAllowed from './utils/getIsCommentAllowed';
+import classNames from 'classnames';
 
 interface IEditableCommentContentProps {
 	userId: number;
@@ -86,7 +88,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { userId, className, comment, content, commentId, sentiment, setSentiment, prevSentiment, userName, is_custom_username, proposer } = props;
 	const { comments, setComments, setTimelines } = useCommentDataContext();
 	const { network } = useNetworkSelector();
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
+	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [replyForm] = Form.useForm();
@@ -95,7 +97,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const currentContent = useRef<string>(content);
 
 	const {
-		postData: { postType, postIndex, track_number }
+		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
 	} = usePostDataContext();
 	const { asPath } = useRouter();
 
@@ -110,6 +112,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const [isReplying, setIsReplying] = useState(false);
 
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
+	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editCommentKey(commentId)) || '';
@@ -628,6 +631,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 		canEditComment();
 	}, [canEditComment]);
 
+	useEffect(() => {
+		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allowedCommentors, loginAddress]);
+
 	return (
 		<>
 			<div className={className}>
@@ -728,8 +736,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							/>
 							{id && (
 								<Button
-									disabled={props.disableEdit}
-									className={'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'}
+									disabled={props.disableEdit || !isCommentAllowed}
+									className={classNames(
+										props.disableEdit || !isCommentAllowed ? 'bg-transparent opacity-50' : '',
+										'mt-[-2px] flex items-center justify-start border-none pl-1 pr-1 text-xs text-pink_primary shadow-none dark:bg-transparent dark:text-blue-dark-helper'
+									)}
 									onClick={props.isSubsquareUser ? toggleReply : toggleReply}
 								>
 									{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply

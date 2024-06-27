@@ -16,10 +16,12 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { ProposalType } from '~src/global/proposalType';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EActivityAction, IPostTag, Post } from '~src/types';
+import { EActivityAction, EAllowedCommentor, IPostTag, Post } from '~src/types';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import isContentBlacklisted from '~src/util/isContentBlacklisted';
 import createUserActivity from '../../utils/create-activity';
+import { isSpamDetected } from '~src/util/getPostContentAiSummary';
+import { sendSpamNotificationEmail } from '~src/auth/email';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostResponseType>) {
 	storeApiKeyUsage(req);
@@ -29,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address } = req.body;
+	const { content, proposalType, title, topicId, userId, gov_type, tags, inductee_address, allowedCommentors } = req.body;
 	if (!content || !title || !topicId || !userId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (typeof content !== 'string' || typeof title !== 'string' || isContentBlacklisted(title) || isContentBlacklisted(content)) {
@@ -37,6 +39,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 	}
 
 	if (tags && !Array.isArray(tags)) return res.status(400).json({ message: 'Invalid tags parameter' });
+
+	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
+		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
+	}
+
+	if ((allowedCommentors || []).length > 0) {
+		const invalidCommentors = allowedCommentors.filter((commentor: unknown) => !Object.values(EAllowedCommentor).includes(String(commentor) as EAllowedCommentor));
+		if (invalidCommentors.length > 0) return res.status(400).json({ message: 'Invalid values in allowedCommentors array parameter' });
+	}
 
 	const substrate_inductee_address = getSubstrateAddress(inductee_address);
 
@@ -64,6 +75,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 
 	const last_comment_at = new Date();
 	const newPost: Post = {
+		allowedCommentors: allowedCommentors || [EAllowedCommentor.ALL],
 		content,
 		created_at: new Date(),
 		gov_type: gov_type,
@@ -118,6 +130,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<CreatePostRespo
 			console.error('Error saving post: ', error);
 			return res.status(500).json({ message: 'Error saving post' });
 		});
+
+	const isSpam = await isSpamDetected(content);
+	if (isSpam) {
+		await sendSpamNotificationEmail(content, network, newID);
+	}
+
 	try {
 		await createUserActivity({ action: EActivityAction.CREATE, content, network, postAuthorId: userId, postId: newID, postType: proposalType, userId });
 		return;

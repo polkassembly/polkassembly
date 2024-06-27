@@ -49,7 +49,7 @@ const VoteDataExpand = () => {
 
 	return (
 		<main className='dark:bg-section-dark-overlay'>
-			<div className='mx-auto mt-2 flex h-1 w-[56px] rounded-[100px] bg-[#D2D8E0]'></div>
+			<div className='mx-auto mt-2 flex h-1 w-[56px] rounded-[100px] bg-section-light-container'></div>
 			<div className='flex items-center justify-between px-4 pt-3 dark:bg-section-dark-overlay '>
 				<div className='flex space-x-[6px]'>
 					<LikeFilled />
@@ -116,7 +116,7 @@ const VoteDataExpand = () => {
 				</div>
 			</div>
 			<div className='flex flex-col gap-4 px-4 dark:bg-section-dark-overlay'>
-				<div className='flex items-center justify-between gap-[50px] border-x-0 border-y-2 border-dashed border-[#D2D8E0] py-4 dark:border-[#3B444F] dark:border-separatorDark'>
+				<div className='flex items-center justify-between gap-[50px] border-x-0 border-y-2 border-dashed border-section-light-container py-4 dark:border-[#3B444F] dark:border-separatorDark'>
 					<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
 						<CalenderIcon />{' '}
 						{dayjs(voteData?.createdAt)
@@ -136,7 +136,7 @@ const VoteDataExpand = () => {
 				<div>
 					<p className='mb-2.5 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Vote Breakdown</p>
 					<div className=''>
-						<div className='flex flex-col gap-1 border-x-0 border-t-0 border-dashed border-[#D2D8E0] px-1 pb-2 dark:border-[#3B444F] dark:border-separatorDark'>
+						<div className='flex flex-col gap-1 border-x-0 border-t-0 border-dashed border-section-light-container px-1 pb-2 dark:border-[#3B444F] dark:border-separatorDark'>
 							<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Self Votes</div>
 							<div className='flex justify-between'>
 								<span className='flex items-center gap-1 text-xs text-[#576D8B] dark:text-blue-dark-high'>
@@ -164,7 +164,7 @@ const VoteDataExpand = () => {
 
 						{voteData?.delegatedVotes?.length > 0 && (
 							<>
-								<div className='border-y-0 border-l-2 border-r-0 border-dashed border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
+								<div className='border-y-0 border-l-2 border-r-0 border-dashed border-section-light-container dark:border-[#3B444F] dark:border-separatorDark max-sm:hidden'></div>
 								<div className='mt-2.5 flex-col gap-1 px-1 sm:mt-0'>
 									<div className='text-xs font-medium text-lightBlue dark:text-blue-dark-medium'>Delegated Votes</div>
 									<div className='mt-1.5 flex justify-between'>
@@ -196,7 +196,7 @@ const VoteDataExpand = () => {
 					<>
 						<Divider
 							dashed
-							className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark'
+							className='m-0 mt-2 border-[2px] border-x-0 border-b-0 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 						/>
 						<div>
 							<p className='mb-4 px-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>Delegation list</p>

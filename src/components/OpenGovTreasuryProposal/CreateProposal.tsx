@@ -309,7 +309,7 @@ const CreateProposal = ({
 										key={index}
 										disableBalanceFormatting
 										assetId={genralIndex}
-										isProposalCreationFlow
+										isProposalCreationFlow={!isPreimage}
 									/>
 								))}
 							</div>

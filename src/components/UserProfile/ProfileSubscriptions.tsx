@@ -19,6 +19,7 @@ import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ImageComponent from '../ImageComponent';
+import dayjs from 'dayjs';
 
 interface Props {
 	className?: string;
@@ -89,7 +90,7 @@ const ProfileSubscriptions = ({ className }: Props) => {
 				) : (
 					<>
 						{data.map((item: any, index: number) => {
-							const date = new Date(item?.createdAt);
+							const date = dayjs(item?.created_at).format("DD[th] MMM 'YY");
 							return (
 								<div
 									key={index}
@@ -107,7 +108,7 @@ const ProfileSubscriptions = ({ className }: Props) => {
 											</div>
 											{item.createdAt && (
 												<div className='hidden items-center text-xs text-lightBlue dark:text-icon-dark-inactive sm:flex'>
-													<ClockCircleOutlined className='mr-1' /> {getRelativeCreatedAt(date)}
+													<ClockCircleOutlined className='mr-1' /> {date}
 												</div>
 											)}
 										</div>

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { CommentsIcon, MyActivityIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Divider, Empty, Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import ImageComponent from '../ImageComponent';
 import { DislikeFilled, LikeOutlined } from '@ant-design/icons';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -17,10 +17,9 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EActivityFilter, EUserActivityIn, EUserActivityType } from '~src/types';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import Select from '~src/basic-components/Select';
 import { poppins } from 'pages/_app';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -214,12 +213,14 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 								);
 						  })
 						: !loading && (
-								<Empty
-									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-									imageStyle={{ height: 300 }}
-									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No current activities</p>}
-									className='my-6 dark:text-[#9e9e9e]'
-								/>
+								<div className='my-[60px] flex flex-col items-center gap-6'>
+									<ImageIcon
+										src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+										alt='Empty Icon'
+										imgClassName='w-[225px] h-[225px]'
+									/>
+									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No current activities</h3>
+								</div>
 						  )}
 				</div>
 				<div className='flex items-center justify-center'>

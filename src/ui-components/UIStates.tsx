@@ -2,15 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { FrownOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Empty, Result } from 'antd';
+import { Result } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { FC } from 'react';
 import cleanError from 'src/util/cleanError';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 
 import { OffChainProposalType, ProposalType } from '~src/global/proposalType';
+import ImageIcon from './ImageIcon';
 
 export const LoadingState = () => {
 	return (
@@ -55,24 +54,25 @@ interface IPostEmptyStateProps {
 	imageStyle?: any;
 	text?: string;
 }
+
 export const PostEmptyState: FC<IPostEmptyStateProps> = ({ className, description, postCategory, image, imageStyle, text }) => {
 	const { resolvedTheme: theme } = useTheme();
-	//console.log('image=>'+image);
-	text ? text : 'No Data.';
+	text = text ? text : '';
+
 	return (
-		<Empty
-			className={className}
-			image={image ? image : theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-			imageStyle={imageStyle ? imageStyle : { height: 300 }}
-			description={
-				postCategory ? (
-					<span className='text-md text-navBlue dark:text-white'>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</span>
-				) : description ? (
-					<span className='text-md text-navBlue dark:text-white'>{description}</span>
-				) : (
-					<span className='text-md text-navBlue dark:text-white'>{text}</span>
-				)
-			}
-		/>
+		<div className={`my-[60px] flex flex-col items-center gap-6 ${className}`}>
+			{image ? (
+				<div style={imageStyle}>{image}</div>
+			) : (
+				<ImageIcon
+					src={theme === 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg'}
+					alt='Empty Icon'
+					imgClassName='w-[225px] h-[225px]'
+				/>
+			)}
+			<h3 className='text-blue-light-high dark:text-blue-dark-high'>
+				{postCategory ? <>We couldn&apos;t find any {postCategory.replaceAll('_', ' ')}.</> : description ? description : text}
+			</h3>
+		</div>
 	);
 };

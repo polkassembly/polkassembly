@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Empty, Popover } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import classNames from 'classnames';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -18,9 +18,8 @@ import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -279,12 +278,14 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 							);
 						})
 					) : (
-						<Empty
-							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-							imageStyle={{ height: 300 }}
-							description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No posts found</p>}
-							className='my-6 dark:text-[#9e9e9e]'
-						/>
+						<div className='my-[60px] flex flex-col items-center gap-6'>
+							<ImageIcon
+								src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+								alt='Empty Icon'
+								imgClassName='w-[225px] h-[225px]'
+							/>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Posts found</h3>
+						</div>
 					)}
 				</div>
 			</div>

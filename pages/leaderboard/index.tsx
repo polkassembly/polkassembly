@@ -63,9 +63,10 @@ const Leaderboard = ({ network, className }: Props) => {
 			>
 				<div className='-ml-[236px] flex justify-center px-4'>
 					<TrophyIcon className='trophy-icon -mt-[92px] ml-[190px] md:ml-0' />
-					<div className={`${poppins.className} ${poppins.variable} ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center`}>
-						<h1 className='m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>Leaderboard</h1>
+					<div className={`${poppins.className} ${poppins.variable} relative ml-auto flex flex-col items-start md:ml-0 md:mt-2 md:items-center`}>
+						<h1 className=' m-0 flex items-center justify-center p-0 text-2xl font-semibold text-white md:text-[40px]'>Leaderboard</h1>
 						<p className='m-0 mt-2 flex items-center justify-center p-0 text-sm text-white md:text-base'>Find your rank in {network} ecosystem</p>
+						<div className='absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
 					</div>
 				</div>
 			</div>

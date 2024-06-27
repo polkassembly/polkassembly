@@ -511,10 +511,16 @@ const CreatePreimage = ({
 		//validate beneficiaryAddresses and fundingAmount for each beneficiary
 		let areBeneficiaryAddressesValid = true;
 		for (const beneficiary in beneficiaryAddresses) {
+			const beneficiaryAddress =
+				typeof beneficiaryAddresses?.[beneficiary]?.address === 'string'
+					? beneficiaryAddresses?.[beneficiary]?.address
+					: (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.length
+					? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
+					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) || '';
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
 				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||
-				!getEncodedAddress(beneficiaryAddresses[beneficiary].address, network) ||
+				!getEncodedAddress(beneficiaryAddress, network) ||
 				Number(beneficiaryAddresses[beneficiary].amount) <= 0
 			) {
 				areBeneficiaryAddressesValid = false;
@@ -653,7 +659,7 @@ const CreatePreimage = ({
 					console.log('fetching data from subsquid');
 					form.setFieldValue('preimage_length', data?.length);
 
-					const balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
+					let balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
 
 					const args = convertAnyHexToASCII(data?.proposedCall?.args, network);
 
@@ -662,6 +668,21 @@ const CreatePreimage = ({
 						amount: balance.toString()
 					};
 
+					if (args?.assetKind?.assetId?.value?.interior) {
+						const call = args?.assetKind?.assetId?.value?.interior?.value;
+						const assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+						setGenralIndex(assetId);
+
+						const beneficiaryAddress =
+							typeof args?.beneficiary === 'string'
+								? args?.beneficiary
+								: (args?.beneficiary as any)?.value?.length
+								? (args?.beneficiary as any)?.value
+								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '';
+
+						newBeneficiaryAddress.address = beneficiaryAddress;
+						balance = balance.div(new BN('1000000')).mul(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+					}
 					dispatchBeneficiaryAddresses({
 						payload: {
 							address: newBeneficiaryAddress.address,

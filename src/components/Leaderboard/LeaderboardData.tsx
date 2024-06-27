@@ -4,7 +4,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
-import { InfoCircleOutlined } from '@ant-design/icons';
+// import { InfoCircleOutlined } from '@ant-design/icons';
 import StarIcon from '~assets/icons/StarIcon.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
@@ -19,11 +19,11 @@ import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { MenuProps } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
+// import { MenuProps } from 'antd';
+// import { Dropdown } from '~src/ui-components/Dropdown';
 import { poppins } from 'pages/_app';
-import Link from 'next/link';
-import Image from 'next/image';
+// import Link from 'next/link';
+// import Image from 'next/image';
 
 const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -102,65 +102,11 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		setCurrentPage(pagination.current);
 	};
 
-	const items: MenuProps['items'] = [
-		{
-			key: '1',
-			label: (
-				<div className=' flex w-[260px] flex-col '>
-					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
-						<ImageIcon
-							src='/assets/icons/astrals-icon.svg'
-							alt='astrals icon'
-							className=''
-						/>
-						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
-					</div>
-					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
-						<div className=''>
-							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
-							<a
-								className='ml-[2px] text-pink_primary'
-								href=''
-							>
-								Learn more{' '}
-								<Image
-									src='/assets/icons/redirect.svg'
-									alt='redirection-icon'
-									width={13}
-									height={13}
-									className='-mt-[3px]'
-								/>
-							</a>
-						</div>
-						<span className='my-1 flex'>
-							The more points you earn, the higher your rank in the leaderboard!
-							{/* <ImageIcon
-								src='/assets/icons/profile-icon.svg'
-								alt='medal icon'
-								imgWrapperClassName='self-end'
-							/> */}
-						</span>
-						<div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
-							To view detailed off-chain and on-chain activity{' '}
-							<Link
-								className='text-xs font-medium text-pink_primary'
-								href={`/user/${username}`}
-								target='_blank'
-							>
-								Visit Profile
-							</Link>
-						</div>
-					</div>
-				</div>
-			)
-		}
-	];
-
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
 			key: 'rank',
-			render: (rank, record) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
+			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
 			title: <span className={`${poppins.className} ${poppins.variable}`}>Rank</span>,
 			width: 15
 		},

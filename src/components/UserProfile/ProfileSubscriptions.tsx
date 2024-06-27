@@ -11,7 +11,6 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { Divider, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import getRelativeCreatedAt from '~src/util/getRelativeCreatedAt';
 import { removeSymbols } from '~src/util/htmlDiff';
 import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import { poppins } from 'pages/_app';

@@ -845,6 +845,13 @@ z-index: 105 !important;
   transform: scale(0.7);
 }
 
+.place-container {
+  transform: scale(0.95);
+}
+
+.divider-container {
+  border-top: 1px solid #D2D8E0 !important;
+}
 .proxyDropdown {
   border: 1px solid #d2d8e0 !important;
 }
@@ -859,6 +866,9 @@ z-index: 105 !important;
   text-shadow: none !important;
 }
 
+.ant-input {
+  background-color: transparent !important;
+}
 .dark-icons{
   filter: invert(56%) sepia(0%) saturate(15%) hue-rotate(141deg) brightness(101%) contrast(93%)  !important;
 }

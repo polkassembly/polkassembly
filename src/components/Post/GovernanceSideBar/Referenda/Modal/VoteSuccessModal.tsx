@@ -99,7 +99,6 @@ const VoteInitiatedModal = ({
 			onCancel={() => setOpen(false)}
 			centered
 			footer={false}
-			maskClosable={false}
 			closable
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>

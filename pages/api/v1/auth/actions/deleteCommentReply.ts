@@ -61,7 +61,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			return res.status(500).json({ message: 'Error deleting reply' });
 		});
 	try {
-		await createUserActivity({ action: EActivityAction.DELETE, network, replyId: replyId, type: EUserActivityType.REPLIED, userId: userId });
+		await createUserActivity({ action: EActivityAction.DELETE, network, postId, replyId: replyId, type: EUserActivityType.REPLIED, userId: userId });
 		return;
 	} catch (err) {
 		console.log(err);

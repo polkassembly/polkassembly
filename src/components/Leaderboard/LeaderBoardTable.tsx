@@ -34,6 +34,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 							onSearch={handleSearch}
 							onChange={(e) => setInputValue(e.target.value)}
 							value={inputValue}
+							allowClear
 						/>
 					</div>
 				</div>
@@ -49,7 +50,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 
 export default styled(LeaderBoardTable)`
 	.ant-input-group .ant-input {
-		height: 42px !important;
+		height: 32px !important;
 		width: 245px !important;
 	}
 	.ant-input {
@@ -59,8 +60,12 @@ export default styled(LeaderBoardTable)`
 	.ant-input-search .ant-input-search-button {
 		height: 42px !important;
 		width: 42px !important;
-		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
 		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
+	.ant-input-affix-wrapper {
+		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
 	}
 	.ant-input-search .ant-input-search-button svg {
 		fill: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#4B4B4B')};

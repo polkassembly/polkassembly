@@ -20,12 +20,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network in request header' });
 
 	const { address, addresses, ss58Prefix, threshold, signatory, signature } = req.body;
-	if (!address || !addresses || isNaN(ss58Prefix) || !threshold || !signatory || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
+
+	const numss58Prefix = Number(ss58Prefix);
+
+	if (!address || !addresses || isNaN(numss58Prefix) || !threshold || !signatory || !signature) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	const token = getTokenFromReq(req);
 	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	const updatedJWT = await authServiceInstance.MultiSigAddressLinkConfirm(token, network, address, addresses, ss58Prefix, threshold, signatory, signature);
+	const updatedJWT = await authServiceInstance.MultiSigAddressLinkConfirm(token, network, address, addresses, numss58Prefix, threshold, signatory, signature);
 
 	return res.status(200).json({ message: messages.ADDRESS_LINKING_SUCCESSFUL, token: updatedJWT });
 }

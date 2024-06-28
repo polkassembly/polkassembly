@@ -559,7 +559,6 @@ export async function getComments(
 			is_custom_username: boolean;
 		};
 	} = {};
-
 	if (newIds.length > 0) {
 		const chunkSize = 30;
 		const totalChunks = Math.ceil(newIds.length / chunkSize);
@@ -579,7 +578,7 @@ export async function getComments(
 						};
 					}
 				});
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '!=', false).get();
 				addressesQuery.docs.forEach((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -625,7 +624,6 @@ export async function getComments(
 			}
 		}
 	}
-
 	const commentsPromiseWithVote = comments.map(async (comment) => {
 		if (comment && userIdToUserMap[comment?.user_id]) {
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;

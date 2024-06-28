@@ -34,7 +34,6 @@ import MANUAL_USERNAME_25_CHAR from '~src/auth/utils/manualUsername25Char';
 import { IComment } from './Comment';
 import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
-import Tooltip from '~src/basic-components/Tooltip';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 
@@ -665,19 +664,14 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 							<div className='item-center flex flex-wrap gap-3'>
 								{id ? (
 									reply.reply_source === 'subsquare' ? (
-										<Tooltip
-											title='Reply are disabled for imported comments.'
-											color='#E5007A'
+										<Button
+											disabled={!isCommentAllowed}
+											className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
+												reply.reply_source ? 'disabled-reply' : ''
+											} ${!isCommentAllowed ? 'opacity-50' : ''}`}
 										>
-											<Button
-												disabled={!isCommentAllowed}
-												className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
-													reply.reply_source ? 'disabled-reply' : ''
-												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
-											>
-												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
-											</Button>
-										</Tooltip>
+											{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
+										</Button>
 									) : (
 										!isReplying && (
 											<Button

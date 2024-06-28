@@ -24,6 +24,7 @@ import {
 	MotionsIcon,
 	NewsIcon,
 	OverviewIcon,
+	LeaderboardOverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
@@ -414,6 +415,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  )
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+			getSiderMenuItem('Leaderboard', '/leaderboard', <LeaderboardOverviewIcon className='scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
@@ -828,6 +830,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			  )
 			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+		getSiderMenuItem(
+			'Leaderboard',
+			'/leaderboard',
+			<LeaderboardOverviewIcon className='-ml-0.5 -mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+		),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),

@@ -14,6 +14,8 @@ import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { getPostsRefAndData, updatePostLinkInGroup } from './linkPostConfirm';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import changeProfileScore from '../../utils/changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 export interface ILinkPostRemoveResponse {
 	timeline: any[];
@@ -101,9 +103,15 @@ const handler: NextApiHandler<ILinkPostRemoveResponse | MessageType> = async (re
 		}
 
 		const data = await updatePostLinkInGroup(params);
-		return res.status(200).json(data);
+		res.status(200).json(data);
 	} catch (error) {
 		return res.status(error.name).json({ message: error.message });
+	}
+
+	try {
+		await changeProfileScore(user.id, -REPUTATION_SCORES.add_context.value);
+	} catch (error) {
+		console.error('Error while updating user profile score', error);
 	}
 };
 

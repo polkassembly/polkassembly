@@ -147,6 +147,7 @@ import VotesSVG from '~assets/profile/profile-votes.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
+import LeaderboardSVG from '~assets/sidebar/LeaderboardSelected.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
@@ -1122,6 +1123,12 @@ export const SubscanIcon = (props: Partial<CustomIconComponentProps>) => (
 export const ProfileOverviewIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ProfileOverviewSVG}
+		{...props}
+	/>
+);
+export const LeaderboardOverviewIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={LeaderboardSVG}
 		{...props}
 	/>
 );

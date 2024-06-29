@@ -35,10 +35,10 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 			return {
 				addresses: [],
 				created_at: userData?.created_at?.toDate?.() || new Date(),
+				image: userData?.profile?.image,
 				profile_score: userData.profile_score,
 				user_id: userData.id,
 				username: userData.username,
-				image: userData?.profile?.image,
 				...userData.profile,
 				rank
 			} as LeaderboardEntry;

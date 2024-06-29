@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
 import Image from 'next/image';
+import { spaceGrotesk } from 'pages/_app';
 
 const BountyActivities = () => {
 	const activities = [
@@ -20,7 +21,7 @@ const BountyActivities = () => {
 			{activities.map((activity, index) => (
 				<div
 					key={index}
-					className='flex items-center gap-x-1 rounded-[14px] border border-solid border-section-light-container bg-white px-3 py-2 dark:border-section-dark-container dark:bg-section-dark-overlay'
+					className={` ${spaceGrotesk.className} ${spaceGrotesk.variable} flex items-center gap-x-1 rounded-[14px] border border-solid border-section-light-container bg-white px-3 py-2 dark:border-section-dark-container dark:bg-section-dark-overlay`}
 				>
 					<Image
 						src={'/assets/icons/user-profile.png'}
@@ -29,7 +30,7 @@ const BountyActivities = () => {
 						className='-mt-[2px]'
 						alt='user image'
 					/>
-					<span className='mr-1 inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity.name}</span>
+					<span className='inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity.name}</span>
 					<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
 					<span className='text-[20px] font-normal text-pink_primary'>{activity.amount}</span>
 					<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>

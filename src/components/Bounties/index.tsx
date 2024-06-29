@@ -8,12 +8,15 @@ import BountyCard from './BountyCard';
 import Image from 'next/image';
 import BountyActivities from './BountyActivities';
 import { Carousel } from 'antd';
+import { useRouter } from 'next/router';
+import { spaceGrotesk } from 'pages/_app';
 
 const BountiesContainer = () => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
+	const router = useRouter();
 
 	const handleBeforeChange1 = (next: number) => {
 		setCurrentSlide1(next);
@@ -27,7 +30,14 @@ const BountiesContainer = () => {
 		<div>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
-				<button className='bounty-button cursor-pointer rounded-[20px] border-none px-[22px] py-[11px] font-bold text-white'>Create Bounty Proposal</button>
+				<button className='bounty-button flex cursor-pointer items-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] '>
+					<ImageIcon
+						src='/assets/bounty-icons/proposal-icon.svg'
+						alt='bounty icon'
+						imgClassName=''
+					/>
+					<span className='font-bold text-white'>Create Bounty Proposal</span>
+				</button>
 			</div>
 			<BountiesHeader />
 
@@ -41,7 +51,14 @@ const BountiesContainer = () => {
 					/>
 					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Hot Bounties</h2>
 				</div>
-				<button className='cursor-pointer rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary'>View All</button>
+				<button
+					onClick={() => {
+						router.push('/bounties');
+					}}
+					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary`}
+				>
+					View All
+				</button>
 			</div>
 
 			<div className='relative '>
@@ -99,7 +116,6 @@ const BountiesContainer = () => {
 					/>
 					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounty Proposals</h2>
 				</div>
-				<button className='rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary'>View All</button>
 			</div>
 			<div className='relative '>
 				{currentSlide2 > 0 && (

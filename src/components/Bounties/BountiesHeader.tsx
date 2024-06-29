@@ -11,10 +11,7 @@ const BountiesHeader = () => {
 				<div className='flex gap-6'>
 					<div>
 						<span className='text-base   text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-						<div className='text-[46px]'>
-							$78,390
-							<span className='text-base font-semibold text-pink_primary'>CLAIM</span>
-						</div>
+						<div className='text-[46px]'>$78,390</div>
 						<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 							<div className='mb-8 ml-6 flex items-end gap-3'>
 								<ImageIcon
@@ -31,16 +28,20 @@ const BountiesHeader = () => {
 					</div>
 					<div className='grid grid-cols-2 gap-x-24 py-7'>
 						<div className='flex flex-col'>
-							<span className='text-base'>Active bounties</span>
+							<span className='text-base'>Active Bounties</span>
 							<span className='text-[28px]'>31</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='text-base'>Total Child bounties</span>
+							<span className='text-base'>No. of People Earned</span>
 							<span className='text-[28px]'>340</span>
 						</div>
 						<div className='flex flex-col'>
-							<span className='text-base'>Total Claimed</span>
+							<span className='text-base'>Total Rewarded</span>
 							<span className='text-[28px]'>$28,320</span>
+						</div>
+						<div className='flex flex-col'>
+							<span className='text-base'>Total Bounty Pool</span>
+							<span className='text-[28px]'>$96,420</span>
 						</div>
 					</div>
 				</div>

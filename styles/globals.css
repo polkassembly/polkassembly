@@ -38,6 +38,7 @@
   --ligth_red: #fff1f4;
   --comment_bg: #F9FAFB;
   --font_default: "Poppins";
+  --font-space_grotesk: "Space Grotesk";
   --main-bg: #F5F6F8;
   --separatorDark: #4B4B4B;
   --tableRowSeparator: #323232;
@@ -108,7 +109,7 @@ body {
   scroll-behavior: smooth;
   font-family: var(--font_default), "Poppins", -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
+    "Helvetica Neue", sans-serif, "Space Grotesk";
 }
 
 a {

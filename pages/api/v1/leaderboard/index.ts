@@ -38,6 +38,7 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 				profile_score: userData.profile_score,
 				user_id: userData.id,
 				username: userData.username,
+				image: userData?.profile?.image,
 				...userData.profile,
 				rank
 			} as LeaderboardEntry;

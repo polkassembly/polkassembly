@@ -125,10 +125,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
 			},
-			render: (user, userImage) => (
+			render: (user, obj) => (
 				<div className='flex items-center gap-x-2'>
 					<ImageComponent
-						src={userImage || ''}
+						src={obj?.userImage || ''}
 						alt='User Picture'
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'

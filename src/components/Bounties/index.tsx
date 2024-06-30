@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import BountiesHeader from './BountiesHeader';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BountyCard from './BountyCard';
@@ -10,8 +10,14 @@ import BountyActivities from './BountyActivities';
 import { Carousel } from 'antd';
 import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
+import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 
-const BountiesContainer = () => {
+interface IBountiesContainer {
+	proposedData?: IPostsListingResponse;
+	activeData?: IPostsListingResponse;
+}
+
+const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);

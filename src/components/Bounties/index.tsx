@@ -4,20 +4,22 @@
 import React, { FC, useRef, useState } from 'react';
 import BountiesHeader from './BountiesHeader';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import BountyCard from './BountyCard';
 import Image from 'next/image';
 import BountyActivities from './BountyActivities';
 import { Carousel } from 'antd';
 import { useRouter } from 'next/router';
 import { spaceGrotesk } from 'pages/_app';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
+import HotBountyCard from './HotBountyCard';
+import BountiesProposalsCard from './BountiesProposalsCard';
+import { chunkArray } from './utils/ChunksArr';
 
 interface IBountiesContainer {
-	proposedData?: IPostsListingResponse;
+	extendedData?: IPostsListingResponse;
 	activeData?: IPostsListingResponse;
 }
 
-const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData }) => {
+const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
@@ -32,8 +34,11 @@ const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData })
 		setCurrentSlide2(next);
 	};
 
+	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
+	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
+
 	return (
-		<div>
+		<main>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
 				<button className='bounty-button flex cursor-pointer items-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] '>
@@ -87,18 +92,21 @@ const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData })
 					dots={false}
 					beforeChange={handleBeforeChange1}
 				>
-					{[...Array(4)].map((_, index) => (
+					{extendedDataChunks.map((chunk, index) => (
 						<div
 							key={index}
 							className='flex justify-between space-x-4'
 						>
-							<BountyCard />
-							<BountyCard />
-							<BountyCard />
+							{chunk.map((post, postIndex) => (
+								<HotBountyCard
+									key={postIndex}
+									extendedData={post}
+								/>
+							))}
 						</div>
 					))}
 				</Carousel>
-				{currentSlide1 < 3 && (
+				{currentSlide1 < extendedDataChunks.length - 1 && (
 					<span
 						onClick={() => carouselRef1?.current?.next()}
 						className='cursor-pointer'
@@ -143,18 +151,21 @@ const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData })
 					dots={false}
 					beforeChange={handleBeforeChange2}
 				>
-					{[...Array(4)].map((_, index) => (
+					{activeDataChunks.map((chunk, index) => (
 						<div
 							key={index}
 							className='flex justify-between space-x-4'
 						>
-							<BountyCard isUsedInBountyProposals={true} />
-							<BountyCard isUsedInBountyProposals={true} />
-							<BountyCard isUsedInBountyProposals={true} />
+							{chunk.map((post, postIndex) => (
+								<BountiesProposalsCard
+									key={postIndex}
+									activeData={post}
+								/>
+							))}
 						</div>
 					))}
 				</Carousel>
-				{currentSlide2 < 3 && (
+				{currentSlide2 < activeDataChunks.length - 1 && (
 					<span
 						onClick={() => carouselRef2?.current?.next()}
 						className='cursor-pointer'
@@ -178,7 +189,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ proposedData, activeData })
 				/>
 				<BountyActivities />
 			</div>
-		</div>
+		</main>
 	);
 };
 

@@ -34,12 +34,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = context.query;
 	const proposalType = ProposalType.BOUNTIES;
 
-	const proposedResponse = await getOnChainPosts({
+	const extendedResponse = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
-		proposalStatus: ['Proposed'],
+		proposalStatus: ['Extended'],
 		proposalType,
 		sortBy
 	});
@@ -56,23 +56,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	return {
 		props: {
-			proposedData: proposedResponse.data,
 			activeData: activeResponse.data,
-			error: proposedResponse.error || activeResponse.error || null,
+			error: extendedResponse.error || activeResponse.error || null,
+			extendedData: extendedResponse.data,
 			network
 		}
 	};
 };
 
 interface IBountyProps {
-	proposedData?: IPostsListingResponse;
 	activeData?: IPostsListingResponse;
 	error?: string;
+	extendedData?: IPostsListingResponse;
 	network: string;
 }
 
 const Bounty: React.FC<IBountyProps> = (props) => {
-	const { proposedData, activeData, error, network } = props;
+	const { extendedData, activeData, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -81,7 +81,10 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	if (!proposedData || !activeData) return null;
+	if (!extendedData || !activeData) return null;
+
+	console.log('proposedPosts', extendedData);
+	console.log('activePosts', activeData);
 
 	return (
 		<>
@@ -91,7 +94,7 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 				network={network}
 			/>
 			<BountiesContainer
-				proposedData={proposedData}
+				extendedData={extendedData}
 				activeData={activeData}
 			/>
 		</>

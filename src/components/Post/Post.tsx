@@ -14,7 +14,6 @@ import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -43,6 +42,7 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
+import Curator from './Curator';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -575,6 +575,8 @@ const Post: FC<IPostProps> = (props) => {
 								{/* Post Content */}
 								<div className='mb-6 w-full rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay md:p-4 lg:p-6 '>
 									{isEditing && <EditablePostContent toggleEdit={toggleEdit} />}
+
+									<Curator />
 
 									{!isEditing && (
 										<>

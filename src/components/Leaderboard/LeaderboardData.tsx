@@ -352,8 +352,8 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
 					onChange={handleTableChange}
 					theme={theme}
-					rowClassName={(record, index) => {
-						return index === combinedDataSource.length - 1 && username ? 'last-row' : '';
+					rowClassName={(record) => {
+						return username === record.user ? 'user-row' : '';
 					}}
 				/>
 			</div>
@@ -419,14 +419,14 @@ export default styled(LeaderboardData)`
 	td {
 		background-color: transparent !important;
 	}
-	// .ant-table-tbody > tr.last-row {
-	// background-color: ${(props: any) => (props.theme === 'light' ? '#e2ebff' : '#141C2D')} !important;
-	// color: ${(props: any) => (props.theme === 'light' ? '#243A57' : '#FFFFFF')} !important;
-	// }
-	// .ant-table-tbody > tr.last-row > td {
-	// border-top: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
-	// border-bottom: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
-	// }
+	.ant-table-tbody > tr.user-row {
+		background-color: ${(props: any) => (props.theme === 'light' ? '#e2ebff' : '#141C2D')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '#243A57' : '#FFFFFF')} !important;
+	}
+	.ant-table-tbody > tr.user-row > td {
+		border-top: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
+	}
 	.ant-table-wrapper .ant-table-cell-fix-left {
 		background-color: #fff !important;
 	}

@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const LeaderBoardTable = dynamic(() => import('src/components/Leaderboard/LeaderBoardTable'), {
 	loading: () => <Skeleton active />,
@@ -147,6 +148,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
+
+	if (network != 'polkadot') {
+		return {
+			props: {},
+			redirect: {
+				destination: isOpenGovSupported(network) ? '/opengov' : '/'
+			}
+		};
+	}
 
 	return { props: { network } };
 };

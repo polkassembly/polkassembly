@@ -46,7 +46,7 @@ export const getDelegationDashboardData = async (address: string, network: strin
 
 	for (const [index, trackDelegationData] of subsquidResults.entries()) {
 		if (!trackDelegationData || trackDelegationData.status !== 'fulfilled') continue;
-		const votingDelegationsArr = (trackDelegationData?.value?.data?.votingDelegations || []) as IDelegation[];
+		const votingDelegationsArr = (trackDelegationData.value.data.votingDelegations || []) as IDelegation[];
 
 		const track = Number(Object.keys(subsquidFetches)[index]);
 		if (isNaN(track)) continue;

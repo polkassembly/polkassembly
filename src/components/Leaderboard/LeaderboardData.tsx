@@ -6,7 +6,6 @@ import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import StarIcon from '~assets/icons/StarIcon.svg';
-import StarYellow from '~assets/icons/StarYellow.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -23,7 +22,10 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 // import { MenuProps } from 'antd';
 // import { Dropdown } from '~src/ui-components/Dropdown';
 import { poppins } from 'pages/_app';
-import { Popover, Spin } from 'antd';
+import { MenuProps, Spin } from 'antd';
+import Image from 'next/image';
+// import Link from 'next/link';
+import { Dropdown } from '~src/ui-components/Dropdown';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -82,30 +84,59 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
 
-	const AstralsInfo = () => {
-		return (
-			<div>
-				<div className='flex gap-2'>
-					<StarYellow /> <h3 className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-white'>Astrals</h3>
-				</div>
-				<p className='m-0 mt-2 max-w-[275px] p-0 text-sm font-light text-bodyBlue dark:text-white'>
-					A score system based on the aggregate of off-chain, on-chain activity and profile activity.
-					<a
-						className='mx-0.5 inline-flex items-center gap-1 p-0 text-sm text-pink_primary'
-						href={''}
-					>
-						Learn more
+	const items: MenuProps['items'] = [
+		{
+			key: '1',
+			label: (
+				<div className=' flex w-[260px] flex-col '>
+					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
 						<ImageIcon
-							src='/assets/icons/learn-more-icon.svg'
-							alt='learnIcon'
-							className='icon-container scale-[0.9]'
+							src='/assets/icons/astrals-icon.svg'
+							alt='astrals icon'
+							className=''
 						/>
-					</a>
-					<br /> The more points you earn, the higher your rank in the leaderboard!
-				</p>
-			</div>
-		);
-	};
+						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
+					</div>
+					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
+						<div className=''>
+							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
+							<a
+								className='ml-[2px] text-pink_primary'
+								href=''
+							>
+								Learn more{' '}
+								<Image
+									src='/assets/icons/redirect.svg'
+									alt='redirection-icon'
+									width={13}
+									height={13}
+									className='-mt-[3px]'
+								/>
+							</a>
+						</div>
+						<span className='my-1 flex'>
+							The more points you earn, the higher your rank in the leaderboard!
+							{/* <ImageIcon
+								src='/assets/icons/profile-icon.svg'
+								alt='medal icon'
+								imgWrapperClassName='self-end'
+							/> */}
+						</span>
+						{/* <div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
+							To view detailed off-chain and on-chain activity{' '}
+							<Link
+								className='text-xs font-medium text-pink_primary'
+								href={`/user/${username}`}
+								target='_blank'
+							>
+								Visit Profile
+							</Link>
+						</div> */}
+					</div>
+				</div>
+			)
+		}
+	];
 
 	const getLeaderboardData = async () => {
 		const body = searchedUsername ? { page: 1, username: searchedUsername } : { page: currentPage };
@@ -194,17 +225,18 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			title: (
 				<div className='flex items-center gap-1 text-sm font-medium'>
 					<span>Astrals</span>
-					<Popover
+					<Dropdown
+						theme={theme}
 						className={'cursor-pointer rounded-md border-none bg-none'}
 						overlayClassName='z-[1056]'
 						placement='topRight'
-						content={AstralsInfo}
+						menu={{ items }}
 						arrow
 					>
 						<span className='ml-[2px]'>
 							<InfoCircleOutlined style={{ color: '#485F7D' }} />
 						</span>
-					</Popover>
+					</Dropdown>
 				</div>
 			),
 			width: 150
@@ -397,6 +429,9 @@ export default styled(LeaderboardData)`
 	// }
 	.ant-table-wrapper .ant-table-cell-fix-left {
 		background-color: #fff !important;
+	}
+	.ant-table-column-sorter-inner {
+		color: #9e9e9e !important;
 	}
 	.ant-table-content {
 		overflow: auto hidden !important;

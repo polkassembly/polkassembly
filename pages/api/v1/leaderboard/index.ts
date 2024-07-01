@@ -35,10 +35,11 @@ export const getLeaderboard = async ({ page, username = '' }: { page: number; us
 			return {
 				addresses: [],
 				created_at: userData?.created_at?.toDate?.() || new Date(),
-				profile_score: userData.profile_score,
-				user_id: userData.id,
-				username: userData.username,
-				...userData.profile,
+				image: userData?.profile?.image,
+				profile_score: userData?.profile_score,
+				user_id: userData?.id,
+				username: userData?.username,
+				...userData?.profile,
 				rank
 			} as LeaderboardEntry;
 		});

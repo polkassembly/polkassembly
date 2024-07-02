@@ -254,7 +254,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-white' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
 				</div>
 			),
-			// showSorterTooltip: { target: 'sorter-icon' },
+			showSorterTooltip: { open: false },
 			sorter: (a, b) => {
 				const timestampA = dayjs(a.userSince, "DD[th] MMM 'YY").unix();
 				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();

@@ -30,6 +30,7 @@ import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
 import Curator from './Curator';
+import { bountyStatus } from '~src/global/statuses';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -213,7 +214,13 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
-			<Curator />
+			{proposalType === ProposalType.BOUNTIES && status === bountyStatus.ACTIVE && (
+				<Curator
+					curator={curator}
+					proposer={proposer}
+					postId={onchainId ? Number(onchainId) : (onchainId as any)}
+				/>
+			)}
 			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}
@@ -263,7 +270,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						/>
 					)}
 					{requestedAmt && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<div className='relative flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}

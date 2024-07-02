@@ -27,6 +27,8 @@ import { getSortedComments } from '~src/components/Post/Comment/CommentsContaine
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
+const ZERO_BN = new BN(0);
+
 interface Props {
 	className?: string;
 	open: boolean;
@@ -42,6 +44,7 @@ interface Props {
 	nayVoteValue?: BN;
 	abstainVoteValue?: BN;
 	icon: ReactElement;
+	delegatedVotingPower?: BN;
 }
 
 const VoteInitiatedModal = ({
@@ -58,6 +61,7 @@ const VoteInitiatedModal = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
+	delegatedVotingPower = ZERO_BN,
 	icon
 }: Props) => {
 	const { network } = useNetworkSelector();
@@ -97,7 +101,6 @@ const VoteInitiatedModal = ({
 				</span>
 			}
 			onCancel={() => setOpen(false)}
-			centered
 			footer={false}
 			closable
 		>
@@ -106,7 +109,9 @@ const VoteInitiatedModal = ({
 				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{title}</h2>
 				<div className='flex flex-col items-center justify-center gap-[14px]'>
 					<div className='text-[24px] font-semibold text-pink_primary'>
-						{formatedBalance(balance.toString(), unit)}
+						{conviction
+							? formatedBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), unit)
+							: formatedBalance(balance.add(delegatedVotingPower).toString(), unit)}
 						{` ${unit}`}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
@@ -156,6 +161,7 @@ const VoteInitiatedModal = ({
 							</span>
 						</div>
 					)}
+
 					<div className='flex flex-col items-start justify-center gap-[10px]'>
 						<div className='flex gap-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							With address:{' '}
@@ -183,6 +189,14 @@ const VoteInitiatedModal = ({
 							</div>
 						)}
 
+						{
+							<div className='flex gap-[15px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								Vote Amount:{' '}
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+									{formatedBalance(balance.toString(), unit)} {unit}
+								</span>
+							</div>
+						}
 						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Vote :
 							{vote === EVoteDecisionType.AYE ? (
@@ -203,9 +217,26 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
+						{/* <div className='flex gap-[13px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							Vote Amount:
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{formatedBalance(
+									!conviction ? balance.div(new BN('10')).add(delegatedVotingPower).toString() : balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(),
+									unit,
+									1
+								) || '0.1'}{' '}
+								{unit}
+							</span>
+						</div> */}
 						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Conviction:
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
+						</div>
+						<div className='flex gap-[10px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							Delegated Power:
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								{formatedBalance(delegatedVotingPower.toString(), unit, 0) || '0.1'} {unit}
+							</span>
 						</div>
 						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>

@@ -27,6 +27,8 @@ import { getSortedComments } from '~src/components/Post/Comment/CommentsContaine
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 
+const ZERO_BN = new BN(0);
+
 interface Props {
 	className?: string;
 	open: boolean;
@@ -42,7 +44,7 @@ interface Props {
 	nayVoteValue?: BN;
 	abstainVoteValue?: BN;
 	icon: ReactElement;
-	delegatedVotingPower: BN;
+	delegatedVotingPower?: BN;
 }
 
 const VoteInitiatedModal = ({
@@ -59,7 +61,7 @@ const VoteInitiatedModal = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
-	delegatedVotingPower,
+	delegatedVotingPower = ZERO_BN,
 	icon
 }: Props) => {
 	const { network } = useNetworkSelector();

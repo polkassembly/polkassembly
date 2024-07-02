@@ -142,7 +142,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 		if (data) {
 			handleTallyData(data?.tally);
-			console.log(data?.tally, 'data');
 		} else if (error) {
 			console.log(error);
 		}

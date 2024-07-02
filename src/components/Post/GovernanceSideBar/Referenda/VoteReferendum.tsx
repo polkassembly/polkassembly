@@ -169,7 +169,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 
 	const getDelegateData = async () => {
-		console.log(proposalType);
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
 		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
 			addresses: [address]
@@ -177,7 +176,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (data) {
 			const bnVotingPower = new BN(data?.votingPower || '0');
 			setDelegatedVotingPower(bnVotingPower);
-			console.log(data);
 		} else if (error) {
 			console.log(error);
 		}

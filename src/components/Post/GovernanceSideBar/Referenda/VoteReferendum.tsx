@@ -39,7 +39,7 @@ import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
 import executeTx from '~src/util/executeTx';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
@@ -58,6 +58,10 @@ import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+import Input from '~src/basic-components/Input';
+import { formatedBalance } from '~src/util/formatedBalance';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -70,6 +74,7 @@ interface Props {
 	address: string;
 	theme?: string;
 	trackNumber?: number;
+	setUpdateTally?: (pre: boolean) => void;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -121,7 +126,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -161,6 +166,22 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
+	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+
+	const getDelegateData = async () => {
+		console.log(proposalType);
+		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: [address]
+		});
+		if (data) {
+			const bnVotingPower = new BN(data?.votingPower || '0');
+			setDelegatedVotingPower(bnVotingPower);
+			console.log(data);
+		} else if (error) {
+			console.log(error);
+		}
+	};
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -173,6 +194,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	useEffect(() => {
 		getProxies(address);
+
+		getDelegateData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
@@ -536,6 +559,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				message: `Vote on referendum #${referendumId} successful.`,
 				status: NotificationStatus.SUCCESS
 			});
+			setUpdateTally?.(true);
 			setLastVote({
 				balance: totalVoteValue,
 				conviction: conviction,
@@ -937,6 +961,20 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
 									</div>
 								)}
+								{/* delegate voting power */}
+								{delegatedVotingPower.gt(ZERO_BN) && (
+									<div className='mb-4 mt-6 flex flex-col gap-0.5 text-sm'>
+										<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
+											{' '}
+											Delegated power <HelperTooltip text='Total amount of voting power' />
+										</span>
+										<Input
+											value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}
+											disabled
+											className='h-10 rounded-[4px] border-[1px] border-solid dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high'
+										/>
+									</div>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
@@ -1069,6 +1107,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					vote={vote}
 					balance={voteValues.totalVoteValue}
 					open={successModal}
+					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
 					address={address}
 					multisig={multisig ? multisig : ''}

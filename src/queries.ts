@@ -2508,3 +2508,17 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
   }
 }
 `;
+
+export const GET_TALLY_FOR_POST = `
+query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
+  proposals(where:{index_eq:$index_eq, type_eq: $type }){
+    tally{
+      ayes
+      nays
+      support
+      bareAyes
+    }
+  }
+}
+
+`;

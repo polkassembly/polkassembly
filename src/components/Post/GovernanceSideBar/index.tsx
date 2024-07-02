@@ -133,6 +133,7 @@ export function getDecidingEndPercentage(decisionPeriod: number, decidingSince: 
 const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { canEdit, className, onchainId, proposalType, startTime, status, tally, post, toggleEdit, hash, trackName, pipsVoters, bountyIndex } = props;
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
+	const [updateTally, setUpdateTally] = useState<boolean>(false);
 
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -727,6 +728,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setLastVote(null);
 		setLoading(false);
 		setOnChainLastVote(null);
+		setUpdateTally(true);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({
@@ -938,7 +940,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								{dayjs().format("Do MMM 'YY")}
 							</span>
 						</Tooltip>
-						{balance && (
+						{!!balance && (
 							<Tooltip
 								placement='bottom'
 								title='Amount'
@@ -1100,6 +1102,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															referendumId={onchainId as number}
 															proposalType={proposalType}
 															trackNumber={trackNumber as any}
+															setUpdateTally={setUpdateTally}
 														/>
 														{RenderLastVote}
 													</div>
@@ -1162,6 +1165,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																referendumId={onchainId as number}
 																proposalType={proposalType}
 																trackNumber={trackNumber as any}
+																setUpdateTally={setUpdateTally}
 															/>
 														)}
 														{RenderLastVote}
@@ -1179,6 +1183,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															ayeNayAbstainCounts={ayeNayAbstainCounts}
 															setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 															tally={tally}
+															updateTally={updateTally}
+															setUpdatetally={setUpdateTally}
 														/>
 														<RefV2ThresholdData
 															canVote={canVote}

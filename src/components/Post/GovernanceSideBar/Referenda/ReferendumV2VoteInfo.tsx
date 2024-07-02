@@ -5,11 +5,10 @@
 import { Modal, Spin } from 'antd';
 import { LoadingOutlined, InfoCircleOutlined, LikeFilled } from '@ant-design/icons';
 import BN from 'bn.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
-
 import { useApiContext } from '~src/context';
 import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
@@ -23,20 +22,23 @@ import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalT
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import _ from 'lodash';
 
 interface IReferendumV2VoteInfoProps {
 	className?: string;
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
+	setUpdatetally: (pre: boolean) => void;
+	updateTally: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally }) => {
 	const { network } = useNetworkSelector();
 	const {
-		postData: { status, postIndex }
+		postData: { status, postIndex, postType }
 	} = usePostDataContext();
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
@@ -49,6 +51,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		nays: ZERO || 0,
 		support: ZERO || 0
 	});
+
 	const handleAyeNayCount = async () => {
 		setIsLoading(true);
 
@@ -60,12 +63,50 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		);
 		if (data) {
-			setAyeNayAbstainCounts({ abstain: data?.abstain.totalCount, ayes: data.aye.totalCount, nays: data.nay.totalCount });
+			setAyeNayAbstainCounts({ abstain: data?.abstain?.totalCount, ayes: data?.aye?.totalCount, nays: data?.nay?.totalCount });
 			setIsLoading(false);
 		} else {
 			console.log(error);
 			setIsLoading(false);
 		}
+	};
+
+	const handleTallyData = async (tally: any) => {
+		if (!api || !apiReady) return;
+		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
+			setTallyData({
+				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
+				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
+				support: String(tally?.support).startsWith('0x') ? new BN(tally?.support || 0, 'hex') : new BN(tally?.support || 0)
+			});
+			setIsLoading(false);
+			return;
+		}
+		const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
+		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
+		if (parsedReferendumInfo?.ongoing?.tally) {
+			setTallyData({
+				ayes:
+					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+						: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+				nays:
+					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+						: new BN(parsedReferendumInfo.ongoing.tally.nays),
+				support:
+					typeof parsedReferendumInfo.ongoing.tally.support === 'string'
+						? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
+						: new BN(parsedReferendumInfo.ongoing.tally.support)
+			});
+		} else {
+			setTallyData({
+				ayes: new BN(tally?.ayes || 0, 'hex'),
+				nays: new BN(tally?.nays || 0, 'hex'),
+				support: new BN(tally?.support || 0, 'hex')
+			});
+		}
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
@@ -82,42 +123,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		})();
 
-		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
-			setTallyData({
-				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
-				nays: String(tally?.nays).startsWith('0x') ? new BN(tally?.nays || 0, 'hex') : new BN(tally?.nays || 0),
-				support: String(tally?.support).startsWith('0x') ? new BN(tally?.support || 0, 'hex') : new BN(tally?.support || 0)
-			});
-			setIsLoading(false);
-			return;
-		}
-
-		(async () => {
-			const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
-			const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-			if (parsedReferendumInfo?.ongoing?.tally) {
-				setTallyData({
-					ayes:
-						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
-							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
-					nays:
-						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
-							: new BN(parsedReferendumInfo.ongoing.tally.nays),
-					support:
-						typeof parsedReferendumInfo.ongoing.tally.support === 'string'
-							? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
-							: new BN(parsedReferendumInfo.ongoing.tally.support)
-				});
-			} else {
-				setTallyData({
-					ayes: new BN(tally?.ayes || 0, 'hex'),
-					nays: new BN(tally?.nays || 0, 'hex'),
-					support: new BN(tally?.support || 0, 'hex')
-				});
-			}
-		})();
+		handleTallyData(tally);
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [status, api, apiReady, network]);
@@ -126,6 +132,34 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		handleAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
+
+	const handleSummaryReload = async () => {
+		setIsLoading(true);
+		const { data, error } = await nextApiClientFetch<{ tally: any }>('/api/v1/getTallyVotesData', {
+			postId: postIndex,
+			proposalType: postType
+		});
+
+		if (data) {
+			handleTallyData(data?.tally);
+			console.log(data?.tally, 'data');
+		} else if (error) {
+			console.log(error);
+		}
+		setUpdatetally(false);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const handleDebounceTallyData = useCallback(_.debounce(handleSummaryReload, 10000), [updateTally]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const handleDebounceAyeNayCount = useCallback(_.debounce(handleAyeNayCount, 10000), [updateTally]);
+
+	useEffect(() => {
+		if (!updateTally) return;
+		handleDebounceTallyData();
+		handleDebounceAyeNayCount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [updateTally]);
 
 	return (
 		<>

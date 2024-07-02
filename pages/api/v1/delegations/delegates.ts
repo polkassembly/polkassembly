@@ -18,6 +18,12 @@ const firestore_db = admin.firestore();
 
 const w3fDelegatesPolkadot = [
 	{
+		address: '13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC',
+		longDescription: '',
+		name: 'PolkAssembly',
+		shortDescription: ''
+	},
+	{
 		address: '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K',
 		longDescription: '',
 		name: 'ChaosDAO OpenGov',
@@ -57,6 +63,30 @@ const w3fDelegatesPolkadot = [
 		address: '12mP4sjCfKbDyMRAEyLpkeHeoYtS5USY4x34n9NMwQrcEyoh',
 		longDescription: '',
 		name: 'Polkaworld',
+		shortDescription: ''
+	},
+	{
+		address: '1CaXBXVGNbey352w7ydA1A2yDyNQLshycom8Zyj69v5eRNK',
+		longDescription: '',
+		name: 'BRA_16-D',
+		shortDescription: ''
+	},
+	{
+		address: '14Gn7SEmCgMX7Ukuppnw5TRjA7pao2HFpuJo39frB42tYLEh',
+		longDescription: '',
+		name: 'EZIO ROJAS',
+		shortDescription: ''
+	},
+	{
+		address: '12BJTP99gUerdvBhPobiTvrWwRaj1i5eFHN9qx51JWgrBtmv',
+		longDescription: '',
+		name: 'OneBlock',
+		shortDescription: ''
+	},
+	{
+		address: '16XYgDGN6MxvdmjhRsHLT1oqQVDwGdEPVQqC42pRXiZrE8su',
+		longDescription: '',
+		name: 'Irina Karagyaur',
 		shortDescription: ''
 	}
 ];

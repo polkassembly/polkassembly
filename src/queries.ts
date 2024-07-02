@@ -2508,3 +2508,20 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
   }
 }
 `;
+
+export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
+  query Rewards {
+    proposals(where: {type_eq: Bounty, status_in: [Proposed, Active, CuratorUnassigned, Extended]}) {
+      index
+      reward
+    }
+  }
+`;
+
+export const GET_AWARDED_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES = `
+query AwardedChildBounties($parentBountyIndex_in: [Int!]) {
+		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in, statusHistory_some: {status_eq: Awarded}}) {
+			reward
+		}
+	}
+`;

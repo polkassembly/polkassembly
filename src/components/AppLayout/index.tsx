@@ -108,6 +108,9 @@ const Menu = styled(AntdMenu)`
 		.ant-menu-item-icon {
 			color: var(--pink_primary) !important;
 		}
+		.ant-menu-item-icon > span {
+			color: var(--pink_primary) !important;
+		}
 		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
 	}
 `;
@@ -415,7 +418,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  )
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Leaderboard', '/leaderboard', <LeaderboardOverviewIcon className='scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
@@ -558,6 +560,31 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
+	}
+	if (['polkadot'].includes(network)) {
+		gov1Items['overviewItems'].splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Leaderboard</span>
+					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
+				</div>,
+				'/leaderboard',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						BETA
+					</div>
+				</div>
+			)
+		);
 	}
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
@@ -830,11 +857,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			  )
 			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-		getSiderMenuItem(
-			'Leaderboard',
-			'/leaderboard',
-			<LeaderboardOverviewIcon className='-ml-0.5 -mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-		),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
@@ -847,6 +869,31 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			3,
 			0,
 			getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+		);
+	}
+	if (['polkadot'].includes(network)) {
+		gov2OverviewItems.splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Leaderboard</span>
+					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
+				</div>,
+				'/leaderboard',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						BETA
+					</div>
+				</div>
+			)
 		);
 	}
 	if (isGrantsSupported(network)) {

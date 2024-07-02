@@ -139,6 +139,7 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     description
     type
     origin
+    reward
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {

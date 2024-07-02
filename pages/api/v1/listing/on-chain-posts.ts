@@ -105,6 +105,7 @@ export interface IPostListing {
 	beneficiaries?: string[];
 	allChildBounties?: any[];
 	assetId?: string | null;
+	reward?: string;
 }
 
 export interface IPostsListingResponse {
@@ -493,6 +494,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 		} else {
 			const numTrackNo = Number(trackNo);
 			const strTrackStatus = String(trackStatus);
+
 			if (strProposalType === ProposalType.OPEN_GOV) {
 				if (numTrackNo && !isTrackNoValid(numTrackNo, network)) {
 					throw apiErrorWithStatusCode(`The OpenGov trackNo "${trackNo}" is invalid.`, 400);
@@ -507,6 +509,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
 
 			const orderBy = strSortBy === 'newest' ? 'createdAtBlock_DESC' : 'createdAtBlock_ASC';
+
 			const postsVariables: any = {
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),
@@ -517,6 +520,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
+
 			if (proposalType === ProposalType.OPEN_GOV) {
 				strProposalType = 'referendums_v2';
 				if (proposalType == ProposalType.OPEN_GOV) {
@@ -721,6 +725,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 									post_id: postId,
 									post_reactions,
 									proposer: proposer,
+									reward: subsquidPost.reward || '',
 									spam_users_count:
 										data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 									status,
@@ -745,6 +750,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							post_id: postId,
 							post_reactions,
 							proposer: newProposer,
+							reward: subsquidPost.reward || '',
 							status: status,
 							title: subsquareTitle || title || '',
 							type: type || proposalType,
@@ -901,6 +907,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								proposalHashBlock: proposalHashBlock || null,
 								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: requested ? requested.toString() : undefined,
+								reward: subsquidPost.reward || '',
 								spam_users_count:
 									data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
 								status,
@@ -945,6 +952,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						proposalHashBlock: proposalHashBlock || null,
 						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: requested ? requested.toString() : undefined,
+						reward: subsquidPost.reward || '',
 						status: status,
 						status_history: statusHistory || [],
 						tally,

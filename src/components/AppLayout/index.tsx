@@ -949,7 +949,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
 						</span>
 					</div>,
-					'/bounties',
+					network == 'polkadot' ? '/bounty' : '/bounties',
 					null
 				),
 				getSiderMenuItem(

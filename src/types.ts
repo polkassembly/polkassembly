@@ -802,3 +802,11 @@ export enum EASSETS {
 	USDT = '1984',
 	USDC = '1337'
 }
+
+export interface IBountyStats {
+	availableBountyPool: string;
+	activeBounties: string;
+	peopleEarned: string;
+	totalRewarded: string;
+	totalBountyPool: string;
+}

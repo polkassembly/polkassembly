@@ -36,8 +36,6 @@ import EditProposalStatus from './TreasuryProposals/EditProposalStatus';
 import ReferendaV2Messages from './Referenda/ReferendaV2Messages';
 import blockToTime from '~src/util/blockToTime';
 import { getTrackFunctions } from './Referenda/util';
-import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_CURVE_DATA_BY_INDEX } from '~src/queries';
 import dayjs from 'dayjs';
 import { ChartData, Point } from 'chart.js';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -77,6 +75,8 @@ import PredictionCard from '~src/ui-components/PredictionCard';
 // import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
+import _ from 'lodash';
+
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
 	className?: string;
@@ -389,267 +389,298 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setIsLastVoteLoading(false);
 	}, [address, defaultAddress, loginAddress, network, onchainId, proposalType]);
 
+	const handleCurveData = async () => {
+		if (!api || !apiReady) return;
+
+		if (![ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) return;
+
+		if (isRun.current) {
+			return;
+		}
+
+		isRun.current = true;
+
+		setCurvesLoading(true);
+
+		const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
+		if (tracks && Array.isArray(tracks)) {
+			const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
+			if (track) {
+				setTrackNumber((track as any[])[0]);
+			}
+			if (track && Array.isArray(track) && track.length > 1) {
+				const trackInfo = track[1] as any;
+				const { decisionPeriod } = trackInfo;
+				const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
+				let decisionPeriodHrs = 0;
+				if (strArr && Array.isArray(strArr)) {
+					strArr.forEach((str) => {
+						if (str.includes('h')) {
+							decisionPeriodHrs += parseInt(str.replace('h', ''));
+						} else if (str.includes('d')) {
+							decisionPeriodHrs += parseInt(str.replace('d', '')) * 24;
+						}
+					});
+				}
+				let labels: number[] = [];
+				let supportData: { x: number; y: number }[] = [];
+				let approvalData: { x: number; y: number }[] = [];
+				const currentApprovalData: { x: number; y: number }[] = [];
+				const currentSupportData: { x: number; y: number }[] = [];
+				const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
+
+				// TODO: only show curves if status is deciding
+				// const isDeciding = (statusHistory || [])?.find((v: any) => ['Deciding'].includes(v?.status || ''));
+				setTrackInfo(trackInfo);
+				for (let i = 0; i < decisionPeriodHrs; i++) {
+					labels.push(i);
+					if (supportCalc) {
+						supportData.push({
+							x: i,
+							y: supportCalc(i / decisionPeriodHrs) * 100
+						});
+					}
+					if (approvalCalc) {
+						approvalData.push({
+							x: i,
+							y: approvalCalc(i / decisionPeriodHrs) * 100
+						});
+					}
+				}
+
+				let newAPI: ApiPromise = api;
+				let approval: BigNumber | null = null;
+				let support: BigNumber | null = null;
+
+				try {
+					const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
+
+					if (status) {
+						const blockNumber = status.block;
+						if (blockNumber) {
+							const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
+							newAPI = (await api.at(hash)) as ApiPromise;
+						}
+					}
+					if (newAPI) {
+						const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
+						const totalIssuance = await newAPI.query.balances.totalIssuance();
+						const issuanceInfo = totalIssuance.sub(inactiveIssuance);
+						const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
+						const referendaInfoData = referendaInfo.toJSON() as any;
+						if (referendaInfoData?.ongoing?.tally) {
+							const ayesInfo = referendaInfoData.ongoing.tally.ayes;
+							const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
+							const naysInfo = referendaInfoData.ongoing.tally.nays;
+							const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
+							const supportInfo = referendaInfoData.ongoing.tally.support;
+							const supportBigNumber = typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
+							support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
+							approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
+						}
+					}
+				} catch (error) {
+					// console.log(error);
+				}
+				let progress = {
+					approval: 0,
+					approvalThreshold: 0,
+					support: 0,
+					supportThreshold: 0
+				};
+				const statusBlock = statusHistory?.find((s) => s?.status === 'Deciding');
+				if (statusBlock) {
+					const { data, error } = await nextApiClientFetch<{ curveData: any[]; errors?: any[] }>('/api/v1/curves', {
+						blockGte: statusBlock?.block,
+						postId: Number(onchainId)
+					});
+					if (error) {
+						setCurvesError(error || 'Something went wrong.');
+					} else {
+						if (data && data?.curveData && Array.isArray(data?.curveData)) {
+							const graph_points = data?.curveData || [];
+							if (graph_points?.length > 0) {
+								const lastGraphPoint = graph_points[graph_points.length - 1];
+								const proposalCreatedAt = dayjs(statusBlock?.timestamp || created_at);
+								const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
+								if (decisionPeriodMinutes > decisionPeriodHrs) {
+									labels = [];
+									approvalData = [];
+									supportData = [];
+								}
+								graph_points?.forEach((graph_point: any) => {
+									const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
+									const new_graph_point = {
+										...graph_point,
+										hour
+									};
+
+									if (decisionPeriodMinutes > decisionPeriodHrs) {
+										labels.push(hour);
+										approvalData.push({
+											x: hour,
+											y: approvalCalc(hour / decisionPeriodMinutes) * 100
+										});
+										supportData.push({
+											x: hour,
+											y: supportCalc(hour / decisionPeriodMinutes) * 100
+										});
+									}
+									currentApprovalData.push({
+										x: hour,
+										y: new_graph_point.approvalPercent
+									});
+									currentSupportData.push({
+										x: hour,
+										y: new_graph_point.supportPercent
+									});
+									return new_graph_point;
+								});
+
+								const currentApprovalDataLength = currentApprovalData.length;
+								const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
+								for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
+									const approval = approvalData[i];
+									if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
+										currentApprovalData.push({
+											...lastCurrentApproval,
+											x: approval.x
+										});
+									}
+								}
+								const currentSupportDataLength = currentSupportData.length;
+								const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
+								for (let i = currentSupportDataLength; i < supportData.length; i++) {
+									const support = supportData[i];
+									if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
+										currentSupportData.push({
+											...lastCurrentSupport,
+											x: support.x
+										});
+									}
+								}
+
+								const currentApproval = currentApprovalData[currentApprovalData.length - 1];
+								const currentSupport = currentSupportData[currentSupportData.length - 1];
+								progress = {
+									approval: approval ? approval.toFormat(2, BigNumber.ROUND_UP) : (currentApproval?.y?.toFixed(1) as any),
+									approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
+									support: support ? support.toFormat(2, BigNumber.ROUND_UP) : (currentSupport?.y?.toFixed(1) as any),
+									supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
+								};
+								setProgress(progress);
+							}
+						} else {
+							setCurvesError(data?.errors?.[0]?.message || 'Something went wrong.');
+						}
+					}
+				} else {
+					progress = {
+						approval: Number(approval?.toFormat(2, BigNumber.ROUND_UP) || 0),
+						approvalThreshold: 100,
+						support: Number(support?.toFormat(2, BigNumber.ROUND_UP) || 0),
+						supportThreshold: 50
+					};
+					setProgress(progress);
+				}
+				dispatch(
+					setCurvesInformation({
+						...progress,
+						approvalData,
+						currentApprovalData,
+						currentSupportData,
+						supportData
+					})
+				);
+				const newData: ChartData<'line', (number | Point | null)[]> = {
+					datasets: [
+						{
+							backgroundColor: 'transparent',
+							borderColor: '#5BC044',
+							borderWidth: 2,
+							data: approvalData,
+							label: 'Approval',
+							pointHitRadius: 10,
+							pointHoverRadius: 5,
+							pointRadius: 0,
+							tension: 0.1
+						},
+						{
+							backgroundColor: 'transparent',
+							borderColor: '#E5007A',
+							borderWidth: 2,
+							data: supportData,
+							label: 'Support',
+							pointHitRadius: 10,
+							pointHoverRadius: 5,
+							pointRadius: 0,
+							tension: 0.1
+						},
+						{
+							backgroundColor: 'transparent',
+							borderColor: '#5BC044',
+							borderDash: [4, 4],
+							borderWidth: 2,
+							data: currentApprovalData,
+							label: 'Current Approval',
+							pointHitRadius: 10,
+							pointHoverRadius: 5,
+							pointRadius: 0,
+							tension: 0.1
+						},
+						{
+							backgroundColor: 'transparent',
+							borderColor: '#E5007A',
+							borderDash: [4, 4],
+							borderWidth: 2,
+							data: currentSupportData,
+							label: 'Current Support',
+							pointHitRadius: 10,
+							pointHoverRadius: 5,
+							pointRadius: 0,
+							tension: 0.1
+						}
+					],
+					labels
+				};
+				setData(JSON.parse(JSON.stringify(newData)));
+			}
+		}
+		setCurvesLoading(false);
+		isRun.current = false;
+	};
+
 	useEffect(() => {
+		if (!network) return;
 		if ([ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) {
 			if (!api || !apiReady) {
 				return;
 			}
-			const getData = async () => {
-				if (isRun.current) {
-					return;
-				}
-				isRun.current = true;
-				setCurvesLoading(true);
-				const tracks = network != 'collectives' ? api.consts.referenda.tracks.toJSON() : api.consts.fellowshipReferenda.tracks.toJSON();
-				if (tracks && Array.isArray(tracks)) {
-					const track = tracks.find((track) => track && Array.isArray(track) && track.length >= 2 && track[0] === track_number);
-					if (track) {
-						setTrackNumber((track as any[])[0]);
-					}
-					if (track && Array.isArray(track) && track.length > 1) {
-						const trackInfo = track[1] as any;
-						const { decisionPeriod } = trackInfo;
-						const strArr = blockToTime(decisionPeriod, network)['time'].split(' ');
-						let decisionPeriodHrs = 0;
-						if (strArr && Array.isArray(strArr)) {
-							strArr.forEach((str) => {
-								if (str.includes('h')) {
-									decisionPeriodHrs += parseInt(str.replace('h', ''));
-								} else if (str.includes('d')) {
-									decisionPeriodHrs += parseInt(str.replace('d', '')) * 24;
-								}
-							});
-						}
-						let labels: number[] = [];
-						let supportData: { x: number; y: number }[] = [];
-						let approvalData: { x: number; y: number }[] = [];
-						const currentApprovalData: { x: number; y: number }[] = [];
-						const currentSupportData: { x: number; y: number }[] = [];
-						const { approvalCalc, supportCalc } = getTrackFunctions(trackInfo);
-
-						// TODO: only show curves if status is deciding
-						// const isDeciding = (statusHistory || [])?.find((v: any) => ['Deciding'].includes(v?.status || ''));
-						setTrackInfo(trackInfo);
-						for (let i = 0; i < decisionPeriodHrs; i++) {
-							labels.push(i);
-							if (supportCalc) {
-								supportData.push({
-									x: i,
-									y: supportCalc(i / decisionPeriodHrs) * 100
-								});
-							}
-							if (approvalCalc) {
-								approvalData.push({
-									x: i,
-									y: approvalCalc(i / decisionPeriodHrs) * 100
-								});
-							}
-						}
-
-						let newAPI: ApiPromise = api;
-						let approval: BigNumber | null = null;
-						let support: BigNumber | null = null;
-
-						try {
-							const status = (statusHistory || [])?.find((v: any) => ['Rejected', 'TimedOut', 'Confirmed'].includes(v?.status || ''));
-
-							if (status) {
-								const blockNumber = status.block;
-								if (blockNumber) {
-									const hash = await api.rpc.chain.getBlockHash(blockNumber - 1);
-									newAPI = (await api.at(hash)) as ApiPromise;
-								}
-							}
-							if (newAPI) {
-								const inactiveIssuance = await newAPI.query.balances.inactiveIssuance();
-								const totalIssuance = await newAPI.query.balances.totalIssuance();
-								const issuanceInfo = totalIssuance.sub(inactiveIssuance);
-								const referendaInfo = await newAPI.query.referenda.referendumInfoFor(onchainId);
-								const referendaInfoData = referendaInfo.toJSON() as any;
-								if (referendaInfoData?.ongoing?.tally) {
-									const ayesInfo = referendaInfoData.ongoing.tally.ayes;
-									const ayes = typeof ayesInfo === 'string' && ayesInfo.startsWith('0x') ? new BigNumber(ayesInfo.slice(2), 16) : new BigNumber(ayesInfo);
-									const naysInfo = referendaInfoData.ongoing.tally.nays;
-									const nays = typeof naysInfo === 'string' && naysInfo.startsWith('0x') ? new BigNumber(naysInfo.slice(2), 16) : new BigNumber(naysInfo);
-									const supportInfo = referendaInfoData.ongoing.tally.support;
-									const supportBigNumber = typeof supportInfo === 'string' && supportInfo.startsWith('0x') ? new BigNumber(supportInfo.slice(2), 16) : new BigNumber(supportInfo);
-									support = supportBigNumber.div(issuanceInfo as any).multipliedBy(100);
-									approval = ayes.div(ayes.plus(nays)).multipliedBy(100);
-								}
-							}
-						} catch (error) {
-							// console.log(error);
-						}
-						let progress = {
-							approval: 0,
-							approvalThreshold: 0,
-							support: 0,
-							supportThreshold: 0
-						};
-						const statusBlock = statusHistory?.find((s) => s?.status === 'Deciding');
-						if (statusBlock) {
-							const subsquidRes = await fetchSubsquid({
-								network: network,
-								query: GET_CURVE_DATA_BY_INDEX,
-								variables: {
-									block_gte: statusBlock?.block,
-									index_eq: Number(onchainId)
-								}
-							});
-							if (subsquidRes && subsquidRes.data && subsquidRes.data.curveData && Array.isArray(subsquidRes.data.curveData)) {
-								const graph_points = subsquidRes.data.curveData || [];
-								if (graph_points?.length > 0) {
-									const lastGraphPoint = graph_points[graph_points.length - 1];
-									const proposalCreatedAt = dayjs(statusBlock?.timestamp || created_at);
-									const decisionPeriodMinutes = dayjs(lastGraphPoint.timestamp).diff(proposalCreatedAt, 'hour');
-									if (decisionPeriodMinutes > decisionPeriodHrs) {
-										labels = [];
-										approvalData = [];
-										supportData = [];
-									}
-									graph_points?.forEach((graph_point: any) => {
-										const hour = dayjs(graph_point.timestamp).diff(proposalCreatedAt, 'hour');
-										const new_graph_point = {
-											...graph_point,
-											hour
-										};
-
-										if (decisionPeriodMinutes > decisionPeriodHrs) {
-											labels.push(hour);
-											approvalData.push({
-												x: hour,
-												y: approvalCalc(hour / decisionPeriodMinutes) * 100
-											});
-											supportData.push({
-												x: hour,
-												y: supportCalc(hour / decisionPeriodMinutes) * 100
-											});
-										}
-										currentApprovalData.push({
-											x: hour,
-											y: new_graph_point.approvalPercent
-										});
-										currentSupportData.push({
-											x: hour,
-											y: new_graph_point.supportPercent
-										});
-										return new_graph_point;
-									});
-
-									const currentApprovalDataLength = currentApprovalData.length;
-									const lastCurrentApproval = currentApprovalData[currentApprovalDataLength - 1];
-									for (let i = currentApprovalDataLength; i < approvalData.length; i++) {
-										const approval = approvalData[i];
-										if (lastCurrentApproval.x < approval.x && dayjs().diff(proposalCreatedAt.add(approval.x, 'hour')) > 0) {
-											currentApprovalData.push({
-												...lastCurrentApproval,
-												x: approval.x
-											});
-										}
-									}
-									const currentSupportDataLength = currentSupportData.length;
-									const lastCurrentSupport = currentSupportData[currentSupportDataLength - 1];
-									for (let i = currentSupportDataLength; i < supportData.length; i++) {
-										const support = supportData[i];
-										if (lastCurrentSupport.x < support.x && dayjs().diff(proposalCreatedAt.add(support.x, 'hour')) > 0) {
-											currentSupportData.push({
-												...lastCurrentSupport,
-												x: support.x
-											});
-										}
-									}
-
-									const currentApproval = currentApprovalData[currentApprovalData.length - 1];
-									const currentSupport = currentSupportData[currentSupportData.length - 1];
-									progress = {
-										approval: approval ? approval.toFormat(2, BigNumber.ROUND_UP) : (currentApproval?.y?.toFixed(1) as any),
-										approvalThreshold: (approvalData.find((data) => data && data?.x >= currentApproval?.x)?.y as any) || 0,
-										support: support ? support.toFormat(2, BigNumber.ROUND_UP) : (currentSupport?.y?.toFixed(1) as any),
-										supportThreshold: (supportData.find((data) => data && data?.x >= currentSupport?.x)?.y as any) || 0
-									};
-									setProgress(progress);
-								}
-							} else {
-								setCurvesError(subsquidRes.errors?.[0]?.message || 'Something went wrong.');
-							}
-						} else {
-							progress = {
-								approval: Number(approval?.toFormat(2, BigNumber.ROUND_UP) || 0),
-								approvalThreshold: 100,
-								support: Number(support?.toFormat(2, BigNumber.ROUND_UP) || 0),
-								supportThreshold: 50
-							};
-							setProgress(progress);
-						}
-						dispatch(
-							setCurvesInformation({
-								...progress,
-								approvalData,
-								currentApprovalData,
-								currentSupportData,
-								supportData
-							})
-						);
-						const newData: ChartData<'line', (number | Point | null)[]> = {
-							datasets: [
-								{
-									backgroundColor: 'transparent',
-									borderColor: '#5BC044',
-									borderWidth: 2,
-									data: approvalData,
-									label: 'Approval',
-									pointHitRadius: 10,
-									pointHoverRadius: 5,
-									pointRadius: 0,
-									tension: 0.1
-								},
-								{
-									backgroundColor: 'transparent',
-									borderColor: '#E5007A',
-									borderWidth: 2,
-									data: supportData,
-									label: 'Support',
-									pointHitRadius: 10,
-									pointHoverRadius: 5,
-									pointRadius: 0,
-									tension: 0.1
-								},
-								{
-									backgroundColor: 'transparent',
-									borderColor: '#5BC044',
-									borderDash: [4, 4],
-									borderWidth: 2,
-									data: currentApprovalData,
-									label: 'Current Approval',
-									pointHitRadius: 10,
-									pointHoverRadius: 5,
-									pointRadius: 0,
-									tension: 0.1
-								},
-								{
-									backgroundColor: 'transparent',
-									borderColor: '#E5007A',
-									borderDash: [4, 4],
-									borderWidth: 2,
-									data: currentSupportData,
-									label: 'Current Support',
-									pointHitRadius: 10,
-									pointHoverRadius: 5,
-									pointRadius: 0,
-									tension: 0.1
-								}
-							],
-							labels
-						};
-						setData(JSON.parse(JSON.stringify(newData)));
-					}
-				}
-				setCurvesLoading(false);
-			};
-			getData();
+			handleCurveData();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, network]);
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const handleDebounceCurveData = useCallback(_.debounce(handleCurveData, 1000), [api, apiReady]);
+
+	useEffect(() => {
+		if (!api || !apiReady || !network) return;
+		if (![ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) return;
+
+		const handleVisibilityChange = () => {
+			if (document.visibilityState === 'visible') {
+				handleDebounceCurveData();
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		return () => {
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network]);
 
 	useEffect(() => {
 		if (trackInfo) {

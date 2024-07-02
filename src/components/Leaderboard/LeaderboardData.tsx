@@ -142,6 +142,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 							usernameMaxLength={15}
 							truncateUsername={false}
 							isUsedInLeadership={true}
+							imgUrl={obj.userImage || ''}
 						/>
 					)}
 				</div>

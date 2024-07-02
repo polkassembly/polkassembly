@@ -27,6 +27,7 @@ interface Props {
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
 	isUsedInLeadership?: boolean;
+	imgUrl?: string;
 }
 const NameLabel = ({
 	className,
@@ -37,7 +38,8 @@ const NameLabel = ({
 	disableAddressClick = false,
 	truncateUsername,
 	usernameMaxLength,
-	isUsedInLeadership
+	isUsedInLeadership,
+	imgUrl
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -89,6 +91,7 @@ const NameLabel = ({
 								setOpenAddressChangeModal={setOpenAddressChangeModal}
 								setOpenTipping={setOpenTipping}
 								leaderboardAstrals={leaderboardAstrals}
+								imgUrl={imgUrl}
 							/>
 						}
 						open={!defaultAddress ? open : false}

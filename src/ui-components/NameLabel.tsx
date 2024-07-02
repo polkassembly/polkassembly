@@ -27,7 +27,6 @@ interface Props {
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
 	isUsedInLeadership?: boolean;
-	imgUrl?: string;
 }
 const NameLabel = ({
 	className,
@@ -38,8 +37,7 @@ const NameLabel = ({
 	disableAddressClick = false,
 	truncateUsername,
 	usernameMaxLength,
-	isUsedInLeadership,
-	imgUrl
+	isUsedInLeadership
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -49,6 +47,7 @@ const NameLabel = ({
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
 	const [leaderboardAstrals, setLeaderboardAstrals] = useState<number | null | undefined>(null);
+	const [userImage, setUserImage] = useState<string | null | undefined>(null);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -59,6 +58,7 @@ const NameLabel = ({
 				setAddress(data?.addresses[0]);
 			}
 			setLeaderboardAstrals(data?.profile_score);
+			setUserImage(data?.image);
 		}
 	};
 	useEffect(() => {
@@ -91,7 +91,7 @@ const NameLabel = ({
 								setOpenAddressChangeModal={setOpenAddressChangeModal}
 								setOpenTipping={setOpenTipping}
 								leaderboardAstrals={leaderboardAstrals}
-								imgUrl={imgUrl}
+								imgUrl={userImage ? userImage : ''}
 							/>
 						}
 						open={!defaultAddress ? open : false}

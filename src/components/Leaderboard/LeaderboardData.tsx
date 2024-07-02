@@ -20,7 +20,6 @@ import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 // import { MenuProps } from 'antd';
-// import { Dropdown } from '~src/ui-components/Dropdown';
 import { poppins } from 'pages/_app';
 import { MenuProps, Spin } from 'antd';
 import Image from 'next/image';
@@ -98,11 +97,13 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
 					</div>
 					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
-						<div className=''>
+						<div className='mb-2'>
 							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
 							<a
 								className='ml-[2px] text-pink_primary'
-								href=''
+								target='_blank'
+								rel='noreferrer'
+								href='https://docs.google.com/spreadsheets/u/2/d/1Yqqjsg9d1VYl4Da8Hz8hYX24cKgAlqfa_dPnT7C6AcU/htmlview#gid=0'
 							>
 								Learn more{' '}
 								<Image
@@ -114,14 +115,14 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 								/>
 							</a>
 						</div>
-						<span className='my-1 flex'>
+						<div className='inline'>
 							The more points you earn, the higher your rank in the leaderboard!
-							{/* <ImageIcon
-								src='/assets/icons/profile-icon.svg'
+							<ImageIcon
+								src='/assets/icons/medal.svg'
 								alt='medal icon'
-								imgWrapperClassName='self-end'
-							/> */}
-						</span>
+								className='ml-1 inline'
+							/>
+						</div>
 						{/* <div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
 							To view detailed off-chain and on-chain activity{' '}
 							<Link

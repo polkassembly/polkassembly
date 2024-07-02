@@ -90,7 +90,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					arrows
 					infinite={false}
 					dots={false}
-					beforeChange={handleBeforeChange1}
+					afterChange={handleBeforeChange1}
 				>
 					{extendedDataChunks.map((chunk, index) => (
 						<div
@@ -149,7 +149,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					arrows
 					infinite={false}
 					dots={false}
-					beforeChange={handleBeforeChange2}
+					afterChange={handleBeforeChange2}
 				>
 					{activeDataChunks.map((chunk, index) => (
 						<div

@@ -1,17 +1,47 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { IBountyStats } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import formatBnBalance from '~src/util/formatBnBalance';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const BountiesHeader = () => {
+	const { network } = useNetworkSelector();
+	const [statsData, setStatsData] = useState<IBountyStats>({
+		activeBounties: '',
+		availableBountyPool: '',
+		peopleEarned: '',
+		totalBountyPool: '',
+		totalRewarded: ''
+	});
+
+	const fetchStats = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IBountyStats>('/api/v1/bounty/stats');
+			if (error || !data) {
+				console.error(error);
+			}
+			if (data) {
+				setStatsData(data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchStats();
+	}, []);
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex'>
 				<div className='flex gap-6'>
 					<div>
 						<span className='text-base   text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-						<div className='text-[46px]'>$78,390</div>
+						<div className='text-[46px]'>{Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</div>
 						<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 							<div className='mb-8 ml-6 flex items-end gap-3'>
 								<ImageIcon
@@ -29,19 +59,19 @@ const BountiesHeader = () => {
 					<div className='grid grid-cols-2 gap-x-24 py-7'>
 						<div className='flex flex-col'>
 							<span className='text-base'>Active Bounties</span>
-							<span className='text-[28px]'>31</span>
+							<span className='text-[28px]'>{statsData.activeBounties}</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>No. of People Earned</span>
-							<span className='text-[28px]'>340</span>
+							<span className='text-[28px]'>{statsData.peopleEarned}</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Rewarded</span>
-							<span className='text-[28px]'>$28,320</span>
+							<span className='text-[28px]'>{Number(formatBnBalance(statsData.totalRewarded, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Bounty Pool</span>
-							<span className='text-[28px]'>$96,420</span>
+							<span className='text-[28px]'>{Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
 						</div>
 					</div>
 				</div>

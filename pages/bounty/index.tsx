@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
-		proposalStatus: ['Extended'],
+		proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
 		proposalType,
 		sortBy
 	});

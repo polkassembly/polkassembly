@@ -1,43 +1,91 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Divider } from 'antd';
+import { Divider, Popover } from 'antd';
+import BN from 'bn.js';
 import Image from 'next/image';
-import { spaceGrotesk } from 'pages/_app';
-import React from 'react';
+import { poppins, spaceGrotesk } from 'pages/_app';
+import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
+import React, { useEffect, useState } from 'react';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { IChildBountiesResponse } from '~src/types';
 import { BountyCriteriaIcon, CuratorIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import formatBnBalance from '~src/util/formatBnBalance';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import ImageComponent from '../ImageComponent';
+import Link from 'next/link';
+import CuratorPopover from './utils/CuratorPopover';
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
-	const { post_id, title, description, tags } = extendedData;
+	const { network } = useNetworkSelector();
+	const { post_id, title, description, tags, reward, user_id, curator } = extendedData;
+	const [childBountiesCount, setChilldBountiescount] = useState<number>(0);
+	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
+
+	const bnToIntBalance = function (bn: BN): number {
+		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
+	};
+
+	const valueAccNetwork = bnToIntBalance(new BN(reward?.toString())) || 0;
+
+	const getChildBounties = async () => {
+		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+			parentBountyIndex: post_id
+		});
+		if (data && data?.child_bounties_count) {
+			setChilldBountiescount(data.child_bounties_count);
+		}
+		if (error) {
+			console.log('error', error);
+		}
+	};
+
+	const getUserProfile = async (userIds: string[]) => {
+		if (userIds?.length) {
+			const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			if (data) {
+				setUserImageData(data);
+			} else {
+				console.log('There is error in fetching data');
+			}
+		} else {
+			setUserImageData([]);
+		}
+	};
+
+	useEffect(() => {
+		getChildBounties(), getUserProfile([user_id]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user_id, post_id]);
+
 	return (
 		<section className=' w-[383px] '>
 			<div className=' w-[383px]'>
-				<div className=' flex '>
-					<div className='flex h-[56px] w-full items-center justify-between rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
-						<h2 className=' mt-4 text-[35px] font-normal text-pink_primary'>$504</h2>
+				<div className=' flex w-full'>
+					<div className='flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
+						<h2 className=' mt-4 text-[35px] font-normal text-pink_primary'>${valueAccNetwork}</h2>
 						<Divider
 							type='vertical'
 							className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 						/>
 						<h2 className=' mt-3 text-[22px] font-normal'>48%</h2>
 					</div>
-					<div className='mb-2 ml-2 flex w-full  items-center'>
+					<Link
+						key={post_id}
+						href={`/bounty/${post_id}`}
+						target='_blank'
+						className='px-3'
+					>
 						<Image
 							src={'assets/bounty-icons/redirect-icon.svg'}
-							width={45}
-							height={45}
+							width={44}
+							height={44}
 							alt='redirect link'
-							className='-mr-[2px] cursor-pointer rounded-full bg-black'
+							className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black'
 						/>
-						<div className='h-2 w-[10px] bg-black'></div>
-						<button
-							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white`}
-						>
-							Apply
-						</button>
-					</div>
+					</Link>
 				</div>
 				<div
 					className={
@@ -56,39 +104,65 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 					</div>
 					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal`}>{getAscciiFromHex(description).slice(0, 140)}</p>
 					{tags && tags.length > 0 && (
-						<>
+						<div className='flex gap-x-1'>
 							{tags.map((tag: string, index: number) => (
 								<div
 									key={index}
-									className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+									className='w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
 								>
 									{tag}
 								</div>
 							))}
-						</>
-					)}
-					<div className={'flex cursor-pointer items-center '}>
-						<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
-							<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
-							<button
-								className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-[13px] font-medium text-blue-light-medium dark:text-blue-dark-medium `}
-							>
-								Curator
-							</button>
 						</div>
-						<div className='mr-1 h-[5px] w-[5px] rounded-full bg-blue-light-medium dark:bg-blue-dark-medium'></div>
-						<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5]  dark:hover:bg-section-dark-garyBackground'>
-							<BountyCriteriaIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
-							<button
-								className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-[13px] font-medium text-blue-light-medium dark:text-blue-dark-medium`}
-							>
-								Criteria
-							</button>
+					)}
+					<div className='flex items-center justify-between'>
+						<div>
+							<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
+							<ImageComponent
+								alt='user img'
+								src={userImageData[0]?.image}
+								className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
+							/>
+							<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
+						</div>
+						<div className={'flex cursor-pointer items-center '}>
+							{curator && (
+								<>
+									<Popover
+										content={<CuratorPopover address={curator} />}
+										title=''
+										placement='top'
+									>
+										<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
+											<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
+											<button
+												className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
+											>
+												Curator
+											</button>
+										</div>
+									</Popover>
+									<div className='mr-1 h-[5px] w-[5px] rounded-full bg-blue-light-medium dark:bg-blue-dark-medium'></div>
+								</>
+							)}
+							<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5]  dark:hover:bg-section-dark-garyBackground'>
+								<BountyCriteriaIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
+								<button
+									className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium`}
+								>
+									Criteria
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div className='flex w-full items-center justify-between rounded-b-3xl bg-[#343434] p-4 text-white'>
+			<Link
+				key={post_id}
+				href={`/bounty/${post_id}`}
+				target='_blank'
+				className='flex w-full items-center justify-between rounded-b-3xl bg-[#343434] p-4 text-white'
+			>
 				<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-1 flex cursor-pointer items-center gap-2 `}>
 					<Image
 						src={'assets/bounty-icons/child-bounty-icon.svg'}
@@ -97,16 +171,16 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 						alt='curator'
 					/>
 					<span className='text-[13px] font-medium text-white'>Child Bounties:</span>
-					<span className='text-[13px] font-medium text-white'>5</span>
+					<span className='text-[13px] font-medium text-white'>{childBountiesCount}</span>
 				</div>
-				<div className='cursor-pointer '>
-					<Image
-						src={'assets/bounty-icons/arrow-icon.svg'}
-						width={16}
-						height={16}
-						alt='curator'
-					/>
-				</div>
+			</Link>
+			<div className='cursor-pointer '>
+				<Image
+					src={'assets/bounty-icons/arrow-icon.svg'}
+					width={16}
+					height={16}
+					alt='arrow'
+				/>
 			</div>
 		</section>
 	);

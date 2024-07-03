@@ -38,7 +38,7 @@ const w3fDelegatesPolkadot = [
 	{
 		address: '15fTH34bbKGMUjF1bLmTqxPYgpg481imThwhWcQfCyktyBzL',
 		longDescription: '',
-		name: 'JimmyTudeski - Polkadot Resident',
+		name: 'HELIKON',
 		shortDescription: ''
 	},
 	{

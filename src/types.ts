@@ -810,3 +810,10 @@ export interface IBountyStats {
 	totalRewarded: string;
 	totalBountyPool: string;
 }
+
+export interface IBountyUserActivity {
+	amount: string;
+	activity: string;
+	address: string;
+	created_at: Date;
+}

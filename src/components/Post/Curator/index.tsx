@@ -117,10 +117,11 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 		<>
 			{curator === defaultAddress && (
 				<Alert
-					className={`mb-2 rounded-[4px] ${loading && 'opacity-50'}`}
+					className='mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					type='info'
 					showIcon
 					message={
-						<span className='dark:text-blue-dark-high'>
+						<span className='text-bodyBlue dark:text-blue-dark-high'>
 							<span
 								className='cursor-pointer font-semibold text-pink_primary dark:text-blue-dark-helper'
 								onClick={handleAcceptCurator}
@@ -130,12 +131,11 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 							as Curator
 						</span>
 					}
-					type='info'
 				/>
 			)}
-			{proposer === defaultAddress && (
+			{proposer !== defaultAddress && (
 				<Alert
-					className='mb-2 rounded-[4px]'
+					className='mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
 					message={
 						<span className='dark:text-blue-dark-high'>
@@ -205,7 +205,7 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 							name='targetAddress'
 							defaultAddress={target}
 							label={'Curator Address'}
-							placeholder='Curator Address'
+							placeholder='Enter Address'
 							className='text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 							onChange={(address) => {
 								setTarget(address);
@@ -224,6 +224,8 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 						<span className='w-full'>
 							<Input
 								value={fee}
+								placeholder='Enter Fee Amount'
+								className='rounded-md px-2 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 								onChange={(e) => setFee(e.target.value)}
 								type='number'
 							/>
@@ -231,7 +233,7 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 					</div>
 				</Form>
 				<Alert
-					className={`mb mt-2 rounded-[4px] ${loading && 'opacity-50'}`}
+					className={`my-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark ${loading && 'opacity-50'}`}
 					showIcon
 					message={
 						<span className='dark:text-blue-dark-high'>

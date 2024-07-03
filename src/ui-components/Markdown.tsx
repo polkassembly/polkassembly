@@ -151,6 +151,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 
 		img {
 			overflow-x: auto !important;
+			height: min-content;
 			margin: 2rem 0;
 		}
 

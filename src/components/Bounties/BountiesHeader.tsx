@@ -6,6 +6,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { IBountyStats } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import formatBnBalance from '~src/util/formatBnBalance';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const BountiesHeader = () => {
@@ -16,6 +17,10 @@ const BountiesHeader = () => {
 		peopleEarned: '',
 		totalBountyPool: '',
 		totalRewarded: ''
+	});
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
 	});
 
 	const fetchStats = async () => {
@@ -35,13 +40,36 @@ const BountiesHeader = () => {
 	useEffect(() => {
 		fetchStats();
 	}, []);
+
+	useEffect(() => {
+		if (!network) return;
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+	}, [network]);
+
+	const getFormattedValue = (value: string) => {
+		if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
+			return value;
+		}
+		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
+		const tokenPrice = Number(currentTokenPrice.value);
+		const dividedValue = numericValue / tokenPrice;
+
+		if (dividedValue >= 1e6) {
+			return (dividedValue / 1e6).toFixed(2) + 'm';
+		} else if (dividedValue >= 1e3) {
+			return (dividedValue / 1e3).toFixed(2) + 'k';
+		} else {
+			return dividedValue.toFixed(2);
+		}
+	};
+
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex'>
 				<div className='flex gap-6'>
 					<div>
 						<span className='text-base   text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-						<div className='text-[46px]'>{Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</div>
+						<div className='text-[46px]'>{getFormattedValue(statsData.availableBountyPool)}</div>
 						<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 							<div className='mb-8 ml-6 flex items-end gap-3'>
 								<ImageIcon
@@ -67,11 +95,11 @@ const BountiesHeader = () => {
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Rewarded</span>
-							<span className='text-[28px]'>{Number(formatBnBalance(statsData.totalRewarded, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
+							<span className='text-[28px]'>{getFormattedValue(statsData.totalRewarded)}</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Bounty Pool</span>
-							<span className='text-[28px]'>{Number(formatBnBalance(statsData.totalBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network))}</span>
+							<span className='text-[28px]'>{getFormattedValue(statsData.totalBountyPool)}</span>
 						</div>
 					</div>
 				</div>

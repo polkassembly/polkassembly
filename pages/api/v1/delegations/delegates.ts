@@ -20,7 +20,7 @@ const w3fDelegatesPolkadot = [
 	{
 		address: '13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC',
 		longDescription: '',
-		name: 'PolkAssembly',
+		name: 'Polkassembly',
 		shortDescription: ''
 	},
 	{
@@ -74,7 +74,7 @@ const w3fDelegatesPolkadot = [
 	{
 		address: '14Gn7SEmCgMX7Ukuppnw5TRjA7pao2HFpuJo39frB42tYLEh',
 		longDescription: '',
-		name: 'EZIO ROJAS',
+		name: 'EzioRed',
 		shortDescription: ''
 	},
 	{

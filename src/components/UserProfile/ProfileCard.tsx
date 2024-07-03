@@ -119,14 +119,14 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 							</div>
 						)}
 						{isW3FDelegate && (
-							<div className='flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>
+							<div className='ml-1 flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>
 								<Image
 									src={'/assets/profile/w3f.svg'}
 									alt=''
 									width={18}
 									height={18}
 								/>
-								Web3 Delegate
+								Decentralized Voices
 							</div>
 						)}
 					</div>

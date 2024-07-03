@@ -13,13 +13,23 @@ import { getSubsquidLikeProposalType } from '~src/global/proposalType';
 import messages from '~src/auth/utils/messages';
 import { isProposalTypeValid } from '~src/api-utils';
 
-const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+const handler: NextApiHandler<
+	| {
+			tally: {
+				ayes: string;
+				nays: string;
+				support: string;
+				bareAyes: string;
+			};
+	  }
+	| MessageType
+> = async (req, res) => {
 	storeApiKeyUsage(req);
 	try {
 		const network = String(req.headers['x-network']);
 
 		if (!network || !Object.values(AllNetworks).includes(network)) {
-			return res.status(400).json({ error: messages.INVALID_NETWORK });
+			return res.status(400).json({ message: messages.INVALID_NETWORK });
 		}
 		const { proposalType, postId } = req.body;
 

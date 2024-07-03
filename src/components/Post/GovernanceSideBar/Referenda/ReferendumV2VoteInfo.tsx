@@ -135,7 +135,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	const handleSummaryReload = async () => {
 		setIsLoading(true);
-		const { data, error } = await nextApiClientFetch<{ tally: any }>('/api/v1/getTallyVotesData', {
+		const { data, error } = await nextApiClientFetch<{
+			tally: {
+				ayes: string;
+				nays: string;
+				support: string;
+				bareAyes: string;
+			};
+		}>('/api/v1/getTallyVotesData', {
 			postId: postIndex,
 			proposalType: postType
 		});

@@ -66,8 +66,9 @@ const VoteInitiatedModal = ({
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
-	const [posted, setPosted] = useState(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [posted, setPosted] = useState(false);
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -95,12 +96,11 @@ const VoteInitiatedModal = ({
 			open={open}
 			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={
-				<span onClick={() => setPosted(true)}>
-					<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-				</span>
-			}
-			onCancel={() => setOpen(false)}
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			onCancel={() => {
+				setOpen(false);
+				setPosted(false);
+			}}
 			footer={false}
 			closable
 		>
@@ -217,17 +217,6 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
-						{/* <div className='flex gap-[13px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Vote Amount:
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(
-									!conviction ? balance.div(new BN('10')).add(delegatedVotingPower).toString() : balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(),
-									unit,
-									1
-								) || '0.1'}{' '}
-								{unit}
-							</span>
-						</div> */}
 						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Conviction:
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
@@ -272,12 +261,13 @@ const VoteInitiatedModal = ({
 				<div className='form-group form-container ml-4'>
 					<PostCommentForm
 						className='-mt-[25px] ml-4 w-[100%]'
-						posted={posted}
 						isUsedInSuccessModal={true}
 						setCurrentState={handleCurrentCommentAndTimeline}
 						voteDecision={vote}
 						setSuccessModalOpen={setOpen}
 						voteReason={true}
+						posted={posted}
+						setPosted={setPosted}
 					/>
 				</div>
 				<span className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] rounded-bl-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>

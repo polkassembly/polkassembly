@@ -17,9 +17,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ curveData: an
 
 	try {
 		const network = String(req.headers['x-network']);
-		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+		if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 		const { blockGte, postId } = req.body;
+
+		if (isNaN(postId) || !blockGte || isNaN(blockGte)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 		const subsquidRes = await fetchSubsquid({
 			network: network,

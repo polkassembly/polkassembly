@@ -69,7 +69,7 @@ const BountiesHeader = () => {
 				<div className='flex gap-6'>
 					<div>
 						<span className='text-base   text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-						<div className='text-[46px]'>{getFormattedValue(statsData.availableBountyPool)}</div>
+						<div className='text-[46px]'>${getFormattedValue(statsData.availableBountyPool)}</div>
 						<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 							<div className='mb-8 ml-6 flex items-end gap-3'>
 								<ImageIcon
@@ -95,11 +95,11 @@ const BountiesHeader = () => {
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Rewarded</span>
-							<span className='text-[28px]'>{getFormattedValue(statsData.totalRewarded)}</span>
+							<span className='text-[28px]'>${getFormattedValue(statsData.totalRewarded)}</span>
 						</div>
 						<div className='flex flex-col'>
 							<span className='text-base'>Total Bounty Pool</span>
-							<span className='text-[28px]'>{getFormattedValue(statsData.totalBountyPool)}</span>
+							<span className='text-[28px]'>${getFormattedValue(statsData.totalBountyPool)}</span>
 						</div>
 					</div>
 				</div>

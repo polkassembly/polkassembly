@@ -65,12 +65,12 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			>
 				Link Proxy Address
 			</span>
-			<span
+			{/* <span
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => setOpenLinkMultisig(true)}
 			>
 				Link Multisig Address
-			</span>
+			</span> */}
 		</div>
 	);
 

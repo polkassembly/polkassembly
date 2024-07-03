@@ -195,6 +195,7 @@ const ProfileTabs = ({
 				<div className='flex items-center'>
 					<SubscriptionsIcon className='active-icon text-[24px] text-lightBlue dark:text-[#9E9E9E]' />
 					Subscriptions
+					<span className='ml-[2px]'>({activitiesCounts?.totalSubscriptionsCount || 0})</span>
 				</div>
 			)
 		});

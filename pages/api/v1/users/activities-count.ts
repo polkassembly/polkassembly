@@ -49,16 +49,30 @@ export const getUserActivitiesCount = async ({ userId, network }: Props) => {
 			.count()
 			.get();
 
+		const totalSubscriptionSnapshot = await firestore_db
+			.collection('user_activities')
+			.where('network', '==', network)
+			.where('post_author_id', '==', userId)
+			.where('type', '==', EUserActivityType.SUBSCRIBED)
+			.where('is_deleted', '==', false)
+			.orderBy('created_at', 'desc')
+			.count()
+			.get();
+
 		const totalActivitiesCount = totalActivitiesSnapshot.data().count || 0;
 		const totalMentionsCount = totalMentionsSnapshot.data().count || 0;
 		const totalReactionsCount = totalReactionsSnapshot.data().count || 0;
-		return { data: { totalActivitiesCount, totalMentionsCount, totalReactionsCount }, error: null };
+		const totalSubscriptionsCount = totalSubscriptionSnapshot.data().count || 0;
+		return { data: { totalActivitiesCount, totalMentionsCount, totalReactionsCount, totalSubscriptionsCount }, error: null };
 	} catch (err) {
 		return { data: null, error: err };
 	}
 };
 
-const handler: NextApiHandler<{ totalActivitiesCount: number; totalMentionsCount: number; totalReactionsCount: number } | MessageType> = async (req, res) => {
+const handler: NextApiHandler<{ totalActivitiesCount: number; totalMentionsCount: number; totalReactionsCount: number; totalSubscriptionsCount: number } | MessageType> = async (
+	req,
+	res
+) => {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
@@ -68,7 +82,14 @@ const handler: NextApiHandler<{ totalActivitiesCount: number; totalMentionsCount
 
 	const { data, error } = await getUserActivitiesCount({ network, userId: userId });
 	if (data) {
-		return res.status(200).json({ totalActivitiesCount: data?.totalActivitiesCount, totalMentionsCount: data?.totalMentionsCount, totalReactionsCount: data?.totalReactionsCount });
+		return res
+			.status(200)
+			.json({
+				totalActivitiesCount: data?.totalActivitiesCount,
+				totalMentionsCount: data?.totalMentionsCount,
+				totalReactionsCount: data?.totalReactionsCount,
+				totalSubscriptionsCount: data?.totalSubscriptionsCount
+			});
 	} else {
 		return res.status(500).json({ message: error || 'Activities count not found!' });
 	}

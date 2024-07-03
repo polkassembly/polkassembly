@@ -83,9 +83,6 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!extendedData || !activeData) return null;
 
-	console.log('proposedPosts', extendedData);
-	console.log('activePosts', activeData);
-
 	return (
 		<>
 			<SEOHead

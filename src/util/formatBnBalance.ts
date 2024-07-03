@@ -13,7 +13,7 @@ interface Options {
 
 export default function formatBnBalance(value: BN | string, options: Options, network: string): string {
 	const tokenDecimals = chainProperties[network]?.tokenDecimals;
-	const valueString = value.toString();
+	const valueString = String(value);
 
 	let suffix = '';
 	let prefix = '';

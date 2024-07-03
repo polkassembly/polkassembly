@@ -17,18 +17,17 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageComponent from '../ImageComponent';
 import Link from 'next/link';
 import CuratorPopover from './utils/CuratorPopover';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
 	const { post_id, title, description, tags, reward, user_id, curator } = extendedData;
 	const [childBountiesCount, setChilldBountiescount] = useState<number>(0);
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
-
-	const bnToIntBalance = function (bn: BN): number {
-		return Number(formatBnBalance(bn, { numberAfterComma: 6, withThousandDelimitor: false }, network));
-	};
-
-	const valueAccNetwork = bnToIntBalance(new BN(reward?.toString())) || 0;
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
+	});
 
 	const getChildBounties = async () => {
 		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
@@ -55,17 +54,40 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		}
 	};
 
+	const getFormattedValue = (value: string) => {
+		if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
+			return value;
+		}
+		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
+		const tokenPrice = Number(currentTokenPrice.value);
+		const dividedValue = numericValue / tokenPrice;
+
+		if (dividedValue >= 1e6) {
+			return (dividedValue / 1e6).toFixed(2) + 'm';
+		} else if (dividedValue >= 1e3) {
+			return (dividedValue / 1e3).toFixed(2) + 'k';
+		} else {
+			return dividedValue.toFixed(2);
+		}
+	};
+
 	useEffect(() => {
-		getChildBounties(), getUserProfile([user_id]);
+		getChildBounties();
+		getUserProfile([user_id]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [user_id, post_id]);
+
+	useEffect(() => {
+		if (!network) return;
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+	}, [network]);
 
 	return (
 		<section className=' w-[383px] '>
 			<div className=' w-[383px]'>
 				<div className=' flex w-full'>
 					<div className='flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
-						<h2 className=' mt-4 text-[35px] font-normal text-pink_primary'>${valueAccNetwork}</h2>
+						<h2 className=' mt-4 text-[35px] font-normal text-pink_primary'>${getFormattedValue(String(reward))}</h2>
 						<Divider
 							type='vertical'
 							className='h-[30px] bg-section-light-container dark:bg-section-dark-container'

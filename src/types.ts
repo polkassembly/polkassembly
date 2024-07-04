@@ -817,3 +817,12 @@ export interface IBountyUserActivity {
 	address: string;
 	created_at: Date;
 }
+
+export interface IBountyProposerResponse {
+	data: {
+		proposals: {
+			proposer: string;
+			reward: string;
+		}[];
+	};
+}

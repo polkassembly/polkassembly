@@ -13,6 +13,7 @@ import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import HotBountyCard from './HotBountyCard';
 import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
+import BountyProposalActionButton from './bountyProposal';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -36,19 +37,13 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 
 	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
 	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
+	console.log('extendedData', extendedData);
 
 	return (
 		<main>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
-				<button className='bounty-button flex cursor-pointer items-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] '>
-					<ImageIcon
-						src='/assets/bounty-icons/proposal-icon.svg'
-						alt='bounty icon'
-						imgClassName=''
-					/>
-					<span className='font-bold text-white'>Create Bounty Proposal</span>
-				</button>
+				<BountyProposalActionButton />
 			</div>
 			<BountiesHeader />
 

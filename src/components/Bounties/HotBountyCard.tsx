@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider, Popover } from 'antd';
-import BN from 'bn.js';
 import Image from 'next/image';
 import { poppins, spaceGrotesk } from 'pages/_app';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';

@@ -26,6 +26,7 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 
 const ZERO_BN = new BN(0);
 
@@ -110,9 +111,8 @@ const VoteInitiatedModal = ({
 				<div className='flex flex-col items-center justify-center gap-[14px]'>
 					<div className='text-[24px] font-semibold text-pink_primary'>
 						{conviction
-							? formatedBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), unit)
-							: formatedBalance(balance.add(delegatedVotingPower).toString(), unit)}
-						{` ${unit}`}
+							? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
+							: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
 						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
@@ -217,7 +217,7 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+						<div className='flex gap-[33px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
 							Conviction:
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
 						</div>

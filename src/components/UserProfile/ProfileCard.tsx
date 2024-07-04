@@ -8,7 +8,6 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import classNames from 'classnames';
 import Address from '~src/ui-components/Address';
 import copyToClipboard from '~src/util/copyToClipboard';
-import StarIcon from '~assets/icons/StarIcon.svg';
 import { message } from 'antd';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import dayjs from 'dayjs';
@@ -18,10 +17,10 @@ import SocialsHandle from '~src/ui-components/SocialsHandle';
 import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { poppins } from 'pages/_app';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegate } from '~src/types';
 import { isAddress } from 'ethers';
+import ScoreTag from '~src/ui-components/ScoreTag';
 
 interface Props {
 	className?: string;
@@ -121,15 +120,12 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 							</div>
 						)}
 						{profileScore && (
-							<div
-								className={`${poppins.className} ${poppins.variable} ml-1 flex  items-center justify-start gap-x-0.5 rounded-md px-1 pr-2`}
-								style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
-							>
-								<span className='ml-1.5 mt-[4px]'>
-									<StarIcon className='scale-[1.1]' />
-								</span>
-								<p className='m-0 ml-1 p-0 text-sm font-medium text-[#534930]'>{profileScore}</p>
-							</div>
+							<ScoreTag
+								score={profileScore}
+								className='ml-1 px-1 pr-3'
+								scale={1.1}
+								iconWrapperClassName='ml-1.5 mt-[5.5px]'
+							/>
 						)}
 						{isW3FDelegate && (
 							<div className='ml-1 flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>

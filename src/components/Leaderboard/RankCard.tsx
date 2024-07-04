@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import StarIcon from '~assets/icons/StarIcon.svg';
 import ImageComponent from '~src/components/ImageComponent';
 import NameLabel from '~src/ui-components/NameLabel';
 import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
@@ -13,6 +12,7 @@ import Tipping from '~src/components/Tipping';
 import { IRankCardProps } from './types';
 import { poppins } from 'pages/_app';
 import dayjs from 'dayjs';
+import ScoreTag from '~src/ui-components/ScoreTag';
 
 const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, className }) => {
 	const [open, setOpen] = useState<boolean>(false);
@@ -63,13 +63,12 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 		>
 			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
-				<div
-					className='mx-auto flex h-7 w-[93px] items-center justify-center rounded-lg bg-[#FFD669]'
-					style={{ border: '1px solid #ffffff' }}
-				>
-					<StarIcon />
-					<p className='m-0 ml-1.5 p-0 text-sm font-medium text-[#534930]'>{data?.profile_score}</p>
-				</div>
+				<ScoreTag
+					score={data?.profile_score}
+					className='mx-auto h-7 w-[93px] justify-center border-solid border-white px-1 pr-3'
+					scale={1.1}
+					iconWrapperClassName='ml-1.5 mt-[5.5px]'
+				/>
 				<div className={'mx-auto mt-6 flex items-center'}>
 					<div className='-mt-1 flex items-center gap-x-2'>
 						<ImageComponent

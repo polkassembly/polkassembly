@@ -82,14 +82,12 @@ const handler: NextApiHandler<{ totalActivitiesCount: number; totalMentionsCount
 
 	const { data, error } = await getUserActivitiesCount({ network, userId: userId });
 	if (data) {
-		return res
-			.status(200)
-			.json({
-				totalActivitiesCount: data?.totalActivitiesCount,
-				totalMentionsCount: data?.totalMentionsCount,
-				totalReactionsCount: data?.totalReactionsCount,
-				totalSubscriptionsCount: data?.totalSubscriptionsCount
-			});
+		return res.status(200).json({
+			totalActivitiesCount: data?.totalActivitiesCount,
+			totalMentionsCount: data?.totalMentionsCount,
+			totalReactionsCount: data?.totalReactionsCount,
+			totalSubscriptionsCount: data?.totalSubscriptionsCount
+		});
 	} else {
 		return res.status(500).json({ message: error || 'Activities count not found!' });
 	}

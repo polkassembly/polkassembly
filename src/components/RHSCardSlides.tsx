@@ -204,7 +204,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						userName: username || ''
 					});
 					newCards.push({
-						clickHandler: () => setOpenLinkCta(true),
+						clickHandler: () => {
+							setOpenLinkCta(true);
+							setCurrentIndex(0);
+						},
 						description: 'Please add contextual info for voters to make an informed decision',
 						icon: '/assets/icons/rhs-card-icons/Doc.png',
 						tag: cardTags.LINK_DISCUSSION,

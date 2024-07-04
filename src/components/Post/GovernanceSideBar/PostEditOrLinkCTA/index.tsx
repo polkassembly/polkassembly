@@ -6,7 +6,6 @@ import React, { FC, useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { Modal } from 'antd';
-import ContinueWithoutLinking from './ContinueWithoutLinking';
 import ContinueWithLinking from './ContinueWithLinking';
 import LinkingAndEditing from './LinkingAndEditing';
 import { checkIsOnChainPost } from '~src/global/proposalType';
@@ -25,7 +24,6 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 	const {
 		postData: { postType }
 	} = usePostDataContext();
-	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [linkingModalOpen, setLinkingModalOpen] = useState(false);
 	const isOnchainPost = checkIsOnChainPost(postType);
 	return (
@@ -39,14 +37,13 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			>
 				<section className='flex flex-col items-center justify-center p-3'>
-					{/* <PostEditLinkingIcon /> */}
 					<ImageIcon
 						src='/assets/icons/post-edit-linking.svg'
 						alt='post edit linking icon'
 					/>
 					<article className='mb-[35px] mt-[28px] flex flex-col items-center text-center text-xl leading-[30px] tracking-[0.01em] text-sidebarBlue dark:text-blue-dark-high'>
-						<h3 className='m-0 p-0 text-lg font-medium'>Welcome Text</h3>
-						<p className='m-0 mt-2 text-base'>Based on the income to the treasuries, the amounts getting burned and the amounts going to proposals.</p>
+						<h3 className='m-0 p-0 text-lg font-medium'>Link discussion</h3>
+						<p className='m-0 mt-2 text-sm'>Please add contextual info for voters to make an informed decision</p>
 					</article>
 					<article className='flex flex-col items-center gap-y-4'>
 						<button
@@ -62,7 +59,7 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 							className='h-[40px] cursor-pointer rounded-[4px] border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium leading-[21px] tracking-[0.0125em] text-pink_primary outline-none dark:bg-section-dark-overlay md:min-w-[314px]'
 							onClick={() => {
 								setOpen(false);
-								setEditModalOpen(true);
+								// setEditModalOpen(true);
 							}}
 						>
 							Continue Without Linking
@@ -70,10 +67,6 @@ const PostEditOrLinkCTA: FC<IPostEditOrLinkCTA> = ({ open, setOpen, linkingAndEd
 					</article>
 				</section>
 			</Modal>
-			<ContinueWithoutLinking
-				editModalOpen={editModalOpen}
-				setEditModalOpen={setEditModalOpen}
-			/>
 			<ContinueWithLinking
 				linkingModalOpen={linkingModalOpen}
 				setLinkingModalOpen={setLinkingModalOpen}

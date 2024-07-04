@@ -15,6 +15,7 @@ import LinkPostPreview from './LinkPostPreview';
 import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
+import { poppins } from 'pages/_app';
 
 interface IContinueWithLinking {
 	setLinkingModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -119,6 +120,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 						message: 'Post linked successfully.',
 						status: NotificationStatus.SUCCESS
 					});
+
 					setPostData((prev) => ({
 						...prev,
 						content: post?.description || '',
@@ -131,9 +133,19 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 							title: post?.title,
 							type: postTypeAndId.type
 						},
-						timeline: data.timeline,
+						timeline: [
+							{
+								commentsCount: 0,
+								created_at: post?.created_at,
+								index: postTypeAndId?.id,
+								statuses: [{ status: 'Created', timeStamp: post?.created_at }],
+								type: postTypeAndId?.type
+							},
+							...(prev?.timeline || ([] as any))
+						],
 						title: post?.title || ''
 					}));
+
 					form.setFieldValue('url', '');
 					setLoading(false);
 					setFormDisabled(false);
@@ -180,23 +192,25 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 			footer={[
 				<div
 					key='save'
-					className='flex items-center justify-end'
+					className='-mx-6 mt-8 flex items-center justify-end border-0 border-t-[1px] border-solid border-lightBlue px-6 pt-4 dark:border-separatorDark'
 				>
 					<CustomButton
 						variant='primary'
 						loading={loading}
 						disabled={formDisabled}
 						onClick={() => form.submit()}
-						className={`px-4 py-1 capitalize ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'}`}
+						className={`h-10 rounded-[4px] px-8 text-sm capitalize tracking-wide ${formDisabled ? 'cursor-not-allowed' : 'cursor-pointer dark:border-none'}`}
 					>
-						{url && prevUrl === url ? 'Save' : 'Preview'}
+						{url && prevUrl === url ? 'Link' : 'Preview'}
 					</CustomButton>
 				</div>
 			]}
-			className='md:min-w-[674px] dark:[&>.ant-modal-content]:bg-section-dark-overlay'
+			className={`md:min-w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay ${poppins.className} ${poppins.variable}`}
 		>
 			<section className='flex flex-col'>
-				<h2 className='mt-3 text-xl font-semibold leading-[24px] text-sidebarBlue'>Proposal Details</h2>
+				<div className='-mx-6 border-0 border-b-[1px] border-solid border-lightBlue px-6 dark:border-separatorDark'>
+					<h2 className='mt-3 text-xl font-semibold leading-[24px] text-bodyBlue dark:text-blue-dark-high'>Discussion details</h2>
+				</div>
 				<Form
 					form={form}
 					name='edit-post-form'
@@ -207,7 +221,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 				>
 					<Form.Item
 						name='url'
-						label={<span className='text-lg font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link Discussion Post</span>}
+						label={<span className='text-base font-semibold leading-[27px] tracking-[0.01em] text-lightBlue dark:text-white'>Link Discussion Post</span>}
 						rules={[
 							{
 								required: true
@@ -224,7 +238,7 @@ const ContinueWithLinking: FC<IContinueWithLinking> = (props) => {
 								setPost(undefined);
 							}}
 							placeholder='Enter your post URL here'
-							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-[#475F7D] placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-light dark:text-white dark:focus:border-[#91054F]'
+							className='rounded-[4px] border border-solid border-[rgba(72,95,125,0.2)] p-2 text-sm font-medium leading-[21px] tracking-[0.01em] text-lightBlue placeholder:text-[#CED4DE] dark:border-separatorDark dark:bg-transparent dark:font-light dark:text-white dark:focus:border-[#91054F]'
 						/>
 					</Form.Item>
 					<LinkPostPreview

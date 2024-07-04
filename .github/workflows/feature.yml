@@ -1,12 +1,6 @@
-name: Feature Branch CI
+name: Test Cron
 
 on:
-  push:
-    branches:
-      - test
-  pull_request:
-    branches:
-      - main
   schedule:
     - cron: '0 */5 * * *' # Run every 5 hours
 

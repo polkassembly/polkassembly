@@ -8,8 +8,11 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import authServiceInstance from '~src/auth/auth';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
+import getDecodedAccessToken from '~src/auth/utils/getDecodedAccessToken';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import changeProfileScore from '../../utils/changeProfileScore';
+import REPUTATION_SCORES from '~src/util/reputationScores';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -24,7 +27,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	const updatedJWT = await authServiceInstance.AddressUnlink(token, address);
 
-	return res.status(200).json({ message: messages.ADDRESS_UNLINKING_SUCCESS, token: updatedJWT });
+	res.status(200).json({ message: messages.ADDRESS_UNLINKING_SUCCESS, token: updatedJWT });
+
+	try {
+		// TODO: when a user deletes or unlinks address, only soft delete the entry in the database
+
+		// if user does not have multiple addresses, remove the profile score
+		const jwt = getDecodedAccessToken(updatedJWT);
+
+		if (jwt.addresses.length == 1) {
+			// this is the second address being linked, reward profile score
+			await changeProfileScore(jwt.id, -REPUTATION_SCORES.link_multiple_wallet_addresses.value);
+		}
+	} catch (e) {
+		console.error('Error updating profile score', e);
+	}
 }
 
 export default withErrorHandling(handler);

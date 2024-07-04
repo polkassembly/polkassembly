@@ -339,7 +339,7 @@ const WriteProposal = ({
 
 					{/* who can comment */}
 					<AllowedCommentorsRadioButtons
-						className={isDiscussionLinked ? 'mt-6 ' : '-mt-8'}
+						className={isDiscussionLinked ? 'mt-6 ' : '-mt-4'}
 						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
 						isLoading={loading}
 						allowedCommentors={allowedCommentors || EAllowedCommentor.ALL}

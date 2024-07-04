@@ -266,6 +266,18 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 							<span>Delegate</span>
 						</CustomButton>
 					)}
+					{userProfile?.user_id === loginId && !!(username || '')?.length && !!delegationMandate?.length && (
+						<span
+							className='flex cursor-pointer items-center'
+							onClick={() => {
+								setOpenEditDelegationMandate(true);
+								setOpenBecomeDelegateModal(true);
+							}}
+						>
+							<EditIcon className='mr-1 text-pink_primary' />
+							<span className='m-0 p-0 text-pink_primary'>Edit</span>
+						</span>
+					)}
 					{userProfile?.user_id === loginId && !!(username || '')?.length && !delegationMandate?.length && (
 						<CustomButton
 							className='delegation-buttons border-none shadow-none'
@@ -306,14 +318,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 				{!!delegationMandate.length && (
 					<div className='flex flex-col gap-1 text-sm text-bodyBlue dark:text-blue-dark-high'>
 						<span className='font-semibold text-lightBlue dark:text-blue-dark-medium'>Delegation Mandate</span>
-						<span
-							className={`flex flex-wrap items-center justify-start font-normal ${userProfile?.user_id === loginId && 'cursor-pointer'}`}
-							onClick={() => {
-								if (userProfile?.user_id !== loginId) return;
-								setOpenEditDelegationMandate(true);
-								setOpenBecomeDelegateModal(true);
-							}}
-						>
+						<span className='flex flex-wrap items-center justify-start font-normal'>
 							<Markdown
 								isPreview={true}
 								md={delegationMandate}

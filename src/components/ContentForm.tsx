@@ -57,6 +57,7 @@ const ContentForm = ({ className, height, onChange, value, autofocus = false }: 
 			<Form.Item
 				valuePropName='value'
 				getValueFromEvent={onChangeWrapper}
+				initialValue={value}
 				name='content'
 				validateStatus={validationStatus.validateStatus}
 				help={validationStatus.errorMsg}

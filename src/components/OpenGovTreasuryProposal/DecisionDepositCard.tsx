@@ -234,17 +234,17 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 	return (
 		<Modal
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			className={`${poppins.className} ${poppins.variable} pay-decision-deposite dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.className} ${poppins.variable}  dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			open={openModal}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => setOpenModal(false)}
 			title={
-				<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+				<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 					Pay Decision Deposit
 				</div>
 			}
 			footer={
-				<div className='flex items-center justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
+				<div className='-mx-6 flex items-center justify-end border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
 					<CustomButton
 						onClick={() => setOpenModal(false)}
 						buttonsize='xs'
@@ -266,7 +266,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 				spinning={loading}
 				indicator={<LoadingOutlined />}
 			>
-				<div className='flex flex-col px-6'>
+				<div className='flex flex-col px-2'>
 					<h3 className='text-center text-sm font-normal text-[#485F7D] dark:text-blue-dark-medium'>Select a wallet</h3>
 					<div className='mb-6 flex items-center justify-center gap-x-4'>
 						{['moonbase', 'moonbeam', 'moonriver'].includes(network) ? (
@@ -414,11 +414,11 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 
 					{Object.keys(availableWallets || {}).length !== 0 && accounts.length === 0 && wallet && wallet?.length !== 0 && !loading && (
 						<Alert
-							message='For paying decision deposite:'
+							message={<div className='text-sm'>For paying decision deposite:</div>}
 							description={
-								<ul className='mt-[-5px] text-sm'>
-									<li>Give access to Polkassembly on your selected wallet.</li>
-									<li>Add an address to the selected wallet.</li>
+								<ul className='mt-[-5px] text-xs'>
+									<li className='text-lightBlue dark:text-blue-dark-medium'>Give access to Polkassembly on your selected wallet.</li>
+									<li className='text-lightBlue dark:text-blue-dark-medium'>Add an address to the selected wallet.</li>
 								</ul>
 							}
 							showIcon
@@ -480,7 +480,7 @@ const DecisionDepositCard = ({ className, trackName, openModal, setOpenModal }: 
 };
 
 export default styled(DecisionDepositCard)`
-	.pay-decision-deposite .ant-modal-content {
-		padding: 16px 0px !important;
+	.ant-alert-icon {
+		font-size: 16px;
 	}
 `;

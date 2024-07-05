@@ -197,15 +197,15 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 					<span className='text-[13px] font-medium text-white'>Child Bounties:</span>
 					<span className='text-[13px] font-medium text-white'>{childBountiesCount}</span>
 				</div>
+				<div className='cursor-pointer '>
+					<Image
+						src={'assets/bounty-icons/arrow-icon.svg'}
+						width={16}
+						height={16}
+						alt='arrow'
+					/>
+				</div>
 			</Link>
-			<div className='cursor-pointer '>
-				<Image
-					src={'assets/bounty-icons/arrow-icon.svg'}
-					width={16}
-					height={16}
-					alt='arrow'
-				/>
-			</div>
 		</section>
 	);
 };

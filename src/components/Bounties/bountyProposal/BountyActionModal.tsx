@@ -88,7 +88,7 @@ const BountyActionModal = ({
 	const [isBounty, setIsBounty] = useState<boolean | null>(null);
 	const [genralIndex] = useState<string | null>(null);
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
-	const [allowedCommentors, setAllowsetGenralIndexedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
+	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const [preimage, setPreimage] = useState<IPreimage | undefined>();
@@ -233,6 +233,8 @@ const BountyActionModal = ({
 							setTags={setTags}
 							setContent={setContent}
 							setTitle={setTitle}
+							setAllowedCommentors={setAllowedCommentors}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 					{steps?.step === 1 && (

@@ -103,6 +103,18 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		if (error || data) console.log(error || data?.message || '');
 	};
 
+	const handleFilterChange = (filter: ECustomNotificationFilters) => {
+		if (inPage) {
+			router.push({
+				pathname: router.pathname,
+				query: { ...router.query, filter: filter, page: 1 }
+			});
+		} else {
+			dispatch(inAppNotificationsActions.updateNotificationsPopupActiveFilter(filter));
+		}
+		setStopInterval(true);
+	};
+
 	const handleMarkAsRead = (isViewAllClicked?: boolean) => {
 		setStopInterval(true);
 		dispatch(inAppNotificationsActions.updateUnreadNotificationsCount(0));
@@ -236,16 +248,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 					<NotificationsFilters
 						inPage={inPage}
 						onChange={(filter: ECustomNotificationFilters) => {
-							if (inPage) {
-								router.push({
-									pathname: router.pathname,
-									query: { ...router.query, filter: filter, page: 1 }
-								});
-							} else {
-								dispatch(inAppNotificationsActions.updateNotificationsPopupActiveFilter(filter));
-							}
-							setStopInterval(true);
-							dispatch(inAppNotificationsActions.updateTotalNotificationsCount(0));
+							handleFilterChange(filter);
 						}}
 					/>
 				</div>

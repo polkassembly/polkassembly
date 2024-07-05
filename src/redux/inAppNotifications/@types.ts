@@ -2,15 +2,23 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { IInAppNotification } from '~src/components/InAppNotification/types';
+import { ECustomNotificationFilters, IInAppNotification } from '~src/components/InAppNotification/types';
 
+export interface IPopupNotifications {
+	all: IInAppNotification[];
+	comments: IInAppNotification[];
+	mentions: IInAppNotification[];
+	proposals: IInAppNotification[];
+}
 export interface IInAppNotificationsStore {
-	recentNotifications: IInAppNotification[];
-	unreadNotifications: IInAppNotification[];
-	recentNotificationsCount: number;
+	allNotifications: IInAppNotification[];
+	proposalsNotifications: IInAppNotification[];
+	mentionsNotifications: IInAppNotification[];
+	commentsNotifications: IInAppNotification[];
 	unreadNotificationsCount?: number;
 	lastReadTime: string | null;
 	viewAllClicked?: boolean;
 	totalNotificationsCount: number;
-	popupNotifications?: IInAppNotification[];
+	popupNotifications?: IPopupNotifications;
+	popupActiveFilter?: ECustomNotificationFilters;
 }

@@ -144,8 +144,9 @@ const InAppNotification = ({ className }: { className?: string }) => {
 							className={classNames(theme === 'dark' && !unreadNotificationsCount ? 'dark-icons' : '', 'cursor-pointer')}
 						/>
 						{!!unreadNotificationsCount && (
-							<div className='absolute -mt-7 ml-3.5 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
-								{unreadNotificationsCount}
+							<div className='absolute -mt-7 ml-3.5 flex h-[18px] w-[18px] cursor-pointer items-center justify-center rounded-full bg-pink_primary text-[8px] text-white'>
+								<span>{unreadNotificationsCount > 99 ? ' 99' : unreadNotificationsCount}</span>
+								{unreadNotificationsCount > 99 && <span className='-mt-0.5 text-[10px]'>+</span>}
 							</div>
 						)}
 					</div>

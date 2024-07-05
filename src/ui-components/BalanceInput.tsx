@@ -101,6 +101,7 @@ const BalanceInput = ({
 
 	const onBalanceChange = (value: string | null): void => {
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
+
 		if (isValid) {
 			setInputValue?.(value || '0');
 			onChange?.(balance);

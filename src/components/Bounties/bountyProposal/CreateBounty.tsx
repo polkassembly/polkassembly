@@ -54,8 +54,6 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 			return;
 		}
 
-		console.log('bountyProposerData: ', bountyProposerData);
-
 		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
 
 		const amount = new BN(String(bountyProposerData?.proposals[0]?.reward));
@@ -63,7 +61,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 		setBountyAmount(amount);
 
 		form.setFieldsValue({
-			bounty_amount: amount
+			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
 		});
 	};
 

@@ -37,7 +37,6 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 
 	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
 	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
-	console.log('extendedData', extendedData);
 
 	return (
 		<main>

@@ -287,6 +287,8 @@ const AddressConnectModal = ({
 	};
 
 	const handleSubmit = () => {
+		console.log('address', { address, wallet, accounts });
+
 		if (!address || !wallet || !accounts) return;
 		if (linkAddressNeeded && isUnlinkedAddress) {
 			handleAddressLink(address, wallet as Wallet);
@@ -418,12 +420,12 @@ const AddressConnectModal = ({
 			footer={
 				<CustomButton
 					onClick={handleSubmit}
-					disabled={
-						!accounts ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
-					}
+					// disabled={
+					// 	!accounts ||
+					// 	(showMultisig && !multisig) ||
+					// 	(showMultisig && initiatorBalance.lte(totalDeposit)) ||
+					// 	(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+					// }
 					width={155}
 					height={40}
 					variant='primary'

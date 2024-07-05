@@ -22,21 +22,23 @@ interface Props {
 	className?: string;
 	setSteps: (pre: ISteps) => void;
 	isBounty: boolean | null;
+	bountyId: number | null;
+	setBountyId: (pre: number | null) => void;
 	setIsBounty: (pre: boolean) => void;
 	form: FormInstance;
 	proposerAddress?: string;
+	bountyAmount: BN;
+	setBountyAmount: (pre: BN) => void;
 }
 
 const ZERO_BN = new BN(0);
 
-const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Props) => {
+const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form, proposerAddress, bountyAmount, setBountyAmount, setBountyId, bountyId }: Props) => {
 	const { network } = useNetworkSelector();
 	const { address: linkedAddress, availableBalance } = useInitialConnectAddress();
 	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const [bountyId, setBountyId] = useState<number | null>(null);
-	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
 	const [bountyProposer, setBountyProposer] = useState<string | null>(null);
 	const [bountyBond, setBountyBond] = useState<BN>(ZERO_BN);
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
@@ -48,7 +50,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 		});
 
 		if (error || !bountyProposerData || !bountyProposerData?.proposals?.length) {
-			console.log('Error in fetching bouny proposer data');
+			console.log('Error in fetching bounty proposer data');
 			setBountyAmount(ZERO_BN);
 			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
 			return;
@@ -76,32 +78,50 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 		return baseBountyDeposit.add(depositPerByte.muln(new Blob([title]).size));
 	}
 
-	const getBoundyBondValue = () => {
-		if (!linkedAddress || !api || !!apiReady) return ZERO_BN;
+	const getBountyBondValue = () => {
+		if (!api || !apiReady) return;
 		const baseBountyDeposit = api.consts.bounties.bountyDepositBase;
 		const depositPerByte = api.consts.bounties.dataDepositPerByte;
 
 		const title = 'PA';
 		const bountyBondValue = getBountyBond(title, baseBountyDeposit, depositPerByte);
+
 		setBountyBond(bountyBondValue);
 	};
 	useEffect(() => {
-		getBoundyBondValue();
-	}, []);
+		if (!api || !apiReady) return;
+		getBountyBondValue();
+	}, [api, apiReady]);
 
 	const handleSubmit = async () => {
-		await form.validateFields();
+		setSteps({ percent: 0, step: 2 });
+		return;
+		setError('');
 
-		if (!linkedAddress || !api || !!apiReady) return ZERO_BN;
+		if (!proposerAddress || !api || !apiReady || !bountyAmount) return;
+
+		if (isBounty) {
+			setSteps({ percent: 0, step: 2 });
+			return;
+		}
 
 		const availableBalanceBN = new BN(availableBalance || '0');
 
-		if (availableBalanceBN.lt(bountyBond)) return;
-
 		const title = 'PA';
+		const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
+		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+
+		if (!availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {
+			setError('Available balance too low');
+			return;
+		}
+
 		try {
-			const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
 			const bounty_id = Number(await api.query.bounties.bountyCount());
+			if (!bounty_id) {
+				setError('Failed to fetch bounty count ');
+				return;
+			}
 
 			const onFailed = (message: string) => {
 				setLoadingStatus({ isLoading: false, message: '' });
@@ -114,6 +134,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 
 			const onSuccess = async () => {
 				localStorage.setItem('bounty_id', bounty_id.toString());
+				setBountyId(bounty_id);
 				queueNotification({
 					header: 'Success!',
 					message: `Proposal #${bounty_id} successful.`,
@@ -129,7 +150,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 				apiReady,
 				errorMessageFallback: 'Transaction failed.',
 				network,
-				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Broadcasting the vote' }),
+				onBroadcast: () => setLoadingStatus({ isLoading: true, message: 'Creating Bounty' }),
 				onFailed,
 				onSuccess,
 				tx: bountyTx
@@ -163,6 +184,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 					<Radio.Group
 						onChange={(e) => {
 							setIsBounty(e.target.value);
+							setBountyAmount(ZERO_BN);
 							// onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);
 							setSteps({ percent: 20, step: 1 });
 						}}
@@ -246,7 +268,8 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 							label='Bounty Amount'
 							inputClassName='dark:text-blue-dark-high text-bodyBlue'
 							className='mb-0'
-							// onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
+							noRules
+							onChange={onValueChange}
 						/>
 					</div>
 
@@ -255,7 +278,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 							<div>
 								<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
 								<span className={`${poppins.variable} ${poppins.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>
-									{bountyBond.toString()}
+									{formatedBalance(String(bountyBond.toString()), unit, 2)}
 								</span>
 							</div>
 						</>
@@ -276,7 +299,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 								isBounty && linkedAddress != bountyProposer ? 'opacity-50' : ''
 							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
-							disabled={isBounty ? linkedAddress != bountyProposer : false}
+							// disabled={isBounty ? linkedAddress != bountyProposer : false}
 						>
 							{isBounty ? 'Next' : 'Create Bounty'}
 						</Button>

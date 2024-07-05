@@ -68,7 +68,6 @@ const BountyActionModal = ({
 	theme
 }: Props) => {
 	const { network } = useNetworkSelector();
-	const { id: userId } = useUserDetailsSelector();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [writeProposalForm] = Form.useForm();
@@ -86,14 +85,11 @@ const BountyActionModal = ({
 	const [preimageHash, setPreimageHash] = useState<string>('');
 	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 	const [isBounty, setIsBounty] = useState<boolean | null>(null);
-	const [genralIndex] = useState<string | null>(null);
-	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
-	const [fundingAmount, setFundingAmount] = useState<BN>(ZERO_BN);
+	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
+	const [bountyId, setBountyId] = useState<number | null>(null);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -183,7 +179,7 @@ const BountyActionModal = ({
 
 			{/* main modal */}
 			<Modal
-				open={true}
+				open={openModal}
 				maskClosable={false}
 				onCancel={() => {
 					setCloseConfirm(true);
@@ -244,6 +240,10 @@ const BountyActionModal = ({
 							isBounty={isBounty}
 							form={createBountyForm}
 							proposerAddress={proposerAddress}
+							bountyAmount={bountyAmount}
+							setBountyAmount={setBountyAmount}
+							bountyId={bountyId}
+							setBountyId={setBountyId}
 						/>
 					)}
 					{steps?.step === 2 && (
@@ -255,9 +255,6 @@ const BountyActionModal = ({
 								setIsPreimage={setIsPreimage}
 								enactment={enactment}
 								setEnactment={setEnactment}
-								genralIndex={genralIndex}
-								setInputAmountValue={setInputAmountValue}
-								inputAmountValue={inputAmountValue}
 								selectedTrack={selectedTrack}
 								setSelectedTrack={setSelectedTrack}
 								setPostId={setPostId}
@@ -271,6 +268,11 @@ const BountyActionModal = ({
 								tags={tags}
 								content={content}
 								title={title}
+								setPreimageHash={setPreimageHash}
+								bountyAmount={bountyAmount}
+								setPreimageLength={setPreimageLength}
+								setBountyAmount={setBountyAmount}
+								bountyId={bountyId}
 							/>
 						</>
 					)}

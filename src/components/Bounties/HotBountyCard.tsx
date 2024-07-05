@@ -72,9 +72,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 
 	useEffect(() => {
 		getChildBounties();
-		getUserProfile([user_id]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user_id, post_id]);
+	}, [post_id]);
+
+	useEffect(() => {
+		getUserProfile([user_id]);
+	}, [user_id]);
 
 	useEffect(() => {
 		if (!network) return;

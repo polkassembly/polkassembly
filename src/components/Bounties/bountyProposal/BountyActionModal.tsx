@@ -183,7 +183,7 @@ const BountyActionModal = ({
 
 			{/* main modal */}
 			<Modal
-				open={openModal}
+				open={true}
 				maskClosable={false}
 				onCancel={() => {
 					setCloseConfirm(true);
@@ -241,6 +241,7 @@ const BountyActionModal = ({
 							setIsBounty={setIsBounty}
 							isBounty={isBounty}
 							form={createBountyForm}
+							proposerAddress={proposerAddress}
 						/>
 					)}
 					{steps?.step === 2 && (

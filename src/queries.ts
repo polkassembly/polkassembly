@@ -2540,8 +2540,8 @@ query ClaimedChildBountiesForParentBountyIndices($parentBountyIndex_in: [Int!]) 
 `;
 
 export const GET_BOUNTY_PROPOSER_BY_INDEX = `
-query MyQuery {
-  proposals(where: {type_eq: Bounty, index_eq: 54}) {
+query MyQuery($index_eq: Int!) {
+  proposals(where: {type_eq: Bounty, index_eq: $index_eq}) {
     proposer
     reward
   }

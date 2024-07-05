@@ -338,10 +338,10 @@ const CreateReferendum = ({
 								<Input
 									name='preimage_length'
 									className='h-10 rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									onChange={(e) => {
-										// setPreimageLength(Number(e.target.value));
-										// onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
-									}}
+									// onChange={(e) => {
+									// setPreimageLength(Number(e.target.value));
+									// onChangeLocalStorageSet({ preimageLength: e.target.value }, isPreimage);
+									// }}
 									disabled
 								/>
 							</Form.Item>

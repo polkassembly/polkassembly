@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import BN from 'bn.js';
-import { use } from 'chai';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
@@ -13,9 +12,9 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useInitialConnectAddress, useNetworkSelector } from '~src/redux/selectors';
 import { IBountyProposerResponse, NotificationStatus } from '~src/types';
 import BalanceInput from '~src/ui-components/BalanceInput';
+import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { formatedBalance } from '~src/util/formatedBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -41,25 +40,31 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 	const [bountyProposer, setBountyProposer] = useState<string | null>(null);
 	const [bountyBond, setBountyBond] = useState<BN>(ZERO_BN);
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
+	const [error, setError] = useState('');
 
 	const fetchBountyProposer = async () => {
-		const resp = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
+		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
 			bountyId
 		});
 
-		if (resp && resp.data && resp.data?.data?.proposals) {
-			setBountyProposer(resp.data?.data?.proposals[0]?.proposer);
-			const amount = new BN(formatBnBalance(resp?.data?.data?.proposals[0]?.reward, { numberAfterComma: 1, withThousandDelimitor: false }, network));
-			setBountyAmount(amount);
-			form.setFieldsValue({
-				Bounty_amount: amount
-			});
+		if (error || !bountyProposerData || !bountyProposerData?.proposals?.length) {
+			console.log('Error in fetching bouny proposer data');
+			setBountyAmount(ZERO_BN);
+			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
+			return;
 		}
 
-		if (resp && resp.error) {
-			console.log('error in fetching proposer', resp.error);
-			setBountyAmount(ZERO_BN);
-		}
+		console.log('bountyProposerData: ', bountyProposerData);
+
+		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
+
+		const amount = new BN(String(bountyProposerData?.proposals[0]?.reward));
+
+		setBountyAmount(amount);
+
+		form.setFieldsValue({
+			bounty_amount: amount
+		});
 	};
 
 	useEffect(() => {
@@ -148,6 +153,13 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 	return (
 		<div className={`${className} create-bounty`}>
 			<Spin spinning={loadingStatus.isLoading}>
+				{error && (
+					<ErrorAlert
+						className='my-2'
+						errorMsg={error}
+					/>
+				)}
+
 				<div className='my-8 flex flex-col'>
 					<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Have you created a bounty already? </label>
 					<Radio.Group
@@ -223,35 +235,25 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form }: Prop
 									}}
 								/>
 							</Form.Item>
-							{bountyAmount && (
-								<>
-									<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Bounty Amount</label>
-									<Form.Item name='Bounty_amount'>
-										<Input
-											name='Bounty_amount'
-											className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-											value={bountyAmount.toString()}
-											disabled
-										/>
-									</Form.Item>
-								</>
-							)}
 						</>
 					)}
+
+					<div>
+						<BalanceInput
+							disabled={Boolean(isBounty)}
+							theme={theme}
+							balance={bountyAmount}
+							formItemName='bounty_amount'
+							placeholder='Enter Bounty Amount'
+							label='Bounty Amount'
+							inputClassName='dark:text-blue-dark-high text-bodyBlue'
+							className='mb-0'
+							// onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
+						/>
+					</div>
+
 					{!isBounty && (
 						<>
-							<div>
-								<BalanceInput
-									theme={theme}
-									// balance={new BN(fundingAmount || '0')}
-									formItemName='balance'
-									placeholder='Enter Bounty Amount'
-									label='Bounty Amount'
-									inputClassName='dark:text-blue-dark-high text-bodyBlue'
-									className='mb-0'
-									// onChange={(address: BN) => handleOnchange({ ...gov1proposalData, fundingAmount: address.toString() })}
-								/>
-							</div>
 							<div>
 								<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-medium dark:text-blue-dark-medium`}>Bounty Bond</span>
 								<span className={`${poppins.variable} ${poppins.className} ml-3  text-sm font-semibold text-blue-light-high dark:text-blue-dark-high`}>

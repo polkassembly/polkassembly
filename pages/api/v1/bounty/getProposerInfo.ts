@@ -28,9 +28,7 @@ const handler: NextApiHandler<IBountyProposerResponse | MessageType> = async (re
 	const proposals = subsquidRes.data.proposals.map(({ proposer, reward }: { proposer: string; reward: string }) => ({ proposer, reward }));
 
 	return res.status(200).json({
-		data: {
-			proposals
-		}
+		proposals
 	});
 };
 

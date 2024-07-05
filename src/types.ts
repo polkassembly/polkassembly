@@ -819,10 +819,8 @@ export interface IBountyUserActivity {
 }
 
 export interface IBountyProposerResponse {
-	data: {
-		proposals: {
-			proposer: string;
-			reward: string;
-		}[];
-	};
+	proposals: {
+		proposer: string;
+		reward: string;
+	}[];
 }

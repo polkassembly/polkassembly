@@ -44,20 +44,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		sortBy
 	});
 
-	const activeResponse = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		listingLimit: LISTING_LIMIT,
-		network,
-		page,
-		proposalStatus: ['Active'],
-		proposalType,
-		sortBy
-	});
-
 	return {
 		props: {
-			activeData: activeResponse.data,
-			error: extendedResponse.error || activeResponse.error || null,
+			error: extendedResponse.error || null,
 			extendedData: extendedResponse.data,
 			network
 		}
@@ -65,14 +54,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface IBountyProps {
-	activeData?: IPostsListingResponse;
 	error?: string;
 	extendedData?: IPostsListingResponse;
 	network: string;
 }
 
 const Bounty: React.FC<IBountyProps> = (props) => {
-	const { extendedData, activeData, error, network } = props;
+	const { extendedData, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -81,7 +69,7 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	if (!extendedData || !activeData) return null;
+	if (!extendedData) return null;
 
 	return (
 		<>
@@ -90,10 +78,7 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
 				network={network}
 			/>
-			<BountiesContainer
-				extendedData={extendedData}
-				activeData={activeData}
-			/>
+			<BountiesContainer extendedData={extendedData} />
 		</>
 	);
 };

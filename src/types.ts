@@ -830,5 +830,7 @@ export interface IBountyProposalsResponse {
 		index: number;
 		trackNumber: number;
 		status: string;
+		bountyId: number;
+		reward: string;
 	}[];
 }

@@ -6,9 +6,20 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
-import { GET_BOUNTY_PROPOSALS, GET_BOUNTY_PROPOSER_BY_INDEX } from '~src/queries';
-import { IBountyProposerResponse } from '~src/types';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
+import { getStatusesFromCustomStatus } from '~src/global/proposalType';
+import { GET_BOUNTY_PROPOSALS, GET_BOUNTY_REWARDS_BY_IDS } from '~src/queries';
+import { IBountyProposalsResponse, IBountyProposerResponse } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+
+export interface IBountyProposal {
+	proposer: string;
+	index: number;
+	trackNumber: number;
+	status: string;
+	bountyId: number;
+	reward: string;
+}
 
 const handler: NextApiHandler<IBountyProposerResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -18,20 +29,66 @@ const handler: NextApiHandler<IBountyProposerResponse | MessageType> = async (re
 
 	const subsquidRes = await fetchSubsquid({
 		network,
-		query: GET_BOUNTY_PROPOSALS
+		query: GET_BOUNTY_PROPOSALS,
+		variables: {
+			status_in: getStatusesFromCustomStatus(CustomStatus.Voting)
+		}
 	});
 
 	if (!subsquidRes?.data?.proposals?.length) return res.status(200).json({ message: 'No bounty data found' });
 
-	const proposals = subsquidRes.data.proposals.map(({ proposer, trackNumber, index, status }: { proposer: string; trackNumber: string; index: number; status: string }) => ({
-		proposer,
-		trackNumber,
-		index,
-		status
+	const proposals = subsquidRes.data.proposals.map(
+		({
+			proposer,
+			trackNumber,
+			index,
+			status,
+			preimage: {
+				proposedCall: {
+					args: { bountyId }
+				}
+			}
+		}: {
+			proposer: string;
+			trackNumber: string;
+			index: number;
+			status: string;
+			preimage: {
+				proposedCall: {
+					args: { bountyId: number };
+				};
+			};
+		}) => ({
+			proposer,
+			trackNumber,
+			index,
+			status,
+			bountyId
+		})
+	);
+
+	const bountyIds = proposals.map(({ bountyId }: { bountyId: number }) => bountyId);
+
+	const rewardsRes = await fetchSubsquid({
+		network: 'polkadot',
+		query: GET_BOUNTY_REWARDS_BY_IDS,
+		variables: {
+			index_in: bountyIds
+		}
+	});
+
+	const rewards = rewardsRes?.data?.proposals?.reduce((acc: any, { index, reward }: { index: number; reward: string }) => {
+		acc[index] = reward;
+		return acc;
+	}, {});
+
+	const finalProposals = proposals.map((proposal: IBountyProposal) => ({
+		...proposal,
+		reward: rewards[proposal.bountyId] || null
 	}));
 
 	return res.status(200).json({
-		proposals
+		proposals: finalProposals
 	});
 };
 

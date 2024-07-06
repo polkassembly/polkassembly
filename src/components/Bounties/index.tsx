@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import BountiesHeader from './BountiesHeader';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Image from 'next/image';
@@ -14,6 +14,9 @@ import HotBountyCard from './HotBountyCard';
 import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IBountyProposerResponse } from '~src/types';
+import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -26,6 +29,28 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const router = useRouter();
+	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
+	const [bountyProposals, setBountyProposals] = useState<IBountyProposal[]>([]);
+
+	const fetchBountyProposer = async () => {
+		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
+		const { data: bountyProposalData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getBountyProposals');
+
+		if (error || !bountyProposalData || !bountyProposalData?.proposals?.length) {
+			console.log('Error in fetching bounty proposer data');
+			setLoadingStatus({ isLoading: false, message: 'Error in fetching bounty' });
+			return;
+		}
+
+		setBountyProposals(bountyProposalData?.proposals);
+
+		setLoadingStatus({ isLoading: false, message: '' });
+	};
+
+	useEffect(() => {
+		fetchBountyProposer();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleBeforeChange1 = (next: number) => {
 		setCurrentSlide1(next);
@@ -37,6 +62,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 
 	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
 	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
+	const bountyProposalsChunks = chunkArray(bountyProposals, 3);
 
 	return (
 		<main>
@@ -145,21 +171,21 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					dots={false}
 					afterChange={handleBeforeChange2}
 				>
-					{activeDataChunks.map((chunk, index) => (
+					{bountyProposalsChunks.map((chunk, index) => (
 						<div
 							key={index}
 							className='flex justify-between space-x-4'
 						>
-							{chunk.map((post, postIndex) => (
+							{chunk.map((proposal, proposalIndex) => (
 								<BountiesProposalsCard
-									key={postIndex}
-									activeData={post}
+									key={proposalIndex}
+									proposal={proposal}
 								/>
 							))}
 						</div>
 					))}
 				</Carousel>
-				{currentSlide2 < activeDataChunks.length - 1 && (
+				{currentSlide2 < bountyProposalsChunks.length - 1 && (
 					<span
 						onClick={() => carouselRef2?.current?.next()}
 						className='cursor-pointer'

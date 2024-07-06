@@ -2562,12 +2562,26 @@ query MyQuery($index_eq: Int!) {
 `;
 
 export const GET_BOUNTY_PROPOSALS = `
-query BountyProposals {
-  proposals(where: {type_eq: ReferendumV2, preimage: {section_eq: "Bounties"}}, orderBy: createdAtBlock_DESC) {
+query BountyProposals($status_in: [ProposalStatus!] = []) {
+  proposals(where: {type_eq: ReferendumV2, preimage: {section_eq: "Bounties"}, status_in: $status_in}, orderBy: createdAtBlock_DESC) {
     index
     proposer
     status
     trackNumber
+    preimage {
+      proposedCall {
+        args
+      }
+    }
+  }
+}
+`;
+
+export const GET_BOUNTY_REWARDS_BY_IDS = `
+query Rewards($index_in: [Int!] = []) {
+  proposals(where: {type_eq: Bounty, index_in: $index_in}) {
+    index
+    reward
   }
 }
 `;

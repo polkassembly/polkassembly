@@ -96,7 +96,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 					<div className='pb-4'>
 						{ambassadorPreimage?.hash}
 						<span
-							className='text ml-1 flex cursor-pointer items-center text-bodyBlue dark:text-blue-dark-high'
+							className='text ml-1 flex cursor-pointer items-center justify-center text-bodyBlue dark:text-blue-dark-high'
 							onClick={(e) => {
 								e.preventDefault();
 								copyLink(ambassadorPreimage?.hash);

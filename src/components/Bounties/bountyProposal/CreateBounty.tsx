@@ -6,6 +6,7 @@ import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
+import { CreatePostResponseType } from '~src/auth/types';
 import { ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
@@ -29,11 +30,13 @@ interface Props {
 	proposerAddress?: string;
 	bountyAmount: BN;
 	setBountyAmount: (pre: BN) => void;
+	title: string;
+	content: string;
 }
 
 const ZERO_BN = new BN(0);
 
-const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form, proposerAddress, bountyAmount, setBountyAmount, setBountyId, bountyId }: Props) => {
+const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, proposerAddress, bountyAmount, setBountyAmount, setBountyId, bountyId, title, content }: Props) => {
 	const { network } = useNetworkSelector();
 	const { address: linkedAddress, availableBalance } = useInitialConnectAddress();
 	const { resolvedTheme: theme } = useTheme();
@@ -45,6 +48,7 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 	const [error, setError] = useState('');
 
 	const fetchBountyProposer = async () => {
+		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
 		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
 			bountyId
 		});
@@ -53,6 +57,7 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 			console.log('Error in fetching bounty proposer data');
 			setBountyAmount(ZERO_BN);
 			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
+			setLoadingStatus({ isLoading: false, message: 'Error in fetching bounty' });
 			return;
 		}
 
@@ -65,6 +70,7 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 		form.setFieldsValue({
 			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
 		});
+		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	useEffect(() => {
@@ -82,20 +88,54 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 		if (!api || !apiReady) return;
 		const baseBountyDeposit = api.consts.bounties.bountyDepositBase;
 		const depositPerByte = api.consts.bounties.dataDepositPerByte;
-
 		const title = 'PA';
 		const bountyBondValue = getBountyBond(title, baseBountyDeposit, depositPerByte);
 
 		setBountyBond(bountyBondValue);
 	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		getBountyBondValue();
 	}, [api, apiReady]);
 
+	const handleCreateBounty = async () => {
+		setLoadingStatus({ isLoading: true, message: '' });
+		if (!content || !title || !bountyId || !proposerAddress) {
+			setError('Error while creating bounty ');
+			setLoadingStatus({ isLoading: false, message: '' });
+			return;
+		}
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('/api/v1/auth/actions/saveBountyInfo', {
+			content,
+			title,
+			postId: bountyId,
+			proposerAddress
+		});
+		if (apiError || !data?.post_id) {
+			setError(apiError || 'There was an error creating your post.');
+			queueNotification({
+				header: 'Error',
+				message: 'There was an error creating your post.',
+				status: NotificationStatus.ERROR
+			});
+			setLoadingStatus({ isLoading: false, message: '' });
+			console.error(apiError);
+		}
+		if (data && data.post_id) {
+			queueNotification({
+				header: 'Thanks for sharing!',
+				message: 'Bounty created successfully.',
+				status: NotificationStatus.SUCCESS
+			});
+			setLoadingStatus({ isLoading: false, message: '' });
+		}
+	};
+
 	const handleSubmit = async () => {
-		setSteps({ percent: 0, step: 2 });
-		return;
+		// remove
+		// setSteps({ percent: 0, step: 2 });
+		// return;
 		setError('');
 
 		if (!proposerAddress || !api || !apiReady || !bountyAmount) return;
@@ -115,6 +155,7 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 			setError('Available balance too low');
 			return;
 		}
+		setLoadingStatus({ isLoading: true, message: 'Creating Transaction' });
 
 		try {
 			const bounty_id = Number(await api.query.bounties.bountyCount());
@@ -140,12 +181,13 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 					message: `Proposal #${bounty_id} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
+				handleCreateBounty();
 				setLoadingStatus({ isLoading: false, message: '' });
 				setSteps({ percent: 0, step: 2 });
 			};
 
 			await executeTx({
-				address: linkedAddress,
+				address: linkedAddress || proposerAddress,
 				api,
 				apiReady,
 				errorMessageFallback: 'Transaction failed.',
@@ -185,12 +227,12 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 						onChange={(e) => {
 							setIsBounty(e.target.value);
 							setBountyAmount(ZERO_BN);
-							// onChangeLocalStorageSet({ isPreimage: e.target.value }, e.target.value, preimageCreated, preimageLinked, true);
 							setSteps({ percent: 20, step: 1 });
 						}}
 						size='small'
 						className='mt-1.5'
 						value={isBounty}
+						defaultValue={false}
 					>
 						<Radio
 							value={true}
@@ -230,14 +272,10 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 				)}
 				<Form
 					form={form}
-					// disabled={loading}
+					disabled={loadingStatus.isLoading}
 					onFinish={handleSubmit}
 					initialValues={{
-						//after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()),
-						//at_block: String(advancedDetails.atBlockNo?.toString()),
-						//preimage_hash: preimageHash,
-						//preimage_length: preimageLength || 0,
-						proposer_address: linkedAddress
+						proposer_address: linkedAddress || proposerAddress
 					}}
 					validateMessages={{ required: "Please add the '${name}' " }}
 				>
@@ -250,7 +288,6 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 									className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									onChange={(e) => {
 										setBountyId(Number(e.target.value));
-										// onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
 										setSteps({ percent: 100, step: 1 });
 									}}
 								/>
@@ -287,7 +324,6 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 						<Button
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });
-								// setGenralIndex(null);
 							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>
@@ -296,10 +332,10 @@ const CreateBounty = ({ className, setSteps, isBounty = false, setIsBounty, form
 						<Button
 							htmlType='submit'
 							className={`${
-								isBounty && linkedAddress != bountyProposer ? 'opacity-50' : ''
+								(isBounty && linkedAddress) || proposerAddress != bountyProposer ? 'opacity-50' : ''
 							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
-							// disabled={isBounty ? linkedAddress != bountyProposer : false}
+							disabled={isBounty ? proposerAddress != bountyProposer : false}
 						>
 							{isBounty ? 'Next' : 'Create Bounty'}
 						</Button>

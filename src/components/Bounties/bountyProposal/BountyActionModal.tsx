@@ -7,7 +7,7 @@ import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { EEnactment, IEnactment, IPreimage, ISteps } from '~src/components/OpenGovTreasuryProposal';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector } from '~src/redux/selectors';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
@@ -16,6 +16,10 @@ import { EAllowedCommentor } from '~src/types';
 import BN from 'bn.js';
 import { BN_HUNDRED } from '@polkadot/util';
 // import { useTheme } from 'next-themes';
+
+const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess'), {
+	ssr: false
+});
 
 const WriteProposal = dynamic(() => import('../../OpenGovTreasuryProposal/WriteProposal'), {
 	ssr: false
@@ -35,7 +39,7 @@ const CreateReferendum = dynamic(() => import('./CreateReferendum'), {
 const ZERO_BN = new BN(0);
 
 interface Props {
-	referendaModal: number;
+	referendaModal?: number;
 	className?: string;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
@@ -55,7 +59,6 @@ enum ESteps {
 }
 
 const BountyActionModal = ({
-	referendaModal,
 	className,
 	openAddressLinkedModal,
 	setOpenAddressLinkedModal,
@@ -79,7 +82,7 @@ const BountyActionModal = ({
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
-	const [postId, setPostId] = useState(0);
+	const [postId, setPostId] = useState<number | null>(null);
 	const [selectedTrack, setSelectedTrack] = useState('');
 	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
 	const [preimageHash, setPreimageHash] = useState<string>('');
@@ -109,6 +112,9 @@ const BountyActionModal = ({
 		setSteps({ percent: 0, step: 0 });
 		setOpenModal(false);
 		setCloseConfirm(false);
+		setBountyAmount(ZERO_BN);
+		setBountyId(null);
+		setPostId(null);
 	};
 
 	useEffect(() => {}, [network]);
@@ -152,7 +158,7 @@ const BountyActionModal = ({
 					</div>
 				}
 			>
-				<div className='mt-6 px-6'>
+				<div className='mt-6'>
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 						Your proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
@@ -196,7 +202,7 @@ const BountyActionModal = ({
 					</div>
 				}
 			>
-				<div className='mt-6 px-6'>
+				<div className='mt-6'>
 					<Steps
 						className='font-medium text-bodyBlue dark:text-blue-dark-high'
 						percent={steps.percent}
@@ -243,6 +249,8 @@ const BountyActionModal = ({
 							bountyAmount={bountyAmount}
 							setBountyAmount={setBountyAmount}
 							bountyId={bountyId}
+							title={title}
+							content={content}
 							setBountyId={setBountyId}
 						/>
 					)}
@@ -278,6 +286,15 @@ const BountyActionModal = ({
 					)}
 				</div>
 			</Modal>
+			<TreasuryProposalSuccessPopup
+				open={openSuccess}
+				onCancel={() => {
+					setOpenSuccess(false);
+					handleClose();
+				}}
+				postId={bountyId || undefined}
+				selectedTrack={selectedTrack}
+			/>
 			<ReferendaLoginPrompts
 				modalOpen={openLoginPrompt}
 				setModalOpen={setOpenLoginPrompt}

@@ -2560,3 +2560,14 @@ query MyQuery($index_eq: Int!) {
   }
 }
 `;
+
+export const GET_BOUNTY_PROPOSALS = `
+query BountyProposals {
+  proposals(where: {type_eq: ReferendumV2, preimage: {section_eq: "Bounties"}}, orderBy: createdAtBlock_DESC) {
+    index
+    proposer
+    status
+    trackNumber
+  }
+}
+`;

@@ -9,14 +9,14 @@ import { IBountyUserActivity } from '~src/types';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { Carousel } from 'antd';
+import { Carousel, Spin } from 'antd';
 import { chunkArray } from './utils/ChunksArr';
 import dayjs from 'dayjs';
 
 const BountyActivities = () => {
 	const { network } = useNetworkSelector();
 	const [userActivities, setUserActivities] = useState<IBountyUserActivity[]>([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -24,12 +24,19 @@ const BountyActivities = () => {
 	const [startIndex, setStartIndex] = useState(0);
 
 	const getData = async () => {
-		const { data } = await nextApiClientFetch<{ data: IBountyUserActivity[] }>('/api/v1/bounty/latest-user-activity');
-		if (data) {
-			setUserActivities(data?.data);
+		setLoading(true);
+		try {
+			const { data } = await nextApiClientFetch<{ data: IBountyUserActivity[] }>('/api/v1/bounty/latest-user-activity');
+			if (data) {
+				setUserActivities(data?.data);
+			}
+			setLoading(false);
+		} catch (error) {
+			console.log('Error fetching user activities:', error);
 			setLoading(false);
 		}
 	};
+
 	const getFormattedValue = (value: string) => {
 		if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
 			return value;
@@ -49,7 +56,7 @@ const BountyActivities = () => {
 
 	useEffect(() => {
 		getData();
-	}, [userActivities.length]);
+	}, []);
 
 	useEffect(() => {
 		if (!network) return;
@@ -73,45 +80,47 @@ const BountyActivities = () => {
 
 	return (
 		<div className='mt-1 flex h-[400px] w-full flex-col gap-[18px]'>
-			<Carousel
-				vertical
-				autoplay
-				autoplaySpeed={3000}
-				dots={false}
-				infinite={false}
-				easing='linear'
-			>
-				{chunkArray(activitiesToShow, 7).map((chunk, index) => (
-					<div
-						key={index}
-						className='flex max-w-[500px] flex-col gap-2'
-					>
-						{chunk.map((activity, index) => {
-							const date = dayjs(activity?.created_at).format("DD[th] MMM 'YY");
-							return (
-								<div
-									key={index}
-									className={` ${spaceGrotesk.className} ${spaceGrotesk.variable} flex items-center gap-1 rounded-[14px] border border-solid border-section-light-container bg-white px-3 py-2 dark:border-section-dark-container dark:bg-section-dark-overlay`}
-								>
-									<Image
-										src={'/assets/icons/user-profile.png'}
-										width={16}
-										height={16}
-										className='-mt-[2px]'
-										alt='user image'
-									/>
-									<span className='inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity?.address.slice(0, 5)}...</span>
-									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-									<span className='text-[20px] font-normal text-pink_primary'>${getFormattedValue(activity?.amount)}</span>
-									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
-									<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
-									<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{date}</span>
-								</div>
-							);
-						})}
-					</div>
-				))}
-			</Carousel>
+			<Spin spinning={loading}>
+				<Carousel
+					vertical
+					autoplay
+					autoplaySpeed={3000}
+					dots={false}
+					infinite={false}
+					easing='linear'
+				>
+					{chunkArray(activitiesToShow, 7).map((chunk, index) => (
+						<div
+							key={index}
+							className='flex max-w-[500px] flex-col gap-2'
+						>
+							{chunk.map((activity, index) => {
+								const date = dayjs(activity?.created_at).format("DD[th] MMM 'YY");
+								return (
+									<div
+										key={index}
+										className={` ${spaceGrotesk.className} ${spaceGrotesk.variable} flex items-center gap-1 rounded-[14px] border border-solid border-section-light-container bg-white px-3 py-2 dark:border-section-dark-container dark:bg-section-dark-overlay`}
+									>
+										<Image
+											src={'/assets/icons/user-profile.png'}
+											width={16}
+											height={16}
+											className='-mt-[2px]'
+											alt='user image'
+										/>
+										<span className='inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity?.address.slice(0, 5)}...</span>
+										<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
+										<span className='text-[20px] font-normal text-pink_primary'>${getFormattedValue(activity?.amount)}</span>
+										<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
+										<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
+										<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{date}</span>
+									</div>
+								);
+							})}
+						</div>
+					))}
+				</Carousel>
+			</Spin>
 		</div>
 	);
 };

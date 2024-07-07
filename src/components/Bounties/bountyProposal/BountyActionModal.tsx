@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { EEnactment, IEnactment, IPreimage, ISteps } from '~src/components/OpenGovTreasuryProposal';
+import { EEnactment, IEnactment, ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
@@ -89,7 +89,7 @@ const BountyActionModal = ({
 	const [preimageLength, setPreimageLength] = useState<number | null>(null);
 	const [isBounty, setIsBounty] = useState<boolean | null>(null);
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
-	const [preimage, setPreimage] = useState<IPreimage | undefined>();
+	// const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
 	const [bountyId, setBountyId] = useState<number | null>(null);
@@ -281,6 +281,7 @@ const BountyActionModal = ({
 								setPreimageLength={setPreimageLength}
 								setBountyAmount={setBountyAmount}
 								bountyId={bountyId}
+								postId={postId}
 							/>
 						</>
 					)}

@@ -97,6 +97,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		getBountyBondValue();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady]);
 
 	const handleCreateBounty = async () => {
@@ -108,9 +109,9 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		}
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('/api/v1/auth/actions/saveBountyInfo', {
 			content,
-			title,
 			postId: bountyId,
-			proposerAddress
+			proposerAddress,
+			title
 		});
 		if (apiError || !data?.post_id) {
 			setError(apiError || 'There was an error creating your post.');

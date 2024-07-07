@@ -17,13 +17,13 @@ import BountyProposalActionButton from './bountyProposal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IBountyProposerResponse } from '~src/types';
 import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
+import Skeleton from '~src/basic-components/Skeleton';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
-	activeData?: IPostsListingResponse;
 }
 
-const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData }) => {
+const BountiesContainer: FC<IBountiesContainer> = ({ extendedData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
@@ -32,7 +32,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const [bountyProposals, setBountyProposals] = useState<IBountyProposal[]>([]);
 
-	const fetchBountyProposer = async () => {
+	const fetchBountyProposals = async () => {
 		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
 		const { data: bountyProposalData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getBountyProposals');
 
@@ -48,7 +48,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 	};
 
 	useEffect(() => {
-		fetchBountyProposer();
+		fetchBountyProposals();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -61,7 +61,6 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 	};
 
 	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
-	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
 	const bountyProposalsChunks = chunkArray(bountyProposals, 3);
 
 	return (
@@ -151,53 +150,57 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounty Proposals</h2>
 				</div>
 			</div>
-			<div className='relative '>
-				{currentSlide2 > 0 && (
-					<span
-						onClick={() => carouselRef2?.current?.prev()}
-						className='rotate-180 cursor-pointer'
-						style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10 }}
-					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-						/>
-					</span>
-				)}
-				<Carousel
-					ref={carouselRef2}
-					arrows
-					infinite={false}
-					dots={false}
-					afterChange={handleBeforeChange2}
-				>
-					{bountyProposalsChunks.map((chunk, index) => (
-						<div
-							key={index}
-							className='flex justify-between space-x-4'
+			{loadingStatus ? (
+				<Skeleton active />
+			) : (
+				<div className='relative '>
+					{currentSlide2 > 0 && (
+						<span
+							onClick={() => carouselRef2?.current?.prev()}
+							className='rotate-180 cursor-pointer'
+							style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10 }}
 						>
-							{chunk.map((proposal, proposalIndex) => (
-								<BountiesProposalsCard
-									key={proposalIndex}
-									proposal={proposal}
-								/>
-							))}
-						</div>
-					))}
-				</Carousel>
-				{currentSlide2 < bountyProposalsChunks.length - 1 && (
-					<span
-						onClick={() => carouselRef2?.current?.next()}
-						className='cursor-pointer'
-						style={{ position: 'absolute', right: -46, top: '40%', zIndex: 10 }}
+							<ImageIcon
+								src='/assets/bounty-icons/carousel-icon.svg'
+								alt='carousel icon'
+							/>
+						</span>
+					)}
+					<Carousel
+						ref={carouselRef2}
+						arrows
+						infinite={false}
+						dots={false}
+						afterChange={handleBeforeChange2}
 					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-						/>
-					</span>
-				)}
-			</div>
+						{bountyProposalsChunks.map((chunk, index) => (
+							<div
+								key={index}
+								className='flex justify-between space-x-4'
+							>
+								{chunk.map((proposal, proposalIndex) => (
+									<BountiesProposalsCard
+										key={proposalIndex}
+										proposal={proposal}
+									/>
+								))}
+							</div>
+						))}
+					</Carousel>
+					{currentSlide2 < bountyProposalsChunks.length - 1 && (
+						<span
+							onClick={() => carouselRef2?.current?.next()}
+							className='cursor-pointer'
+							style={{ position: 'absolute', right: -46, top: '40%', zIndex: 10 }}
+						>
+							<ImageIcon
+								src='/assets/bounty-icons/carousel-icon.svg'
+								alt='carousel icon'
+							/>
+						</span>
+					)}
+				</div>
+			)}
 
 			{/* Footer */}
 			<div className='mt-10 flex items-center gap-8'>

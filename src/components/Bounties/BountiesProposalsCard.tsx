@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackTag from '~src/ui-components/TrackTag';
-import getAscciiFromHex from '~src/util/getAscciiFromHex';
+// import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -27,13 +27,13 @@ interface BountiesProposalsCardProps {
 }
 
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal }) => {
-	if (!proposal) {
-		return null; // Return null or some fallback UI if proposal is undefined
-	}
-
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { proposer, index, trackNumber, status, bountyId, reward } = proposal;
+	console.log(index, status);
+	if (!proposal) {
+		return null; // Return null or some fallback UI if proposal is undefined
+	}
 
 	function formatTrackName(str: string) {
 		return str

@@ -9,7 +9,7 @@ import { MessageType } from '~src/auth/types';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { getStatusesFromCustomStatus } from '~src/global/proposalType';
 import { GET_BOUNTY_PROPOSALS, GET_BOUNTY_REWARDS_BY_IDS } from '~src/queries';
-import { IBountyProposalsResponse, IBountyProposerResponse } from '~src/types';
+import { IBountyProposerResponse } from '~src/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 export interface IBountyProposal {
@@ -59,11 +59,11 @@ const handler: NextApiHandler<IBountyProposerResponse | MessageType> = async (re
 				};
 			};
 		}) => ({
-			proposer,
-			trackNumber,
+			bountyId,
 			index,
+			proposer,
 			status,
-			bountyId
+			trackNumber
 		})
 	);
 

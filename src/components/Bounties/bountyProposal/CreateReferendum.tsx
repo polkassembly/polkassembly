@@ -66,6 +66,7 @@ interface Props {
 	setPreimageLength: (pre: number | null) => void;
 	bountyAmount: BN;
 	setBountyAmount: (pre: BN) => void;
+	postId?: number | null;
 }
 
 const ZERO_BN = new BN(0);
@@ -113,6 +114,8 @@ const CreateReferendum = ({
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const [newBountyAmount, setNewBountyAmount] = useState(bountyAmount);
 	const [error, setError] = useState('');
+	// HERE
+	console.log(gasFee);
 
 	const trackArr: string[] = [];
 	const maxSpendArr: { track: string; maxSpend: number }[] = [];
@@ -298,6 +301,9 @@ const CreateReferendum = ({
 	};
 
 	const existPreimageData = async (preimageHash: string, isPreimage: boolean) => {
+		// HERE
+		console.log(isPreimage);
+
 		setPreimageLength(0);
 		form.setFieldValue('preimage_length', 0);
 		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
@@ -350,7 +356,8 @@ const CreateReferendum = ({
 			bounty_amount: Number(formatedBalance(bountyAmount.toString(), unit).replaceAll(',', ''))
 		});
 		handleSelectTrack(bountyAmount);
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bountyAmount]);
 
 	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
 
@@ -358,6 +365,9 @@ const CreateReferendum = ({
 		if (!proposerAddress || !api || !apiReady || !bountyAmount || !bountyId) return;
 
 		const availableBalanceBN = new BN(availableBalance || '0');
+		// HERE
+		console.log(availableBalanceBN);
+
 		const txns = [];
 
 		if (isPreimage && !preimageLength) {
@@ -678,7 +688,7 @@ const CreateReferendum = ({
 						<Button
 							htmlType='submit'
 							className={'h-10 w-min rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary '}
-							// onClick={() => handleSubmitCreateReferendum()}
+							onClick={() => handleSubmitCreateReferendum()}
 							disabled={loading}
 						>
 							Create Referendum

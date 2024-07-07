@@ -820,6 +820,8 @@ export interface IBountyUserActivity {
 
 export interface IBountyProposerResponse {
 	proposals: {
+		trackNumber: number;
+		index: number;
 		proposer: string;
 		reward: string;
 	}[];

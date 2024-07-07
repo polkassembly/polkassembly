@@ -15,7 +15,7 @@ import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IBountyProposerResponse } from '~src/types';
+// import { IBountyProposerResponse } from '~src/types';
 import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
 import Skeleton from '~src/basic-components/Skeleton';
 
@@ -34,7 +34,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData }) => {
 
 	const fetchBountyProposals = async () => {
 		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
-		const { data: bountyProposalData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getBountyProposals');
+		const { data: bountyProposalData, error } = await nextApiClientFetch<any>('/api/v1/bounty/getBountyProposals');
 
 		if (error || !bountyProposalData || !bountyProposalData?.proposals?.length) {
 			console.log('Error in fetching bounty proposer data');

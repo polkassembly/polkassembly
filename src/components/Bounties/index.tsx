@@ -15,8 +15,7 @@ import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-// import { IBountyProposerResponse } from '~src/types';
-import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
+import { IBountyProposalsResponse } from '~src/types';
 import Skeleton from '~src/basic-components/Skeleton';
 
 interface IBountiesContainer {
@@ -30,20 +29,21 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData }) => {
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
 	const router = useRouter();
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
-	const [bountyProposals, setBountyProposals] = useState<IBountyProposal[]>([]);
+	const initialState: IBountyProposalsResponse = {
+		proposals: []
+	};
+	const [bountyProposals, setBountyProposals] = useState<IBountyProposalsResponse>(initialState);
 
 	const fetchBountyProposals = async () => {
 		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
-		const { data: bountyProposalData, error } = await nextApiClientFetch<any>('/api/v1/bounty/getBountyProposals');
+		const { data: bountyProposalData, error } = await nextApiClientFetch<IBountyProposalsResponse>('/api/v1/bounty/getBountyProposals');
 
 		if (error || !bountyProposalData || !bountyProposalData?.proposals?.length) {
 			console.log('Error in fetching bounty proposer data');
 			setLoadingStatus({ isLoading: false, message: 'Error in fetching bounty' });
 			return;
 		}
-
-		setBountyProposals(bountyProposalData?.proposals);
-
+		setBountyProposals(bountyProposalData);
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
@@ -61,7 +61,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData }) => {
 	};
 
 	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
-	const bountyProposalsChunks = chunkArray(bountyProposals, 3);
+	const bountyProposalsChunks = chunkArray(bountyProposals.proposals, 3);
 
 	return (
 		<main>
@@ -150,8 +150,10 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData }) => {
 					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounty Proposals</h2>
 				</div>
 			</div>
-			{loadingStatus ? (
-				<Skeleton active />
+			{loadingStatus.isLoading ? (
+				<>
+					<Skeleton active />
+				</>
 			) : (
 				<div className='relative '>
 					{currentSlide2 > 0 && (

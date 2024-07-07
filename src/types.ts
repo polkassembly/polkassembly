@@ -833,6 +833,6 @@ export interface IBountyProposalsResponse {
 		trackNumber: number;
 		status: string;
 		bountyId: number;
-		reward: string;
+		reward: string | null;
 	}[];
 }

@@ -70,7 +70,7 @@ const handler: NextApiHandler<IBountyProposerResponse | MessageType> = async (re
 	const bountyIds = proposals.map(({ bountyId }: { bountyId: number }) => bountyId);
 
 	const rewardsRes = await fetchSubsquid({
-		network: 'polkadot',
+		network,
 		query: GET_BOUNTY_REWARDS_BY_IDS,
 		variables: {
 			index_in: bountyIds

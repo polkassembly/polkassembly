@@ -78,7 +78,9 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
 				network={network}
 			/>
-			<BountiesContainer extendedData={extendedData} />
+			<div>
+				<BountiesContainer extendedData={extendedData} />
+			</div>
 		</>
 	);
 };

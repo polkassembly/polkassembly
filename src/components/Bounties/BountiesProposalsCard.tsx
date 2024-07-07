@@ -12,34 +12,29 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
+import Link from 'next/link';
 
-interface IBountyProposal {
-	proposer: string;
-	index: number;
-	trackNumber: number;
-	status: string;
-	bountyId: number;
-	reward: string;
-}
-
-interface BountiesProposalsCardProps {
+export interface BountiesProposalsCardProps {
 	proposal: IBountyProposal;
 }
 
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal }) => {
+	console.log('proposal', proposal);
+
 	const { network } = useNetworkSelector();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { proposer, index, trackNumber, status, bountyId, reward } = proposal;
 	console.log(index, status);
 	if (!proposal) {
-		return null; // Return null or some fallback UI if proposal is undefined
+		return null;
 	}
 
 	function formatTrackName(str: string) {
 		return str
-			.split('_') // Split the string into words using underscores as separators
-			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
-			.join(' '); // Join the words back together with a space separator
+			.split('_')
+			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ');
 	}
 
 	return (
@@ -54,21 +49,26 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 						/>
 						<h2 className='mt-3 text-[22px] font-normal'>52%</h2>
 					</div>
-					<div className='mb-2 ml-2 flex w-full items-center'>
-						<Image
-							src={'assets/bounty-icons/redirect-icon.svg'}
-							width={45}
-							height={45}
-							alt='redirect link'
-							className='-mr-[2px] cursor-pointer rounded-full bg-black'
-						/>
-						<div className='h-2 w-[10px] bg-black'></div>
-						<button
-							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white`}
-						>
-							Vote
-						</button>
-					</div>
+					<Link
+						href={`/referenda/${index}`}
+						target='_blank'
+					>
+						<div className='ml-2 flex w-full items-center'>
+							<Image
+								src={'assets/bounty-icons/redirect-icon.svg'}
+								width={45}
+								height={45}
+								alt='redirect link'
+								className='-mr-[2px] cursor-pointer rounded-full bg-black'
+							/>
+							<div className='h-2 w-[10px] bg-black'></div>
+							<button
+								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white`}
+							>
+								Vote
+							</button>
+						</div>
+					</Link>
 				</div>
 				<div
 					className={`rounded-b-3xl rounded-tr-2xl border-b border-l border-r border-t-0 
@@ -82,7 +82,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 					/>
 					<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
 						<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{bountyId}</span>
-						<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{proposer.slice(0, 5)}...</span>
+						<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{proposer.slice(0, 5) || 'Unknown'}</span>
 					</div>
 					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal`}>{`Reward: ${formatedBalance(reward, unit)}`}</p>
 

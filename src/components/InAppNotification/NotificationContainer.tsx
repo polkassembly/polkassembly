@@ -17,11 +17,28 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 	const { resolvedTheme: theme } = useTheme();
 	const { unreadNotificationsCount, totalNotificationsCount } = useInAppNotificationsSelector();
 
+	const getMarkdownText = (message: string) => {
+		const msgSplitArr = message.split('\n');
+		let msg = '';
+		if (!msgSplitArr.length) return message;
+
+		msgSplitArr.map((str: string, index: number) => {
+			if (index === 0) {
+				msg += str;
+			} else {
+				if (index < 3) {
+					msg += '\n' + str;
+				}
+			}
+		});
+		return `${msg}...`;
+	};
+
 	return (
 		<div>
 			{!inPage && !!unreadNotificationsCount && (
 				<div className={classNames('container mt-3 text-sm font-medium text-lightBlue dark:text-blue-dark-medium', inPage ? 'px-11' : 'px-8', className)}>
-					{title} ({count})
+					{title} ({inPage && title ? unreadNotificationsCount : count})
 				</div>
 			)}
 
@@ -58,7 +75,7 @@ const NotificationsContainer = ({ title, count, data, inPage, className }: { tit
 									<div className={classNames('flex items-center gap-2 text-bodyBlue dark:text-blue-dark-high', inPage ? 'text-sm' : 'text-xs')}>{notification.title}</div>
 									<div className='w-full'>
 										<Markdown
-											md={inPage ? notification.message : notification.message.split('Thanks')?.[0] || notification.message}
+											md={inPage ? notification.message : getMarkdownText(notification?.message || '')}
 											className={classNames(
 												'w-full text-lightBlue dark:text-blue-dark-medium',
 												inPage && notification.type === EInAppNotificationsType.UNREAD ? 'container font-semibold' : 'font-normal',

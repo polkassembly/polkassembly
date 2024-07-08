@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -12,6 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const [statsData, setStatsData] = useState<IBountyStats>({
 		activeBounties: '',
 		availableBountyPool: '',
@@ -125,13 +127,13 @@ const BountiesHeader = () => {
 
 					<div className='flex gap-x-10'>
 						<ImageIcon
-							src='/assets/bounty-icons/create.svg'
+							src={theme == 'dark' ? '/assets/bounty-icons/create-white.svg' : '/assets/bounty-icons/create.svg'}
 							alt='bounty icon'
 							imgClassName='ml-32 mt-6'
 							imgWrapperClassName='h-[69px]'
 						/>
 						<ImageIcon
-							src='/assets/bounty-icons/bounty-barcode.svg'
+							src={theme == 'dark' ? '/assets/bounty-icons/barcode-white.svg' : '/assets/bounty-icons/bounty-barcode.svg'}
 							alt='bounty icon'
 							imgClassName='mt-6'
 							imgWrapperClassName=''

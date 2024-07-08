@@ -96,7 +96,7 @@ const BountyActivities = () => {
 							{chunk.map((activity, idx) => (
 								<div
 									key={idx}
-									className='flex items-center gap-1 rounded-[14px] border bg-white px-3 py-2'
+									className='flex items-center gap-1 rounded-[14px] border bg-white px-3  py-2 dark:bg-section-light-overlay'
 								>
 									<Image
 										src={'/assets/icons/user-profile.png'}

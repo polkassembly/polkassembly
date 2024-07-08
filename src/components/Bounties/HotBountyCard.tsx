@@ -18,11 +18,13 @@ import Link from 'next/link';
 import CuratorPopover from './utils/CuratorPopover';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useTheme } from 'next-themes';
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
 	const { post_id, title, description, tags, reward, user_id, curator } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
+	const { resolvedTheme: theme } = useTheme();
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
@@ -107,7 +109,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
-								<h2 className='mt-3 text-[22px] font-normal'>48%</h2>
+								<h2 className='mt-3 text-[22px] font-normal dark:text-white'>48%</h2>
 							</div>
 							<Link
 								key={post_id}
@@ -116,11 +118,11 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								className='px-3'
 							>
 								<Image
-									src={'/assets/bounty-icons/redirect-icon.svg'}
+									src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 									width={44}
 									height={44}
 									alt='redirect link'
-									className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black'
+									className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black dark:bg-white'
 								/>
 							</Link>
 						</div>
@@ -139,7 +141,9 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
-							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal`}>{getAscciiFromHex(description).slice(0, 140)}</p>
+							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								{getAscciiFromHex(description).slice(0, 140)}
+							</p>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>
 									{tags.map((tag: string, index: number) => (

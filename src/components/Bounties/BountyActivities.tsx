@@ -73,7 +73,7 @@ const BountyActivities = () => {
 	const activitiesToShow = userActivities.slice(startIndex, startIndex + 7);
 
 	return (
-		<div className='mt-1 flex h-[400px] w-full flex-col gap-[18px]'>
+		<div className='mt-1 flex max-h-[400px] w-full flex-col gap-[18px]'>
 			{loading ? (
 				<>
 					<Skeleton />

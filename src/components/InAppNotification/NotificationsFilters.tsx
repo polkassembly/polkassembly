@@ -26,20 +26,22 @@ const NotificationsFilters = ({ className, inPage, onChange }: INotificationsFil
 	const router = useRouter();
 	const { popupActiveFilter } = useInAppNotificationsSelector();
 	const activeFilter = inPage ? (router?.query?.filter as ECustomNotificationFilters) || ECustomNotificationFilters.ALL : popupActiveFilter;
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 
 	return (
 		<div
 			className={classNames(
 				className,
 				'flex rounded-sm border-[1px] border-solid border-section-light-container px-3 py-1.5 dark:border-section-dark-container',
-				inPage ? 'w-[500px] justify-between text-sm' : 'justify-between text-xs'
+				inPage ? (isMobile ? 'w-full justify-between' : 'w-[500px] justify-between text-sm') : 'justify-between text-xs'
 			)}
 		>
 			{['all', 'comments', 'mentions', 'proposals'].map((value) => (
 				<div
 					className={classNames(
-						'flex cursor-pointer items-center gap-1 px-3.5 py-1 font-medium capitalize text-lightBlue dark:text-blue-dark-medium',
-						activeFilter === value ? 'rounded-md bg-[#fdedf7] dark:bg-[#451b30] dark:text-pink_primary' : ''
+						'flex cursor-pointer items-center gap-1 py-1 font-medium capitalize text-lightBlue dark:text-blue-dark-medium',
+						activeFilter === value ? 'rounded-md bg-[#fdedf7] dark:bg-[#451b30] dark:text-pink_primary' : '',
+						isMobile ? 'px-1' : 'px-3.5'
 					)}
 					key={value}
 					onClick={() => onChange(value as ECustomNotificationFilters)}

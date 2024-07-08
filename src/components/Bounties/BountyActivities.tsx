@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState, useCallback } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { Carousel } from 'antd';
 import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -12,6 +12,7 @@ import { chunkArray } from './utils/ChunksArr';
 import { IBountyUserActivity } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Skeleton from '~src/basic-components/Skeleton';
+import NameLabel from '~src/ui-components/NameLabel';
 
 const BountyActivities = () => {
 	const { network } = useNetworkSelector();
@@ -86,6 +87,7 @@ const BountyActivities = () => {
 					autoplaySpeed={3000}
 					dots={false}
 					infinite={false}
+					className='max-h-[400px]'
 					easing='linear'
 				>
 					{chunkArray(activitiesToShow, 7).map((chunk, index) => (
@@ -98,13 +100,11 @@ const BountyActivities = () => {
 									key={idx}
 									className='flex items-center gap-1 rounded-[14px] border bg-white px-3  py-2 dark:bg-section-light-overlay'
 								>
-									<Image
-										src={'/assets/icons/user-profile.png'}
-										width={16}
-										height={16}
-										alt='user image'
+									<NameLabel
+										truncateUsername={true}
+										defaultAddress={activity.address}
+										usernameMaxLength={10}
 									/>
-									<span className='inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity?.address.slice(0, 5)}...</span>
 									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
 									<span className='text-[20px] font-normal text-pink_primary'>${getFormattedValue(activity?.amount)}</span>
 									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>

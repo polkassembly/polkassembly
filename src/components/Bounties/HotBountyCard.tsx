@@ -15,10 +15,11 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageComponent from '../ImageComponent';
 import Link from 'next/link';
-import CuratorPopover from './utils/CuratorPopover';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import CuratorPopover from './utils/CuratorPopover';
+import BN from 'bn.js';
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
@@ -31,37 +32,39 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		value: ''
 	});
 	const [loading, setLoading] = useState(false);
+	const [percentageClaimed, setPercentageClaimed] = useState<number>(0);
 
 	const getChildBounties = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
-				parentBountyIndex: post_id
-			});
-			if (data && data?.child_bounties_count) {
-				setChildBountiesCount(data.child_bounties_count);
+		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+			parentBountyIndex: post_id
+		});
+		if (data) {
+			setChildBountiesCount(data.child_bounties_count);
+
+			if (data.child_bounties_count > 0) {
+				const totalChildRewards = data.child_bounties.reduce((sum, childBounty) => sum.add(new BN(childBounty.reward)), new BN(0));
+				const totalReward = new BN(reward);
+				const claimedPercentage = totalChildRewards.muln(100).div(totalReward).toNumber();
+				setPercentageClaimed(claimedPercentage);
+			} else {
+				setPercentageClaimed(0);
 			}
-			if (error) {
-				console.log('error', error);
-			}
-		} catch (error) {
+		}
+		if (error) {
 			console.log('error', error);
 		}
 	};
 
 	const getUserProfile = async (userIds: string[]) => {
-		try {
-			if (userIds?.length) {
-				const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
-				if (data) {
-					setUserImageData(data);
-				} else {
-					console.log('There is error in fetching data');
-				}
+		if (userIds?.length) {
+			const { data, error } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			if (data) {
+				setUserImageData(data);
 			} else {
-				setUserImageData([]);
+				console.log('There is error in fetching data', error);
 			}
-		} catch (error) {
-			console.log('error', error);
+		} else {
+			setUserImageData([]);
 		}
 	};
 
@@ -109,7 +112,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
-								<h2 className='mt-3 text-[22px] font-normal dark:text-white'>48%</h2>
+								<h2 className='mt-3 text-[26px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
 							</div>
 							<Link
 								key={post_id}

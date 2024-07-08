@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import React, { useEffect, useState, useCallback } from 'react';
 import { Alert, Button, Form, FormInstance, Input, Radio, Spin } from 'antd';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
-import React, { useEffect, useState } from 'react';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useApiContext } from '~src/context';
@@ -18,6 +18,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import _ from 'lodash';
 
 interface Props {
 	className?: string;
@@ -47,7 +48,8 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const [error, setError] = useState('');
 
-	const fetchBountyProposer = async () => {
+	const fetchBountyProposer = async (bountyId: number | null) => {
+		if (bountyId === null) return;
 		setLoadingStatus({ isLoading: true, message: 'Fetching Bounty' });
 		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
 			bountyId
@@ -73,10 +75,16 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedFetchBountyProposer = useCallback(_.debounce(fetchBountyProposer, 1000), []);
+
 	useEffect(() => {
 		if (bountyId !== null) {
-			fetchBountyProposer();
+			debouncedFetchBountyProposer(bountyId);
 		}
+		return () => {
+			debouncedFetchBountyProposer.cancel();
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyId]);
 

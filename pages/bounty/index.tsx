@@ -36,9 +36,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const extendedResponse = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		includeContent: true,
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
+		preimageSection: '',
 		proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
 		proposalType,
 		sortBy

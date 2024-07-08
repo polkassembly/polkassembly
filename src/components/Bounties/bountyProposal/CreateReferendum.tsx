@@ -35,6 +35,7 @@ import _ from 'lodash';
 import { ApiPromise } from '@polkadot/api';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
+import Alert from '~src/basic-components/Alert';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -104,7 +105,6 @@ const CreateReferendum = ({
 	const currentUser = useUserDetailsSelector();
 	const { address: linkedAddress, availableBalance } = useInitialConnectAddress();
 	const { id: userId } = currentUser;
-	// const [showAlert, setShowAlert] = useState<boolean>(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
@@ -114,8 +114,8 @@ const CreateReferendum = ({
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const [newBountyAmount, setNewBountyAmount] = useState(bountyAmount);
 	const [error, setError] = useState('');
-	// HERE
-	console.log(gasFee);
+	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
+	const [eligibleToCreateRef, setEligibleToCreateRef] = useState<boolean>(false);
 
 	const trackArr: string[] = [];
 	const maxSpendArr: { track: string; maxSpend: number }[] = [];
@@ -301,7 +301,6 @@ const CreateReferendum = ({
 	};
 
 	const existPreimageData = async (preimageHash: string, isPreimage: boolean) => {
-		// HERE
 		console.log(isPreimage);
 
 		setPreimageLength(0);
@@ -312,9 +311,6 @@ const CreateReferendum = ({
 
 		if (data && !data?.message) {
 			if (data.section === 'Bounties' && data?.method === 'approve_bounty' && !isNaN(data.proposedCall?.args?.bountyId) && !isNaN(data?.length)) {
-				// ToDo
-				// getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
-
 				form.setFieldValue('preimage_length', data?.length);
 
 				setPreimageLength(data?.length);
@@ -333,8 +329,6 @@ const CreateReferendum = ({
 			}
 		} else if (error || data?.message) {
 			console.log('fetching data from polkadotjs');
-			// Todo
-			// getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 		}
 		setLoading(false);
 	};
@@ -361,12 +355,53 @@ const CreateReferendum = ({
 
 	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
 
+	useEffect(() => {
+		const calculateGasFee = async () => {
+			if (!proposerAddress || !api || !apiReady || !bountyAmount || !bountyId) return;
+			const submissionDeposit = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
+
+			const availableBalanceBN = new BN(availableBalance || '0');
+
+			const txns = [];
+
+			if (!isPreimage) {
+				const preimage = getState(api, api.tx.bounties.approveBounty(bountyId));
+
+				if (!preimage.notePreimageTx) {
+					setError('Error in creating preimage');
+					return;
+				}
+				txns.push(preimage.notePreimageTx);
+			}
+
+			const origin: any = { Origins: selectedTrack };
+			const proposalTx = api.tx.referenda.submit(
+				origin,
+				{ Lookup: { hash: preimageHash, len: preimageLength } },
+				enactment.value ? (enactment.key === EEnactment.At_Block_No ? { At: enactment.value } : { After: enactment.value }) : { After: BN_HUNDRED }
+			);
+			txns.push(proposalTx);
+
+			const mainTx = txns.length > 1 ? api.tx.utility.batchAll(txns) : proposalTx;
+			const { partialFee: bountyTxGasFee } = (await mainTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+
+			setGasFee(new BN(String(bountyTxGasFee)));
+
+			const totalRequired = new BN(gasFee).add(baseDeposit).add(submissionDeposit);
+
+			if (availableBalanceBN.gt(totalRequired)) {
+				setEligibleToCreateRef(true);
+			} else {
+				setEligibleToCreateRef(false);
+			}
+		};
+
+		calculateGasFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, proposerAddress, bountyAmount, bountyId, isPreimage, preimageHash, preimageLength, selectedTrack, enactment]);
+
 	const handleSubmit = async () => {
 		if (!proposerAddress || !api || !apiReady || !bountyAmount || !bountyId) return;
-
-		const availableBalanceBN = new BN(availableBalance || '0');
-		// HERE
-		console.log(availableBalanceBN);
 
 		const txns = [];
 
@@ -394,8 +429,6 @@ const CreateReferendum = ({
 		txns.push(proposalTx);
 
 		const mainTx = txns.length > 1 ? api.tx.utility.batchAll(txns) : proposalTx;
-		const { partialFee: bountyTxGasFee } = (await mainTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
-		setGasFee(new BN(String(bountyTxGasFee)));
 
 		const onFailed = (message: string) => {
 			setLoading(false);
@@ -496,7 +529,6 @@ const CreateReferendum = ({
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
 								</Form.Item>
-								{/* {invalidPreimageHash() && !loading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>} */}
 							</div>
 							<div className='mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
@@ -543,7 +575,6 @@ const CreateReferendum = ({
 									tracksArr={trackArr}
 									onTrackChange={(track) => {
 										setSelectedTrack(track);
-										// getPreimageTxFee();
 										setSteps({ percent: 100, step: 2 });
 									}}
 									selectedTrack={selectedTrack}
@@ -663,19 +694,19 @@ const CreateReferendum = ({
 							</Radio.Group>
 						</div>
 					)}
-					{/* ToDO set gas fee */}
-					{/* {gasFee && gasFee != ZERO_BN && (
-					<Alert
-						type='info'
-						className='mt-6 rounded-[4px] text-bodyBlue '
-						showIcon
-						description={
-							<span className='text-xs dark:text-blue-dark-high'>
-								Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
-							</span>
-						}
-					/>
-				)} */}
+					{gasFee && gasFee != ZERO_BN && (
+						<Alert
+							type='info'
+							className='mt-6 rounded-[4px] text-bodyBlue '
+							showIcon
+							description={
+								<span className='text-xs dark:text-blue-dark-high'>
+									Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+								</span>
+							}
+							message='Gas Fee'
+						/>
+					)}
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-section-dark-container'>
 						<Button
 							onClick={() => {
@@ -687,9 +718,11 @@ const CreateReferendum = ({
 						</Button>
 						<Button
 							htmlType='submit'
-							className={'h-10 w-min rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary '}
+							className={`h-10 w-min ${
+								!eligibleToCreateRef ? 'opacity-50' : ''
+							} rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white dark:border-pink_primary `}
 							onClick={() => handleSubmitCreateReferendum()}
-							disabled={loading}
+							disabled={loading || !eligibleToCreateRef}
 						>
 							Create Referendum
 						</Button>

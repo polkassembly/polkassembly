@@ -444,7 +444,7 @@ const AddressConnectModal = ({
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin
-				spinning={loading || !api || !apiReady}
+				spinning={loading}
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex flex-col'>

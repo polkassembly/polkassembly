@@ -84,7 +84,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 						<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{bountyId}</span>
 						<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{proposer.slice(0, 5) || 'Unknown'}</span>
 					</div>
-					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{`Reward: ${formatedBalance(
+					<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>{`Reward: ${formatedBalance(
 						reward,
 						unit
 					)}`}</p>

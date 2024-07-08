@@ -139,7 +139,9 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
-							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal`}>{getAscciiFromHex(description).slice(0, 140)}</p>
+							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+								{getAscciiFromHex(description).slice(0, 140)}
+							</p>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>
 									{tags.map((tag: string, index: number) => (

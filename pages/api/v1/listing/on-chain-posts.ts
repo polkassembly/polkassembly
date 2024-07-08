@@ -122,6 +122,7 @@ export function getGeneralStatus(status: string) {
 }
 
 interface IGetOnChainPostsParams {
+	preimageSection: string;
 	network: string;
 	page?: string | string[] | number;
 	sortBy: string | string[];
@@ -157,7 +158,8 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus } = params;
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus, preimageSection } = params;
+
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -253,15 +255,22 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			const topicFromType = getTopicFromType(proposalType as ProposalType);
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
 			const postsVariables: any = {
 				index_in: ids,
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
+
+			if (preimageSection) {
+				postsVariables.section_eq = preimageSection;
+			}
+
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
@@ -519,6 +528,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
+			}
+
+			if (preimageSection) {
+				postsVariables.section_eq = preimageSection;
 			}
 
 			if (proposalType === ProposalType.OPEN_GOV) {
@@ -1107,16 +1120,20 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, proposalStatus } = req.query;
+	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, proposalStatus, preimageSection } = req.query;
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+
 	const postIds = req.body.postIds;
+
 	const { data, error, status } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
 		listingLimit,
 		network,
 		page,
 		postIds,
+		preimageSection: preimageSection ? String(preimageSection) : '',
 		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy,

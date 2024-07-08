@@ -53,11 +53,6 @@ interface IDelegates {
 	};
 }
 
-const getIsSingleDelegation = (delegations: IDelegation[]) => {
-	const filteredData = delegations.filter((delegation) => Number(delegations[0]?.balance) === Number(delegation?.balance) && delegations[0]?.lockPeriod === delegation?.lockPeriod);
-	return filteredData?.length === delegations?.length;
-};
-
 const handleUniqueDelegations = (data: ITrackDelegation[], type: ETrackDelegationStatus, checkedAddress: string, network: string) => {
 	const dataObj: any = {};
 	const encodedAddress = getEncodedAddress(checkedAddress, network);
@@ -378,7 +373,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 												<ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
 											<span className='flex items-center justify-center gap-1'>
-												Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+												Tracks <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
 											<span className='w-[10%] max-lg:w-[5%]' />
 										</div>
@@ -411,7 +406,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																usernameMaxLength={isMobile ? 5 : 30}
 															/>
 														</div>
-														<div className='flex w-[50%] items-center justify-center text-sm'>{parseBalance(String(value?.votingPower), 2, true, network)} </div>
+														<div className='flex w-[50%] items-center justify-center text-sm'>{value?.delegations?.length || 0} </div>
 														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
@@ -447,12 +442,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																			<VoterIcon /> Voting Power
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
-																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${parseBalance(String(value?.votingPower), 2, true, network)}`
-																				: 'Multiple'}
+																			{value?.delegations?.length === 1 ? `${parseBalance(String(value?.votingPower), 2, true, network)}` : 'Multiple'}
 																		</span>
 																	</div>
-																	{getIsSingleDelegation(value?.delegations) && (
+																	{value?.delegations?.length === 1 && (
 																		<div className='flex justify-between'>
 																			<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
 																				<ConvictionIcon /> Conviction
@@ -465,9 +458,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																			<CapitalIcon /> Capital
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
-																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${parseBalance(String(value?.capital), 2, true, network)}`
-																				: 'Multiple'}
+																			{value?.delegations?.length === 1 ? `${parseBalance(String(value?.capital), 2, true, network)}` : 'Multiple'}
 																		</span>
 																	</div>
 																	<div className='flex justify-between'>
@@ -476,7 +467,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</div>
 																		<div
 																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
-																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
+																				value?.delegations.length !== 1 ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
 																			}`}
 																		>
 																			{value?.delegations.map((delegate, trackIndex) => (
@@ -487,7 +478,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																					{getTrackNameFromId(network, delegate?.track)
 																						.split('_')
 																						.join(' ')}{' '}
-																					{value?.delegations.length !== 1 && !getIsSingleDelegation(value?.delegations)
+																					{value?.delegations.length !== 1
 																						? `(VP: ${parseBalance(String(Number(delegate?.balance) * (delegate?.lockPeriod || 1)), 2, true, network)}, Ca: ${parseBalance(
 																								String(delegate?.balance),
 																								2,
@@ -503,7 +494,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</div>
 																	</div>
 																</div>
-																{value?.delegations?.length !== 1 && !getIsSingleDelegation(value?.delegations) && (
+																{value?.delegations?.length !== 1 && (
 																	<div className='mt-2 flex w-full justify-start text-xs font-normal text-lightBlue dark:text-blue-dark-medium'>
 																		VP: Voting Power, Ca: Capital, Co: Conviction
 																	</div>

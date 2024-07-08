@@ -14,15 +14,15 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 
 export interface BountiesProposalsCardProps {
 	proposal: IBountyProposal;
 }
 
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal }) => {
-	console.log('proposal', proposal);
-
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const { proposer, index, trackNumber, status, bountyId, reward } = proposal;
 	console.log(index, status);
@@ -47,7 +47,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 							type='vertical'
 							className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 						/>
-						<h2 className='mt-3 text-[22px] font-normal'>52%</h2>
+						<h2 className='mt-3 text-[22px] font-normal dark:text-white'>52%</h2>
 					</div>
 					<Link
 						href={`/referenda/${index}`}
@@ -55,15 +55,15 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 					>
 						<div className='ml-2 flex w-full items-center'>
 							<Image
-								src={'assets/bounty-icons/redirect-icon.svg'}
+								src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 								width={45}
 								height={45}
 								alt='redirect link'
-								className='-mr-[2px] cursor-pointer rounded-full bg-black'
+								className='-mr-[2px] cursor-pointer rounded-full bg-black dark:bg-white'
 							/>
-							<div className='h-2 w-[10px] bg-black'></div>
+							<div className='h-2 w-[10px] bg-black dark:bg-white'></div>
 							<button
-								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white`}
+								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white dark:bg-white dark:text-black`}
 							>
 								Vote
 							</button>

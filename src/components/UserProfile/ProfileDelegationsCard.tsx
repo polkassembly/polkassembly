@@ -467,7 +467,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</div>
 																		<div
 																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
-																				value?.delegations.length !== 1 ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
+																				value?.delegations.length !== 1 ? 'flex flex-col flex-wrap items-end justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
 																			}`}
 																		>
 																			{value?.delegations.map((delegate, trackIndex) => (

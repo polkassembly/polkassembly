@@ -107,6 +107,7 @@ export interface IPostListing {
 	assetId?: string | null;
 	reward?: string;
 	content?: string;
+	includeContent?: boolean;
 }
 
 export interface IPostsListingResponse {
@@ -123,7 +124,7 @@ export function getGeneralStatus(status: string) {
 }
 
 interface IGetOnChainPostsParams {
-	preimageSection: string;
+	preimageSection?: string;
 	network: string;
 	page?: string | string[] | number;
 	sortBy: string | string[];
@@ -134,7 +135,8 @@ interface IGetOnChainPostsParams {
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
 	proposalStatus?: string | string[];
-	includeContent: boolean;
+	content?: string;
+	includeContent?: boolean;
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {

@@ -135,7 +135,6 @@ interface IGetOnChainPostsParams {
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
 	proposalStatus?: string | string[];
-	content?: string;
 	includeContent?: boolean;
 }
 

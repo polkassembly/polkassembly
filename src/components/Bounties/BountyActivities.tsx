@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState, useCallback } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { Carousel } from 'antd';
 import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -12,9 +12,12 @@ import { chunkArray } from './utils/ChunksArr';
 import { IBountyUserActivity } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Skeleton from '~src/basic-components/Skeleton';
+import NameLabel from '~src/ui-components/NameLabel';
+import { chainProperties } from '~src/global/networkConstants';
 
 const BountyActivities = () => {
 	const { network } = useNetworkSelector();
+	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [userActivities, setUserActivities] = useState<IBountyUserActivity[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
@@ -56,19 +59,34 @@ const BountyActivities = () => {
 		}
 	}, [loading, userActivities.length]);
 
-	const getFormattedValue = useCallback(
-		(value: string) => {
-			if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
-				return value;
-			}
-			const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
-			const tokenPrice = Number(currentTokenPrice.value);
-			const dividedValue = numericValue / tokenPrice;
+	const formatNumberWithSuffix = (value: number) => {
+		if (value >= 1e6) {
+			return (value / 1e6).toFixed(1) + 'm';
+		} else if (value >= 1e3) {
+			return (value / 1e3).toFixed(1) + 'k';
+		}
+		return value.toFixed(1);
+	};
 
-			return dividedValue >= 1e6 ? (dividedValue / 1e6).toFixed(2) + 'm' : dividedValue >= 1e3 ? (dividedValue / 1e3).toFixed(2) + 'k' : dividedValue.toFixed(2);
-		},
-		[currentTokenPrice.isLoading, currentTokenPrice.value, network]
-	);
+	const getFormattedValue = (value: string) => {
+		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
+
+		if (isNaN(Number(currentTokenPrice.value))) {
+			return formatNumberWithSuffix(numericValue);
+		}
+
+		const tokenPrice = Number(currentTokenPrice.value);
+		const dividedValue = numericValue / tokenPrice;
+
+		return formatNumberWithSuffix(dividedValue);
+	};
+
+	const getDisplayValue = (value: string) => {
+		if (currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value))) {
+			return `${getFormattedValue(value)} ${unit}`;
+		}
+		return `$${getFormattedValue(value)}`;
+	};
 
 	const activitiesToShow = userActivities.slice(startIndex, startIndex + 7);
 
@@ -86,6 +104,7 @@ const BountyActivities = () => {
 					autoplaySpeed={3000}
 					dots={false}
 					infinite={false}
+					className='max-h-[400px]'
 					easing='linear'
 				>
 					{chunkArray(activitiesToShow, 7).map((chunk, index) => (
@@ -98,15 +117,13 @@ const BountyActivities = () => {
 									key={idx}
 									className='flex items-center gap-1 rounded-[14px] border bg-white px-3  py-2 dark:bg-section-light-overlay'
 								>
-									<Image
-										src={'/assets/icons/user-profile.png'}
-										width={16}
-										height={16}
-										alt='user image'
+									<NameLabel
+										truncateUsername={true}
+										defaultAddress={activity.address}
+										usernameMaxLength={10}
 									/>
-									<span className='inline-block text-[15px] font-semibold text-blue-light-high dark:text-blue-dark-high'>{activity?.address.slice(0, 5)}...</span>
 									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-									<span className='text-[20px] font-normal text-pink_primary'>${getFormattedValue(activity?.amount)}</span>
+									<span className='text-[20px] font-normal text-pink_primary'>{getDisplayValue(activity?.amount)}</span>
 									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
 									<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
 									<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>

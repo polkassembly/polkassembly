@@ -106,6 +106,8 @@ export interface IPostListing {
 	allChildBounties?: any[];
 	assetId?: string | null;
 	reward?: string;
+	content?: string;
+	includeContent?: boolean;
 }
 
 export interface IPostsListingResponse {
@@ -122,6 +124,7 @@ export function getGeneralStatus(status: string) {
 }
 
 interface IGetOnChainPostsParams {
+	preimageSection?: string;
 	network: string;
 	page?: string | string[] | number;
 	sortBy: string | string[];
@@ -132,6 +135,7 @@ interface IGetOnChainPostsParams {
 	postIds?: string | string[] | number[];
 	filterBy?: string[] | [];
 	proposalStatus?: string | string[];
+	includeContent?: boolean;
 }
 
 export function getProposerAddressFromFirestorePostData(data: any, network: string) {
@@ -157,7 +161,8 @@ export function getProposerAddressFromFirestorePostData(data: any, network: stri
 
 export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<IApiResponse<IPostsListingResponse>> {
 	try {
-		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus } = params;
+		const { listingLimit, network, page, proposalType, sortBy, trackNo, trackStatus, postIds, filterBy, proposalStatus, preimageSection, includeContent = false } = params;
+
 		const numListingLimit = Number(listingLimit);
 		if (isNaN(numListingLimit)) {
 			throw apiErrorWithStatusCode(`Invalid listingLimit "${listingLimit}"`, 400);
@@ -253,15 +258,22 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			const topicFromType = getTopicFromType(proposalType as ProposalType);
 			const subsquidProposalType = getSubsquidProposalType(proposalType as any);
+
 			const postsVariables: any = {
 				index_in: ids,
 				limit: numListingLimit,
 				offset: numListingLimit * (numPage - 1),
 				type_eq: subsquidProposalType
 			};
+
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
 			}
+
+			if (preimageSection) {
+				postsVariables.section_eq = preimageSection;
+			}
+
 			let query = GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
 			if (network === 'polymesh') {
 				query = GET_POLYMESH_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES;
@@ -377,9 +389,11 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					const data = postDoc.data();
 					if (data) {
 						let subsquareTitle = '';
+						let subsquareContent = '';
 						if (data?.title === '' || data?.title === undefined) {
 							const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 							subsquareTitle = res?.title;
+							subsquareContent = res?.content;
 						}
 						const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 						const topic = data?.topic;
@@ -388,6 +402,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						return {
 							assetId: assetId || null,
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							content: !includeContent ? '' : data.content || subsquareContent || '',
 							created_at: createdAt,
 							curator,
 							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
@@ -429,12 +444,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				}
 
 				let subsquareTitle = '';
+				let subsquareContent = '';
 				const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 				subsquareTitle = res?.title;
+				subsquareContent = res?.content;
 
 				return {
 					assetId: assetId || null,
 					comments_count: commentsQuerySnapshot.data()?.count || 0,
+					content: !includeContent ? '' : subsquareContent || '',
 					created_at: createdAt,
 					curator,
 					description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
@@ -453,7 +471,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					status_history: statusHistory,
 					tally,
 					timeline: proposalTimeline,
-					title: subsquareTitle,
+					title: subsquareTitle || 'Untitled',
 					topic: topicFromType,
 					track_no: !isNaN(trackNumber) ? trackNumber : null,
 					type: type || subsquidProposalType,
@@ -519,6 +537,10 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 			if (Array.isArray(proposalStatus) && proposalStatus.length > 0) {
 				postsVariables.status_in = proposalStatus;
+			}
+
+			if (preimageSection) {
+				postsVariables.section_eq = preimageSection;
 			}
 
 			if (proposalType === ProposalType.OPEN_GOV) {
@@ -635,13 +657,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
+								let subsquareContent = '';
+
 								if (data?.title === '' || data?.content === '' || data.title === undefined || data?.content === undefined) {
 									const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 									subsquareTitle = res?.title;
+									subsquareContent = res?.content;
 								}
 								return {
 									cid: cid,
 									comments_count: commentsQuerySnapshot.data()?.count || 0,
+									content: !includeContent ? '' : data.content || subsquareContent || '',
 									created_at: createdAt,
 									gov_type: data.gov_type,
 									hash,
@@ -709,12 +735,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							const data = postDoc.data();
 							if (data) {
 								let subsquareTitle = '';
+								let subsquareContent = '';
 								if (data?.title === '' || data?.title === title || data?.title === undefined) {
 									const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 									subsquareTitle = res?.title;
+									subsquareContent = res?.content;
 								}
 								return {
 									comments_count: commentsQuerySnapshot.data()?.count || 0,
+									content: !includeContent ? '' : data.content || subsquareContent || '',
 									created_at: createdAt,
 									description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 									end,
@@ -738,11 +767,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						}
 
 						let subsquareTitle = '';
+						let subsquareContent = '';
 						const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 						subsquareTitle = res?.title;
+						subsquareContent = res?.content;
 
 						return {
 							comments_count: commentsQuerySnapshot.data()?.count || 0,
+							content: !includeContent ? '' : subsquareContent || '',
 							created_at: createdAt,
 							description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
 							end: end,
@@ -878,10 +910,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						const data = postDoc.data();
 						if (data) {
 							let subsquareTitle = '';
+							let subsquareContent = '';
+
 							if (data?.title === '' || data?.title === method) {
 								const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 								subsquareTitle = res?.title;
+								subsquareContent = res?.content;
 							}
+
 							const proposer_address = getProposerAddressFromFirestorePostData(data, network);
 							const topic = data?.topic;
 							const topic_id = data?.topic_id;
@@ -890,6 +926,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								assetId: assetId || null,
 								beneficiaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
+								content: !includeContent ? '' : subsquareContent || '',
 								created_at: createdAt,
 								curator,
 								description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
@@ -932,12 +969,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					}
 
 					let subsquareTitle = '';
+					let subsquareContent = '';
+
 					const res = await getSubSquareContentAndTitle(strProposalType, network, postId);
 					subsquareTitle = res?.title;
+					subsquareContent = res?.content;
+
 					return {
 						assetId: assetId || null,
 						beneficiaries,
 						comments_count: commentsQuerySnapshot.data()?.count || 0,
+						content: !includeContent ? '' : subsquareContent || '',
 						created_at: createdAt,
 						curator,
 						description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',
@@ -1107,16 +1149,32 @@ export const getSpamUsersCountForPosts = async (network: string, posts: any[], p
 const handler: NextApiHandler<IPostsListingResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { page = 1, trackNo, trackStatus, proposalType, sortBy = sortValues.NEWEST, listingLimit = LISTING_LIMIT, filterBy, proposalStatus } = req.query;
+	const {
+		page = 1,
+		trackNo,
+		trackStatus,
+		proposalType,
+		sortBy = sortValues.NEWEST,
+		listingLimit = LISTING_LIMIT,
+		filterBy,
+		proposalStatus,
+		preimageSection,
+		includeContent
+	} = req.query;
+
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
+
 	const postIds = req.body.postIds;
+
 	const { data, error, status } = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		includeContent: Boolean(includeContent),
 		listingLimit,
 		network,
 		page,
 		postIds,
+		preimageSection: preimageSection ? String(preimageSection) : '',
 		proposalStatus: proposalStatus && Array.isArray(JSON.parse(decodeURIComponent(String(proposalStatus)))) ? JSON.parse(decodeURIComponent(String(proposalStatus))) : [],
 		proposalType,
 		sortBy,

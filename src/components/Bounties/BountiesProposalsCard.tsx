@@ -62,8 +62,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { proposer, index, trackNumber, status, bountyId, reward } = proposal;
-	console.log(index, status);
+	const { proposer, index, trackNumber, bountyId, reward } = proposal;
 	if (!proposal) {
 		return null;
 	}

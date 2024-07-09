@@ -15,10 +15,13 @@ import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageComponent from '../ImageComponent';
 import Link from 'next/link';
-import CuratorPopover from './utils/CuratorPopover';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import CuratorPopover from './utils/CuratorPopover';
+import BN from 'bn.js';
+import { chainProperties } from '~src/global/networkConstants';
+import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 
 const CardHeader = styled.div`
@@ -35,6 +38,8 @@ const CardHeader = styled.div`
 	}
 `;
 
+const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGraph'), { ssr: false });
+
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
 	const { post_id, title, description, tags, reward, user_id, curator } = extendedData;
@@ -46,37 +51,40 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		value: ''
 	});
 	const [loading, setLoading] = useState(false);
+	const [percentageClaimed, setPercentageClaimed] = useState<number>(0);
+	const unit = chainProperties?.[network]?.tokenSymbol;
 
 	const getChildBounties = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
-				parentBountyIndex: post_id
-			});
-			if (data && data?.child_bounties_count) {
-				setChildBountiesCount(data.child_bounties_count);
+		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
+			parentBountyIndex: post_id
+		});
+		if (data) {
+			setChildBountiesCount(data.child_bounties_count);
+
+			if (data.child_bounties_count > 0) {
+				const totalChildRewards = data.child_bounties.reduce((sum, childBounty) => sum.add(new BN(childBounty.reward)), new BN(0));
+				const totalReward = new BN(reward);
+				const claimedPercentage = totalChildRewards.muln(100).div(totalReward).toNumber();
+				setPercentageClaimed(claimedPercentage);
+			} else {
+				setPercentageClaimed(0);
 			}
-			if (error) {
-				console.log('error', error);
-			}
-		} catch (error) {
+		}
+		if (error) {
 			console.log('error', error);
 		}
 	};
 
 	const getUserProfile = async (userIds: string[]) => {
-		try {
-			if (userIds?.length) {
-				const { data } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
-				if (data) {
-					setUserImageData(data);
-				} else {
-					console.log('There is error in fetching data');
-				}
+		if (userIds?.length) {
+			const { data, error } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
+			if (data) {
+				setUserImageData(data);
 			} else {
-				setUserImageData([]);
+				console.log('There is error in fetching data', error);
 			}
-		} catch (error) {
-			console.log('error', error);
+		} else {
+			setUserImageData([]);
 		}
 	};
 
@@ -93,21 +101,33 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post_id, user_id, network]);
 
-	const getFormattedValue = (value: string) => {
-		if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
-			return value;
+	const formatNumberWithSuffix = (value: number) => {
+		if (value >= 1e6) {
+			return (value / 1e6).toFixed(1) + 'm';
+		} else if (value >= 1e3) {
+			return (value / 1e3).toFixed(1) + 'k';
 		}
+		return value.toFixed(1);
+	};
+
+	const getFormattedValue = (value: string) => {
 		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
+
+		if (isNaN(Number(currentTokenPrice.value))) {
+			return formatNumberWithSuffix(numericValue);
+		}
+
 		const tokenPrice = Number(currentTokenPrice.value);
 		const dividedValue = numericValue / tokenPrice;
 
-		if (dividedValue >= 1e6) {
-			return (dividedValue / 1e6).toFixed(2) + 'm';
-		} else if (dividedValue >= 1e3) {
-			return (dividedValue / 1e3).toFixed(2) + 'k';
-		} else {
-			return dividedValue.toFixed(2);
+		return formatNumberWithSuffix(dividedValue);
+	};
+
+	const getDisplayValue = (value: string) => {
+		if (currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value))) {
+			return `${getFormattedValue(value)} ${unit}`;
 		}
+		return `$${getFormattedValue(value)}`;
 	};
 
 	return (
@@ -122,12 +142,13 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								theme={theme as any}
 								className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 							>
-								<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>${getFormattedValue(String(reward))}</h2>
+								<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
 								<Divider
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
-								<h2 className='mt-3 text-[22px] font-normal dark:text-white'>48%</h2>
+								<h2 className='mt-3 text-[26px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
+								<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
 							</CardHeader>
 							<Link
 								key={post_id}

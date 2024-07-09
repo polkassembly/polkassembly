@@ -38,8 +38,8 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 	}
 
 	return (
-		<section className='w-[383px]'>
-			<div className='w-[383px]'>
+		<section className='w-full md:w-[383px]'>
+			<div className='w-full md:w-[383px]'>
 				<div className='flex'>
 					<div className='flex h-[56px] w-full items-center justify-between rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
 						<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
@@ -59,11 +59,11 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 								width={45}
 								height={45}
 								alt='redirect link'
-								className='-mr-[2px] cursor-pointer rounded-full bg-black dark:bg-white'
+								className='-mr-[2px] h-[36px] w-[36px] cursor-pointer rounded-full bg-black dark:bg-white md:h-auto md:w-auto'
 							/>
 							<div className='h-2 w-[10px] bg-black dark:bg-white'></div>
 							<button
-								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[44px] w-[100px] cursor-pointer rounded-3xl border-none bg-black text-lg font-bold text-white dark:bg-white dark:text-black`}
+								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[36px] w-[75px] cursor-pointer rounded-3xl border-none bg-black text-base font-bold text-white dark:bg-white dark:text-black md:h-[44px] md:w-[100px] md:text-lg`}
 							>
 								Vote
 							</button>
@@ -77,7 +77,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 					<ImageIcon
 						src='/assets/bounty-icons/bounty-image.svg'
 						alt='bounty icon'
-						imgClassName='mt-5 mb-3'
+						imgClassName='mt-5 mb-3 w-full md:w-auto'
 						imgWrapperClassName=''
 					/>
 					<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>

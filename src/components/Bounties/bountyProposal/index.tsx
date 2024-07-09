@@ -39,7 +39,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 		<div className={className}>
 			<button
 				onClick={() => handleClick(1)}
-				className='bounty-button flex cursor-pointer items-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] '
+				className='bounty-button flex w-full cursor-pointer items-center justify-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] md:w-auto md:justify-normal '
 			>
 				<ImageIcon
 					src='/assets/bounty-icons/proposal-icon.svg'

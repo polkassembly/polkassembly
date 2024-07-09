@@ -15,10 +15,48 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { IBountyProposal } from 'pages/api/v1/bounty/getBountyProposals';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
+import styled from 'styled-components';
 
 export interface BountiesProposalsCardProps {
 	proposal: IBountyProposal;
 }
+
+const CardHeader = styled.div`
+	&:after {
+		content: '';
+		position: absolute;
+		bottom: 0px;
+		right: -30px;
+		height: 30px;
+		width: 30px;
+		border-bottom-left-radius: 100%;
+		border-left: 1px solid ${(props: any) => (props.theme === 'dark' ? '#3b444f' : '#d2d8e0')} !important;
+		box-shadow: -9px 9px 0 4px ${(props: any) => (props.theme === 'dark' ? '#141416' : '#fff')} !important;
+	}
+`;
+
+const HeaderBtns = styled.div`
+	&:after {
+		content: '';
+		position: absolute;
+		bottom: 29px;
+		right: 105px;
+		height: 12px;
+		width: 12px;
+		border-radius: 100%;
+		box-shadow: 0px 4px 0 0px ${(props: any) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+	}
+	&:before {
+		content: '';
+		position: absolute;
+		bottom: 4px;
+		right: 105px;
+		height: 12px;
+		width: 12px;
+		border-radius: 100%;
+		box-shadow: 0px -4px 0 0px ${(props: any) => (props.theme === 'dark' ? 'white' : 'black')} !important;
+	}
+`;
 
 const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal }) => {
 	const { network } = useNetworkSelector();
@@ -40,19 +78,25 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 		<section className='w-full md:w-[383px]'>
 			<div className='w-full md:w-[383px]'>
 				<div className='flex'>
-					<div className='flex h-[56px] w-full items-center justify-between rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
+					<CardHeader
+						theme={theme as any}
+						className='relative flex h-[56px] w-full items-center justify-between rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
+					>
 						<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
 						<Divider
 							type='vertical'
 							className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 						/>
 						<h2 className='mt-3 text-[22px] font-normal dark:text-white'>52%</h2>
-					</div>
+					</CardHeader>
 					<Link
 						href={`/referenda/${index}`}
 						target='_blank'
 					>
-						<div className='ml-2 flex w-full items-center'>
+						<HeaderBtns
+							theme={theme as any}
+							className='relative ml-2 flex w-full items-center'
+						>
 							<Image
 								src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 								width={45}
@@ -66,7 +110,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ proposal 
 							>
 								Vote
 							</button>
-						</div>
+						</HeaderBtns>
 					</Link>
 				</div>
 				<div

@@ -22,6 +22,21 @@ import CuratorPopover from './utils/CuratorPopover';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import dynamic from 'next/dynamic';
+import styled from 'styled-components';
+
+const CardHeader = styled.div`
+	&:after {
+		content: '';
+		position: absolute;
+		bottom: 0px;
+		right: -30px;
+		height: 30px;
+		width: 30px;
+		border-bottom-left-radius: 100%;
+		border-left: 1px solid ${(props: any) => (props.theme === 'dark' ? '#3b444f' : '#d2d8e0')} !important;
+		box-shadow: -9px 9px 0 4px ${(props: any) => (props.theme === 'dark' ? '#141416' : '#fff')} !important;
+	}
+`;
 
 const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGraph'), { ssr: false });
 
@@ -123,20 +138,23 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 				<>
 					<div className='w-full md:w-[383px]'>
 						<div className='flex w-full'>
-							<div className='flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
-								<h2 className='mt-4 text-[32px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
+							<CardHeader
+								theme={theme as any}
+								className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
+							>
+								<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
 								<Divider
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
 								<h2 className='mt-3 text-[26px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
 								<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
-							</div>
+							</CardHeader>
 							<Link
 								key={post_id}
 								href={`/bounty/${post_id}`}
 								target='_blank'
-								className='px-3'
+								className='px-2'
 							>
 								<Image
 									src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}

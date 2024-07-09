@@ -99,12 +99,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	};
 
 	return (
-		<section className='w-[383px]'>
+		<section className='w-full md:w-[383px]'>
 			{loading ? (
 				<Skeleton active />
 			) : (
 				<>
-					<div className='w-[383px]'>
+					<div className='w-full md:w-[383px]'>
 						<div className='flex w-full'>
 							<div className='flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'>
 								<h2 className='mt-4 text-[35px] font-normal text-pink_primary'>${getFormattedValue(String(reward))}</h2>
@@ -137,7 +137,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 							<ImageIcon
 								src='/assets/bounty-icons/bounty-image.svg'
 								alt='bounty icon'
-								imgClassName='mt-5 mb-3'
+								imgClassName='mt-5 mb-3 w-full md:w-auto'
 								imgWrapperClassName=''
 							/>
 							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>

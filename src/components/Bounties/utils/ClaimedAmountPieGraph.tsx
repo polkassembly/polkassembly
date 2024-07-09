@@ -1,19 +1,23 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+/* eslint-disable sort-keys */
 import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 
 const ClaimedAmountPieGraph = ({ percentageClaimed }: { percentageClaimed: number }) => {
 	const data = [
 		{
+			color: '#FFC302',
 			id: 'claimed',
 			label: 'claimed',
-			value: percentageClaimed,
-			color: '#FFC302'
+			value: percentageClaimed
 		},
 		{
+			color: '#E0E0E0',
 			id: 'unclaimed',
 			label: 'unclaimed',
-			value: 100 - percentageClaimed,
-			color: '#E0E0E0'
+			value: 100 - percentageClaimed
 		}
 	];
 

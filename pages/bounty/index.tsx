@@ -7,10 +7,11 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import BountiesContainer from '~src/components/Bounties';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getStatusesFromCustomStatus } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
@@ -36,7 +37,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	const extendedResponse = await getOnChainPosts({
 		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		includeContent: true,
 		listingLimit: LISTING_LIMIT,
 		network,
 		page,
@@ -46,8 +46,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		sortBy
 	});
 
+	const activeBountyResp = await getOnChainPosts({
+		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+		includeContent: true,
+		listingLimit: LISTING_LIMIT,
+		network,
+		page,
+		preimageSection: 'Bounties',
+		proposalStatus: getStatusesFromCustomStatus(CustomStatus.Voting),
+		proposalType,
+		sortBy
+	});
+	console.log('activeBountyResp', activeBountyResp);
+
 	return {
 		props: {
+			activeBountyData: activeBountyResp.data,
 			error: extendedResponse.error || null,
 			extendedData: extendedResponse.data,
 			network
@@ -56,13 +70,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 interface IBountyProps {
+	activeBountyData?: IPostsListingResponse;
 	error?: string;
 	extendedData?: IPostsListingResponse;
 	network: string;
 }
 
 const Bounty: React.FC<IBountyProps> = (props) => {
-	const { extendedData, error, network } = props;
+	const { extendedData, activeBountyData, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -71,7 +86,7 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	if (!extendedData) return null;
+	console.log('activeBountyData', activeBountyData);
 
 	return (
 		<>

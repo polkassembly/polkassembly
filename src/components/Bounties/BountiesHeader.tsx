@@ -4,6 +4,7 @@
 import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import Skeleton from '~src/basic-components/Skeleton';
+import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IBountyStats } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -14,6 +15,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
+	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [statsData, setStatsData] = useState<IBountyStats>({
 		activeBounties: '',
 		availableBountyPool: '',
@@ -53,21 +55,33 @@ const BountiesHeader = () => {
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
 
-	const getFormattedValue = (value: string) => {
-		if (currentTokenPrice.isLoading || !currentTokenPrice.value) {
-			return value;
+	const formatNumberWithSuffix = (value: number) => {
+		if (value >= 1e6) {
+			return (value / 1e6).toFixed(2) + 'm';
+		} else if (value >= 1e3) {
+			return (value / 1e3).toFixed(2) + 'k';
 		}
+		return value.toFixed(2);
+	};
+
+	const getFormattedValue = (value: string) => {
 		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
+
+		if (isNaN(Number(currentTokenPrice.value))) {
+			return formatNumberWithSuffix(numericValue);
+		}
+
 		const tokenPrice = Number(currentTokenPrice.value);
 		const dividedValue = numericValue / tokenPrice;
 
-		if (dividedValue >= 1e6) {
-			return (dividedValue / 1e6).toFixed(2) + 'm';
-		} else if (dividedValue >= 1e3) {
-			return (dividedValue / 1e3).toFixed(2) + 'k';
-		} else {
-			return dividedValue.toFixed(2);
+		return formatNumberWithSuffix(dividedValue);
+	};
+
+	const getDisplayValue = (value: string) => {
+		if (currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value))) {
+			return `${getFormattedValue(value)} ${unit}`;
 		}
+		return `$${getFormattedValue(value)}`;
 	};
 
 	return (
@@ -79,7 +93,7 @@ const BountiesHeader = () => {
 					<div className='flex gap-6'>
 						<div>
 							<span className='text-base text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-							<div className='text-[46px]'>${getFormattedValue(statsData.availableBountyPool)}</div>
+							<div className='text-[46px]'>{getDisplayValue(statsData.availableBountyPool)}</div>
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon
@@ -105,11 +119,11 @@ const BountiesHeader = () => {
 							</div>
 							<div className='flex flex-col'>
 								<span className='text-base'>Total Rewarded</span>
-								<span className='text-[28px]'>${getFormattedValue(statsData.totalRewarded)}</span>
+								<span className='text-[28px]'>{getDisplayValue(statsData.totalRewarded)}</span>
 							</div>
 							<div className='flex flex-col'>
 								<span className='text-base'>Total Bounty Pool</span>
-								<span className='text-[28px]'>${getFormattedValue(statsData.totalBountyPool)}</span>
+								<span className='text-[28px]'>{getDisplayValue(statsData.totalBountyPool)}</span>
 							</div>
 						</div>
 					</div>

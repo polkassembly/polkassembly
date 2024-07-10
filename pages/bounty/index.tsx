@@ -48,6 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		}),
 		getOnChainPosts({
 			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			getBountyReward: true,
 			includeContent: true,
 			listingLimit: LISTING_LIMIT,
 			network,

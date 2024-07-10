@@ -35,6 +35,7 @@ import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks } from 'src/global/networkConstants';
 import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
+import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
 const ZERO_BN = new BN(0);
 
@@ -272,6 +273,14 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
+				{onchainIdentitySupportedNetwork.includes(network) && network === 'kusama' && (
+					<div
+						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
+						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}
+					>
+						<span className='font-semibold text-white'>People Chain is now LIVE for {network.charAt(0).toUpperCase() + network.slice(1)} network</span>
+					</div>
+				)}
 				{totalFee.gt(ZERO_BN) &&
 					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
 					availableBalance &&

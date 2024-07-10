@@ -36,6 +36,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import AmbassadorSeeding from '~src/components/AmbassadorSeeding';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -282,6 +283,17 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	return (
 		<div className={`${className}`}>
+			<div>
+				<div className='image-button-wrapper mx-auto'>
+					<ImageIcon
+						src='/assets/vote-badge.svg'
+						alt='vote-badge'
+						imgWrapperClassName='flex justify-center'
+						imgClassName=''
+					/>
+					<Button className='begin-button flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs text-white'>Lets Begin</Button>
+				</div>
+			</div>
 			<article className='flex justify-between xs:py-2 md:py-0'>
 				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
@@ -551,5 +563,18 @@ export default styled(AboutTrackCard)`
 		.text-container {
 			display: block !important;
 		}
+	}
+	.image-button-wrapper {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: fit-content;
+	}
+
+	.begin-button {
+		position: absolute;
+		top: 63%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 `;

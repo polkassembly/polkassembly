@@ -15,6 +15,7 @@ module.exports = {
 			colors: {
 				navBlue: 'var(--navBlue)',
 				// blue: 'var(--blue)',
+				blue_tertiary: 'var(--blue_tertiary)',
 				sidebarBlue: 'var(--sidebarBlue)',
 				bodyBlue: 'var(--bodyBlue)',
 				lightBlue: 'var(--lightBlue)',
@@ -70,6 +71,7 @@ module.exports = {
 				abstainDarkBlueColor: 'var(--abstainBlueColor)',
 				textGreyColor: 'var(--textGreyColor)',
 				highlightBg: 'var(--highlightBg)',
+				yellowPrimary: 'var(--yellowPrimary)',
 				blue: {
 					light: {
 						disabled: '#96A4B6',

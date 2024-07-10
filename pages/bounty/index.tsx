@@ -35,36 +35,39 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = context.query;
 	const proposalType = ProposalType.BOUNTIES;
 
-	const extendedResponse = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		listingLimit: LISTING_LIMIT,
-		network,
-		page,
-		preimageSection: '',
-		proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
-		proposalType,
-		sortBy
-	});
+	const [extendedResponse, activeBountyResp] = await Promise.allSettled([
+		getOnChainPosts({
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			listingLimit: LISTING_LIMIT,
+			network,
+			page,
+			preimageSection: '',
+			proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
+			proposalType,
+			sortBy
+		}),
+		getOnChainPosts({
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			includeContent: true,
+			listingLimit: LISTING_LIMIT,
+			network,
+			page,
+			preimageSection: 'Bounties',
+			proposalStatus: getStatusesFromCustomStatus(CustomStatus.Voting),
+			proposalType: ProposalType.REFERENDUM_V2,
+			sortBy
+		})
+	]);
 
-	const activeBountyResp = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		includeContent: true,
-		listingLimit: LISTING_LIMIT,
-		network,
-		page,
-		preimageSection: 'Bounties',
-		proposalStatus: getStatusesFromCustomStatus(CustomStatus.Voting),
-		proposalType: ProposalType.REFERENDUM_V2,
-		sortBy
-	});
-
-	console.log('activeBountyResp', activeBountyResp);
+	const extendedData = extendedResponse.status === 'fulfilled' ? extendedResponse.value.data : null;
+	const activeBountyData = activeBountyResp.status === 'fulfilled' ? activeBountyResp.value.data : null;
+	const error = extendedResponse.status === 'rejected' ? extendedResponse.reason : activeBountyResp.status === 'rejected' ? activeBountyResp.reason : null;
 
 	return {
 		props: {
-			activeBountyData: activeBountyResp.data,
-			error: extendedResponse.error || null,
-			extendedData: extendedResponse.data,
+			activeBountyData,
+			error,
+			extendedData,
 			network
 		}
 	};

@@ -196,7 +196,10 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								</div>
 							)}
 							<div className='flex items-center justify-between'>
-								<div>
+								<Link
+									href={`/user/${userImageData[0]?.username}`}
+									target='_blank '
+								>
 									<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
 									<ImageComponent
 										alt='user img'
@@ -204,7 +207,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
 									/>
 									<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
-								</div>
+								</Link>
 								<div className={'flex cursor-pointer items-center '}>
 									{curator && (
 										<>

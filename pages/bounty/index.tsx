@@ -58,8 +58,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		sortBy
 	});
 
-	console.log('activeBountyResp', activeBountyResp);
-
 	return {
 		props: {
 			activeBountyData: activeBountyResp.data,

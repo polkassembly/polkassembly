@@ -142,12 +142,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								theme={theme as any}
 								className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 							>
-								<h2 className='font-pixeboy mt-4 text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
+								<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
 								<Divider
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
-								<h2 className='font-pixeboy mt-3 text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
+								<h2 className='mt-3 font-pixeboy text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
 								<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
 							</CardHeader>
 							<Link

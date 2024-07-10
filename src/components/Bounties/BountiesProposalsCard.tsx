@@ -110,12 +110,12 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							theme={theme as any}
 							className='relative flex h-[56px] w-full items-center justify-start gap-4 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 						>
-							<h2 className='font-pixeboy mt-4 text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
+							<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
 							<Divider
 								type='vertical'
 								className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 							/>
-							<h2 className='font-pixeboy mt-3 text-[22px] font-normal dark:text-white'>52%</h2>
+							<h2 className='mt-3 font-pixeboy text-[22px] font-normal dark:text-white'>52%</h2>
 						</CardHeader>
 						<Link
 							href={`/referenda/${post_id}`}

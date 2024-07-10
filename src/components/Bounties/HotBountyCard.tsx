@@ -142,12 +142,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								theme={theme as any}
 								className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 							>
-								<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
+								<h2 className='font-pixeboy mt-4 text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
 								<Divider
 									type='vertical'
 									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 								/>
-								<h2 className='mt-3 font-pixeboy text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
+								<h2 className='font-pixeboy mt-3 text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
 								<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
 							</CardHeader>
 							<Link
@@ -170,12 +170,17 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								'rounded-tr-2xl border-b border-l border-r border-t-0 border-solid border-section-light-container bg-white px-3 py-1 dark:border-section-dark-container dark:bg-section-light-overlay'
 							}
 						>
-							<ImageIcon
-								src='/assets/bounty-icons/bounty-image.svg'
-								alt='bounty icon'
-								imgClassName='mt-5 mb-3 w-full md:w-auto'
-								imgWrapperClassName=''
-							/>
+							<Link
+								href={`/referenda/${post_id}`}
+								target='_blank'
+							>
+								<ImageIcon
+									src='/assets/bounty-icons/bounty-image.svg'
+									alt='bounty icon'
+									imgClassName='mt-5 mb-3 w-full md:w-auto'
+									imgWrapperClassName=''
+								/>
+							</Link>
 							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
 								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
@@ -184,25 +189,25 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								{getAscciiFromHex(description).slice(0, 140)}
 							</p>
 							{tags && tags.length > 0 && (
-								<>
-									{tags?.slice(0, 2).map((tag: string, index: number) => (
+								<div className='flex gap-x-1'>
+									{tags?.slice(0, 3).map((tag: string, index: number) => (
 										<div
 											key={index}
 											style={{ fontSize: '10px' }}
-											className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
+											className=' w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
 										>
 											{tag}
 										</div>
 									))}
-									{tags.length > 2 && (
+									{tags.length > 3 && (
 										<span
 											className='text-bodyBlue dark:text-blue-dark-high'
 											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
 										>
-											+{tags.length - 2}
+											+{tags.length - 3}
 										</span>
 									)}
-								</>
+								</div>
 							)}
 							<div className='flex items-center justify-between'>
 								<Link

@@ -107,7 +107,7 @@ const BountyActivities = () => {
 									usernameMaxLength={10}
 								/>
 								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-								<span className='text-sm font-normal text-pink_primary md:text-[20px]'>{getDisplayValue(activity?.amount)}</span>
+								<span className='font-pixeboy text-sm font-normal text-pink_primary md:text-[20px]'>{getDisplayValue(activity?.amount)}</span>
 								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
 								<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
 								<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>

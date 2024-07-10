@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { poppins, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackTag from '~src/ui-components/TrackTag';
-import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -107,7 +106,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 
 	useEffect(() => {
 		if (!window || track_no === null) return;
-		let trackDetails = getTrackData(network, '', track_no);
+		const trackDetails = getTrackData(network, '', track_no);
 		if (!created_at || !trackDetails) return;
 
 		const prepare = getPeriodData(network, dayjs(created_at), trackDetails, 'preparePeriod');
@@ -190,12 +189,12 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							theme={theme as any}
 							className='relative flex h-[56px] w-full items-center justify-start gap-4 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 						>
-							<h2 className='font-pixeboy mt-4 text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
+							<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
 							<Divider
 								type='vertical'
 								className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 							/>
-							{decision && decidingStatusBlock && <h2 className='font-pixeboy mt-3 text-[22px] font-normal dark:text-white'>{decision.periodPercent || 0}%</h2>}
+							{decision && decidingStatusBlock && <h2 className='mt-3 font-pixeboy text-[22px] font-normal dark:text-white'>{decision.periodPercent || 0}%</h2>}
 							<div className='mr-1'>
 								{votesData && (
 									<VotesProgressInListing

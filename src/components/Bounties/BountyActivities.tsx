@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { chunkArray } from './utils/ChunksArr';
 import { IBountyUserActivity } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Skeleton from '~src/basic-components/Skeleton';

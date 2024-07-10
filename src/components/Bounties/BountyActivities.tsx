@@ -103,14 +103,14 @@ const BountyActivities = () => {
 					autoplay
 					autoplaySpeed={3000}
 					dots={false}
-					infinite={false}
-					className='max-h-[400px]'
+					infinite
+					className='flex items-center'
 					easing='linear'
 				>
 					{chunkArray(activitiesToShow, 7).map((chunk, index) => (
 						<div
 							key={index}
-							className='flex max-w-[500px] flex-col gap-2'
+							className='my-1 flex h-[50px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
 						>
 							{chunk.map((activity, idx) => (
 								<div

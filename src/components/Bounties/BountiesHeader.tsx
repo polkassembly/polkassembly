@@ -92,8 +92,8 @@ const BountiesHeader = () => {
 				<div className='flex'>
 					<div className='flex gap-6'>
 						<div>
-							<span className='text-base text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-							<div className='text-[46px]'>{getDisplayValue(statsData.availableBountyPool)}</div>
+							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
+							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool)}</div>
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon
@@ -110,20 +110,20 @@ const BountiesHeader = () => {
 						</div>
 						<div className='grid grid-cols-2 gap-x-24 py-7'>
 							<div className='flex flex-col'>
-								<span className='text-base'>Active Bounties</span>
-								<span className='text-[28px]'>{statsData.activeBounties}</span>
+								<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Active Bounties</span>
+								<span className='font-pixeboy text-[28px]'>{statsData.activeBounties}</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='text-base'>No. of People Earned</span>
-								<span className='text-[28px]'>{statsData.peopleEarned}</span>
+								<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>No. of People Earned</span>
+								<span className='font-pixeboy text-[28px]'>{statsData.peopleEarned}</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='text-base'>Total Rewarded</span>
-								<span className='text-[28px]'>{getDisplayValue(statsData.totalRewarded)}</span>
+								<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Total Rewarded</span>
+								<span className='font-pixeboy text-[28px]'>{getDisplayValue(statsData.totalRewarded)}</span>
 							</div>
 							<div className='flex flex-col'>
-								<span className='text-base'>Total Bounty Pool</span>
-								<span className='text-[28px]'>{getDisplayValue(statsData.totalBountyPool)}</span>
+								<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Total Bounty Pool</span>
+								<span className='font-pixeboy text-[28px]'>{getDisplayValue(statsData.totalBountyPool)}</span>
 							</div>
 						</div>
 					</div>

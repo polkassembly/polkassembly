@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+
+@font-face {
+  font-family: 'Pixeboy';
+  src: url('../public/fonts/Pixeboy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --navBlue: #90a0b7;
   --sidebarBlue: #334d6e;
@@ -109,7 +118,7 @@ body {
   scroll-behavior: smooth;
   font-family: var(--font_default), "Poppins", -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif, "Space Grotesk";
+    "Helvetica Neue", sans-serif, "Space Grotesk", "Pixeboy", "Pixelify Sans";
 }
 
 a {

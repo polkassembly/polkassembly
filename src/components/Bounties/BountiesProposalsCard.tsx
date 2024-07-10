@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { poppins, spaceGrotesk } from 'pages/_app';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import TrackTag from '~src/ui-components/TrackTag';
-// import getAscciiFromHex from '~src/util/getAscciiFromHex';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -15,11 +14,10 @@ import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
-import getAscciiFromHex from '~src/util/getAscciiFromHex';
-import ImageComponent from '../ImageComponent';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import Skeleton from '~src/basic-components/Skeleton';
+import ImageComponent from '../ImageComponent';
 
 export interface BountiesProposalsCardProps {
 	activeData: any;
@@ -66,7 +64,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { track_no, tags, title, description, reward, user_id, post_id } = activeData;
+	const { track_no, tags, title, content, reward, user_id, post_id } = activeData;
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [loading, setLoading] = useState(false);
 
@@ -112,12 +110,12 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							theme={theme as any}
 							className='relative flex h-[56px] w-full items-center justify-start gap-4 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 						>
-							<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
+							<h2 className='font-pixeboy mt-4 text-[35px] font-normal text-pink_primary'>${Number(formatedBalance(reward.toString(), unit).replaceAll(',', ''))}</h2>
 							<Divider
 								type='vertical'
 								className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 							/>
-							<h2 className='mt-3 font-pixeboy text-[22px] font-normal dark:text-white'>52%</h2>
+							<h2 className='font-pixeboy mt-3 text-[22px] font-normal dark:text-white'>52%</h2>
 						</CardHeader>
 						<Link
 							href={`/referenda/${post_id}`}
@@ -157,20 +155,27 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 							<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 						</div>
-						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-							{getAscciiFromHex(description).slice(0, 140)}
-						</p>
+						<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>{content.slice(0, 140)}</p>
 						{tags && tags.length > 0 && (
-							<div className='flex gap-x-1'>
-								{tags.map((tag: string, index: number) => (
+							<>
+								{tags?.slice(0, 2).map((tag: string, index: number) => (
 									<div
 										key={index}
-										className='w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-1 text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:text-blue-dark-medium'
+										style={{ fontSize: '10px' }}
+										className='rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
 									>
 										{tag}
 									</div>
 								))}
-							</div>
+								{tags.length > 2 && (
+									<span
+										className='text-bodyBlue dark:text-blue-dark-high'
+										style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
+									>
+										+{tags.length - 2}
+									</span>
+								)}
+							</>
 						)}
 						<div>
 							<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>

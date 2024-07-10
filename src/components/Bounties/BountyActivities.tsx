@@ -95,23 +95,24 @@ const BountyActivities = () => {
 					easing='linear'
 					slidesToShow={7}
 				>
-					{userActivities.map((activity, index) => (
-						<div
-							key={index}
-							className='my-1 flex h-[50px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
-						>
-							<NameLabel
-								truncateUsername={true}
-								defaultAddress={activity.address}
-								usernameMaxLength={10}
-							/>
-							<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-							<span className='text-sm font-normal text-pink_primary md:text-[20px]'>{getDisplayValue(activity?.amount)}</span>
-							<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
-							<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
-							<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>
-						</div>
-					))}
+					{userActivities &&
+						userActivities.map((activity, index) => (
+							<div
+								key={index}
+								className='my-1 flex h-[50px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
+							>
+								<NameLabel
+									truncateUsername={true}
+									defaultAddress={activity.address}
+									usernameMaxLength={10}
+								/>
+								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
+								<span className='text-sm font-normal text-pink_primary md:text-[20px]'>{getDisplayValue(activity?.amount)}</span>
+								<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
+								<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
+								<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>
+							</div>
+						))}
 				</Carousel>
 			)}
 		</div>

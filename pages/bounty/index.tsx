@@ -90,6 +90,7 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
+	console.log('activeBountyData', activeBountyData);
 
 	return (
 		<>

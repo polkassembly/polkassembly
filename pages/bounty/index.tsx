@@ -54,9 +54,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		page,
 		preimageSection: 'Bounties',
 		proposalStatus: getStatusesFromCustomStatus(CustomStatus.Voting),
-		proposalType,
+		proposalType: ProposalType.REFERENDUM_V2,
 		sortBy
 	});
+
 	console.log('activeBountyResp', activeBountyResp);
 
 	return {
@@ -86,7 +87,6 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	console.log('activeBountyData', activeBountyData);
 
 	return (
 		<>
@@ -96,7 +96,10 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 				network={network}
 			/>
 			<div>
-				<BountiesContainer extendedData={extendedData} />
+				<BountiesContainer
+					activeBountyData={activeBountyData}
+					extendedData={extendedData}
+				/>
 			</div>
 		</>
 	);

@@ -74,36 +74,45 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		const dataPromises = activitiesDocs.map(async (activity) => {
 			const activityData = activity.data() as IUserActivity;
 
-			const postRef = postsByTypeRef(network, activityData.post_type).doc(String(activityData.post_id));
-			const postSnapshot = await postRef.get();
-			const postData = postSnapshot.data();
+			try {
+				const postRef = postsByTypeRef(network, activityData.post_type).doc(String(activityData.post_id));
+				const postSnapshot = await postRef.get();
+				const postData = postSnapshot.data();
 
-			const userQuerySnapshot = await firestore_db.collection('users').where('id', '==', Number(activityData.by)).limit(1).get();
-			if (userQuerySnapshot.size == 0) return res.status(404).json({ message: `No user found with the id '${userId}'.` });
-			const userDoc = userQuerySnapshot.docs[0].data() as User;
+				const userQuerySnapshot = await firestore_db.collection('users').where('id', '==', Number(activityData.by)).limit(1).get();
+				if (userQuerySnapshot.size == 0) throw new Error(`No user found with the id '${userId}'.`);
+				const userDoc = userQuerySnapshot.docs[0].data() as User;
 
-			return {
-				by: activityData.by,
-				createdAt: activityData.created_at,
-				id: activity.id,
-				image: userDoc?.profile?.image,
-				network: activityData.network,
-				postAuthorId: activityData.post_author_id,
-				postContent: postData ? postData.content : null,
-				postId: activityData.post_id,
-				postTitle: postData ? postData?.title : null,
-				postType: activityData.post_type,
-				reacted_by: userDoc.username,
-				type: activityData.type
-			};
+				return {
+					by: activityData.by,
+					createdAt: activityData.created_at,
+					id: activity.id,
+					image: userDoc?.profile?.image,
+					network: activityData.network,
+					postAuthorId: activityData.post_author_id,
+					postContent: postData ? postData.content : null,
+					postId: activityData.post_id,
+					postTitle: postData ? postData?.title : null,
+					postType: activityData.post_type,
+					reacted_by: userDoc.username,
+					type: activityData.type
+				};
+			} catch (error) {
+				return { error: error.message };
+			}
 		});
 
-		const data = await Promise.all(dataPromises);
+		const results = await Promise.allSettled(dataPromises);
+		const data = results.filter((result) => result.status === 'fulfilled').map((result) => (result as PromiseFulfilledResult<any>).value);
+		const errors = results.filter((result) => result.status === 'rejected').map((result) => (result as PromiseRejectedResult).reason);
+
+		if (errors.length > 0) {
+			console.error('Some promises were rejected:', errors);
+		}
 
 		return res.status(200).json({ data, totalCount });
 	} catch (error) {
-		console.error('Error fetching subscribed activities:', error);
-		return res.status(500).json({ message: 'Internal Server Error' });
+		return res.status(500).json({ message: messages.API_FETCH_ERROR });
 	}
 };
 

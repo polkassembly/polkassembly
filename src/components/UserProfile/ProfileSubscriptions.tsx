@@ -78,7 +78,7 @@ const ProfileSubscriptions = ({ className }: Props) => {
 					<span className='ml-2 text-xl font-semibold text-blue-light-high dark:text-blue-dark-high'>Subscriptions</span>
 					<span className='ml-2 mt-1 text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>({totalCount})</span>
 				</div>
-				{totalCount == 0 ? (
+				{!!loading && totalCount == 0 ? (
 					<div className='mx-auto my-10'>
 						<ImageIcon
 							alt='Empty icon'

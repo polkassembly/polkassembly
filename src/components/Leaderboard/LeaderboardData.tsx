@@ -5,7 +5,6 @@ import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import StarIcon from '~assets/icons/StarIcon.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -19,11 +18,15 @@ import DelegateModal from '~src/components/Listing/Tracks/DelegateModal';
 import Tipping from '~src/components/Tipping';
 import { IleaderboardData } from './types';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { MenuProps } from 'antd';
-import { Dropdown } from '~src/ui-components/Dropdown';
+// import { MenuProps } from 'antd';
 import { poppins } from 'pages/_app';
-import Link from 'next/link';
+import { MenuProps, Spin } from 'antd';
 import Image from 'next/image';
+// import Link from 'next/link';
+import { Dropdown } from '~src/ui-components/Dropdown';
+import ScoreTag from '~src/ui-components/ScoreTag';
+// import Link from 'next/link';
+// import Image from 'next/image';
 
 const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -37,19 +40,26 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const [tippingUser, setTippingUser] = useState<string>('');
 	const [currentUserData, setCurrentUserData] = useState<any>();
 	const { username } = useUserDetailsSelector();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [loadingCurrentUser, setLoadingCurrentUser] = useState<boolean>(false);
 
 	const router = useRouter();
 
 	useEffect(() => {
 		const fetchData = async () => {
 			if (router.isReady) {
+				setLoading(true);
 				await getLeaderboardData();
+				setLoading(false);
+
+				setLoadingCurrentUser(true);
 				await currentuserData();
+				setLoadingCurrentUser(false);
 			}
 		};
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage, router.isReady, searchedUsername]);
+	}, [currentPage, router.isReady, searchedUsername, username]);
 
 	const currentuserData = async () => {
 		if (username) {
@@ -72,6 +82,62 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		userImage: item?.image,
 		userSince: dayjs(item?.created_at).format("DD[th] MMM 'YY")
 	}));
+
+	const items: MenuProps['items'] = [
+		{
+			key: '1',
+			label: (
+				<div className=' flex w-[260px] flex-col '>
+					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
+						<ImageIcon
+							src='/assets/icons/astrals-icon.svg'
+							alt='astrals icon'
+							className=''
+						/>
+						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
+					</div>
+					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
+						<div className='mb-2'>
+							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
+							<a
+								className='ml-[2px] text-pink_primary'
+								target='_blank'
+								rel='noreferrer'
+								href='https://docs.google.com/spreadsheets/u/2/d/1Yqqjsg9d1VYl4Da8Hz8hYX24cKgAlqfa_dPnT7C6AcU/htmlview#gid=0'
+							>
+								Learn more{' '}
+								<Image
+									src='/assets/icons/redirect.svg'
+									alt='redirection-icon'
+									width={13}
+									height={13}
+									className='-mt-[3px]'
+								/>
+							</a>
+						</div>
+						<div className='inline'>
+							The more points you earn, the higher your rank in the leaderboard!
+							<ImageIcon
+								src='/assets/icons/medal.svg'
+								alt='medal icon'
+								className='ml-1 inline'
+							/>
+						</div>
+						{/* <div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
+							To view detailed off-chain and on-chain activity{' '}
+							<Link
+								className='text-xs font-medium text-pink_primary'
+								href={`/user/${username}`}
+								target='_blank'
+							>
+								Visit Profile
+							</Link>
+						</div> */}
+					</div>
+				</div>
+			)
+		}
+	];
 
 	const getLeaderboardData = async () => {
 		const body = searchedUsername ? { page: 1, username: searchedUsername } : { page: currentPage };
@@ -102,79 +168,11 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		setCurrentPage(pagination.current);
 	};
 
-	const items: MenuProps['items'] = [
-		{
-			key: '1',
-			label: (
-				<div className=' flex w-[260px] flex-col '>
-					<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-center gap-1`}>
-						<ImageIcon
-							src='/assets/icons/astrals-icon.svg'
-							alt='astrals icon'
-							className=''
-						/>
-						<span className='text-sm font-semibold text-blue-light-high dark:text-blue-dark-high'>Astrals</span>
-					</div>
-					<div className={`${poppins.className} ${poppins.variable} mt-3 text-xs font-normal text-blue-light-high dark:text-blue-dark-high`}>
-						<div className=''>
-							A score system based on the aggregate of off-chain, on-chain activity and profile activity.
-							<a
-								className='ml-[2px] text-pink_primary'
-								href=''
-							>
-								Learn more{' '}
-								<Image
-									src='/assets/icons/redirect.svg'
-									alt='redirection-icon'
-									width={13}
-									height={13}
-									className='-mt-[3px]'
-								/>
-							</a>
-						</div>
-						<span className='my-1 flex'>
-							The more points you earn, the higher your rank in the leaderboard!
-							{/* <ImageIcon
-								src='/assets/icons/profile-icon.svg'
-								alt='medal icon'
-								imgWrapperClassName='self-end'
-							/> */}
-						</span>
-						<div className='mb-2 mt-1 rounded-[6px] bg-[#f7f8f9] p-2 text-blue-light-medium dark:text-blue-dark-medium'>
-							To view detailed off-chain and on-chain activity{' '}
-							<Link
-								className='text-xs font-medium text-pink_primary'
-								href={`/user/${username}`}
-								target='_blank'
-							>
-								Visit Profile
-							</Link>
-						</div>
-					</div>
-				</div>
-			)
-		}
-	];
-
 	const columns: ColumnsType<any> = [
 		{
 			dataIndex: 'rank',
 			key: 'rank',
-			render: (rank, record) => (
-				<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>
-					{record.user === username ? (
-						<ImageIcon
-							className='-ml-2'
-							src='/assets/icons/CircleWavyQuestion.svg'
-							alt=''
-						/>
-					) : rank < 10 ? (
-						`0${rank}`
-					) : (
-						rank
-					)}
-				</p>
-			),
+			render: (rank) => <p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>{rank}</p>,
 			title: <span className={`${poppins.className} ${poppins.variable}`}>Rank</span>,
 			width: 15
 		},
@@ -185,10 +183,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			onFilter: (value, record) => {
 				return String(record.user).toLocaleLowerCase().includes(String(value).toLowerCase());
 			},
-			render: (user, userImage) => (
+			render: (user, obj) => (
 				<div className='flex items-center gap-x-2'>
 					<ImageComponent
-						src={userImage || ''}
+						src={obj?.userImage || ''}
 						alt='User Picture'
 						className='flex h-[36px] w-[36px] items-center justify-center '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] w-full h-full rounded-full'
@@ -213,16 +211,14 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			dataIndex: 'profileScore',
 			key: 'profileScore',
 			render: (profileScore) => (
-				<div
-					className={`${poppins.className} ${poppins.variable} flex h-7 w-[93px] items-center justify-start gap-x-0.5 rounded-md px-2 py-2`}
-					style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
-				>
-					<span className='ml-1.5 mt-[5.5px]'>
-						<StarIcon />
-					</span>
-					<p className='m-0 ml-1 p-0 text-sm font-medium text-[#534930]'>{profileScore}</p>
-				</div>
+				<ScoreTag
+					className='h-7 w-[90px] py-2'
+					score={profileScore}
+					scale={1.1}
+					iconWrapperClassName='ml-1.5 mt-[5.5px]'
+				/>
 			),
+			showSorterTooltip: { open: false },
 			sorter: (a, b) => a.profileScore - b.profileScore,
 			title: (
 				<div className='flex items-center gap-1 text-sm font-medium'>
@@ -253,9 +249,10 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						alt='calenderIcon'
 						className='icon-container scale-[0.8]'
 					/>
-					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-bodyBlue' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
+					<p className={`text-bodyBlue ${record.user === username ? 'dark:text-white' : 'dark:text-white'} m-0 p-0 text-xs`}>{userSince}</p>
 				</div>
 			),
+			showSorterTooltip: { open: false },
 			sorter: (a, b) => {
 				const timestampA = dayjs(a.userSince, "DD[th] MMM 'YY").unix();
 				const timestampB = dayjs(b.userSince, "DD[th] MMM 'YY").unix();
@@ -325,38 +322,40 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 	const combinedDataSource = [...(dataSource || []), ...(currentUserDataSource || [])];
 
 	return (
-		<div className={theme}>
-			{address && (
-				<DelegateModal
-					// trackNum={trackDetails?.trackId}
-					defaultTarget={address}
-					open={open}
-					setOpen={setOpen}
+		<Spin spinning={loading || loadingCurrentUser}>
+			<div className={theme}>
+				{address && (
+					<DelegateModal
+						// trackNum={trackDetails?.trackId}
+						defaultTarget={address}
+						open={open}
+						setOpen={setOpen}
+					/>
+				)}
+				{address && (
+					<Tipping
+						username={tippingUser || ''}
+						open={openTipping}
+						setOpen={setOpenTipping}
+						key={address}
+						paUsername={tippingUser as any}
+						setOpenAddressChangeModal={setOpenAddressChangeModal}
+						openAddressChangeModal={openAddressChangeModal}
+					/>
+				)}
+				<Table
+					columns={columns}
+					className={`${className} w-full overflow-x-auto`}
+					dataSource={combinedDataSource}
+					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
+					onChange={handleTableChange}
+					theme={theme}
+					rowClassName={(record) => {
+						return username === record.user ? 'user-row' : '';
+					}}
 				/>
-			)}
-			{address && (
-				<Tipping
-					username={tippingUser || ''}
-					open={openTipping}
-					setOpen={setOpenTipping}
-					key={address}
-					paUsername={tippingUser as any}
-					setOpenAddressChangeModal={setOpenAddressChangeModal}
-					openAddressChangeModal={openAddressChangeModal}
-				/>
-			)}
-			<Table
-				columns={columns}
-				className={`${className} w-full overflow-x-auto`}
-				dataSource={combinedDataSource}
-				pagination={{ pageSize: searchedUsername ? 1 : 11, total: totalData }}
-				onChange={handleTableChange}
-				theme={theme}
-				rowClassName={(record, index) => {
-					return index === combinedDataSource.length - 1 ? 'last-row' : '';
-				}}
-			/>
-		</div>
+			</div>
+		</Spin>
 	);
 };
 
@@ -418,15 +417,19 @@ export default styled(LeaderboardData)`
 	td {
 		background-color: transparent !important;
 	}
-	.ant-table-tbody > tr.last-row {
-		background-color: #e2ebff !important;
+	.ant-table-tbody > tr.user-row {
+		background-color: ${(props: any) => (props.theme === 'light' ? '#e2ebff' : '#141C2D')} !important;
+		color: ${(props: any) => (props.theme === 'light' ? '#243A57' : '#FFFFFF')} !important;
 	}
-	.ant-table-tbody > tr.last-row > td {
-		border-top: 1px solid #486ddf !important;
-		border-bottom: 1px solid #486ddf !important;
+	.ant-table-tbody > tr.user-row > td {
+		border-top: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
+		border-bottom: ${(props: any) => (props.theme === 'light' ? '1px solid #486ddf' : '1px solid #407BFF')} !important;
 	}
 	.ant-table-wrapper .ant-table-cell-fix-left {
 		background-color: #fff !important;
+	}
+	.ant-table-column-sorter-inner {
+		color: #9e9e9e !important;
 	}
 	.ant-table-content {
 		overflow: auto hidden !important;

@@ -1,29 +1,26 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
 import { ILeaderboardTable } from './types';
 import { poppins } from 'pages/_app';
-import debounce from 'lodash/debounce';
 
 const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [searchedUsername, setSearchedUsername] = useState<string | undefined>();
 	const [inputValue, setInputValue] = useState<string>('');
 
-	useEffect(() => {
-		const debouncedSearch = debounce((value: string) => {
-			setSearchedUsername(value);
-		}, 400);
-		debouncedSearch(inputValue);
-		return () => {
-			debouncedSearch.cancel();
-		};
-	}, [inputValue]);
+	const handleSearch = (value: string) => {
+		if (value.length >= 3) {
+			setSearchedUsername(value.trim());
+		} else {
+			setSearchedUsername(undefined);
+		}
+	};
 
 	return (
 		<section className={`${className}`}>
@@ -34,9 +31,10 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 						<Input.Search
 							placeholder='Enter username to search'
 							className='m-0 rounded-[4px] p-0 px-3.5 py-2.5 text-[#7788a0] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-							onChange={(e) => {
-								setInputValue(e.target.value);
-							}}
+							onSearch={handleSearch}
+							onChange={(e) => setInputValue(e.target.value)}
+							value={inputValue}
+							allowClear
 						/>
 					</div>
 				</div>
@@ -52,7 +50,7 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 
 export default styled(LeaderBoardTable)`
 	.ant-input-group .ant-input {
-		height: 42px !important;
+		height: 32px !important;
 		width: 245px !important;
 	}
 	.ant-input {
@@ -62,8 +60,12 @@ export default styled(LeaderBoardTable)`
 	.ant-input-search .ant-input-search-button {
 		height: 42px !important;
 		width: 42px !important;
-		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
 		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
+	.ant-input-affix-wrapper {
+		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
 	}
 	.ant-input-search .ant-input-search-button svg {
 		fill: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#4B4B4B')};

@@ -25,7 +25,7 @@ import SocialsHandle from './SocialsHandle';
 import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import StarIcon from '~assets/icons/StarIcon.svg';
+import ScoreTag from './ScoreTag';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -67,7 +67,7 @@ const QuickView = ({
 	socials,
 	setOpenAddressChangeModal,
 	enableTipping = true,
-	isW3FDelegate,
+	isW3FDelegate = false,
 	leaderboardAstrals
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
@@ -180,17 +180,15 @@ const QuickView = ({
 								</span>
 							</div>
 						)}
-						{leaderboardAstrals && !isNaN(leaderboardAstrals) && (
-							<div
-								className='flex w-min items-center gap-1 rounded-md px-[6px] py-1'
-								style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
-							>
-								<StarIcon />
-								<span className=' text-sm font-medium text-[#534930]'>{leaderboardAstrals}</span>
-							</div>
+						{!!leaderboardAstrals && !isNaN(leaderboardAstrals) && (
+							<ScoreTag
+								className='h-6 w-min px-[6px] py-1'
+								score={leaderboardAstrals}
+								iconWrapperClassName='mt-[5.5px]'
+							/>
 						)}
 						<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
-							{profileCreatedAt && (
+							{!!profileCreatedAt && (
 								<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
 									Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 								</span>

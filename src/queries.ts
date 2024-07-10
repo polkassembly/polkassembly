@@ -2318,8 +2318,8 @@ export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:Delegat
 }
 `;
 
-export const TOTAL_DELEGATE_BALANCE = `query DelegateBalance ($type_eq:DelegationType!= OpenGov, $to_in: [String!]){
-  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq, to_in: $to_in}) {
+export const TOTAL_DELEGATE_BALANCE = `query DelegateBalance ($type_eq:DelegationType!= OpenGov, $to_in: [String!], $track_eq: Int!){
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq, to_in: $to_in, track_eq: $track_eq}) {
     to
     balance
     lockPeriod
@@ -2507,4 +2507,18 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
     lockPeriod
   }
 }
+`;
+
+export const GET_TALLY_FOR_POST = `
+query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
+  proposals(where:{index_eq:$index_eq, type_eq: $type }){
+    tally{
+      ayes
+      nays
+      support
+      bareAyes
+    }
+  }
+}
+
 `;

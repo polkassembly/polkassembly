@@ -45,7 +45,8 @@ const ConfirmMessage = () => {
 	const { approval, approvalData, supportData, support, supportThreshold, approvalThreshold } = curvesInformation;
 	const [estimateHour, setEstimateHour] = useState(0);
 
-	useEffect(() => {
+	const handleEstimatedTime = () => {
+		if (!network) return;
 		const trackInfo = getTrackData(network, track_name, track_number);
 		const statusObj = statusHistory?.find((s) => s?.status === 'Deciding');
 		const confirmedStartedStatus = statusHistory?.find((s) => s?.status === 'ConfirmStarted');
@@ -73,6 +74,7 @@ const ConfirmMessage = () => {
 		} else {
 			estimateHour = estimateApprovalHour;
 		}
+		//adding confirm time to estimated time
 		if (trackInfo?.confirmPeriod) {
 			const timeStr = blocksToRelevantTime(network, Number(trackInfo?.confirmPeriod));
 			const time = timeStr.split(' ')[0];
@@ -88,6 +90,11 @@ const ConfirmMessage = () => {
 			return;
 		}
 		setEstimateHour(estimateHour);
+	};
+
+	useEffect(() => {
+		handleEstimatedTime();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [approval, approvalData, approvalThreshold, network, statusHistory, support, supportData, supportThreshold, track_name, track_number]);
 
 	if (!estimateHour) {
@@ -97,7 +104,7 @@ const ConfirmMessage = () => {
 	return (
 		<Tooltip title={<div>Estimated Date: {dayjs().add(estimateHour, 'hour').format('YYYY-MM-DD HH:MM')}, based on current tally</div>}>
 			<div className='mt-4 flex h-[62px] items-center justify-center rounded-lg bg-[#F5F5FD] p-3 hover:h-[62px] dark:bg-[#2C2C3E]'>
-				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-[#485F7D] dark:text-[#A4A4A4]'>
+				<p className='m-0 text-sm font-normal leading-[21px] tracking-[0.035px] text-lightBlue dark:text-[#A4A4A4]'>
 					Proposal estimated to pass in
 					<span className='ml-1 text-sm font-semibold leading-[21px] tracking-[0.28px] text-[#e5007a] dark:text-[#FF60B5]'>
 						{[

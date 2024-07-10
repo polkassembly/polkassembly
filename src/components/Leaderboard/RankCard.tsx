@@ -59,9 +59,9 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 	return (
 		<div
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
-			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[180px] w-[350px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
+			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px] md:h-[180px] md:w-[350px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
 		>
-			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[180px] w-[350px] px-8'}`}>
+			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8 md:h-[180px] md:w-[350px]'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<ScoreTag
 					score={data?.profile_score}

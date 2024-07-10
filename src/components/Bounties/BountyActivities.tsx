@@ -8,7 +8,6 @@ import dayjs from 'dayjs';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import formatBnBalance from '~src/util/formatBnBalance';
-import { chunkArray } from './utils/ChunksArr';
 import { IBountyUserActivity } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import Skeleton from '~src/basic-components/Skeleton';
@@ -24,7 +23,6 @@ const BountyActivities = () => {
 		isLoading: true,
 		value: ''
 	});
-	const [startIndex, setStartIndex] = useState(0);
 
 	const getData = useCallback(async () => {
 		setLoading(true);
@@ -49,15 +47,6 @@ const BountyActivities = () => {
 		if (!network) return;
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
-
-	useEffect(() => {
-		if (!loading && userActivities.length > 0) {
-			const interval = setInterval(() => {
-				setStartIndex((prevIndex) => (prevIndex + 1) % userActivities.length);
-			}, 3000);
-			return () => clearInterval(interval);
-		}
-	}, [loading, userActivities.length]);
 
 	const formatNumberWithSuffix = (value: number) => {
 		if (value >= 1e6) {
@@ -88,10 +77,8 @@ const BountyActivities = () => {
 		return `$${getFormattedValue(value)}`;
 	};
 
-	const activitiesToShow = userActivities.slice(startIndex, startIndex + 7);
-
 	return (
-		<div className='mt-1 flex max-h-[400px] w-full flex-col gap-[18px]'>
+		<div className=' w-full'>
 			{loading ? (
 				<>
 					<Skeleton />
@@ -106,29 +93,23 @@ const BountyActivities = () => {
 					infinite
 					className='flex items-center'
 					easing='linear'
+					slidesToShow={7}
 				>
-					{chunkArray(activitiesToShow, 7).map((chunk, index) => (
+					{userActivities.map((activity, index) => (
 						<div
 							key={index}
 							className='my-1 flex h-[50px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
 						>
-							{chunk.map((activity, idx) => (
-								<div
-									key={idx}
-									className='flex items-center gap-1 rounded-[14px] border bg-white px-3  py-2 dark:bg-section-light-overlay'
-								>
-									<NameLabel
-										truncateUsername={true}
-										defaultAddress={activity.address}
-										usernameMaxLength={10}
-									/>
-									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
-									<span className='text-[20px] font-normal text-pink_primary'>{getDisplayValue(activity?.amount)}</span>
-									<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
-									<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
-									<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>
-								</div>
-							))}
+							<NameLabel
+								truncateUsername={true}
+								defaultAddress={activity.address}
+								usernameMaxLength={10}
+							/>
+							<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>claimed</span>
+							<span className='text-[20px] font-normal text-pink_primary'>{getDisplayValue(activity?.amount)}</span>
+							<span className='text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium'>bounty</span>
+							<div className='mx-2 h-[5px] w-[5px] rounded-full bg-[#485F7DB2] dark:bg-[#909090B2]'></div>
+							<span className='rounded-full text-xs text-[#485F7DB2] dark:text-blue-dark-medium'>{dayjs(activity?.created_at).format("DD[th] MMM 'YY")}</span>
 						</div>
 					))}
 				</Carousel>

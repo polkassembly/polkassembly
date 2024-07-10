@@ -926,7 +926,7 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								assetId: assetId || null,
 								beneficiaries,
 								comments_count: commentsQuerySnapshot.data()?.count || 0,
-								content: !includeContent ? '' : subsquareContent || '',
+								content: !includeContent ? '' : data.content || subsquareContent || '',
 								created_at: createdAt,
 								curator,
 								description: network === AllNetworks.POLYMESH ? getAscciiFromHex(description) : description || '',

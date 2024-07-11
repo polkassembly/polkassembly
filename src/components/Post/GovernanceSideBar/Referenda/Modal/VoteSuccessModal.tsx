@@ -92,10 +92,21 @@ const VoteInitiatedModal = ({
 
 	title = 'Voted Successfully';
 
+	console.log(
+		'delegatedVotingPower',
+		delegatedVotingPower,
+		'FormattedBalance delegatedVotingPower',
+		+formatedBalance(delegatedVotingPower.toString(), unit, 0),
+		'Parse Balanceconviction',
+		conviction && parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network),
+		'parseBalance delegatedVotingPower',
+		parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)
+	);
+
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.variable} ${poppins.className} delegate mt-[5vh] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
@@ -163,8 +174,8 @@ const VoteInitiatedModal = ({
 					)}
 
 					<div className='flex flex-col items-start justify-center gap-[10px]'>
-						<div className='flex gap-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							With address:{' '}
+						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>With address:</span>
 							<span className='font-medium'>
 								<Address
 									isTruncateUsername={false}
@@ -176,8 +187,8 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig && (
-							<div className='flex gap-[17px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								With Multisig:{' '}
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>With Multisig:</span>
 								<span className='font-medium'>
 									<Address
 										isTruncateUsername={false}
@@ -190,15 +201,15 @@ const VoteInitiatedModal = ({
 						)}
 
 						{
-							<div className='flex gap-[15px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								Vote Amount:{' '}
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Vote Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{formatedBalance(balance.toString(), unit)} {unit}
 								</span>
 							</div>
 						}
-						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Vote :
+						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Vote :</span>
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
@@ -217,22 +228,22 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[33px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Conviction:
+						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Conviction:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
 						</div>
-						<div className='flex gap-[10px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Delegated Power:
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{formatedBalance(delegatedVotingPower.toString(), unit, 0) || '0.1'} {unit}
-							</span>
-						</div>
-						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
+						{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Delegated Power:</span>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
+							</div>
+						)}
+						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Time of Vote :</span> <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 						</div>
 						{multisig && (
-							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								Vote Link:{' '}
+							<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Vote Link:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<a
 										className='text-pink_primary'

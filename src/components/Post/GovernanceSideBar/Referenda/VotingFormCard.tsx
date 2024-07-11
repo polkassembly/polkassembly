@@ -1,14 +1,14 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, FormInstance, Slider, SliderSingleProps } from 'antd';
 import BalanceInput from '~src/ui-components/BalanceInput';
-import { ReactNode } from 'react-markdown/lib/ast-to-react';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
-import InfoIcon from '~assets/icons/red-info-alert.svg';
 import styled from 'styled-components';
+import { editBatchValueChanged } from '~src/redux/batchVoting/actions';
+import { useAppDispatch } from '~src/redux/store';
 
 export enum EFormType {
 	AYE_NAY_FORM = 'aye-nay-form',
@@ -16,49 +16,19 @@ export enum EFormType {
 	ABSTAIN_FORM = 'abstain-form'
 }
 interface Props {
-	convictionClassName?: string;
 	formName: EFormType;
 	form: FormInstance<any>;
+	handleSubmit: () => void;
 	onBalanceChange: (pre: BN) => void;
 	onAyeValueChange?: (pre: BN) => void;
 	onNayValueChange?: (pre: BN) => void;
 	onAbstainValueChange?: (pre: BN) => void;
-	handleSubmit: () => void;
-	disabled: boolean;
-	conviction: number;
-	setConviction: (pre: number) => void;
-	convictionOpts: ReactNode;
-	showMultisig?: any;
-	initiatorBalance?: any;
-	multisig?: any;
-	isBalanceErr?: any;
-	loadingStatus?: any;
-	wallet?: any;
-	ayeVoteValue?: any;
-	isProxyExistsOnWallet?: boolean;
-	showProxyDropdown?: boolean;
 	className?: string;
 }
 
-const VotingFormCard = ({
-	form,
-	formName,
-	handleSubmit,
-	onBalanceChange,
-	onAyeValueChange,
-	onNayValueChange,
-	onAbstainValueChange,
-	showMultisig,
-	initiatorBalance,
-	multisig,
-	isBalanceErr,
-	loadingStatus,
-	wallet,
-	ayeVoteValue,
-	className
-}: Props) => {
+const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
-	const [isBalanceSet, setIsBalanceSet] = useState(false);
+	const dispatch = useAppDispatch();
 	const marks: SliderSingleProps['marks'] = {
 		0: '0.1x',
 		16.7: '1x',
@@ -108,21 +78,7 @@ const VotingFormCard = ({
 						className='text-sm font-medium'
 						formItemName={'nayVote'}
 						theme={theme}
-						setIsBalanceSet={setIsBalanceSet}
 					/>
-
-					{isBalanceSet && (
-						<div className='-mt-5 mb-5'>
-							{showMultisig ||
-								(initiatorBalance && !multisig) ||
-								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
-									<div className='flex items-center gap-x-1'>
-										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
-									</div>
-								))}
-						</div>
-					)}
 				</>
 			)}
 			{[EFormType.AYE_NAY_FORM].includes(formName) && (
@@ -135,34 +91,27 @@ const VotingFormCard = ({
 						className='border-section-light-container text-sm font-medium dark:border-[#3B444F]'
 						formItemName='balance'
 						theme={theme}
-						setIsBalanceSet={setIsBalanceSet}
 					/>
-					{isBalanceSet && (
-						<div className='-mt-5 mb-5'>
-							{showMultisig ||
-								(initiatorBalance && !multisig) ||
-								(isBalanceErr && !loadingStatus.isLoading && wallet && ayeVoteValue && (
-									<div className='flex items-center gap-x-1'>
-										<InfoIcon />
-										<p className='m-0 p-0 text-xs text-red_primary'>Insufficient balance</p>
-									</div>
-								))}
-						</div>
-					)}
-					<div>
-						<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-							<span className='flex items-center'>Set Conviction</span>
-							<Slider
-								marks={marks}
-								onChange={(e: any) => {
-									console.log('value set --> ', e);
-								}}
-								defaultValue={0}
-							/>
-						</label>
-					</div>
 				</>
 			)}
+			<div>
+				<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
+					<span className='flex items-center'>Set Conviction</span>
+					<Slider
+						marks={marks}
+						onChange={(e: any) => {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										conviction: e
+									}
+								})
+							);
+						}}
+						defaultValue={0}
+					/>
+				</label>
+			</div>
 		</Form>
 	);
 };

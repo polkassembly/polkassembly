@@ -3,11 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { StopOutlined } from '@ant-design/icons';
-import { InjectedAccount, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Form, Segmented } from 'antd';
 import BN from 'bn.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ETrackDelegationStatus, EVoteDecisionType, ILastVote, LoadingStatusType, Wallet } from 'src/types';
+import React, { useState } from 'react';
+import { EVoteDecisionType, ILastVote } from 'src/types';
 import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
@@ -20,23 +19,17 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import DislikeGray from '~assets/icons/dislike-gray.svg';
 import DarkDislikeGray from '~assets/icons/dislike-gray-dark.svg';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import checkWalletForSubstrateNetwork from '~src/util/checkWalletForSubstrateNetwork';
 import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import formatBnBalance from '~src/util/formatBnBalance';
-import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { ITrackDelegation } from 'pages/api/v1/delegations';
-import Alert from '~src/basic-components/Alert';
 import SelectOption from '~src/basic-components/Select/SelectOption';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import VotingFormCard, { EFormType } from './VotingFormCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
-const ZERO_BN = new BN(0);
+import { editBatchValueChanged } from '~src/redux/batchVoting/actions';
+import { useAppDispatch } from '~src/redux/store';
 
 interface Props {
 	className?: string;
@@ -101,209 +94,53 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 // const VoteReferendumCard = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
-const VoteReferendumCard = ({ className, referendumId, onAccountChange, proposalType, address, trackNumber }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) => {
 	const userDetails = useUserDetailsSelector();
-	const { addresses, id, loginAddress, loginWallet } = userDetails;
-	const [lockedBalance, setLockedBalance] = useState<BN>(ZERO_BN);
+	const dispatch = useAppDispatch();
+	const { id } = userDetails;
 	const { api, apiReady } = useApiContext();
-	const [loadingStatus, setLoadingStatus] = useState<LoadingStatusType>({ isLoading: false, message: '' });
-	const [isFellowshipMember, setIsFellowshipMember] = useState<boolean>(false);
-	const [fetchingFellowship, setFetchingFellowship] = useState(true);
 	const { network } = useNetworkSelector();
-	const [wallet, setWallet] = useState<Wallet>();
-	const [availableWallets, setAvailableWallets] = useState<any>({});
-	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
-	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const [ayeNayForm] = Form.useForm();
-	const [abstainVoteValue, setAbstainVoteValue] = useState<BN>(ZERO_BN);
-	const [ayeVoteValue, setAyeVoteValue] = useState<BN>(ZERO_BN);
-	const [nayVoteValue, setNayVoteValue] = useState<BN>(ZERO_BN);
-	const [walletErr, setWalletErr] = useState<INetworkWalletErr>({ description: '', error: 0, message: '' });
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [multisig, setMultisig] = useState<string>('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
-	const [isBalanceErr, setIsBalanceErr] = useState<boolean>(false);
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
-	const [totalDeposit, setTotalDeposit] = useState<BN>(new BN(0));
-	const [initiatorBalance, setInitiatorBalance] = useState<BN>(ZERO_BN);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [multisigBalance, setMultisigBalance] = useState<BN>(ZERO_BN);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [delegatedTo, setDelegatedTo] = useState<string | null>(null);
-
-	const getData = async (address: any) => {
-		if (!address) return;
-		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			address: address,
-			track: trackNumber
-		});
-		if (data && data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))?.length) {
-			const delegated = data?.filter((item) => item?.status.includes(ETrackDelegationStatus.DELEGATED))[0];
-			delegated?.delegations.map((item) => {
-				if (getEncodedAddress(item.from, network) === getEncodedAddress(loginAddress, network)) {
-					setDelegatedTo(item?.to);
-				} else {
-					setDelegatedTo(null);
-				}
-			});
-		} else if (error) {
-			console.log(error);
-			setDelegatedTo(null);
-		}
-	};
-
-	useEffect(() => {
-		if (typeof trackNumber !== 'number') return;
-		getData(address);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [trackNumber, address]);
-
-	useEffect(() => {
-		getWallet();
-		if (!api || !apiReady) return;
-		if (loginWallet) {
-			setWallet(loginWallet);
-			(async () => {
-				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
-				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
-				setAccounts(accountsData?.accounts || []);
-				onAccountChange(accountsData?.account || '');
-				setLoadingStatus({ isLoading: false, message: '' });
-			})();
-		} else {
-			if (!window) return;
-			const loginWallet = localStorage.getItem('loginWallet');
-			if (loginWallet) {
-				setWallet(loginWallet as Wallet);
-				(async () => {
-					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
-					setAccounts(accountsData?.accounts || []);
-					onAccountChange(accountsData?.account || '');
-				})();
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userDetails]);
-
-	const getWallet = () => {
-		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
-	};
-
-	const handleInitiatorBalance = useCallback(async () => {
-		if (!api || !apiReady) {
-			return;
-		}
-		//deposit balance
-		const depositBase = api.consts.multisig.depositBase.toString();
-		const depositFactor = api.consts.multisig.depositFactor.toString();
-		setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
-		//initiator balance
-		const initiatorBalance = await api.query.system.account(address);
-		setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
-	}, [address, api, apiReady]);
-
-	useEffect(() => {
-		if (!address || !wallet || !api || !apiReady) return;
-		(async () => {
-			const accountsData = await getAccountsFromWallet({ api, apiReady, chosenAddress: address, chosenWallet: wallet, loginAddress, network });
-			setAccounts(accountsData?.accounts || []);
-			onAccountChange(accountsData?.account || '');
-		})();
-		handleInitiatorBalance();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, wallet, handleInitiatorBalance]);
-
-	const convictionOpts = useMemo(() => {
-		return getConvictionVoteOptions(CONVICTIONS, proposalType, api, apiReady, network);
-	}, [CONVICTIONS, proposalType, api, apiReady, network]);
-
-	const [conviction, setConviction] = useState<number>(0);
-
-	const checkIfFellowshipMember = async () => {
-		if (!api || !apiReady) {
-			return;
-		}
-
-		if (!api?.query?.fellowshipCollective?.members?.entries) {
-			return;
-		}
-
-		// using any because it returns some Codec types
-		api.query.fellowshipCollective.members.entries().then((entries: any) => {
-			const members: string[] = [];
-
-			for (let i = 0; i < entries.length; i++) {
-				// key split into args part to extract
-				const [
-					{
-						args: [accountId]
-					},
-					optInfo
-				] = entries[i];
-				if (optInfo.isSome) {
-					members.push(accountId.toString());
-				}
-			}
-
-			addresses &&
-				addresses.some((address) => {
-					if (members.includes(address)) {
-						setIsFellowshipMember(true);
-						// this breaks the loop as soon as we find a matching address
-						return true;
-					}
-					return false;
-				});
-
-			setFetchingFellowship(false);
-		});
-	};
-
-	useEffect(() => {
-		if (!api || !apiReady) return;
-		checkIfFellowshipMember();
-		setWalletErr(checkWalletForSubstrateNetwork(network) as INetworkWalletErr);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, availableWallets]);
 
 	if (!id) {
 		return <LoginToVote />;
 	}
+
 	const handleModalReset = () => {
-		setAbstainVoteValue(ZERO_BN);
-		setAyeVoteValue(ZERO_BN);
-		setNayVoteValue(ZERO_BN);
-		setLockedBalance(ZERO_BN);
 		ayeNayForm.setFieldValue('balance', '');
 		splitForm.setFieldValue('ayeVote', '');
 		splitForm.setFieldValue('nayVote', '');
 		abstainFrom.setFieldValue('ayeVote', '');
 		abstainFrom.setFieldValue('nayVote', '');
 		abstainFrom.setFieldValue('abstainVote', '');
-		setLoadingStatus({ isLoading: false, message: '' });
 	};
 
 	const handleOnVoteChange = (value: any) => {
-		if (availableBalance.gte(ZERO_BN)) {
-			setIsBalanceErr(false);
-		}
 		setVote(value as EVoteDecisionType);
+		console.log('reached here');
+		dispatch(
+			editBatchValueChanged({
+				values: {
+					voteOption: value as EVoteDecisionType
+				}
+			})
+		);
 		handleModalReset();
 	};
 
 	const handleSubmit = async () => {
 		// GAEvent for proposal voting
 		trackEvent('proposal_voting', 'voted_proposal', {
-			balance: lockedBalance,
-			conviction: conviction,
 			decision: vote,
 			isWeb3Login: currentUser?.web3signup,
 			postId: referendumId,
@@ -374,33 +211,6 @@ const VoteReferendumCard = ({ className, referendumId, onAccountChange, proposal
 
 	const VoteUI = (
 		<>
-			{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
-				<Alert
-					message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
-						totalDeposit,
-						{ numberAfterComma: 3, withUnit: true },
-						network
-					)} required to create a Transaction.`}
-					showIcon
-					className='mb-6'
-					type='info'
-				/>
-			)}
-			{walletErr.error === 1 && !loadingStatus.isLoading && (
-				<Alert
-					message={walletErr.message}
-					description={walletErr.description}
-					showIcon
-					type='warning'
-				/>
-			)}
-			{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
-				<Alert
-					message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
-					showIcon
-					type='info'
-				/>
-			)}
 			{/* aye nye split abstain buttons */}
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
@@ -418,66 +228,44 @@ const VoteReferendumCard = ({ className, referendumId, onAccountChange, proposal
 				<VotingFormCard
 					form={ayeNayForm}
 					formName={EFormType.AYE_NAY_FORM}
-					onBalanceChange={(balance: BN) => setLockedBalance(balance)}
-					convictionClassName={className}
+					onBalanceChange={(balance: BN) => {
+						console.log('balance change --> ', balance.toNumber());
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									voteBalance: balance
+								}
+							})
+						);
+					}}
+					onAyeValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									ayeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onNayValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									nyeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onAbstainValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									abstainVoteBalance: balance
+								}
+							})
+						);
+					}}
 					handleSubmit={handleSubmit}
-					disabled={
-						!wallet ||
-						!lockedBalance ||
-						lockedBalance.lte(ZERO_BN) ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						isBalanceErr ||
-						(showMultisig && multisigBalance.lte(lockedBalance))
-					}
-					conviction={conviction}
-					setConviction={setConviction}
-					convictionOpts={convictionOpts}
-					showMultisig={showMultisig}
-					initiatorBalance={initiatorBalance.gte(totalDeposit)}
-					multisig={multisig}
-					isBalanceErr={isBalanceErr}
-					loadingStatus={loadingStatus.isLoading}
-					wallet={wallet}
-					ayeVoteValue={ayeVoteValue
-						.add(nayVoteValue)
-						.add(abstainVoteValue)
-						.add(lockedBalance)
-						.gte(showMultisig ? multisigBalance : availableBalance)}
-				/>
-			)}
-
-			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === EVoteDecisionType.SPLIT && (
-				<VotingFormCard
-					form={splitForm}
-					formName={EFormType.SPLIT_FORM}
-					onBalanceChange={(balance: BN) => setLockedBalance(balance)}
-					onAyeValueChange={(balance: BN) => setAyeVoteValue(balance)}
-					onNayValueChange={(balance: BN) => setNayVoteValue(balance)}
-					convictionClassName={className}
-					handleSubmit={handleSubmit}
-					disabled={
-						!wallet ||
-						ayeVoteValue.add(nayVoteValue).lte(ZERO_BN) ||
-						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						isBalanceErr ||
-						(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
-					}
-					conviction={conviction}
-					setConviction={setConviction}
-					convictionOpts={convictionOpts}
-					showMultisig={showMultisig}
-					initiatorBalance={initiatorBalance.gte(totalDeposit)}
-					multisig={multisig}
-					isBalanceErr={isBalanceErr}
-					loadingStatus={loadingStatus.isLoading}
-					wallet={wallet}
-					ayeVoteValue={ayeVoteValue
-						.add(nayVoteValue)
-						.add(abstainVoteValue)
-						.add(lockedBalance)
-						.gte(showMultisig ? multisigBalance : availableBalance)}
 				/>
 			)}
 
@@ -485,33 +273,44 @@ const VoteReferendumCard = ({ className, referendumId, onAccountChange, proposal
 				<VotingFormCard
 					form={abstainFrom}
 					formName={EFormType.ABSTAIN_FORM}
-					onBalanceChange={(balance: BN) => setLockedBalance(balance)}
-					onAyeValueChange={(balance: BN) => setAyeVoteValue(balance)}
-					onNayValueChange={(balance: BN) => setNayVoteValue(balance)}
-					onAbstainValueChange={(balance: BN) => setAbstainVoteValue(balance)}
-					convictionClassName={className}
+					onBalanceChange={(balance: BN) => {
+						console.log('balance change --> ', balance.toNumber());
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									voteBalance: balance
+								}
+							})
+						);
+					}}
+					onAyeValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									ayeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onNayValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									nyeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onAbstainValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									abstainVoteBalance: balance
+								}
+							})
+						);
+					}}
 					handleSubmit={handleSubmit}
-					disabled={
-						!wallet ||
-						ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).lte(ZERO_BN) ||
-						(showMultisig && !multisig) ||
-						isBalanceErr ||
-						(showMultisig && multisigBalance.lte(ayeVoteValue.add(nayVoteValue).add(abstainVoteValue).add(lockedBalance)))
-					}
-					conviction={conviction}
-					setConviction={setConviction}
-					convictionOpts={convictionOpts}
-					showMultisig={showMultisig}
-					initiatorBalance={initiatorBalance.gte(totalDeposit)}
-					multisig={multisig}
-					isBalanceErr={isBalanceErr}
-					loadingStatus={loadingStatus.isLoading}
-					wallet={wallet}
-					ayeVoteValue={ayeVoteValue
-						.add(nayVoteValue)
-						.add(abstainVoteValue)
-						.add(lockedBalance)
-						.gte(showMultisig ? multisigBalance : availableBalance)}
 				/>
 			)}
 			<div className='mt-[40px] flex h-[46px] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
@@ -526,20 +325,10 @@ const VoteReferendumCard = ({ className, referendumId, onAccountChange, proposal
 			</div>
 		</>
 	);
-
-	if (proposalType === ProposalType.FELLOWSHIP_REFERENDUMS) {
-		if (!fetchingFellowship) {
-			if (isFellowshipMember) return VoteUI;
-
-			return <div className={className}>Only fellowship members may vote.</div>;
-		} else {
-			return <div className={className}>Fetching fellowship members...</div>;
-		}
-	}
 	return VoteUI;
 };
 
-export default React.memo(styled(VoteReferendumCard)`
+export default styled(VoteReferendumCard)`
 	.LoaderWrapper {
 		height: 40rem;
 		position: absolute;
@@ -620,4 +409,4 @@ export default React.memo(styled(VoteReferendumCard)`
 	.ant-segmented .ant-segmented-lg .ant-segmented-item-label {
 		padding: 0 !important;
 	}
-`);
+`;

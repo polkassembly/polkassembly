@@ -161,7 +161,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
 		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
 
-		if (!availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {
+		if (availableBalanceBN.lt(bountyBond.add(new BN(String(bountyTxGasFee))))) {
 			setError('Available balance too low');
 			return;
 		}

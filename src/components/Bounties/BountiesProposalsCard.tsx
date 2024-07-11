@@ -25,8 +25,8 @@ import { IPeriod } from '~src/types';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import formatBnBalance from '~src/util/formatBnBalance';
-
+import NameLabel from '~src/ui-components/NameLabel';
+import { formatTrackName, getFormattedValue } from './utils/formatBalanceUsd';
 export interface BountiesProposalsCardProps {
 	activeData: any;
 }
@@ -72,7 +72,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline } = activeData;
+	const { track_no, tags, title, content, reward, user_id, proposer, post_id, tally, created_at, timeline } = activeData;
 	const [decision, setDecision] = useState<IPeriod>();
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
@@ -142,42 +142,6 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [post_id, user_id, network]);
 
-	function formatTrackName(str: string) {
-		return str
-			.split('_')
-			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(' ');
-	}
-
-	const formatNumberWithSuffix = (value: number) => {
-		if (value >= 1e6) {
-			return (value / 1e6).toFixed(1) + 'm';
-		} else if (value >= 1e3) {
-			return (value / 1e3).toFixed(1) + 'k';
-		}
-		return value.toFixed(1);
-	};
-
-	const getFormattedValue = (value: string) => {
-		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
-
-		if (isNaN(Number(currentTokenPrice.value))) {
-			return formatNumberWithSuffix(numericValue);
-		}
-
-		const tokenPrice = Number(currentTokenPrice.value);
-		const dividedValue = numericValue / tokenPrice;
-
-		return formatNumberWithSuffix(dividedValue);
-	};
-
-	const getDisplayValue = (value: string) => {
-		if (currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value))) {
-			return `${getFormattedValue(value)} ${unit}`;
-		}
-		return `$${getFormattedValue(value)}`;
-	};
-
 	return (
 		<section className='w-full md:w-[383px]'>
 			{loading ? (
@@ -189,7 +153,15 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							theme={theme as any}
 							className='relative flex h-[56px] w-full items-center justify-start gap-4 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 						>
-							<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>{getDisplayValue(String(reward))}</h2>
+							<div className='flex items-baseline gap-x-2'>
+								<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
+									{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? '' : '$'}
+									{getFormattedValue(String(reward), network, currentTokenPrice)}
+								</h2>
+								<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>
+									{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
+								</span>
+							</div>
 							<Divider
 								type='vertical'
 								className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
@@ -273,13 +245,26 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							</div>
 						)}
 						<div>
-							<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
-							<ImageComponent
-								alt='user img'
-								src={userImageData[0]?.image}
-								className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
-							/>
-							<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
+							{user_id == 1 ? (
+								<NameLabel
+									defaultAddress={proposer}
+									className='text-xs'
+									isUsedInLeadership
+								/>
+							) : (
+								<Link
+									href={`/user/${userImageData[0]?.username}`}
+									target='_blank '
+								>
+									<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
+									<ImageComponent
+										alt='user img'
+										src={userImageData[0]?.image}
+										className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
+									/>
+									<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
+								</Link>
+							)}
 						</div>
 						<div className='mb-3 mt-2'>
 							<TrackTag

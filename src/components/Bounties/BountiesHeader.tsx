@@ -8,9 +8,10 @@ import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IBountyStats } from '~src/types';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import formatBnBalance from '~src/util/formatBnBalance';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { StatItem } from './utils/Statitem';
+import { getDisplayValue } from './utils/formatBalanceUsd';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
@@ -55,35 +56,6 @@ const BountiesHeader = () => {
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 	}, [network]);
 
-	const formatNumberWithSuffix = (value: number) => {
-		if (value >= 1e6) {
-			return (value / 1e6).toFixed(2) + 'm';
-		} else if (value >= 1e3) {
-			return (value / 1e3).toFixed(2) + 'k';
-		}
-		return value.toFixed(2);
-	};
-
-	const getFormattedValue = (value: string) => {
-		const numericValue = Number(formatBnBalance(value, { numberAfterComma: 1, withThousandDelimitor: false }, network));
-
-		if (isNaN(Number(currentTokenPrice.value))) {
-			return formatNumberWithSuffix(numericValue);
-		}
-
-		const tokenPrice = Number(currentTokenPrice.value);
-		const dividedValue = numericValue / tokenPrice;
-
-		return formatNumberWithSuffix(dividedValue);
-	};
-
-	const getDisplayValue = (value: string) => {
-		if (currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value))) {
-			return `${getFormattedValue(value)} ${unit}`;
-		}
-		return `$${getFormattedValue(value)}`;
-	};
-
 	return (
 		<div className='mt-4 rounded-3xl bg-white p-5 dark:bg-section-dark-overlay md:p-6'>
 			{loading ? (
@@ -93,7 +65,7 @@ const BountiesHeader = () => {
 					<div className='flex gap-6'>
 						<div>
 							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
-							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool)}</div>
+							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon
@@ -109,22 +81,22 @@ const BountiesHeader = () => {
 							</div>
 						</div>
 						<div className='grid grid-cols-2 gap-x-24 py-7'>
-							<div className='flex flex-col'>
-								<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Active Bounties</span>
-								<span className='font-pixeboy text-[28px] font-medium'>{statsData.activeBounties}</span>
-							</div>
-							<div className='flex flex-col'>
-								<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>No. of People Earned</span>
-								<span className='font-pixeboy text-[28px] font-medium'>{statsData.peopleEarned}</span>
-							</div>
-							<div className='flex flex-col'>
-								<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Total Rewarded</span>
-								<span className='font-pixeboy text-[28px] font-medium'>{getDisplayValue(statsData.totalRewarded)}</span>
-							</div>
-							<div className='flex flex-col'>
-								<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Total Bounty Pool</span>
-								<span className='font-pixeboy text-[28px] font-medium'>{getDisplayValue(statsData.totalBountyPool)}</span>
-							</div>
+							<StatItem
+								label='Active Bounties'
+								value={statsData.activeBounties}
+							/>
+							<StatItem
+								label='No. of People Earned'
+								value={statsData.peopleEarned}
+							/>
+							<StatItem
+								label='Total Rewarded'
+								value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
+							/>
+							<StatItem
+								label='Total Bounty Pool'
+								value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
+							/>
 						</div>
 					</div>
 

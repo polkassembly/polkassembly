@@ -11,7 +11,7 @@ import { ISteps } from '~src/components/OpenGovTreasuryProposal';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
 import { useInitialConnectAddress, useNetworkSelector } from '~src/redux/selectors';
-import { IBountyProposerResponse, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, IBountyProposerResponse, NotificationStatus } from '~src/types';
 import BalanceInput from '~src/ui-components/BalanceInput';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -33,11 +33,26 @@ interface Props {
 	setBountyAmount: (pre: BN) => void;
 	title: string;
 	content: string;
+	allowedCommentors: EAllowedCommentor;
 }
 
 const ZERO_BN = new BN(0);
 
-const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, proposerAddress, bountyAmount, setBountyAmount, setBountyId, bountyId, title, content }: Props) => {
+const CreateBounty = ({
+	className,
+	setSteps,
+	isBounty,
+	setIsBounty,
+	form,
+	proposerAddress,
+	bountyAmount,
+	setBountyAmount,
+	setBountyId,
+	bountyId,
+	title,
+	content,
+	allowedCommentors
+}: Props) => {
 	const { network } = useNetworkSelector();
 	const { address: linkedAddress, availableBalance } = useInitialConnectAddress();
 	const { resolvedTheme: theme } = useTheme();
@@ -116,6 +131,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 			return;
 		}
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('/api/v1/auth/actions/saveBountyInfo', {
+			allowedCommentors: [allowedCommentors],
 			content,
 			postId: bountyId,
 			proposerAddress,
@@ -142,11 +158,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 	};
 
 	const handleSubmit = async () => {
-		// remove
-		// setSteps({ percent: 0, step: 2 });
-		// return;
 		setError('');
-		console.log('here', { api, apiReady, bountyAmount, proposerAddress });
 
 		if (!proposerAddress || !api || !apiReady || !bountyAmount) return;
 

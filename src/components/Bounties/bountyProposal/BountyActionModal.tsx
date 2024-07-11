@@ -16,7 +16,6 @@ import { EAllowedCommentor } from '~src/types';
 import BN from 'bn.js';
 import { BN_HUNDRED } from '@polkadot/util';
 import styled from 'styled-components';
-// import { useTheme } from 'next-themes';
 
 const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess'), {
 	ssr: false
@@ -253,6 +252,7 @@ const BountyActionModal = ({
 							title={title}
 							content={content}
 							setBountyId={setBountyId}
+							allowedCommentors={allowedCommentors}
 						/>
 					)}
 					{steps?.step === 2 && (

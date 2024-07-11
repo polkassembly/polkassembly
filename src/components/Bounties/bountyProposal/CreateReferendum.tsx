@@ -167,17 +167,14 @@ const CreateReferendum = ({
 			console.log(error);
 		}
 	};
-
 	const handleSaveTreasuryProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/saveBountyProposalInfo', {
 			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
+			bountyId,
 			content,
-			discussionId: discussionId || null,
 			postId,
 			proposerAddress,
-			tags,
-			title,
-			userId
+			title
 		});
 
 		if (apiError || !data?.post_id) {

@@ -12,7 +12,7 @@ import { BN_HUNDRED, BN_MAX_INTEGER, BN_ONE, isHex } from '@polkadot/util';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { IAdvancedDetails } from '~src/components/OpenGovTreasuryProposal/CreatePreimage';
 import { chainProperties } from '~src/global/networkConstants';
-import { useInitialConnectAddress, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useInitialConnectAddress, useNetworkSelector } from '~src/redux/selectors';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import SelectTracks from '~src/components/OpenGovTreasuryProposal/SelectTracks';
 import { inputToBn } from '~src/util/inputToBn';
@@ -29,7 +29,6 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { EAllowedCommentor, NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
-import { getDiscussionIdFromLink } from '~src/components/OpenGovTreasuryProposal/CreateProposal';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { ApiPromise } from '@polkadot/api';
@@ -57,7 +56,7 @@ interface Props {
 	setOpenModal: (pre: boolean) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	allowedCommentors?: EAllowedCommentor;
-	discussionLink: string | null;
+	discussionLink?: string | null;
 	bountyId: number | null;
 	title: string;
 	content: string;
@@ -92,8 +91,6 @@ const CreateReferendum = ({
 	allowedCommentors,
 	title,
 	content,
-	tags,
-	discussionLink,
 	setPreimageHash,
 	bountyAmount,
 	setPreimageLength,
@@ -102,16 +99,13 @@ const CreateReferendum = ({
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const currentBlock = useCurrentBlock();
-	const currentUser = useUserDetailsSelector();
 	const { address: linkedAddress, availableBalance } = useInitialConnectAddress();
-	const { id: userId } = currentUser;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState(ZERO_BN);
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const [newBountyAmount, setNewBountyAmount] = useState(bountyAmount);
 	const [error, setError] = useState('');
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);

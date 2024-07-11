@@ -15,6 +15,7 @@ import NotificationsContent from './NotificationsContent';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { ACTIONS } from '../Settings/Notifications/Reducer/action';
+import { ECustomNotificationFilters } from './types';
 
 const InAppNotification = ({ className }: { className?: string }) => {
 	const { resolvedTheme: theme } = useTheme();
@@ -114,6 +115,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 
 	useEffect(() => {
 		getUnreadNotificationsCount();
+		dispatch(inAppNotificationsActions.updateNotificationsPopupActiveFilter(ECustomNotificationFilters.ALL));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userId]);
 

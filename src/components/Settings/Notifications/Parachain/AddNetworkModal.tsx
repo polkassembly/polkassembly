@@ -118,7 +118,7 @@ const AddNetworkModal = ({
 										<Tag
 											key={name}
 											className={
-												'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8] dark:bg-[#33071E] dark:bg-[#33071E]'
+												'max-w-[200px] cursor-pointer items-center rounded-[34px] border border-solid border-[#E5007A] bg-[#FEF2F8] px-[12px] py-[8px] pb-[5px] text-navBlue hover:bg-[#FEF2F8] dark:bg-[#33071E]'
 											}
 										>
 											<Image
@@ -192,7 +192,7 @@ const AddNetworkModal = ({
 								</div>
 								{i < Object.keys(allNetworks).length - 1 && (
 									<Divider
-										className='border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:border-separatorDark'
+										className='border-2 border-section-light-container dark:border-[#3B444F] dark:border-separatorDark'
 										dashed
 									/>
 								)}

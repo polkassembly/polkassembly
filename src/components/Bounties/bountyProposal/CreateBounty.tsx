@@ -106,7 +106,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		if (!api || !apiReady) return;
 		getBountyBondValue();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [api, apiReady, isBounty]);
 
 	const handleCreateBounty = async () => {
 		setLoadingStatus({ isLoading: true, message: '' });
@@ -146,6 +146,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		// setSteps({ percent: 0, step: 2 });
 		// return;
 		setError('');
+		console.log('here', { proposerAddress, api, apiReady, bountyAmount });
 
 		if (!proposerAddress || !api || !apiReady || !bountyAmount) return;
 

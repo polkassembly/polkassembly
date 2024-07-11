@@ -78,6 +78,7 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const newPost: Post = {
 		allowedCommentors: allowedCommentors || [EAllowedCommentor.ALL],
 		content,
+		createdOnPolkassembly: true,
 		created_at: new Date(),
 		id: postId,
 		isDeleted: false,

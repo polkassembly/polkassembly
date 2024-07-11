@@ -25,8 +25,8 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { content, title, postId, proposerAddress, allowedCommentors } = req.body;
-	if (!content || !title || !postId || !proposerAddress) return res.status(400).json({ message: 'Missing parameters in request body' });
+	const { content, title, postId, proposerAddress, allowedCommentors, bountyId = null } = req.body;
+	if (!content || !title || !postId || !proposerAddress || !bountyId) return res.status(400).json({ message: 'Missing parameters in request body' });
 
 	if (allowedCommentors && !Array.isArray(allowedCommentors)) {
 		return res.status(400).json({ message: 'Invalid allowedCommentors parameter' });
@@ -79,12 +79,18 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 	const newPost: Post = {
 		allowedCommentors: allowedCommentors || [EAllowedCommentor.ALL],
 		content,
+		createdOnPolkassembly: true,
 		created_at: new Date(),
 		id: postId,
 		isDeleted: false,
 		last_comment_at,
 		last_edited_at: last_comment_at,
-		post_link: null,
+		post_link: bountyId
+			? {
+					id: Number(bountyId),
+					type: ProposalType.BOUNTIES
+			  }
+			: null,
 		proposer_address: proposerAddress,
 		title,
 		topic_id: 4,

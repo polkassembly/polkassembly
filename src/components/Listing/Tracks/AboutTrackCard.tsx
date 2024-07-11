@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider } from 'antd';
+import { Button, Divider, Modal } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -37,6 +37,10 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
 import AmbassadorSeeding from '~src/components/AmbassadorSeeding';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import DefaultVotingOptionsModal from './DefaultVotingOptionsModal';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -163,6 +167,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [showDetails, setShowDetails] = useState(false);
 	const [trackNum, setTrackNum] = useState<number | null>(null);
 	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
+	const [openTinderVotingModal, setOpenTinderVotingModal] = useState(false);
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	const [data, setData] = useState<any>({
 		datasets: [],
@@ -283,17 +289,26 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 
 	return (
 		<div className={`${className}`}>
-			<div>
-				<div className='image-button-wrapper mx-auto'>
-					<ImageIcon
-						src='/assets/vote-badge.svg'
-						alt='vote-badge'
-						imgWrapperClassName='flex justify-center'
-						imgClassName=''
-					/>
-					<Button className='begin-button flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs text-white'>Lets Begin</Button>
+			{isMobile && (
+				<div className='flex h-[128px] w-full items-center justify-center rounded-[14px] bg-[#FFDC21] p-0'>
+					<div className='relative mx-auto mt-3 w-full'>
+						<ImageIcon
+							src='/assets/vote-badge.svg'
+							alt='vote-badge'
+							imgWrapperClassName='flex justify-center'
+							imgClassName=''
+						/>
+						<Button
+							className='begin-button flex h-[30px] w-[96px] items-center justify-center rounded-[40px] bg-black text-xs text-white'
+							onClick={() => {
+								setOpenTinderVotingModal(true);
+							}}
+						>
+							Lets Begin
+						</Button>
+					</div>
 				</div>
-			</div>
+			)}
 			<article className='flex justify-between xs:py-2 md:py-0'>
 				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
@@ -548,6 +563,40 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</div>
 				</article>
 			</section>
+			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={classNames(className, poppins.className, poppins.variable, 'w-[600px]')}
+				open={openTinderVotingModal}
+				footer={
+					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
+						<CustomButton
+							variant='default'
+							text='Cancel'
+							buttonsize='sm'
+							onClick={() => {
+								setOpenTinderVotingModal(false);
+							}}
+						/>
+						<CustomButton
+							variant='primary'
+							text='Next'
+							buttonsize='sm'
+						/>
+					</div>
+				}
+				maskClosable={false}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				onCancel={() => {
+					setOpenTinderVotingModal(false);
+				}}
+				title={
+					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+						Set Defaults
+					</div>
+				}
+			>
+				<DefaultVotingOptionsModal theme={theme} />
+			</Modal>
 		</div>
 	);
 };

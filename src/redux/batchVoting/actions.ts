@@ -20,7 +20,6 @@ interface IBatchVotingDefaults {
 
 export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldValueChanged', async (params: IBatchVotingDefaults, { dispatch }) => {
 	const { values } = params;
-	console.log('values inside action --> ', values);
 	if (values?.voteOption) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({

@@ -127,7 +127,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 
 	const handleOnVoteChange = (value: any) => {
 		setVote(value as EVoteDecisionType);
-		console.log('reached here');
 		dispatch(
 			editBatchValueChanged({
 				values: {
@@ -229,7 +228,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 					form={ayeNayForm}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
-						console.log('balance change --> ', balance.toNumber());
 						dispatch(
 							editBatchValueChanged({
 								values: {
@@ -274,7 +272,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 					form={abstainFrom}
 					formName={EFormType.ABSTAIN_FORM}
 					onBalanceChange={(balance: BN) => {
-						console.log('balance change --> ', balance.toNumber());
 						dispatch(
 							editBatchValueChanged({
 								values: {

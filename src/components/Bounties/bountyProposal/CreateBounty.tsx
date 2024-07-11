@@ -345,7 +345,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 								(isBounty && linkedAddress) || proposerAddress != bountyProposer ? 'opacity-50' : ''
 							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
-							disabled={isBounty ? proposerAddress != bountyProposer : false}
+							disabled={loadingStatus.isLoading}
 						>
 							{isBounty ? 'Next' : 'Create Bounty'}
 						</Button>

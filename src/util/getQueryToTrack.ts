@@ -20,6 +20,7 @@ const getDefaultTrackMetaData = () => {
 };
 
 const getQueryToTrack = (track: string, network: string) => {
+	console.log(track, network);
 	if (!network) return getDefaultTrackMetaData;
 
 	const originTrack = track && !Array.isArray(track) && track.split('-').join('_').toUpperCase();

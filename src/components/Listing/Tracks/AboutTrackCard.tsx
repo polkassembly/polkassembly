@@ -41,6 +41,7 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import DefaultVotingOptionsModal from './DefaultVotingOptionsModal';
+import { useRouter } from 'next/router';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -168,6 +169,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [trackNum, setTrackNum] = useState<number | null>(null);
 	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
 	const [openTinderVotingModal, setOpenTinderVotingModal] = useState(false);
+	const router = useRouter();
 	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 
 	const [data, setData] = useState<any>({
@@ -581,6 +583,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 							variant='primary'
 							text='Next'
 							buttonsize='sm'
+							onClick={() => {
+								router.push(`/batch-voting/${trackName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`);
+								setOpenTinderVotingModal(false);
+							}}
 						/>
 					</div>
 				}

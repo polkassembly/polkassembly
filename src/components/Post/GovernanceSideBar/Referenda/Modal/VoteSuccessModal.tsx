@@ -92,17 +92,6 @@ const VoteInitiatedModal = ({
 
 	title = 'Voted Successfully';
 
-	console.log(
-		'delegatedVotingPower',
-		delegatedVotingPower,
-		'FormattedBalance delegatedVotingPower',
-		+formatedBalance(delegatedVotingPower.toString(), unit, 0),
-		'Parse Balanceconviction',
-		conviction && parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network),
-		'parseBalance delegatedVotingPower',
-		parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)
-	);
-
 	return (
 		<Modal
 			open={open}

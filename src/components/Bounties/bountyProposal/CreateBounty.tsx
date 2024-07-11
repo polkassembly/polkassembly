@@ -146,7 +146,7 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 		// setSteps({ percent: 0, step: 2 });
 		// return;
 		setError('');
-		console.log('here', { proposerAddress, api, apiReady, bountyAmount });
+		console.log('here', { api, apiReady, bountyAmount, proposerAddress });
 
 		if (!proposerAddress || !api || !apiReady || !bountyAmount) return;
 

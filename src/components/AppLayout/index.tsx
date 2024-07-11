@@ -41,7 +41,8 @@ import {
 	CommunityPIPsIcon,
 	ApplayoutIdentityIcon,
 	ArchivedIcon,
-	ClearIdentityOutlinedIcon
+	ClearIdentityOutlinedIcon,
+	RoundedDollarIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -830,6 +831,30 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
+	if (network == 'polkadot') {
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				<div className='ml-[2px] flex items-center gap-1.5'>
+					Bounty
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/bounty',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+
 	const gov2OverviewItems = [
 		!isMobile
 			? getSiderMenuItem(
@@ -949,7 +974,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
 						</span>
 					</div>,
-					network == 'polkadot' ? '/bounty' : '/bounties',
+					'/bounties',
 					null
 				),
 				getSiderMenuItem(

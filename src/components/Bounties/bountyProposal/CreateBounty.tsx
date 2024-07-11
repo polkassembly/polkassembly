@@ -342,10 +342,10 @@ const CreateBounty = ({ className, setSteps, isBounty, setIsBounty, form, propos
 						<Button
 							htmlType='submit'
 							className={`${
-								(isBounty && linkedAddress) || proposerAddress != bountyProposer ? 'opacity-50' : ''
+								isBounty && proposerAddress != bountyProposer ? 'opacity-50' : ''
 							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
-							disabled={loadingStatus.isLoading}
+							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount}
 						>
 							{isBounty ? 'Next' : 'Create Bounty'}
 						</Button>

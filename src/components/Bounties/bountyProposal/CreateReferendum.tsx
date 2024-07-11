@@ -243,25 +243,24 @@ const CreateReferendum = ({
 			const onSuccess = async () => {
 				handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
+				setLoading(false);
+				setOpenModal(false);
+				setOpenSuccess(true);
 				localStorage.removeItem('treasuryProposalProposerAddress');
 				localStorage.removeItem('treasuryProposalProposerWallet');
 				localStorage.removeItem('treasuryProposalData');
-				setLoading(false);
-				setOpenSuccess(true);
-				setOpenModal(false);
 			};
 
 			const onFailed = async () => {
+				setLoading(false);
 				queueNotification({
 					header: 'Failed!',
 					message: 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
-
-				setLoading(false);
 			};
-			setLoading(true);
 			await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
+			setLoading(false);
 		} catch (error) {
 			setLoading(false);
 			console.log(':( transaction failed');
@@ -440,12 +439,14 @@ const CreateReferendum = ({
 		};
 
 		const onSuccess = async () => {
+			setLoading(false);
 			queueNotification({
 				header: 'Success!',
 				message: 'Proposal created successfully.',
 				status: NotificationStatus.SUCCESS
 			});
-			setLoading(false);
+			setOpenModal(false);
+			setOpenSuccess(true);
 			setSteps({ percent: 0, step: 2 });
 		};
 

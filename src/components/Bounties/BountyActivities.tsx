@@ -38,13 +38,10 @@ const BountyActivities = () => {
 	}, []);
 
 	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
-
-	useEffect(() => {
 		if (!network) return;
+		getData();
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
 
 	return (

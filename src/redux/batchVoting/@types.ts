@@ -6,7 +6,13 @@ import BN from 'bn.js';
 
 export interface IBatchVoteStore {
 	batch_vote_details: IBatchVotesDetails;
+	vote_card_info: IVoteCardInfo;
 }
+
+export type IVoteCardInfo = {
+	post_id: string;
+	voted_for: string;
+};
 
 export interface IBatchVotesDetails {
 	voteOption?: string;

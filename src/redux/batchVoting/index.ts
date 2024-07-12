@@ -3,11 +3,15 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IBatchVotesDetails, IBatchVoteStore } from './@types';
+import { IBatchVotesDetails, IBatchVoteStore, IVoteCardInfo } from './@types';
 import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState: IBatchVoteStore = {
-	batch_vote_details: {}
+	batch_vote_details: {},
+	vote_card_info: {
+		post_id: '',
+		voted_for: ''
+	}
 };
 
 type IBatchVotesPayload = {
@@ -16,6 +20,13 @@ type IBatchVotesPayload = {
 		value: IBatchVotesDetails[K];
 	};
 }[keyof IBatchVotesDetails];
+
+type IVoteCardInfoPayload = {
+	[K in keyof IVoteCardInfo]: {
+		key: K;
+		value: IVoteCardInfo[K];
+	};
+}[keyof IVoteCardInfo];
 
 export const batchVoteStore = createSlice({
 	extraReducers: (builder) => {
@@ -33,7 +44,11 @@ export const batchVoteStore = createSlice({
 		reset: (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
-				batch_vote_details: {}
+				batch_vote_details: {},
+				vote_card_info: {
+					post_id: '',
+					voted_for: ''
+				}
 			};
 		},
 		setBatchVoting_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
@@ -58,6 +73,23 @@ export const batchVoteStore = createSlice({
 						break;
 					case 'conviction':
 						state.batch_vote_details[key] = value;
+						break;
+				}
+			}
+		},
+		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
+			state.vote_card_info = action.payload;
+		},
+		setvoteCardInfo_field: (state, action: PayloadAction<IVoteCardInfoPayload>) => {
+			const obj = action.payload;
+			if (obj) {
+				const { key, value } = obj;
+				switch (key) {
+					case 'post_id':
+						state.vote_card_info[key] = value;
+						break;
+					case 'voted_for':
+						state.vote_card_info[key] = value;
 						break;
 				}
 			}

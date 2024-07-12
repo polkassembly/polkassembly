@@ -7,6 +7,8 @@ import { StopOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { Button } from 'antd';
+import ImageIcon from '~src/ui-components/ImageIcon';
 // import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
@@ -17,6 +19,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
 	console.log(trackPosts);
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
+	const [showCartMenu, setShowCartMenu] = useState(false);
 	const currentIndexRef = useRef(currentIndex);
 
 	const childRefs: any = useMemo(
@@ -48,6 +51,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	};
 
 	const swipe = async (dir: any) => {
+		setShowCartMenu(true);
 		if (canSwipe && currentIndex < trackPosts?.posts?.length) {
 			await childRefs[currentIndex].current.swipe(dir);
 		}
@@ -102,43 +106,48 @@ const VotingCards: FC<IVotingCards> = (props) => {
 					</TinderCard>
 				))}
 			</div>
-			<div className='sticky bottom-[110px] z-10 flex w-full items-center justify-center gap-x-6 p-4'>
-				<button
-					className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'
-					onClick={() => swipe('left')}
-				>
-					<DislikeWhite className='' />
-				</button>
-				<button
-					className='flex h-[60px] w-[60px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
-					onClick={() => swipe('up')}
-				>
-					<StopOutlined className={'text-2xl text-lightBlue'} />
-				</button>
-				<button
-					className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#2ED47A] drop-shadow-2xl'
-					onClick={() => swipe('right')}
-				>
-					<LikeWhite className='' />
-				</button>
-			</div>
-			<div className='items-betweenh-[56px] sticky bottom-[48px] z-10 flex w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
-				<p className='p-0 m-0 mr-auto text-xs'>1 proposal added</p>
-				<div className='ml-auto flex gap-x-1'>
-					<CustomButton
-						variant='primary'
-						text='Add to cart'
-						height={36}
-						width={91}
-						fontSize='xs'
-					/>
-					<CustomButton
-						variant='default'
-						height={36}
-						width={36}
-					/>
+			<div className={'sticky bottom-[48px] z-10 flex w-full flex-col gap-y-2'}>
+				<div className='flex items-center justify-center gap-x-6 p-4'>
+					<button
+						className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'
+						onClick={() => swipe('left')}
+					>
+						<DislikeWhite className='' />
+					</button>
+					<button
+						className='flex h-[60px] w-[60px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
+						onClick={() => swipe('up')}
+					>
+						<StopOutlined className={'text-2xl text-lightBlue'} />
+					</button>
+					<button
+						className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#2ED47A] drop-shadow-2xl'
+						onClick={() => swipe('right')}
+					>
+						<LikeWhite className='' />
+					</button>
 				</div>
 			</div>
+			{showCartMenu && (
+				<div className='z-1000 sticky bottom-0 flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
+					<p className='m-0 mr-auto p-0 text-xs'>1 proposal added</p>
+					<div className='ml-auto flex gap-x-1'>
+						<CustomButton
+							variant='primary'
+							text='Add to cart'
+							height={36}
+							width={91}
+							fontSize='xs'
+						/>
+						<Button className='flex h-[36px] w-[36px] items-center justify-center rounded-lg border border-solid border-pink_primary bg-transparent'>
+							<ImageIcon
+								src='/assets/icons/bin-icon.svg'
+								alt='bin-icon'
+							/>
+						</Button>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

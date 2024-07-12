@@ -44,7 +44,7 @@ const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGrap
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
-	const { post_id, title, description, tags, reward, user_id, curator, proposer } = extendedData;
+	const { post_id, title, content, tags, reward, user_id, curator, proposer, description } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
 	const { resolvedTheme: theme } = useTheme();
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
@@ -189,9 +189,10 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 								</div>
-								<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-									{getAscciiFromHex(description).slice(0, 140)}
-								</p>
+
+								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+									{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}
+								</div>
 								{tags && tags.length > 0 && (
 									<div className='mb-1 flex gap-x-1'>
 										{tags?.slice(0, 3).map((tag: string, index: number) => (

@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { Divider, Popover } from 'antd';
 import Image from 'next/image';
 import { poppins, spaceGrotesk } from 'pages/_app';
-import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';
 // import { BountyCriteriaIcon, CuratorIcon } from '~src/ui-components/CustomIcons';
@@ -48,7 +47,6 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { post_id, title, description, tags, reward, user_id, curator, proposer } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
 	const { resolvedTheme: theme } = useTheme();
-	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''

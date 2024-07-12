@@ -14,7 +14,6 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import Skeleton from '~src/basic-components/Skeleton';
 import ImageComponent from '../ImageComponent';
 import VotesProgressInListing from '~src/ui-components/VotesProgressInListing';
@@ -76,7 +75,6 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline, proposer } = activeData;
 	const [decision, setDecision] = useState<IPeriod>();
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
-	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [votesData, setVotesData] = useState(null);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({

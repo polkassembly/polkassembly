@@ -62,7 +62,7 @@ const BountiesHeader = () => {
 				<Skeleton active />
 			) : (
 				<div className='flex'>
-					<div className='flex gap-6'>
+					<div className='hidden gap-6 md:flex'>
 						<div>
 							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
 							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
@@ -100,7 +100,7 @@ const BountiesHeader = () => {
 						</div>
 					</div>
 
-					<div className='items-between relative flex h-full flex-col justify-between'>
+					<div className='items-between relative hidden h-full flex-col justify-between md:flex'>
 						<div className='absolute -top-6 left-1/2 h-10 w-20 rotate-180 rounded-t-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 						<ImageIcon
 							src='/assets/bounty-icons/dashed-line.svg'
@@ -111,7 +111,7 @@ const BountiesHeader = () => {
 						<div className='absolute left-1/2 top-[237px] h-10 w-20 rounded-t-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
 					</div>
 
-					<div className='flex gap-x-10'>
+					<div className='hidden gap-x-10 md:flex'>
 						<ImageIcon
 							src={theme == 'dark' ? '/assets/bounty-icons/create-white.svg' : '/assets/bounty-icons/create.svg'}
 							alt='bounty icon'
@@ -124,6 +124,68 @@ const BountiesHeader = () => {
 							imgClassName='mt-6'
 							imgWrapperClassName=''
 						/>
+					</div>
+					<div className='flex flex-col gap-6 md:hidden'>
+						<div>
+							<span className='text-base text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
+							<div className='text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
+							<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
+								<StatItem
+									label='Active Bounties'
+									value={statsData.activeBounties}
+								/>
+								<StatItem
+									label='No. of People Earned'
+									value={statsData.peopleEarned}
+								/>
+								<StatItem
+									label='Total Rewarded'
+									value={getDisplayValue(statsData.totalRewarded, network, currentTokenPrice, unit)}
+								/>
+								<StatItem
+									label='Total Bounty Pool'
+									value={getDisplayValue(statsData.totalBountyPool, network, currentTokenPrice, unit)}
+								/>
+							</div>
+							<div className='items-between relative -ml-6 flex items-center justify-between'>
+								<div className='left-0 h-20 w-10 rounded-r-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
+								<ImageIcon
+									src='/assets/bounty-icons/dashed-horizontal-line.svg'
+									alt='bounty icon'
+									imgWrapperClassName='h-[3px] w-[209px]'
+								/>
+								<div className='first-letter  right-0 h-20 w-10 rounded-l-full bg-[#f5f6f8] shadow-none dark:bg-[#1c1d1f]'></div>
+							</div>
+							<div className='-ml-4 mt-12 flex w-full flex-col items-center gap-x-4'>
+								<ImageIcon
+									src={theme == 'dark' ? '/assets/bounty-icons/create-mb-white.svg' : '/assets/bounty-icons/create-mb.svg'}
+									alt='bounty icon'
+									imgClassName='scale-125'
+									imgWrapperClassName='h-[24px]'
+								/>
+								<ImageIcon
+									src={theme == 'dark' ? '/assets/bounty-icons/barcode-mb-white.svg' : '/assets/bounty-icons/barcode-mb.svg'}
+									alt='bounty icon'
+									imgClassName='mt-6 scale-125'
+									imgWrapperClassName=''
+								/>
+							</div>
+							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
+								<div className='mb-8 flex items-end gap-3'>
+									<ImageIcon
+										src='/assets/bounty-icons/bounty-icon.svg'
+										alt='bounty icon'
+										className='scale-90'
+										imgWrapperClassName='w-[308px] h-[113px]'
+									/>
+									<ImageIcon
+										src='/assets/bounty-icons/bounty-arrow-icon.svg'
+										alt='arrow icon'
+										className='pr-2'
+									/>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			)}

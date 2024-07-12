@@ -14,7 +14,6 @@ import HotBountyCard from './HotBountyCard';
 import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
 import BountyProposalActionButton from './bountyProposal';
-import BountiesHeaderMb from './BountiesHeaderMb';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
@@ -46,12 +45,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
 				<BountyProposalActionButton className='hidden md:block' />
 			</div>
-			<span className='hidden md:block'>
-				<BountiesHeader />
-			</span>
-			<span className='block md:hidden'>
-				<BountiesHeaderMb />
-			</span>
+			<BountiesHeader />
 
 			{/* // Hot Bounties */}
 			<div className='mt-7 flex items-center justify-between'>

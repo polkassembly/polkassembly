@@ -44,12 +44,12 @@ const CardHeader = styled.div`
 	}
 `;
 
-const HeaderBtns = styled.div`
+const BtnLine = styled.div`
 	&:after {
 		content: '';
 		position: absolute;
-		bottom: 29px;
-		right: 105px;
+		bottom: 8px;
+		right: -1px;
 		height: 12px;
 		width: 12px;
 		border-radius: 100%;
@@ -58,8 +58,8 @@ const HeaderBtns = styled.div`
 	&:before {
 		content: '';
 		position: absolute;
-		bottom: 4px;
-		right: 105px;
+		bottom: -13px;
+		right: -1px;
 		height: 12px;
 		width: 12px;
 		border-radius: 100%;
@@ -182,8 +182,8 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 							href={`/referenda/${post_id}`}
 							target='_blank'
 						>
-							<HeaderBtns
-								theme={theme as any}
+							<div
+								// theme={theme as any}
 								className='relative ml-2 flex w-full items-center'
 							>
 								<Image
@@ -193,13 +193,16 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									alt='redirect link'
 									className='-mr-[2px] h-[36px] w-[36px] cursor-pointer rounded-full bg-black dark:bg-white md:h-auto md:w-auto'
 								/>
-								<div className='h-2 w-[10px] bg-black dark:bg-white'></div>
+								<BtnLine
+									theme={theme as any}
+									className='relative h-2 w-[10px] bg-black dark:bg-white'
+								></BtnLine>
 								<button
 									className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-[2px] h-[36px] w-[75px] cursor-pointer rounded-3xl border-none bg-black text-base font-bold text-white dark:bg-white dark:text-black md:h-[44px] md:w-[100px] md:text-lg`}
 								>
 									Vote
 								</button>
-							</HeaderBtns>
+							</div>
 						</Link>
 					</div>
 					<div

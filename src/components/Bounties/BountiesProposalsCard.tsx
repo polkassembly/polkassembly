@@ -241,7 +241,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
 							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[60px] break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-								{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}
+								{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
 							</div>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>

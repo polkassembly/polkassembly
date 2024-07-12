@@ -6,6 +6,8 @@ import TinderCard from 'react-tinder-card';
 import { StopOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+// import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
 	trackPosts?: any;
@@ -88,32 +90,19 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						<div className='flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow-lg'>
 							<div className='h-full overflow-y-auto'>
 								<h3 className='text-xl font-bold'>{character.title}</h3>
-								<p>
-									Overview DOT Play Project Name: Dot Play: Accelerate Gaming Adoption of Polkadot Following our successful application to the DFF as the specialized business
-									development arm for Polkadot gaming, along with the establishment of Dot Play as curators of the Games Bounty, we are submitting a new proposal herein. The
-									details are identical to the original Dot Play bounty, except that we have adjusted the amount requested to 400k DOT from 1 million DOT. This accounts for the
-									100k DOT that previously existed in the Games Bounty, and provides an opportunity to demonstrate our abilities as responsible stewards of Treasury capital. Below
-									please find our ambitious road map to create a games accelerator for the Polkadot ecosystem, using our resources and IP relationships, game studio talent, and
-									tools. Background and Teams Game Master Partners The team has deep experience and expertise both in the gaming industry and in Polkadot. Nicholas Douzinas is
-									Co-Founder of Ajuna Network and Angela Dalton, CEO & Founder of Signum Growth, has a 20-year history in the gaming vertical as an analyst, investor, and board
-									member, including as a seed round investor in Mythical and as board member of the largest esports org, FaZe Clan. She also served as Lead Advisor to the Web3
-									Foundation on the launch of the Polkadot network. Overview DOT Play Project Name: Dot Play: Accelerate Gaming Adoption of Polkadot Following our successful
-									application to the DFF as the specialized business development arm for Polkadot gaming, along with the establishment of Dot Play as curators of the Games Bounty,
-									we are submitting a new proposal herein. The details are identical to the original Dot Play bounty, except that we have adjusted the amount requested to 400k DOT
-									from 1 million DOT. This accounts for the 100k DOT that previously existed in the Games Bounty, and provides an opportunity to demonstrate our abilities as
-									responsible stewards of Treasury capital. Below please find our ambitious road map to create a games accelerator for the Polkadot ecosystem, using our resources
-									and IP relationships, game studio talent, and tools. Background and Teams Game Master Partners The team has deep experience and expertise both in the gaming
-									industry and in Polkadot. Nicholas Douzinas is Co-Founder of Ajuna Network and Angela Dalton, CEO & Founder of Signum Growth, has a 20-year history in the gaming
-									vertical as an analyst, investor, and board member, including as a seed round investor in Mythical and as board member of the largest esports org, FaZe Clan. She
-									also served as Lead Advisor to the Web3 Foundation on the launch of the Polkadot network.
-								</p>
+								{/* <PostHeading
+									method={character?.method}
+									motion_method={character?.motion_method}
+									postArguments={character?.proposed_call?.args}
+									className='mb-5'
+								/> */}
 							</div>
 							<div className='bg-custom-gradient absolute bottom-0 left-0 h-24 w-full'></div>
 						</div>
 					</TinderCard>
 				))}
 			</div>
-			<div className='sticky bottom-[48px] z-10 flex w-full items-center justify-center gap-x-6 p-4'>
+			<div className='sticky bottom-[110px] z-10 flex w-full items-center justify-center gap-x-6 p-4'>
 				<button
 					className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'
 					onClick={() => swipe('left')}
@@ -132,6 +121,23 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				>
 					<LikeWhite className='' />
 				</button>
+			</div>
+			<div className='items-betweenh-[56px] sticky bottom-[48px] z-10 flex w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
+				<p className='p-0 m-0 mr-auto text-xs'>1 proposal added</p>
+				<div className='ml-auto flex gap-x-1'>
+					<CustomButton
+						variant='primary'
+						text='Add to cart'
+						height={36}
+						width={91}
+						fontSize='xs'
+					/>
+					<CustomButton
+						variant='default'
+						height={36}
+						width={36}
+					/>
+				</div>
 			</div>
 		</div>
 	);

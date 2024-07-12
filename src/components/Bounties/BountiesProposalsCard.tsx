@@ -27,6 +27,7 @@ import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { formatTrackName, getFormattedValue } from './utils/formatBalanceUsd';
 import { IDelegationProfileType } from '~src/auth/types';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import getAscciiFromHex from '~src/util/getAscciiFromHex';
 export interface BountiesProposalsCardProps {
 	activeData: any;
 }
@@ -72,7 +73,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline, proposer } = activeData;
+	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline, proposer, description } = activeData;
 	const [decision, setDecision] = useState<IPeriod>();
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [loading, setLoading] = useState(false);
@@ -239,7 +240,9 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
-							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>{content.slice(0, 140)}</p>
+							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[60px] break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+								{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+							</div>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>
 									{tags?.slice(0, 3).map((tag: string, index: number) => (

@@ -20,7 +20,7 @@ export const getFormattedValue = (value: string, network: string, currentTokenPr
 	}
 
 	const tokenPrice = Number(currentTokenPrice.value);
-	const dividedValue = numericValue / tokenPrice;
+	const dividedValue = numericValue * tokenPrice;
 
 	return formatNumberWithSuffix(dividedValue);
 };

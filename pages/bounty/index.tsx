@@ -38,6 +38,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const [extendedResponse, activeBountyResp] = await Promise.allSettled([
 		getOnChainPosts({
 			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			includeContent: true,
 			listingLimit: LISTING_LIMIT,
 			network,
 			page,

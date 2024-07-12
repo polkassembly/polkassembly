@@ -324,7 +324,7 @@ const CreateReferendum = ({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
 
-	const handlePreimageHash = (preimageHash: string, isPreimage: boolean) => {
+	const handlePreimageHash = (preimageHash: string) => {
 		setPreimageLength(0);
 		if (!preimageHash || preimageHash.length === 0) return;
 		setSteps({ percent: 60, step: 2 });
@@ -516,7 +516,7 @@ const CreateReferendum = ({
 										name='preimage_hash'
 										className='h-10 rounded-[4px] dark:border-section-dark-container dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 										value={preimageHash}
-										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
+										onChange={(e) => handlePreimageHash(e.target.value)}
 									/>
 								</Form.Item>
 							</div>

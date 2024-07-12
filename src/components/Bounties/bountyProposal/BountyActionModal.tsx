@@ -4,10 +4,9 @@
 import { Form, Modal, Steps } from 'antd';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { EEnactment, IEnactment, ISteps } from '~src/components/OpenGovTreasuryProposal';
-import { useNetworkSelector } from '~src/redux/selectors';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
@@ -70,7 +69,6 @@ const BountyActionModal = ({
 	setProposerAddress,
 	theme
 }: Props) => {
-	const { network } = useNetworkSelector();
 	const [closeConfirm, setCloseConfirm] = useState<boolean>(false);
 	const [steps, setSteps] = useState<ISteps>({ percent: 0, step: 0 });
 	const [writeProposalForm] = Form.useForm();

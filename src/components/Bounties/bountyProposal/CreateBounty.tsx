@@ -60,6 +60,7 @@ const CreateBounty = ({
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [bountyProposer, setBountyProposer] = useState<string | null>(null);
 	const [bountyBond, setBountyBond] = useState<BN>(ZERO_BN);
+	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const [loadingStatus, setLoadingStatus] = useState({ isLoading: false, message: '' });
 	const [error, setError] = useState('');
 
@@ -79,11 +80,8 @@ const CreateBounty = ({
 		}
 
 		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
-
 		const amount = new BN(String(bountyProposerData?.proposals[0]?.reward));
-
 		setBountyAmount(amount);
-
 		form.setFieldsValue({
 			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
 		});
@@ -117,11 +115,20 @@ const CreateBounty = ({
 		setBountyBond(bountyBondValue);
 	};
 
+	const fetchGasFee = async () => {
+		if (!api || !apiReady || !linkedAddress || !proposerAddress || !bountyAmount) return;
+		const title = 'PA';
+		const bountyTx = api.tx.bounties.proposeBounty(bountyAmount, title);
+		const { partialFee: bountyTxGasFee } = (await bountyTx.paymentInfo(linkedAddress || proposerAddress)).toJSON();
+		setGasFee(new BN(String(bountyTxGasFee)));
+	};
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		getBountyBondValue();
+		fetchGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, isBounty]);
+	}, [api, apiReady, isBounty, bountyAmount]);
 
 	const handleCreateBounty = async () => {
 		setLoadingStatus({ isLoading: true, message: '' });
@@ -272,7 +279,7 @@ const CreateBounty = ({
 				</div>
 				{new BN(availableBalance || '0').lte(bountyBond) && (
 					<Alert
-						className='my-2 mt-6 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+						className='my-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 						type='info'
 						showIcon
 						message={
@@ -354,10 +361,10 @@ const CreateBounty = ({
 						<Button
 							htmlType='submit'
 							className={`${
-								isBounty && proposerAddress != bountyProposer ? 'opacity-50' : ''
+								isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee)) ? 'opacity-50' : ''
 							} h-10 w-[165px] rounded-[4px] bg-pink_primary text-center text-sm font-medium tracking-[0.05em] text-white
 						dark:border-pink_primary`}
-							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount}
+							disabled={isBounty ? proposerAddress != bountyProposer : !bountyAmount || new BN(availableBalance || '0').lt(bountyBond.add(gasFee))}
 						>
 							{isBounty ? 'Next' : 'Create Bounty'}
 						</Button>

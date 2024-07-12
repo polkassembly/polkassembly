@@ -25,7 +25,6 @@ import { IPeriod } from '~src/types';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import { getStatusBlock } from '~src/util/getStatusBlock';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
-import NameLabel from '~src/ui-components/NameLabel';
 import { formatTrackName, getFormattedValue } from './utils/formatBalanceUsd';
 export interface BountiesProposalsCardProps {
 	activeData: any;
@@ -72,7 +71,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
-	const { track_no, tags, title, content, reward, user_id, proposer, post_id, tally, created_at, timeline } = activeData;
+	const { track_no, tags, title, content, reward, user_id, post_id, tally, created_at, timeline } = activeData;
 	const [decision, setDecision] = useState<IPeriod>();
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
@@ -244,28 +243,19 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								)}
 							</div>
 						)}
-						<div>
-							{user_id == 1 ? (
-								<NameLabel
-									defaultAddress={proposer}
-									className='text-xs'
-									isUsedInLeadership
-								/>
-							) : (
-								<Link
-									href={`/user/${userImageData[0]?.username}`}
-									target='_blank '
-								>
-									<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
-									<ImageComponent
-										alt='user img'
-										src={userImageData[0]?.image}
-										className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
-									/>
-									<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
-								</Link>
-							)}
-						</div>
+
+						<Link
+							href={`/user/${userImageData[0]?.username}`}
+							target='_blank '
+						>
+							<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
+							<ImageComponent
+								alt='user img'
+								src={userImageData[0]?.image}
+								className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
+							/>
+							<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
+						</Link>
 						<div className='mb-3 mt-2'>
 							<TrackTag
 								theme={theme as any}

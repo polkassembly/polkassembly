@@ -2522,3 +2522,83 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
 }
 
 `;
+
+export const ACTIVE_PROPOSALS_FOR_TRACK = `
+query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2) {
+  proposals(where: {trackNumber_eq:$track_eq, status_in: $status_in, type_eq: $type_eq},){
+    index
+    proposer
+    status
+    preimage {
+      proposer
+      method
+      hash
+      proposedCall {
+        method
+        args
+        description
+        section
+      }
+    }
+    description
+    parentBountyIndex
+    hash
+    curator
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    origin
+    trackNumber
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    deposit
+    bond
+    reward
+    payee
+    fee
+    curatorDeposit
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    enactmentAfterBlock
+    enactmentAtBlock
+    decisionDeposit {
+      amount
+      who
+    }
+    submissionDeposit {
+      amount
+      who
+    }
+    deciding {
+      confirming
+      since
+    }
+  }
+}
+`

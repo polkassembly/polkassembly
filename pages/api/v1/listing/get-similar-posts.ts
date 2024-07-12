@@ -8,17 +8,21 @@ import { isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType, getSubsquidProposalType } from '~src/global/proposalType';
-
+import { network as AllNetworks } from '~src/global/networkConstants';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import messages from '~src/util/messages';
 import { getNetworkBasedSubsquidQuery, getResults } from '../utils/similar-proposals';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import messages from '~src/auth/utils/messages';
 
 const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const { postId, proposalType, tags, trackNumber, trackGroup } = req.body;
 	const network = String(req.headers['x-network']);
+
+	if (!network || !Object.values(AllNetworks).includes(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 	const query = getNetworkBasedSubsquidQuery(network, proposalType);
 
 	const strProposalType = String(proposalType);
@@ -38,7 +42,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 	const seenProposalIds = new Set<number>();
 	const subsquidData = subsquidRes?.data?.proposals;
 	if (!subsquidData) {
-		return res.status(400).json({ message: 'error' || messages.NO_ACTIVE_PROPOSALS });
+		return res.status(400).json({ message: 'error' || messages.NO_ACTIVE_PROPOSAL_FOUND });
 	}
 	const onChainCollRef = postsByTypeRef(network, strProposalType as ProposalType);
 	if (tags && tags?.length > 0) {

@@ -120,7 +120,8 @@ const messages = {
 	USER_EMAIL_ALREADY_EXISTS: 'A user with this email already exists.',
 	USER_NOT_FOUND: 'User not found.',
 	DISABLE_COMMENTS: 'Comments have been disabled for this post.',
-	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.'
+	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.',
+	NO_ACTIVE_PROPOSAL_FOUND: 'No active proposal found.'
 };
 
 export default messages;

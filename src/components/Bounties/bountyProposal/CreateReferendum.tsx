@@ -290,9 +290,7 @@ const CreateReferendum = ({
 		};
 	};
 
-	const existPreimageData = async (preimageHash: string, isPreimage: boolean) => {
-		console.log(isPreimage);
-
+	const existPreimageData = async (preimageHash: string) => {
 		setPreimageLength(0);
 		form.setFieldValue('preimage_length', 0);
 		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
@@ -330,7 +328,7 @@ const CreateReferendum = ({
 		setPreimageLength(0);
 		if (!preimageHash || preimageHash.length === 0) return;
 		setSteps({ percent: 60, step: 2 });
-		debounceExistPreimageFn(preimageHash, isPreimage);
+		debounceExistPreimageFn(preimageHash);
 		setPreimageHash(preimageHash);
 	};
 

@@ -117,8 +117,6 @@ const BountyActionModal = ({
 		setPostId(null);
 	};
 
-	useEffect(() => {}, [network]);
-
 	return (
 		<div className={className}>
 			{openAddressLinkedModal && (

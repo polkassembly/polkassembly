@@ -101,7 +101,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 									className='mb-5'
 								/> */}
 							</div>
-							<div className='bg-custom-gradient absolute bottom-0 left-0 h-24 w-full'></div>
+							<div className='absolute bottom-0 left-0 h-24 w-full bg-custom-gradient'></div>
 						</div>
 					</TinderCard>
 				))}

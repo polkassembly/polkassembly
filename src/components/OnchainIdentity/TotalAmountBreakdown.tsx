@@ -43,6 +43,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
+		if (network === 'polkadot') return; //temp
 		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
@@ -191,6 +192,8 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 					variant='primary'
 				/>
 				<button
+					//temp
+					disabled={network === 'polkadot'}
 					onClick={handleRequestJudgement}
 					className='mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay'
 				>

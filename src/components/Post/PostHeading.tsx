@@ -177,7 +177,9 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	};
 
 	const handlePreimageWarning = async (isTreasuryProposal: boolean) => {
-		if (!api || !apiReady || !isTreasuryProposal) return;
+		if (!api || !apiReady || !isTreasuryProposal || ['Cancelled', 'TimedOut', 'Confirmed', 'Approved', 'Rejected', 'Executed', 'Killed', 'ExecutionFailed'].includes(status)) {
+			return;
+		}
 		const { preimageWarning = null } = await getPreimageWarning({ api: api, apiReady: apiReady, preimageHash: hash || preimageHash || '' });
 		setPreimageWarning(preimageWarning);
 	};

@@ -13,17 +13,19 @@ import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import HotBountyCard from './HotBountyCard';
 import BountiesProposalsCard from './BountiesProposalsCard';
 import { chunkArray } from './utils/ChunksArr';
+import BountyProposalActionButton from './bountyProposal';
 
 interface IBountiesContainer {
 	extendedData?: IPostsListingResponse;
-	activeData?: IPostsListingResponse;
+	activeBountyData?: IPostsListingResponse;
 }
 
-const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData }) => {
+const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyData }) => {
 	const carouselRef1 = useRef<any>(null);
 	const carouselRef2 = useRef<any>(null);
 	const [currentSlide1, setCurrentSlide1] = useState<number>(0);
 	const [currentSlide2, setCurrentSlide2] = useState<number>(0);
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const router = useRouter();
 
 	const handleBeforeChange1 = (next: number) => {
@@ -34,21 +36,14 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 		setCurrentSlide2(next);
 	};
 
-	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, 3) : [];
-	const activeDataChunks = activeData ? chunkArray(activeData.posts, 3) : [];
+	const extendedDataChunks = extendedData ? chunkArray(extendedData.posts, isMobile ? 1 : 3) : [];
+	const activeDataChunks = activeBountyData ? chunkArray(activeBountyData.posts, isMobile ? 1 : 3) : [];
 
 	return (
 		<main>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
-				<button className='bounty-button flex cursor-pointer items-center gap-[6px] rounded-[20px] border-none px-[22px] py-[11px] '>
-					<ImageIcon
-						src='/assets/bounty-icons/proposal-icon.svg'
-						alt='bounty icon'
-						imgClassName=''
-					/>
-					<span className='font-bold text-white'>Create Bounty Proposal</span>
-				</button>
+				<BountyProposalActionButton className='hidden md:block' />
 			</div>
 			<BountiesHeader />
 
@@ -60,13 +55,13 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 						alt='bounty icon'
 						imgClassName='-mt-[18px]'
 					/>
-					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Hot Bounties</h2>
+					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
 				</div>
 				<button
 					onClick={() => {
 						router.push('/bounties');
 					}}
-					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-[26px] font-bold text-pink_primary`}
+					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} mb:text-[26px] cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary`}
 				>
 					View All
 				</button>
@@ -77,25 +72,27 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					<span
 						onClick={() => carouselRef1?.current?.prev()}
 						className='rotate-180 cursor-pointer'
-						style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10 }}
+						style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
 					>
 						<ImageIcon
 							src='/assets/bounty-icons/carousel-icon.svg'
 							alt='carousel icon'
+							className='scale-75 md:scale-100'
 						/>
 					</span>
 				)}
 				<Carousel
 					ref={carouselRef1}
 					arrows
+					className='overflow-hidden'
 					infinite={false}
 					dots={false}
-					beforeChange={handleBeforeChange1}
+					afterChange={handleBeforeChange1}
 				>
 					{extendedDataChunks.map((chunk, index) => (
 						<div
 							key={index}
-							className='flex justify-between space-x-4'
+							className='flex justify-center space-x-4 md:justify-between'
 						>
 							{chunk.map((post, postIndex) => (
 								<HotBountyCard
@@ -110,11 +107,18 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					<span
 						onClick={() => carouselRef1?.current?.next()}
 						className='cursor-pointer'
-						style={{ position: 'absolute', right: -46, top: '35%', zIndex: 10 }}
+						style={{
+							position: 'absolute',
+							right: -46,
+							top: '35%',
+							zIndex: 10,
+							...(isMobile ? { right: 10 } : {})
+						}}
 					>
 						<ImageIcon
 							src='/assets/bounty-icons/carousel-icon.svg'
 							alt='carousel icon'
+							className='scale-75 md:scale-100'
 						/>
 					</span>
 				)}
@@ -128,37 +132,40 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 						alt='bounty icon'
 						imgClassName='-mt-[18px]'
 					/>
-					<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounty Proposals</h2>
+					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
 				</div>
 			</div>
+
 			<div className='relative '>
 				{currentSlide2 > 0 && (
 					<span
 						onClick={() => carouselRef2?.current?.prev()}
 						className='rotate-180 cursor-pointer'
-						style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10 }}
+						style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
 					>
 						<ImageIcon
 							src='/assets/bounty-icons/carousel-icon.svg'
 							alt='carousel icon'
+							className='scale-75 md:scale-100'
 						/>
 					</span>
 				)}
 				<Carousel
 					ref={carouselRef2}
 					arrows
+					className='overflow-hidden'
 					infinite={false}
 					dots={false}
-					beforeChange={handleBeforeChange2}
+					afterChange={handleBeforeChange2}
 				>
 					{activeDataChunks.map((chunk, index) => (
 						<div
 							key={index}
 							className='flex justify-between space-x-4'
 						>
-							{chunk.map((post, postIndex) => (
+							{chunk.map((post, proposalIndex) => (
 								<BountiesProposalsCard
-									key={postIndex}
+									key={proposalIndex}
 									activeData={post}
 								/>
 							))}
@@ -169,25 +176,36 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeData })
 					<span
 						onClick={() => carouselRef2?.current?.next()}
 						className='cursor-pointer'
-						style={{ position: 'absolute', right: -46, top: '40%', zIndex: 10 }}
+						style={{
+							position: 'absolute',
+							right: -46,
+							top: '40%',
+							zIndex: 10,
+							...(isMobile ? { right: 10 } : {})
+						}}
 					>
 						<ImageIcon
 							src='/assets/bounty-icons/carousel-icon.svg'
 							alt='carousel icon'
+							className='scale-75 md:scale-100'
 						/>
 					</span>
 				)}
 			</div>
 
 			{/* Footer */}
-			<div className='mt-10 flex items-center gap-8'>
+			<div className='mt-10 flex flex-col-reverse items-center gap-8 md:flex-row'>
 				<Image
 					src={'assets/bounty-icons/bounty-coming-soon.svg'}
 					width={753}
 					height={400}
 					alt='curator'
+					className='h-auto w-full md:w-auto'
 				/>
 				<BountyActivities />
+			</div>
+			<div className='sticky bottom-0 z-20 -ml-4 mt-2 flex w-screen justify-center rounded-t-md bg-white p-2 pt-3 dark:bg-black md:hidden'>
+				<BountyProposalActionButton className='w-full' />
 			</div>
 		</main>
 	);

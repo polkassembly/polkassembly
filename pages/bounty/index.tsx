@@ -7,10 +7,11 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import BountiesContainer from '~src/components/Bounties';
+import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import SEOHead from '~src/global/SEOHead';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import { ProposalType } from '~src/global/proposalType';
+import { ProposalType, getStatusesFromCustomStatus } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
 import { setNetwork } from '~src/redux/network';
 import { ErrorState } from '~src/ui-components/UIStates';
@@ -34,45 +35,54 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = context.query;
 	const proposalType = ProposalType.BOUNTIES;
 
-	const extendedResponse = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		listingLimit: LISTING_LIMIT,
-		network,
-		page,
-		proposalStatus: ['Extended'],
-		proposalType,
-		sortBy
-	});
+	const [extendedResponse, activeBountyResp] = await Promise.allSettled([
+		getOnChainPosts({
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			listingLimit: LISTING_LIMIT,
+			network,
+			page,
+			preimageSection: '',
+			proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
+			proposalType,
+			sortBy
+		}),
+		getOnChainPosts({
+			filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
+			getBountyReward: true,
+			includeContent: true,
+			listingLimit: LISTING_LIMIT,
+			network,
+			page,
+			preimageSection: 'Bounties',
+			proposalStatus: getStatusesFromCustomStatus(CustomStatus.Voting),
+			proposalType: ProposalType.REFERENDUM_V2,
+			sortBy
+		})
+	]);
 
-	const activeResponse = await getOnChainPosts({
-		filterBy: filterBy && Array.isArray(JSON.parse(decodeURIComponent(String(filterBy)))) ? JSON.parse(decodeURIComponent(String(filterBy))) : [],
-		listingLimit: LISTING_LIMIT,
-		network,
-		page,
-		proposalStatus: ['Active'],
-		proposalType,
-		sortBy
-	});
+	const extendedData = extendedResponse.status === 'fulfilled' ? extendedResponse.value.data : null;
+	const activeBountyData = activeBountyResp.status === 'fulfilled' ? activeBountyResp.value.data : null;
+	const error = extendedResponse.status === 'rejected' ? extendedResponse.reason : activeBountyResp.status === 'rejected' ? activeBountyResp.reason : null;
 
 	return {
 		props: {
-			activeData: activeResponse.data,
-			error: extendedResponse.error || activeResponse.error || null,
-			extendedData: extendedResponse.data,
+			activeBountyData,
+			error,
+			extendedData,
 			network
 		}
 	};
 };
 
 interface IBountyProps {
-	activeData?: IPostsListingResponse;
+	activeBountyData?: IPostsListingResponse;
 	error?: string;
 	extendedData?: IPostsListingResponse;
 	network: string;
 }
 
 const Bounty: React.FC<IBountyProps> = (props) => {
-	const { extendedData, activeData, error, network } = props;
+	const { extendedData, activeBountyData, error, network } = props;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -81,10 +91,6 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 	}, [network]);
 
 	if (error) return <ErrorState errorMessage={error} />;
-	if (!extendedData || !activeData) return null;
-
-	console.log('proposedPosts', extendedData);
-	console.log('activePosts', activeData);
 
 	return (
 		<>
@@ -93,10 +99,12 @@ const Bounty: React.FC<IBountyProps> = (props) => {
 				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
 				network={network}
 			/>
-			<BountiesContainer
-				extendedData={extendedData}
-				activeData={activeData}
-			/>
+			<div>
+				<BountiesContainer
+					activeBountyData={activeBountyData}
+					extendedData={extendedData}
+				/>
+			</div>
 		</>
 	);
 };

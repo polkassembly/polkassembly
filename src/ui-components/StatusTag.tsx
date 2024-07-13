@@ -97,13 +97,13 @@ export default styled(StatusTag).attrs(({ status, theme }: any) => ({
 		&.${proposalStatus.CLEARED},
 		&.${referendumStatus.CANCELLED},
 		&.${referendumStatus.EXPIRED},
-		&.${referendumStatus.VETOED},
+		&.${referendumStatus.VOTED},
 		&.${motionStatus.DISAPPROVED},
 		&.${tipStatus.RETRACTED},
-		&.${bountyStatus.CANCELED},
+		&.${bountyStatus.CANCELLED},
 		&.${bountyStatus.REJECTED},
 		&.${gov2ReferendumStatus.EXECUTION_FAILED},
-		&.${childBountyStatus.CANCELED},
+		&.${childBountyStatus.CANCELLED},
 		&.${gov2ReferendumStatus.CONFIRM_ABORTED} {
 		color: #fff;
 		border: ${(props: any) => (props.theme === 'dark' ? '2px solid #BD2020' : '2px solid #FF0000 ')} !important;

@@ -9,6 +9,9 @@ import DislikeWhite from '~assets/icons/dislike-white.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { Button } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { batchVotesActions } from '~src/redux/batchVoting';
+import { useAppDispatch } from '~src/redux/store';
+// import { useBatchVotesSelector } from '~src/redux/selectors';
 // import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
@@ -17,6 +20,8 @@ interface IVotingCards {
 
 const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
+	// const { total_votes_added_in_Cart } = useBatchVotesSelector();
+	const dispatch = useAppDispatch();
 	console.log(trackPosts);
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
 	const [showCartMenu, setShowCartMenu] = useState(false);
@@ -37,11 +42,17 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	};
 
 	const canGoBack = currentIndex < trackPosts?.posts?.length - 1;
-
 	const canSwipe = currentIndex >= 0;
 
-	const swiped = (direction: string, index: number) => {
-		console.log(direction);
+	const swiped = (direction: string, index: number, postId: number) => {
+		setShowCartMenu(true);
+		dispatch(batchVotesActions.setTotalVotesAddedInCart(1));
+		dispatch(
+			batchVotesActions.setvoteCardInfo({
+				post_id: postId,
+				voted_for: direction === 'left' ? 'nye' : direction === 'right' ? 'aye' : 'abstain'
+			})
+		);
 		updateCurrentIndex(index - 1);
 	};
 
@@ -51,7 +62,6 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	};
 
 	const swipe = async (dir: any) => {
-		setShowCartMenu(true);
 		if (canSwipe && currentIndex < trackPosts?.posts?.length) {
 			await childRefs[currentIndex].current.swipe(dir);
 		}
@@ -65,7 +75,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	};
 
 	return (
-		<div className='flex h-screen w-full flex-col items-center'>
+		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='mb-4 flex w-full justify-between'>
 				<button
 					className='mr-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
@@ -87,7 +97,9 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						ref={childRefs[index]}
 						className='absolute h-full w-full'
 						key={character.name}
-						onSwipe={(dir) => swiped(dir, index)}
+						onSwipe={(dir) => {
+							swiped(dir, index, character?.post_id);
+						}}
 						onCardLeftScreen={() => outOfFrame(character.name, index)}
 						preventSwipe={['down']}
 					>
@@ -101,12 +113,12 @@ const VotingCards: FC<IVotingCards> = (props) => {
 									className='mb-5'
 								/> */}
 							</div>
-							<div className='absolute bottom-0 left-0 h-24 w-full bg-custom-gradient'></div>
+							<div className='absolute bottom-0 left-0 h-24 w-full '></div>
 						</div>
 					</TinderCard>
 				))}
 			</div>
-			<div className={'sticky bottom-[48px] z-10 flex w-full flex-col gap-y-2'}>
+			<div className={`${showCartMenu ? '-mt-[320px]' : ''} sticky bottom-[48px] z-10 flex w-full flex-col gap-y-2`}>
 				<div className='flex items-center justify-center gap-x-6 p-4'>
 					<button
 						className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'
@@ -129,7 +141,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				</div>
 			</div>
 			{showCartMenu && (
-				<div className='z-1000 sticky bottom-0 flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
+				<div className='z-1000 sticky bottom-0 mt-[20px] flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
 					<p className='m-0 mr-auto p-0 text-xs'>1 proposal added</p>
 					<div className='ml-auto flex gap-x-1'>
 						<CustomButton

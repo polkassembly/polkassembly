@@ -8,8 +8,9 @@ import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {},
+	total_votes_added_in_Cart: 0,
 	vote_card_info: {
-		post_id: '',
+		post_id: 0,
 		voted_for: ''
 	}
 };
@@ -45,8 +46,9 @@ export const batchVoteStore = createSlice({
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
 				batch_vote_details: {},
+				total_votes_added_in_Cart: 0,
 				vote_card_info: {
-					post_id: '',
+					post_id: 0,
 					voted_for: ''
 				}
 			};
@@ -76,6 +78,9 @@ export const batchVoteStore = createSlice({
 						break;
 				}
 			}
+		},
+		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
+			state.total_votes_added_in_Cart = action.payload;
 		},
 		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
 			state.vote_card_info = action.payload;

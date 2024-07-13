@@ -9,6 +9,7 @@ export interface IBatchVoteStore {
 	vote_card_info: IVoteCardInfo;
 	total_proposals_added_in_Cart: number;
 	vote_card_info_array: IVoteCardInfo[];
+	show_cart_menu: boolean;
 }
 
 export type IVoteCardInfo = {

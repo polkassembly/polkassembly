@@ -11,7 +11,7 @@ import { Button } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
-// import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 // import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
@@ -20,7 +20,7 @@ interface IVotingCards {
 
 const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
-	// const { total_votes_added_in_Cart } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	console.log(trackPosts);
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
@@ -46,7 +46,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 
 	const swiped = (direction: string, index: number, postId: number) => {
 		setShowCartMenu(true);
-		dispatch(batchVotesActions.setTotalVotesAddedInCart(1));
+		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
 		dispatch(
 			batchVotesActions.setvoteCardInfo({
 				post_id: postId,
@@ -57,7 +57,6 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	};
 
 	const outOfFrame = (name: string, idx: number) => {
-		console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
 		currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
 	};
 
@@ -142,7 +141,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 			</div>
 			{showCartMenu && (
 				<div className='z-1000 sticky bottom-0 mt-[20px] flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
-					<p className='m-0 mr-auto p-0 text-xs'>1 proposal added</p>
+					<p className='m-0 mr-auto p-0 text-xs'>{total_proposals_added_in_Cart} proposal added</p>
 					<div className='ml-auto flex gap-x-1'>
 						<CustomButton
 							variant='primary'

@@ -81,7 +81,7 @@ const useAmbassadorSeedingSelector = () => {
 };
 
 const useBatchVotesSelector = () => {
-	return useSelector<TAppState, IBatchVoteStore>((state) => state.home);
+	return useSelector<TAppState, IBatchVoteStore>((state) => state.batchVote);
 };
 
 export {

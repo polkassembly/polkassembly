@@ -7,7 +7,8 @@ import BN from 'bn.js';
 export interface IBatchVoteStore {
 	batch_vote_details: IBatchVotesDetails;
 	vote_card_info: IVoteCardInfo;
-	total_votes_added_in_Cart: number;
+	total_proposals_added_in_Cart: number;
+	vote_card_info_array: IVoteCardInfo[];
 }
 
 export type IVoteCardInfo = {

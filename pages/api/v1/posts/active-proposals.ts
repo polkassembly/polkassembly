@@ -20,6 +20,7 @@ import { IBeneficiary } from '~src/types';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { IPostResponse } from './on-chain-post';
 
 interface Args {
 	network: string;
@@ -59,18 +60,16 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 };
 
 export const getUpdatedAt = (data: any) => {
-	let updated_at: Date | string | undefined;
 	if (data) {
-		if (data.last_edited_at) {
-			updated_at = data.last_edited_at?.toDate ? data.last_edited_at.toDate() : data.last_edited_at;
+		if (data?.last_edited_at) {
+			return data?.last_edited_at?.toDate ? data?.last_edited_at?.toDate() : data?.last_edited_at;
 		} else if (data.updated_at) {
-			updated_at = data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
+			return data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
 		}
 	}
-	return updated_at;
 };
 
-const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, isExternalApiCall }: Args) => {
+export const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, isExternalApiCall }: Args) => {
 	if (!network || !Object.values(AllNetworks).includes(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
@@ -100,7 +99,7 @@ const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, 
 	if (!subsquidData.length) {
 		return { data: [], error: null };
 	} else {
-		const activeProposalIds = subsquidData.map((proposal: any) => (isNaN(proposal?.index) ? null : String(proposal?.index)));
+		const activeProposalIds = subsquidData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
 
 		const postsSnapshot = await postsByTypeRef(network, (getFirestoreProposalType(proposalType) as ProposalType) || proposalType)
 			.where(
@@ -113,14 +112,15 @@ const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, 
 		if (postsSnapshot.empty) {
 			return { data: subsquidData, error: null };
 		} else {
+			const results: any[] = [];
+
 			const postsDocs = postsSnapshot.docs;
-			const postsPromises = postsDocs.map(async (doc) => {
-				const post = doc.data();
-				const { statusHistory, isSwap } = getIsSwapStatus(subsquidData?.statusHistory);
-				const subsquidPost = subsquidData.filter((data: any) => data.index == post.id);
+			const subsquidDataPromises = subsquidData.map(async (subsquidPost: any) => {
+				const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
 
 				const preimage = subsquidPost?.preimage;
 				const proposedCall = preimage?.proposedCall;
+				const proposalArguments = subsquidData?.proposalArguments || subsquidData?.callData;
 				let requested = BigInt(0);
 				const beneficiaries: IBeneficiary[] = [];
 				let assetId: null | string = null;
@@ -162,51 +162,76 @@ const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, 
 					}
 				}
 
-				const payload = {
-					...subsquidPost,
+				const payload: any = {
 					assetId: assetId || null,
 					beneficiaries: beneficiaries || [],
-					last_edited_at: getUpdatedAt(post),
+					comments: [],
+					content: '',
+					created_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
+					gov_type: ProposalType.OPEN_GOV === proposalType ? 'open_gov' : 'gov_1',
+					id: subsquidPost.index,
+					last_edited_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
+					method: preimage?.method || proposedCall?.method || proposalArguments?.method,
+					preimageHash: preimage.hash,
+					proposedCall: proposedCall,
+					proposer: subsquidPost?.proposer || '',
 					requested: requested.toString() || '0',
-					statusHistory: statusHistory,
-					summary: post?.summary,
-					tags: post?.tags,
-					title: post?.title,
-					topic: getTopicFromFirestoreData(post, getFirestoreProposalType(proposalType) as ProposalType),
+					status: subsquidPost?.status,
+					statusHistory: subsquidPost?.statusHistory || [],
+					summary: '',
+					tags: [],
+					tally: subsquidPost.tally,
+					title: '',
 					track_number: trackNumber,
 					type: subsquidPost.type
 				};
-				if (isSwap) {
-					if (payload.status === 'DecisionDepositPlaced') {
-						payload.status = 'Deciding';
+
+				if (firebasePostDoc?.exists) {
+					const firebasePost = firebasePostDoc?.data();
+
+					const { statusHistory, isSwap } = getIsSwapStatus(subsquidPost?.statusHistory);
+
+					// payload.last_edited_at = getUpdatedAt(firebasePost).toDate() || null;
+					payload.statusHistory = statusHistory;
+					payload.summary = firebasePost?.summary || '';
+					payload.tags = firebasePost?.tags || [];
+					payload.title = firebasePost?.title || '';
+					payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(proposalType) as ProposalType);
+
+					if (isSwap) {
+						if (payload.status === 'DecisionDepositPlaced') {
+							payload.status = 'Deciding';
+						}
 					}
+
+					await getContentSummary(firebasePost, network, isExternalApiCall);
+					results.push(payload);
+				} else {
+					results.push(payload);
 				}
-
-				await getContentSummary(post, network, isExternalApiCall);
-
-				return payload;
 			});
-			await Promise.allSettled(postsPromises);
 
-			return { data: postsPromises, error: null };
+			await Promise.allSettled(subsquidDataPromises);
+
+			return { data: results, error: null };
 		}
 	}
 };
-const handler: NextApiHandler<any | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { proposalType, trackNumber = null } = req.body;
+	// const { proposalType, trackNumber = null } = req.body;
 	const network = String(req.headers['x-network']);
 
 	const { data, error } = await getActiveProposalsForTrack({
-		isExternalApiCall: false,
+		isExternalApiCall: true,
 		network: network,
-		proposalType: proposalType,
-		trackNumber: trackNumber
+		proposalType: ProposalType.REFERENDUM_V2,
+		trackNumber: 33
 	});
 
 	if (error || !data) {
-		return res.status(400).json({ error: error || messages.API_FETCH_ERROR });
+		return res.status(400).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
 		if (data.summary) {
 			delete data.summary;

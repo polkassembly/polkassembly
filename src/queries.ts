@@ -2543,7 +2543,6 @@ query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPla
     description
     parentBountyIndex
     hash
-    curator
     type
     threshold {
       ... on MotionThreshold {
@@ -2562,12 +2561,6 @@ query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPla
     updatedAt
     delay
     endedAt
-    deposit
-    bond
-    reward
-    payee
-    fee
-    curatorDeposit
     proposalArguments {
       method
       args
@@ -2587,18 +2580,6 @@ query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPla
     }
     enactmentAfterBlock
     enactmentAtBlock
-    decisionDeposit {
-      amount
-      who
-    }
-    submissionDeposit {
-      amount
-      who
-    }
-    deciding {
-      confirming
-      since
-    }
   }
 }
-`
+`;

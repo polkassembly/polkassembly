@@ -2,7 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
-import { useBatchVotesSelector } from '~src/redux/selectors';
 import LikeWhite from '~assets/icons/like-white.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import { StopOutlined } from '@ant-design/icons';
@@ -15,7 +14,6 @@ interface ISwipeActionButtons {
 
 const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 	const { currentIndex, trackPosts, childRefs } = props;
-	const { show_cart_menu } = useBatchVotesSelector();
 	const canSwipe = currentIndex >= 0;
 
 	const swipe = async (dir: any) => {
@@ -25,7 +23,7 @@ const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 	};
 
 	return (
-		<section className={`${show_cart_menu ? '-mt-[320px]' : ''} sticky bottom-[48px] z-10 flex w-full flex-col gap-y-2`}>
+		<section className={'flex w-full flex-col gap-y-2'}>
 			<div className='flex items-center justify-center gap-x-6 p-4'>
 				<button
 					className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'

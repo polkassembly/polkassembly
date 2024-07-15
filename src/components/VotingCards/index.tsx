@@ -20,7 +20,6 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
 	const { total_proposals_added_in_Cart, show_cart_menu } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
-	// console.log(trackPosts);
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 
@@ -80,7 +79,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 					<RightOutlined className='text-black' />
 				</button>
 			</div>
-			<div className='relative h-full w-full max-w-sm'>
+			<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
 				{trackPosts?.map((proposal: any, index: number) => (
 					<TinderCard
 						ref={childRefs[index]}

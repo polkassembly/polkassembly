@@ -70,7 +70,7 @@ export const getUpdatedAt = (data: any) => {
 	return updated_at;
 };
 
-const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, isExternalApiCall }: Args) => {
+export const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, isExternalApiCall }: Args) => {
 	if (!network || !Object.values(AllNetworks).includes(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
@@ -161,7 +161,7 @@ const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, 
 						}
 					}
 				}
-
+				console.log('summary --> ', post?.summary);
 				const payload = {
 					...subsquidPost,
 					assetId: assetId || null,
@@ -169,7 +169,7 @@ const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, 
 					last_edited_at: getUpdatedAt(post),
 					requested: requested.toString() || '0',
 					statusHistory: statusHistory,
-					summary: post?.summary,
+					summary: post?.summary || null,
 					tags: post?.tags,
 					title: post?.title,
 					topic: getTopicFromFirestoreData(post, getFirestoreProposalType(proposalType) as ProposalType),
@@ -209,6 +209,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 		return res.status(400).json({ error: error || messages.API_FETCH_ERROR });
 	} else {
 		if (data.summary) {
+			console.log('backend data --> ', data.summary);
 			delete data.summary;
 		}
 		return res.status(200).json(data);

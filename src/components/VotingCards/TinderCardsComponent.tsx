@@ -9,6 +9,7 @@ interface ITinderCardsComponent {
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;
+	console.log('from tinder cards --> ', proposal);
 	return (
 		<section>
 			<h3 className='text-xl font-bold'>{proposal.title}</h3>

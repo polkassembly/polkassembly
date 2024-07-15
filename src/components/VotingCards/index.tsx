@@ -20,7 +20,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
 	const { total_proposals_added_in_Cart, show_cart_menu } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
-	console.log(trackPosts);
+	// console.log(trackPosts);
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 
@@ -81,7 +81,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				</button>
 			</div>
 			<div className='relative h-full w-full max-w-sm'>
-				{trackPosts?.posts?.map((proposal: any, index: number) => (
+				{trackPosts?.map((proposal: any, index: number) => (
 					<TinderCard
 						ref={childRefs[index]}
 						className='absolute h-full w-full'
@@ -89,7 +89,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						onSwipe={(dir) => {
 							swiped(dir, index, proposal?.post_id);
 						}}
-						onCardLeftScreen={() => outOfFrame(proposal.name, index)}
+						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 						preventSwipe={['down']}
 					>
 						<div className='flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow-lg'>

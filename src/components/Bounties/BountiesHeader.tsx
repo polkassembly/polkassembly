@@ -127,8 +127,8 @@ const BountiesHeader = () => {
 					</div>
 					<div className='flex flex-col gap-6 md:hidden'>
 						<div>
-							<span className='text-base text-[#2D2D2D] dark:text-white'>Available Bounty pool</span>
-							<div className='text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
+							<span className='font-pixelify text-base text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
+							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
 							<div className='grid grid-cols-2 gap-y-8  py-7 pr-4'>
 								<StatItem
 									label='Active Bounties'

@@ -668,16 +668,21 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	useEffect(() => {
 		if (!api || !apiReady || !network) return;
 		if (![ProposalType.OPEN_GOV, ProposalType.FELLOWSHIP_REFERENDUMS].includes(proposalType)) return;
+		setCurvesLoading(false);
 
 		const handleVisibilityChange = () => {
 			if (document.visibilityState === 'visible') {
+				setCurvesLoading(true);
 				handleDebounceCurveData();
+			} else {
+				setCurvesLoading(false);
 			}
 		};
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
 		return () => {
+			setCurvesLoading(false);
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps

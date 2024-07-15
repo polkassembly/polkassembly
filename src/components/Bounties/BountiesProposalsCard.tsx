@@ -28,6 +28,7 @@ import { formatTrackName, getFormattedValue } from './utils/formatBalanceUsd';
 import { IDelegationProfileType } from '~src/auth/types';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { removeSymbols } from '~src/util/htmlDiff';
 export interface BountiesProposalsCardProps {
 	activeData: any;
 }
@@ -241,7 +242,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
 							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[60px] break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-								{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+								{content ? removeSymbols(content).slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
 							</div>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>

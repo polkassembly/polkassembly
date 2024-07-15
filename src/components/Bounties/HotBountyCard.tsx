@@ -25,6 +25,7 @@ import styled from 'styled-components';
 import { getFormattedValue } from './utils/formatBalanceUsd';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import { IDelegationProfileType } from '~src/auth/types';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 const CardHeader = styled.div`
 	&:after {
@@ -191,7 +192,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								</div>
 
 								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-									{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+									{content ? removeSymbols(content).slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
 								</div>
 								{tags && tags.length > 0 && (
 									<div className='mb-1 flex gap-x-1'>

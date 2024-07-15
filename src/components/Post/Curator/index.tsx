@@ -15,6 +15,7 @@ import executeTx from '~src/util/executeTx';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
+import CuratorProposalActionButton from '~src/components/Bounties/curatorProposal';
 
 interface Props {
 	curator?: string;
@@ -138,13 +139,8 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 					className='mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
 					message={
-						<span className='dark:text-blue-dark-high'>
-							<span
-								className='cursor-pointer font-semibold text-pink_primary dark:text-blue-dark-helper'
-								onClick={() => setShowModal(true)}
-							>
-								Assign Curator
-							</span>{' '}
+						<span className='flex gap-x-2 dark:text-blue-dark-high'>
+							<CuratorProposalActionButton className='cursor-pointer font-semibold text-pink_primary dark:text-blue-dark-helper' />
 							to your referendum to proceed with bounty creation
 						</span>
 					}

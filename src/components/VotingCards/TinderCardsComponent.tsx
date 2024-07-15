@@ -2,19 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
-// import PostHeading from '../Post/PostHeading';
 import CardPostHeading from '../Post/CardPostHeading';
-import { Divider, Skeleton } from 'antd';
+import { Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
-// import GovernanceSideBar from '../Post/GovernanceSideBar';
-import { ProposalType } from '~src/global/proposalType';
-import dynamic from 'next/dynamic';
-// import CardVoteInfo from '../Post/GovernanceSideBar/cardVoteInfo';
-const CardVoteInfo = dynamic(() => import('../Post/GovernanceSideBar/cardVoteInfo'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
-
+// import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
+import { IVotesCount } from '~src/types';
+import ReferendumV2CardInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2CardInfo';
 interface ITinderCardsComponent {
 	proposal: any;
 }
@@ -22,15 +15,12 @@ interface ITinderCardsComponent {
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;
 	console.log('from tinder cards --> ', proposal);
-	const [isEditing, setIsEditing] = useState(false);
-
-	const toggleEdit = () => setIsEditing(!isEditing);
+	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
 		const newMd = (md || '').trim();
 		return newMd;
 	};
-	const onchainId = proposal?.type === ProposalType.TIPS ? proposal?.hash : proposal?.id;
 
 	return (
 		<section>
@@ -52,20 +42,15 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						md={sanitizeSummary(proposal?.summary || '')}
 					/>
 				</div>
-				<CardVoteInfo
-					toggleEdit={toggleEdit}
-					proposalType={proposal?.type}
-					onchainId={onchainId}
-					// status={postStatus}
-					// canEdit={canEdit}
-					startTime={proposal.created_at as any}
-					post={proposal}
+				<Divider
+					type='horizontal'
+					className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
+				/>
+				<ReferendumV2CardInfo
+					ayeNayAbstainCounts={ayeNayAbstainCounts}
+					setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 					tally={proposal?.tally}
-					// trackName={trackName}
-					// className={`${!isOffchainPost}`}
-					pipsVoters={proposal?.pips_voters || []}
-					hash={proposal?.hash}
-					bountyIndex={proposal.parent_bounty_index}
+					post={proposal}
 				/>
 			</div>
 		</section>

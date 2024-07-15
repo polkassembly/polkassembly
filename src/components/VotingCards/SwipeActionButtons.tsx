@@ -17,13 +17,13 @@ const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 	const canSwipe = currentIndex >= 0;
 
 	const swipe = async (dir: any) => {
-		if (canSwipe && currentIndex < trackPosts?.posts?.length) {
+		if (canSwipe && currentIndex < trackPosts?.length) {
 			await childRefs[currentIndex].current.swipe(dir);
 		}
 	};
 
 	return (
-		<section className={'flex w-full flex-col gap-y-2'}>
+		<section className={'z-50 -mt-[36px] flex w-full flex-col gap-y-2'}>
 			<div className='flex items-center justify-center gap-x-6 p-4'>
 				<button
 					className='flex h-[46px] w-[46px] items-center justify-center rounded-full border-none bg-[#F53C3C] drop-shadow-2xl'

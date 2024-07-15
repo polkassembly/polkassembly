@@ -20,16 +20,16 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
 	const { total_proposals_added_in_Cart, show_cart_menu } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
-	const [currentIndex, setCurrentIndex] = useState(trackPosts?.posts?.length - 1);
+	const [currentIndex, setCurrentIndex] = useState(trackPosts?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 
 	const childRefs: any = useMemo(
 		() =>
-			Array(trackPosts?.posts?.length)
+			Array(trackPosts?.length)
 				.fill(0)
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				.map((i) => React.createRef()),
-		[trackPosts?.posts?.length]
+		[trackPosts?.length]
 	);
 
 	const updateCurrentIndex = (val: any) => {
@@ -37,7 +37,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		currentIndexRef.current = val;
 	};
 
-	const canGoBack = currentIndex < trackPosts?.posts?.length - 1;
+	const canGoBack = currentIndex < trackPosts?.length - 1;
 
 	const swiped = (direction: string, index: number, postId: number) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));
@@ -91,7 +91,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 						preventSwipe={['down']}
 					>
-						<div className='flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow-lg'>
+						<div className='flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow-md'>
 							<div className='h-full overflow-y-auto'>
 								<TinderCardsComponent proposal={proposal} />
 							</div>

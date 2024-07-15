@@ -16,7 +16,7 @@ const CartOptionMenu = () => {
 			<div className='ml-auto flex gap-x-1'>
 				<CustomButton
 					variant='primary'
-					text='Add to cart'
+					text='View cart'
 					height={36}
 					width={91}
 					fontSize='xs'

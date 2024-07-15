@@ -10,7 +10,6 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext } from '~src/context';
-import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { CastVoteIcon, CloseIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
@@ -24,22 +23,21 @@ import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
 
-interface IReferendumV2VoteInfoProps {
+interface IReferendumV2CardInfoProps {
 	className?: string;
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
 	setUpdatetally?: (pre: boolean) => void;
 	updateTally?: boolean;
+	post?: any;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post }) => {
 	const { network } = useNetworkSelector();
-	const {
-		postData: { status, postIndex, postType }
-	} = usePostDataContext();
+	const { status, postIndex, postType } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
@@ -399,7 +397,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	);
 };
 
-export default styled(React.memo(ReferendumV2VoteInfo))`
+export default styled(React.memo(ReferendumV2CardInfo))`
 	.ant-modal .ant-modal-header {
 		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#F5F7FF')} !important;
 	}

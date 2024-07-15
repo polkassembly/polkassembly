@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import CouncilBoardContainer from '~src/components/CouncilBoard';
+import VoteCart from '~src/components/VoteCart';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
@@ -37,7 +37,7 @@ const CouncilBoard = (props: { network: string }) => {
 				title='Votes Cart'
 				network={props.network}
 			/>
-			<CouncilBoardContainer />
+			<VoteCart />
 		</>
 	);
 };

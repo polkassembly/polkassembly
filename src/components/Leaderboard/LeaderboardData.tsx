@@ -5,7 +5,6 @@ import React, { FC, useEffect, useState } from 'react';
 import Table from '~src/basic-components/Tables/Table';
 import { ColumnsType } from 'antd/lib/table';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import StarIcon from '~assets/icons/StarIcon.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import styled from 'styled-components';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -25,6 +24,7 @@ import { MenuProps, Spin } from 'antd';
 import Image from 'next/image';
 // import Link from 'next/link';
 import { Dropdown } from '~src/ui-components/Dropdown';
+import ScoreTag from '~src/ui-components/ScoreTag';
 // import Link from 'next/link';
 // import Image from 'next/image';
 
@@ -211,15 +211,12 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 			dataIndex: 'profileScore',
 			key: 'profileScore',
 			render: (profileScore) => (
-				<div
-					className={`${poppins.className} ${poppins.variable} flex h-7 w-[90px] items-center justify-start gap-x-0.5 rounded-md px-1 py-2`}
-					style={{ background: 'linear-gradient(0deg, #FFD669 0%, #FFD669 100%), #FCC636' }}
-				>
-					<span className='ml-1.5 mt-[5.5px]'>
-						<StarIcon className='scale-[1.1]' />
-					</span>
-					<p className='m-0 ml-1 p-0 text-sm font-medium text-[#534930]'>{profileScore}</p>
-				</div>
+				<ScoreTag
+					className='h-7 w-[90px] py-2'
+					score={profileScore}
+					scale={1.1}
+					iconWrapperClassName='ml-1.5 mt-[5.5px]'
+				/>
 			),
 			showSorterTooltip: { open: false },
 			sorter: (a, b) => a.profileScore - b.profileScore,

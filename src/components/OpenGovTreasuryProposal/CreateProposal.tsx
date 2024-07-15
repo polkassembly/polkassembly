@@ -59,7 +59,7 @@ interface Props {
 	inputAmountValue: string;
 	allowedCommentors?: EAllowedCommentor;
 }
-const getDiscussionIdFromLink = (discussion: string) => {
+export const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
 	return splitedArr[splitedArr.length - 1];
 };

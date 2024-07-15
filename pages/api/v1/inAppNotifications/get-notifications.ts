@@ -11,31 +11,26 @@ import messages from '~src/auth/utils/messages';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { firestore_db } from '~src/services/firebaseInit';
-import { EInAppNotificationsType, IInAppNotification, IInAppNotificationResponse } from '~src/components/InAppNotification/types';
+import { ECustomNotificationFilters, EInAppNotificationsType, IInAppNotification, IInAppNotificationResponse } from '~src/components/InAppNotification/types';
 import dayjs from 'dayjs';
+import getNotificationFiltersFromCustomFilters from '~src/components/InAppNotification/utils/getCustomNotificationFilters';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 
-const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date, totalNotificationsCount: number) => {
+const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date) => {
 	let modifiedNotifications: IInAppNotificationResponse = {
 		lastSeen: null,
-		notifications: {
-			readNotifications: [],
-			unreadNotifications: []
-		},
-		totalNotificationsCount: totalNotificationsCount
+		notifications: []
 	};
 
 	if (!lastSeen) {
 		modifiedNotifications = {
 			...modifiedNotifications,
 			lastSeen: null,
-			notifications: {
-				readNotifications: [],
-				unreadNotifications:
-					notifications.map((notification) => {
-						return { ...notification, type: EInAppNotificationsType.UNREAD };
-					}) || []
-			}
+			notifications: [
+				...(notifications.map((notification) => {
+					return { ...notification, type: EInAppNotificationsType.UNREAD };
+				}) || [])
+			]
 		};
 	} else {
 		const read: IInAppNotification[] = [];
@@ -50,31 +45,53 @@ const handleModifyData = (notifications: IInAppNotification[], lastSeen: Date, t
 		modifiedNotifications = {
 			...modifiedNotifications,
 			lastSeen: lastSeen,
-			notifications: {
-				readNotifications: read || [],
-				unreadNotifications: unread || []
-			}
+			notifications: [...unread, ...read]
 		};
 	}
 
 	return modifiedNotifications;
 };
 
-export const getUserNotifications = async ({ userId, page }: { userId: number; page: number }) => {
+export const getUserNotifications = async ({ userId, filterBy, page }: { userId: number; filterBy: ECustomNotificationFilters; page: number }) => {
 	try {
-		const notificationsSnapshot = await firestore_db
-			.collection('users')
-			.doc(String(userId))
-			.collection('notifications')
-			.orderBy('created_at', 'desc')
-			.limit(LISTING_LIMIT)
-			.offset(Number(page - 1) * LISTING_LIMIT)
-			.get();
+		let notificationsSnapshot;
+		let totalNotificationsSnapshot;
+
+		if (filterBy !== ECustomNotificationFilters.ALL) {
+			const filterArr = getNotificationFiltersFromCustomFilters(filterBy);
+			notificationsSnapshot = await firestore_db
+				.collection('users')
+				.doc(String(userId))
+				.collection('notifications')
+				.where('trigger', 'in', filterArr)
+				.orderBy('created_at', 'desc')
+				.limit(LISTING_LIMIT)
+				.offset((page - 1) * LISTING_LIMIT)
+				.get();
+
+			totalNotificationsSnapshot = await firestore_db
+				.collection('users')
+				.doc(String(userId))
+				.collection('notifications')
+				.where('trigger', 'in', filterArr)
+				.orderBy('created_at', 'desc')
+				.count()
+				.get();
+		} else {
+			notificationsSnapshot = await firestore_db
+				.collection('users')
+				.doc(String(userId))
+				.collection('notifications')
+				.orderBy('created_at', 'desc')
+				.limit(LISTING_LIMIT)
+				.offset((page - 1) * LISTING_LIMIT)
+				.get();
+
+			totalNotificationsSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').orderBy('created_at', 'desc').count().get();
+		}
 
 		const userSnapshot = await firestore_db.collection('users').doc(String(userId)).get();
-		const notificationsCountSnapshot = await firestore_db.collection('users').doc(String(userId)).collection('notifications').orderBy('created_at', 'desc').count().get();
 
-		const totalNotificationsCount = notificationsCountSnapshot.data().count;
 		let lastSeen = null;
 		if (userSnapshot.exists) {
 			const userData = userSnapshot.data();
@@ -93,6 +110,7 @@ export const getUserNotifications = async ({ userId, page }: { userId: number; p
 						message: docData?.message,
 						network: docData.network,
 						title: docData?.title,
+						trigger: docData.trigger,
 						url: docData?.url,
 						userId: docData?.userId
 					};
@@ -102,7 +120,7 @@ export const getUserNotifications = async ({ userId, page }: { userId: number; p
 		}
 
 		return {
-			data: handleModifyData(response, lastSeen, totalNotificationsCount || 0),
+			data: { ...handleModifyData(response, lastSeen), filterBy: filterBy, totalNotificationsCount: totalNotificationsSnapshot?.data()?.count || 0 },
 			error: null,
 			status: 200
 		};
@@ -118,8 +136,7 @@ export const getUserNotifications = async ({ userId, page }: { userId: number; p
 const handler: NextApiHandler<IInAppNotificationResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 	const network = String(req.headers['x-network']);
-
-	const { page = 1 } = req.body;
+	const { filterBy, page = 1 } = req.body as unknown as { filterBy: ECustomNotificationFilters; page: number };
 
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
@@ -128,11 +145,17 @@ const handler: NextApiHandler<IInAppNotificationResponse | MessageType> = async 
 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
-
 	if (isNaN(page)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
+	if (
+		filterBy &&
+		![ECustomNotificationFilters.ALL, ECustomNotificationFilters.COMMENTS, ECustomNotificationFilters.MENTIONS, ECustomNotificationFilters.PROPOSALS].includes(filterBy)
+	)
+		return res.status(400).json({ message: messages.INVALID_PARAMS });
+
 	const { data, error, status } = await getUserNotifications({
-		page: Number(page) || 1,
+		filterBy: filterBy || ECustomNotificationFilters.ALL,
+		page: page,
 		userId: user.id
 	});
 

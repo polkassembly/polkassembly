@@ -20,6 +20,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IDelegate } from '~src/types';
 import { isAddress } from 'ethers';
+import ScoreTag from '~src/ui-components/ScoreTag';
 
 interface Props {
 	className?: string;
@@ -30,7 +31,7 @@ interface Props {
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { image, created_at: profileSince, social_links: socials, username, addresses } = userProfile;
+	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore, addresses } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
@@ -117,6 +118,14 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 									address={addressWithIdentity}
 								/>
 							</div>
+						)}
+						{profileScore && (
+							<ScoreTag
+								score={profileScore}
+								className='ml-1 px-1 pr-3'
+								scale={1.1}
+								iconWrapperClassName='ml-1.5 mt-[5.5px]'
+							/>
 						)}
 						{isW3FDelegate && (
 							<div className='ml-1 flex items-center gap-1.5 rounded-md bg-[#272525] px-2 py-1 text-xs font-normal text-white'>

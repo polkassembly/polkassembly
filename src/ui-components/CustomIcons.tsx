@@ -169,6 +169,8 @@ import StackingAdminSVG from '~assets/icons/stacking-admin.svg';
 import ReferendumsSVG from '~assets/icons/referndums.svg';
 import ClearIdentityOutlinedSVG from '~assets/icons/outlined-clear-identity.svg';
 import ClearIdentityFilledSVG from '~assets/icons/filled-clear-identity.svg';
+import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
+import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1263,6 +1265,20 @@ export const ClearIdentityOutlinedIcon = (props: Partial<CustomIconComponentProp
 export const ClearIdentityFilledIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ClearIdentityFilledSVG}
+		{...props}
+	/>
+);
+
+export const CuratorIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CuratorSVG}
+		{...props}
+	/>
+);
+
+export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BountyCriteriaSVG}
 		{...props}
 	/>
 );

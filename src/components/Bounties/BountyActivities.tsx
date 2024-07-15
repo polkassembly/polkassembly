@@ -66,7 +66,7 @@ const BountyActivities = () => {
 						userActivities.map((activity, index) => (
 							<div
 								key={index}
-								className='my-1 flex h-[50px] max-w-[436px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
+								className='my-1 flex h-[50px] max-w-[450px] items-center gap-1 rounded-[14px] border bg-white px-3 py-2 dark:bg-section-light-overlay'
 							>
 								<NameLabel
 									truncateUsername={true}

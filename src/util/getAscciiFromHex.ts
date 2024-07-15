@@ -9,11 +9,16 @@ const getAscciiFromHex = (hex: string) => {
 	}
 
 	let sb = '';
+
+	//remove 0x from starting of hex
+	hex = hex.substring(2);
+
 	for (let i = 0; i < hex.length; i += 2) {
 		const str = hex.substring(i, i + 2);
 		const ch = String.fromCharCode(parseInt(str, 16));
 		sb += ch;
 	}
+
 	return sb;
 };
 

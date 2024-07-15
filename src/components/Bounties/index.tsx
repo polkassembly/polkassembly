@@ -56,6 +56,11 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 						imgClassName='-mt-[18px]'
 					/>
 					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
+					{extendedData?.count && (
+						<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
+							({extendedData?.count})
+						</span>
+					)}
 				</div>
 				<button
 					onClick={() => {

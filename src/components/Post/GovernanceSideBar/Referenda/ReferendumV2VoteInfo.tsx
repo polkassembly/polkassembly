@@ -153,6 +153,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			console.log(error);
 		}
 		setUpdatetally(false);
+		setIsLoading(false);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,6 +163,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	useEffect(() => {
 		if (!updateTally) return;
+		setIsLoading(true);
 		handleDebounceTallyData();
 		handleDebounceAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

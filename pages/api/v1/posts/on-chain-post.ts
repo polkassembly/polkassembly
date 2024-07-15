@@ -830,39 +830,41 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args) {
-				if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-					const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
-					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-				}
+			if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+			}
+			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 
-				proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-				if (proposedCall.args.amount) {
-					requested = proposedCall.args.amount;
-					if (proposedCall.args.beneficiary) {
-						beneficiaries.push({
-							address: proposedCall.args.beneficiary as string,
-							amount: proposedCall.args.amount
-						});
-					}
-				} else {
-					const calls = proposedCall.args.calls;
-					if (calls && Array.isArray(calls) && calls.length > 0) {
-						calls.forEach((call) => {
-							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-								remark += call.remark + '\n';
+			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
+				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
+			}
+
+			if (proposedCall.args.amount) {
+				requested = proposedCall.args.amount;
+				if (proposedCall.args.beneficiary) {
+					beneficiaries.push({
+						address: proposedCall.args.beneficiary as string,
+						amount: proposedCall.args.amount
+					});
+				}
+			} else {
+				const calls = proposedCall.args.calls;
+				if (calls && Array.isArray(calls) && calls.length > 0) {
+					calls.forEach((call) => {
+						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+							remark += call.remark + '\n';
+						}
+						if (call && call.amount) {
+							requested += BigInt(call.amount);
+							if (call.beneficiary) {
+								beneficiaries.push({
+									address: call.beneficiary as string,
+									amount: call.amount
+								});
 							}
-							if (call && call.amount) {
-								requested += BigInt(call.amount);
-								if (call.beneficiary) {
-									beneficiaries.push({
-										address: call.beneficiary as string,
-										amount: call.amount
-									});
-								}
-							}
-						});
-					}
+						}
+					});
 				}
 			}
 		}

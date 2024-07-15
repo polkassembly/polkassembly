@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { Divider, Popover } from 'antd';
 import Image from 'next/image';
 import { poppins, spaceGrotesk } from 'pages/_app';
-import { UserProfileImage } from 'pages/api/v1/auth/data/getUsersProfileImages';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IChildBountiesResponse } from '~src/types';
 // import { BountyCriteriaIcon, CuratorIcon } from '~src/ui-components/CustomIcons';
@@ -24,6 +23,8 @@ import { chainProperties } from '~src/global/networkConstants';
 import dynamic from 'next/dynamic';
 import styled from 'styled-components';
 import { getFormattedValue } from './utils/formatBalanceUsd';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import { IDelegationProfileType } from '~src/auth/types';
 
 const CardHeader = styled.div`
 	&:after {
@@ -43,10 +44,9 @@ const ClaimedAmountPieGraph = dynamic(() => import('./utils/ClaimedAmountPieGrap
 
 const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const { network } = useNetworkSelector();
-	const { post_id, title, description, tags, reward, user_id, curator } = extendedData;
+	const { post_id, title, content, tags, reward, user_id, curator, proposer, description } = extendedData;
 	const [childBountiesCount, setChildBountiesCount] = useState<number>(0);
 	const { resolvedTheme: theme } = useTheme();
-	const [userImageData, setUserImageData] = useState<UserProfileImage[]>([]);
 	const [currentTokenPrice, setCurrentTokenPrice] = useState({
 		isLoading: true,
 		value: ''
@@ -54,6 +54,31 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	const [loading, setLoading] = useState(false);
 	const [percentageClaimed, setPercentageClaimed] = useState<number>(0);
 	const unit = chainProperties?.[network]?.tokenSymbol;
+	const [profileDetails, setProfileDetails] = useState<IDelegationProfileType>({
+		bio: '',
+		image: '',
+		social_links: [],
+		user_id: 0,
+		username: ''
+	});
+
+	const getData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`api/v1/auth/data/profileWithAddress?address=${proposer}`, undefined, 'GET');
+			if (error || !data || !data.username || !data.user_id) {
+				return;
+			}
+			setProfileDetails({
+				bio: data?.profile?.bio || '',
+				image: data?.profile?.image || '',
+				social_links: data?.profile?.social_links || [],
+				user_id: data?.user_id,
+				username: data?.username
+			});
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const getChildBounties = async () => {
 		const { data, error } = await nextApiClientFetch<IChildBountiesResponse>('/api/v1/child_bounties/getAllChildBounties', {
@@ -76,31 +101,25 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 		}
 	};
 
-	const getUserProfile = async (userIds: string[]) => {
-		if (userIds?.length) {
-			const { data, error } = await nextApiClientFetch<UserProfileImage[]>('api/v1/auth/data/getUsersProfileImages', { userIds });
-			if (data) {
-				setUserImageData(data);
-			} else {
-				console.log('There is error in fetching data', error);
-			}
-		} else {
-			setUserImageData([]);
-		}
-	};
-
 	useEffect(() => {
 		if (!network) return;
+		setProfileDetails({
+			bio: '',
+			image: '',
+			social_links: [],
+			user_id: 0,
+			username: ''
+		});
 		GetCurrentTokenPrice(network, setCurrentTokenPrice);
 		const fetchData = async () => {
 			setLoading(true);
 			await getChildBounties();
-			await getUserProfile([user_id]);
+			await getData();
 			setLoading(false);
 		};
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [post_id, user_id, network]);
+	}, [post_id, user_id, network, proposer]);
 
 	return (
 		<section className='w-full md:w-[383px]'>
@@ -109,120 +128,126 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 			) : (
 				<>
 					<div className='w-full md:w-[383px]'>
-						<div className='flex w-full'>
-							<CardHeader
-								theme={theme as any}
-								className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
-							>
-								<div className='flex items-baseline gap-x-2'>
-									<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
-										{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? '' : '$'}
-										{getFormattedValue(String(reward), network, currentTokenPrice)}
-									</h2>
-									<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>
-										{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
-									</span>
-								</div>
-								<Divider
-									type='vertical'
-									className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
-								/>
-								<h2 className='mt-3 font-pixeboy text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
-								<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
-							</CardHeader>
-							<Link
-								key={post_id}
-								href={`/bounty/${post_id}`}
-								target='_blank'
-								className='px-2'
-							>
-								<Image
-									src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
-									width={44}
-									height={44}
-									alt='redirect link'
-									className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black dark:bg-white'
-								/>
-							</Link>
-						</div>
-						<div
-							className={
-								'rounded-tr-2xl border-b border-l border-r border-t-0 border-solid border-section-light-container bg-white px-3 py-1 dark:border-section-dark-container dark:bg-section-light-overlay'
-							}
+						<Link
+							key={post_id}
+							href={`/bounty/${post_id}`}
+							target='_blank'
 						>
-							<Link
-								href={`/referenda/${post_id}`}
-								target='_blank'
-							>
-								<ImageIcon
-									src='/assets/bounty-icons/bounty-image.svg'
-									alt='bounty icon'
-									imgClassName='mt-5 mb-3 w-full md:w-auto'
-									imgWrapperClassName=''
-								/>
-							</Link>
-							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
-								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
-								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
-							</div>
-							<p className={`${spaceGrotesk.className} ${spaceGrotesk.variable} text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-								{getAscciiFromHex(description).slice(0, 140)}
-							</p>
-							{tags && tags.length > 0 && (
-								<div className='mb-1 flex gap-x-1'>
-									{tags?.slice(0, 3).map((tag: string, index: number) => (
-										<div
-											key={index}
-											style={{ fontSize: '10px' }}
-											className=' w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
-										>
-											{tag}
-										</div>
-									))}
-									{tags.length > 3 && (
-										<span
-											className='text-bodyBlue dark:text-blue-dark-high'
-											style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
-										>
-											+{tags.length - 3}
-										</span>
-									)}
-								</div>
-							)}
-							<div className='my-[2px] flex items-center justify-between'>
-								<Link
-									href={`/user/${userImageData[0]?.username}`}
-									target='_blank '
+							<div className='flex w-full'>
+								<CardHeader
+									theme={theme as any}
+									className='relative flex h-[56px] w-[90%] items-center gap-x-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 								>
-									<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
-									<ImageComponent
-										alt='user img'
-										src={userImageData[0]?.image}
-										className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
+									<div className='flex items-baseline gap-x-2'>
+										<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
+											{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? '' : '$'}
+											{getFormattedValue(String(reward), network, currentTokenPrice)}
+										</h2>
+										<span className=' font-pixeboy text-[24px] font-normal text-pink_primary'>
+											{currentTokenPrice.isLoading || isNaN(Number(currentTokenPrice.value)) ? `${unit}` : ''}
+										</span>
+									</div>
+									<Divider
+										type='vertical'
+										className='h-[30px] bg-section-light-container dark:bg-section-dark-container'
 									/>
-									<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{userImageData[0]?.username}</span>
+									<h2 className='mt-3 font-pixeboy text-[28px] font-normal  text-blue-light-high dark:text-blue-dark-high'>{percentageClaimed}%</h2>
+									<ClaimedAmountPieGraph percentageClaimed={percentageClaimed} />
+								</CardHeader>
+								<Link
+									key={post_id}
+									href={`/bounty/${post_id}`}
+									target='_blank'
+									className='px-2'
+								>
+									<Image
+										src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
+										width={44}
+										height={44}
+										alt='redirect link'
+										className='-mr-[2px] mt-[6px] cursor-pointer rounded-full bg-black dark:bg-white'
+									/>
 								</Link>
-								<div className={'flex cursor-pointer items-center '}>
-									{curator && (
-										<>
-											<Popover
-												content={<CuratorPopover address={curator} />}
-												title=''
-												placement='top'
+							</div>
+							<div
+								className={
+									'rounded-tr-2xl border-b border-l border-r border-t-0 border-solid border-section-light-container bg-white px-3 py-1 dark:border-section-dark-container dark:bg-section-light-overlay'
+								}
+							>
+								<Link
+									href={`/bounty/${post_id}`}
+									target='_blank'
+								>
+									<ImageIcon
+										src='/assets/bounty-icons/bounty-image.svg'
+										alt='bounty icon'
+										imgClassName='mt-5 mb-3 w-full md:w-auto'
+										imgWrapperClassName=''
+									/>
+								</Link>
+								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+									<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
+									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
+								</div>
+
+								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+									{content ? content.slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+								</div>
+								{tags && tags.length > 0 && (
+									<div className='mb-1 flex gap-x-1'>
+										{tags?.slice(0, 3).map((tag: string, index: number) => (
+											<div
+												key={index}
+												style={{ fontSize: '10px' }}
+												className=' w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
 											>
-												<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
-													<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
-													<button
-														className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
-													>
-														Curator
-													</button>
-												</div>
-											</Popover>
-											<div className='mr-1 h-[5px] w-[5px] rounded-full bg-blue-light-medium dark:bg-blue-dark-medium'></div>
-										</>
-									)}
-									{/* <div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
+												{tag}
+											</div>
+										))}
+										{tags.length > 3 && (
+											<span
+												className='text-bodyBlue dark:text-blue-dark-high'
+												style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
+											>
+												+{tags.length - 3}
+											</span>
+										)}
+									</div>
+								)}
+								<div className='my-[2px] flex items-center justify-between'>
+									<Link
+										href={`/address/${proposer}`}
+										target='_blank'
+									>
+										<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
+										<ImageComponent
+											alt='user img'
+											src={profileDetails.image}
+											className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
+										/>
+										<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
+									</Link>
+									<div className={'flex cursor-pointer items-center '}>
+										{curator && (
+											<>
+												<Popover
+													content={<CuratorPopover address={curator} />}
+													title=''
+													placement='top'
+												>
+													<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
+														<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
+														<button
+															className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
+														>
+															Curator
+														</button>
+													</div>
+												</Popover>
+												{/* <div className='mr-1 h-[5px] w-[5px] rounded-full bg-blue-light-medium dark:bg-blue-dark-medium'></div> */}
+											</>
+										)}
+										{/* <div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
 										<BountyCriteriaIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
 										<button
 											className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium`}
@@ -230,35 +255,36 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 											Criteria
 										</button>
 									</div> */}
+									</div>
 								</div>
 							</div>
-						</div>
+							<Link
+								key={post_id}
+								href={`/bounty/${post_id}`}
+								target='_blank'
+								className='flex w-full items-center justify-between rounded-b-3xl bg-[#343434] p-4 text-white'
+							>
+								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-1 flex cursor-pointer items-center gap-2 `}>
+									<Image
+										src={'/assets/bounty-icons/child-bounty-icon.svg'}
+										width={16}
+										height={16}
+										alt='curator'
+									/>
+									<span className='text-[13px] font-medium text-white'>Child Bounties:</span>
+									<span className='text-[13px] font-medium text-white'>{childBountiesCount}</span>
+								</div>
+								<div className='cursor-pointer '>
+									<Image
+										src={'/assets/bounty-icons/arrow-icon.svg'}
+										width={16}
+										height={16}
+										alt='arrow'
+									/>
+								</div>
+							</Link>
+						</Link>
 					</div>
-					<Link
-						key={post_id}
-						href={`/bounty/${post_id}`}
-						target='_blank'
-						className='flex w-full items-center justify-between rounded-b-3xl bg-[#343434] p-4 text-white'
-					>
-						<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -ml-1 flex cursor-pointer items-center gap-2 `}>
-							<Image
-								src={'/assets/bounty-icons/child-bounty-icon.svg'}
-								width={16}
-								height={16}
-								alt='curator'
-							/>
-							<span className='text-[13px] font-medium text-white'>Child Bounties:</span>
-							<span className='text-[13px] font-medium text-white'>{childBountiesCount}</span>
-						</div>
-						<div className='cursor-pointer '>
-							<Image
-								src={'/assets/bounty-icons/arrow-icon.svg'}
-								width={16}
-								height={16}
-								alt='arrow'
-							/>
-						</div>
-					</Link>
 				</>
 			)}
 		</section>

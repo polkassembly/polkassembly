@@ -220,11 +220,12 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
 						<div className='my-4 ml-7 flex justify-between dark:text-white'>
-							<div>
+							<div className='flex'>
 								{theme === 'dark' ? <WhiteMailIcon className='mr-2 text-2xl' /> : <MailIcon className='mr-2 text-2xl' />}
 								<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
 							</div>
 							<div
+								className='mr-4'
 								onClick={() => {
 									setLoginOpen?.(false);
 									setSignupOpen?.(false);

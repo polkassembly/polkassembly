@@ -14,7 +14,6 @@ interface ITinderCardsComponent {
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;
-	// console.log('from tinder cards --> ', proposal);
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {

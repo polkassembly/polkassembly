@@ -47,7 +47,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const BatchVoting: FC<IBatchVoting> = (props) => {
 	const { network, data } = props;
-	console.log('console.log --> ', data);
 	return (
 		<>
 			<SEOHead

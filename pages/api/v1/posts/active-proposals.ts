@@ -234,7 +234,6 @@ const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) 
 		return res.status(400).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
 		if (data.summary) {
-			console.log('backend data --> ', data.summary);
 			delete data.summary;
 		}
 		return res.status(200).json(data);

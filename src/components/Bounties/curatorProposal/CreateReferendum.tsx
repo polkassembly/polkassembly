@@ -19,7 +19,6 @@ import { inputToBn } from '~src/util/inputToBn';
 import { useTheme } from 'next-themes';
 import { HexString } from '@polkadot/util/types';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import dynamic from 'next/dynamic';
 import { useApiContext } from '~src/context';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
@@ -27,7 +26,7 @@ import { APPNAME } from '~src/global/appName';
 import { CreatePostResponseType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EAllowedCommentor, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, IBountyProposerResponse, NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
@@ -35,10 +34,7 @@ import { ApiPromise } from '@polkadot/api';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import Alert from '~src/basic-components/Alert';
-
-const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
-	ssr: false
-});
+import AddressInput from '~src/ui-components/AddressInput';
 
 interface Props {
 	className?: string;
@@ -92,7 +88,7 @@ const CreateReferendum = ({
 	title,
 	content,
 	setPreimageHash,
-	bountyAmount,
+	// bountyAmount,
 	setPreimageLength,
 	bountyId
 }: Props) => {
@@ -104,9 +100,12 @@ const CreateReferendum = ({
 	const [openAdvanced, setOpenAdvanced] = useState<boolean>(false);
 	const [advancedDetails, setAdvancedDetails] = useState<IAdvancedDetails>({ afterNoOfBlocks: BN_HUNDRED, atBlockNo: BN_ONE });
 	const [gasFee, setGasFee] = useState(ZERO_BN);
+	const [fee, setFee] = useState<string>('');
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [newBountyAmount, setNewBountyAmount] = useState(bountyAmount);
+	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
+	const [bountyProposer, setBountyProposer] = useState<string | null>(null);
+	const [curatorAddress, setNewCuratorAddress] = useState('');
 	const [error, setError] = useState('');
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
 	const [eligibleToCreateRef, setEligibleToCreateRef] = useState<boolean>(false);
@@ -142,6 +141,42 @@ const CreateReferendum = ({
 
 		return selectedTrack;
 	};
+
+	const fetchBountyProposer = async (bountyId: number | null) => {
+		if (bountyId === null) return;
+		setLoading(true);
+		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
+			bountyId
+		});
+
+		if (error || !bountyProposerData || !bountyProposerData?.proposals?.length) {
+			console.log('Error in fetching bounty proposer data');
+			setBountyAmount(ZERO_BN);
+			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
+			setLoading(true);
+			return;
+		}
+		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
+		const amount = new BN(String(bountyProposerData?.proposals[0]?.reward));
+		setBountyAmount(amount);
+		form.setFieldsValue({
+			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
+		});
+		setLoading(true);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debouncedFetchBountyProposer = useCallback(_.debounce(fetchBountyProposer, 1000), []);
+
+	useEffect(() => {
+		if (bountyId !== null) {
+			debouncedFetchBountyProposer(bountyId);
+		}
+		return () => {
+			debouncedFetchBountyProposer.cancel();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [bountyId]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -298,13 +333,13 @@ const CreateReferendum = ({
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 
 		if (data && !data?.message) {
-			if (data.section === 'Bounties' && data?.method === 'approve_bounty' && !isNaN(data.proposedCall?.args?.bountyId) && !isNaN(data?.length)) {
+			if (data.section === 'Bounties' && data?.method === 'propose_curator' && !isNaN(data.proposedCall?.args?.bountyId) && !isNaN(data?.length)) {
 				form.setFieldValue('preimage_length', data?.length);
 
 				setPreimageLength(data?.length);
 				form.setFieldValue('preimage_length', data?.length);
 
-				setSteps({ percent: 100, step: 2 });
+				setSteps({ percent: 100, step: 1 });
 			} else {
 				setPreimageLength(0);
 				form.setFieldValue('preimage_length', 0);
@@ -327,7 +362,7 @@ const CreateReferendum = ({
 	const handlePreimageHash = (preimageHash: string) => {
 		setPreimageLength(0);
 		if (!preimageHash || preimageHash.length === 0) return;
-		setSteps({ percent: 60, step: 2 });
+		setSteps({ percent: 60, step: 1 });
 		debounceExistPreimageFn(preimageHash);
 		setPreimageHash(preimageHash);
 	};
@@ -341,19 +376,25 @@ const CreateReferendum = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyAmount]);
 
-	const onValueChange = (balance: BN) => setNewBountyAmount(balance);
+	const onValueChange = (address: string) => setNewCuratorAddress(address);
 
 	useEffect(() => {
+		if (proposerAddress !== bountyProposer) {
+			setEligibleToCreateRef(false);
+			setError(error || 'Please login with bounty proposer account');
+			return;
+		}
+
 		const calculateGasFee = async () => {
-			if (!proposerAddress || !api || !apiReady || !bountyAmount || !bountyId) return;
+			if (!proposerAddress || !api || !apiReady || !curatorAddress || !fee || !bountyId) return;
 			const submissionDeposit = api?.consts?.referenda?.submissionDeposit || ZERO_BN;
 
 			const availableBalanceBN = new BN(availableBalance || '0');
 
 			const txns = [];
 
-			if (!isPreimage) {
-				const preimage = getState(api, api.tx.bounties.approveBounty(bountyId));
+			if (!isPreimage && curatorAddress && fee) {
+				const preimage = getState(api, api.tx.bounties.proposeCurator(bountyId, curatorAddress, fee));
 
 				if (!preimage.notePreimageTx) {
 					setError('Error in creating preimage');
@@ -386,10 +427,10 @@ const CreateReferendum = ({
 
 		calculateGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, proposerAddress, bountyAmount, bountyId, isPreimage, preimageHash, preimageLength, selectedTrack, enactment]);
+	}, [api, apiReady, proposerAddress, curatorAddress, fee, bountyId, isPreimage, preimageHash, preimageLength, selectedTrack, enactment]);
 
 	const handleSubmit = async () => {
-		if (!proposerAddress || !api || !apiReady || !bountyAmount || !bountyId) return;
+		if (!proposerAddress || !api || !apiReady || !curatorAddress || !bountyId || !fee) return;
 
 		const txns = [];
 
@@ -399,7 +440,7 @@ const CreateReferendum = ({
 		}
 
 		if (!isPreimage) {
-			const preimage = getState(api, api.tx.bounties.approveBounty(bountyId));
+			const preimage = getState(api, api.tx.bounties.proposeCurator(bountyId, curatorAddress, fee));
 
 			if (!preimage.notePreimageTx) {
 				setError('Error in creating preimage');
@@ -436,7 +477,7 @@ const CreateReferendum = ({
 			});
 			setOpenModal(false);
 			setOpenSuccess(true);
-			setSteps({ percent: 0, step: 2 });
+			setSteps({ percent: 0, step: 1 });
 		};
 
 		await executeTx({
@@ -466,7 +507,7 @@ const CreateReferendum = ({
 					<Radio.Group
 						onChange={(e) => {
 							setIsPreimage(e.target.value);
-							setSteps({ percent: 20, step: 2 });
+							setSteps({ percent: 20, step: 1 });
 						}}
 						size='small'
 						className='mt-1.5'
@@ -537,18 +578,46 @@ const CreateReferendum = ({
 						<>
 							<div className='-mb-6 mt-6'>
 								<div>
-									<BalanceInput
-										theme={theme}
-										balance={newBountyAmount || bountyAmount}
-										formItemName='bounty_amount'
-										placeholder='Enter Bounty Amount'
-										label='Bounty Amount'
-										inputClassName='dark:text-blue-dark-high text-bodyBlue'
-										className='mb-0'
-										noRules
-										disabled
+									<AddressInput
+										name='curatorAddress'
+										defaultAddress={curatorAddress}
+										label={'Curator Address'}
+										placeholder='Enter Address'
+										className='pb-2 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 										onChange={onValueChange}
+										helpText='Address'
+										size='large'
+										identiconSize={30}
+										inputClassName={'font-normal text-sm h-[40px]'}
+										skipFormatCheck={true}
+										theme={theme}
 									/>
+								</div>
+								<>
+									<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Bounty Id</label>
+									<Form.Item name='Bounty_id'>
+										<Input
+											name='Bounty_id'
+											defaultValue={bountyId || 0}
+											value={bountyId || ''}
+											className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											onChange={() => {
+												setSteps({ percent: 100, step: 1 });
+											}}
+										/>
+									</Form.Item>
+								</>
+								<div className='flex w-full flex-col items-start justify-between pb-4 text-lightBlue dark:text-blue-dark-medium'>
+									Fee
+									<span className='w-full'>
+										<Input
+											value={fee}
+											placeholder='Enter Fee Amount'
+											className='rounded-md px-2 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											onChange={(e) => setFee(e.target.value)}
+											type='number'
+										/>
+									</span>
 								</div>
 							</div>
 							<div className='mt-6'>
@@ -565,7 +634,7 @@ const CreateReferendum = ({
 									tracksArr={trackArr}
 									onTrackChange={(track) => {
 										setSelectedTrack(track);
-										setSteps({ percent: 100, step: 2 });
+										setSteps({ percent: 100, step: 1 });
 									}}
 									selectedTrack={selectedTrack}
 								/>
@@ -700,7 +769,7 @@ const CreateReferendum = ({
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-section-dark-container'>
 						<Button
 							onClick={() => {
-								setSteps({ percent: 100, step: 1 });
+								setSteps({ percent: 100, step: 0 });
 							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>

@@ -36,6 +36,7 @@ const ZERO_BN = new BN(0);
 interface Props {
 	referendaModal?: number;
 	className?: string;
+	bountyId: number | null;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 	openModal: boolean;
@@ -48,7 +49,7 @@ interface Props {
 }
 
 enum ESteps {
-	WRITE_PROPOSAL = 'Write a Proposal',
+	LINK_PROPOSAL = 'Link Bounty Proposal',
 	ADD_CURATOR = 'Add Curator'
 }
 
@@ -57,6 +58,7 @@ const CuratorActionModal = ({
 	openAddressLinkedModal,
 	setOpenAddressLinkedModal,
 	openModal,
+	bountyId,
 	setOpenModal,
 	openLoginPrompt,
 	setOpenLoginPrompt,
@@ -83,7 +85,7 @@ const CuratorActionModal = ({
 	// const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
-	const [bountyId, setBountyId] = useState<number | null>(null);
+	// const [updatedBountyId, setUpdatedBountyId] = useState<number | null>(null);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -104,7 +106,7 @@ const CuratorActionModal = ({
 		setOpenModal(false);
 		setCloseConfirm(false);
 		setBountyAmount(ZERO_BN);
-		setBountyId(null);
+		// setBountyId(null);
 		setPostId(null);
 	};
 
@@ -122,7 +124,7 @@ const CuratorActionModal = ({
 						setOpenModal(true);
 						setProposerAddress(address);
 					}}
-					walletAlertTitle={'Creating a Bounty Proposal'}
+					walletAlertTitle={'Creating a Curator Proposal'}
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
@@ -187,7 +189,7 @@ const CuratorActionModal = ({
 				title={
 					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
-						Create Bounty Proposal
+						Create Curator Proposal
 					</div>
 				}
 			>
@@ -200,7 +202,7 @@ const CuratorActionModal = ({
 						labelPlacement='vertical'
 						items={[
 							{
-								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.WRITE_PROPOSAL}</span>
+								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.LINK_PROPOSAL}</span>
 							},
 							{
 								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.ADD_CURATOR}</span>

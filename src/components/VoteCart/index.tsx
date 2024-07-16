@@ -38,9 +38,9 @@ const VoteCart: React.FC = () => {
 							/>
 							<div className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 								<div className='mr-auto flex items-center gap-x-1'>
-									{voteCardInfo?.voted_for === 'aye' || voteCardInfo?.voted_for === 'nye' ? (
+									{voteCardInfo?.voted_for === 'Aye' || voteCardInfo?.voted_for === 'Nye' ? (
 										<ImageIcon
-											src={`${voteCardInfo?.voted_for === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
+											src={`${voteCardInfo?.voted_for === 'Aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
 											imgClassName='text-black'
 											alt='like-dislike-icon'
 										/>
@@ -49,15 +49,19 @@ const VoteCart: React.FC = () => {
 									)}
 									<p
 										className={`${
-											voteCardInfo?.voted_for === 'aye'
+											voteCardInfo?.voted_for === 'Aye'
 												? 'text-aye_green dark:text-aye_green_Dark'
-												: voteCardInfo?.voted_for === 'nye'
+												: voteCardInfo?.voted_for === 'Nye'
 												? 'text-nye_red dark:text-nay_red_Dark'
 												: 'text-bodyBlue'
 										} text-capitalize m-0 p-0 text-xs`}
 									>
 										{voteCardInfo?.voted_for}
 									</p>
+								</div>
+								<div className='flex items-center justify-center gap-x-2'>
+									<p className='m-0 p-0 text-xs text-bodyBlue'>{voteCardInfo?.vote_balance.toNumber() / 10000000000} DOT</p>
+									<p className='m-0 p-0 text-xs text-bodyBlue'>{voteCardInfo?.vote_conviction}x</p>
 								</div>
 								<div className='ml-auto flex items-center gap-x-3'>
 									<ImageIcon

@@ -223,20 +223,11 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 				options={decisionOptions}
 				disabled={!api || !apiReady}
 			/>
-			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && (
+			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 				<VotingFormCard
 					form={ayeNayForm}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									voteBalance: balance
-								}
-							})
-						);
-					}}
-					onAyeValueChange={(balance: BN) => {
 						dispatch(
 							editBatchValueChanged({
 								values: {
@@ -245,11 +236,53 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 							})
 						);
 					}}
-					onNayValueChange={(balance: BN) => {
+					handleSubmit={handleSubmit}
+				/>
+			)}
+			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
+				<VotingFormCard
+					form={ayeNayForm}
+					formName={EFormType.AYE_NAY_FORM}
+					onBalanceChange={(balance: BN) => {
 						dispatch(
 							editBatchValueChanged({
 								values: {
 									nyeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					handleSubmit={handleSubmit}
+				/>
+			)}
+
+			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
+				<VotingFormCard
+					form={abstainFrom}
+					formName={EFormType.ABSTAIN_FORM}
+					onBalanceChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									abstainVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onAyeValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									abstainAyeVoteBalance: balance
+								}
+							})
+						);
+					}}
+					onNayValueChange={(balance: BN) => {
+						dispatch(
+							editBatchValueChanged({
+								values: {
+									abstainNyeVoteBalance: balance
 								}
 							})
 						);
@@ -267,49 +300,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 				/>
 			)}
 
-			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
-				<VotingFormCard
-					form={abstainFrom}
-					formName={EFormType.ABSTAIN_FORM}
-					onBalanceChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									voteBalance: balance
-								}
-							})
-						);
-					}}
-					onAyeValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									ayeVoteBalance: balance
-								}
-							})
-						);
-					}}
-					onNayValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									nyeVoteBalance: balance
-								}
-							})
-						);
-					}}
-					onAbstainValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									abstainVoteBalance: balance
-								}
-							})
-						);
-					}}
-					handleSubmit={handleSubmit}
-				/>
-			)}
 			<div className='mt-[40px] flex h-[46px] items-center justify-between rounded-md bg-[#F6F7F9] p-3'>
 				<div className='flex items-center gap-x-1'>
 					<ImageIcon

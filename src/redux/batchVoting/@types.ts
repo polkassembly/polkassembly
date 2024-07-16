@@ -16,13 +16,16 @@ export type IVoteCardInfo = {
 	post_id: number;
 	post_title: string;
 	voted_for: string;
+	vote_conviction: string;
+	vote_balance: any;
 };
 
 export interface IBatchVotesDetails {
 	voteOption?: string;
-	voteBalance?: BN;
 	ayeVoteBalance?: BN;
 	nyeVoteBalance?: BN;
+	abstainAyeVoteBalance?: BN;
+	abstainNyeVoteBalance?: BN;
 	abstainVoteBalance?: BN;
 	conviction?: string;
 }

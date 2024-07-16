@@ -18,7 +18,7 @@ interface IVotingCards {
 
 const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
-	const { total_proposals_added_in_Cart, show_cart_menu } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
@@ -46,6 +46,9 @@ const VotingCards: FC<IVotingCards> = (props) => {
 			batchVotesActions.setvoteCardInfo({
 				post_id: postId,
 				post_title: postTitle,
+				vote_balance:
+					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
+				vote_conviction: batch_vote_details?.conviction || '0x',
 				voted_for: direction === 'left' ? 'Nye' : direction === 'right' ? 'Aye' : 'Abstain'
 			})
 		);

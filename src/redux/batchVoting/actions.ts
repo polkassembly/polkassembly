@@ -10,9 +10,10 @@ import { EVoteDecisionType } from '~src/types';
 interface IBatchVotingDefaults {
 	values: {
 		voteOption?: string;
-		voteBalance?: BN;
 		ayeVoteBalance?: BN;
 		nyeVoteBalance?: BN;
+		abstainAyeVoteBalance?: BN;
+		abstainNyeVoteBalance?: BN;
 		abstainVoteBalance?: BN;
 		conviction?: string;
 	};
@@ -20,18 +21,12 @@ interface IBatchVotingDefaults {
 
 export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldValueChanged', async (params: IBatchVotingDefaults, { dispatch }) => {
 	const { values } = params;
+	console.log('inside actions --> ', values);
 	if (values?.voteOption) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'voteOption',
 				value: values?.voteOption || EVoteDecisionType.AYE
-			})
-		);
-	} else if (values?.voteBalance) {
-		dispatch(
-			batchVotesActions.setBatchVoting_Field({
-				key: 'voteBalance',
-				value: values?.voteBalance || 0
 			})
 		);
 	} else if (values?.ayeVoteBalance) {
@@ -46,6 +41,20 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 			batchVotesActions.setBatchVoting_Field({
 				key: 'nyeVoteBalance',
 				value: values?.nyeVoteBalance || 0
+			})
+		);
+	} else if (values?.abstainAyeVoteBalance) {
+		dispatch(
+			batchVotesActions.setBatchVoting_Field({
+				key: 'abstainAyeVoteBalance',
+				value: values?.abstainAyeVoteBalance || 0
+			})
+		);
+	} else if (values?.abstainNyeVoteBalance) {
+		dispatch(
+			batchVotesActions.setBatchVoting_Field({
+				key: 'abstainNyeVoteBalance',
+				value: values?.abstainNyeVoteBalance || 0
 			})
 		);
 	} else if (values?.abstainVoteBalance) {

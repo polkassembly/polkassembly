@@ -13,6 +13,8 @@ const initialState: IBatchVoteStore = {
 	vote_card_info: {
 		post_id: 0,
 		post_title: '',
+		vote_balance: 0,
+		vote_conviction: '',
 		voted_for: ''
 	},
 	vote_card_info_array: []
@@ -54,6 +56,8 @@ export const batchVoteStore = createSlice({
 				vote_card_info: {
 					post_id: 0,
 					post_title: '',
+					vote_balance: 0,
+					vote_conviction: '',
 					voted_for: ''
 				},
 				vote_card_info_array: []
@@ -67,13 +71,16 @@ export const batchVoteStore = createSlice({
 					case 'voteOption':
 						state.batch_vote_details[key] = value;
 						break;
-					case 'voteBalance':
-						state.batch_vote_details[key] = value;
-						break;
 					case 'ayeVoteBalance':
 						state.batch_vote_details[key] = value;
 						break;
 					case 'nyeVoteBalance':
+						state.batch_vote_details[key] = value;
+						break;
+					case 'abstainAyeVoteBalance':
+						state.batch_vote_details[key] = value;
+						break;
+					case 'abstainNyeVoteBalance':
 						state.batch_vote_details[key] = value;
 						break;
 					case 'abstainVoteBalance':
@@ -107,6 +114,12 @@ export const batchVoteStore = createSlice({
 						state.vote_card_info[key] = value;
 						break;
 					case 'voted_for':
+						state.vote_card_info[key] = value;
+						break;
+					case 'vote_balance':
+						state.vote_card_info[key] = value;
+						break;
+					case 'vote_conviction':
 						state.vote_card_info[key] = value;
 						break;
 				}

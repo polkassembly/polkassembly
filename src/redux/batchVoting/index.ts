@@ -12,6 +12,7 @@ const initialState: IBatchVoteStore = {
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
 		post_id: 0,
+		post_title: '',
 		voted_for: ''
 	},
 	vote_card_info_array: []
@@ -52,6 +53,7 @@ export const batchVoteStore = createSlice({
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
 					post_id: 0,
+					post_title: '',
 					voted_for: ''
 				},
 				vote_card_info_array: []
@@ -99,6 +101,9 @@ export const batchVoteStore = createSlice({
 				const { key, value } = obj;
 				switch (key) {
 					case 'post_id':
+						state.vote_card_info[key] = value;
+						break;
+					case 'post_title':
 						state.vote_card_info[key] = value;
 						break;
 					case 'voted_for':

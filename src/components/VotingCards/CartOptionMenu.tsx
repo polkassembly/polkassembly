@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
+import { useRouter } from 'next/router';
 import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useBatchVotesSelector } from '~src/redux/selectors';
@@ -9,6 +10,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 
 const CartOptionMenu = () => {
 	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
+	const router = useRouter();
 
 	return (
 		<article className='flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
@@ -20,6 +22,9 @@ const CartOptionMenu = () => {
 					height={36}
 					width={91}
 					fontSize='xs'
+					onClick={() => {
+						router.push('/votes-cart');
+					}}
 				/>
 				<Button className='flex h-[36px] w-[36px] items-center justify-center rounded-lg border border-solid border-pink_primary bg-transparent'>
 					<ImageIcon

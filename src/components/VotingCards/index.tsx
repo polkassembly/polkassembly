@@ -39,13 +39,14 @@ const VotingCards: FC<IVotingCards> = (props) => {
 
 	const canGoBack = currentIndex < trackPosts?.length - 1;
 
-	const swiped = (direction: string, index: number, postId: number) => {
+	const swiped = (direction: string, index: number, postId: number, postTitle: string) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
 		dispatch(
 			batchVotesActions.setvoteCardInfo({
 				post_id: postId,
-				voted_for: direction === 'left' ? 'nye' : direction === 'right' ? 'aye' : 'abstain'
+				post_title: postTitle,
+				voted_for: direction === 'left' ? 'Nye' : direction === 'right' ? 'Aye' : 'Abstain'
 			})
 		);
 		updateCurrentIndex(index - 1);
@@ -86,7 +87,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						className='absolute h-full w-full'
 						key={proposal.name}
 						onSwipe={(dir) => {
-							swiped(dir, index, proposal?.post_id);
+							swiped(dir, index, proposal?.id, proposal?.title);
 						}}
 						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 						preventSwipe={['down']}

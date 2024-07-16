@@ -14,6 +14,7 @@ export interface IBatchVoteStore {
 
 export type IVoteCardInfo = {
 	post_id: number;
+	post_title: string;
 	voted_for: string;
 };
 

@@ -62,7 +62,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 					{tag}
 				</div>
 			))}
-			{tags.length > maxTags && (
+			{tags?.length > maxTags && (
 				<span
 					className='mr-1 cursor-pointer bg-[#D2D8E080] text-bodyBlue dark:bg-[#222222] dark:text-[#8B8B8B]'
 					style={{ borderRadius: '20px', padding: '4px 8px' }}
@@ -72,7 +72,7 @@ const TagsListing = ({ className, tags, handleTagClick, handleTagModalOpen, maxT
 						handleTagModalOpen();
 					}}
 				>
-					+{tags.length - maxTags}
+					+{tags?.length - maxTags}
 				</span>
 			)}
 		</div>
@@ -162,7 +162,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 		if (!api || !apiReady) return;
 
 		const didKeys = await api.query.identity.didKeys.keys(identityId);
-		if (didKeys.length > 0) {
+		if (didKeys?.length > 0) {
 			const didKey = didKeys[0];
 			const key = didKey.args[1].toJSON();
 			return key;
@@ -315,7 +315,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
-						{tags && tags.length > 0 && beneficiaries && beneficiaries?.length > 0 && (
+						{tags && tags?.length > 0 && beneficiaries && beneficiaries?.length > 0 && (
 							<>
 								<Divider
 									className='mr-3 hidden md:inline-block'
@@ -334,7 +334,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 							</>
 						)}
 					</CreationLabel>
-					{tags && tags.length > 0 && !beneficiaries?.length && (
+					{tags && tags?.length > 0 && !beneficiaries?.length && (
 						<TagsListing
 							tags={tags}
 							handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}
@@ -357,7 +357,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 					/>
 				</>
 			</div>
-			{history && history.length > 0 && (
+			{history && history?.length > 0 && (
 				<PostHistoryModal
 					open={openModal}
 					setOpen={setOpenModal}

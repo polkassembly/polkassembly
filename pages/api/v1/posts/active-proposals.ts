@@ -96,7 +96,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, trackN
 	});
 	const subsquidData = subsquidRes?.['data']?.proposals || [];
 
-	if (!subsquidData.length) {
+	if (!subsquidData?.length) {
 		return { data: [], error: null };
 	} else {
 		const activeProposalIds = subsquidData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
@@ -146,7 +146,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, trackN
 						}
 					} else {
 						const calls = proposedCall.args.calls;
-						if (calls && Array.isArray(calls) && calls.length > 0) {
+						if (calls && Array.isArray(calls) && calls?.length > 0) {
 							calls.forEach((call) => {
 								if (call && call.amount) {
 									requested += BigInt(call.amount);

@@ -18,7 +18,7 @@ import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
-import { CapitalIcon, ConvictionIcon, DownArrowIcon, ExpandIcon, VoterIcon } from '~src/ui-components/CustomIcons';
+import { CapitalIcon, ConvictionIcon, DownArrowIcon, EditIcon, ExpandIcon, VoterIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import dynamic from 'next/dynamic';

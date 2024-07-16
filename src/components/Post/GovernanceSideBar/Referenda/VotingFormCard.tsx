@@ -15,6 +15,7 @@ export enum EFormType {
 	SPLIT_FORM = 'split-form',
 	ABSTAIN_FORM = 'abstain-form'
 }
+
 interface Props {
 	formName: EFormType;
 	form: FormInstance<any>;
@@ -29,6 +30,7 @@ interface Props {
 const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
+
 	const marks: SliderSingleProps['marks'] = {
 		0: '0.1x',
 		16.7: '1x',
@@ -39,6 +41,26 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 		// eslint-disable-next-line sort-keys
 		100: '6x'
 	};
+
+	const getMarkValue = (value: number): string => {
+		const markValue = marks[value];
+		if (typeof markValue === 'string') {
+			return markValue;
+		}
+		throw new Error(`Invalid mark value: ${markValue}`);
+	};
+
+	const renderBalanceInput = (label: string, placeholder: string, onChange: (balance: BN) => void, formItemName: string) => (
+		<BalanceInput
+			label={label}
+			placeholder={placeholder}
+			onChange={onChange}
+			className='text-sm font-medium'
+			formItemName={formItemName}
+			theme={theme}
+		/>
+	);
+
 	return (
 		<Form
 			form={form}
@@ -47,66 +69,26 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 			onFinish={handleSubmit}
 			style={{ maxWidth: 600 }}
 		>
-			{[EFormType.ABSTAIN_FORM].includes(formName) && (
+			{formName === EFormType.ABSTAIN_FORM && renderBalanceInput('Abstain vote value', 'Add balance', onAbstainValueChange!, 'abstainVote')}
+
+			{(formName === EFormType.ABSTAIN_FORM || formName === EFormType.SPLIT_FORM) && (
 				<>
-					<BalanceInput
-						label={'Abstain vote value'}
-						placeholder={'Add balance'}
-						onChange={(balance: BN) => onAbstainValueChange?.(balance)}
-						className='text-sm font-medium'
-						formItemName={'abstainVote'}
-						theme={theme}
-					/>
+					{renderBalanceInput('Aye vote value', 'Add balance', onAyeValueChange!, 'ayeVote')}
+					{renderBalanceInput('Nay vote value', 'Add balance', onNayValueChange!, 'nayVote')}
 				</>
 			)}
 
-			{[EFormType.ABSTAIN_FORM, EFormType.SPLIT_FORM].includes(formName) && (
-				<>
-					<BalanceInput
-						label={'Aye vote value'}
-						placeholder={'Add balance'}
-						onChange={(balance: BN) => onAyeValueChange?.(balance)}
-						className='text-sm font-medium'
-						formItemName={'ayeVote'}
-						theme={theme}
-					/>
+			{formName === EFormType.AYE_NAY_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
 
-					<BalanceInput
-						label={'Nay vote value'}
-						placeholder={'Add balance'}
-						onChange={(balance: BN) => onNayValueChange?.(balance)}
-						className='text-sm font-medium'
-						formItemName={'nayVote'}
-						theme={theme}
-					/>
-				</>
-			)}
-			{[EFormType.AYE_NAY_FORM].includes(formName) && (
-				<>
-					<BalanceInput
-						label={'Set Default Balance'}
-						helpText={'Amount of you are willing to lock for this vote.'}
-						placeholder={'Add balance'}
-						onChange={onBalanceChange}
-						className='border-section-light-container text-sm font-medium dark:border-[#3B444F]'
-						formItemName='balance'
-						theme={theme}
-					/>
-				</>
-			)}
 			<div>
 				<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
 					<span className='flex items-center'>Set Conviction</span>
 					<Slider
 						marks={marks}
-						onChange={(e: any) => {
-							dispatch(
-								editBatchValueChanged({
-									values: {
-										conviction: e
-									}
-								})
-							);
+						step={null}
+						onChange={(value) => {
+							const markValue = getMarkValue(value as number);
+							dispatch(editBatchValueChanged({ values: { conviction: markValue } }));
 						}}
 						defaultValue={0}
 					/>
@@ -115,6 +97,7 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 		</Form>
 	);
 };
+
 export default styled(VotingFormCard)`
 	.ant-slider .ant-slider-mark {
 		margin-top: 8px !important;

@@ -14,7 +14,7 @@ interface ITinderCardsComponent {
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;
-	console.log('from tinder cards --> ', proposal);
+	// console.log('from tinder cards --> ', proposal);
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
@@ -23,8 +23,8 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	};
 
 	return (
-		<section>
-			<div>
+		<section className='flex flex-col gap-y-4'>
+			<div className='overflow-y-auto rounded-2xl bg-white p-4 shadow-md'>
 				<CardPostHeading
 					method={proposal?.method}
 					motion_method={proposal?.motion_method}
@@ -42,10 +42,8 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						md={sanitizeSummary(proposal?.summary || '')}
 					/>
 				</div>
-				<Divider
-					type='horizontal'
-					className='border-l-1 border-[#90A0B7] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'
-				/>
+			</div>
+			<div className='h-full rounded-2xl bg-white p-4 shadow-md'>
 				<ReferendumV2CardInfo
 					ayeNayAbstainCounts={ayeNayAbstainCounts}
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}

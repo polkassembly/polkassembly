@@ -91,10 +91,8 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 						preventSwipe={['down']}
 					>
-						<div className='flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-white p-4 shadow-md'>
-							<div className='h-full overflow-y-auto'>
-								<TinderCardsComponent proposal={proposal} />
-							</div>
+						<div className='h-full overflow-y-auto bg-[#f4f5f7]'>
+							<TinderCardsComponent proposal={proposal} />
 						</div>
 					</TinderCard>
 				))}

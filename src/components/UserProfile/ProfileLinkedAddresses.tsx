@@ -230,6 +230,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				setOpen={setOpenAddressLinkModal}
 				closable
 				onConfirm={() => setOpenAddressLinkModal(false)}
+				usedInIdentityFlow={false}
 			/>
 			<Proxy
 				open={openProxyLinkModal}

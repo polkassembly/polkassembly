@@ -172,6 +172,7 @@ const ReferendaActionModal = ({
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
+					usedInIdentityFlow={false}
 				/>
 			)}
 			<Modal

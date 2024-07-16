@@ -28,6 +28,7 @@ const RefV2ThresholdData: FC<IRefV2ThresholdDataProps> = ({ className, setOpen, 
 	const [isCurvesRender, setIsCurvesRender] = useState(true);
 	const currentUser = useUserDetailsSelector();
 	const { approval, support, approvalThreshold, supportThreshold } = useCurvesInformationSelector();
+
 	useEffect(() => {
 		if (thresholdOpen && isCurvesRender) {
 			setTimeout(() => {

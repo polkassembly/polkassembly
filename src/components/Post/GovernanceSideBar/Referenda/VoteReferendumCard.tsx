@@ -28,7 +28,7 @@ import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import VotingFormCard, { EFormType } from './VotingFormCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
-import { editBatchValueChanged } from '~src/redux/batchVoting/actions';
+import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 
 interface Props {
@@ -128,6 +128,14 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 		if (!forSpecificPost) {
 			dispatch(
 				editBatchValueChanged({
+					values: {
+						voteOption: value as EVoteDecisionType
+					}
+				})
+			);
+		} else {
+			dispatch(
+				editCartPostValueChanged({
 					values: {
 						voteOption: value as EVoteDecisionType
 					}
@@ -236,6 +244,14 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
+									values: {
+										ayeVoteBalance: balance
+									}
+								})
+							);
 						}
 					}}
 					handleSubmit={handleSubmit}
@@ -249,6 +265,14 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 						if (!forSpecificPost) {
 							dispatch(
 								editBatchValueChanged({
+									values: {
+										nyeVoteBalance: balance
+									}
+								})
+							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
 									values: {
 										nyeVoteBalance: balance
 									}
@@ -273,12 +297,28 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
+									values: {
+										abstainVoteBalance: balance
+									}
+								})
+							);
 						}
 					}}
 					onAyeValueChange={(balance: BN) => {
 						if (!forSpecificPost) {
 							dispatch(
 								editBatchValueChanged({
+									values: {
+										abstainAyeVoteBalance: balance
+									}
+								})
+							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
 									values: {
 										abstainAyeVoteBalance: balance
 									}
@@ -295,12 +335,28 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 									}
 								})
 							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
+									values: {
+										abstainNyeVoteBalance: balance
+									}
+								})
+							);
 						}
 					}}
 					onAbstainValueChange={(balance: BN) => {
 						if (!forSpecificPost) {
 							dispatch(
 								editBatchValueChanged({
+									values: {
+										abstainVoteBalance: balance
+									}
+								})
+							);
+						} else {
+							dispatch(
+								editCartPostValueChanged({
 									values: {
 										abstainVoteBalance: balance
 									}

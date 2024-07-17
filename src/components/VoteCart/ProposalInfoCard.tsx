@@ -14,6 +14,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -25,6 +26,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo } = props;
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 
 	const handleRemove = (postId: number) => {
@@ -110,8 +112,25 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 							/>
 							<CustomButton
 								variant='primary'
-								text='Next'
+								text='Done'
 								buttonsize='sm'
+								onClick={() => {
+									dispatch(
+										batchVotesActions.setvoteCardInfo({
+											post_id: voteInfo.post_id,
+											post_title: voteInfo.title,
+											vote_balance:
+												edit_vote_details?.voteOption === 'aye'
+													? edit_vote_details?.ayeVoteBalance
+													: edit_vote_details?.voteOption === 'nay'
+													? edit_vote_details?.nyeVoteBalance
+													: edit_vote_details?.abstainVoteBalance,
+											vote_conviction: edit_vote_details?.conviction || '0x',
+											voted_for: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'Aye'
+										})
+									);
+									setOpenEditModal(false);
+								}}
 							/>
 						</div>
 					}

@@ -8,6 +8,7 @@ import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {},
+	edit_vote_details: {},
 	show_cart_menu: false,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
@@ -51,6 +52,7 @@ export const batchVoteStore = createSlice({
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			state = {
 				batch_vote_details: {},
+				edit_vote_details: {},
 				show_cart_menu: false,
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
@@ -92,6 +94,35 @@ export const batchVoteStore = createSlice({
 				}
 			}
 		},
+		setEditCartPost_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
+			const obj = action.payload;
+			if (obj) {
+				const { key, value } = obj;
+				switch (key) {
+					case 'voteOption':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'ayeVoteBalance':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'nyeVoteBalance':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'abstainAyeVoteBalance':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'abstainNyeVoteBalance':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'abstainVoteBalance':
+						state.edit_vote_details[key] = value;
+						break;
+					case 'conviction':
+						state.edit_vote_details[key] = value;
+						break;
+				}
+			}
+		},
 		setRemoveVoteCardInfo: (state, action: PayloadAction<number>) => {
 			state.vote_card_info_array = state.vote_card_info_array.filter((voteCard) => voteCard.post_id !== action.payload);
 			state.total_proposals_added_in_Cart = state.vote_card_info_array.length;
@@ -105,6 +136,13 @@ export const batchVoteStore = createSlice({
 		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
 			state.vote_card_info = action.payload;
 			state.vote_card_info_array.push(action.payload);
+
+			// Ensure unique post_id entries by keeping only the last one
+			const uniqueVoteCardInfoMap = new Map();
+			state.vote_card_info_array.forEach((voteCard) => {
+				uniqueVoteCardInfoMap.set(voteCard.post_id, voteCard);
+			});
+			state.vote_card_info_array = Array.from(uniqueVoteCardInfoMap.values());
 		},
 		setvoteCardInfo_field: (state, action: PayloadAction<IVoteCardInfoPayload>) => {
 			const obj = action.payload;

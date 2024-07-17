@@ -66,6 +66,7 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 	};
 
 	const onSuccess = (preimage: IPreimage) => {
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(true));
 		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 }));
 		closeCurrentModal();
 		setOpenSuccessModal(true);
@@ -79,6 +80,8 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
+		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 }));
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(false));
 	};
 
 	const handleCreatePreimage = async () => {

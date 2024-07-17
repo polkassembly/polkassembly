@@ -35,6 +35,7 @@ import { blake2AsHex } from '@polkadot/util-crypto';
 import ErrorAlert from '~src/ui-components/ErrorAlert';
 import Alert from '~src/basic-components/Alert';
 import AddressInput from '~src/ui-components/AddressInput';
+import BalanceInput from '~src/ui-components/BalanceInput';
 
 interface Props {
 	className?: string;
@@ -595,7 +596,7 @@ const CreateReferendum = ({
 										theme={theme}
 									/>
 								</div>
-								<>
+								{/* <>
 									<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Bounty Id</label>
 									<Form.Item name='Bounty_id'>
 										<Input
@@ -603,12 +604,23 @@ const CreateReferendum = ({
 											defaultValue={bountyId || 0}
 											value={bountyId || ''}
 											className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-											onChange={() => {
-												setSteps({ percent: 100, step: 1 });
-											}}
+											disabled={true}
 										/>
 									</Form.Item>
-								</>
+								</> */}
+								<div>
+									<BalanceInput
+										disabled={true}
+										theme={theme}
+										balance={bountyAmount}
+										formItemName='bounty_amount'
+										placeholder='Enter Bounty Amount'
+										label='Bounty Amount'
+										inputClassName='dark:text-blue-dark-high text-bodyBlue'
+										className='mb-0'
+										noRules
+									/>
+								</div>
 								<div className='flex w-full flex-col items-start justify-between pb-4 text-lightBlue dark:text-blue-dark-medium'>
 									Fee
 									<span className='w-full'>

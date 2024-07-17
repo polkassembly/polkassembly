@@ -16,8 +16,8 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Input from '~src/basic-components/Input';
 import { ISteps } from '~src/components/OpenGovTreasuryProposal';
-import ContentForm from '~src/components/ContentForm';
 import AllowedCommentorsRadioButtons from '~src/components/AllowedCommentorsRadioButtons';
+import { ProposalType } from '~src/global/proposalType';
 
 interface Props {
 	isDiscussionLinked: boolean | null;
@@ -40,7 +40,6 @@ interface Props {
 
 const LinkBounty = ({
 	setSteps,
-	setIsDiscussionLinked,
 	isDiscussionLinked,
 	discussionLink,
 	setDiscussionLink,
@@ -58,42 +57,37 @@ const LinkBounty = ({
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [isDiscussionFound, setIsDiscussionFound] = useState<boolean>(true);
 
 	const handleSubmit = async () => {
 		await form.validateFields();
 		setSteps({ percent: 0, step: 1 });
 	};
-	const isDiscussionLinkedValid = (value: string) => {
-		const regex = /^https:\/\/\w+\.polkassembly\.io\/bounty\/\d+$/;
-		return !regex.test(value) || value.split('https://')[1].split('.')[0] !== network;
-	};
+	// const isDiscussionLinkedValid = (value: string) => {
+	// const regex = /^https:\/\/\w+\.polkassembly\.io\/bounty\/\d+$/;
+	// return !regex.test(value) || value.split('https://')[1].split('.')[0] !== network;
+	// };
 
-	const getDiscussionPostData = async (link: string, isDiscussionLinked: boolean) => {
+	const getDiscussionPostData = async (link: string) => {
 		const regex = /^https:\/\/\w+\.polkassembly\.io\/bounty\/\d+$/;
 		if (!regex.test(link)) return;
 
 		const linkNetwork = link?.split('https://')[1]?.split('.')?.[0];
-		const bountyId = link.split('bounty/')[1];
+		const extractedBountyId = link.split('bounty/')[1];
 		if (network !== linkNetwork) return;
+
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IPostResponse>('/api/v1/bounty/getProposerInfo', {
-			bountyId
-		});
-		console.log('GetLink', bountyId, data);
+		const { data, error } = await nextApiClientFetch<IPostResponse>(`/api/v1/posts/on-chain-post?postId=${extractedBountyId}&proposalType=${ProposalType.BOUNTIES}`);
 		if (data) {
 			setTitle(data.title || '');
 			setContent(data.content || '');
 			setTags(data?.tags || []);
 			form.setFieldValue('title', data?.title || '');
+			form.setFieldValue('bounty_id', data?.post_id || '');
 			form.setFieldValue('content', data?.content || '');
 			form.setFieldValue('tags', data?.tags || []);
-			setIsDiscussionFound(true);
 			setSteps({ percent: 100, step: 0 });
 			setLoading(false);
-			onChangeLocalStorageSet({ content: data?.content || '', tags: data?.tags || [], title: data?.title || '' }, Boolean(isDiscussionLinked));
 		} else if (error) {
-			setIsDiscussionFound(false);
 			queueNotification({
 				header: 'Failed!',
 				message: 'Unable to fetch data for this discussion number.',
@@ -102,59 +96,30 @@ const LinkBounty = ({
 		}
 		setLoading(false);
 	};
-	const handleStateChange = (writeProposalFormData: any) => {
-		setSteps({ percent: 33.3, step: 0 });
-		if (writeProposalFormData?.discussionLink) {
-			setSteps({ percent: 66.6, step: 0 });
-			!(writeProposalFormData?.content && writeProposalFormData.title) && getDiscussionPostData(writeProposalFormData?.discussionLink, writeProposalFormData?.isDiscussionLinked);
-		}
-		writeProposalFormData?.discussionLink && writeProposalFormData.title && writeProposalFormData.content && setSteps({ percent: 100, step: 0 });
-		setDiscussionLink(writeProposalFormData?.discussionLink || '');
-		setTitle(writeProposalFormData?.title || '');
-		setContent(writeProposalFormData?.content || '');
-		setTags(writeProposalFormData?.tags || []);
-		form.setFieldValue('discussion_link', writeProposalFormData?.discussionLink || '');
-		form.setFieldValue('title', writeProposalFormData?.title || '');
-		form.setFieldValue('content', writeProposalFormData?.content || '');
-		form.setFieldValue('tags', writeProposalFormData?.tags || []);
-	};
 
-	useEffect(() => {
-		let data: any = localStorage.getItem('treasuryProposalData');
-		data = JSON.parse(data);
-		if (data && data?.writeProposalForm) {
-			const isDiscussionLink = data?.isDiscussionLinked;
-			data?.isDiscussionLinked !== undefined && setIsDiscussionLinked(Boolean(isDiscussionLink));
-			setSteps({ percent: 33.3, step: 0 });
-			const writeProposalFormData = data?.writeProposalForm?.[isDiscussionLink ? 'discussionLinkForm' : 'withoutDiscussionLinkForm'] || {};
-			handleStateChange(writeProposalFormData);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const onChangeLocalStorageSet = (obj: any, isDiscussionLink: boolean, isDiscussionLinkedStateChange?: boolean) => {
-		let data: any = localStorage.getItem('treasuryProposalData');
+	const getPostDataById = async (id: number) => {
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<IPostResponse>(`/api/v1/posts/on-chain-post?postId=${id}&proposalType=${ProposalType.BOUNTIES}`);
 		if (data) {
-			data = JSON.parse(data);
+			setDiscussionLink('');
+			setTitle(data.title || '');
+			setContent(data.content || '');
+			setTags(data?.tags || []);
+			form.resetFields(['discussion_link']);
+			form.setFieldValue('title', data?.title || '');
+			form.setFieldValue('bounty_id', data?.post_id || '');
+			form.setFieldValue('content', data?.content || '');
+			form.setFieldValue('tags', data?.tags || []);
+			setSteps({ percent: 100, step: 0 });
+			setLoading(false);
+		} else if (error) {
+			queueNotification({
+				header: 'Failed!',
+				message: 'Unable to fetch data for this discussion number.',
+				status: NotificationStatus.ERROR
+			});
 		}
-
-		const writeProposalFormKey = isDiscussionLink ? 'discussionLinkForm' : 'withoutDiscussionLinkForm';
-		const writeProposalFormData = data?.writeProposalForm || {};
-		const writeProposalKeysData = data?.writeProposalForm?.[writeProposalFormKey] || {};
-
-		localStorage.setItem(
-			'treasuryProposalData',
-			JSON.stringify({
-				...data,
-				isDiscussionLinked: isDiscussionLink,
-				step: 0,
-				writeProposalForm: {
-					...writeProposalFormData,
-					[writeProposalFormKey]: { ...writeProposalKeysData, ...obj }
-				}
-			})
-		);
-		isDiscussionLinkedStateChange && handleStateChange(writeProposalKeysData);
+		setLoading(false);
 	};
 
 	const handleChangeIsDiscussion = () => {
@@ -162,18 +127,29 @@ const LinkBounty = ({
 		setTags([]);
 		setContent('');
 		form.resetFields(['content', 'tags', 'title']);
-		setIsDiscussionFound(true);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const populateDiscussionPostDataFn = useCallback(_.debounce(getDiscussionPostData, 1500), []);
-	const handleChangeDiscussionLink = (link: string, isDiscussionLinked: boolean) => {
+	const handleChangeDiscussionLink = (link: string) => {
 		setDiscussionLink(link);
 		handleChangeIsDiscussion();
-		populateDiscussionPostDataFn(link, isDiscussionLinked);
-		onChangeLocalStorageSet({ discussionLink: link }, Boolean(isDiscussionLinked));
+		populateDiscussionPostDataFn(link);
 		setSteps({ percent: 66.6, step: 0 });
 	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const populateDiscussionPostByIdFn = useCallback(_.debounce(getPostDataById, 1500), []);
+	const handleChangeBoundyId = (id: string) => {
+		setBountyId(+id);
+		setSteps({ percent: 100, step: 0 });
+	};
+
+	useEffect(() => {
+		if (bountyId) {
+			populateDiscussionPostByIdFn(bountyId);
+		}
+	}, [bountyId]);
 
 	return (
 		<>
@@ -192,122 +168,84 @@ const LinkBounty = ({
 					<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Link Bounty Proposal</label>
 					<Form.Item
 						name='discussion_link'
-						rules={[
-							{
-								message: `Please add a valid discussion link for ${network} Network`,
-								validator(rule, value, callback) {
-									if (callback && isDiscussionLinkedValid(value)) {
-										callback(rule?.message?.toString());
-									} else {
-										callback();
-									}
-								}
-							}
-						]}
+						// rules={[
+						// {
+						// message: `Please add a valid discussion link for ${network} Network`,
+						// validator(rule, value, callback) {
+						// if (callback && isDiscussionLinkedValid(value)) {
+						// callback(rule?.message?.toString());
+						// } else {
+						// callback();
+						// }
+						// }
+						// }
+						// ]}
 					>
 						<Input
 							name='discussion_link'
 							value={discussionLink}
-							onChange={(e) => handleChangeDiscussionLink(e.target.value, Boolean(isDiscussionLinked))}
+							onChange={(e) => handleChangeDiscussionLink(e.target.value)}
 							className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:placeholder-white dark:focus:border-[#91054F]'
 							placeholder='https://'
 						/>
 					</Form.Item>
+					<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>
+						Bounty Id<span className='ml-1 text-nay_red'>*</span>
+					</label>
+					<Form.Item name='bounty_id'>
+						<Input
+							name='bounty_id'
+							defaultValue={bountyId || ''}
+							className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+							onChange={(e) => handleChangeBoundyId(e.target.value)}
+						/>
+					</Form.Item>
 
-					{bountyId && (
-						<>
-							<label className='mb-1.5 text-sm text-lightBlue dark:text-blue-dark-high'>Bounty Id</label>
-							<Form.Item name='Bounty_id'>
+					{/* {isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound : true) && ( */}
+					<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
+						<label className='font-medium'>Write a proposal :</label>
+						<div className='mt-4'>
+							<label className='mb-0.5'>
+								Title <span className='text-nay_red'>*</span>
+							</label>
+							<Form.Item name='title'>
 								<Input
-									name='Bounty_id'
-									value={bountyId}
+									name='title'
 									className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-									onChange={(e) => {
-										setBountyId(Number(e.target.value));
-										setSteps({ percent: 100, step: 1 });
-									}}
+									disabled={true}
 								/>
 							</Form.Item>
-						</>
-					)}
-
-					{isDiscussionLinked !== null && (isDiscussionLinked ? discussionLink && !isDiscussionLinkedValid(discussionLink) && isDiscussionFound : true) && (
-						<div className='mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-high'>
-							<label className='font-medium'>Write a proposal :</label>
-							<div className='mt-4'>
-								<label className='mb-0.5'>
-									Title <span className='text-nay_red'>*</span>
-								</label>
-								<Form.Item
-									name='title'
-									rules={
-										isDiscussionLinked
-											? []
-											: [
-													{
-														message: 'Title should not exceed 150 characters.',
-														validator(rule, value, callback) {
-															if (callback && value?.length > 150) {
-																callback(rule?.message?.toString());
-															} else {
-																callback();
-															}
-														}
-													}
-											  ]
-									}
-								>
-									<Input
-										name='title'
-										className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-										onChange={(e) => {
-											setTitle(e.target.value);
-											onChangeLocalStorageSet({ title: e.target.value }, Boolean(isDiscussionLinked));
-											setSteps({ percent: content.length === 0 ? 83.33 : 100, step: 0 });
-										}}
-										disabled={isDiscussionLinked}
-									/>
-								</Form.Item>
-							</div>
-							<div className='mt-6'>
-								<label className='mb-0.5'>{isDiscussionLinked ? 'Tags' : 'Add Tags'}</label>
-								<Form.Item name='tags'>
-									<AddTags
-										onChange={(e) => onChangeLocalStorageSet({ tags: e }, isDiscussionLinked)}
-										tags={tags}
-										setTags={setTags}
-										disabled={isDiscussionLinked}
-									/>
-								</Form.Item>
-							</div>
-							<div className='mt-6'>
-								<label className='mb-0.5'>
-									Description <span className='text-nay_red'>*</span>
-								</label>
-								{isDiscussionLinked ? (
-									<Markdown
-										imgHidden
-										className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 dark:bg-section-dark-overlay dark:text-blue-dark-high'
-										md={`${content?.slice(0, 300)}...` || content}
-									/>
-								) : (
-									<Form.Item name='content'>
-										<ContentForm
-											value={content}
-											height={250}
-											onChange={(content: string) => {
-												setContent(content);
-												onChangeLocalStorageSet({ content: content }, isDiscussionLinked);
-												setSteps({ percent: title.length === 0 ? 83.33 : 100, step: 0 });
-											}}
-										/>
-									</Form.Item>
-								)}
-							</div>
 						</div>
-					)}
-
-					{/* who can comment */}
+						<div className='mt-6'>
+							<label className='mb-0.5'>Tags</label>
+							<Form.Item name='tags'>
+								<AddTags
+									tags={tags}
+									setTags={setTags}
+									disabled={true}
+								/>
+							</Form.Item>
+						</div>
+						<div className='my-6'>
+							<label className='mb-0.5'>
+								Description <span className='text-nay_red'>*</span>
+							</label>
+							{content ? (
+								<Markdown
+									imgHidden
+									className='post-content rounded-[4px] border-[1px] border-solid border-[#dddddd] bg-[#f5f5f5] px-3 py-2 dark:bg-section-dark-overlay dark:text-blue-dark-high'
+									md={`${content?.slice(0, 300)}...` || content}
+								/>
+							) : (
+								<Input
+									name='description'
+									className='h-[40px] rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+									disabled={true}
+								/>
+							)}
+						</div>
+					</div>
+					{/* )} */}
 					<AllowedCommentorsRadioButtons
 						className={isDiscussionLinked ? 'mt-6 ' : '-mt-4'}
 						onChange={(value: EAllowedCommentor) => setAllowedCommentors?.(value as EAllowedCommentor)}
@@ -322,8 +260,8 @@ const LinkBounty = ({
 							variant='primary'
 							height={40}
 							width={155}
-							className={`${(!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)) && 'opacity-50'}`}
-							disabled={!isDiscussionLinked ? !(title && content) : !(discussionLink && title && content)}
+							className={`${!(title && content && bountyId) && 'opacity-50'}`}
+							disabled={!(title && content && bountyId)}
 						/>
 					</div>
 				</Form>

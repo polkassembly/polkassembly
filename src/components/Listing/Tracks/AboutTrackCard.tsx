@@ -573,9 +573,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 						<CustomButton
 							variant='default'
-							text='Cancel'
+							text='Skip'
 							buttonsize='sm'
 							onClick={() => {
+								router.push(`/batch-voting/${trackName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`);
 								setOpenTinderVotingModal(false);
 							}}
 						/>

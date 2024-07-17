@@ -28,11 +28,10 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-
 	const handleRemove = (postId: number) => {
 		dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
 	};
-
+	console.log(voteInfo);
 	return (
 		<section
 			key={index}
@@ -53,9 +52,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			/>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<div className='mr-auto flex items-center gap-x-1'>
-					{voteInfo?.voted_for === 'Aye' || voteInfo?.voted_for === 'Nye' ? (
+					{voteInfo?.voted_for === 'aye' || voteInfo?.voted_for === 'aye' ? (
 						<ImageIcon
-							src={`${voteInfo?.voted_for === 'Aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
+							src={`${voteInfo?.voted_for === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
 							imgClassName='text-black'
 							alt='like-dislike-icon'
 						/>
@@ -64,7 +63,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					)}
 					<p
 						className={`${
-							voteInfo?.voted_for === 'Aye' ? 'text-aye_green dark:text-aye_green_Dark' : voteInfo?.voted_for === 'Nye' ? 'text-nye_red dark:text-nay_red_Dark' : 'text-bodyBlue'
+							voteInfo?.voted_for === 'aye' ? 'text-aye_green dark:text-aye_green_Dark' : voteInfo?.voted_for === 'nay' ? 'text-nye_red dark:text-nay_red_Dark' : 'text-bodyBlue'
 						} text-capitalize m-0 p-0 text-xs`}
 					>
 						{voteInfo?.voted_for}
@@ -118,7 +117,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
 											post_id: voteInfo.post_id,
-											post_title: voteInfo.title,
+											post_title: voteInfo.post_title,
 											vote_balance:
 												edit_vote_details?.voteOption === 'aye'
 													? edit_vote_details?.ayeVoteBalance
@@ -126,7 +125,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 													? edit_vote_details?.nyeVoteBalance
 													: edit_vote_details?.abstainVoteBalance,
 											vote_conviction: edit_vote_details?.conviction || '0x',
-											voted_for: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'Aye'
+											voted_for: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'aye'
 										})
 									);
 									setOpenEditModal(false);

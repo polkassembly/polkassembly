@@ -7,7 +7,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import BN from 'bn.js';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
-import { editBatchValueChanged } from '~src/redux/batchVoting/actions';
+import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';
 
 export enum EFormType {
@@ -25,9 +25,10 @@ interface Props {
 	onNayValueChange?: (pre: BN) => void;
 	onAbstainValueChange?: (pre: BN) => void;
 	className?: string;
+	forSpecificPost?: boolean;
 }
 
-const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className }: Props) => {
+const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className, forSpecificPost }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
 
@@ -88,7 +89,17 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 						step={null}
 						onChange={(value) => {
 							const markValue = getMarkValue(value as number);
-							dispatch(editBatchValueChanged({ values: { conviction: markValue } }));
+							if (forSpecificPost) {
+								dispatch(editBatchValueChanged({ values: { conviction: markValue } }));
+							} else {
+								dispatch(
+									editCartPostValueChanged({
+										values: {
+											conviction: markValue
+										}
+									})
+								);
+							}
 						}}
 						defaultValue={0}
 					/>

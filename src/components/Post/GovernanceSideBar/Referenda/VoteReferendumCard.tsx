@@ -255,6 +255,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 						}
 					}}
 					handleSubmit={handleSubmit}
+					forSpecificPost={forSpecificPost}
 				/>
 			)}
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
@@ -281,6 +282,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 						}
 					}}
 					handleSubmit={handleSubmit}
+					forSpecificPost={forSpecificPost}
 				/>
 			)}
 
@@ -365,6 +367,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 						}
 					}}
 					handleSubmit={handleSubmit}
+					forSpecificPost={forSpecificPost}
 				/>
 			)}
 

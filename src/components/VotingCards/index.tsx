@@ -49,7 +49,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				vote_balance:
 					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
 				vote_conviction: batch_vote_details?.conviction || '0x',
-				voted_for: direction === 'left' ? 'Nay' : direction === 'right' ? 'Aye' : 'Abstain'
+				voted_for: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain'
 			})
 		);
 		updateCurrentIndex(index - 1);

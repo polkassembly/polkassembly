@@ -232,7 +232,7 @@ const CreateReferendum = ({
 			);
 
 			const onSuccess = async () => {
-				handleSaveTreasuryProposal(post_id);
+				await handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				setLoading(false);
 				setOpenModal(false);

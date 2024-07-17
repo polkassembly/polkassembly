@@ -20,7 +20,7 @@ const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenG
 	ssr: false
 });
 
-const WriteProposal = dynamic(() => import('../../OpenGovTreasuryProposal/WriteProposal'), {
+const LinkBounty = dynamic(() => import('./LinkBounty'), {
 	ssr: false
 });
 
@@ -50,7 +50,7 @@ interface Props {
 
 enum ESteps {
 	LINK_PROPOSAL = 'Link Bounty Proposal',
-	ADD_CURATOR = 'Add Curator'
+	CREATE_REFERENDUM = 'Create Referendum'
 }
 
 const CuratorActionModal = ({
@@ -85,7 +85,7 @@ const CuratorActionModal = ({
 	// const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
-	// const [updatedBountyId, setUpdatedBountyId] = useState<number | null>(null);
+	const [updatedBountyId, setUpdatedBountyId] = useState<number | null>(bountyId);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -205,17 +205,19 @@ const CuratorActionModal = ({
 								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.LINK_PROPOSAL}</span>
 							},
 							{
-								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.ADD_CURATOR}</span>
+								title: <span className='text-sm font-medium text-blue-light-high dark:text-blue-dark-high'>{ESteps.CREATE_REFERENDUM}</span>
 							}
 						]}
 					/>
 					{steps?.step === 0 && (
-						<WriteProposal
+						<LinkBounty
 							form={writeProposalForm}
 							setSteps={setSteps}
 							title={title}
 							content={content}
 							tags={tags}
+							bountyId={updatedBountyId}
+							setBountyId={setUpdatedBountyId}
 							isDiscussionLinked={isDiscussionLinked}
 							setIsDiscussionLinked={setIsDiscussionLinked}
 							discussionLink={discussionLink}

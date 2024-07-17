@@ -144,7 +144,7 @@ const CreateReferendum = ({
 
 	const fetchBountyProposer = async (bountyId: number | null) => {
 		if (bountyId === null) return;
-		setLoading(true);
+		// setLoading(true);
 		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
 			bountyId
 		});
@@ -153,7 +153,7 @@ const CreateReferendum = ({
 			console.log('Error in fetching bounty proposer data');
 			setBountyAmount(ZERO_BN);
 			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
-			setLoading(true);
+			// setLoading(true);
 			return;
 		}
 		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
@@ -162,7 +162,7 @@ const CreateReferendum = ({
 		form.setFieldsValue({
 			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
 		});
-		setLoading(true);
+		// setLoading(true);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -330,7 +330,9 @@ const CreateReferendum = ({
 		form.setFieldValue('preimage_length', 0);
 		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
+		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}&network=${network}`);
+
+		console.log('PreImage Data', preimageHash, data);
 
 		if (data && !data?.message) {
 			if (data.section === 'Bounties' && data?.method === 'propose_curator' && !isNaN(data.proposedCall?.args?.bountyId) && !isNaN(data?.length)) {

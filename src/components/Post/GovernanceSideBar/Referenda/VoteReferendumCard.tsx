@@ -42,6 +42,8 @@ interface Props {
 	theme?: string;
 	trackNumber?: number;
 	setUpdateTally?: (pre: boolean) => void;
+	forSpecificPost?: boolean;
+	postEdit?: any;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -94,7 +96,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 };
 
 // const VoteReferendumCard = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
-const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) => {
+const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();
 	const { id } = userDetails;
@@ -103,10 +105,6 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
 	const [ayeNayForm] = Form.useForm();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [multisig, setMultisig] = useState<string>('');
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [showMultisig, setShowMultisig] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const [vote, setVote] = useState<EVoteDecisionType>(EVoteDecisionType.AYE);
@@ -127,13 +125,15 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 
 	const handleOnVoteChange = (value: any) => {
 		setVote(value as EVoteDecisionType);
-		dispatch(
-			editBatchValueChanged({
-				values: {
-					voteOption: value as EVoteDecisionType
-				}
-			})
-		);
+		if (!forSpecificPost) {
+			dispatch(
+				editBatchValueChanged({
+					values: {
+						voteOption: value as EVoteDecisionType
+					}
+				})
+			);
+		}
 		handleModalReset();
 	};
 
@@ -228,13 +228,15 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 					form={ayeNayForm}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									ayeVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										ayeVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					handleSubmit={handleSubmit}
 				/>
@@ -244,13 +246,15 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 					form={ayeNayForm}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									nyeVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										nyeVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					handleSubmit={handleSubmit}
 				/>
@@ -261,40 +265,48 @@ const VoteReferendumCard = ({ className, referendumId, proposalType }: Props) =>
 					form={abstainFrom}
 					formName={EFormType.ABSTAIN_FORM}
 					onBalanceChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									abstainVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										abstainVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					onAyeValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									abstainAyeVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										abstainAyeVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					onNayValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									abstainNyeVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										abstainNyeVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					onAbstainValueChange={(balance: BN) => {
-						dispatch(
-							editBatchValueChanged({
-								values: {
-									abstainVoteBalance: balance
-								}
-							})
-						);
+						if (!forSpecificPost) {
+							dispatch(
+								editBatchValueChanged({
+									values: {
+										abstainVoteBalance: balance
+									}
+								})
+							);
+						}
 					}}
 					handleSubmit={handleSubmit}
 				/>

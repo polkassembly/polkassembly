@@ -15,10 +15,12 @@ const VoteReferendumCard = dynamic(() => import('src/components/Post/GovernanceS
 
 interface IDefaultVotingOptionsModal {
 	theme?: string;
+	forSpecificPost?: boolean;
+	postEdit?: any;
 }
 
-const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = () => {
-	// const { theme } = props;
+const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
+	const { forSpecificPost, postEdit } = props;
 	const { loginAddress } = useUserDetailsSelector();
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [address, setAddress] = useState<String>(loginAddress);
@@ -37,6 +39,8 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = () => {
 				proposalType={ProposalType.TREASURY_PROPOSALS}
 				lastVote={lastVote as any}
 				setLastVote={setLastVote}
+				forSpecificPost={forSpecificPost}
+				postEdit={postEdit}
 			/>
 		</section>
 	);

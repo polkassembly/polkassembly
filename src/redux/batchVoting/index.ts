@@ -92,6 +92,10 @@ export const batchVoteStore = createSlice({
 				}
 			}
 		},
+		setRemoveVoteCardInfo: (state, action: PayloadAction<number>) => {
+			state.vote_card_info_array = state.vote_card_info_array.filter((voteCard) => voteCard.post_id !== action.payload);
+			state.total_proposals_added_in_Cart = state.vote_card_info_array.length;
+		},
 		setShowCartMenu: (state, action: PayloadAction<boolean>) => {
 			state.show_cart_menu = action.payload;
 		},

@@ -199,10 +199,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 								href={`/referenda/${post_id}`}
 								target='_blank'
 							>
-								<div
-									// theme={theme as any}
-									className='relative ml-2 flex w-full items-center'
-								>
+								<div className='relative ml-2 flex w-full items-center'>
 									<Image
 										src={theme === 'light' ? '/assets/bounty-icons/redirect-icon.svg' : '/assets/bounty-icons/redirect-icon-black.svg'}
 										width={45}
@@ -237,12 +234,14 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									imgWrapperClassName=''
 								/>
 							</Link>
-							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} scroll-hidden h-7 overflow-y-auto`}>
 								<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
 								<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 							</div>
-							<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[60px] break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-								{content ? removeSymbols(content).slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+							<div
+								className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[40px] overflow-y-auto break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}
+							>
+								{content ? removeSymbols(content).slice(0, 90) : getAscciiFromHex(description).slice(0, 90)}...
 							</div>
 							{tags && tags.length > 0 && (
 								<div className='flex gap-x-1'>
@@ -265,20 +264,18 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									)}
 								</div>
 							)}
-
-							<Link
-								href={`/address/${proposer}`}
-								target='_blank'
-							>
-								<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
-								<ImageComponent
-									alt='user img'
-									src={profileDetails.image}
-									className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
-								/>
-								<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
-							</Link>
-							<div className='mb-3 mt-2'>
+							<div className='mb-[6px] mt-1 flex justify-between'>
+								<Link
+									href={`/address/${proposer}`}
+									target='_blank'
+								>
+									<ImageComponent
+										alt='user img'
+										src={profileDetails.image}
+										className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
+									/>
+									<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
+								</Link>
 								<TrackTag
 									theme={theme as any}
 									className='sm:mt-0'

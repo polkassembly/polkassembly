@@ -9,7 +9,6 @@ import { getNetworkFromReqHeaders } from '~src/api-utils';
 import BountiesContainer from '~src/components/Bounties';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import SEOHead from '~src/global/SEOHead';
-import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProposalType, getStatusesFromCustomStatus } from '~src/global/proposalType';
 import { sortValues } from '~src/global/sortOptions';
@@ -31,7 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			}
 		};
 	}
-
+	const LISTING_LIMIT = 12;
 	const { page = 1, sortBy = sortValues.NEWEST, filterBy } = context.query;
 	const proposalType = ProposalType.BOUNTIES;
 

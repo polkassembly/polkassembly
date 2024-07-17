@@ -40,7 +40,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const activeDataChunks = activeBountyData ? chunkArray(activeBountyData.posts, isMobile ? 1 : 3) : [];
 
 	return (
-		<main>
+		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
 				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
 				<BountyProposalActionButton className='hidden md:block' />
@@ -97,7 +97,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					{extendedDataChunks.map((chunk, index) => (
 						<div
 							key={index}
-							className='flex justify-center space-x-4 md:justify-between'
+							className='flex justify-center md:justify-around'
 						>
 							{chunk.map((post, postIndex) => (
 								<HotBountyCard
@@ -130,16 +130,18 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			</div>
 
 			{/* Bounty Proposals */}
-			<div className='mt-8 flex items-center justify-between'>
-				<div className='flex items-center gap-2'>
-					<ImageIcon
-						src='/assets/bounty-icons/bounty-proposals.svg'
-						alt='bounty icon'
-						imgClassName='-mt-[18px]'
-					/>
-					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+			{extendedData && extendedData?.count > 1 && (
+				<div className='mt-8 flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						<ImageIcon
+							src='/assets/bounty-icons/bounty-proposals.svg'
+							alt='bounty icon'
+							imgClassName='-mt-[18px]'
+						/>
+						<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+					</div>
 				</div>
-			</div>
+			)}
 
 			<div className='relative '>
 				{currentSlide2 > 0 && (
@@ -166,7 +168,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					{activeDataChunks.map((chunk, index) => (
 						<div
 							key={index}
-							className='flex justify-between space-x-4'
+							className='mx-3 flex justify-between space-x-4'
 						>
 							{chunk.map((post, proposalIndex) => (
 								<BountiesProposalsCard

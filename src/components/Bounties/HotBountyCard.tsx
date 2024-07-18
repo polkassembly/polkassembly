@@ -207,35 +207,29 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 													{tag}
 												</div>
 											))}
-											{tags.length > 3 && (
-												<div
-													className='text-bodyBlue dark:text-blue-dark-high'
-													style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
-												>
-													+{tags.length - 3}
-												</div>
-											)}
 										</div>
 									)}
 								</div>
 								<div className='mt-[2px] flex h-[22px] items-center justify-between'>
-									{profileDetails?.username && (
-										<Link
-											href={`/address/${proposer}`}
-											target='_blank'
-										>
-											<ImageComponent
-												alt='user img'
-												src={profileDetails.image}
-												className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
-											/>
-											<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
-												{profileDetails.username}
-											</span>
-										</Link>
-									)}
-									{curator && (
-										<div className={'flex cursor-pointer items-center justify-end'}>
+									<div>
+										{profileDetails?.username && (
+											<Link
+												href={`/address/${proposer}`}
+												target='_blank'
+											>
+												<ImageComponent
+													alt='user img'
+													src={profileDetails.image}
+													className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
+												/>
+												<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
+													{profileDetails.username}
+												</span>
+											</Link>
+										)}
+									</div>
+									<div className={'cursor-pointer'}>
+										{curator && (
 											<Popover
 												content={<CuratorPopover address={curator} />}
 												title=''
@@ -250,8 +244,8 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 													</button>
 												</div>
 											</Popover>
-										</div>
-									)}
+										)}
+									</div>
 								</div>
 							</div>
 							<Link

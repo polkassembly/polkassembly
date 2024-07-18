@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			network,
 			page,
 			preimageSection: '',
-			proposalStatus: ['Proposed', 'Active', 'CuratorUnassigned', 'Extended'],
+			proposalStatus: ['Active'],
 			proposalType,
 			sortBy
 		}),

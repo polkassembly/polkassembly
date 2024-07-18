@@ -12,7 +12,7 @@ const VoteCart: React.FC = () => {
 	return (
 		<section>
 			<article className='h-[100vh] p-2'>
-				<div className='mb-[48px] h-[686px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md'>
+				<div className='mb-[48px] h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md'>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue'>({vote_card_info_array?.length})</p>
@@ -27,10 +27,14 @@ const VoteCart: React.FC = () => {
 				</div>
 			</article>
 			<article
-				className='sticky bottom-0 h-[137px] w-full bg-white p-5 shadow-lg'
+				className='sticky bottom-0 h-[161px] w-full bg-white p-5 shadow-lg drop-shadow-lg'
 				style={{ borderRadius: '8px 8px 0 0' }}
 			>
 				<div className='flex flex-col gap-y-2'>
+					<div className='flex h-[40px] items-center justify-between rounded-sm bg-white p-2'>
+						<p className='m-0 p-0 text-sm text-lightBlue'>Total Proposals</p>
+						<p className='m-0 p-0 text-base font-semibold text-bodyBlue'>{vote_card_info_array?.length}</p>
+					</div>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2'>
 						<p className='m-0 p-0 text-sm text-lightBlue'>Gas Fees</p>
 						<p className='m-0 p-0 text-base font-semibold text-bodyBlue'>27.4 DOT</p>

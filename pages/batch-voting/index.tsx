@@ -12,7 +12,6 @@ import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import getQueryToTrack from '~src/util/getQueryToTrack';
 
 interface IBatchVoting {
 	data?: IPostsListingResponse;
@@ -21,28 +20,23 @@ interface IBatchVoting {
 	trackDetails: any;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
 
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
 
-	const { track } = query;
-	const trackDetails: any = getQueryToTrack(String(track), network);
-
 	const { data, error = '' } = await getActiveProposalsForTrack({
 		isExternalApiCall: true,
 		network,
-		proposalType: ProposalType.OPEN_GOV,
-		trackNumber: trackDetails?.trackId
+		proposalType: ProposalType.OPEN_GOV
 	});
 
 	return {
 		props: {
 			data,
 			error,
-			network,
-			trackDetails
+			network
 		}
 	};
 };
@@ -55,6 +49,7 @@ const BatchVoting: FC<IBatchVoting> = (props) => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	console.log(data);
 
 	return (
 		<>

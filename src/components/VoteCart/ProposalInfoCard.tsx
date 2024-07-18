@@ -82,7 +82,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					>
 						<ImageIcon
 							src='/assets/icons/edit-option-icon.svg'
-							alt='eye-icon'
+							alt='edit-icon'
 						/>
 					</Button>
 					<Button
@@ -139,8 +139,12 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						setOpenEditModal(false);
 					}}
 					title={
-						<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-							Set Voting Details
+						<div className='-mx-6 flex items-center gap-x-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+							<ImageIcon
+								src='/assets/icons/edit-option-icon.svg'
+								alt='edit-icon'
+							/>
+							Edit Vote Details
 						</div>
 					}
 				>

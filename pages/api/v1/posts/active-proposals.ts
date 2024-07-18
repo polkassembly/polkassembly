@@ -11,7 +11,7 @@ import { ProposalType, getFirestoreProposalType, getStatusesFromCustomStatus, ge
 
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { ACTIVE_PROPOSALS_FOR_TRACK } from '~src/queries';
+import { OPEN_GOV_ACTIVE_PROPOSALS } from '~src/queries';
 import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
@@ -24,7 +24,6 @@ import { IPostResponse } from './on-chain-post';
 
 interface Args {
 	network: string;
-	trackNumber: number;
 	proposalType: ProposalType;
 	isExternalApiCall?: boolean;
 }
@@ -69,25 +68,21 @@ export const getUpdatedAt = (data: any) => {
 	}
 };
 
-export const getActiveProposalsForTrack = async ({ network, proposalType, trackNumber, isExternalApiCall }: Args) => {
+export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall }: Args) => {
 	if (!network || !Object.values(AllNetworks).includes(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
 
 	const strProposalType = String(proposalType);
-	if (!isProposalTypeValid(strProposalType) || (trackNumber !== null && isNaN(trackNumber))) {
+	if (!isProposalTypeValid(strProposalType)) {
 		throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 	}
-	const query = ACTIVE_PROPOSALS_FOR_TRACK;
+	const query = OPEN_GOV_ACTIVE_PROPOSALS;
 
 	const variables: any = {
 		status_in: getStatusesFromCustomStatus(CustomStatus.Active),
 		type_eq: getSubsquidProposalType(proposalType as any)
 	};
-
-	if (trackNumber !== null) {
-		variables.track_eq = trackNumber;
-	}
 
 	const subsquidRes = await fetchSubsquid({
 		network,
@@ -182,7 +177,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, trackN
 					tags: [],
 					tally: subsquidPost.tally,
 					title: '',
-					track_number: trackNumber,
+					track_number: subsquidPost.trackNumber,
 					type: subsquidPost.type
 				};
 
@@ -220,14 +215,13 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, trackN
 const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	// const { proposalType, trackNumber = null } = req.body;
+	const { proposalType } = req.body;
 	const network = String(req.headers['x-network']);
 
 	const { data, error } = await getActiveProposalsForTrack({
 		isExternalApiCall: true,
 		network: network,
-		proposalType: ProposalType.REFERENDUM_V2,
-		trackNumber: 33
+		proposalType: proposalType
 	});
 
 	if (error || !data) {

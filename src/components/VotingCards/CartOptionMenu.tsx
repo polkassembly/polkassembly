@@ -23,7 +23,7 @@ const CartOptionMenu = () => {
 					width={91}
 					fontSize='xs'
 					onClick={() => {
-						router.push('/votes-cart');
+						router.push('/batch-voting/Cart');
 					}}
 				/>
 				<Button className='flex h-[36px] w-[36px] items-center justify-center rounded-lg border border-solid border-pink_primary bg-transparent'>

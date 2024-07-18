@@ -11,7 +11,7 @@ import { ProposalType, getFirestoreProposalType, getStatusesFromCustomStatus, ge
 
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { OPEN_GOV_ACTIVE_PROPOSALS } from '~src/queries';
+import { GET_DELEGATED_DELEGATION_ADDRESSES, NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS } from '~src/queries';
 import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
@@ -21,11 +21,15 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { IPostResponse } from './on-chain-post';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { LISTING_LIMIT } from '~src/global/listingLimit';
 
 interface Args {
 	network: string;
 	proposalType: ProposalType;
 	isExternalApiCall?: boolean;
+	page: number;
+	userAddress: string;
 }
 
 const getIsSwapStatus = (statusHistory: string[]) => {
@@ -68,33 +72,53 @@ export const getUpdatedAt = (data: any) => {
 	}
 };
 
-export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall }: Args) => {
+export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall, page, userAddress }: Args) => {
 	if (!network || !Object.values(AllNetworks).includes(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
 
 	const strProposalType = String(proposalType);
-	if (!isProposalTypeValid(strProposalType)) {
+	if (!isProposalTypeValid(strProposalType) || isNaN(page) || !getEncodedAddress(userAddress, network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 	}
-	const query = OPEN_GOV_ACTIVE_PROPOSALS;
 
-	const variables: any = {
-		status_in: getStatusesFromCustomStatus(CustomStatus.Active),
-		type_eq: getSubsquidProposalType(proposalType as any)
-	};
+	const encodedAddress = getEncodedAddress(userAddress, network);
 
 	const subsquidRes = await fetchSubsquid({
 		network,
-		query,
-		variables
+		query: GET_DELEGATED_DELEGATION_ADDRESSES,
+		variables: {
+			address: encodedAddress || userAddress
+		}
 	});
-	const subsquidData = subsquidRes?.['data']?.proposals || [];
 
-	if (!subsquidData.length) {
+	const delegatedAddressObj: { [key: string]: number } = {};
+	const subsquidData = subsquidRes?.['data']?.votingDelegations || [];
+
+	subsquidData.map((delegation: { to: string; from: string }) => {
+		if (delegatedAddressObj[delegation.to] == undefined) {
+			delegatedAddressObj[delegation.to] = 1;
+		}
+	});
+
+	const subsquidProposalsRes = await fetchSubsquid({
+		network,
+		query: NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS,
+		variables: {
+			addresses: [encodedAddress, ...(Object.keys(delegatedAddressObj) || [])],
+			limit: LISTING_LIMIT,
+			offset: LISTING_LIMIT * (page - 1),
+			status_in: getStatusesFromCustomStatus(CustomStatus.Active),
+			type: getSubsquidProposalType(proposalType as any)
+		}
+	});
+
+	const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
+
+	if (!subsquidProposalsData.length) {
 		return { data: [], error: null };
 	} else {
-		const activeProposalIds = subsquidData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
+		const activeProposalIds = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
 
 		const postsSnapshot = await postsByTypeRef(network, (getFirestoreProposalType(proposalType) as ProposalType) || proposalType)
 			.where(
@@ -105,17 +129,17 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 			.get();
 
 		if (postsSnapshot.empty) {
-			return { data: subsquidData, error: null };
+			return { data: subsquidProposalsData, error: null };
 		} else {
 			const results: any[] = [];
 
 			const postsDocs = postsSnapshot.docs;
-			const subsquidDataPromises = subsquidData.map(async (subsquidPost: any) => {
+			const subsquidProposalsDataPromises = subsquidProposalsData.map(async (subsquidPost: any) => {
 				const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
 
 				const preimage = subsquidPost?.preimage;
 				const proposedCall = preimage?.proposedCall;
-				const proposalArguments = subsquidData?.proposalArguments || subsquidData?.callData;
+				const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData;
 				let requested = BigInt(0);
 				const beneficiaries: IBeneficiary[] = [];
 				let assetId: null | string = null;
@@ -206,22 +230,27 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 				}
 			});
 
-			await Promise.allSettled(subsquidDataPromises);
+			await Promise.allSettled(subsquidProposalsDataPromises);
 
-			return { data: results, error: null };
+			const sortByIdResultsData = results.sort((a: IPostResponse, b: IPostResponse) => b?.id - a?.id);
+
+			return { data: sortByIdResultsData, error: null };
 		}
 	}
 };
 const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
+	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { proposalType } = req.body;
+	const { proposalType, page, userAddress } = req.body;
 	const network = String(req.headers['x-network']);
 
 	const { data, error } = await getActiveProposalsForTrack({
-		isExternalApiCall: false,
+		isExternalApiCall: true,
 		network: network,
-		proposalType: proposalType
+		page: Number(page) || 1,
+		proposalType: proposalType || ProposalType.REFERENDUM_V2,
+		userAddress: userAddress || '1585VeaY99rqUCqhVhRc5WBXELdx2qqsvYYdTNVWG6pUWAub'
 	});
 
 	if (error || !data) {

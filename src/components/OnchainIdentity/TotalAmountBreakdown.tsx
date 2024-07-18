@@ -19,14 +19,14 @@ import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { registerarFee, minDeposite } = txFee;
@@ -35,12 +35,12 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (['kusama', 'polkadot'].includes(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
 		if (network === 'polkadot') return; //temp

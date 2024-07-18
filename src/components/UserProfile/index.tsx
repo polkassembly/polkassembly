@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import ProfileHeader from './ProfileHeader';
 import { ESocialType, ProfileDetailsResponse } from '~src/auth/types';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/accounts/types';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProfileCard from './ProfileCard';
@@ -36,7 +36,7 @@ export type TOnChainIdentity = { nickname: string } & DeriveAccountRegistration;
 const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { addresses, image, bio, social_links, title, user_id, username } = userProfile;
 	const { resolvedTheme: theme } = useTheme();
 	const [onChainIdentity, setOnChainIdentity] = useState<TOnChainIdentity>({
@@ -59,8 +59,8 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
+		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
 
 		if (!apiPromise) {
 			return;
@@ -107,7 +107,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 			unsubscribes && unsubscribes.length > 0 && unsubscribes.forEach((unsub) => unsub && unsub());
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileDetails?.addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
+	}, [profileDetails?.addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	useEffect(() => {
 		const { email, twitter, riot, web } = onChainIdentity;

@@ -33,7 +33,7 @@ import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
@@ -59,7 +59,7 @@ const IdentityForm = ({
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -75,12 +75,12 @@ const IdentityForm = ({
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (['kusama', 'polkadot'].includes(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -273,7 +273,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{onchainIdentitySupportedNetwork.includes(network) && network === 'kusama' && (
+				{onchainIdentitySupportedNetwork.includes(network) && ['kusama', 'polkadot'].includes(network) && (
 					<div
 						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}

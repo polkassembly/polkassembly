@@ -2523,7 +2523,7 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
 
 `;
 
-export const ACTIVE_PROPOSALS_FOR_TRACK = `
+export const OPEN_GOV_ACTIVE_PROPOSALS = `
 query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2) {
   proposals(where: {trackNumber_eq:$track_eq, status_in: $status_in, type_eq: $type_eq},){
     index

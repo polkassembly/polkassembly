@@ -88,6 +88,12 @@ const w3fDelegatesPolkadot = [
 		longDescription: '',
 		name: 'Irina Karagyaur',
 		shortDescription: ''
+	},
+	{
+		address: '1E1kTJXUnAg1r8xHKvgrZmF74qcfwYAUKF1mkgqjruRDd5w',
+		longDescription: '',
+		name: 'Scytaledigital',
+		shortDescription: ''
 	}
 ];
 

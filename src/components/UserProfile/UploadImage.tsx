@@ -100,6 +100,7 @@ const UploadImage = ({ className, updateProfile, imageInside, defaultImage, name
 					const image = images[images.length - 1];
 					const isValid = beforeUpload(image);
 					if (isValid) {
+						setLoading(false);
 						return [image];
 					}
 					setLoading(false);

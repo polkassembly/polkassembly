@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector } from '~src/redux/selectors';
+import Post from '../Post/Post';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -28,6 +29,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+	const [openViewProposalModal, setOpenViewProposalModal] = useState<boolean>(false);
 	const handleRemove = (postId: number) => {
 		dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
 	};
@@ -40,11 +42,18 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.post_id}</p>
 				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo.post_title?.substring(0, 50)}...</p>
-				<ImageIcon
-					src='/assets/icons/eye-icon-grey.svg'
-					alt='eye-icon'
-					imgWrapperClassName='ml-auto'
-				/>
+				<Button
+					className='m-0 flex items-center justify-center border-none bg-none p-0'
+					onClick={() => {
+						setOpenViewProposalModal(true);
+					}}
+				>
+					<ImageIcon
+						src='/assets/icons/eye-icon-grey.svg'
+						alt='eye-icon'
+						imgWrapperClassName='ml-auto'
+					/>
+				</Button>
 			</article>
 			<Divider
 				type='horizontal'
@@ -52,9 +61,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			/>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<div className='mr-auto flex items-center gap-x-1'>
-					{voteInfo?.voted_for === 'aye' || voteInfo?.voted_for === 'aye' ? (
+					{voteInfo?.decision === 'aye' || voteInfo?.decision === 'aye' ? (
 						<ImageIcon
-							src={`${voteInfo?.voted_for === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
+							src={`${voteInfo?.decision === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
 							imgClassName='text-black'
 							alt='like-dislike-icon'
 						/>
@@ -63,15 +72,15 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					)}
 					<p
 						className={`${
-							voteInfo?.voted_for === 'aye' ? 'text-aye_green dark:text-aye_green_Dark' : voteInfo?.voted_for === 'nay' ? 'text-nye_red dark:text-nay_red_Dark' : 'text-bodyBlue'
+							voteInfo?.decision === 'aye' ? 'text-aye_green dark:text-aye_green_Dark' : voteInfo?.decision === 'nay' ? 'text-nye_red dark:text-nay_red_Dark' : 'text-bodyBlue'
 						} text-capitalize m-0 p-0 text-xs`}
 					>
-						{voteInfo?.voted_for}
+						{voteInfo?.decision}
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.vote_balance?.toNumber() / 10000000000 || 0} DOT</p>
-					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.vote_conviction || '0x'}</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.voteBalance?.toNumber() / 10000000000 || 0} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.voteConviction || '0x'}</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button
@@ -116,16 +125,18 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								onClick={() => {
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
+											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
+											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainNyeVoteBalance,
+											decision: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'aye',
 											post_id: voteInfo.post_id,
 											post_title: voteInfo.post_title,
-											vote_balance:
+											voteBalance:
 												edit_vote_details?.voteOption === 'aye'
 													? edit_vote_details?.ayeVoteBalance
 													: edit_vote_details?.voteOption === 'nay'
 													? edit_vote_details?.nyeVoteBalance
 													: edit_vote_details?.abstainVoteBalance,
-											vote_conviction: edit_vote_details?.conviction || '0x',
-											voted_for: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'aye'
+											voteConviction: edit_vote_details?.conviction || '0x'
 										})
 									);
 									setOpenEditModal(false);
@@ -153,6 +164,34 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						forSpecificPost={true}
 						postEdit={voteInfo.post_id}
 					/>
+				</Modal>
+				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
+					className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+					open={openViewProposalModal}
+					footer={
+						<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
+							<CustomButton
+								variant='default'
+								text='Cancel'
+								buttonsize='sm'
+								onClick={() => {
+									setOpenViewProposalModal(false);
+								}}
+							/>
+						</div>
+					}
+					maskClosable={false}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+					onCancel={() => {
+						setOpenViewProposalModal(false);
+					}}
+				>
+					{/* <Post
+						post={post}
+						trackName={'root'}
+						proposalType={proposalType}
+					/> */}
 				</Modal>
 			</article>
 		</section>

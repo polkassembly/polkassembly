@@ -8,14 +8,12 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import { noTitle } from 'src/global/noTitle';
-import StatusTag from 'src/ui-components/StatusTag';
 import UpdateLabel from 'src/ui-components/UpdateLabel';
 import { useApiContext } from '~src/context';
 import { ProposalType, getProposalTypeTitle } from '~src/global/proposalType';
 import PostHistoryModal from '~src/ui-components/PostHistoryModal';
 import { onTagClickFilter } from '~src/util/onTagClickFilter';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 import TagsModal from '~src/ui-components/TagsModal';
 import styled from 'styled-components';
 import SkeletonInput from '~src/basic-components/Skeleton/SkeletonInput';
@@ -89,7 +87,6 @@ interface ICardPostHeadingProps {
 const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const router = useRouter();
 	const { className, postArguments, method, motion_method, post } = props;
-	const { resolvedTheme: theme } = useTheme();
 	const {
 		assetId,
 		beneficiaries,
@@ -250,13 +247,6 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{status && (
-						<StatusTag
-							theme={theme}
-							className='mb-3'
-							status={status}
-						/>
-					)}
 					{requestedAmt && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>

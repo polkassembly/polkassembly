@@ -27,9 +27,12 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
-import BatchVotingBadge from '~src/components/Home/LatestActivity/BatchVotingBadge';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivity/BatchVotingBadge'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

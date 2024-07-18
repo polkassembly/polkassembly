@@ -8,8 +8,13 @@ import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector } from '~src/redux/selectors';
 import SwipeActionButtons from './SwipeActionButtons';
-import CartOptionMenu from './CartOptionMenu';
 import TinderCardsComponent from './TinderCardsComponent';
+import dynamic from 'next/dynamic';
+import { Skeleton } from 'antd';
+const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 // import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
@@ -44,12 +49,14 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
 		dispatch(
 			batchVotesActions.setvoteCardInfo({
+				abstainAyeBalance: direction === 'left' || direction === 'right' ? '0' : batch_vote_details?.abstainAyeVoteBalance,
+				abstainNayBalance: direction === 'left' || direction === 'right' ? '0' : batch_vote_details?.abstainNyeVoteBalance,
+				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
 				post_id: postId,
 				post_title: postTitle,
-				vote_balance:
+				voteBalance:
 					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
-				vote_conviction: batch_vote_details?.conviction || '0x',
-				voted_for: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain'
+				voteConviction: batch_vote_details?.conviction || '0x'
 			})
 		);
 		updateCurrentIndex(index - 1);

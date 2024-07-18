@@ -14,9 +14,12 @@ export interface IBatchVoteStore {
 export type IVoteCardInfo = {
 	post_id: number;
 	post_title: string;
-	voted_for: string;
-	vote_conviction: string;
-	vote_balance: any;
+	decision: string;
+	voteConviction: string;
+	voteBalance: any;
+	posted?: boolean;
+	abstainAyeBalance?: string;
+	abstainNayBalance?: string;
 };
 
 export interface IBatchVotesDetails {

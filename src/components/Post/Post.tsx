@@ -308,6 +308,7 @@ const Post: FC<IPostProps> = (props) => {
 	}
 	const { post_id, hash, status: postStatus } = post;
 	const onchainId = proposalType === ProposalType.TIPS ? hash : post_id;
+	console.log(post);
 
 	const Sidebar = ({ className }: { className?: string }) => {
 		return (

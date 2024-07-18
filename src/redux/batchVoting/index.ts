@@ -13,11 +13,13 @@ const initialState: IBatchVoteStore = {
 	show_default_options_modal: false,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
+		abstainAyeBalance: '',
+		abstainNayBalance: '',
+		decision: '',
 		post_id: 0,
 		post_title: '',
-		vote_balance: 0,
-		vote_conviction: '',
-		voted_for: ''
+		voteBalance: 0,
+		voteConviction: ''
 	},
 	vote_card_info_array: []
 };
@@ -58,11 +60,13 @@ export const batchVoteStore = createSlice({
 				show_default_options_modal: false,
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
+					abstainAyeBalance: '',
+					abstainNayBalance: '',
+					decision: '',
 					post_id: 0,
 					post_title: '',
-					vote_balance: 0,
-					vote_conviction: '',
-					voted_for: ''
+					voteBalance: 0,
+					voteConviction: ''
 				},
 				vote_card_info_array: []
 			};
@@ -160,13 +164,19 @@ export const batchVoteStore = createSlice({
 					case 'post_title':
 						state.vote_card_info[key] = value;
 						break;
-					case 'voted_for':
+					case 'decision':
 						state.vote_card_info[key] = value;
 						break;
-					case 'vote_balance':
+					case 'voteBalance':
 						state.vote_card_info[key] = value;
 						break;
-					case 'vote_conviction':
+					case 'voteConviction':
+						state.vote_card_info[key] = value;
+						break;
+					case 'abstainAyeBalance':
+						state.vote_card_info[key] = value;
+						break;
+					case 'abstainNayBalance':
 						state.vote_card_info[key] = value;
 						break;
 				}

@@ -10,6 +10,7 @@ const initialState: IBatchVoteStore = {
 	batch_vote_details: {},
 	edit_vote_details: {},
 	show_cart_menu: false,
+	show_default_options_modal: false,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
 		post_id: 0,
@@ -54,6 +55,7 @@ export const batchVoteStore = createSlice({
 				batch_vote_details: {},
 				edit_vote_details: {},
 				show_cart_menu: false,
+				show_default_options_modal: false,
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
 					post_id: 0,
@@ -129,6 +131,9 @@ export const batchVoteStore = createSlice({
 		},
 		setShowCartMenu: (state, action: PayloadAction<boolean>) => {
 			state.show_cart_menu = action.payload;
+		},
+		setShowDefaultOptionsModal: (state, action: PayloadAction<boolean>) => {
+			state.show_default_options_modal = action.payload;
 		},
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;

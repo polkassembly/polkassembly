@@ -27,6 +27,7 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
+import BatchVotingBadge from '~src/components/Home/LatestActivity/BatchVotingBadge';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -113,6 +114,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -142,7 +144,11 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					/>
 				)}
 			</div>
-
+			{isMobile && (
+				<div className='mx-1 mt-8'>
+					<BatchVotingBadge />
+				</div>
+			)}
 			<div className='mx-1 mt-8'>
 				<TreasuryOverview theme={theme} />
 			</div>

@@ -251,7 +251,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					)}
 				</div>
 				<div className='flex min-h-[92px] justify-between border-0 border-t-[1px] border-solid  border-section-light-container dark:border-[#3B444F]  dark:border-separatorDark '>
-					<div className='flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
+					<div className='mt-1 flex w-[33%] flex-col items-center py-3 text-[20px] font-semibold text-bodyBlue dark:text-blue-dark-high'>
 						<div className='flex flex-wrap items-end justify-center'>
 							<span className='px-1 text-2xl font-semibold'>{parseBalance(votingPower.add(freeBalance).toString(), 2, false, network)}</span>
 							<span className='mb-[3px] text-sm font-normal dark:text-blue-dark-high'>{unit}</span>

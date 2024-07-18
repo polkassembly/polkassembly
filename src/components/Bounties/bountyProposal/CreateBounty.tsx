@@ -210,7 +210,7 @@ const CreateBounty = ({
 					message: `Proposal #${bounty_id} successful.`,
 					status: NotificationStatus.SUCCESS
 				});
-				handleCreateBounty();
+				await handleCreateBounty();
 				setLoadingStatus({ isLoading: false, message: '' });
 				setSteps({ percent: 0, step: 2 });
 			};

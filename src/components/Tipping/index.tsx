@@ -493,6 +493,7 @@ const Tipping = ({ className, open, setOpen, username, openAddressChangeModal, s
 				setOpen={setOpenAddressChangeModal}
 				walletAlertTitle='Please install a web3 wallet to access Tipping'
 				isBalanceUpdated={isBalanceUpdated}
+				usedInIdentityFlow={false}
 			/>
 		</div>
 	);

@@ -11,6 +11,7 @@ import { ProfileDetails } from '~src/auth/types';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import UploadImage from './UploadImage';
+import { useUserDetailsSelector } from '~src/redux/selectors';
 
 interface IBasicInformationProps {
 	profile?: ProfileDetails;
@@ -32,6 +33,7 @@ const defaultCoverImagesData = [
 
 const BasicInformation: FC<IBasicInformationProps> = (props) => {
 	const { profile, loading, setProfile, setUsername, username, className, errorCheck, isValidCoverImage } = props;
+	const { picture } = useUserDetailsSelector();
 	const [newBadge, setNewBadge] = useState<string>('');
 
 	const addNewBadge = () => {
@@ -145,7 +147,7 @@ const BasicInformation: FC<IBasicInformationProps> = (props) => {
 					boxWidth={100}
 					borderRadius={100}
 					borderStyle={'dashed'}
-					defaultImage={profile?.image || ''}
+					defaultImage={profile?.image || picture || ''}
 					imageInside
 					className='relative'
 					updateProfile={(image) =>

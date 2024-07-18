@@ -108,7 +108,7 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama' || !usedInIdentityFlow) {
+		if (network === 'kusama' && usedInIdentityFlow) {
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

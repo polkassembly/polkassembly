@@ -667,7 +667,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: cereLogo,
 		rpcEndpoint: 'wss://archive.mainnet.cere.network/ws',
 		ss58Format: 54,
-		subsquidUrl: 'https://squid.subsquid.io/cere-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/cere-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.CERE,
 		treasuryProposalBondPercent: '5%',

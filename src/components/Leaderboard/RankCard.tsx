@@ -59,9 +59,9 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 	return (
 		<div
 			style={{ backgroundImage: `url(${placeImageMap[place]})` }}
-			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
+			className={`-ml-2 ${type === 'primary' ? 'h-[217px] w-[456px]' : 'h-[197px] w-[400px] md:h-[180px] md:w-[350px]'} relative bg-cover bg-center bg-no-repeat ${className}`}
 		>
-			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8'}`}>
+			<div className={`${poppins.className} ${poppins.variable} ${type === 'primary' ? 'ml-9 h-[217px] w-[390px]' : 'ml-2 h-[197px] w-[400px] px-8 md:h-[180px] md:w-[350px]'}`}>
 				<p className='m-0 mt-1 flex justify-center p-0 text-base font-semibold text-bodyBlue'>Rank 0{place}</p>
 				<ScoreTag
 					score={data?.profile_score}
@@ -119,13 +119,13 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					</div>
 				</div>
 
-				<div className='mx-auto -mt-1'>
+				<div className={`mx-auto ${type === 'primary' ? '-mt-1' : '-mt-4'}`}>
 					<Divider
 						style={{ background: '#D2D8E0' }}
 						className='dark:bg-separatorDark'
 					/>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable}mx-auto ${type === 'primary' ? '-mt-1' : '-mt-3'} flex  items-center`}>
+				<div className={`${poppins.className} ${poppins.variable}mx-auto ${type === 'primary' ? '-mt-1' : '-mt-4'} flex  items-center`}>
 					<p className='m-0 whitespace-nowrap p-0 text-sm text-lightBlue dark:text-[#909090]'>User Since: </p>
 					<span className='flex items-center gap-x-1 whitespace-nowrap text-xs text-bodyBlue dark:text-white'>
 						<ImageIcon

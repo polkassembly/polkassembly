@@ -49,7 +49,7 @@ interface Props {
 	selectedTrack: string;
 	setSelectedTrack: (pre: string) => void;
 	setPreimageHash: (pre: string) => void;
-	setPostId: (pre: number) => void;
+	// setPostId: (pre: number) => void;
 	setOpenModal: (pre: boolean) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	allowedCommentors?: EAllowedCommentor;
@@ -81,7 +81,7 @@ const CreateReferendum = ({
 	setEnactment,
 	selectedTrack,
 	setSelectedTrack,
-	setPostId,
+	// setPostId,
 	proposerAddress,
 	preimageHash,
 	preimageLength,
@@ -91,7 +91,8 @@ const CreateReferendum = ({
 	setPreimageHash,
 	// bountyAmount,
 	setPreimageLength,
-	bountyId
+	bountyId,
+	postId
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -143,11 +144,11 @@ const CreateReferendum = ({
 		return selectedTrack;
 	};
 
-	const fetchBountyProposer = async (bountyId: number | null) => {
-		if (bountyId === null) return;
+	const fetchBountyProposer = async (id: number | null) => {
+		if (id === null) return;
 		// setLoading(true);
 		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
-			bountyId
+			bountyId: id
 		});
 
 		if (error || !bountyProposerData || !bountyProposerData?.proposals?.length) {
@@ -170,14 +171,15 @@ const CreateReferendum = ({
 	const debouncedFetchBountyProposer = useCallback(_.debounce(fetchBountyProposer, 1000), []);
 
 	useEffect(() => {
-		if (bountyId !== null) {
+		console.log('Post Bounty', postId, bountyId);
+		if (bountyId) {
 			debouncedFetchBountyProposer(bountyId);
 		}
 		return () => {
 			debouncedFetchBountyProposer.cancel();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [bountyId]);
+	}, [postId, bountyId]);
 
 	const handleAdvanceDetailsChange = (key: EEnactment, value: string) => {
 		if (!value || value.includes('-')) return;
@@ -269,7 +271,7 @@ const CreateReferendum = ({
 
 			const onSuccess = async () => {
 				handleSaveTreasuryProposal(post_id);
-				setPostId(post_id);
+				// setPostId(post_id);
 				setLoading(false);
 				setOpenModal(false);
 				setOpenSuccess(true);
@@ -608,6 +610,18 @@ const CreateReferendum = ({
 										/>
 									</Form.Item>
 								</> */}
+								<div className='flex w-full flex-col items-start justify-between pb-4 text-lightBlue dark:text-blue-dark-medium'>
+									Fee
+									<span className='w-full'>
+										<Input
+											value={fee}
+											placeholder='Enter Fee Amount'
+											className='rounded-md px-2 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+											onChange={(e) => setFee(e.target.value)}
+											type='number'
+										/>
+									</span>
+								</div>
 								<div>
 									<BalanceInput
 										disabled={true}
@@ -620,18 +634,6 @@ const CreateReferendum = ({
 										className='mb-0'
 										noRules
 									/>
-								</div>
-								<div className='flex w-full flex-col items-start justify-between pb-4 text-lightBlue dark:text-blue-dark-medium'>
-									Fee
-									<span className='w-full'>
-										<Input
-											value={fee}
-											placeholder='Enter Fee Amount'
-											className='rounded-md px-2 py-2 dark:border-[#3B444F] dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
-											onChange={(e) => setFee(e.target.value)}
-											type='number'
-										/>
-									</span>
 								</div>
 							</div>
 							<div className='mt-6'>

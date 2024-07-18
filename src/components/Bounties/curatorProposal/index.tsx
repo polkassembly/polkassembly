@@ -9,10 +9,10 @@ import CuratorActionModal from './CuratorActionModal';
 
 interface ICuratorProposalActionButtonProps {
 	className?: string;
-	bountyId: number;
+	postId: number;
 }
 
-const CuratorProposalActionButton = ({ className, bountyId }: ICuratorProposalActionButtonProps) => {
+const CuratorProposalActionButton = ({ className, postId }: ICuratorProposalActionButtonProps) => {
 	const currentUser = useUserDetailsSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { id } = currentUser;
@@ -46,7 +46,7 @@ const CuratorProposalActionButton = ({ className, bountyId }: ICuratorProposalAc
 				setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 				openModal={openModal}
 				setOpenModal={setOpenModal}
-				bountyId={bountyId}
+				postId={postId}
 				openLoginPrompt={openLoginPrompt}
 				setOpenLoginPrompt={setOpenLoginPrompt}
 				setProposerAddress={setProposerAddress}

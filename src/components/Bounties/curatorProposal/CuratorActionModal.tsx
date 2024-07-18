@@ -36,7 +36,7 @@ const ZERO_BN = new BN(0);
 interface Props {
 	referendaModal?: number;
 	className?: string;
-	bountyId: number | null;
+	postId: number | null;
 	openAddressLinkedModal?: boolean;
 	setOpenAddressLinkedModal?: (pre: boolean) => void;
 	openModal: boolean;
@@ -58,7 +58,7 @@ const CuratorActionModal = ({
 	openAddressLinkedModal,
 	setOpenAddressLinkedModal,
 	openModal,
-	bountyId,
+	postId,
 	setOpenModal,
 	openLoginPrompt,
 	setOpenLoginPrompt,
@@ -76,7 +76,7 @@ const CuratorActionModal = ({
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
-	const [postId, setPostId] = useState<number | null>(null);
+	// const [postId, setPostId] = useState<number | null>(null);
 	const [selectedTrack, setSelectedTrack] = useState('');
 	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
 	const [preimageHash, setPreimageHash] = useState<string>('');
@@ -85,7 +85,7 @@ const CuratorActionModal = ({
 	// const [preimage, setPreimage] = useState<IPreimage | undefined>();
 	const [enactment, setEnactment] = useState<IEnactment>({ key: EEnactment.After_No_Of_Blocks, value: BN_HUNDRED });
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
-	const [updatedBountyId, setUpdatedBountyId] = useState<number | null>(bountyId);
+	const [bountyId, setBountyId] = useState<number | null>(null);
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -106,8 +106,8 @@ const CuratorActionModal = ({
 		setOpenModal(false);
 		setCloseConfirm(false);
 		setBountyAmount(ZERO_BN);
-		// setBountyId(null);
-		setPostId(null);
+		setBountyId(null);
+		// setPostId(null);
 	};
 
 	return (
@@ -216,8 +216,9 @@ const CuratorActionModal = ({
 							title={title}
 							content={content}
 							tags={tags}
-							bountyId={updatedBountyId}
-							setBountyId={setUpdatedBountyId}
+							bountyId={bountyId}
+							postId={postId}
+							setBountyId={setBountyId}
 							isDiscussionLinked={isDiscussionLinked}
 							setIsDiscussionLinked={setIsDiscussionLinked}
 							discussionLink={discussionLink}
@@ -240,7 +241,7 @@ const CuratorActionModal = ({
 								setEnactment={setEnactment}
 								selectedTrack={selectedTrack}
 								setSelectedTrack={setSelectedTrack}
-								setPostId={setPostId}
+								// setPostId={setPostId}
 								setOpenModal={setOpenModal}
 								setOpenSuccess={setOpenSuccess}
 								proposerAddress={proposerAddress}
@@ -268,7 +269,7 @@ const CuratorActionModal = ({
 					setOpenSuccess(false);
 					handleClose();
 				}}
-				postId={bountyId || undefined}
+				postId={postId || undefined}
 				selectedTrack={selectedTrack}
 			/>
 			<ReferendaLoginPrompts

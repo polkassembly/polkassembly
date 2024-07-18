@@ -216,14 +216,14 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
-			{proposalType === ProposalType.BOUNTIES && (
-				// status === bountyStatus.ACTIVE &&
-				<Curator
-					curator={curator}
-					proposer={proposer}
-					postId={onchainId ? Number(onchainId) : (onchainId as any)}
-				/>
-			)}
+			{/* Assign Curator Flow */}
+			{/* {proposalType === ProposalType.REFERENDUM_V2 && status === bountyStatus.ACTIVE && method === 'unassign_curator' && ( */}
+			<Curator
+				curator={curator}
+				proposer={proposer}
+				postId={onchainId ? Number(onchainId) : (onchainId as any)}
+			/>
+			{/* )} */}
 			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}

@@ -21,7 +21,7 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 	const { network } = useNetworkSelector();
 	const [loading, setLoading] = useState(false);
 	const { api, apiReady } = useApiContext();
-	const { defaultAddress } = useUserDetailsSelector();
+	const { defaultAddress, id } = useUserDetailsSelector();
 
 	const handleAcceptCurator = async () => {
 		if (!api || !apiReady || !proposer) return;
@@ -54,13 +54,13 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 		});
 	};
 
-	console.log('loading', loading);
+	if (!id) return null;
 
 	return (
 		<>
 			{curator === defaultAddress && (
 				<Alert
-					className='mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+					className={`mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark ${loading ? 'cursor-not-allowed' : ''}`}
 					type='info'
 					showIcon
 					message={
@@ -84,7 +84,7 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 						<span className='flex gap-x-2 dark:text-blue-dark-high'>
 							<CuratorProposalActionButton
 								className='cursor-pointer font-semibold text-pink_primary dark:text-blue-dark-helper'
-								bountyId={postId}
+								postId={postId}
 							/>
 							to your referendum to proceed with bounty creation
 						</span>

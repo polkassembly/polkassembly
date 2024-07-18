@@ -10,6 +10,7 @@ const initialState: IAmbassadorSeedingStore = {
 	ambassadorPreimage: { hash: '', length: 0 },
 	applicantAddress: '',
 	discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+	isPreimageCreationDone: false,
 	promoteCallData: '',
 	proposer: '',
 	rank: 3,
@@ -42,6 +43,7 @@ export const ambassadorSeedingStore = createSlice({
 			state.step = EAmbassadorSeedingSteps.PROMOTES_CALL;
 			state.ambassadorPreimage = { hash: '', length: 0 };
 			state.ambassadorPostIndex = null;
+			state.isPreimageCreationDone = false;
 		},
 		updateAmbassadorPreimage: (state, action: PayloadAction<{ hash: string; length: number }>) => {
 			state.ambassadorPreimage = action.payload;
@@ -67,7 +69,9 @@ export const ambassadorSeedingStore = createSlice({
 		updateDiscussionTitle: (state, action: PayloadAction<string>) => {
 			state.discussion.discussionTitle = action.payload;
 		},
-
+		updateIsPreimageCreationDone: (state, action: PayloadAction<boolean>) => {
+			state.isPreimageCreationDone = action.payload;
+		},
 		updatePromoteCallData: (state, action: PayloadAction<string>) => {
 			state.promoteCallData = action.payload;
 		},

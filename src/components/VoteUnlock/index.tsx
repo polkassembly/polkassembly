@@ -397,6 +397,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 					setAddress(address);
 					setOpen(true);
 				}}
+				usedInIdentityFlow={false}
 			/>
 			<VoteUnlockSuccessState
 				open={openSuccessState}

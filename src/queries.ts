@@ -105,11 +105,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
 `;
 
 export const GET_PROPOSALS_LISTING_BY_TYPE = `
-query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!]) {
-  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrderByInput!] = createdAtBlock_DESC, $limit: Int = 10, $offset: Int = 0, $index_in: [Int!], $hash_in: [String!], $trackNumber_in: [Int!], $status_in: [ProposalStatus!], $section_eq: String ) {
+  proposalsConnection(orderBy: id_ASC, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in, preimage: {section_eq: $section_eq}}) {
     totalCount
   }
-  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in}) {
+  proposals(orderBy: $orderBy, limit: $limit, offset: $offset, where: {type_in: $type_in, index_in: $index_in, hash_in: $hash_in, trackNumber_in: $trackNumber_in, status_in: $status_in, preimage: {section_eq: $section_eq}}) {
     proposer
     curator
     createdAt
@@ -139,10 +139,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     description
     type
     origin
+    reward
     trackNumber
     group {
       proposals(limit: 10, orderBy: createdAt_ASC) {
-       type
+        type
         statusHistory(limit: 10, orderBy: timestamp_ASC) {
           status
           timestamp
@@ -269,8 +270,8 @@ query PolymeshPrposalsQuery($type_in: [ProposalType!], $limit: Int = 10, $offset
 }
 `;
 
-export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!]) {
-  proposals(where: {type_eq: $type_eq, index_in: $index_in, status_in: $status_in}, limit: $limit) {
+export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingByTypeAndIndexes($type_eq: ProposalType, $limit: Int = 10, $index_in: [Int!], $status_in: [ProposalStatus!], $section_eq: String) {
+  proposals(where: {type_eq: $type_eq, preimage: {section_eq: $section_eq}, index_in: $index_in, status_in: $status_in}, limit: $limit) {
     proposer
     curator
     createdAt
@@ -2520,7 +2521,69 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
     }
   }
 }
+`;
 
+export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
+  query Rewards {
+    proposals(where: {type_eq: Bounty, status_in: [Proposed, Active, CuratorUnassigned, Extended]}) {
+      index
+      reward
+    }
+  }
+`;
+
+export const GET_AWARDED_CHILD_BOUNTIES_REWARDS_FOR_PARENT_BOUNTY_INDICES = `
+query AwardedChildBounties($parentBountyIndex_in: [Int!]) {
+		proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in, statusHistory_some: {status_eq: Awarded}}) {
+			reward
+		}
+	}
+`;
+
+export const GET_CLAIMED_CHILD_BOUNTIES_PAYEES_AND_REWARD_FOR_PARENT_BOUNTY_INDICES = `
+query ClaimedChildBountiesForParentBountyIndices($parentBountyIndex_in: [Int!]) {
+  proposals(where: {type_eq: ChildBounty, parentBountyIndex_in: $parentBountyIndex_in, statusHistory_some: {status_eq: Claimed}}, orderBy: id_DESC, limit: 10) {
+    payee
+    reward
+    statusHistory(where: {status_eq: Claimed}) {
+      timestamp
+    }
+  }
+}
+`;
+
+export const GET_BOUNTY_PROPOSER_BY_INDEX = `
+query MyQuery($index_eq: Int!) {
+  proposals(where: {type_eq: Bounty, index_eq: $index_eq}) {
+    proposer
+    reward
+  }
+}
+`;
+
+export const GET_BOUNTY_PROPOSALS = `
+query BountyProposals($status_in: [ProposalStatus!] = []) {
+  proposals(where: {type_eq: ReferendumV2, preimage: {section_eq: "Bounties"}, status_in: $status_in}, orderBy: createdAtBlock_DESC) {
+    index
+    proposer
+    status
+    trackNumber
+    preimage {
+      proposedCall {
+        args
+      }
+    }
+  }
+}
+`;
+
+export const GET_BOUNTY_REWARDS_BY_IDS = `
+query Rewards($index_in: [Int!] = []) {
+  proposals(where: {type_eq: Bounty, index_in: $index_in}) {
+    index
+    reward
+  }
+}
 `;
 
 export const ACTIVE_PROPOSALS_FOR_TRACK = `

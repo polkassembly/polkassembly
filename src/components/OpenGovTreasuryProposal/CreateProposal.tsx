@@ -59,7 +59,7 @@ interface Props {
 	inputAmountValue: string;
 	allowedCommentors?: EAllowedCommentor;
 }
-const getDiscussionIdFromLink = (discussion: string) => {
+export const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
 	return splitedArr[splitedArr.length - 1];
 };
@@ -230,7 +230,7 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
-				handleSaveTreasuryProposal(post_id);
+				await handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);
 				localStorage.removeItem('treasuryProposalProposerAddress');

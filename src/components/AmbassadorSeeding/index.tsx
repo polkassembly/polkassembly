@@ -22,7 +22,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => {
 	const dispatch = useDispatch();
 	const { loginAddress } = useUserDetailsSelector();
-	const { step } = useAmbassadorSeedingSelector();
+	const { step, ambassadorPreimage, isPreimageCreationDone } = useAmbassadorSeedingSelector();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
@@ -37,7 +37,11 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 
 	useEffect(() => {
 		dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
-		dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL));
+		if (ambassadorPreimage.hash && ambassadorPreimage.length && isPreimageCreationDone) {
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL));
+		} else {
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL));
+		}
 		dispatch(ambassadorSeedingActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

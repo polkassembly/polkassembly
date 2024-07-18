@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Poppins, Roboto_Mono, Work_Sans } from 'next/font/google';
+import { Poppins, Roboto_Mono, Work_Sans, Space_Grotesk } from 'next/font/google';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import Image from 'next/image';
@@ -46,6 +46,14 @@ const robotoMono = Roboto_Mono({
 const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin']
+});
+export const spaceGrotesk = Space_Grotesk({
+	adjustFontFallback: false,
+	display: 'swap',
+	style: ['normal'],
+	subsets: ['latin'],
+	variable: '--font-space_grotesk',
+	weight: ['300', '400', '500', '600', '700']
 });
 
 const GlobalStyle = createGlobalStyle`

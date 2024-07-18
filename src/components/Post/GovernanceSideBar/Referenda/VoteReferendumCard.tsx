@@ -222,7 +222,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
 				block
-				className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
+				className={`${className} -ml-4 mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white pt-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
 				size='large'
 				value={vote}
 				onChange={(value) => {
@@ -240,7 +240,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										ayeVoteBalance: balance
+										ayeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -248,7 +248,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										ayeVoteBalance: balance
+										ayeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -267,7 +267,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										nyeVoteBalance: balance
+										nyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -275,7 +275,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										nyeVoteBalance: balance
+										nyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -295,7 +295,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										abstainVoteBalance: balance
+										abstainVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -303,7 +303,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance
+										abstainVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -314,7 +314,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										abstainAyeVoteBalance: balance
+										abstainAyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -322,7 +322,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainAyeVoteBalance: balance
+										abstainAyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -333,7 +333,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										abstainNyeVoteBalance: balance
+										abstainNyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -341,7 +341,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainNyeVoteBalance: balance
+										abstainNyeVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -352,7 +352,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editBatchValueChanged({
 									values: {
-										abstainVoteBalance: balance
+										abstainVoteBalance: balance?.toString()
 									}
 								})
 							);
@@ -360,7 +360,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance
+										abstainVoteBalance: balance?.toString()
 									}
 								})
 							);

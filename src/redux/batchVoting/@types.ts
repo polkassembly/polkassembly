@@ -1,9 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import BN from 'bn.js';
-
 export interface IBatchVoteStore {
 	batch_vote_details: IBatchVotesDetails;
 	edit_vote_details: IBatchVotesDetails;
@@ -23,10 +20,10 @@ export type IVoteCardInfo = {
 
 export interface IBatchVotesDetails {
 	voteOption?: string;
-	ayeVoteBalance?: BN;
-	nyeVoteBalance?: BN;
-	abstainAyeVoteBalance?: BN;
-	abstainNyeVoteBalance?: BN;
-	abstainVoteBalance?: BN;
+	ayeVoteBalance?: string;
+	nyeVoteBalance?: string;
+	abstainAyeVoteBalance?: string;
+	abstainNyeVoteBalance?: string;
+	abstainVoteBalance?: string;
 	conviction?: string;
 }

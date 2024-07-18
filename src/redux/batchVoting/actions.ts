@@ -4,17 +4,16 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batchVotesActions } from '.';
-import BN from 'bn.js';
 import { EVoteDecisionType } from '~src/types';
 
 interface IBatchVotingDefaults {
 	values: {
 		voteOption?: string;
-		ayeVoteBalance?: BN;
-		nyeVoteBalance?: BN;
-		abstainAyeVoteBalance?: BN;
-		abstainNyeVoteBalance?: BN;
-		abstainVoteBalance?: BN;
+		ayeVoteBalance?: string;
+		nyeVoteBalance?: string;
+		abstainAyeVoteBalance?: string;
+		abstainNyeVoteBalance?: string;
+		abstainVoteBalance?: string;
 		conviction?: string;
 	};
 }
@@ -32,35 +31,35 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'ayeVoteBalance',
-				value: values?.ayeVoteBalance || 0
+				value: values?.ayeVoteBalance || ''
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'nyeVoteBalance',
-				value: values?.nyeVoteBalance || 0
+				value: values?.nyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'abstainAyeVoteBalance',
-				value: values?.abstainAyeVoteBalance || 0
+				value: values?.abstainAyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainNyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'abstainNyeVoteBalance',
-				value: values?.abstainNyeVoteBalance || 0
+				value: values?.abstainNyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainVoteBalance) {
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'abstainVoteBalance',
-				value: values?.abstainVoteBalance || 0
+				value: values?.abstainVoteBalance || ''
 			})
 		);
 	} else if (values?.conviction) {
@@ -86,35 +85,35 @@ export const editCartPostValueChanged = createAsyncThunk('house/editProfileField
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'ayeVoteBalance',
-				value: values?.ayeVoteBalance || 0
+				value: values?.ayeVoteBalance || ''
 			})
 		);
 	} else if (values?.nyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'nyeVoteBalance',
-				value: values?.nyeVoteBalance || 0
+				value: values?.nyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainAyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainAyeVoteBalance',
-				value: values?.abstainAyeVoteBalance || 0
+				value: values?.abstainAyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainNyeVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainNyeVoteBalance',
-				value: values?.abstainNyeVoteBalance || 0
+				value: values?.abstainNyeVoteBalance || ''
 			})
 		);
 	} else if (values?.abstainVoteBalance) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'abstainVoteBalance',
-				value: values?.abstainVoteBalance || 0
+				value: values?.abstainVoteBalance || ''
 			})
 		);
 	} else if (values?.conviction) {

@@ -4,11 +4,13 @@
 import { GetServerSideProps } from 'next';
 import { IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getActiveProposalsForTrack } from 'pages/api/v1/posts/active-proposals';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import VotingCards from '~src/components/VotingCards';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
+import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import getQueryToTrack from '~src/util/getQueryToTrack';
 
@@ -47,6 +49,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
 const BatchVoting: FC<IBatchVoting> = (props) => {
 	const { network, data } = props;
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<SEOHead

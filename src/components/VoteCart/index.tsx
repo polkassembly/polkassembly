@@ -8,6 +8,7 @@ import ProposalInfoCard from './ProposalInfoCard';
 
 const VoteCart: React.FC = () => {
 	const { vote_card_info_array } = useBatchVotesSelector();
+	console.log(vote_card_info_array);
 	return (
 		<section>
 			<article className='h-[100vh] p-2'>

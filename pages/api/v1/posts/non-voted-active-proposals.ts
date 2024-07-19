@@ -7,7 +7,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isProposalTypeValid } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
-import { ProposalType, getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType } from '~src/global/proposalType';
+import { ProposalType, getFirestoreProposalType, getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType } from '~src/global/proposalType';
 
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
@@ -25,6 +25,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { firestore_db } from '~src/services/firebaseInit';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
+import { getSubSquareContentAndTitle } from './subsqaure/subsquare-content';
 
 interface Args {
 	network: string;
@@ -63,16 +64,6 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 			: getTopicFromType(proposalType);
 	}
 	return null;
-};
-
-export const getUpdatedAt = (data: any) => {
-	if (data) {
-		if (data?.last_edited_at) {
-			return data?.last_edited_at?.toDate ? data?.last_edited_at?.toDate() : data?.last_edited_at;
-		} else if (data.updated_at) {
-			return data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
-		}
-	}
 };
 
 export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall, userAddress, userId, skippedIndexes = [] }: Args) => {
@@ -137,8 +128,6 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 	});
 
 	const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
-
-	console.log(subsquidProposalsData.length);
 
 	if (!subsquidProposalsData.length) {
 		return { data: [], error: null };
@@ -232,7 +221,6 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 
 				if (firebasePostDoc?.exists) {
 					const firebasePost = firebasePostDoc?.data();
-					console.log('hereeeee', 3, subsquidPost.index);
 
 					const commentsRef = await postsByTypeRef(network, ProposalType.REFERENDUM_V2)
 						.doc(String(subsquidPost.index))
@@ -242,23 +230,19 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 						.offset(0)
 						.get();
 
-					console.log('hereeeee', 1);
-
 					const commentsDocs = commentsRef.docs;
-					console.log('hereeeee', 2);
 
 					const comments: any[] = [];
 					const commentsPromises = commentsDocs.map(async (commentDoc) => {
 						if (commentDoc.exists) {
 							const data = commentDoc.data();
 							const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
-							console.log(data, 'commnets');
 
 							const comment = data.isDeleted
 								? {
 										comment_source: 'polkassembly',
 										content: '[Deleted]',
-										created_at: data.created_at.toDate ? data.created_at.toDate() : data.created_at,
+										created_at: data?.created_at?.toDate ? data?.created_at?.toDate().toString() : data?.created_at || '',
 										id: data.id,
 										is_custom_username: false,
 										post_index: subsquidPost.index,
@@ -268,7 +252,6 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 										replies: data.replies || ([] as any[]),
 										sentiment: 0,
 										spam_users_count: 0,
-										updated_at: getUpdatedAt(data),
 										user_id: data.user_id,
 										username: data.username,
 										votes: [] as any[]
@@ -276,7 +259,7 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 								: {
 										comment_source: data.comment_source || 'polkassembly',
 										content: data.content,
-										created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+										created_at: data?.created_at?.toDate ? data?.created_at?.toDate().toString() : data?.created_at || '',
 										id: data.id,
 										is_custom_username: false,
 										post_index: subsquidPost.index,
@@ -286,7 +269,6 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 										replies: data.replies || ([] as any[]),
 										sentiment: data.sentiment || 0,
 										spam_users_count: 0,
-										updated_at: getUpdatedAt(data),
 										user_id: data.user_id,
 										username: data.username,
 										votes: [] as any[]
@@ -299,8 +281,6 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					await Promise.allSettled(commentsPromises);
 					await Promise.allSettled(comments);
 
-					console.log(commentsPromises, comments, subsquidPost.index);
-
 					const { statusHistory, isSwap } = getIsSwapStatus(subsquidPost?.statusHistory);
 
 					payload.statusHistory = statusHistory;
@@ -310,6 +290,13 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(proposalType) as ProposalType);
 					payload.comments = comments || [];
 
+					if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
+						const res = await getSubSquareContentAndTitle(proposalType, network, subsquidPost.index);
+						firebasePost.content = res.content;
+						firebasePost.title = res.title;
+						payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+					}
+
 					if (isSwap) {
 						if (payload.status === 'DecisionDepositPlaced') {
 							payload.status = 'Deciding';
@@ -317,8 +304,23 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					}
 
 					await getContentSummary(firebasePost, network, isExternalApiCall);
+
+					if (!payload.summary) {
+						payload.summary = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${
+							payload.proposer
+						}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 					results.push(payload);
 				} else {
+					if (!payload?.title?.length || !payload?.content?.length) {
+						const res = await getSubSquareContentAndTitle(proposalType, network, subsquidPost.index);
+						payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+					}
+					if (!payload.summary) {
+						payload.summary = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${
+							payload.proposer
+						}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+					}
 					results.push(payload);
 				}
 			});

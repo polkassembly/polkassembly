@@ -26,7 +26,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 
 	return (
 		<section className='flex flex-col gap-y-4'>
-			<div className='overflow-y-auto rounded-2xl bg-white p-4 shadow-md'>
+			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
 				<CardPostHeading
 					method={proposal?.method}
 					motion_method={proposal?.motion_method}
@@ -54,7 +54,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</p>
 				<div className='mx-auto flex max-h-[304px] flex-col gap-y-4 overflow-y-auto rounded-xl border border-solid border-[#D2D8E0] px-4 py-6'>
 					<div className='flex items-center justify-between'>
-						<h1 className='m-0 -mt-1 p-0 text-sm font-semibold text-sidebarBlue'>Users are saying...</h1>
+						<h1 className='m-0 -mt-1 p-0 text-sm font-semibold text-sidebarBlue dark:text-white'>Users are saying...</h1>
 						<p className='m-0 flex h-[24px] w-[124px] items-center justify-center rounded-[38px] bg-[#F6F6F6] p-0 text-[10px] text-lightBlue'>Based on comments</p>
 					</div>
 					<div className='flex items-start justify-center gap-x-4'>
@@ -63,7 +63,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 							alt='check-icon'
 						/>
 						<div className='flex flex-col gap-y-2'>
-							<p className='m-0 flex items-center justify-center p-0 text-xs text-bodyBlue'>
+							<p className='m-0 flex items-center justify-center p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>
 								Ultricies ultricies interdum dolor sodales. Vitae feugiat vitae vitae quis id consectetur.{' '}
 							</p>
 							<div className='flex items-center justify-start gap-x-2'>
@@ -79,7 +79,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 							alt='check-icon'
 						/>
 						<div className='flex flex-col gap-y-2'>
-							<p className='m-0 flex items-center justify-center p-0 text-xs text-bodyBlue'>
+							<p className='m-0 flex items-center justify-center p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>
 								Ultricies ultricies interdum dolor sodales. Vitae feugiat vitae vitae quis id consectetur.{' '}
 							</p>
 							<div className='flex items-center justify-start gap-x-2'>
@@ -91,7 +91,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					</div>
 				</div>
 			</div>
-			<div className='h-full rounded-2xl bg-white p-4 shadow-md'>
+			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
 				<ReferendumV2CardInfo
 					ayeNayAbstainCounts={ayeNayAbstainCounts}
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}

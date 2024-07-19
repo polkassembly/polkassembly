@@ -15,7 +15,6 @@ const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-// import PostHeading from '../Post/PostHeading';
 
 interface IVotingCards {
 	trackPosts?: any;
@@ -73,6 +72,13 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		await childRefs[newIndex].current.restoreCard();
 	};
 
+	const skipCard = async () => {
+		const newIndex = currentIndex - 1;
+		if (newIndex >= 0) {
+			updateCurrentIndex(newIndex);
+		}
+	};
+
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='mb-4 flex w-full justify-between'>
@@ -85,7 +91,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				<p className='m-0 p-0 text-base font-semibold text-bodyBlue'>Active Proposals</p>
 				<button
 					className='ml-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
-					onClick={() => goBack()}
+					onClick={() => skipCard()}
 				>
 					<RightOutlined className='text-black' />
 				</button>
@@ -102,7 +108,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 						preventSwipe={['down']}
 					>
-						<div className='h-full overflow-y-auto bg-[#f4f5f7]'>
+						<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
 							<TinderCardsComponent proposal={proposal} />
 						</div>
 					</TinderCard>

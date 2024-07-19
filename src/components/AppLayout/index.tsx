@@ -1110,7 +1110,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={className}>
+		<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
 			<NavHeader
 				theme={theme as any}
 				sidedrawer={sidedrawer}

@@ -37,13 +37,13 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	return (
 		<section
 			key={index}
-			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white'
+			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'
 		>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.post_id}</p>
 				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo.post_title?.substring(0, 50)}...</p>
 				<Button
-					className='m-0 flex items-center justify-center border-none bg-none p-0'
+					className='m-0 flex items-center justify-center border-none bg-transparent p-0'
 					onClick={() => {
 						setOpenViewProposalModal(true);
 					}}
@@ -79,12 +79,12 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.voteBalance?.toNumber() / 10000000000 || 0} DOT</p>
-					<p className='m-0 p-0 text-xs text-bodyBlue'>{voteInfo?.voteConviction || '0x'}</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteBalance?.toNumber() / 10000000000 || 0} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteConviction || '0x'}</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button
-						className='m-0 flex items-center justify-center border-none bg-none p-0'
+						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
 						onClick={() => {
 							setOpenEditModal(true);
 						}}
@@ -95,7 +95,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						/>
 					</Button>
 					<Button
-						className='m-0 flex items-center justify-center border-none bg-none p-0'
+						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
 						onClick={() => handleRemove(voteInfo.post_id)}
 					>
 						<ImageIcon

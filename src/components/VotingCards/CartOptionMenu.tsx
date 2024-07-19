@@ -14,7 +14,7 @@ const CartOptionMenu = () => {
 
 	return (
 		<article className='flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
-			<p className='m-0 mr-auto p-0 text-xs'>{total_proposals_added_in_Cart} proposal added</p>
+			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue'>{total_proposals_added_in_Cart} proposal added</p>
 			<div className='ml-auto flex gap-x-1'>
 				<CustomButton
 					variant='primary'

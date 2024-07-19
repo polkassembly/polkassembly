@@ -123,12 +123,12 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	}, [post_id, user_id, network, proposer]);
 
 	return (
-		<section className='w-full md:w-[383px]'>
+		<section className='w-full sm:w-[340px] xl:w-[383px]'>
 			{loading ? (
 				<Skeleton active />
 			) : (
 				<>
-					<div className='w-full md:w-[383px]'>
+					<div className='w-full sm:w-[340px] xl:w-[383px]'>
 						<Link
 							key={post_id}
 							href={`/bounty/${post_id}`}
@@ -182,7 +182,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-image.svg'
 										alt='bounty icon'
-										imgClassName='mt-5 mb-3 w-full md:w-auto'
+										imgClassName='mt-5 mb-3 w-full'
 										imgWrapperClassName=''
 									/>
 								</Link>
@@ -191,7 +191,9 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
 								</div>
 
-								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+								<div
+									className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-[60px] overflow-hidden break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}
+								>
 									{content ? removeSymbols(content).slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
 								</div>
 								{tags && tags.length > 0 && (
@@ -215,10 +217,11 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										)}
 									</div>
 								)}
-								<div className='my-[2px] flex items-center justify-between'>
+								<div className='my-[2px] flex h-8 items-center justify-between'>
 									<Link
 										href={`/address/${proposer}`}
 										target='_blank'
+										className='flex items-center'
 									>
 										<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
 										<ImageComponent
@@ -226,7 +229,9 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 											src={profileDetails.image}
 											className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
 										/>
-										<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
+										<span className={`${poppins.variable} ${poppins.className} relative max-w-[150px] truncate text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+											{profileDetails.username}
+										</span>
 									</Link>
 									<div className={'flex cursor-pointer items-center '}>
 										{curator && (

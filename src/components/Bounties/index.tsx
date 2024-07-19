@@ -97,7 +97,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					{extendedDataChunks.map((chunk, index) => (
 						<div
 							key={index}
-							className='flex justify-center space-x-4 md:justify-between'
+							className='flex justify-center space-x-4 overflow-hidden md:justify-between'
 						>
 							{chunk.map((post, postIndex) => (
 								<HotBountyCard

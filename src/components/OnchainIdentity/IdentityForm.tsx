@@ -117,69 +117,65 @@ const IdentityForm = ({
 			await handleIdentityHashSave(identityHash);
 		};
 
-		if (requestJudgement && network == 'polkadot') {
-			onSuccess();
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+			// GAEvent for request judgement button clicked
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
 		} else {
-			if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
-				// GAEvent for request judgement button clicked
-				trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
-					userId: currentUser?.id || '',
-					userName: currentUser?.username || ''
-				});
-			} else {
-				// GAEvent for set identity button clicked
-				trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
-					userId: currentUser?.id || '',
-					userName: currentUser?.username || ''
-				});
-			}
-			const registrarIndex = getIdentityRegistrarIndex({ network: network });
-
-			if (!api || !apiReady || !okAll || registrarIndex === null) return;
-			if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
-
-			let tx;
-			if (requestJudgement) {
-				tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-			} else {
-				const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-				const identityTx = api.tx?.identity?.setIdentity(info);
-				tx = network === 'polkadot' ? identityTx : api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-			}
-
-			setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
-
-			const onFailed = () => {
-				queueNotification({
-					header: 'failed!',
-					message: 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setLoading(false);
-				setStartLoading({ isLoading: false, message: '' });
-			};
-
-			let payload: any = {
-				address: identityAddress,
-				api,
-				apiReady,
-				errorMessageFallback: 'failed.',
-				network,
-				onFailed,
-				onSuccess,
-				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
-				tx
-			};
-
-			if (selectedProxyAddress?.length && showProxyDropdown) {
-				payload = {
-					...payload,
-					proxyAddress: selectedProxyAddress || ''
-				};
-			}
-
-			await executeTx(payload);
+			// GAEvent for set identity button clicked
+			trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
 		}
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+		if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
+
+		let tx;
+		if (requestJudgement) {
+			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+		} else {
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			const identityTx = api.tx?.identity?.setIdentity(info);
+			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+		}
+
+		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
+
+		const onFailed = () => {
+			queueNotification({
+				header: 'failed!',
+				message: 'Transaction failed!',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+			setStartLoading({ isLoading: false, message: '' });
+		};
+
+		let payload: any = {
+			address: identityAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+			tx
+		};
+
+		if (selectedProxyAddress?.length && showProxyDropdown) {
+			payload = {
+				...payload,
+				proxyAddress: selectedProxyAddress || ''
+			};
+		}
+
+		await executeTx(payload);
 	};
 
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {

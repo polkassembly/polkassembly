@@ -2586,10 +2586,9 @@ query Rewards($index_in: [Int!] = []) {
 }
 `;
 
-export const OPEN_GOV_ACTIVE_PROPOSALS = `
-query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2) {
-  proposals(where: {trackNumber_eq:$track_eq, status_in: $status_in, type_eq: $type_eq},){
-    index
+export const NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $addresses:[String!]=["16kXcMxe3sGTWcgbQj5nGdkUtB9RaudkXMe5GBvGuinF968p", "1585VeaY99rqUCqhVhRc5WBXELdx2qqsvYYdTNVWG6pUWAub"] ){
+  proposals(where: {status_in: $status_in, convictionVoting_none:{voter_in: $addresses}, type_eq: $type_eq}, limit: 10, offset:0, orderBy: index_DESC){
+     index
     proposer
     status
     preimage {
@@ -2644,5 +2643,11 @@ query MyQuery($track_eq: Int, $status_in: [ProposalStatus!] =[DecisionDepositPla
     enactmentAfterBlock
     enactmentAtBlock
   }
+}`;
+
+export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFromAddressForTrack($address: String) {
+  votingDelegations(orderBy: createdAt_DESC, where: { endedAtBlock_isNull: true, AND: {from_eq: $address}}) {
+    to
+    from
 }
-`;
+}`;

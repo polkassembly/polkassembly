@@ -2586,8 +2586,67 @@ query Rewards($index_in: [Int!] = []) {
 }
 `;
 
-export const NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $addresses:[String!]=["16kXcMxe3sGTWcgbQj5nGdkUtB9RaudkXMe5GBvGuinF968p", "1585VeaY99rqUCqhVhRc5WBXELdx2qqsvYYdTNVWG6pUWAub"] ){
-  proposals(where: {status_in: $status_in, convictionVoting_none:{voter_in: $addresses}, type_eq: $type_eq}, limit: 10, offset:0, orderBy: index_DESC){
+export const NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $addresses:[String!], $index_not_in: [Int!]  ){
+  proposals(where: {status_in: $status_in, convictionVoting_none:{voter_in: $addresses}, type_eq: $type_eq, index_not_in:$index_not_in}, limit: 10, offset:0, orderBy: index_DESC){
+     index
+    proposer
+    status
+    preimage {
+      proposer
+      method
+      hash
+      proposedCall {
+        method
+        args
+        description
+        section
+      }
+    }
+    description
+    parentBountyIndex
+    hash
+    type
+    threshold {
+      ... on MotionThreshold {
+        __typename
+        value
+      }
+      ... on ReferendumThreshold {
+        __typename
+        type
+      }
+    }
+    origin
+    trackNumber
+    end
+    createdAt
+    updatedAt
+    delay
+    endedAt
+    proposalArguments {
+      method
+      args
+      description
+      section
+    }
+    statusHistory(limit: 10) {
+      timestamp
+      status
+      block
+    }
+    tally {
+      ayes
+      bareAyes
+      nays
+      support
+    }
+    enactmentAfterBlock
+    enactmentAtBlock
+  }
+}`;
+
+export const ACTIVE_PROPOSALS_FROM_PROPOSALS_INDEXES = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $index_in:[Int!]){
+  proposals(where: {status_in: $status_in,type_eq: $type_eq,index_in:$index_in}, limit: 10, offset:0, orderBy: index_DESC){
      index
     proposer
     status

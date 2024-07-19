@@ -22,14 +22,17 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import { IPostResponse } from './on-chain-post';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { LISTING_LIMIT } from '~src/global/listingLimit';
+import { firestore_db } from '~src/services/firebaseInit';
+import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import authServiceInstance from '~src/auth/auth';
 
 interface Args {
 	network: string;
 	proposalType: ProposalType;
 	isExternalApiCall?: boolean;
-	page: number;
 	userAddress: string;
+	userId: number;
+	skippedIndexes?: number[];
 }
 
 const getIsSwapStatus = (statusHistory: string[]) => {
@@ -72,13 +75,14 @@ export const getUpdatedAt = (data: any) => {
 	}
 };
 
-export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall, page, userAddress }: Args) => {
+export const getActiveProposalsForTrack = async ({ network, proposalType, isExternalApiCall, userAddress, userId, skippedIndexes = [] }: Args) => {
 	if (!network || !Object.values(AllNetworks).includes(network)) {
 		throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 	}
 
 	const strProposalType = String(proposalType);
-	if (!isProposalTypeValid(strProposalType) || isNaN(page) || !getEncodedAddress(userAddress, network)) {
+
+	if (!isProposalTypeValid(strProposalType) || !getEncodedAddress(userAddress, network) || isNaN(userId) || skippedIndexes.filter((index) => typeof index !== 'number')?.length) {
 		throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 	}
 
@@ -101,19 +105,40 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 		}
 	});
 
+	const batchVotesCartRef = await firestore_db
+		.collection('users')
+		.doc(String(userId))
+		.collection('batch_votes_cart')
+		.where('network', '==', network)
+		.where('user_address', '==', userAddress)
+		.get();
+
+	const batchVotesCartDocs = batchVotesCartRef.docs;
+
+	const batchVotesIndexes = batchVotesCartDocs.map((voteDoc) => {
+		const data = voteDoc.data();
+		return data?.referendum_index;
+	});
+
+	const variables: any = {
+		addresses: [encodedAddress, ...(Object.keys(delegatedAddressObj) || [])],
+		status_in: getStatusesFromCustomStatus(CustomStatus.Active),
+		type: getSubsquidProposalType(proposalType as any)
+	};
+
+	if ([...batchVotesIndexes, ...skippedIndexes].length) {
+		variables.index_not_in = [...batchVotesIndexes, ...skippedIndexes];
+	}
+
 	const subsquidProposalsRes = await fetchSubsquid({
 		network,
 		query: NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS,
-		variables: {
-			addresses: [encodedAddress, ...(Object.keys(delegatedAddressObj) || [])],
-			limit: LISTING_LIMIT,
-			offset: LISTING_LIMIT * (page - 1),
-			status_in: getStatusesFromCustomStatus(CustomStatus.Active),
-			type: getSubsquidProposalType(proposalType as any)
-		}
+		variables: variables
 	});
 
 	const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
+
+	console.log(subsquidProposalsData.length);
 
 	if (!subsquidProposalsData.length) {
 		return { data: [], error: null };
@@ -207,15 +232,83 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 
 				if (firebasePostDoc?.exists) {
 					const firebasePost = firebasePostDoc?.data();
+					console.log('hereeeee', 3, subsquidPost.index);
+
+					const commentsRef = await postsByTypeRef(network, ProposalType.REFERENDUM_V2)
+						.doc(String(subsquidPost.index))
+						.collection('comments')
+						.orderBy('created_at', 'desc')
+						.limit(2)
+						.offset(0)
+						.get();
+
+					console.log('hereeeee', 1);
+
+					const commentsDocs = commentsRef.docs;
+					console.log('hereeeee', 2);
+
+					const comments: any[] = [];
+					const commentsPromises = commentsDocs.map(async (commentDoc) => {
+						if (commentDoc.exists) {
+							const data = commentDoc.data();
+							const user = (await firestore_db.collection('users').doc(String(data.user_id)).get()).data();
+							console.log(data, 'commnets');
+
+							const comment = data.isDeleted
+								? {
+										comment_source: 'polkassembly',
+										content: '[Deleted]',
+										created_at: data.created_at.toDate ? data.created_at.toDate() : data.created_at,
+										id: data.id,
+										is_custom_username: false,
+										post_index: subsquidPost.index,
+										post_type: subsquidPost.type,
+										profile: user?.profile || null,
+										proposer: data.proposer || '',
+										replies: data.replies || ([] as any[]),
+										sentiment: 0,
+										spam_users_count: 0,
+										updated_at: getUpdatedAt(data),
+										user_id: data.user_id,
+										username: data.username,
+										votes: [] as any[]
+								  }
+								: {
+										comment_source: data.comment_source || 'polkassembly',
+										content: data.content,
+										created_at: data.created_at?.toDate ? data.created_at.toDate() : data.created_at,
+										id: data.id,
+										is_custom_username: false,
+										post_index: subsquidPost.index,
+										post_type: subsquidPost.type,
+										profile: user?.profile || null,
+										proposer: data.proposer || '',
+										replies: data.replies || ([] as any[]),
+										sentiment: data.sentiment || 0,
+										spam_users_count: 0,
+										updated_at: getUpdatedAt(data),
+										user_id: data.user_id,
+										username: data.username,
+										votes: [] as any[]
+								  };
+
+							comments.push(comment);
+						}
+					});
+
+					await Promise.allSettled(commentsPromises);
+					await Promise.allSettled(comments);
+
+					console.log(commentsPromises, comments, subsquidPost.index);
 
 					const { statusHistory, isSwap } = getIsSwapStatus(subsquidPost?.statusHistory);
 
-					// payload.last_edited_at = getUpdatedAt(firebasePost).toDate() || null;
 					payload.statusHistory = statusHistory;
 					payload.summary = firebasePost?.summary || '';
 					payload.tags = firebasePost?.tags || [];
 					payload.title = firebasePost?.title || '';
 					payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(proposalType) as ProposalType);
+					payload.comments = comments || [];
 
 					if (isSwap) {
 						if (payload.status === 'DecisionDepositPlaced') {
@@ -242,23 +335,26 @@ const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) 
 	storeApiKeyUsage(req);
 	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-	const { proposalType, page, userAddress } = req.body;
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	const user = await authServiceInstance.GetUser(token);
+	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
+
+	const { proposalType, userAddress, isExternalApiCall = false, userId } = req.body;
 	const network = String(req.headers['x-network']);
 
 	const { data, error } = await getActiveProposalsForTrack({
-		isExternalApiCall: true,
+		isExternalApiCall: isExternalApiCall,
 		network: network,
-		page: Number(page) || 1,
 		proposalType: proposalType || ProposalType.REFERENDUM_V2,
-		userAddress: userAddress || '1585VeaY99rqUCqhVhRc5WBXELdx2qqsvYYdTNVWG6pUWAub'
+		userAddress: userAddress,
+		userId: userId
 	});
 
 	if (error || !data) {
 		return res.status(400).json({ message: error || messages.API_FETCH_ERROR });
 	} else {
-		if (data.summary) {
-			delete data.summary;
-		}
 		return res.status(200).json(data);
 	}
 };

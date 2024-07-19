@@ -7,12 +7,14 @@ import { getActiveProposalsForTrack } from 'pages/api/v1/posts/non-voted-active-
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
+import console_pretty from '~src/api-utils/console_pretty';
+import { IRefreshTokenPayload } from '~src/auth/types';
 import VotingCards from '~src/components/VotingCards';
 import { ProposalType } from '~src/global/proposalType';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import * as jwt from 'jsonwebtoken';
 
 interface IBatchVoting {
 	data?: IPostsListingResponse;
@@ -20,21 +22,24 @@ interface IBatchVoting {
 	network: string;
 	trackDetails: any;
 }
-
+const publicKey = process.env.REFRESH_TOKEN_PUBLIC_KEY;
 export const getServerSideProps: GetServerSideProps = async (context) => {
 	const network = getNetworkFromReqHeaders(context.req.headers);
-	const token = getTokenFromReq(context.req.headers as any);
-	console.log('hello SSR --> ', token);
-
 	const networkRedirect = checkRouteNetworkWithRedirect(network);
 	if (networkRedirect) return networkRedirect;
-
+	const token = context.req.cookies.refresh_token;
+	let userInfo;
+	if (token && publicKey) {
+		const decoded = jwt.verify(token, publicKey) as IRefreshTokenPayload;
+		console_pretty({ decoded });
+		userInfo = decoded;
+	}
 	const { data, error = '' } = await getActiveProposalsForTrack({
 		isExternalApiCall: true,
 		network,
-		page: 1,
 		proposalType: ProposalType.OPEN_GOV,
-		userAddress: ''
+		userAddress: userInfo?.login_address || '',
+		userId: userInfo?.id || 0
 	});
 
 	return {

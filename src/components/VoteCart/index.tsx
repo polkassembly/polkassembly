@@ -2,13 +2,59 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
-import React from 'react';
-import { useBatchVotesSelector } from '~src/redux/selectors';
+import React, { useEffect, useState } from 'react';
+import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
+import { EVoteDecisionType } from '~src/types';
+import { useApiContext } from '~src/context';
+import { BN } from 'bn.js';
 
 const VoteCart: React.FC = () => {
 	const { vote_card_info_array } = useBatchVotesSelector();
+	const { api } = useApiContext();
+	const { loginAddress } = useUserDetailsSelector();
+	const [gasFees, setGasFees] = useState<string>('0');
 	console.log(vote_card_info_array);
+	useEffect(() => {
+		const batchCall: any[] = [];
+
+		vote_card_info_array.map((vote) => {
+			let voteTx = null;
+			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
+				voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
+					Standard: { balance: vote?.voteBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.voteConviction } }
+				});
+			} else if (vote?.decision === EVoteDecisionType.SPLIT) {
+				try {
+					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, { Split: { aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` } });
+				} catch (e) {
+					console.log(e);
+				}
+			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.abstainAyeBalance && vote?.abstainNayBalance) {
+				try {
+					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
+						SplitAbstain: { abstain: `${vote?.voteBalance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
+					});
+				} catch (e) {
+					console.log(e);
+				}
+			}
+			batchCall.push(voteTx);
+		});
+		console.log(batchCall);
+		api?.isReady &&
+			api?.tx.utility
+				.batch(batchCall)
+				.paymentInfo(loginAddress)
+				.then((info) => {
+					const gasPrice = info?.partialFee?.toBn();
+					console.log(gasPrice);
+					const milliDOT = gasPrice.div(new BN(10 ** 7));
+					setGasFees(milliDOT.toString());
+				});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<section>
 			<article className='px-2'>
@@ -37,7 +83,7 @@ const VoteCart: React.FC = () => {
 					</div>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>27.4 DOT</p>
+						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>{gasFees} milli DOT</p>
 					</div>
 					<Button className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'>Confirm Batch Voting</Button>
 				</div>

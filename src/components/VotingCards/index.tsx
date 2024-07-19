@@ -6,11 +6,12 @@ import TinderCard from 'react-tinder-card';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
-import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector } from '~src/redux/selectors';
 import SwipeActionButtons from './SwipeActionButtons';
 import TinderCardsComponent from './TinderCardsComponent';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -24,6 +25,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
+	const { network } = useNetworkSelector();
 	const [currentIndex, setCurrentIndex] = useState(trackPosts?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 
@@ -43,7 +45,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 
 	const canGoBack = currentIndex < trackPosts?.length - 1;
 
-	const swiped = (direction: string, index: number, postId: number, postTitle: string) => {
+	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
 		dispatch(
@@ -58,6 +60,22 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				voteConviction: batch_vote_details?.conviction || '0x'
 			})
 		);
+
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
+			vote: {
+				balance: direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
+				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
+				locked_period: batch_vote_details?.conviction || '0x',
+				network: network,
+				referendum_index: postId
+			}
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+		}
 		updateCurrentIndex(index - 1);
 	};
 
@@ -72,13 +90,6 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		await childRefs[newIndex].current.restoreCard();
 	};
 
-	const skipCard = async () => {
-		const newIndex = currentIndex - 1;
-		if (newIndex >= 0) {
-			updateCurrentIndex(newIndex);
-		}
-	};
-
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='mb-4 flex w-full justify-between'>
@@ -91,7 +102,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				<p className='m-0 p-0 text-base font-semibold text-bodyBlue'>Active Proposals</p>
 				<button
 					className='ml-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
-					onClick={() => skipCard()}
+					onClick={() => goBack()}
 				>
 					<RightOutlined className='text-black' />
 				</button>

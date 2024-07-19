@@ -18,7 +18,7 @@ interface Args {
 		network: string;
 		decision: 'aye' | 'nay' | 'abstain';
 		balance: string;
-		locked_period: number;
+		locked_period: string;
 		user_address: string;
 		id: string;
 	};

@@ -14,8 +14,9 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
-import { useBatchVotesSelector } from '~src/redux/selectors';
-import Post from '../Post/Post';
+import { useBatchVotesSelector, useNetworkSelector } from '~src/redux/selectors';
+// import Post from '../Post/Post';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -26,13 +27,48 @@ interface IProposalInfoCard {
 const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo } = props;
 	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [openViewProposalModal, setOpenViewProposalModal] = useState<boolean>(false);
 	const handleRemove = (postId: number) => {
 		dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
+		deletePostDetails(postId);
 	};
+
+	const editPostVoteDetails = async () => {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
+			vote: {
+				balance: voteInfo?.voteBalance,
+				decision: voteInfo?.decision,
+				locked_period: voteInfo?.voteConviction,
+				network: network,
+				referendum_index: voteInfo.post_id
+			}
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+		}
+	};
+
+	const deletePostDetails = async (post_id: number) => {
+		const removeIds = [];
+		removeIds.push(post_id);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+			ids: removeIds
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+		}
+	};
+
 	console.log(voteInfo);
 	return (
 		<section
@@ -43,7 +79,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.post_id}</p>
 				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo.post_title?.substring(0, 50)}...</p>
 				<Button
-					className='m-0 flex items-center justify-center border-none bg-transparent p-0'
+					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0'
 					onClick={() => {
 						setOpenViewProposalModal(true);
 					}}
@@ -140,6 +176,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 										})
 									);
 									setOpenEditModal(false);
+									editPostVoteDetails();
 								}}
 							/>
 						</div>

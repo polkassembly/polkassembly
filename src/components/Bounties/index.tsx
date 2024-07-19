@@ -199,13 +199,12 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			</div>
 
 			{/* Footer */}
-			<div className='mt-10 flex flex-col-reverse items-center gap-8 md:flex-row'>
+			<div className='mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
 				<Image
 					src={'assets/bounty-icons/bounty-coming-soon.svg'}
-					width={753}
-					height={400}
+					fill
 					alt='curator'
-					className='h-auto w-full md:w-auto'
+					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
 				/>
 				<BountyActivities />
 			</div>

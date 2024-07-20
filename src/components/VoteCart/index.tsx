@@ -21,9 +21,10 @@ const VoteCart: React.FC = () => {
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
 	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 10;
-
+	const pageSize = 1;
 	console.log(vote_card_info_array);
+
+	console.log('userid --> ', user?.id, user?.loginAddress);
 
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
@@ -44,42 +45,42 @@ const VoteCart: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage]);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
-		const batchCall: any[] = [];
-		vote_card_info_array.map((vote) => {
-			let voteTx = null;
-			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
-				voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
-					Standard: { balance: vote?.voteBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.voteConviction } }
-				});
-			} else if (vote?.decision === EVoteDecisionType.SPLIT) {
-				try {
-					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, { Split: { aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` } });
-				} catch (e) {
-					console.log(e);
-				}
-			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.abstainAyeBalance && vote?.abstainNayBalance) {
-				try {
-					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
-						SplitAbstain: { abstain: `${vote?.voteBalance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
-					});
-				} catch (e) {
-					console.log(e);
-				}
-			}
-			batchCall.push(voteTx);
-		});
-		api?.tx?.utility
-			?.batch(batchCall)
-			?.paymentInfo(loginAddress)
-			.then((info) => {
-				const gasPrice = new BN(info?.partialFee?.toString() || '0');
-				console.log(gasPrice);
-				setGasFees(gasPrice);
-			});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// useEffect(() => {
+	// 	if (!api || !apiReady) return;
+	// 	const batchCall: any[] = [];
+	// 	vote_card_info_array.map((vote) => {
+	// 		let voteTx = null;
+	// 		if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
+	// 			voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
+	// 				Standard: { balance: vote?.voteBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.voteConviction } }
+	// 			});
+	// 		} else if (vote?.decision === EVoteDecisionType.SPLIT) {
+	// 			try {
+	// 				voteTx = api?.tx.convictionVoting.vote(vote?.post_id, { Split: { aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` } });
+	// 			} catch (e) {
+	// 				console.log(e);
+	// 			}
+	// 		} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.abstainAyeBalance && vote?.abstainNayBalance) {
+	// 			try {
+	// 				voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
+	// 					SplitAbstain: { abstain: `${vote?.voteBalance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
+	// 				});
+	// 			} catch (e) {
+	// 				console.log(e);
+	// 			}
+	// 		}
+	// 		batchCall.push(voteTx);
+	// 	});
+	// 	api?.tx?.utility
+	// 		?.batch(batchCall)
+	// 		?.paymentInfo(loginAddress)
+	// 		.then((info) => {
+	// 			const gasPrice = new BN(info?.partialFee?.toString() || '0');
+	// 			console.log(gasPrice);
+	// 			setGasFees(gasPrice);
+	// 		});
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);

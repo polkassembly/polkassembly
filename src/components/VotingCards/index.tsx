@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TinderCard from 'react-tinder-card';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
@@ -18,19 +18,16 @@ const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	ssr: false
 });
 
-interface IVotingCards {
-	trackPosts?: any;
-}
-
-const VotingCards: FC<IVotingCards> = (props) => {
-	const { trackPosts } = props;
+const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const [activeProposal, setActiveProposals] = useState(trackPosts);
+	const [activeProposal, setActiveProposals] = useState([]);
+	// const [isLoading, setIsLoading] = useState(true);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
+	console.log('here proposals --> ', activeProposal);
 
 	const childRefs: any = useMemo(
 		() =>
@@ -74,19 +71,27 @@ const VotingCards: FC<IVotingCards> = (props) => {
 			isExternalApiCall: true,
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
-			skippedIndexes: voted_post_ids_array,
+			skippedIndexes: voted_post_ids_array || [],
 			userAddress: user?.loginAddress,
 			userId: user?.id
 		});
 		if (error) {
+			// setIsLoading(false);
 			console.error(error);
 			return;
 		} else {
 			console.log(data);
+			// setIsLoading(false);
 			dispatch(batchVotesActions.setVotedPostsIdsArray([]));
 			setActiveProposals(data);
 		}
 	};
+
+	useEffect(() => {
+		if (!network || !user?.loginAddress?.length) return;
+		getActiveProposals();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network, user?.loginAddress]);
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));

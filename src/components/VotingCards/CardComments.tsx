@@ -10,7 +10,7 @@ interface ICardComments {
 const CardComments: FC<ICardComments> = (props) => {
 	const { proposal } = props;
 	return (
-		<div className='mx-auto flex max-h-[304px] flex-col gap-y-4 overflow-y-auto rounded-xl border border-solid border-[#D2D8E0] px-4 py-6'>
+		<div className='mx-auto flex max-h-[304px] flex-col gap-y-4 overflow-y-auto overflow-x-hidden rounded-xl border border-solid border-[#D2D8E0] px-4 py-6'>
 			<div className='flex items-center justify-between'>
 				<h1 className='m-0 -mt-1 p-0 text-sm font-semibold text-sidebarBlue dark:text-white'>Users are saying...</h1>
 				<p className='m-0 flex h-[24px] w-[124px] items-center justify-center rounded-[38px] bg-[#F6F6F6] p-0 text-[10px] text-lightBlue'>Based on comments</p>

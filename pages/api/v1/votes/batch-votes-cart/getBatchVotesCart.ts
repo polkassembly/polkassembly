@@ -163,128 +163,126 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 						)
 						.get();
 
-					if (!postsSnapshot.empty) {
-						const postsDocs = postsSnapshot.docs;
-						const subsquidProposalsDataPromises = subsquidProposalsData.map(async (subsquidPost: any) => {
-							const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
+					const postsDocs = postsSnapshot.docs;
+					const subsquidProposalsDataPromises = subsquidProposalsData.map(async (subsquidPost: any) => {
+						const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
 
-							const preimage = subsquidPost?.preimage;
-							const proposedCall = preimage?.proposedCall;
-							const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData;
-							let requested = BigInt(0);
-							const beneficiaries: IBeneficiary[] = [];
-							let assetId: null | string = null;
+						const preimage = subsquidPost?.preimage || null;
+						const proposedCall = preimage?.proposedCall || null;
+						const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData || null;
+						let requested = BigInt(0);
+						const beneficiaries: IBeneficiary[] = [];
+						let assetId: null | string = null;
 
-							if (proposedCall?.args) {
-								if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-									const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
-									assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-								}
-								proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+						if (proposedCall?.args) {
+							if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+								const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+								assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+							}
+							proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 
-								if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
-									proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
-								}
-
-								if (proposedCall.args.amount) {
-									requested = proposedCall.args.amount;
-									if (proposedCall.args.beneficiary) {
-										beneficiaries.push({
-											address: proposedCall.args.beneficiary as string,
-											amount: proposedCall.args.amount
-										});
-									}
-								} else {
-									const calls = proposedCall.args.calls;
-									if (calls && Array.isArray(calls) && calls.length > 0) {
-										calls.forEach((call) => {
-											if (call && call.amount) {
-												requested += BigInt(call.amount);
-												if (call.beneficiary) {
-													beneficiaries.push({
-														address: call.beneficiary as string,
-														amount: call.amount
-													});
-												}
-											}
-										});
-									}
-								}
+							if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
+								proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
 							}
 
-							const payload: any = {
-								assetId: assetId || null,
-								beneficiaries: beneficiaries || [],
-								comments: [],
-								content: '',
-								created_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
-								gov_type: ProposalType.OPEN_GOV,
-								id: subsquidPost.index,
-								last_edited_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
-								method: preimage?.method || proposedCall?.method || proposalArguments?.method,
-								preimageHash: preimage.hash,
-								proposedCall: proposedCall,
-								proposer: subsquidPost?.proposer || '',
-								requested: requested.toString() || '0',
-								status: subsquidPost?.status,
-								statusHistory: subsquidPost?.statusHistory || [],
-								summary: '',
-								tags: [],
-								tally: subsquidPost.tally,
-								title: '',
-								track_number: subsquidPost.trackNumber,
-								type: subsquidPost.type
-							};
-
-							if (firebasePostDoc?.exists) {
-								const firebasePost = firebasePostDoc?.data();
-
-								const { statusHistory, isSwap } = getIsSwapStatus(subsquidPost?.statusHistory);
-
-								payload.statusHistory = statusHistory;
-								payload.summary = firebasePost?.summary || '';
-								payload.tags = firebasePost?.tags || [];
-								payload.title = firebasePost?.title || '';
-								payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(ProposalType.OPEN_GOV) as ProposalType);
-
-								if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
-									const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
-									firebasePost.content = payload?.content || res?.content || '';
-									firebasePost.title = payload?.title || res.title || '';
-									payload.content =
-										payload?.content ||
-										res.content ||
-										`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
-											payload.proposer
-										}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-									payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+							if (proposedCall.args.amount) {
+								requested = proposedCall.args.amount;
+								if (proposedCall.args.beneficiary) {
+									beneficiaries.push({
+										address: proposedCall.args.beneficiary as string,
+										amount: proposedCall.args.amount
+									});
 								}
-
-								if (isSwap) {
-									if (payload.status === 'DecisionDepositPlaced') {
-										payload.status = 'Deciding';
-									}
-								}
-
-								await getContentSummary(firebasePost, network, isExternalApiCall);
-								results.push(payload);
 							} else {
-								if (!payload?.title?.length || !payload?.content?.length) {
-									const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
-									payload.content =
-										payload?.content ||
-										res.content ||
-										`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
-											payload.proposer
-										}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
-									payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+								const calls = proposedCall.args.calls;
+								if (calls && Array.isArray(calls) && calls.length > 0) {
+									calls.forEach((call) => {
+										if (call && call.amount) {
+											requested += BigInt(call.amount);
+											if (call.beneficiary) {
+												beneficiaries.push({
+													address: call.beneficiary as string,
+													amount: call.amount
+												});
+											}
+										}
+									});
 								}
-								results.push(payload);
 							}
-						});
+						}
 
-						await Promise.allSettled(subsquidProposalsDataPromises);
-					}
+						const payload: any = {
+							assetId: assetId || null,
+							beneficiaries: beneficiaries || [],
+							comments: [],
+							content: '',
+							created_at: subsquidPost?.createdAt,
+							gov_type: 'open_gov',
+							id: subsquidPost.index,
+							last_edited_at: subsquidPost?.createdAt,
+							method: preimage?.method || proposedCall?.method || proposalArguments?.method || null,
+							preimageHash: preimage?.hash || '',
+							proposedCall: proposedCall || null,
+							proposer: subsquidPost?.proposer || '',
+							requested: requested.toString() || '0',
+							status: subsquidPost?.status,
+							statusHistory: subsquidPost?.statusHistory || [],
+							summary: '',
+							tags: [],
+							tally: subsquidPost?.tally || [],
+							title: '',
+							track_number: subsquidPost?.trackNumber,
+							type: subsquidPost?.type || ProposalType.REFERENDUM_V2
+						};
+
+						if (firebasePostDoc?.exists) {
+							const firebasePost = firebasePostDoc?.data();
+
+							const { statusHistory, isSwap } = getIsSwapStatus(subsquidPost?.statusHistory);
+
+							payload.statusHistory = statusHistory;
+							payload.summary = firebasePost?.summary || '';
+							payload.tags = firebasePost?.tags || [];
+							payload.title = firebasePost?.title || '';
+							payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(ProposalType.OPEN_GOV) as ProposalType);
+
+							if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
+								const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
+								firebasePost.content = payload?.content || res?.content || '';
+								firebasePost.title = payload?.title || res?.title || '';
+								payload.content =
+									payload?.content ||
+									res?.content ||
+									`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
+										payload.proposer
+									}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+								payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+							}
+
+							if (isSwap) {
+								if (payload.status === 'DecisionDepositPlaced') {
+									payload.status = 'Deciding';
+								}
+							}
+
+							await getContentSummary(firebasePost, network, isExternalApiCall);
+							results.push(payload);
+						} else {
+							if (!payload?.title?.length || !payload?.content?.length) {
+								const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
+								payload.content =
+									payload?.content ||
+									res?.content ||
+									`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
+										payload.proposer
+									}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+								payload.title = payload?.title || res?.title || `Referenda #${subsquidPost.index}`;
+							}
+							results.push(payload);
+						}
+					});
+
+					await Promise.allSettled(subsquidProposalsDataPromises);
 				}
 
 				votes.map((vote) => {

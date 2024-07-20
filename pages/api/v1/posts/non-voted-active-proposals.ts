@@ -133,13 +133,13 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 		if (!subsquidProposalsData.length) {
 			return { data: [], error: null };
 		} else {
-			const activeProposalIds = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
+			const activeProposalIds: number[] = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
 
 			const postsSnapshot = await postsByTypeRef(network, (getFirestoreProposalType(proposalType) as ProposalType) || proposalType)
 				.where(
 					'id',
 					'in',
-					activeProposalIds.filter((item: string | null) => !!item)
+					activeProposalIds.filter((item: number | null) => !!item)
 				)
 				.get();
 

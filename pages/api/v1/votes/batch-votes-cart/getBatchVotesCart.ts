@@ -107,7 +107,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 
 		const cartRef = await firestore_db
 			.collection('users')
-			.doc(String(user?.id))
+			.doc(String(6496))
 			.collection('batch_votes_cart')
 			.where('user_address', '==', userAddress)
 			.where('network', '==', network)
@@ -122,20 +122,26 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 			return res.status(200).json({ votes: [] });
 		} else {
 			const cartDocs = cartRef.docs;
-			const votes = cartDocs.map((doc: any) => {
-				const data = doc.data();
-				postsIndex.push(data?.referendum_index);
-				return {
-					balance: data?.balance || '0',
-					createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
-					decision: data?.decison || 'aye',
-					id: data?.id || '',
-					lockedPeriod: data?.locked_period || 0.1,
-					network: data?.network || network,
-					referendumIndex: data?.referendum_index,
-					updatedAt: getUpdatedAt(data),
-					userAddress: data?.user_address
-				};
+
+			const allVotes: IBatchVoteCartResponse[] = [];
+
+			cartDocs.map((doc) => {
+				if (doc.exists) {
+					const data = doc.data();
+
+					postsIndex.push(data?.referendum_index);
+					allVotes.push({
+						balance: data?.balance || '0',
+						createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
+						decision: data?.decison || 'aye',
+						id: data?.id || '',
+						lockedPeriod: data?.locked_period || 0.1,
+						network: data?.network || network,
+						referendumIndex: data?.referendum_index,
+						updatedAt: getUpdatedAt(data) || null,
+						userAddress: data?.user_address
+					});
+				}
 			});
 
 			if (postsIndex.length) {
@@ -150,16 +156,17 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				});
 
 				const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
+
 				const results: any[] = [];
 
 				if (subsquidProposalsData.length) {
-					const activeProposalIds = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
+					const activeProposalIds: number[] = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
 
-					const postsSnapshot = await postsByTypeRef(network, getFirestoreProposalType(ProposalType.REFERENDUM_V2) as ProposalType)
+					const postsSnapshot = await postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType)
 						.where(
 							'id',
 							'in',
-							activeProposalIds.filter((item: string | null) => !!item)
+							activeProposalIds.filter((item: number | null) => !!item)
 						)
 						.get();
 
@@ -224,7 +231,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 							preimageHash: preimage?.hash || '',
 							proposedCall: proposedCall || null,
 							proposer: subsquidPost?.proposer || '',
-							requested: requested.toString() || '0',
+							requested: requested?.toString() || '0',
 							status: subsquidPost?.status,
 							statusHistory: subsquidPost?.statusHistory || [],
 							summary: '',
@@ -285,7 +292,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 					await Promise.allSettled(subsquidProposalsDataPromises);
 				}
 
-				votes.map((vote) => {
+				allVotes.map((vote) => {
 					results.map((item) => {
 						if (item.id == vote?.referendumIndex) {
 							return {
@@ -298,7 +305,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 					return vote;
 				});
 			}
-			const sortByIdResultsData = votes.sort((a: IBatchVoteCartResponse, b: IBatchVoteCartResponse) => b?.referendumIndex - a?.referendumIndex);
+			const sortByIdResultsData = allVotes.sort((a: IBatchVoteCartResponse, b: IBatchVoteCartResponse) => b?.referendumIndex - a?.referendumIndex);
 
 			return res.status(200).send({ votes: sortByIdResultsData || [] });
 		}

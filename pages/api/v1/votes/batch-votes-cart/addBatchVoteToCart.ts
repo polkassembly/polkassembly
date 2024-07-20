@@ -40,6 +40,17 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 		const { vote } = req.body as unknown as Args;
 
+		if (
+			typeof vote?.balance !== 'string' ||
+			!['aye', 'nay', 'abstain'].includes(vote?.decision) ||
+			!vote?.locked_period ||
+			typeof vote?.locked_period !== 'number' ||
+			!vote?.referendum_index ||
+			!vote?.user_address?.length
+		) {
+			return res.status(403).json({ message: messages.INVALID_PARAMS });
+		}
+
 		const ref = firestore_db
 			.collection('users')
 			.doc(String(user?.id))

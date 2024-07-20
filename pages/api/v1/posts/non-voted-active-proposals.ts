@@ -312,11 +312,11 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					}
 					results.push(payload);
 				} else {
-					if (!payload?.title?.length || !payload?.content?.length) {
+					if (!payload?.title?.length) {
 						const res = await getSubSquareContentAndTitle(proposalType, network, subsquidPost.index);
 						payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
 					}
-					if (!payload.summary) {
+					if (!payload.summary?.length) {
 						payload.summary = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${
 							payload.proposer
 						}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;

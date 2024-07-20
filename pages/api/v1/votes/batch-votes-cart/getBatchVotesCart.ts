@@ -13,7 +13,7 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
-import { getFirestoreProposalType, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
+import { getFirestoreProposalType, getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { ACTIVE_PROPOSALS_FROM_PROPOSALS_INDEXES } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IBeneficiary } from '~src/types';
@@ -23,6 +23,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getContentSummary } from '~src/util/getPostContentAiSummary';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import { IPostResponse } from '../../posts/on-chain-post';
+import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-content';
 
 interface Args {
 	userAddress: string;
@@ -76,9 +77,9 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 export const getUpdatedAt = (data: any) => {
 	if (data) {
 		if (data?.last_edited_at) {
-			return data?.last_edited_at?.toDate ? data?.last_edited_at?.toDate() : data?.last_edited_at;
+			return data?.last_edited_at?.toDate ? data?.last_edited_at?.toDate()?.toString() : data?.last_edited_at;
 		} else if (data.updated_at) {
-			return data.updated_at?.toDate ? data.updated_at?.toDate() : data.updated_at;
+			return data.updated_at?.toDate ? data.updated_at?.toDate()?.toString() : data.updated_at;
 		}
 	}
 };
@@ -126,13 +127,13 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				postsIndex.push(data?.referendum_index);
 				return {
 					balance: data?.balance || '0',
-					createAt: data?.created_at?.toDate ? data?.created_at.toDate() : data?.created_at,
+					createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
 					decision: data?.decison || 'aye',
 					id: data?.id || '',
 					lockedPeriod: data?.locked_period || 0.1,
 					network: data?.network || network,
 					referendumIndex: data?.referendum_index,
-					updatedAt: data?.update_at?.toDate ? data?.update_at.toDate() : data?.update_at,
+					updatedAt: getUpdatedAt(data),
 					userAddress: data?.user_address
 				};
 			});
@@ -246,6 +247,19 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 								payload.title = firebasePost?.title || '';
 								payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(ProposalType.OPEN_GOV) as ProposalType);
 
+								if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
+									const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
+									firebasePost.content = payload?.content || res?.content || '';
+									firebasePost.title = payload?.title || res.title || '';
+									payload.content =
+										payload?.content ||
+										res.content ||
+										`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
+											payload.proposer
+										}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+									payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+								}
+
 								if (isSwap) {
 									if (payload.status === 'DecisionDepositPlaced') {
 										payload.status = 'Deciding';
@@ -255,6 +269,16 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 								await getContentSummary(firebasePost, network, isExternalApiCall);
 								results.push(payload);
 							} else {
+								if (!payload?.title?.length || !payload?.content?.length) {
+									const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
+									payload.content =
+										payload?.content ||
+										res.content ||
+										`This is a ${getProposalTypeTitle(ProposalType.REFERENDUM_V2)} whose proposer address (${
+											payload.proposer
+										}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
+									payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+								}
 								results.push(payload);
 							}
 						});

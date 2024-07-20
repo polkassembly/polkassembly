@@ -125,6 +125,25 @@ const Post: FC<IPostProps> = (props) => {
 	const [data, setData] = useState<IPostResponse[]>([]);
 	const [isSimilarLoading, setIsSimilarLoading] = useState<boolean>(false);
 
+	const getActiveProposals = async () => {
+		if (!loginAddress) return;
+		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
+			isExternalApiCall: true,
+			proposalType: ProposalType.REFERENDUM_V2,
+			userAddress: loginAddress
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log({ data });
+		}
+	};
+	useEffect(() => {
+		getActiveProposals();
+		console.log('heeee');
+	}, [network, loginAddress]);
+
 	const handleCanEdit = useCallback(async () => {
 		const { post_id, proposer } = post;
 

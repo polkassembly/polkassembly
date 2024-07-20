@@ -77,83 +77,81 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 		throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 	}
 
-	const encodedAddress = getEncodedAddress(userAddress, network);
+	try {
+		const encodedAddress = getEncodedAddress(userAddress, network);
 
-	const subsquidRes = await fetchSubsquid({
-		network,
-		query: GET_DELEGATED_DELEGATION_ADDRESSES,
-		variables: {
-			address: encodedAddress || userAddress
-		}
-	});
+		const subsquidRes = await fetchSubsquid({
+			network,
+			query: GET_DELEGATED_DELEGATION_ADDRESSES,
+			variables: {
+				address: encodedAddress || userAddress
+			}
+		});
 
-	const delegatedAddressObj: { [key: string]: number } = {};
-	const subsquidData = subsquidRes?.['data']?.votingDelegations || [];
+		const delegatedAddressObj: { [key: string]: number } = {};
+		const subsquidData = subsquidRes?.['data']?.votingDelegations || [];
 
-	subsquidData.map((delegation: { to: string; from: string }) => {
-		if (delegatedAddressObj[delegation.to] == undefined) {
-			delegatedAddressObj[delegation.to] = 1;
-		}
-	});
+		subsquidData.map((delegation: { to: string; from: string }) => {
+			if (delegatedAddressObj[delegation.to] == undefined) {
+				delegatedAddressObj[delegation.to] = 1;
+			}
+		});
 
-	const batchVotesCartRef = await firestore_db
-		.collection('users')
-		.doc(String(userId))
-		.collection('batch_votes_cart')
-		.where('network', '==', network)
-		.where('user_address', '==', userAddress)
-		.get();
-
-	const batchVotesCartDocs = batchVotesCartRef.docs;
-
-	const batchVotesIndexes = batchVotesCartDocs.map((voteDoc) => {
-		const data = voteDoc.data();
-		return data?.referendum_index;
-	});
-
-	const variables: any = {
-		addresses: [encodedAddress, ...(Object.keys(delegatedAddressObj) || [])],
-		status_in: getStatusesFromCustomStatus(CustomStatus.Active),
-		type: getSubsquidProposalType(proposalType as any)
-	};
-
-	if ([...batchVotesIndexes, ...skippedIndexes].length) {
-		variables.index_not_in = [...batchVotesIndexes, ...skippedIndexes];
-	}
-
-	const subsquidProposalsRes = await fetchSubsquid({
-		network,
-		query: NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS,
-		variables: variables
-	});
-
-	const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
-
-	if (!subsquidProposalsData.length) {
-		return { data: [], error: null };
-	} else {
-		const activeProposalIds = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
-
-		const postsSnapshot = await postsByTypeRef(network, (getFirestoreProposalType(proposalType) as ProposalType) || proposalType)
-			.where(
-				'id',
-				'in',
-				activeProposalIds.filter((item: string | null) => !!item)
-			)
+		const batchVotesCartRef = await firestore_db
+			.collection('users')
+			.doc(String(userId))
+			.collection('batch_votes_cart')
+			.where('network', '==', network)
+			.where('user_address', '==', userAddress)
 			.get();
 
-		if (postsSnapshot.empty) {
-			return { data: subsquidProposalsData, error: null };
+		const batchVotesCartDocs = batchVotesCartRef.docs;
+
+		const batchVotesIndexes = batchVotesCartDocs.map((voteDoc) => {
+			const data = voteDoc.data();
+			return data?.referendum_index;
+		});
+
+		const variables: any = {
+			addresses: [encodedAddress, ...(Object.keys(delegatedAddressObj) || [])],
+			status_in: getStatusesFromCustomStatus(CustomStatus.Active),
+			type: getSubsquidProposalType(proposalType as any)
+		};
+
+		if ([...batchVotesIndexes, ...skippedIndexes].length) {
+			variables.index_not_in = [...batchVotesIndexes, ...skippedIndexes];
+		}
+
+		const subsquidProposalsRes = await fetchSubsquid({
+			network,
+			query: NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS,
+			variables: variables
+		});
+
+		const subsquidProposalsData = subsquidProposalsRes?.['data']?.proposals || [];
+
+		if (!subsquidProposalsData.length) {
+			return { data: [], error: null };
 		} else {
+			const activeProposalIds = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
+
+			const postsSnapshot = await postsByTypeRef(network, (getFirestoreProposalType(proposalType) as ProposalType) || proposalType)
+				.where(
+					'id',
+					'in',
+					activeProposalIds.filter((item: string | null) => !!item)
+				)
+				.get();
+
 			const results: any[] = [];
 
-			const postsDocs = postsSnapshot.docs;
+			const postsDocs = postsSnapshot?.docs;
 			const subsquidProposalsDataPromises = subsquidProposalsData.map(async (subsquidPost: any) => {
 				const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
 
-				const preimage = subsquidPost?.preimage;
-				const proposedCall = preimage?.proposedCall;
-				const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData;
+				const preimage = subsquidPost?.preimage || null;
+				const proposedCall = preimage?.proposedCall || null;
+				const proposalArguments = subsquidProposalsData?.proposalArguments || subsquidProposalsData?.callData || null;
 				let requested = BigInt(0);
 				const beneficiaries: IBeneficiary[] = [];
 				let assetId: null | string = null;
@@ -200,28 +198,27 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 					beneficiaries: beneficiaries || [],
 					comments: [],
 					content: '',
-					created_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
+					created_at: subsquidPost?.createdAt,
 					gov_type: ProposalType.OPEN_GOV === proposalType ? 'open_gov' : 'gov_1',
-					id: subsquidPost.index,
-					last_edited_at: subsquidPost?.createdAt?.toDate ? subsquidPost?.createdAt?.toDate() : subsquidPost?.createdAt || null,
+					id: subsquidPost?.index,
+					last_edited_at: subsquidPost?.createdAt,
 					method: preimage?.method || proposedCall?.method || proposalArguments?.method,
-					preimageHash: preimage.hash,
-					proposedCall: proposedCall,
+					preimageHash: preimage?.hash || '',
+					proposedCall: proposedCall || null,
 					proposer: subsquidPost?.proposer || '',
 					requested: requested.toString() || '0',
 					status: subsquidPost?.status,
 					statusHistory: subsquidPost?.statusHistory || [],
 					summary: '',
 					tags: [],
-					tally: subsquidPost.tally,
+					tally: subsquidPost.tally || [],
 					title: '',
-					track_number: subsquidPost.trackNumber,
-					type: subsquidPost.type
+					track_number: subsquidPost?.trackNumber || null,
+					type: subsquidPost?.type || ProposalType.REFERENDUM_V2
 				};
 
 				if (firebasePostDoc?.exists) {
 					const firebasePost = firebasePostDoc?.data();
-
 					const commentsRef = await postsByTypeRef(network, ProposalType.REFERENDUM_V2)
 						.doc(String(subsquidPost.index))
 						.collection('comments')
@@ -292,9 +289,9 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 
 					if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
 						const res = await getSubSquareContentAndTitle(proposalType, network, subsquidPost.index);
-						firebasePost.content = res.content;
-						firebasePost.title = res.title;
-						payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+						firebasePost.content = res?.content;
+						firebasePost.title = res?.title;
+						payload.title = payload?.title || res?.title || `Referenda #${subsquidPost.index}`;
 					}
 
 					if (isSwap) {
@@ -310,17 +307,23 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 							payload.proposer
 						}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
+
 					results.push(payload);
 				} else {
 					if (!payload?.title?.length) {
 						const res = await getSubSquareContentAndTitle(proposalType, network, subsquidPost.index);
-						payload.title = payload?.title || res.title || `Referenda #${subsquidPost.index}`;
+						if (res.title) {
+							payload.title = payload?.title || res?.title || `Referenda #${subsquidPost.index}`;
+						} else {
+							payload.title = payload?.title || `Referenda #${subsquidPost.index}`;
+						}
 					}
 					if (!payload.summary?.length) {
 						payload.summary = `This is a ${getProposalTypeTitle(proposalType as ProposalType)} whose proposer address (${
 							payload.proposer
 						}) is shown in on-chain info below. Only this user can edit this description and the title. If you own this account, login and tell us more about your proposal.`;
 					}
+
 					results.push(payload);
 				}
 			});
@@ -331,6 +334,11 @@ export const getActiveProposalsForTrack = async ({ network, proposalType, isExte
 
 			return { data: sortByIdResultsData, error: null };
 		}
+	} catch (err) {
+		return {
+			data: [],
+			error: err || messages.API_FETCH_ERROR
+		};
 	}
 };
 const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) => {

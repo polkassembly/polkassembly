@@ -343,15 +343,15 @@ const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { proposalType, userAddress, isExternalApiCall = false, userId } = req.body;
+	const { proposalType, userAddress, isExternalApiCall = false } = req.body;
 	const network = String(req.headers['x-network']);
-
+	console.log('inside non voted api --> ', proposalType, userAddress, isExternalApiCall);
 	const { data, error } = await getActiveProposalsForTrack({
 		isExternalApiCall: isExternalApiCall,
 		network: network,
 		proposalType: proposalType || ProposalType.REFERENDUM_V2,
 		userAddress: userAddress,
-		userId: userId
+		userId: user?.id
 	});
 
 	if (error || !data) {

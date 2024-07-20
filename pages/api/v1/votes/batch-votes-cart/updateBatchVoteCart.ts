@@ -42,14 +42,18 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const { vote } = req.body as unknown as Args;
 
 		if (!vote.id.length || typeof vote.id !== 'string') return res.status(403).json({ message: messages.INVALID_PARAMS });
-
-		const ref = firestore_db
+		const voteSnapshot = firestore_db
 			.collection('users')
 			.doc(String(user?.id))
 			.collection('batch_votes_cart')
 			.doc(vote.id);
 
-		await ref.update({ ...vote, updated_at: new Date() });
+		const ref = await voteSnapshot.get();
+
+		if (!ref.exists) {
+			return res.status(500).send({ message: `${messages.VOTE_NOT_FOUND} for id ${vote?.id || ''}` });
+		}
+		await voteSnapshot.update({ ...vote, updated_at: new Date() });
 		return res.status(200).send({ message: messages.SUCCESS });
 	} catch (error) {
 		return res.status(500).send({ message: error || messages.API_FETCH_ERROR });

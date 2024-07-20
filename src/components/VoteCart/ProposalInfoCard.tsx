@@ -14,7 +14,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
-import { useBatchVotesSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 // import Post from '../Post/Post';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -27,6 +27,7 @@ interface IProposalInfoCard {
 const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo } = props;
 	const dispatch = useDispatch();
+	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
@@ -40,11 +41,13 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const editPostVoteDetails = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
-				balance: voteInfo?.voteBalance,
-				decision: voteInfo?.decision,
+				balance: voteInfo?.voteBalance || '0',
+				decision: voteInfo?.decision || 'aye',
+				id: user?.id?.toString(),
 				locked_period: voteInfo?.voteConviction,
 				network: network,
-				referendum_index: voteInfo.post_id
+				referendum_index: voteInfo.post_id,
+				user_address: user?.loginAddress
 			}
 		});
 		if (error) {
@@ -57,7 +60,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 
 	const deletePostDetails = async (post_id: number) => {
 		const removeIds = [];
-		removeIds.push(post_id);
+		removeIds.push(post_id.toString());
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			ids: removeIds
 		});
@@ -115,7 +118,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteBalance?.toNumber() / 10000000000 || 0} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteBalance} DOT</p>
 					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteConviction || '0x'}</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>

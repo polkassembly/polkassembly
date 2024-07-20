@@ -121,7 +121,8 @@ const messages = {
 	USER_NOT_FOUND: 'User not found.',
 	DISABLE_COMMENTS: 'Comments have been disabled for this post.',
 	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.',
-	NO_ACTIVE_PROPOSAL_FOUND: 'No active proposal found.'
+	NO_ACTIVE_PROPOSAL_FOUND: 'No active proposal found.',
+	VOTE_NOT_FOUND: 'Vote not found.'
 };
 
 export default messages;

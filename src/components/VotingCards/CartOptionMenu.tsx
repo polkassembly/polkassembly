@@ -5,12 +5,37 @@ import { Button } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { batchVotesActions } from '~src/redux/batchVoting';
 import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useAppDispatch } from '~src/redux/store';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const CartOptionMenu = () => {
-	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart, post_ids_array } = useBatchVotesSelector();
 	const router = useRouter();
+	const dispatch = useAppDispatch();
+
+	const deletePostDetails = async (post_ids: number[]) => {
+		const post_ids_strings = post_ids.map((id) => id.toString());
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+			ids: post_ids_strings
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+		}
+	};
+
+	const emptyCart = async () => {
+		console.log('heelo lets delete');
+		dispatch(batchVotesActions.setShowCartMenu(false));
+		dispatch(batchVotesActions.setTotalVotesAddedInCart(0));
+		dispatch(batchVotesActions.setVotesCardInfoArray([0]));
+		deletePostDetails(post_ids_array);
+	};
 
 	return (
 		<article className='flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
@@ -26,7 +51,12 @@ const CartOptionMenu = () => {
 						router.push('/batch-voting/cart');
 					}}
 				/>
-				<Button className='flex h-[36px] w-[36px] items-center justify-center rounded-lg border border-solid border-pink_primary bg-transparent'>
+				<Button
+					className='flex h-[36px] w-[36px] items-center justify-center rounded-lg border border-solid border-pink_primary bg-transparent'
+					onClick={() => {
+						emptyCart();
+					}}
+				>
 					<ImageIcon
 						src='/assets/icons/bin-icon.svg'
 						alt='bin-icon'

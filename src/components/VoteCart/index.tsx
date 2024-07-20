@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button } from 'antd';
+import { Button, Pagination } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
@@ -10,15 +10,40 @@ import { useApiContext } from '~src/context';
 import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const VoteCart: React.FC = () => {
 	const { vote_card_info_array } = useBatchVotesSelector();
 	const { api, apiReady } = useApiContext();
+	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
+	const [currentPage, setCurrentPage] = useState(1);
+	const pageSize = 10;
+
 	console.log(vote_card_info_array);
+
+	const getVoteCartData = async () => {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
+			isExternalApiCall: true,
+			page: currentPage,
+			userAddress: user?.loginAddress
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log('cards in cart --> ', data);
+		}
+	};
+
+	useEffect(() => {
+		getVoteCartData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentPage]);
+
 	useEffect(() => {
 		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
@@ -56,6 +81,12 @@ const VoteCart: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const paginatedData = vote_card_info_array.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 	return (
 		<section>
 			<article className='px-2'>
@@ -64,7 +95,7 @@ const VoteCart: React.FC = () => {
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_card_info_array?.length})</p>
 					</div>
-					{vote_card_info_array.map((voteCardInfo, index) => (
+					{paginatedData.map((voteCardInfo, index) => (
 						<ProposalInfoCard
 							key={index}
 							voteInfo={voteCardInfo}
@@ -72,6 +103,13 @@ const VoteCart: React.FC = () => {
 						/>
 					))}
 				</div>
+				<Pagination
+					current={currentPage}
+					pageSize={pageSize}
+					total={vote_card_info_array.length}
+					onChange={handlePageChange}
+					className='my-4 flex justify-center'
+				/>
 			</article>
 			<article
 				className='h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'

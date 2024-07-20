@@ -6,12 +6,13 @@ import TinderCard from 'react-tinder-card';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
-import { useBatchVotesSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import SwipeActionButtons from './SwipeActionButtons';
 import TinderCardsComponent from './TinderCardsComponent';
 import dynamic from 'next/dynamic';
 import { Skeleton } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { ProposalType } from '~src/global/proposalType';
 const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -23,19 +24,21 @@ interface IVotingCards {
 
 const VotingCards: FC<IVotingCards> = (props) => {
 	const { trackPosts } = props;
-	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
+	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const [currentIndex, setCurrentIndex] = useState(trackPosts?.length - 1);
+	const [activeProposal, setActiveProposals] = useState(trackPosts);
+	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 
 	const childRefs: any = useMemo(
 		() =>
-			Array(trackPosts?.length)
+			Array(activeProposal?.length)
 				.fill(0)
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 				.map((i) => React.createRef()),
-		[trackPosts?.length]
+		[activeProposal?.length]
 	);
 
 	const updateCurrentIndex = (val: any) => {
@@ -43,11 +46,53 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		currentIndexRef.current = val;
 	};
 
-	const canGoBack = currentIndex < trackPosts?.length - 1;
+	const canGoBack = currentIndex < activeProposal?.length - 1;
+
+	const addVotedPostToDB = async (postId: number, direction: string) => {
+		console.log('hello postid --> ', postId);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
+			vote: {
+				balance:
+					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance || '0',
+				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
+				locked_period: batch_vote_details?.conviction || '0x',
+				network: network,
+				referendum_index: postId,
+				user_address: user?.loginAddress
+			}
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+		}
+	};
+
+	const getActiveProposals = async () => {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
+			isExternalApiCall: true,
+			network: network,
+			proposalType: ProposalType.REFERENDUM_V2,
+			skippedIndexes: voted_post_ids_array,
+			userAddress: user?.loginAddress,
+			userId: user?.id
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			console.log(data);
+			dispatch(batchVotesActions.setVotedPostsIdsArray([]));
+			setActiveProposals(data);
+		}
+	};
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
 		dispatch(batchVotesActions.setShowCartMenu(true));
+		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
+		dispatch(batchVotesActions.setTotalActivePosts(total_active_posts + 1));
 		dispatch(
 			batchVotesActions.setvoteCardInfo({
 				abstainAyeBalance: direction === 'left' || direction === 'right' ? '0' : batch_vote_details?.abstainAyeVoteBalance,
@@ -61,21 +106,10 @@ const VotingCards: FC<IVotingCards> = (props) => {
 			})
 		);
 		updateCurrentIndex(index - 1);
-
-		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
-			vote: {
-				balance: direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
-				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
-				locked_period: batch_vote_details?.conviction || '0x',
-				network: network,
-				referendum_index: postId
-			}
-		});
-		if (error) {
-			console.error(error);
-			return;
-		} else {
-			console.log(data);
+		addVotedPostToDB(postId, direction);
+		if (total_active_posts > 5) {
+			dispatch(batchVotesActions.setTotalActivePosts(0));
+			getActiveProposals();
 		}
 	};
 
@@ -108,7 +142,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				</button>
 			</div>
 			<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
-				{trackPosts?.map((proposal: any, index: number) => (
+				{activeProposal?.map((proposal: any, index: number) => (
 					<TinderCard
 						ref={childRefs[index]}
 						className='absolute h-full w-full'
@@ -126,7 +160,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				))}
 			</div>
 			<SwipeActionButtons
-				trackPosts={trackPosts}
+				trackPosts={activeProposal}
 				currentIndex={currentIndex}
 				childRefs={childRefs}
 			/>

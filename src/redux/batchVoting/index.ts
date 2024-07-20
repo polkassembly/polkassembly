@@ -9,8 +9,10 @@ import { HYDRATE } from 'next-redux-wrapper';
 const initialState: IBatchVoteStore = {
 	batch_vote_details: {},
 	edit_vote_details: {},
+	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
+	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
 		abstainAyeBalance: '',
@@ -21,7 +23,9 @@ const initialState: IBatchVoteStore = {
 		voteBalance: 0,
 		voteConviction: ''
 	},
-	vote_card_info_array: []
+	vote_card_info_array: [],
+	voted_post_ids_array: [],
+	voted_proposal_id: 0
 };
 
 type IBatchVotesPayload = {
@@ -56,8 +60,10 @@ export const batchVoteStore = createSlice({
 			state = {
 				batch_vote_details: {},
 				edit_vote_details: {},
+				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
+				total_active_posts: 0,
 				total_proposals_added_in_Cart: 0,
 				vote_card_info: {
 					abstainAyeBalance: '',
@@ -68,7 +74,9 @@ export const batchVoteStore = createSlice({
 					voteBalance: 0,
 					voteConviction: ''
 				},
-				vote_card_info_array: []
+				vote_card_info_array: [],
+				voted_post_ids_array: [],
+				voted_proposal_id: 0
 			};
 		},
 		setBatchVoting_Field: (state, action: PayloadAction<IBatchVotesPayload>) => {
@@ -139,8 +147,21 @@ export const batchVoteStore = createSlice({
 		setShowDefaultOptionsModal: (state, action: PayloadAction<boolean>) => {
 			state.show_default_options_modal = action.payload;
 		},
+		setTotalActivePosts: (state, action: PayloadAction<number>) => {
+			state.total_active_posts = action.payload;
+		},
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
+		},
+		setVotedPostsIdsArray: (state, action: PayloadAction<number[]>) => {
+			state.voted_post_ids_array = action.payload;
+		},
+		setVotedProposalId: (state, action: PayloadAction<number>) => {
+			state.voted_proposal_id = action.payload;
+			state.voted_post_ids_array.push(action.payload);
+		},
+		setVotesCardInfoArray: (state, action: PayloadAction<any>) => {
+			state.vote_card_info_array = action.payload;
 		},
 		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
 			state.vote_card_info = action.payload;
@@ -152,6 +173,7 @@ export const batchVoteStore = createSlice({
 				uniqueVoteCardInfoMap.set(voteCard.post_id, voteCard);
 			});
 			state.vote_card_info_array = Array.from(uniqueVoteCardInfoMap.values());
+			state.post_ids_array = state.vote_card_info_array.map((voteCard) => voteCard.post_id);
 		},
 		setvoteCardInfo_field: (state, action: PayloadAction<IVoteCardInfoPayload>) => {
 			const obj = action.payload;

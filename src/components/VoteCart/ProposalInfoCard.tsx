@@ -97,7 +97,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			/>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<div className='mr-auto flex items-center gap-x-1'>
-					{voteInfo?.decision === 'aye' || voteInfo?.decision === 'aye' ? (
+					{voteInfo?.decision === 'aye' || voteInfo?.decision === 'nay' ? (
 						<ImageIcon
 							src={`${voteInfo?.decision === 'aye' ? '/assets/icons/like-icon-green.svg' : '/assets/icons/dislike-icon-red.svg'}`}
 							imgClassName='text-black'

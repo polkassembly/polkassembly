@@ -3,21 +3,25 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
 import { EVoteDecisionType } from '~src/types';
 import { useApiContext } from '~src/context';
-import { BN } from 'bn.js';
+import BN from 'bn.js';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 const VoteCart: React.FC = () => {
 	const { vote_card_info_array } = useBatchVotesSelector();
-	const { api } = useApiContext();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
+	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
-	const [gasFees, setGasFees] = useState<string>('0');
+	const [gasFees, setGasFees] = useState<any>();
 	console.log(vote_card_info_array);
 	useEffect(() => {
+		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
-
 		vote_card_info_array.map((vote) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
@@ -41,17 +45,14 @@ const VoteCart: React.FC = () => {
 			}
 			batchCall.push(voteTx);
 		});
-		console.log(batchCall);
-		api?.isReady &&
-			api?.tx.utility
-				.batch(batchCall)
-				.paymentInfo(loginAddress)
-				.then((info) => {
-					const gasPrice = info?.partialFee?.toBn();
-					console.log(gasPrice);
-					const milliDOT = gasPrice.div(new BN(10 ** 7));
-					setGasFees(milliDOT.toString());
-				});
+		api?.tx?.utility
+			?.batch(batchCall)
+			?.paymentInfo(loginAddress)
+			.then((info) => {
+				const gasPrice = new BN(info?.partialFee?.toString() || '0');
+				console.log(gasPrice);
+				setGasFees(gasPrice);
+			});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -83,7 +84,9 @@ const VoteCart: React.FC = () => {
 					</div>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>{gasFees} milli DOT</p>
+						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
+							{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+						</p>
 					</div>
 					<Button className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'>Confirm Batch Voting</Button>
 				</div>

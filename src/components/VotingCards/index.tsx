@@ -60,6 +60,7 @@ const VotingCards: FC<IVotingCards> = (props) => {
 				voteConviction: batch_vote_details?.conviction || '0x'
 			})
 		);
+		updateCurrentIndex(index - 1);
 
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
@@ -76,7 +77,6 @@ const VotingCards: FC<IVotingCards> = (props) => {
 		} else {
 			console.log(data);
 		}
-		updateCurrentIndex(index - 1);
 	};
 
 	const outOfFrame = (name: string, idx: number) => {

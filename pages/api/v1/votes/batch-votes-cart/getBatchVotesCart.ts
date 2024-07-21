@@ -33,7 +33,9 @@ export interface IBatchVoteCartResponse {
 	referendumIndex: number;
 	network: string;
 	decision: 'aye' | 'nay' | 'abstain';
-	balance: string;
+	ayeBalance: string;
+	nayBalance: string;
+	abstainBalance: string;
 	lockedPeriod: number;
 	userAddress: string;
 	id: string;
@@ -105,7 +107,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 
 		const cartRef = await firestore_db
 			.collection('users')
-			.doc(String(6496))
+			.doc(String(user?.id))
 			.collection('batch_votes_cart')
 			.where('user_address', '==', userAddress)
 			.where('network', '==', network)
@@ -115,23 +117,27 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 		const postsIndex: number[] = [];
 
 		if (cartRef?.empty) {
+			console.log('just checking 1');
 			return res.status(200).json({ votes: [] });
 		} else {
 			const cartDocs = cartRef.docs;
 
 			let allVotes: IBatchVoteCartResponse[] = [];
-
 			cartDocs.map((doc) => {
+				console.log('just checking 2');
+
 				if (doc.exists) {
 					const data = doc.data();
 
 					postsIndex.push(data?.referendum_index);
 					allVotes.push({
-						balance: data?.balance || '0',
+						abstainBalance: data?.abstain_balance || '0',
+						ayeBalance: data?.aye_balance || '0',
 						createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
 						decision: data?.decison || 'aye',
 						id: data?.id || '',
 						lockedPeriod: data?.locked_period || 0.1,
+						nayBalance: data?.nay_balance || '0',
 						network: data?.network || network,
 						referendumIndex: data?.referendum_index,
 						updatedAt: getUpdatedAt(data) || null,
@@ -140,7 +146,9 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				}
 			});
 
+			console.log('hi there guys 1');
 			if (postsIndex.length) {
+				console.log('hi there guys 2');
 				const subsquidProposalsRes = await fetchSubsquid({
 					network,
 					query: ACTIVE_PROPOSALS_FROM_PROPOSALS_INDEXES,
@@ -156,7 +164,9 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				const results: any[] = [];
 
 				if (subsquidProposalsData.length) {
+					console.log('heelo polkas');
 					const activeProposalIds: number[] = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
+					console.log(activeProposalIds);
 
 					const allRefs = activeProposalIds.map((id) => {
 						return postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(id));
@@ -284,13 +294,14 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 
 					await Promise.allSettled(subsquidProposalsDataPromises);
 				}
-
+				console.log('inside api --> ', results.length);
 				allVotes = allVotes.map((vote) => {
 					results.map((item) => {
 						if (item.id == vote?.referendumIndex) {
 							vote.proposal = item;
 						}
 					});
+					console.log('api data --> ', vote);
 					return vote;
 				});
 			}

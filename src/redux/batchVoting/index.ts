@@ -21,7 +21,7 @@ const initialState: IBatchVoteStore = {
 		post_id: 0,
 		post_title: '',
 		voteBalance: 0,
-		voteConviction: ''
+		voteConviction: 0.1
 	},
 	vote_card_info_array: [],
 	voted_post_ids_array: [],
@@ -72,7 +72,7 @@ export const batchVoteStore = createSlice({
 					post_id: 0,
 					post_title: '',
 					voteBalance: 0,
-					voteConviction: ''
+					voteConviction: 0.1
 				},
 				vote_card_info_array: [],
 				voted_post_ids_array: [],

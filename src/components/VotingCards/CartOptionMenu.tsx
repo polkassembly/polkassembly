@@ -17,7 +17,8 @@ const CartOptionMenu = () => {
 	const dispatch = useAppDispatch();
 
 	const deletePostDetails = async (post_ids: number[]) => {
-		const post_ids_strings = post_ids.map((id) => id.toString());
+		const post_ids_strings = post_ids.map((id) => id?.toString());
+		console.log(post_ids_strings);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			ids: post_ids_strings
 		});

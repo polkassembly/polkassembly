@@ -19,7 +19,7 @@ export type IVoteCardInfo = {
 	post_id: number;
 	post_title: string;
 	decision: string;
-	voteConviction: string;
+	voteConviction: number;
 	voteBalance: any;
 	posted?: boolean;
 	abstainAyeBalance?: string;
@@ -33,5 +33,5 @@ export interface IBatchVotesDetails {
 	abstainAyeVoteBalance?: string;
 	abstainNyeVoteBalance?: string;
 	abstainVoteBalance?: string;
-	conviction?: string;
+	conviction?: number;
 }

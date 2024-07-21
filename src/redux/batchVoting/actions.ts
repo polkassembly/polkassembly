@@ -14,7 +14,7 @@ interface IBatchVotingDefaults {
 		abstainAyeVoteBalance?: string;
 		abstainNyeVoteBalance?: string;
 		abstainVoteBalance?: string;
-		conviction?: string;
+		conviction?: number;
 	};
 }
 
@@ -66,7 +66,7 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 		dispatch(
 			batchVotesActions.setBatchVoting_Field({
 				key: 'conviction',
-				value: values?.conviction || '0x'
+				value: values?.conviction || 0
 			})
 		);
 	}
@@ -74,6 +74,7 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 
 export const editCartPostValueChanged = createAsyncThunk('house/editProfileFieldValueChanged', async (params: IBatchVotingDefaults, { dispatch }) => {
 	const { values } = params;
+	console.log(values);
 	if (values?.voteOption) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
@@ -120,7 +121,7 @@ export const editCartPostValueChanged = createAsyncThunk('house/editProfileField
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({
 				key: 'conviction',
-				value: values?.conviction || '0x'
+				value: values?.conviction || 0
 			})
 		);
 	}

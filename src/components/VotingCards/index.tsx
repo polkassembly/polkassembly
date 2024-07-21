@@ -47,13 +47,14 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		console.log('hello postid --> ', postId);
+		console.log('hello postid --> ', postId, direction);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
-				balance:
-					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance || '0',
+				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
+				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
 				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
-				locked_period: batch_vote_details?.conviction || '0x',
+				locked_period: batch_vote_details.conviction || 0.1,
+				nay_balance: direction === 'left' ? batch_vote_details.nyeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainNyeVoteBalance || '0' : '0',
 				network: network,
 				referendum_index: postId,
 				user_address: user?.loginAddress
@@ -100,6 +101,7 @@ const VotingCards = () => {
 	}, [network, user?.loginAddress]);
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
+		console.log(batch_vote_details?.conviction);
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
@@ -113,7 +115,7 @@ const VotingCards = () => {
 				post_title: postTitle,
 				voteBalance:
 					direction === 'left' ? batch_vote_details?.nyeVoteBalance : direction === 'right' ? batch_vote_details?.ayeVoteBalance : batch_vote_details?.abstainVoteBalance,
-				voteConviction: batch_vote_details?.conviction || '0x'
+				voteConviction: batch_vote_details?.conviction || 0
 			})
 		);
 		updateCurrentIndex(index - 1);

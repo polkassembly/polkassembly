@@ -28,7 +28,6 @@ const VoteCart: React.FC = () => {
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
 			isExternalApiCall: true,
-			page: 1,
 			userAddress: user?.loginAddress
 		});
 		if (error) {
@@ -79,7 +78,7 @@ const VoteCart: React.FC = () => {
 		if (!api || !apiReady) return;
 		console.log('here is vote data guys --> ', votesData);
 		if (votesData && votesData?.length > 0) {
-			getGASFees();
+			// getGASFees();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [votesData]);

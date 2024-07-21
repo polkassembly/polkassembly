@@ -123,7 +123,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 		} else {
 			const cartDocs = cartRef.docs;
 
-			const allVotes: IBatchVoteCartResponse[] = [];
+			let allVotes: IBatchVoteCartResponse[] = [];
 
 			cartDocs.map((doc) => {
 				if (doc.exists) {
@@ -292,16 +292,13 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 					await Promise.allSettled(subsquidProposalsDataPromises);
 				}
 
-				allVotes.map((vote) => {
+				allVotes = allVotes.map((vote) => {
 					results.map((item) => {
 						if (item.id == vote?.referendumIndex) {
-							return {
-								...vote,
-								proposal: item
-							};
+							console.log('inside if getbatchvote items --> ', { ...vote, proposal: item }, item.id, vote?.referendumIndex);
+							vote.proposal = item;
 						}
 					});
-
 					return vote;
 				});
 			}

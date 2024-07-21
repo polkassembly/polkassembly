@@ -27,6 +27,7 @@ const VotingCards = () => {
 	// const [isLoading, setIsLoading] = useState(true);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
+	const [tempActiveProposals, setTempActiveProposals] = useState([]);
 	console.log('here proposals --> ', activeProposal);
 
 	const childRefs: any = useMemo(
@@ -66,7 +67,7 @@ const VotingCards = () => {
 		}
 	};
 
-	const getActiveProposals = async () => {
+	const getActiveProposals = async (callingFirstTime: boolean) => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
 			isExternalApiCall: true,
 			network: network,
@@ -82,14 +83,19 @@ const VotingCards = () => {
 		} else {
 			console.log(data);
 			// setIsLoading(false);
-			dispatch(batchVotesActions.setVotedPostsIdsArray([]));
-			setActiveProposals(data);
+			if (callingFirstTime) {
+				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
+				setActiveProposals(data);
+			} else {
+				setTempActiveProposals(data);
+			}
 		}
 	};
 
 	useEffect(() => {
+		console.log('user login adddress --> ', user?.loginAddress);
 		if (!network || !user?.loginAddress?.length) return;
-		getActiveProposals();
+		getActiveProposals(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, user?.loginAddress]);
 
@@ -113,8 +119,12 @@ const VotingCards = () => {
 		updateCurrentIndex(index - 1);
 		addVotedPostToDB(postId, direction);
 		if (total_active_posts > 5) {
+			getActiveProposals(false);
+		}
+		if (total_active_posts === 9) {
+			console.log('temporary --> ', tempActiveProposals);
 			dispatch(batchVotesActions.setTotalActivePosts(0));
-			getActiveProposals();
+			setActiveProposals([...activeProposal, ...tempActiveProposals]);
 		}
 	};
 

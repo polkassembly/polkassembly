@@ -87,8 +87,9 @@ interface ICardPostHeadingProps {
 const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const router = useRouter();
 	const { className, postArguments, method, motion_method, post } = props;
+	let assetId: any;
 	const {
-		assetId,
+		// assetId,
 		beneficiaries,
 		created_at,
 		status,
@@ -251,7 +252,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
-								assetId={assetId}
+								assetId={assetId || '0'}
 								requestedAmt={requestedAmt.toString()}
 								className={classNames(className, 'flex')}
 								postId={onchainId ? Number(onchainId) : (onchainId as any)}
@@ -281,7 +282,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 			<div className='mb-3'>
 				<>
 					<CreationLabel
-						assetId={assetId}
+						assetId={assetId || '0'}
 						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}

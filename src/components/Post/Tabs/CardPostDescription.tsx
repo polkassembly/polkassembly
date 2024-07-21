@@ -5,12 +5,10 @@
 import dynamic from 'next/dynamic';
 import React, { FC } from 'react';
 import Markdown from 'src/ui-components/Markdown';
-import { usePostDataContext } from '~src/context';
 import CreateOptionPoll from '../ActionsBar/OptionPoll/CreateOptionPoll';
 import PostReactionBar from '../ActionsBar/Reactionbar/PostReactionBar';
 import ReportButton from '../ActionsBar/ReportButton';
 import ShareButton from '../ActionsBar/ShareButton';
-import SubscriptionButton from '../ActionsBar/SubscriptionButton/SubscriptionButton';
 import { useRouter } from 'next/router';
 import { EReportType, NotificationStatus } from '~src/types';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -48,14 +46,13 @@ interface IPostDescriptionProps {
 	isOnchainPost: boolean;
 	toggleEdit?: () => void;
 	TrackerButtonComp?: JSX.Element;
+	post: any;
 	Sidebar: ({ className }: { className?: string | undefined }) => JSX.Element;
 }
 
-const PostDescription: FC<IPostDescriptionProps> = (props) => {
-	const { className, canEdit, id, isEditing, toggleEdit, Sidebar } = props;
-	const {
-		postData: { content, postType, postIndex, title, post_reactions }
-	} = usePostDataContext();
+const CardPostDescription: FC<IPostDescriptionProps> = (props) => {
+	const { className, canEdit, id, isEditing, toggleEdit, Sidebar, post } = props;
+	const { content, postType, postIndex, title, post_reactions } = post;
 	const currentUser = useUserDetailsSelector();
 	const { allowed_roles } = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -186,14 +183,6 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 								</span>
 							</button>
 						)}
-
-						{!canEdit && id && !isEditing && (
-							<SubscriptionButton
-								postId={postIndex}
-								proposalType={postType}
-								title={title}
-							/>
-						)}
 						<Dropdown
 							theme={theme}
 							placement='bottomLeft'
@@ -221,4 +210,4 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 	);
 };
 
-export default PostDescription;
+export default CardPostDescription;

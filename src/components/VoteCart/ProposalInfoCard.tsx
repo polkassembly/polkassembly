@@ -15,8 +15,8 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-// import Post from '../Post/Post';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import CardPostInfo from '../Post/CardPostInfo';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -227,11 +227,11 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						setOpenViewProposalModal(false);
 					}}
 				>
-					{/* <Post
-						post={post}
+					<CardPostInfo
+						post={voteInfo?.proposal}
 						trackName={'root'}
-						proposalType={proposalType}
-					/> */}
+						proposalType={voteInfo?.proposal?.type}
+					/>
 				</Modal>
 			</article>
 		</section>

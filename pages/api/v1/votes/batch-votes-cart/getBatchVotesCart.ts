@@ -107,7 +107,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 
 		const cartRef = await firestore_db
 			.collection('users')
-			.doc(String(6496))
+			.doc(String(user.id))
 			.collection('batch_votes_cart')
 			.where('user_address', '==', userAddress)
 			.where('network', '==', network)

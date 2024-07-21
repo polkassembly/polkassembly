@@ -13,7 +13,8 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 
 interface Args {
-	ids: string[];
+	id: string[];
+	deleteWholeCart: boolean;
 }
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
@@ -31,23 +32,46 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user = await authServiceInstance.GetUser(token);
 		if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		const { ids } = req.body as unknown as Args;
-
-		if (!ids.length && ids.filter((id) => typeof id !== 'string')?.length) return res.status(403).json({ message: messages.INVALID_PARAMS });
-
+		const { id, deleteWholeCart } = req.body as unknown as Args;
 		const batch = firestore_db.batch();
 
-		ids.map((id) => {
-			const ref = firestore_db
+		if (deleteWholeCart) {
+			const cartRefs = await firestore_db
+				.collection('users')
+				.doc(String(user?.id))
+				.collection('batch_votes_cart')
+				.get();
+
+			cartRefs.docs.map((doc) =>
+				batch.delete(
+					firestore_db
+						.collection('users')
+						.doc(String(user?.id))
+						.collection('batch_votes_cart')
+						.doc(doc.id)
+				)
+			);
+
+			await batch.commit();
+		} else {
+			if (typeof id !== 'string') return res.status(403).json({ message: messages.INVALID_PARAMS });
+
+			const voteSnaphot = firestore_db
 				.collection('users')
 				.doc(String(user?.id))
 				.collection('batch_votes_cart')
 				.doc(id);
 
-			batch.delete(ref);
-		});
+			const ref = await voteSnaphot.get();
 
-		await batch.commit();
+			if (ref.exists) {
+				await voteSnaphot.delete();
+			} else {
+				return res.status(500).send({
+					message: `${messages.VOTE_NOT_FOUND} for id ${id || ''}`
+				});
+			}
+		}
 
 		return res.status(200).send({ message: messages.SUCCESS });
 	} catch (error) {

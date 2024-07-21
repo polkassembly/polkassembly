@@ -33,7 +33,9 @@ export interface IBatchVoteCartResponse {
 	referendumIndex: number;
 	network: string;
 	decision: 'aye' | 'nay' | 'abstain';
-	balance: string;
+	ayeBalance: string;
+	nayBalance: string;
+	abstainBalance: string;
 	lockedPeriod: number;
 	userAddress: string;
 	id: string;
@@ -127,11 +129,13 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 
 					postsIndex.push(data?.referendum_index);
 					allVotes.push({
-						balance: data?.balance || '0',
+						abstainBalance: data?.abstain_balance || '0',
+						ayeBalance: data?.aye_balance || '0',
 						createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
 						decision: data?.decison || 'aye',
 						id: data?.id || '',
 						lockedPeriod: data?.locked_period || 0.1,
+						nayBalance: data?.nay_balance || '0',
 						network: data?.network || network,
 						referendumIndex: data?.referendum_index,
 						updatedAt: getUpdatedAt(data) || null,

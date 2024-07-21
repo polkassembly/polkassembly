@@ -17,7 +17,9 @@ interface Args {
 		referendum_index: number;
 		network: string;
 		decision: 'aye' | 'nay' | 'abstain';
-		balance: string;
+		aye_balance: string;
+		nay_balance: string;
+		abstain_balance: string;
 		locked_period: number;
 		user_address: string;
 	};
@@ -41,7 +43,9 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const { vote } = req.body as unknown as Args;
 
 		if (
-			typeof vote?.balance !== 'string' ||
+			typeof vote?.aye_balance !== 'string' ||
+			typeof vote?.nay_balance !== 'string' ||
+			typeof vote?.abstain_balance !== 'string' ||
 			!['aye', 'nay', 'abstain'].includes(vote?.decision) ||
 			!vote?.locked_period ||
 			typeof vote?.locked_period !== 'number' ||

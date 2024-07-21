@@ -137,7 +137,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			dispatch(
 				editCartPostValueChanged({
 					values: {
-						voteOption: value as EVoteDecisionType
+						voteOption: (value as EVoteDecisionType) || 'aye'
 					}
 				})
 			);
@@ -248,7 +248,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										ayeVoteBalance: balance?.toString()
+										ayeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -275,7 +275,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										nyeVoteBalance: balance?.toString()
+										nyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -303,7 +303,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString()
+										abstainVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -322,7 +322,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainAyeVoteBalance: balance?.toString()
+										abstainAyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -341,7 +341,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainNyeVoteBalance: balance?.toString()
+										abstainNyeVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);
@@ -360,7 +360,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 							dispatch(
 								editCartPostValueChanged({
 									values: {
-										abstainVoteBalance: balance?.toString()
+										abstainVoteBalance: balance?.toString() || '0'
 									}
 								})
 							);

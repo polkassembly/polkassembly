@@ -89,13 +89,13 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 						step={null}
 						onChange={(value) => {
 							const markValue = getMarkValue(value as number);
-							if (forSpecificPost) {
+							if (!forSpecificPost) {
 								dispatch(editBatchValueChanged({ values: { conviction: parseFloat(markValue.replace('x', '')) } }));
 							} else {
 								dispatch(
 									editCartPostValueChanged({
 										values: {
-											conviction: parseFloat(markValue.replace('x', ''))
+											conviction: parseFloat(markValue.replace('x', '')) || 0.1
 										}
 									})
 								);

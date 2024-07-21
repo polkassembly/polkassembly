@@ -12,15 +12,13 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const CartOptionMenu = () => {
-	const { total_proposals_added_in_Cart, post_ids_array } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 
-	const deletePostDetails = async (post_ids: number[]) => {
-		const post_ids_strings = post_ids.map((id) => id?.toString());
-		console.log(post_ids_strings);
+	const deletePostDetails = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
-			ids: post_ids_strings
+			deleteWholeCart: true
 		});
 		if (error) {
 			console.error(error);
@@ -35,7 +33,7 @@ const CartOptionMenu = () => {
 		dispatch(batchVotesActions.setShowCartMenu(false));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(0));
 		dispatch(batchVotesActions.setVotesCardInfoArray([0]));
-		deletePostDetails(post_ids_array);
+		deletePostDetails();
 	};
 
 	return (

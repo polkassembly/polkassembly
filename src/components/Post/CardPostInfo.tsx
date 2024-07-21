@@ -4,12 +4,10 @@
 import React, { FC } from 'react';
 import PostOnChainInfo from './Tabs/PostOnChainInfo';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
-import { useUserDetailsSelector } from '~src/redux/selectors';
-import { checkIsOnChainPost } from '~src/global/proposalType';
-import { Tabs } from 'antd';
 import CardPostHeading from './CardPostHeading';
 import { useTheme } from 'next-themes';
 import CardPostDescription from './Tabs/CardPostDescription';
+import { Tabs } from '~src/ui-components/Tabs';
 
 interface ICardPostInfo {
 	post: any;
@@ -18,9 +16,7 @@ interface ICardPostInfo {
 
 const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	const { post, proposalType } = props;
-	const isOnchainPost = checkIsOnChainPost(proposalType);
 	const { resolvedTheme: theme } = useTheme();
-	const { id } = useUserDetailsSelector();
 
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];
@@ -84,12 +80,8 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 		{
 			children: (
 				<CardPostDescription
-					id={id}
-					post={post}
-					isEditing={false}
-					canEdit={false}
-					isOnchainPost={isOnchainPost}
-					Sidebar={() => <p>hello</p>}
+					postContent={post?.content}
+					postId={post?.id}
 				/>
 			),
 			key: 'description',
@@ -105,6 +97,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 				motion_method={post?.motion_method}
 				postArguments={post?.proposed_call?.args}
 				className='mb-5'
+				post={post}
 			/>
 			<Tabs
 				theme={theme}

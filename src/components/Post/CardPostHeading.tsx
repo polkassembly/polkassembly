@@ -87,10 +87,9 @@ interface ICardPostHeadingProps {
 const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const router = useRouter();
 	const { className, postArguments, method, motion_method, post } = props;
-	let assetId: any;
+	console.log('checking props --> ', post);
 	const {
-		// assetId,
-		beneficiaries,
+		assetId,
 		created_at,
 		status,
 		postType: proposalType,
@@ -252,7 +251,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
-								assetId={assetId || '0'}
+								assetId={assetId}
 								requestedAmt={requestedAmt.toString()}
 								className={classNames(className, 'flex')}
 								postId={onchainId ? Number(onchainId) : (onchainId as any)}
@@ -282,7 +281,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 			<div className='mb-3'>
 				<>
 					<CreationLabel
-						assetId={assetId || '0'}
+						assetId={assetId}
 						className='md post-user-container  dark:bg-section-dark-overlay'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}
@@ -290,7 +289,6 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 						topic={topic && topic?.name}
 						cid={cid}
 						isRow={false}
-						beneficiaries={beneficiaries}
 						inPostHeading={true}
 					>
 						{history && history?.length > 0 && (
@@ -306,7 +304,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 								/>
 							</div>
 						)}
-						{tags && tags?.length > 0 && beneficiaries && beneficiaries?.length > 0 && (
+						{tags && tags?.length > 0 && (
 							<>
 								<Divider
 									className='mr-3 hidden md:inline-block'
@@ -325,7 +323,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 							</>
 						)}
 					</CreationLabel>
-					{tags && tags?.length > 0 && !beneficiaries?.length && (
+					{tags && tags?.length > 0 && (
 						<TagsListing
 							tags={tags}
 							handleTagClick={(tag: string) => handleTagClick(onTagClickFilter(proposalType, track_name || ''), tag)}

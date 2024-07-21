@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CardPostInfo from '../Post/CardPostInfo';
+import { useRouter } from 'next/router';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -27,6 +28,8 @@ interface IProposalInfoCard {
 const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo } = props;
 	const dispatch = useDispatch();
+	const router = useRouter();
+	const { vote_card_info } = useBatchVotesSelector();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -35,18 +38,21 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const [openViewProposalModal, setOpenViewProposalModal] = useState<boolean>(false);
 	const handleRemove = (postId: number) => {
 		dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
-		deletePostDetails(postId);
+		deletePostDetails();
 	};
 
 	const editPostVoteDetails = async () => {
+		console.log('vote infos --> ', vote_card_info);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
-				balance: voteInfo?.voteBalance || '0',
-				decision: voteInfo?.decision || 'aye',
+				abstain_balance: vote_card_info?.decision === 'abstain' ? vote_card_info?.voteBalance : '0',
+				aye_balance: vote_card_info?.decision === 'aye' ? vote_card_info.voteBalance : vote_card_info?.decision === 'abstain' ? vote_card_info.abstainAyeBalance : '0',
+				decision: vote_card_info?.decision,
 				id: voteInfo?.id,
-				locked_period: voteInfo?.voteConviction,
+				locked_period: vote_card_info?.voteConviction,
+				nay_balance: vote_card_info?.decision === 'nay' ? vote_card_info.voteBalance : vote_card_info?.decision === 'abstain' ? vote_card_info.abstainNayBalance : '0',
 				network: network,
-				referendum_index: voteInfo.post_id,
+				referendum_index: voteInfo.referendumIndex,
 				user_address: user?.loginAddress
 			}
 		});
@@ -58,11 +64,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		}
 	};
 
-	const deletePostDetails = async (post_id: number) => {
-		const removeIds = [];
-		removeIds.push(post_id.toString());
+	const deletePostDetails = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
-			ids: removeIds
+			id: voteInfo?.id
 		});
 		if (error) {
 			console.error(error);
@@ -162,11 +166,12 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								text='Done'
 								buttonsize='sm'
 								onClick={() => {
+									console.log('edit infos --> ', edit_vote_details);
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
 											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
 											abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainNyeVoteBalance,
-											decision: edit_vote_details?.voteOption || batch_vote_details?.conviction || 'aye',
+											decision: edit_vote_details?.voteOption || batch_vote_details?.voteOption || 'aye',
 											post_id: voteInfo.post_id,
 											post_title: voteInfo.post_title,
 											voteBalance:
@@ -175,7 +180,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 													: edit_vote_details?.voteOption === 'nay'
 													? edit_vote_details?.nyeVoteBalance
 													: edit_vote_details?.abstainVoteBalance,
-											voteConviction: edit_vote_details?.conviction || '0x'
+											voteConviction: edit_vote_details?.conviction || 0.1
 										})
 									);
 									setOpenEditModal(false);
@@ -213,9 +218,11 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 						<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
 							<CustomButton
 								variant='default'
-								text='Cancel'
+								text='View Details'
+								className='w-full'
 								buttonsize='sm'
 								onClick={() => {
+									router.push(`/refernda/${voteInfo?.proposal?.id}`);
 									setOpenViewProposalModal(false);
 								}}
 							/>
@@ -229,7 +236,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				>
 					<CardPostInfo
 						post={voteInfo?.proposal}
-						trackName={'root'}
 						proposalType={voteInfo?.proposal?.type}
 					/>
 				</Modal>

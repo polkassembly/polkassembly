@@ -43,7 +43,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			vote: {
 				balance: voteInfo?.voteBalance || '0',
 				decision: voteInfo?.decision || 'aye',
-				id: user?.id?.toString(),
+				id: voteInfo?.id,
 				locked_period: voteInfo?.voteConviction,
 				network: network,
 				referendum_index: voteInfo.post_id,
@@ -79,8 +79,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'
 		>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
-				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.post_id}</p>
-				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo.post_title?.substring(0, 50)}...</p>
+				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
+				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo?.proposal?.title?.substring(0, 50)}...</p>
 				<Button
 					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0'
 					onClick={() => {
@@ -118,8 +118,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteBalance} DOT</p>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.voteConviction || '0x'}</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.balance} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.lockedPeriod || '0x'}</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Pagination } from 'antd';
+import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
@@ -20,8 +20,7 @@ const VoteCart: React.FC = () => {
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
-	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 1;
+	const [votesData, setVotesData] = useState<any>([]);
 	console.log(vote_card_info_array);
 
 	console.log('userid --> ', user?.id, user?.loginAddress);
@@ -29,7 +28,7 @@ const VoteCart: React.FC = () => {
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
 			isExternalApiCall: true,
-			page: currentPage,
+			page: 1,
 			userAddress: user?.loginAddress
 		});
 		if (error) {
@@ -37,33 +36,28 @@ const VoteCart: React.FC = () => {
 			return;
 		} else {
 			console.log('cards in cart --> ', data);
+			setVotesData(data?.votes);
 		}
 	};
 
 	useEffect(() => {
 		getVoteCartData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentPage]);
+	}, []);
 
-	useEffect(() => {
-		if (!api || !apiReady) return;
+	const getGASFees = () => {
 		const batchCall: any[] = [];
-		vote_card_info_array.map((vote) => {
+		votesData.map((vote: any) => {
+			console.log('individual --> ', vote);
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
-				voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
-					Standard: { balance: vote?.voteBalance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.voteConviction } }
+				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
+					Standard: { balance: vote?.balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.lockedPeriod } }
 				});
-			} else if (vote?.decision === EVoteDecisionType.SPLIT) {
-				try {
-					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, { Split: { aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` } });
-				} catch (e) {
-					console.log(e);
-				}
 			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.abstainAyeBalance && vote?.abstainNayBalance) {
 				try {
 					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
-						SplitAbstain: { abstain: `${vote?.voteBalance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
+						SplitAbstain: { abstain: `${vote?.balance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
 					});
 				} catch (e) {
 					console.log(e);
@@ -79,14 +73,16 @@ const VoteCart: React.FC = () => {
 				console.log(gasPrice);
 				setGasFees(gasPrice);
 			});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
 	};
 
-	const paginatedData = vote_card_info_array.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+	useEffect(() => {
+		if (!api || !apiReady) return;
+		console.log('here is vote data guys --> ', votesData);
+		if (votesData && votesData?.length > 0) {
+			getGASFees();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [votesData]);
 
 	return (
 		<section>
@@ -94,9 +90,9 @@ const VoteCart: React.FC = () => {
 				<div className='h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md dark:bg-black'>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
-						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_card_info_array?.length})</p>
+						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({votesData?.length})</p>
 					</div>
-					{paginatedData.map((voteCardInfo, index) => (
+					{votesData.map((voteCardInfo: any, index: number) => (
 						<ProposalInfoCard
 							key={index}
 							voteInfo={voteCardInfo}
@@ -104,13 +100,6 @@ const VoteCart: React.FC = () => {
 						/>
 					))}
 				</div>
-				<Pagination
-					current={currentPage}
-					pageSize={pageSize}
-					total={vote_card_info_array.length}
-					onChange={handlePageChange}
-					className='my-4 flex justify-center'
-				/>
 			</article>
 			<article
 				className='h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
@@ -119,7 +108,7 @@ const VoteCart: React.FC = () => {
 				<div className='flex flex-col gap-y-2'>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_card_info_array?.length}</p>
+						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{votesData?.length}</p>
 					</div>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>

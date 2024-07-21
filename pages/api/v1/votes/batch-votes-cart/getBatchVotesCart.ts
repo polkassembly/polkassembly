@@ -12,7 +12,6 @@ import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import { CustomStatus } from '~src/components/Listing/Tracks/TrackListingCard';
-import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { getFirestoreProposalType, getProposalTypeTitle, getStatusesFromCustomStatus, getSubsquidProposalType, ProposalType } from '~src/global/proposalType';
 import { ACTIVE_PROPOSALS_FROM_PROPOSALS_INDEXES } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
@@ -27,7 +26,6 @@ import { getSubSquareContentAndTitle } from '../../posts/subsqaure/subsquare-con
 
 interface Args {
 	userAddress: string;
-	page: number;
 	isExternalApiCall: boolean;
 }
 
@@ -99,9 +97,9 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 		const user = await authServiceInstance.GetUser(token);
 		if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		const { userAddress, page, isExternalApiCall } = req.body as unknown as Args;
+		const { userAddress, isExternalApiCall } = req.body as unknown as Args;
 
-		if (isNaN(page) || !getEncodedAddress(userAddress, network)) {
+		if (!getEncodedAddress(userAddress, network)) {
 			return res.status(500).json({ message: messages.INVALID_PARAMS });
 		}
 
@@ -111,8 +109,6 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 			.collection('batch_votes_cart')
 			.where('user_address', '==', userAddress)
 			.where('network', '==', network)
-			.limit(LISTING_LIMIT)
-			.offset(LISTING_LIMIT * (page - 1))
 			.orderBy('created_at', 'desc')
 			.get();
 
@@ -162,15 +158,12 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				if (subsquidProposalsData.length) {
 					const activeProposalIds: number[] = subsquidProposalsData.map((proposal: any) => (isNaN(proposal?.index) ? null : proposal?.index));
 
-					const postsSnapshot = await postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType)
-						.where(
-							'id',
-							'in',
-							activeProposalIds.filter((item: number | null) => !!item)
-						)
-						.get();
+					const allRefs = activeProposalIds.map((id) => {
+						return postsByTypeRef(network, ProposalType.REFERENDUM_V2 as ProposalType).doc(String(id));
+					});
 
-					const postsDocs = postsSnapshot.docs;
+					const postsDocs = await firestore_db.getAll(...allRefs);
+
 					const subsquidProposalsDataPromises = subsquidProposalsData.map(async (subsquidPost: any) => {
 						const firebasePostDoc = postsDocs.find((doc) => doc.id == subsquidPost.index);
 
@@ -253,7 +246,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 							payload.title = firebasePost?.title || '';
 							payload.topic = getTopicFromFirestoreData(firebasePost, getFirestoreProposalType(ProposalType.OPEN_GOV) as ProposalType);
 
-							if (!firebasePost?.title?.length || !firebasePost?.content?.length) {
+							if ((!firebasePost?.title?.length || !firebasePost?.content?.length) && firebasePost) {
 								const res = await getSubSquareContentAndTitle(ProposalType.REFERENDUM_V2, network, subsquidPost.index);
 								firebasePost.content = payload?.content || res?.content || '';
 								firebasePost.title = payload?.title || res?.title || '';
@@ -295,10 +288,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 				allVotes.map((vote) => {
 					results.map((item) => {
 						if (item.id == vote?.referendumIndex) {
-							return {
-								...vote,
-								proposal: item
-							};
+							vote.proposal = item;
 						}
 					});
 

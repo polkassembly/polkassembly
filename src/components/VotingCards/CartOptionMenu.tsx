@@ -21,6 +21,8 @@ const CartOptionMenu = () => {
 		if (error) {
 			console.error(error);
 			return;
+		} else {
+			dispatch(batchVotesActions.setRemoveCartItems([]));
 		}
 	};
 

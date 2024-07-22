@@ -10,7 +10,7 @@ const VoteSuccessModal = () => {
 	const user = useUserDetailsSelector();
 	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
 	return (
-		<section className='h-[300px] p-6'>
+		<section className='h-[250px] p-6'>
 			<ImageIcon
 				src='/assets/icons/success-icon.svg'
 				alt='success-icon'
@@ -18,18 +18,18 @@ const VoteSuccessModal = () => {
 			/>
 			<div className='-mt-[116px] flex flex-col items-center justify-center'>
 				<h1 className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Batch Voted successfully </h1>
-				<div className='mt-2 flex w-[206px] items-center justify-between gap-x-4'>
+				<div className='mt-6 flex w-[216px] items-center justify-between'>
 					<p className='m-0 mr-auto p-0 text-sm text-lightBlue dark:text-blue-dark-high'>Address:</p>
 					<NameLabel
 						username={user?.username || ''}
 						usernameMaxLength={15}
-						className='m-0 ml-auto p-0'
+						className='m-0 -mr-1.5 ml-auto whitespace-nowrap p-0'
 						disableIdenticon={false}
 						truncateUsername={false}
 						isUsedInLeadership={true}
 					/>
 				</div>
-				<div className='flex w-[206px] items-center justify-between gap-x-4'>
+				<div className='flex w-[216px] items-center justify-between'>
 					<p className='m-0 mr-auto p-0 text-sm text-lightBlue dark:text-blue-dark-high'>proposal(s):</p>
 					<p className='m-0 ml-auto p-0 text-sm text-bodyBlue dark:text-white'>{total_proposals_added_in_Cart}</p>
 				</div>

@@ -5,7 +5,7 @@ import { Button, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
-import { EVoteDecisionType } from '~src/types';
+import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
@@ -17,6 +17,9 @@ import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import VoteSuccessModal from './VoteSuccessModal';
+import executeTx from '~src/util/executeTx';
+import queueNotification from '~src/ui-components/QueueNotification';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
@@ -26,7 +29,9 @@ const VoteCart: React.FC = () => {
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
+	const [isDisable, setIsDisable] = useState<boolean>(false);
 	const { vote_cart_data } = useBatchVotesSelector();
+	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
@@ -47,7 +52,61 @@ const VoteCart: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const onFailed = (error: string) => {
+		queueNotification({
+			header: 'failed!',
+			message: error || 'Transaction failed!',
+			status: NotificationStatus.ERROR
+		});
+	};
+
+	const onSuccess = async () => {
+		queueNotification({
+			header: 'success!',
+			message: 'Transaction successful!',
+			status: NotificationStatus.SUCCESS
+		});
+		setIsDisable(true);
+		setOpenSuccessModal(true);
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+			deleteWholeCart: true
+		});
+		if (error) {
+			console.error(error);
+			return;
+		} else {
+			dispatch(batchVotesActions.setRemoveCartItems([]));
+		}
+	};
+
+	const voteProposals = async () => {
+		if (!api || !apiReady) return;
+		const batchCall: any[] = [];
+		vote_cart_data.map((vote: any) => {
+			let voteTx = null;
+			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
+				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
+				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
+					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
+				});
+			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.ayeBalance && vote?.nayBalance) {
+				try {
+					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
+						SplitAbstain: { abstain: `${vote?.abstainBalance?.toString()}`, aye: `${vote?.ayeBalance?.toString()}`, nay: `${vote?.nayBalance?.toString()}` }
+					});
+				} catch (e) {
+					console.log(e);
+				}
+			}
+			batchCall.push(voteTx);
+		});
+		const tx = api?.tx?.utility?.batchAll(batchCall);
+		// eslint-disable-next-line sort-keys
+		await executeTx({ address: loginAddress, api, apiReady, network, errorMessageFallback: 'error', onFailed: onFailed, onSuccess: onSuccess, tx });
+	};
+
 	const getGASFees = () => {
+		if (!api || !apiReady) return;
 		const batchCall: any[] = [];
 		vote_cart_data.map((vote: any) => {
 			let voteTx = null;
@@ -116,15 +175,30 @@ const VoteCart: React.FC = () => {
 							{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
 						</p>
 					</div>
-					<Button className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'>Confirm Batch Voting</Button>
+					<Button
+						className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'
+						onClick={voteProposals}
+						disabled={isDisable}
+					>
+						Confirm Batch Voting
+					</Button>
 				</div>
 			</article>
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
-				open={true}
+				open={openSuccessModal}
 				maskClosable={false}
-				footer={null}
+				footer={
+					<CustomButton
+						variant='primary'
+						className='w-full'
+						text='close'
+						onClick={() => {
+							setOpenSuccessModal(false);
+						}}
+					/>
+				}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				onCancel={() => {}}
 			>

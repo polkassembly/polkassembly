@@ -167,7 +167,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 						<div className='flex'>
 							<CardHeader
 								theme={theme as any}
-								className='relative flex h-[56px] w-full items-center justify-start gap-4 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
+								className='relative flex h-[56px] w-full items-center justify-start gap-3 rounded-t-3xl border-b-0 border-l border-r border-t border-solid border-section-light-container bg-white px-3 pt-5 dark:border-section-dark-container dark:bg-section-light-overlay'
 							>
 								<div className='flex items-baseline gap-x-2'>
 									<h2 className='mt-4 font-pixeboy text-[35px] font-normal text-pink_primary'>
@@ -264,7 +264,7 @@ const BountiesProposalsCard: React.FC<BountiesProposalsCardProps> = ({ activeDat
 									)}
 								</div>
 							)}
-							<div className='mb-[6px] mt-1 flex justify-between'>
+							<div className='mb-2 mt-2 flex justify-between'>
 								<Link
 									href={`/address/${proposer}`}
 									target='_blank'

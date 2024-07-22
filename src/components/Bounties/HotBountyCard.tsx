@@ -188,11 +188,11 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 								</Link>
 								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-7 overflow-y-auto`}>
 									<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
-									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
+									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'> {title.length <= 28 ? title : `${title.slice(0, 28)}...`}</span>
 								</div>
 
 								<div
-									className={`${spaceGrotesk.className} ${spaceGrotesk.variable} mb-2 h-[40px] overflow-y-auto break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}
+									className={`${spaceGrotesk.className} ${spaceGrotesk.variable} scroll-hidden mb-2 h-[40px] overflow-y-auto break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}
 								>
 									{content ? removeSymbols(content).slice(0, 90) : getAscciiFromHex(description).slice(0, 90)}...
 								</div>
@@ -210,7 +210,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										</div>
 									)}
 								</div>
-								<div className='mt-[2px] flex h-[22px] items-center justify-between'>
+								<div className='my-1 flex h-[22px] items-center justify-between'>
 									<div>
 										{profileDetails?.username && (
 											<Link
@@ -223,7 +223,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 													className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
 												/>
 												<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
-													{profileDetails.username}
+													{profileDetails?.username.length <= 12 ? profileDetails.username : `${profileDetails.username.slice(0, 12)}...`}
 												</span>
 											</Link>
 										)}

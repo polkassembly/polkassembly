@@ -15,19 +15,16 @@ const CartOptionMenu = () => {
 	const dispatch = useAppDispatch();
 
 	const deletePostDetails = async () => {
-		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			deleteWholeCart: true
 		});
 		if (error) {
 			console.error(error);
 			return;
-		} else {
-			console.log(data);
 		}
 	};
 
 	const emptyCart = async () => {
-		console.log('heelo lets delete');
 		dispatch(batchVotesActions.setShowCartMenu(false));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(0));
 		dispatch(batchVotesActions.setVotesCardInfoArray([0]));

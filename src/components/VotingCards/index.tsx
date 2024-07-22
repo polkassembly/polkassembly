@@ -20,7 +20,6 @@ const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 
 const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
-	console.log('batch details -> ', batch_vote_details);
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -29,7 +28,6 @@ const VotingCards = () => {
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
-	console.log('here proposals --> ', activeProposal);
 
 	const childRefs: any = useMemo(
 		() =>
@@ -48,8 +46,7 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		console.log('hello postid --> ', postId, direction);
-		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
 				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
@@ -64,8 +61,6 @@ const VotingCards = () => {
 		if (error) {
 			console.error(error);
 			return;
-		} else {
-			console.log(data);
 		}
 	};
 
@@ -83,7 +78,6 @@ const VotingCards = () => {
 			console.error(error);
 			return;
 		} else {
-			console.log(data);
 			// setIsLoading(false);
 			if (callingFirstTime) {
 				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
@@ -95,14 +89,12 @@ const VotingCards = () => {
 	};
 
 	useEffect(() => {
-		console.log('user login adddress --> ', user?.loginAddress);
 		if (!network || !user?.loginAddress?.length) return;
 		getActiveProposals(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, user?.loginAddress]);
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
-		console.log(batch_vote_details);
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));
@@ -125,7 +117,6 @@ const VotingCards = () => {
 			getActiveProposals(false);
 		}
 		if (total_active_posts === 9) {
-			console.log('temporary --> ', tempActiveProposals);
 			dispatch(batchVotesActions.setTotalActivePosts(0));
 			setActiveProposals([...activeProposal, ...tempActiveProposals]);
 		}

@@ -87,7 +87,6 @@ interface ICardPostHeadingProps {
 const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const router = useRouter();
 	const { className, postArguments, method, motion_method, post } = props;
-	console.log('checking props --> ', post);
 	const {
 		assetId,
 		created_at,

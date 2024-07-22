@@ -24,8 +24,6 @@ const VoteCart: React.FC = () => {
 	const [gasFees, setGasFees] = useState<any>();
 	const { vote_cart_data } = useBatchVotesSelector();
 
-	console.log('userid --> ', user?.id, user?.loginAddress);
-
 	const getVoteCartData = async () => {
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
 			isExternalApiCall: true,
@@ -35,7 +33,6 @@ const VoteCart: React.FC = () => {
 			console.error(error);
 			return;
 		} else {
-			console.log('cards in cart --> ', data);
 			dispatch(batchVotesActions.setVoteCartData(data?.votes));
 		}
 	};
@@ -48,7 +45,6 @@ const VoteCart: React.FC = () => {
 	const getGASFees = () => {
 		const batchCall: any[] = [];
 		vote_cart_data.map((vote: any) => {
-			console.log('individual --> ', vote);
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
@@ -70,14 +66,12 @@ const VoteCart: React.FC = () => {
 			?.paymentInfo(loginAddress)
 			.then((info) => {
 				const gasPrice = new BN(info?.partialFee?.toString() || '0');
-				console.log(gasPrice);
 				setGasFees(gasPrice);
 			});
 	};
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		console.log('here is vote data guys --> ', vote_cart_data);
 		if (vote_cart_data && vote_cart_data?.length > 0) {
 			getGASFees();
 		}

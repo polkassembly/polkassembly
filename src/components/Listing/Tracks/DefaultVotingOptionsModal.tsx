@@ -25,7 +25,6 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 	const [lastVote, setLastVote] = useState<ILastVote | null>(null);
 	const [address, setAddress] = useState<string>(loginAddress);
 	const onAccountChange = (address: string) => {
-		console.log(address);
 		setAddress(address);
 	};
 

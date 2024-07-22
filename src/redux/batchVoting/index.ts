@@ -189,7 +189,6 @@ export const batchVoteStore = createSlice({
 		},
 		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
 			state.vote_card_info = action.payload;
-			console.log('action pp --> ', state.vote_card_info);
 			state.vote_card_info_array.push(action.payload);
 
 			const uniqueVoteCardInfoMap = new Map();

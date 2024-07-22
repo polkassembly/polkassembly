@@ -353,7 +353,6 @@ const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) 
 
 	const { proposalType, userAddress, isExternalApiCall = false } = req.body;
 	const network = String(req.headers['x-network']);
-	console.log('inside non voted api --> ', proposalType, userAddress, isExternalApiCall);
 	const { data, error } = await getActiveProposalsForTrack({
 		isExternalApiCall: isExternalApiCall,
 		network: network,

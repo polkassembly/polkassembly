@@ -50,6 +50,32 @@ const nextConfig = {
 			]
 		};
 	},
+	async redirects() {
+		return [
+			{
+				source: '/',
+				destination: '/opengov',
+				permanent: true,
+				has: [
+					{
+						type: 'host',
+						value: 'polkadot.polkassembly.io'
+					}
+				]
+			},
+			{
+				source: '/',
+				destination: '/opengov',
+				permanent: true,
+				has: [
+					{
+						type: 'host',
+						value: 'kusama.polkassembly.io'
+					}
+				]
+			}
+		];
+	},
 	images: {
 		domains: ['parachains.info']
 	},

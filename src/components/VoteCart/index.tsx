@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
@@ -13,6 +13,10 @@ import { chainProperties } from '~src/global/networkConstants';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import VoteSuccessModal from './VoteSuccessModal';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
@@ -34,6 +38,7 @@ const VoteCart: React.FC = () => {
 			return;
 		} else {
 			dispatch(batchVotesActions.setVoteCartData(data?.votes));
+			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
 		}
 	};
 
@@ -47,13 +52,14 @@ const VoteCart: React.FC = () => {
 		vote_cart_data.map((vote: any) => {
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
+				const balance = vote?.decision === 'aye' ? vote?.ayeBalance : vote?.nayBalance;
 				voteTx = api?.tx.convictionVoting.vote(vote?.referendumIndex, {
-					Standard: { balance: vote?.balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: vote?.lockedPeriod } }
+					Standard: { balance: balance, vote: { aye: vote?.decision === EVoteDecisionType.AYE, conviction: parseInt(vote?.lockedPeriod) } }
 				});
-			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.abstainAyeBalance && vote?.abstainNayBalance) {
+			} else if (vote?.decision === EVoteDecisionType.ABSTAIN && vote?.ayeBalance && vote?.nayBalance) {
 				try {
 					voteTx = api?.tx.convictionVoting.vote(vote?.post_id, {
-						SplitAbstain: { abstain: `${vote?.balance?.toString()}`, aye: `${vote?.abstainAyeBalance?.toString()}`, nay: `${vote?.abstainNayBalance?.toString()}` }
+						SplitAbstain: { abstain: `${vote?.abstainBalance?.toString()}`, aye: `${vote?.ayeBalance?.toString()}`, nay: `${vote?.nayBalance?.toString()}` }
 					});
 				} catch (e) {
 					console.log(e);
@@ -62,7 +68,7 @@ const VoteCart: React.FC = () => {
 			batchCall.push(voteTx);
 		});
 		api?.tx?.utility
-			?.batch(batchCall)
+			?.batchAll(batchCall)
 			?.paymentInfo(loginAddress)
 			.then((info) => {
 				const gasPrice = new BN(info?.partialFee?.toString() || '0');
@@ -113,6 +119,17 @@ const VoteCart: React.FC = () => {
 					<Button className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'>Confirm Batch Voting</Button>
 				</div>
 			</article>
+			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				open={true}
+				maskClosable={false}
+				footer={null}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				onCancel={() => {}}
+			>
+				<VoteSuccessModal />
+			</Modal>
 		</section>
 	);
 };

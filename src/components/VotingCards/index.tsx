@@ -10,9 +10,10 @@ import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } fro
 import SwipeActionButtons from './SwipeActionButtons';
 import TinderCardsComponent from './TinderCardsComponent';
 import dynamic from 'next/dynamic';
-import { Skeleton } from 'antd';
+import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
+import { PostEmptyState } from '~src/ui-components/UIStates';
 const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -24,7 +25,7 @@ const VotingCards = () => {
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
 	const [activeProposal, setActiveProposals] = useState([]);
-	// const [isLoading, setIsLoading] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
@@ -46,11 +47,12 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
+		console.log(direction);
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
 				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
-				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
+				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'abstain',
 				locked_period: batch_vote_details.conviction,
 				nay_balance: direction === 'left' ? batch_vote_details.nyeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainNyeVoteBalance || '0' : '0',
 				network: network,
@@ -65,6 +67,7 @@ const VotingCards = () => {
 	};
 
 	const getActiveProposals = async (callingFirstTime: boolean) => {
+		setIsLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
 			isExternalApiCall: true,
 			network: network,
@@ -74,11 +77,10 @@ const VotingCards = () => {
 			userId: user?.id
 		});
 		if (error) {
-			// setIsLoading(false);
 			console.error(error);
 			return;
 		} else {
-			// setIsLoading(false);
+			setIsLoading(false);
 			if (callingFirstTime) {
 				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
 				setActiveProposals(data);
@@ -103,7 +105,7 @@ const VotingCards = () => {
 			batchVotesActions.setvoteCardInfo({
 				abstainAyeBalance: direction === 'left' || direction === 'right' ? '0' : batch_vote_details?.abstainAyeVoteBalance,
 				abstainNayBalance: direction === 'left' || direction === 'right' ? '0' : batch_vote_details?.abstainNyeVoteBalance,
-				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
+				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'abstain',
 				post_id: postId,
 				post_title: postTitle,
 				voteBalance:
@@ -150,24 +152,50 @@ const VotingCards = () => {
 					<RightOutlined className='text-black' />
 				</button>
 			</div>
-			<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
-				{activeProposal?.map((proposal: any, index: number) => (
-					<TinderCard
-						ref={childRefs[index]}
-						className='absolute h-full w-full'
-						key={proposal.name}
-						onSwipe={(dir) => {
-							swiped(dir, index, proposal?.id, proposal?.title);
-						}}
-						onCardLeftScreen={() => outOfFrame(proposal.title, index)}
-						preventSwipe={['down']}
-					>
-						<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
-							<TinderCardsComponent proposal={proposal} />
-						</div>
-					</TinderCard>
-				))}
-			</div>
+
+			{!isLoading && activeProposal.length <= 0 && (
+				<div className='flex h-[600px] items-center justify-center'>
+					<PostEmptyState
+						description={
+							<div className='p-5'>
+								<p>urrently no active proposals found</p>
+							</div>
+						}
+					/>
+				</div>
+			)}
+
+			{isLoading && (
+				<div className='flex h-[500px] items-center justify-center'>
+					<Spin
+						spinning={isLoading}
+						size='large'
+						className='mt-[48px]'
+					></Spin>
+				</div>
+			)}
+
+			{!isLoading && (
+				<div className={`relative ${show_cart_menu ? 'h-[640px]' : 'h-[700px]'} w-full max-w-sm`}>
+					{activeProposal?.map((proposal: any, index: number) => (
+						<TinderCard
+							ref={childRefs[index]}
+							className='absolute h-full w-full'
+							key={proposal.name}
+							onSwipe={(dir) => {
+								swiped(dir, index, proposal?.id, proposal?.title);
+							}}
+							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
+							preventSwipe={['down']}
+						>
+							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
+								<TinderCardsComponent proposal={proposal} />
+							</div>
+						</TinderCard>
+					))}
+				</div>
+			)}
+
 			<SwipeActionButtons
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}

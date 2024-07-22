@@ -12,10 +12,10 @@ import DownIcon from '~assets/icons/down-icon.svg';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { EAddressOtherTextType } from '~src/types';
 import { useDispatch } from 'react-redux';
-import { setUserDetailsState } from '~src/redux/userDetails';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { userDetailsActions } from '~src/redux/userDetails';
 
 export type InjectedTypeWithCouncilBoolean = InjectedAccount & {
 	isCouncil?: boolean;
@@ -130,7 +130,9 @@ const AddressDropdown = ({
 					if (e.key !== '1') {
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);
-						setSwitchModalOpen && dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: e.key }));
+						if (setSwitchModalOpen) {
+							dispatch(userDetailsActions.updateDelegationDashboardAddress(e?.key));
+						}
 					}
 				}
 			}}

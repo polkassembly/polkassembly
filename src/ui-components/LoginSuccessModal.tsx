@@ -22,6 +22,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from './ImageIcon';
 import Input from '~src/basic-components/Input';
 import Alert from '~src/basic-components/Alert';
+import CloseIcon from '~assets/icons/close-cross-icon.svg';
 
 interface Props {
 	// setLoading: (pre: boolean) => void;
@@ -218,9 +219,20 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 			{!showSuccessModal && (
 				<AuthForm onSubmit={handleOptionalDetails}>
 					<div>
-						<div className='my-4 ml-7 flex dark:text-white'>
-							{theme === 'dark' ? <WhiteMailIcon className='mr-2 text-2xl' /> : <MailIcon className='mr-2 text-2xl' />}
-							<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
+						<div className='my-4 ml-7 flex justify-between dark:text-white'>
+							<div className='flex'>
+								{theme === 'dark' ? <WhiteMailIcon className='mr-2 text-2xl' /> : <MailIcon className='mr-2 text-2xl' />}
+								<p className='m-0 p-0 text-xl font-semibold text-bodyBlue dark:text-white'>Add your email</p>
+							</div>
+							<div
+								className='mr-4'
+								onClick={() => {
+									setLoginOpen?.(false);
+									setSignupOpen?.(false);
+								}}
+							>
+								<CloseIcon />
+							</div>
 						</div>
 						<Divider
 							style={{ background: '#D2D8E0', flexGrow: 1 }}

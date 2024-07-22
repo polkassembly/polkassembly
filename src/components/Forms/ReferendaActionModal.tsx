@@ -172,6 +172,7 @@ const ReferendaActionModal = ({
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
+					usedInIdentityFlow={false}
 				/>
 			)}
 			<Modal
@@ -186,7 +187,7 @@ const ReferendaActionModal = ({
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closable={false}
 				title={
-					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						Exit Proposal Creation
 					</div>
 				}
@@ -195,7 +196,7 @@ const ReferendaActionModal = ({
 					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>
 						Your proposal information (Title, Description & Tags) would be lost. Are you sure you want to exit proposal creation process?{' '}
 					</span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={handleClose}
 							buttonsize='sm'
@@ -227,7 +228,7 @@ const ReferendaActionModal = ({
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				title={
-					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='flex items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						{theme === 'dark' ? <CreateProposalIconDark /> : <CreateProposalIcon />}
 						{referendaModal === 1 ? 'Create Referenda' : referendaModal === 2 ? 'Cancel Referenda' : referendaModal === 3 ? 'Kill Referenda' : 'Create Treasury Proposal'}
 					</div>

@@ -44,6 +44,8 @@ const PreImages: FC<IPreImagesProps> = (props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
 
+	console.log(data);
+
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps

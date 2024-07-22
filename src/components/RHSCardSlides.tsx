@@ -204,7 +204,10 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						userName: username || ''
 					});
 					newCards.push({
-						clickHandler: () => setOpenLinkCta(true),
+						clickHandler: () => {
+							setOpenLinkCta(true);
+							setCurrentIndex(0);
+						},
 						description: 'Please add contextual info for voters to make an informed decision',
 						icon: '/assets/icons/rhs-card-icons/Doc.png',
 						tag: cardTags.LINK_DISCUSSION,
@@ -331,7 +334,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 						{RHSCards.map((_, index) => (
 							<div
 								key={index}
-								className={`indicator h-2 w-2 rounded-full  ${index === currentIndex ? 'bg-rhs-indicator-gradient' : 'bg-[#D2D8E0]'}`}
+								className={`indicator h-2 w-2 rounded-full  ${index === currentIndex ? 'bg-rhs-indicator-gradient' : 'bg-section-light-container'}`}
 							></div>
 						))}
 						{RHSCards.length > 1 && (

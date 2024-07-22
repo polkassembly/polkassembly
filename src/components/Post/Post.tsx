@@ -4,17 +4,14 @@
 
 import { dayjs } from 'dayjs-init';
 import { IReferendumV2PostsByStatus } from 'pages/root';
-
 import dynamic from 'next/dynamic';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { PostEmptyState } from 'src/ui-components/UIStates';
-
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';
@@ -42,6 +39,7 @@ import QuoteCommentContextProvider from '~src/context/QuoteCommentContext';
 import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBottomDrawer';
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
+import { EAllowedCommentor } from '~src/types';
 import { useRouter } from 'next/router';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
@@ -490,6 +488,7 @@ const Post: FC<IPostProps> = (props) => {
 		<>
 			<PostDataContextProvider
 				initialPostData={{
+					allowedCommentors: post?.allowedCommentors || EAllowedCommentor.ALL,
 					assetId: post?.assetId || null,
 					beneficiaries: post?.beneficiaries || [],
 					cid: post?.cid || '',
@@ -524,6 +523,7 @@ const Post: FC<IPostProps> = (props) => {
 					topic: post?.topic || '',
 					track_name: trackName,
 					track_number: post?.track_number,
+					userId: post?.user_id,
 					username: post?.username
 				}}
 			>

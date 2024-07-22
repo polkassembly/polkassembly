@@ -18,6 +18,12 @@ const firestore_db = admin.firestore();
 
 const w3fDelegatesPolkadot = [
 	{
+		address: '13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC',
+		longDescription: '',
+		name: 'Polkassembly',
+		shortDescription: ''
+	},
+	{
 		address: '13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K',
 		longDescription: '',
 		name: 'ChaosDAO OpenGov',
@@ -32,7 +38,7 @@ const w3fDelegatesPolkadot = [
 	{
 		address: '15fTH34bbKGMUjF1bLmTqxPYgpg481imThwhWcQfCyktyBzL',
 		longDescription: '',
-		name: 'JimmyTudeski - Polkadot Resident',
+		name: 'HELIKON',
 		shortDescription: ''
 	},
 	{
@@ -57,6 +63,30 @@ const w3fDelegatesPolkadot = [
 		address: '12mP4sjCfKbDyMRAEyLpkeHeoYtS5USY4x34n9NMwQrcEyoh',
 		longDescription: '',
 		name: 'Polkaworld',
+		shortDescription: ''
+	},
+	{
+		address: '1CaXBXVGNbey352w7ydA1A2yDyNQLshycom8Zyj69v5eRNK',
+		longDescription: '',
+		name: 'BRA_16-D',
+		shortDescription: ''
+	},
+	{
+		address: '14Gn7SEmCgMX7Ukuppnw5TRjA7pao2HFpuJo39frB42tYLEh',
+		longDescription: '',
+		name: 'EzioRed',
+		shortDescription: ''
+	},
+	{
+		address: '12BJTP99gUerdvBhPobiTvrWwRaj1i5eFHN9qx51JWgrBtmv',
+		longDescription: '',
+		name: 'OneBlock',
+		shortDescription: ''
+	},
+	{
+		address: '16XYgDGN6MxvdmjhRsHLT1oqQVDwGdEPVQqC42pRXiZrE8su',
+		longDescription: '',
+		name: 'Irina Karagyaur',
 		shortDescription: ''
 	}
 ];
@@ -276,39 +306,39 @@ export const getDelegatesData = async (network: string, address?: string) => {
 		let bio = '';
 		let username = '';
 		const dataSource = [];
-		if (combinedDelegatesUniqueData[address]?.nova) {
-			if (combinedDelegatesUniqueData[address]?.nova?.longDescription?.length) {
-				bio = combinedDelegatesUniqueData[address]?.nova?.longDescription;
-				username = combinedDelegatesUniqueData[address]?.nova?.name;
+		if (combinedDelegatesUniqueData?.[address]?.nova) {
+			if (combinedDelegatesUniqueData?.[address]?.nova?.longDescription?.length) {
+				bio = combinedDelegatesUniqueData?.[address]?.nova?.longDescription || '';
+				username = combinedDelegatesUniqueData?.[address]?.nova?.name || '';
 			}
 			dataSource.push('nova');
 		}
-		if (combinedDelegatesUniqueData[address]?.w3f) {
-			if (combinedDelegatesUniqueData[address]?.w3f?.longDescription?.length) {
-				bio = combinedDelegatesUniqueData[address]?.w3f?.longDescription;
-				username = combinedDelegatesUniqueData[address]?.w3f?.name;
+		if (combinedDelegatesUniqueData?.[address]?.w3f) {
+			if (combinedDelegatesUniqueData?.[address]?.w3f?.longDescription?.length) {
+				bio = combinedDelegatesUniqueData?.[address]?.w3f?.longDescription || '';
+				username = combinedDelegatesUniqueData?.[address]?.w3f?.name || '';
 			}
 			dataSource.push('w3f');
 		}
-		if (combinedDelegatesUniqueData[address]?.parity) {
-			if (combinedDelegatesUniqueData[address]?.parity?.manifesto?.length) {
-				bio = combinedDelegatesUniqueData[address]?.parity?.manifesto;
-				username = combinedDelegatesUniqueData[address]?.parity?.name;
+		if (combinedDelegatesUniqueData?.[address]?.parity) {
+			if (combinedDelegatesUniqueData?.[address]?.parity?.manifesto?.length) {
+				bio = combinedDelegatesUniqueData?.[address]?.parity?.manifesto || '';
+				username = combinedDelegatesUniqueData?.[address]?.parity?.name;
 			}
 			dataSource.push('parity');
 		}
 		if (combinedDelegatesUniqueData[address]?.polkassembly) {
-			if (combinedDelegatesUniqueData[address]?.polkassembly?.bio?.length) {
-				bio = combinedDelegatesUniqueData[address]?.polkassembly?.bio;
-				username = combinedDelegatesUniqueData[address]?.polkassembly?.name;
+			if (combinedDelegatesUniqueData?.[address]?.polkassembly?.bio?.length) {
+				bio = combinedDelegatesUniqueData?.[address]?.polkassembly?.bio || '';
+				username = combinedDelegatesUniqueData?.[address]?.polkassembly?.name || '';
 			}
 			dataSource.push('polkassembly');
 		}
-		if (combinedDelegatesUniqueData[address]) {
+		if (combinedDelegatesUniqueData?.[address]) {
 			const newDelegate: IDelegate = {
 				active_delegation_count: Object.keys(receivedDelgations)?.length || 0,
 				address,
-				bio,
+				bio: bio || '',
 				dataSource,
 				name: username,
 				voted_proposals_count: votesCount

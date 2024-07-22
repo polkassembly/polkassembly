@@ -62,7 +62,7 @@ const DisabledConfirmation = ({ open, onConfirm, onCancel, channel }: { open: bo
 				icon={<InfoCircleOutlined />}
 				showIcon
 				type='info'
-				className='bg-[#4E75FF] text-[14px] text-[#fff] '
+				className='bg-[#4E75FF] text-sm text-[#fff] '
 				message={`Are you sure you want to disable this Polkassemble bot, Disabling bot means no more notifications for ${channel} channel chat, Stay connected and informed by keeping the bot enabled.`}
 			/>
 			<div className='ml-[-24px] mr-[-24px]'>

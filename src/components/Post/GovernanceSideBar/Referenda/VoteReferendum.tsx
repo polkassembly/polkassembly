@@ -39,7 +39,7 @@ import blockToDays from '~src/util/blockToDays';
 import { ApiPromise } from '@polkadot/api';
 import VoteInitiatedModal from './Modal/VoteSuccessModal';
 import executeTx from '~src/util/executeTx';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import PolkasafeIcon from '~assets/polkasafe-logo.svg';
 import formatBnBalance from '~src/util/formatBnBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
@@ -58,6 +58,10 @@ import InfoIcon from '~assets/icons/red-info-alert.svg';
 import ProxyAccountSelectionForm from '~src/ui-components/ProxyAccountSelectionForm';
 import SelectOption from '~src/basic-components/Select/SelectOption';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalances';
+import Input from '~src/basic-components/Input';
+import { formatedBalance } from '~src/util/formatedBalance';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -70,6 +74,7 @@ interface Props {
 	address: string;
 	theme?: string;
 	trackNumber?: number;
+	setUpdateTally?: (pre: boolean) => void;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -121,7 +126,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -161,6 +166,21 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [proxyAddresses, setProxyAddresses] = useState<string[]>([]);
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
+	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+
+	const getDelegateData = async () => {
+		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
+		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
+			addresses: [address],
+			trackNo: trackNumber
+		});
+		if (data) {
+			const bnVotingPower = new BN(data?.votingPower || '0');
+			setDelegatedVotingPower(bnVotingPower);
+		} else if (error) {
+			console.log(error);
+		}
+	};
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -173,6 +193,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 
 	useEffect(() => {
 		getProxies(address);
+
+		getDelegateData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address]);
 
@@ -402,7 +424,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			setIsBalanceErr(false);
 		}
 		setVote(value as EVoteDecisionType);
-		// handleModalReset();
+		handleModalReset();
 	};
 
 	const handleSubmit = async () => {
@@ -536,6 +558,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				message: `Vote on referendum #${referendumId} successful.`,
 				status: NotificationStatus.SUCCESS
 			});
+			setUpdateTally?.(true);
 			setLastVote({
 				balance: totalVoteValue,
 				conviction: conviction,
@@ -663,12 +686,12 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 						handleModalReset();
 					}}
 					footer={false}
-					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+					className={`w-[550px] ${poppins.variable} ${poppins.className} alignment-close vote-referendum max-h-[675px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					title={
 						showMultisig ? (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<ArrowLeft
 									onClick={() => {
 										setShowMultisig(false);
@@ -690,7 +713,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								</div>
 							</div>
 						) : (
-							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+							<div className='-mt-5 ml-[-24px] mr-[-24px] flex h-[65px] items-center justify-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								{theme === 'dark' ? <DarkCastVoteIcon className='ml-6' /> : <CastVoteIcon className='ml-6' />}
 								<span className='text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Cast Your Vote</span>
 							</div>
@@ -795,7 +818,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											<div className='flex-col'>
 												<div className='flex w-full justify-center'>
 													<WalletButton
-														className='h-[50px] w-[64px] !border-[#D2D8E0] text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+														className='h-[50px] w-[64px] !border-section-light-container text-sm font-semibold text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 														onClick={() => {
 															setShowMultisig(!showMultisig);
 														}}
@@ -937,11 +960,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										<p className='m-0 p-0 text-xs text-errorAlertBorderDark'>Proxy address does not exist on selected wallet</p>
 									</div>
 								)}
+								{/* delegate voting power */}
+								{delegatedVotingPower.gt(ZERO_BN) && (
+									<div className='mb-4 mt-6 flex flex-col gap-0.5 text-sm'>
+										<span className='flex gap-1 text-sm text-lightBlue dark:text-blue-dark-medium'>
+											{' '}
+											Delegated power <HelperTooltip text='Total amount of voting power' />
+										</span>
+										<Input
+											value={formatedBalance(delegatedVotingPower?.toString() || '0', chainProperties[network]?.tokenSymbol, 0)}
+											disabled
+											className='h-10 rounded-[4px] border-[1px] border-solid dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high'
+										/>
+									</div>
+								)}
 								{/* aye nye split abstain buttons */}
 								<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 								<Segmented
 									block
-									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-[#D2D8E0] bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
+									className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
 									size='large'
 									value={vote}
 									onChange={(value) => {
@@ -1069,6 +1106,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					vote={vote}
 					balance={voteValues.totalVoteValue}
 					open={successModal}
+					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
 					address={address}
 					multisig={multisig ? multisig : ''}

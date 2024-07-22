@@ -4,35 +4,96 @@
 
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-import NotificationsLayout from './NotificationsLayout';
 import { useInAppNotificationsSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
-import { EInAppNotificationsType } from './types';
-import { CHANNEL } from '../Settings/Notifications/NotificationChannels';
+import { ECustomNotificationFilters, EInAppNotificationsType } from './types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { MessageType } from '~src/auth/types';
 import { useRouter } from 'next/router';
+import NotificationsFilters from './NotificationsFilters';
+import AllNotificationsTab from './FiltersTabs/AllNotificationsTab';
+import CommentsNotificationsTab from './FiltersTabs/CommentsNotificationsTab';
+import MentionsNotificationsTab from './FiltersTabs/MentionsNotificationsTab';
+import ProposalsNotificationsTab from './FiltersTabs/ProposalsNotificationsTab';
 
 interface INotificationsContent {
 	className?: string;
 	inPage?: boolean;
-	isLoading?: boolean;
 	closePopover?: (pre: boolean) => void;
 }
 
-const NotificationsContent = ({ className, inPage = false, isLoading, closePopover }: INotificationsContent) => {
-	const router = useRouter();
+const handleRenderTab = (
+	activeFilter: ECustomNotificationFilters,
+	inPage: boolean,
+	isStopInterval: boolean,
+	setStopInterval: (pre: boolean) => void,
+	closePopover?: (pre: boolean) => void
+) => {
+	switch (activeFilter) {
+		case ECustomNotificationFilters.ALL:
+			return (
+				<AllNotificationsTab
+					inPage={inPage}
+					closePopover={closePopover}
+					isStopInterval={isStopInterval}
+					setStopInterval={setStopInterval}
+				/>
+			);
+		case ECustomNotificationFilters.COMMENTS:
+			return (
+				<CommentsNotificationsTab
+					inPage={inPage}
+					closePopover={closePopover}
+					isStopInterval={isStopInterval}
+					setStopInterval={setStopInterval}
+				/>
+			);
+		case ECustomNotificationFilters.MENTIONS:
+			return (
+				<MentionsNotificationsTab
+					inPage={inPage}
+					closePopover={closePopover}
+					isStopInterval={isStopInterval}
+					setStopInterval={setStopInterval}
+				/>
+			);
+		case ECustomNotificationFilters.PROPOSALS:
+			return (
+				<ProposalsNotificationsTab
+					inPage={inPage}
+					closePopover={closePopover}
+					isStopInterval={isStopInterval}
+					setStopInterval={setStopInterval}
+				/>
+			);
+	}
+};
+const NotificationsContent = ({ className, inPage = false, closePopover }: INotificationsContent) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
+	const page = Number(router.query.page as string) || 1;
 	const { resolvedTheme: theme } = useTheme();
-	const { networkPreferences, id: userId } = useUserDetailsSelector();
+	const { id: userId } = useUserDetailsSelector();
+	const {
+		viewAllClicked = false,
+		popupNotifications,
+		allNotifications,
+		commentsNotifications,
+		mentionsNotifications,
+		proposalsNotifications,
+		totalNotificationsCount,
+		unreadNotificationsCount,
+		popupActiveFilter
+	} = useInAppNotificationsSelector();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
-	const { unreadNotificationsCount, recentNotificationsCount, recentNotifications, unreadNotifications } = useInAppNotificationsSelector();
+	const [isStopInterval, setStopInterval] = useState(false);
+	const activeFilter = inPage ? (router.query.filter as ECustomNotificationFilters) || ECustomNotificationFilters.ALL : popupActiveFilter || ECustomNotificationFilters.ALL;
 
 	const handleUpdateLastSeen = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/inAppNotifications/add-last-seen', {
@@ -42,35 +103,88 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 		if (error || data) console.log(error || data?.message || '');
 	};
 
-	const handleMarkAsRead = () => {
+	const handleFilterChange = (filter: ECustomNotificationFilters) => {
+		if (inPage) {
+			router.push({
+				pathname: router.pathname,
+				query: { ...router.query, filter: filter, page: 1 }
+			});
+		} else {
+			dispatch(inAppNotificationsActions.updateNotificationsPopupActiveFilter(filter));
+		}
+		setStopInterval(true);
+	};
+
+	const handleMarkAsRead = (isViewAllClicked?: boolean) => {
+		setStopInterval(true);
+		dispatch(inAppNotificationsActions.updateUnreadNotificationsCount(0));
 		handleUpdateLastSeen();
 		dispatch(
-			inAppNotificationsActions.updateInAppNotifications({
-				lastReadTime: JSON.stringify(new Date()),
-				recentNotifications: [
-					...unreadNotifications.map((notification) => {
+			inAppNotificationsActions.updatePopupNotifications({
+				all:
+					popupNotifications?.all?.map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.RECENT };
-					}),
-					...recentNotifications
-				],
-				recentNotificationsCount: unreadNotificationsCount + recentNotificationsCount,
-				unreadNotifications: [],
-				unreadNotificationsCount: 0
+					}) || [],
+				comments:
+					popupNotifications?.comments?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || [],
+				mentions:
+					popupNotifications?.mentions?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || [],
+				proposals:
+					popupNotifications?.proposals?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || []
 			})
 		);
+		dispatch(
+			inAppNotificationsActions.updateInAppNotifications({
+				allNotifications: [
+					...allNotifications.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					})
+				],
+				commentsNotifications: [
+					...(commentsNotifications?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || [])
+				],
+				lastReadTime: JSON.stringify(new Date()),
+				mentionsNotifications: [
+					...(mentionsNotifications?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || [])
+				],
+				proposalsNotifications: [
+					...(proposalsNotifications?.map((notification) => {
+						return { ...notification, type: EInAppNotificationsType.RECENT };
+					}) || [])
+				],
+				totalNotificationsCount: totalNotificationsCount,
+				unreadNotificationsCount: 0,
+				viewAllClicked: isViewAllClicked
+			})
+		);
+		handleUpdateLastSeen();
+		setStopInterval(false);
 	};
 
 	const handleViewAll = () => {
 		if (!unreadNotificationsCount) return;
-		const timeoutId = setTimeout(() => {
-			handleMarkAsRead();
-		}, 5000);
-		return () => clearTimeout(timeoutId);
+		handleMarkAsRead(true);
 	};
 
 	return (
 		<div
-			className={classNames(className, poppins.className, poppins.variable, 'flex flex-col justify-between', inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : '')}
+			className={classNames(
+				className,
+				poppins.className,
+				poppins.variable,
+				'flex min-h-[540px] flex-col justify-between',
+				inPage ? 'rounded-xl bg-white py-6 dark:bg-section-dark-overlay' : ''
+			)}
 		>
 			<div className='flex flex-col'>
 				<div className={classNames('flex items-center justify-between rounded-t-md pb-3 text-bodyBlue dark:text-blue-dark-high', inPage ? 'px-10 pt-3 max-sm:px-5' : 'px-8 pt-5')}>
@@ -78,21 +192,23 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						{inPage && (
 							<Image
 								src={'/assets/icons/notification-bell-default.svg'}
-								height={28}
-								width={28}
+								height={inPage ? 32 : 28}
+								width={inPage ? 32 : 28}
 								alt='notific...'
 								className={theme === 'dark' ? 'dark-icons' : ''}
 							/>
 						)}
 						Notifications
-						{!!unreadNotificationsCount && (
-							<span className='flex items-center justify-center rounded-full bg-[#3B47DF] p-1 text-sm font-medium text-white dark:bg-[#5B67FF]'>{unreadNotificationsCount}</span>
+						{!!unreadNotificationsCount && !viewAllClicked && (
+							<span className='flex min-h-[26px] min-w-[26px] items-center justify-center rounded-full bg-[#3B47DF] p-1 text-xs font-medium text-white dark:bg-[#5B67FF]'>
+								{unreadNotificationsCount}
+							</span>
 						)}
 					</div>
 					<div className='flex gap-4'>
-						{!!unreadNotificationsCount && !router.pathname.includes('/notifications') && (
+						{!!unreadNotificationsCount && !viewAllClicked && (
 							<button
-								onClick={handleMarkAsRead}
+								onClick={() => handleMarkAsRead()}
 								className={classNames(
 									'flex cursor-pointer items-center gap-1 bg-transparent py-0.5 text-xs font-medium text-[#3B47DF] dark:text-[#5B67FF]',
 									inPage ? 'rounded-md border-[1px] border-solid border-[#5B67FF] bg-[#F3F4FD] px-3 dark:bg-[#1A1B34]' : 'border-none'
@@ -127,43 +243,18 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 					</div>
 				</div>
 
+				{/* filters */}
+				<div className={inPage ? 'mb-4 px-10 max-sm:px-5' : 'px-8 pb-2'}>
+					<NotificationsFilters
+						inPage={inPage}
+						onChange={(filter: ECustomNotificationFilters) => {
+							handleFilterChange(filter);
+						}}
+					/>
+				</div>
+
 				{/* content */}
-				{unreadNotificationsCount + recentNotificationsCount > 0 && !isLoading ? (
-					<NotificationsLayout inPage={inPage} />
-				) : !isLoading ? (
-					<div className='flex h-[350px] flex-col items-center gap-2 py-8'>
-						<Image
-							src={theme == 'dark' ? '/assets/icons/notification-empty-state-dark.svg' : '/assets/icons/notification-empty-state.svg'}
-							height={150}
-							width={150}
-							alt='empty...'
-						/>
-						<span className='text-sm text-lightBlue dark:text-blue-dark-medium'>No Notifications</span>
-						{!networkPreferences.channelPreferences?.[CHANNEL.IN_APP]?.enabled && !isLoading && (
-							<div className='mt-1 flex items-center justify-center gap-1 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
-								<div className={'flex items-center justify-between gap-1'}>
-									<Image
-										src={'/assets/icons/notification-bell-default.svg'}
-										height={14}
-										width={14}
-										alt='notific...'
-										className={theme == 'dark' ? 'pink-dark-icon ' : 'pink-icon'}
-									/>
-									<Link
-										onClick={() => closePopover?.(true)}
-										href={'/settings?tab=notifications'}
-										className={'-ml-0.5 text-pink_primary dark:text-blue-dark-helper'}
-									>
-										set Notifications
-									</Link>
-								</div>
-								to get alerts for the governance events
-							</div>
-						)}
-					</div>
-				) : (
-					<div className='h-[200px]' />
-				)}
+				{handleRenderTab(activeFilter, inPage, isStopInterval, setStopInterval, closePopover as any)}
 			</div>
 
 			{/* footer */}
@@ -188,9 +279,9 @@ const NotificationsContent = ({ className, inPage = false, isLoading, closePopov
 						/>
 						Manage Settings
 					</Link>
-					{unreadNotificationsCount + recentNotificationsCount > 0 && (
+					{totalNotificationsCount > 0 && (
 						<Link
-							href='/notifications'
+							href={`/notifications?page=${page}`}
 							className='font-medium text-pink_primary dark:text-blue-dark-helper'
 							onClick={() => {
 								closePopover?.(true);

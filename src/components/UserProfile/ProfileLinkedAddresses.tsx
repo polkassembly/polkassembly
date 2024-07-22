@@ -65,12 +65,12 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 			>
 				Link Proxy Address
 			</span>
-			<span
+			{/* <span
 				className='cursor-pointer dark:text-blue-dark-high'
 				onClick={() => setOpenLinkMultisig(true)}
 			>
 				Link Multisig Address
-			</span>
+			</span> */}
 		</div>
 	);
 
@@ -131,7 +131,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		<div
 			className={classNames(
 				className,
-				'flex w-full flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'flex w-full flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<div className='flex justify-between'>
@@ -176,7 +176,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 					filterDuplicateAddresses(addresses, network).map((address) => (
 						<div
 							key={address}
-							className='flex w-full items-start justify-start rounded-xl border-[1px] border-solid border-[#D2D8E0] px-4 py-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:flex-col'
+							className='flex w-full items-start justify-start rounded-xl border-[1px] border-solid border-section-light-container px-4 py-3 text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high max-md:flex-col'
 						>
 							<div className='flex w-full justify-between'>
 								<Checkbox
@@ -230,6 +230,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 				setOpen={setOpenAddressLinkModal}
 				closable
 				onConfirm={() => setOpenAddressLinkModal(false)}
+				usedInIdentityFlow={false}
 			/>
 			<Proxy
 				open={openProxyLinkModal}

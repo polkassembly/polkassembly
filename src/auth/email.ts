@@ -201,3 +201,19 @@ export const sendReportContentEmail = (username: string, network: string, report
 
 	sgMail.send(msg).catch((e) => console.error('Report Content Email not sent', e));
 };
+
+export const sendSpamNotificationEmail = async (content: string, network: string, newID: number) => {
+	const msg = {
+		from: FROM.email,
+		subject: 'Spam Detected',
+		text: `Spam content detected:\n\n $ Click on the link -> https://${network}.polkassembly.io/post/${newID} \n\n
+        content is -> ${content}`,
+		to: ['bhavya@polkassembly.io', 'jaski@polkassembly.io', 'parambir@polkassembly.io', ' hello@polkassembly.io']
+	};
+
+	try {
+		await sgMail.send(msg);
+	} catch (error) {
+		console.error('Error sending spam notification email:', error);
+	}
+};

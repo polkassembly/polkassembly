@@ -147,6 +147,7 @@ import VotesSVG from '~assets/profile/profile-votes.svg';
 import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
+import LeaderboardSVG from '~assets/sidebar/LeaderboardSelected.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';
@@ -168,6 +169,8 @@ import StackingAdminSVG from '~assets/icons/stacking-admin.svg';
 import ReferendumsSVG from '~assets/icons/referndums.svg';
 import ClearIdentityOutlinedSVG from '~assets/icons/outlined-clear-identity.svg';
 import ClearIdentityFilledSVG from '~assets/icons/filled-clear-identity.svg';
+import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
+import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1125,6 +1128,12 @@ export const ProfileOverviewIcon = (props: Partial<CustomIconComponentProps>) =>
 		{...props}
 	/>
 );
+export const LeaderboardOverviewIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={LeaderboardSVG}
+		{...props}
+	/>
+);
 export const ExpandIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ExpandSVG}
@@ -1256,6 +1265,20 @@ export const ClearIdentityOutlinedIcon = (props: Partial<CustomIconComponentProp
 export const ClearIdentityFilledIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={ClearIdentityFilledSVG}
+		{...props}
+	/>
+);
+
+export const CuratorIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CuratorSVG}
+		{...props}
+	/>
+);
+
+export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BountyCriteriaSVG}
 		{...props}
 	/>
 );

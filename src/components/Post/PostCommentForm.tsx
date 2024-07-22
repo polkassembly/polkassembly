@@ -43,6 +43,7 @@ interface IPostCommentFormProps {
 	setCurrentState?: (postId: string, type: string, comment: IComment) => void;
 	posted?: boolean;
 	voteReason?: boolean;
+	setPosted?: (pre: boolean) => void;
 }
 
 interface IEmojiOption {
@@ -58,7 +59,7 @@ interface IEmojiOption {
 const commentKey = () => `comment:${global.window.location.href}`;
 
 const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
-	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false } = props;
+	const { className, isUsedInSuccessModal = false, voteDecision = null, setCurrentState, posted, voteReason = false, setPosted } = props;
 	const { id, username, picture, loginAddress } = useUserDetailsSelector();
 	const { setComments } = useCommentDataContext();
 	const { resolvedTheme: theme } = useTheme();
@@ -198,10 +199,12 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 			comment_reactions: {
 				'👍': {
 					count: 0,
+					userIds: [],
 					usernames: []
 				},
 				'👎': {
 					count: 0,
+					userIds: [],
 					usernames: []
 				}
 			},
@@ -264,6 +267,9 @@ const PostCommentForm: FC<IPostCommentFormProps> = (props) => {
 					message: 'Comment created successfully.',
 					status: NotificationStatus.SUCCESS
 				});
+				if (isUsedInSuccessModal) {
+					setPosted?.(true);
+				}
 				setComments((prev) => {
 					const comments: any = Object.assign({}, prev);
 					for (const key of Object.keys(comments)) {

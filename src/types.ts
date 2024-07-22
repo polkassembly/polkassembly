@@ -341,6 +341,12 @@ export enum EReferendumType {
 	OTHER = 'other'
 }
 
+export enum EAllowedCommentor {
+	ALL = 'all',
+	ONCHAIN_VERIFIED = 'onchain_verified',
+	NONE = 'none'
+}
+
 export interface Post {
 	user_id: number;
 	content: string;
@@ -363,6 +369,7 @@ export interface Post {
 	createdOnPolkassembly?: boolean;
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
+	allowedCommentors?: EAllowedCommentor[];
 }
 
 export interface IPostTag {
@@ -794,4 +801,38 @@ export interface IActiveProposalCount {
 export enum EASSETS {
 	USDT = '1984',
 	USDC = '1337'
+}
+
+export interface IBountyStats {
+	availableBountyPool: string;
+	activeBounties: string;
+	peopleEarned: string;
+	totalRewarded: string;
+	totalBountyPool: string;
+}
+
+export interface IBountyUserActivity {
+	amount: string;
+	activity: string;
+	address: string;
+	created_at: Date;
+}
+
+export interface IBountyProposerResponse {
+	proposals: {
+		trackNumber: number;
+		index: number;
+		proposer: string;
+		reward: string;
+	}[];
+}
+export interface IBountyProposalsResponse {
+	proposals: {
+		proposer: string;
+		index: number;
+		trackNumber: number;
+		status: string;
+		bountyId: number;
+		reward: string | null;
+	}[];
 }

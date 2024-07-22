@@ -168,7 +168,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				className={`${poppins.variable} ${poppins.className} padding w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				wrapClassName={`${className} dark:bg-modalOverlayDark`}
 				title={
-					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-[#D2D8E0] px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='-mx-6 mb-6 flex items-center border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-[20px] font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
 						<UndelegateProfileIcon className='mr-2' />
 						Undelegate
 					</div>
@@ -178,7 +178,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 				confirmLoading={loading}
 				onCancel={() => setOpen(false)}
 				footer={
-					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-[#D2D8E0] px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
+					<div className='-mx-6 flex items-center justify-end gap-1 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							key='back'
 							text='Cancel'
@@ -208,7 +208,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 							<Alert
 								showIcon
 								type='info'
-								className='rounded-[4px] text-[14px]'
+								className='rounded-[4px] text-sm'
 								message={
 									<span className='dark:text-blue-dark-high'>An approximate fees of {formatBalance(txFee.toNumber(), { forceUnit: unit })} will be applied to the transaction</span>
 								}
@@ -220,7 +220,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 						>
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
-								<div className='h-10 rounded-[6px] px-0 py-[px] text-[#7c899b]'>
+								<div className='h-10 rounded-sm px-0 py-[px] text-[#7c899b]'>
 									<Address
 										isTruncateUsername={false}
 										address={defaultAddress}
@@ -233,7 +233,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-1 text-sm text-lightBlue dark:text-blue-dark-medium'>Delegated to</label>
-								<div className='h-10 rounded-[6px] px-0 py-[px] text-bodyBlue dark:text-blue-dark-high'>
+								<div className='h-10 rounded-sm px-0 py-[px] text-bodyBlue dark:text-blue-dark-high'>
 									<Address
 										isTruncateUsername={false}
 										address={defaultTarget}
@@ -246,7 +246,7 @@ const UndelegateModal = ({ trackNum, className, defaultTarget, open, setOpen, co
 
 							<div className='mt-4'>
 								<label className='mb-2 text-sm text-lightBlue dark:text-blue-dark-medium'>Balance </label>
-								<div className='h-10 cursor-not-allowed rounded-[6px] px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high'>{`${formatedBalance(
+								<div className='h-10 cursor-not-allowed rounded-sm px-0 py-[px] text-[#7c899b] dark:text-blue-dark-high'>{`${formatedBalance(
 									balance.toString(),
 									unit
 								)} ${unit}`}</div>

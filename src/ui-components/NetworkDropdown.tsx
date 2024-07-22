@@ -195,7 +195,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				</div>
 			) : isSmallScreen ? (
 				<a
-					className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-[#D2D8E0] bg-[rgba(210,216,224,0.2)] px-[18px] dark:border-[#3B444F] dark:bg-section-dark-overlay'
+					className='flex h-10 items-center justify-between gap-x-2 rounded-[4px] border border-solid border-section-light-container bg-[rgba(210,216,224,0.2)] px-[18px] dark:border-[#3B444F] dark:bg-section-dark-overlay'
 					onClick={(e) => {
 						e.preventDefault();
 						setSidedrawer(false);
@@ -215,7 +215,7 @@ const NetworkDropdown: FC<INetworkDropdown> = (props) => {
 				</a>
 			) : (
 				<a
-					className='flex items-center justify-between border border-solid border-[#D2D8E0] text-blue-light-high hover:text-pink_primary dark:border-[#3B444F] dark:border-separatorDark  dark:text-blue-dark-high lg:h-8 lg:min-w-[133px] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px] dark:lg:bg-[#29323C33]'
+					className='flex items-center justify-between border border-solid border-section-light-container text-blue-light-high hover:text-pink_primary dark:border-[#3B444F] dark:border-separatorDark  dark:text-blue-dark-high lg:h-8 lg:min-w-[133px] lg:rounded-[26px] lg:bg-[rgba(210,216,224,0.2)] lg:px-[12px] lg:py-[6px] dark:lg:bg-[#29323C33]'
 					onClick={(e) => {
 						e.preventDefault();
 						setSidedrawer(false);

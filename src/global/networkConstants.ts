@@ -188,10 +188,10 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
-		parachain: '10000',
+		parachain: '1000',
 		logo: polkadotLogo,
 		palletInstance: '50',
-		rpcEndpoint: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156',
+		rpcEndpoint: 'wss://polkadot.api.onfinality.io/public-ws',
 		ss58Format: 0,
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
@@ -203,8 +203,8 @@ export const chainProperties: types.ChainPropType = {
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{
-				label: 'via On-finality (recommended)',
-				key: 'wss://node-7144126277301010432.sk.onfinality.io/ws?apikey=c26b705b-b812-4f43-82ea-443d71485156'
+				label: 'via Parity (recommended)',
+				key: 'wss://rpc.polkadot.io'
 			},
 			{
 				label: 'via On-finality',
@@ -213,10 +213,6 @@ export const chainProperties: types.ChainPropType = {
 			{
 				label: 'via Dwellir',
 				key: 'wss://polkadot-rpc.dwellir.com'
-			},
-			{
-				label: 'via Parity',
-				key: 'wss://rpc.polkadot.io'
 			},
 			{
 				label: 'via Pinknode',
@@ -245,7 +241,7 @@ export const chainProperties: types.ChainPropType = {
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
-		parachain: '10000',
+		parachain: '1000',
 		peopleKusamaRpcEndpoint: 'wss://kusama-people-rpc.polkadot.io',
 		logo: kusamaLogo,
 		palletInstance: '50',
@@ -671,7 +667,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: cereLogo,
 		rpcEndpoint: 'wss://archive.mainnet.cere.network/ws',
 		ss58Format: 54,
-		subsquidUrl: 'https://squid.subsquid.io/cere-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/cere-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.CERE,
 		treasuryProposalBondPercent: '5%',
@@ -692,7 +688,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: collectivesLogo,
-		rpcEndpoint: 'wss://sys.dotters.network/collectives-polkadot',
+		rpcEndpoint: 'wss://rpc-collectives-polkadot.luckyfriday.io',
 		relayRpcEndpoints: [
 			{ key: 'wss://1rpc.io/dot', label: 'Automata 1RPC' },
 			{ key: 'wss://polkadot-public-rpc.blockops.network/ws', label: 'BlockOps' },

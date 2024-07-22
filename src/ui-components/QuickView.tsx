@@ -25,6 +25,7 @@ import SocialsHandle from './SocialsHandle';
 import classNames from 'classnames';
 import Image from 'next/image';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import ScoreTag from './ScoreTag';
 
 export const TippingUnavailableNetworks = [
 	AllNetworks.MOONBASE,
@@ -51,6 +52,7 @@ interface Props {
 	enableTipping?: boolean;
 	isKiltNameExists?: boolean;
 	isW3FDelegate?: boolean;
+	leaderboardAstrals?: number | null;
 }
 const QuickView = ({
 	className,
@@ -65,7 +67,8 @@ const QuickView = ({
 	socials,
 	setOpenAddressChangeModal,
 	enableTipping = true,
-	isW3FDelegate
+	isW3FDelegate = false,
+	leaderboardAstrals
 }: Props) => {
 	const { id, loginAddress } = useUserDetailsSelector();
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
@@ -177,8 +180,15 @@ const QuickView = ({
 								</span>
 							</div>
 						)}
+						{!!leaderboardAstrals && !isNaN(leaderboardAstrals) && (
+							<ScoreTag
+								className='h-6 w-min px-[6px] py-1'
+								score={leaderboardAstrals}
+								iconWrapperClassName='mt-[5.5px]'
+							/>
+						)}
 						<div className='mt-0.5 flex items-center justify-between gap-1 border-solid dark:border-none'>
-							{profileCreatedAt && (
+							{!!profileCreatedAt && (
 								<span className='flex items-center text-xs tracking-wide text-[#9aa7b9] dark:text-[#595959]'>
 									Since:<span className='ml-0.5 text-lightBlue dark:text-blue-dark-medium'>{dayjs(profileCreatedAt).format('MMM DD, YYYY')}</span>
 								</span>

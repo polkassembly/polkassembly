@@ -36,6 +36,7 @@ import CommentReactionBar from '../ActionsBar/Reactionbar/CommentReactionBar';
 import ThreeDotsIcon from '~assets/icons/three-dots.svg';
 import Tooltip from '~src/basic-components/Tooltip';
 import ThreeDotsIconDark from '~assets/icons/three-dots-dark.svg';
+import getIsCommentAllowed from './utils/getIsCommentAllowed';
 
 interface Props {
 	userId: number;
@@ -56,7 +57,7 @@ const editReplyKey = (replyId: string) => `reply:${replyId}:${global.window.loca
 const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.location.href}`;
 
 const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
-	const { id, username, picture, loginAddress, addresses, allowed_roles } = useUserDetailsSelector();
+	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -71,12 +72,18 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 	const [isReplying, setIsReplying] = useState(false);
 	const [onChainUsername, setOnChainUsername] = useState<string>('');
 	const [isEditable, setIsEditable] = useState(false);
+	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 
 	const toggleEdit = () => setIsEditing(!isEditing);
 
 	const {
-		postData: { postType, postIndex, track_number }
+		postData: { postType, postIndex, track_number, allowedCommentors, userId: proposerId }
 	} = usePostDataContext();
+
+	useEffect(() => {
+		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allowedCommentors, loginAddress]);
 
 	useEffect(() => {
 		const localContent = global.window.localStorage.getItem(editReplyKey(replyId)) || '';
@@ -663,9 +670,10 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 											color='#E5007A'
 										>
 											<Button
+												disabled={!isCommentAllowed}
 												className={`mt-[-2px] flex items-center justify-start border-none bg-transparent pl-1 pr-1 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
 													reply.reply_source ? 'disabled-reply' : ''
-												}`}
+												} ${!isCommentAllowed ? 'opacity-50' : ''}`}
 											>
 												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />} Reply
 											</Button>
@@ -673,7 +681,10 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 									) : (
 										!isReplying && (
 											<Button
-												className={'flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper'}
+												disabled={!isCommentAllowed}
+												className={`flex items-center border-none bg-transparent p-0 text-xs text-pink_primary shadow-none dark:text-blue-dark-helper ${
+													!isCommentAllowed ? 'opacity-50' : ''
+												}`}
 												onClick={() => setIsReplying(!isReplying)}
 											>
 												{theme === 'dark' ? <ReplyIconDark className='mr-1 ' /> : <ReplyIcon className='mr-1 text-pink_primary ' />}

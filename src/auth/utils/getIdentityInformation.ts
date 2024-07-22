@@ -5,6 +5,7 @@ import { ApiPromise } from '@polkadot/api';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import type { RegistrationJudgement } from '@polkadot/types/interfaces';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
+import { hexToString, isHex } from '@polkadot/util';
 
 interface Args {
 	api: ApiPromise;
@@ -74,7 +75,7 @@ const getIdentityInformation = async ({ api, apiReady, address, network }: Args)
 
 	return {
 		discord: identity?.discord?.Raw || '',
-		display: identity?.display?.Raw || '',
+		display: isHex(identity?.display?.Raw || '') ? hexToString(identity?.display?.Raw) || identity?.display?.Raw || '' : identity?.display?.Raw || '',
 		displayParent: identity?.displayParent?.Raw || '',
 		email: identity?.email?.Raw || '',
 		github: identity?.github?.Raw || '',
@@ -82,7 +83,7 @@ const getIdentityInformation = async ({ api, apiReady, address, network }: Args)
 		isIdentitySet: !!identity?.display?.Raw,
 		isVerified: !unverified,
 		judgements: identityInfo?.judgements || [],
-		legal: identity?.legal?.Raw || '',
+		legal: isHex(identity?.legal?.Raw || '') ? hexToString(identity?.legal?.Raw) || identity?.legal?.Raw || '' : identity?.legal?.Raw || '',
 		matrix: identity?.matrix?.Raw || '',
 		nickname: identity?.nickname?.Raw || '',
 		riot: identity?.riot?.Raw || '',

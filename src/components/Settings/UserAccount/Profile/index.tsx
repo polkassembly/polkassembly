@@ -22,7 +22,7 @@ const Row = ({ label, data, handleEdit }: { label: string; data: string; handleE
 	<div className='flex items-baseline justify-between'>
 		<div>
 			<label
-				className='text-[14px] text-[#485F7D] dark:text-blue-dark-medium'
+				className='text-sm text-[#485F7D] dark:text-blue-dark-medium'
 				htmlFor={label}
 			>
 				{label}
@@ -42,7 +42,7 @@ const Row = ({ label, data, handleEdit }: { label: string; data: string; handleE
 			</p>
 		</div>
 		<span
-			className='flex cursor-pointer items-center gap-1 text-[14px] font-medium text-[#485F7D] text-pink_primary dark:text-blue-dark-high'
+			className='flex cursor-pointer items-center gap-1 text-sm font-medium text-[#485F7D] text-pink_primary dark:text-blue-dark-high'
 			onClick={handleEdit}
 		>
 			<EditPencilIcon /> Edit
@@ -86,13 +86,13 @@ export default function ProfileSettings() {
 						data={username || ''}
 						handleEdit={() => setShowModal(ModalType.USERNAME)}
 					/>
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-section-light-container' />
 					<Row
 						label='Email'
 						data={email || ''}
 						handleEdit={() => setShowModal(ModalType.EMAIL)}
 					/>
-					<Divider className='m-0 text-[#D2D8E0]' />
+					<Divider className='m-0 text-section-light-container' />
 					{!web3signup && (
 						<Row
 							label='Password'

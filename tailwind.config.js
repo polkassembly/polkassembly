@@ -10,7 +10,9 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				poppins: ['var(--font-poppins)']
+				poppins: ['var(--font-poppins)'],
+				pixeboy: ['Pixeboy', 'sans-serif'],
+				pixelify: ['Pixelify Sans', 'sans-serif']
 			},
 			colors: {
 				navBlue: 'var(--navBlue)',

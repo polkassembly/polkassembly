@@ -17,7 +17,7 @@ import {
 	GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
 } from '~src/queries';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
+import { EAllowedCommentor, IApiResponse, IBeneficiary, IPostHistory } from '~src/types';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
@@ -92,10 +92,12 @@ export const getTimeline = (
 export interface IReactions {
 	'👍': {
 		count: number;
+		userIds: number[];
 		usernames: string[];
 	};
 	'👎': {
 		count: number;
+		userIds: number[];
 		usernames: string[];
 	};
 }
@@ -108,6 +110,7 @@ export interface IPIPsVoting {
 }
 
 export interface IPostResponse {
+	allowedCommentors: EAllowedCommentor;
 	assetId?: string | null;
 	post_reactions: IReactions;
 	timeline: any[];
@@ -151,14 +154,29 @@ export function getDefaultReactionObj(): IReactions {
 	return {
 		'👍': {
 			count: 0,
+			userIds: [],
 			usernames: []
 		},
 		'👎': {
 			count: 0,
+			userIds: [],
 			usernames: []
 		}
 	};
 }
+
+export const getUserProfileData = async (ids: number[]) => {
+	try {
+		const querySnapshot = await firestore_db.collection('users').where('id', 'array-contains', ids).get();
+
+		const userData = querySnapshot.docs.map((doc) => doc.data());
+
+		return userData;
+	} catch (error) {
+		console.error('Error fetching user profiles:', error);
+		throw error;
+	}
+};
 
 export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData>): IReactions {
 	const reactions = getDefaultReactionObj();
@@ -166,10 +184,11 @@ export function getReactions(reactionsQuerySnapshot: FirebaseFirestore.QuerySnap
 		if (doc && doc.exists) {
 			const data = doc.data();
 			if (data) {
-				const { reaction, username } = data;
+				const { reaction, username, user_id } = data;
 				if (['👍', '👎'].includes(reaction)) {
 					reactions[reaction as IReaction].count++;
 					reactions[reaction as IReaction].usernames.push(username);
+					reactions[reaction as IReaction].userIds.push(user_id);
 				}
 			}
 		}
@@ -540,7 +559,6 @@ export async function getComments(
 			is_custom_username: boolean;
 		};
 	} = {};
-
 	if (newIds.length > 0) {
 		const chunkSize = 30;
 		const totalChunks = Math.ceil(newIds.length / chunkSize);
@@ -560,7 +578,7 @@ export async function getComments(
 						};
 					}
 				});
-				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '==', true).get();
+				const addressesQuery = await firestore_db.collection('addresses').where('user_id', 'in', slice).where('default', '!=', false).get();
 				addressesQuery.docs.forEach((doc) => {
 					if (doc && doc.exists) {
 						const data = doc.data();
@@ -606,7 +624,6 @@ export async function getComments(
 			}
 		}
 	}
-
 	const commentsPromiseWithVote = comments.map(async (comment) => {
 		if (comment && userIdToUserMap[comment?.user_id]) {
 			comment.proposer = userIdToUserMap[comment.user_id].proposer || comment.proposer;
@@ -813,39 +830,41 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args) {
-				if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-					const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
-					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-				}
+			if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+			}
+			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 
-				proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-				if (proposedCall.args.amount) {
-					requested = proposedCall.args.amount;
-					if (proposedCall.args.beneficiary) {
-						beneficiaries.push({
-							address: proposedCall.args.beneficiary as string,
-							amount: proposedCall.args.amount
-						});
-					}
-				} else {
-					const calls = proposedCall.args.calls;
-					if (calls && Array.isArray(calls) && calls.length > 0) {
-						calls.forEach((call) => {
-							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-								remark += call.remark + '\n';
+			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
+				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
+			}
+
+			if (proposedCall.args.amount) {
+				requested = proposedCall.args.amount;
+				if (proposedCall.args.beneficiary) {
+					beneficiaries.push({
+						address: proposedCall.args.beneficiary as string,
+						amount: proposedCall.args.amount
+					});
+				}
+			} else {
+				const calls = proposedCall.args.calls;
+				if (calls && Array.isArray(calls) && calls.length > 0) {
+					calls.forEach((call) => {
+						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+							remark += call.remark + '\n';
+						}
+						if (call && call.amount) {
+							requested += BigInt(call.amount);
+							if (call.beneficiary) {
+								beneficiaries.push({
+									address: call.beneficiary as string,
+									amount: call.amount
+								});
 							}
-							if (call && call.amount) {
-								requested += BigInt(call.amount);
-								if (call.beneficiary) {
-									beneficiaries.push({
-										address: call.beneficiary as string,
-										amount: call.amount
-									});
-								}
-							}
-						});
-					}
+						}
+					});
 				}
 			}
 		}
@@ -874,6 +893,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		}
 
 		const post: IPostResponse = {
+			allowedCommentors: EAllowedCommentor.ALL,
 			announcement: postData?.announcement,
 			assetId: assetId || null,
 			beneficiaries,
@@ -1067,6 +1087,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			}
 			// Populate firestore post data into the post object
 			if (data && post) {
+				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
 				post.summary = data.summary;
 				post.topic = getTopicFromFirestoreData(data, strProposalType);
 				post.content = data.content;

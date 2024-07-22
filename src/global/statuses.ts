@@ -34,7 +34,7 @@ export const referendumStatus = {
 	PASSED: 'Passed',
 	SCHEDULED: 'Scheduled',
 	STARTED: 'Started',
-	VETOED: 'Vetoed'
+	VOTED: 'Voted'
 };
 
 export const referendumStatusOptions = [
@@ -67,8 +67,8 @@ export const referendumStatusOptions = [
 		label: 'Started'
 	},
 	{
-		key: referendumStatus.VETOED,
-		label: 'Vetoed'
+		key: referendumStatus.VOTED,
+		label: 'Voted'
 	}
 ];
 
@@ -260,7 +260,7 @@ export const tipStatusMap = {
 export const bountyStatus = {
 	ACTIVE: 'Active',
 	AWARDED: 'Awarded',
-	CANCELED: 'Canceled',
+	CANCELLED: 'Cancelled',
 	CLAIMED: 'Claimed',
 	EXTENDED: 'Extended',
 	PROPOSED: 'Proposed',
@@ -277,8 +277,8 @@ export const bountyStatusOptions = [
 		label: 'Awarded'
 	},
 	{
-		key: bountyStatus.CANCELED,
-		label: 'Canceled'
+		key: bountyStatus.CANCELLED,
+		label: 'Cancelled'
 	},
 	{
 		key: bountyStatus.CLAIMED,
@@ -301,7 +301,7 @@ export const bountyStatusOptions = [
 export const bountyStatusMap = {
 	[bountyStatus.AWARDED]: 'Awarded',
 	[bountyStatus.ACTIVE]: 'Active',
-	[bountyStatus.CANCELED]: 'Canceled',
+	[bountyStatus.CANCELLED]: 'Cancelled',
 	[bountyStatus.CLAIMED]: 'Claimed',
 	[bountyStatus.EXTENDED]: 'Extended',
 	[bountyStatus.PROPOSED]: 'Proposed',
@@ -311,7 +311,7 @@ export const bountyStatusMap = {
 export const childBountyStatus = {
 	ADDED: 'Added',
 	AWARDED: 'Awarded',
-	CANCELED: 'Canceled',
+	CANCELLED: 'Cancelled',
 	CLAIMED: 'Claimed'
 };
 
@@ -325,8 +325,8 @@ export const childBountyStatusOptions = [
 		label: 'Awarded'
 	},
 	{
-		key: childBountyStatus.CANCELED,
-		label: 'Canceled'
+		key: childBountyStatus.CANCELLED,
+		label: 'Cancelled'
 	},
 	{
 		key: childBountyStatus.CLAIMED,
@@ -337,7 +337,7 @@ export const childBountyStatusOptions = [
 export const childBountyStatusMap = {
 	[childBountyStatus.ADDED]: 'Added',
 	[childBountyStatus.AWARDED]: 'Awarded',
-	[childBountyStatus.CANCELED]: 'Canceled',
+	[childBountyStatus.CANCELLED]: 'Cancelled',
 	[childBountyStatus.CLAIMED]: 'Claimed'
 };
 

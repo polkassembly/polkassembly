@@ -61,3 +61,38 @@ export const fetchContentSummary = async (content: string, type: string, _prompt
 		return summary;
 	}
 };
+
+export const isSpamDetected = async (content: string) => {
+	const prompt = process.env.SPAM_CHECK_PROMPT || 'Determine if the following content is spam. Respond with "yes" if it is spam, or "no" if it is not spam.';
+	const res = await fetch('https://api.openai.com/v1/chat/completions', {
+		body: JSON.stringify({
+			frequency_penalty: 0.0,
+			max_tokens: 10,
+			messages: [
+				{
+					content: prompt,
+					role: 'system'
+				},
+				{
+					content: `${striptags(content)}`,
+					role: 'user'
+				}
+			],
+			model: 'gpt-3.5-turbo',
+			presence_penalty: 0.0,
+			temperature: 0,
+			top_p: 1.0
+		}),
+		headers: {
+			Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
+			'Content-Type': 'application/json'
+		},
+		method: 'POST'
+	});
+	const data = await res.json();
+	if (data && data.choices && Array.isArray(data.choices) && data.choices.length > 0) {
+		const spamCheckResult = data.choices[0]?.message?.content.trim().toLowerCase();
+		return spamCheckResult === 'yes';
+	}
+	return false;
+};

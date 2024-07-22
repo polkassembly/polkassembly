@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { ProfileMentionsIcon } from '~src/ui-components/CustomIcons';
 import { ProfileDetailsResponse } from '~src/auth/types';
-import { Divider, Empty, Spin } from 'antd';
+import { Divider, Spin } from 'antd';
 import ImageComponent from '../ImageComponent';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -16,8 +16,7 @@ import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { useTheme } from 'next-themes';
 import ActivityBottomContent from './ProfileActivityBottom';
 import { EUserActivityIn, EUserActivityType } from '~src/types';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -76,7 +75,7 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 			<div
 				className={classNames(
 					className,
-					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+					'mt-6 flex min-h-[280px] flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 				)}
 			>
 				<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -128,12 +127,14 @@ const ProfileMentions = ({ className, userProfile, count }: Props) => {
 								);
 						  })
 						: !loading && (
-								<Empty
-									image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-									imageStyle={{ height: 300 }}
-									description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No mentions found</p>}
-									className='my-6 dark:text-[#9e9e9e]'
-								/>
+								<div className='my-[60px] flex flex-col items-center gap-6'>
+									<ImageIcon
+										src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+										alt='Empty Icon'
+										imgClassName='w-[225px] h-[225px]'
+									/>
+									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No mentions found</h3>
+								</div>
 						  )}
 				</div>
 

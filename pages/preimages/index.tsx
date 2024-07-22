@@ -18,7 +18,7 @@ import { IPreimagesListingResponse } from '~src/types';
 import { ErrorState } from '~src/ui-components/UIStates';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { handlePaginationChange } from '~src/util/handlePaginationChange';
-import styled from 'styled-components';
+import styled, { DefaultTheme } from 'styled-components';
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 
@@ -61,6 +61,30 @@ const Pagination = styled(AntdPagination)`
 	}
 `;
 
+const StyledInputSearch = styled(Input.Search)<{ theme: DefaultTheme }>`
+	.ant-input-group-wrapper .ant-input-group .ant-input {
+		height: 32px !important;
+		width: 245px !important;
+	}
+	.ant-input {
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+		color: ${(props: any) => (props.theme === 'dark' ? '#9e9e9e' : '#243a57')} !important;
+	}
+	.ant-input-search-button {
+		height: 32px !important;
+		width: 32px !important;
+		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
+	.ant-input-affix-wrapper {
+		background-color: transparent !important;
+		border-color: ${(props: any) => (props.theme === 'dark' ? '#4B4B4B' : '#D2D8E0')};
+	}
+	.ant-input-search-button svg {
+		fill: ${(props: any) => (props.theme === 'dark' ? '#9E9E9E' : '#4B4B4B')};
+	}
+`;
+
 interface IPreImagesProps {
 	data?: IPreimagesListingResponse;
 	error?: string;
@@ -78,6 +102,8 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	console.log(data, 'dataa');
 
 	if (error) return <ErrorState errorMessage={error} />;
 	if (!data) return null;
@@ -142,12 +168,13 @@ const PreImages: FC<IPreImagesProps> = (props: any) => {
 					{count} {count > 1 ? 'Preimages' : 'Preimage'}
 				</h1>
 				<div className='flex items-center justify-between gap-3'>
-					<Input.Search
+					<StyledInputSearch
 						placeholder='Search Hash'
 						onSearch={onSearch}
 						value={searchQuery || ''}
 						onChange={onSearchInputChange}
 						style={{ width: 200 }}
+						theme={theme as unknown as DefaultTheme}
 					/>
 					{showButton && (
 						<button

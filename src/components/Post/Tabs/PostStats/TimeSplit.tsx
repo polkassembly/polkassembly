@@ -43,7 +43,7 @@ const TimeSplit: FC<ITimeSplitProps> = ({ className, axisLabel, votesByTimeSplit
 	];
 
 	return (
-		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-[#D2D8E0] bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
+		<Card className='mx-auto h-fit max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white'>
 			<h2 className='text-xl font-semibold'>Time Split</h2>
 			{elapsedPeriod < 1 ? (
 				<div className='flex flex-col items-center justify-center gap-5'>

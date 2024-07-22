@@ -228,6 +228,7 @@ exports.onReactionWritten = functions.region('europe-west1').firestore.document(
 });
 
 exports.trackLevelAnalytics = functions.runWith({
+	memory: '1GB',
 	timeoutSeconds: 540
 }).pubsub.schedule('every 24 hours').onRun(async () => {
 	functions.logger.info('scheduledTrackLevelAnalytics ran at : ', new Date());

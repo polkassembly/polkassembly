@@ -26,6 +26,7 @@ interface Props {
 	disableAddressClick?: boolean;
 	truncateUsername?: boolean;
 	usernameMaxLength?: number;
+	isUsedInLeadership?: boolean;
 }
 const NameLabel = ({
 	className,
@@ -35,7 +36,8 @@ const NameLabel = ({
 	usernameClassName,
 	disableAddressClick = false,
 	truncateUsername,
-	usernameMaxLength
+	usernameMaxLength,
+	isUsedInLeadership
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -44,6 +46,8 @@ const NameLabel = ({
 	const [openTipping, setOpenTipping] = useState<boolean>(false);
 	const [openAddressChangeModal, setOpenAddressChangeModal] = useState<boolean>(false);
 	const [address, setAddress] = useState<string>('');
+	const [leaderboardAstrals, setLeaderboardAstrals] = useState<number | null | undefined>(null);
+	const [userImage, setUserImage] = useState<string | null | undefined>(null);
 
 	const getUserProfile = async () => {
 		const { data } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -53,6 +57,8 @@ const NameLabel = ({
 			if (data?.addresses) {
 				setAddress(data?.addresses[0]);
 			}
+			setLeaderboardAstrals(data?.profile_score);
+			setUserImage(data?.image);
 		}
 	};
 	useEffect(() => {
@@ -84,6 +90,8 @@ const NameLabel = ({
 								enableTipping={!!address}
 								setOpenAddressChangeModal={setOpenAddressChangeModal}
 								setOpenTipping={setOpenTipping}
+								leaderboardAstrals={leaderboardAstrals}
+								imgUrl={userImage ? userImage : ''}
 							/>
 						}
 						open={!defaultAddress ? open : false}
@@ -92,7 +100,9 @@ const NameLabel = ({
 						}}
 					>
 						<span
-							className={`username mr-1.5 font-semibold text-bodyBlue dark:text-blue-dark-high ${!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'}`}
+							className={`username mr-1.5 ${isUsedInLeadership ? 'font-normal' : 'font-semibold'} text-bodyBlue dark:text-blue-dark-high ${
+								!disableAddressClick ? 'cursor-pointer hover:underline' : 'cursor-not-allowed'
+							} ${className}`}
 							onClick={(e) => {
 								e.stopPropagation();
 								e.preventDefault();

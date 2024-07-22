@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 import EditProfileModal from './EditProfile';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import { EditIcon } from '~src/ui-components/CustomIcons';
 
 const ProfileTippingCard = dynamic(() => import('./ProfileTippingCard'), {
 	ssr: false
@@ -59,7 +60,7 @@ const ProfileOverview = ({
 				<div className='flex w-full gap-6'>
 					<div className='flex w-[60%] flex-col gap-6 max-lg:w-full'>
 						{!!bio?.length && (
-							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
 								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
 									<Image
 										src='/assets/profile/about.svg'
@@ -133,23 +134,30 @@ const ProfileOverview = ({
 					<div className='flex w-[60%] flex-col gap-5 py-1 max-md:w-full'>
 						{/* About card */}
 						{(!!bio?.length || username === userProfile.username) && (
-							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
-								<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
-									<Image
-										src='/assets/profile/about.svg'
-										alt=''
-										width={24}
-										height={24}
-									/>
-									About
-								</span>
-								<span
-									className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}
-									onClick={() => {
-										if (username !== userProfile?.username) return;
-										setOpenEditModal(true);
-									}}
-								>
+							<div className='flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-4 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'>
+								<div className='flex w-full justify-between'>
+									<span className='flex items-center gap-1.5 text-xl font-semibold dark:text-blue-dark-high'>
+										<Image
+											src='/assets/profile/about.svg'
+											alt=''
+											width={24}
+											height={24}
+										/>
+										About
+									</span>
+									{username === userProfile?.username && (
+										<span
+											className='flex cursor-pointer items-center'
+											onClick={() => {
+												setOpenEditModal(true);
+											}}
+										>
+											<EditIcon className='mr-1 text-pink_primary' />
+											<p className='m-0 p-0 text-pink_primary'>Edit</p>
+										</span>
+									)}
+								</div>
+								<span className={classNames('text-sm font-normal', !bio?.length && 'flex cursor-pointer flex-wrap')}>
 									{bio?.length ? (showFullBio ? bio : bio.slice(0, 300)) : username === userProfile.username ? 'Click here to add bio' : ''}
 								</span>
 								{(bio?.length || 0) > 300 && (

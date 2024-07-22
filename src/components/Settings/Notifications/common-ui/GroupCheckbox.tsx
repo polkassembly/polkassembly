@@ -44,7 +44,7 @@ export default function GroupCheckbox({ categoryOptions = [], title, classname, 
 						<Tips className='h-[20px] w-[20px]' />
 					)}
 
-					<h3 className='mb-[1px] text-[14px] font-semibold leading-[21px] tracking-wide'>{title}</h3>
+					<h3 className='mb-[1px] text-sm font-semibold leading-[21px] tracking-wide'>{title}</h3>
 					<Toggler
 						selected={all}
 						label='All'

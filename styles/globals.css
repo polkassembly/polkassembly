@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+
+@font-face {
+  font-family: 'Pixeboy';
+  src: url('../public/fonts/Pixeboy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --navBlue: #90a0b7;
   --sidebarBlue: #334d6e;
@@ -38,6 +47,7 @@
   --ligth_red: #fff1f4;
   --comment_bg: #F9FAFB;
   --font_default: "Poppins";
+  --font-space_grotesk: "Space Grotesk";
   --main-bg: #F5F6F8;
   --separatorDark: #4B4B4B;
   --tableRowSeparator: #323232;
@@ -108,7 +118,7 @@ body {
   scroll-behavior: smooth;
   font-family: var(--font_default), "Poppins", -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
+    "Helvetica Neue", sans-serif, "Space Grotesk", "Pixeboy", "Pixelify Sans";
 }
 
 a {
@@ -845,6 +855,13 @@ z-index: 105 !important;
   transform: scale(0.7);
 }
 
+.place-container {
+  transform: scale(0.95);
+}
+
+.divider-container {
+  border-top: 1px solid #D2D8E0 !important;
+}
 .proxyDropdown {
   border: 1px solid #d2d8e0 !important;
 }
@@ -859,6 +876,13 @@ z-index: 105 !important;
   text-shadow: none !important;
 }
 
+.ant-input {
+  background-color: transparent !important;
+}
 .dark-icons{
   filter: invert(56%) sepia(0%) saturate(15%) hue-rotate(141deg) brightness(101%) contrast(93%)  !important;
+}
+
+.bounty-button {
+  background: linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%);
 }

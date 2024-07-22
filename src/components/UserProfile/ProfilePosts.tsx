@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Empty, Popover } from 'antd';
+import { Checkbox, Popover } from 'antd';
 import classNames from 'classnames';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ProfileDetailsResponse } from '~src/auth/types';
@@ -18,9 +18,8 @@ import { getSinglePostLinkFromProposalType } from '~src/global/proposalType';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { ClipboardIcon, DownArrowIcon } from '~src/ui-components/CustomIcons';
 import SelectGovType from './SelectGovType';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 interface Props {
 	className?: string;
@@ -161,7 +160,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 		<div
 			className={classNames(
 				className,
-				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-[#D2D8E0] bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
+				'mt-6 flex flex-col gap-5 rounded-[14px] border-[1px] border-solid border-section-light-container bg-white px-6 py-6 text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-md:flex-col'
 			)}
 		>
 			<div className={`flex items-center justify-between gap-4 max-md:px-0 ${addresses.length > 1 && 'max-md:flex-col'}`}>
@@ -203,8 +202,8 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 				</div>
 			</div>
 			<div className='flex flex-col gap-8 overflow-x-auto'>
-				<div className='flex justify-between gap-2'>
-					<div className='flex flex-shrink-0 gap-2'>
+				<div className='justify-between gap-2 sm:flex'>
+					<div className='scroll-hidden flex w-auto gap-2 overflow-auto sm:w-auto sm:flex-shrink-0'>
 						{Object.entries(selectedGov === EGovType.OPEN_GOV ? userPosts?.open_gov : userPosts?.gov1)?.map(([key, value]) => (
 							<div
 								key={key}
@@ -225,7 +224,7 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 						))}
 					</div>
 					{!!subFilterContent && selectedFilter !== 'discussions' && (
-						<div className=''>
+						<div className='mt-3 sm:mt-0'>
 							<Popover
 								zIndex={1056}
 								content={subFilterContent}
@@ -279,12 +278,14 @@ const ProfilePosts = ({ className, userPosts, userProfile, totalPosts }: Props) 
 							);
 						})
 					) : (
-						<Empty
-							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-							imageStyle={{ height: 300 }}
-							description={<p className='m-0 p-0 text-bodyBlue dark:text-white'>No posts found</p>}
-							className='my-6 dark:text-[#9e9e9e]'
-						/>
+						<div className='my-[60px] flex flex-col items-center gap-6'>
+							<ImageIcon
+								src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+								alt='Empty Icon'
+								imgClassName='w-[225px] h-[225px]'
+							/>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Posts found</h3>
+						</div>
 					)}
 				</div>
 			</div>

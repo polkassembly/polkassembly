@@ -24,6 +24,7 @@ import {
 	MotionsIcon,
 	NewsIcon,
 	OverviewIcon,
+	LeaderboardOverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
@@ -40,7 +41,8 @@ import {
 	CommunityPIPsIcon,
 	ApplayoutIdentityIcon,
 	ArchivedIcon,
-	ClearIdentityOutlinedIcon
+	ClearIdentityOutlinedIcon,
+	RoundedDollarIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -62,18 +64,20 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
-import { logout } from '~src/redux/userDetails';
+import { logout, userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import TopNudges from '~src/ui-components/TopNudges';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 
+const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
+	ssr: false
+});
 interface IUserDropdown {
 	handleSetIdentityClick: any;
 	isIdentityUnverified: boolean;
@@ -88,9 +92,6 @@ interface IUserDropdown {
 	isIdentityExists: boolean;
 }
 
-const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
-	ssr: false
-});
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -106,6 +107,9 @@ const Menu = styled(AntdMenu)`
 			color: var(--pink_primary) !important;
 		}
 		.ant-menu-item-icon {
+			color: var(--pink_primary) !important;
+		}
+		.ant-menu-item-icon > span {
 			color: var(--pink_primary) !important;
 		}
 		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
@@ -297,7 +301,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
-	const { username, picture, loginAddress, id: userId } = useUserDetailsSelector();
+	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -378,6 +382,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				apiReady: apiReady,
 				network: network
 			});
+			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
 			setMainDisplay(displayParent || display || nickname);
 			setIsGood(isGood);
 			setIsIdentitySet(isIdentitySet);
@@ -556,6 +561,31 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
+	}
+	if (['polkadot'].includes(network)) {
+		gov1Items['overviewItems'].splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Leaderboard</span>
+					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
+				</div>,
+				'/leaderboard',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						BETA
+					</div>
+				</div>
+			)
+		);
 	}
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
@@ -842,6 +872,56 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 		);
 	}
+	if (network == 'polkadot') {
+		gov2OverviewItems.splice(
+			4,
+			0,
+			getSiderMenuItem(
+				<div className='ml-[2px] flex items-center gap-1.5'>
+					Bounty
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/bounty',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+	if (['polkadot'].includes(network)) {
+		gov2OverviewItems.splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Leaderboard</span>
+					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
+				</div>,
+				'/leaderboard',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						BETA
+					</div>
+				</div>
+			)
+		);
+	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
@@ -1041,13 +1121,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				isIdentityExists={isIdentitySet}
 			/>
 
-			{userId && (
-				<TopNudges
-					handleSetIdentityClick={handleIdentityButtonClick}
-					isIdentitySet={isIdentitySet}
-					isIdentityUnverified={isIdentityUnverified}
-				/>
-			)}
+			{/* {userId && <TopNudges />} */}
 			<Layout hasSider>
 				<Sider
 					trigger={null}
@@ -1146,6 +1220,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				</>
 			)}
+
 			<Footer theme={theme as any} />
 			<Modal
 				zIndex={100}

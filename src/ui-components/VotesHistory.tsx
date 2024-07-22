@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import StatusTag from './StatusTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IProfileVoteHistoryRespose, IVotesData } from 'pages/api/v1/votesHistory/getVotesByVoter';
-import { Empty, Spin, Checkbox, Tooltip } from 'antd';
+import { Spin, Checkbox, Tooltip } from 'antd';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
@@ -38,9 +38,8 @@ import { isSubscanSupport } from '~src/util/subscanCheck';
 import SelectGovType from '~src/components/UserProfile/SelectGovType';
 import { Pagination } from './Pagination';
 import { BN } from 'bn.js';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import { useTheme } from 'next-themes';
+import ImageIcon from './ImageIcon';
 
 interface Props {
 	className?: string;
@@ -416,7 +415,7 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 																	<span
 																		className={classNames(
 																			!canRemoveVote || removeVoteLoading?.ids?.includes(Number(vote?.proposal?.id))
-																				? 'cursor-not-allowed text-[#D2D8E0] dark:text-[#4A4A4A]'
+																				? 'cursor-not-allowed text-section-light-container dark:text-[#4A4A4A]'
 																				: 'cursor-pointer text-lightBlue dark:text-[#9E9E9E]'
 																		)}
 																		onClick={() => {
@@ -431,8 +430,8 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 														</div>
 													</span>
 												</div>
-												<div className='flex justify-between px-6 py-4 md:hidden'>
-													<div className='flex w-[50%] items-center justify-between gap-2 max-sm:w-[70%]'>
+												<div className='flex justify-between px-3 py-2 md:hidden'>
+													<div className='flex w-[50%] items-center justify-around gap-2 max-sm:w-[70%]'>
 														{vote?.decision === 'yes' ? (
 															<span className='flex items-center justify-end text-[#2ED47A]'>
 																<AyeIcon className='mr-1' />
@@ -479,11 +478,14 @@ const VotesHistory = ({ className, userProfile, statsArr, setStatsArr, totalVote
 				) : (
 					<div className='mt-16'>
 						{votesData && (
-							<Empty
-								image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-								imageStyle={{ height: 300 }}
-								description={<div className='text-lightBlue dark:text-blue-dark-high'>No vote found</div>}
-							/>
+							<div className='my-[60px] flex flex-col items-center gap-6'>
+								<ImageIcon
+									src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+									alt='Empty Icon'
+									imgClassName='w-[225px] h-[225px]'
+								/>
+								<h3 className='text-blue-light-high dark:text-blue-dark-high'>No vote found</h3>
+							</div>
 						)}
 					</div>
 				)}

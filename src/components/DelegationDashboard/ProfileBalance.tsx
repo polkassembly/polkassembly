@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import { Divider } from 'antd';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import { setUserDetailsState } from '~src/redux/userDetails';
+import { userDetailsActions } from '~src/redux/userDetails';
 import userProfileBalances from '~src/util/userProfieBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
@@ -129,9 +129,9 @@ const ProfileBalances = ({ className }: Props) => {
 						className='cursor-pointer text-sm text-[#788698]'
 						onAccountChange={(address) => {
 							setAddress(address);
-							dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }));
+							dispatch(userDetailsActions.updateDelegationDashboardAddress(address));
 						}}
-						inputClassName='text-white border-[1.5px] border-[#D2D8E0] dark:border-separatorDark bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
+						inputClassName='text-white border-[1.5px] border-section-light-container dark:border-separatorDark bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 						isSwitchButton={true}
 						setSwitchModalOpen={setOpenModal}
 						withoutInfo={true}
@@ -146,7 +146,8 @@ const ProfileBalances = ({ className }: Props) => {
 				setOpen={setOpenModal}
 				walletAlertTitle={'Delegation'}
 				closable={true}
-				onConfirm={(address: string) => dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: address }))}
+				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
+				usedInIdentityFlow={false}
 			/>
 		</div>
 	);

@@ -26,6 +26,9 @@ import { IComment } from '~src/components/Post/Comment/Comment';
 import { getSortedComments } from '~src/components/Post/Comment/CommentsContainer';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
+import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
+
+const ZERO_BN = new BN(0);
 
 interface Props {
 	className?: string;
@@ -42,6 +45,7 @@ interface Props {
 	nayVoteValue?: BN;
 	abstainVoteValue?: BN;
 	icon: ReactElement;
+	delegatedVotingPower?: BN;
 }
 
 const VoteInitiatedModal = ({
@@ -58,12 +62,14 @@ const VoteInitiatedModal = ({
 	ayeVoteValue,
 	nayVoteValue,
 	abstainVoteValue,
+	delegatedVotingPower = ZERO_BN,
 	icon
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
-	const [posted, setPosted] = useState(false);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const [posted, setPosted] = useState(false);
+
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
@@ -89,17 +95,14 @@ const VoteInitiatedModal = ({
 	return (
 		<Modal
 			open={open}
-			className={`${poppins.variable} ${poppins.className} delegate w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			className={`${poppins.variable} ${poppins.className} delegate mt-[5vh] w-[604px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
-			closeIcon={
-				<span onClick={() => setPosted(true)}>
-					<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
-				</span>
-			}
-			onCancel={() => setOpen(false)}
-			centered
+			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+			onCancel={() => {
+				setOpen(false);
+				setPosted(false);
+			}}
 			footer={false}
-			maskClosable={false}
 			closable
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
@@ -107,8 +110,9 @@ const VoteInitiatedModal = ({
 				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{title}</h2>
 				<div className='flex flex-col items-center justify-center gap-[14px]'>
 					<div className='text-[24px] font-semibold text-pink_primary'>
-						{formatedBalance(balance.toString(), unit)}
-						{` ${unit}`}
+						{conviction
+							? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
+							: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
 					</div>
 					{vote === EVoteDecisionType.SPLIT && (
 						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
@@ -157,9 +161,10 @@ const VoteInitiatedModal = ({
 							</span>
 						</div>
 					)}
+
 					<div className='flex flex-col items-start justify-center gap-[10px]'>
-						<div className='flex gap-3 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							With address:{' '}
+						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>With address:</span>
 							<span className='font-medium'>
 								<Address
 									isTruncateUsername={false}
@@ -171,8 +176,8 @@ const VoteInitiatedModal = ({
 						</div>
 
 						{multisig && (
-							<div className='flex gap-[17px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								With Multisig:{' '}
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>With Multisig:</span>
 								<span className='font-medium'>
 									<Address
 										isTruncateUsername={false}
@@ -184,8 +189,16 @@ const VoteInitiatedModal = ({
 							</div>
 						)}
 
-						<div className='flex h-[21px] gap-[70px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Vote :
+						{
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Vote Amount:</span>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+									{formatedBalance(balance.toString(), unit)} {unit}
+								</span>
+							</div>
+						}
+						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Vote :</span>
 							{vote === EVoteDecisionType.AYE ? (
 								<p>
 									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
@@ -204,16 +217,22 @@ const VoteInitiatedModal = ({
 								</p>
 							) : null}
 						</div>
-						<div className='flex gap-[30px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Conviction:
+						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Conviction:</span>
 							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
 						</div>
-						<div className='flex h-[21px] gap-[14px] text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							Time of Vote : <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
+						{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
+							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Delegated Power:</span>
+								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
+							</div>
+						)}
+						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Time of Vote :</span> <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
 						</div>
 						{multisig && (
-							<div className='flex h-[21px] gap-11 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								Vote Link:{' '}
+							<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+								<span className='min-w-[120px]'>Vote Link:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									<a
 										className='text-pink_primary'
@@ -242,12 +261,13 @@ const VoteInitiatedModal = ({
 				<div className='form-group form-container ml-4'>
 					<PostCommentForm
 						className='-mt-[25px] ml-4 w-[100%]'
-						posted={posted}
 						isUsedInSuccessModal={true}
 						setCurrentState={handleCurrentCommentAndTimeline}
 						voteDecision={vote}
 						setSuccessModalOpen={setOpen}
 						voteReason={true}
+						posted={posted}
+						setPosted={setPosted}
 					/>
 				</div>
 				<span className='quote quote--right -right-[24px] -top-[2px] h-[40px] w-[48px] rounded-bl-xxl bg-white pt-[10px] text-center dark:bg-section-dark-overlay'>

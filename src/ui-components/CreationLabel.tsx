@@ -275,11 +275,11 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 								open={showVotesModal}
 								onCancel={() => setShowVotesModal(false)}
 								footer={false}
-								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-[6px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+								className={`${poppins.variable} ${poppins.className} max-h-[675px] w-[595px] rounded-sm max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 								closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 								wrapClassName='dark:bg-modalOverlayDark'
 								title={
-									<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-[#D2D8E0] dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
+									<div className='-ml-6 -mr-6 -mt-5 flex h-[65px] items-center gap-2 rounded-t-[6px] border-0 border-b-[1.5px] border-solid border-section-light-container dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 										<span className='ml-6 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Votes</span>
 									</div>
 								}
@@ -340,7 +340,7 @@ const CreationLabel: FC<ICreationLabelProps> = (props) => {
 						<HelperTooltip
 							text={
 								<span className='dark:text-blue-dark-high'>
-									This comment is imported from <span className='dark-pink'>Subsqaure</span>
+									This comment is imported from <span className='dark-pink'>Subsquare</span>
 								</span>
 							}
 							placement={'leftTop'}

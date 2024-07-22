@@ -121,6 +121,7 @@ class AuthService {
 			id: newUserId,
 			password: password,
 			profile: PROFILE_DETAILS_DEFAULTS,
+			profile_score: 0,
 			salt: salt,
 			username: username,
 			web3_signup: web3signup
@@ -944,13 +945,11 @@ class AuthService {
 		roles
 	}: User & { login_address?: string; login_wallet?: Wallet }): Promise<string> {
 		if (!privateKey) {
-			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PRIVATE_KEY_TEST : process.env.JWT_PRIVATE_KEY?.replace(/\\n/gm, '\n');
-			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
+			throw apiErrorWithStatusCode('JWT_PRIVATE_KEY_TEST not set. Aborting.', 403);
 		}
 
 		if (!passphrase) {
-			const key = process.env.NODE_ENV === 'test' ? process.env.JWT_KEY_PASSPHRASE_TEST : process.env.JWT_KEY_PASSPHRASE;
-			throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
+			throw apiErrorWithStatusCode('JWT_KEY_PASSPHRASE_TEST not set. Aborting.', 403);
 		}
 
 		let default_address = null;

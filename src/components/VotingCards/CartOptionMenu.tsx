@@ -6,13 +6,11 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import { useBatchVotesSelector } from '~src/redux/selectors';
 import { useAppDispatch } from '~src/redux/store';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const CartOptionMenu = () => {
-	const { total_proposals_added_in_Cart } = useBatchVotesSelector();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 
@@ -38,7 +36,7 @@ const CartOptionMenu = () => {
 
 	return (
 		<article className='flex h-[56px] w-full items-center justify-center gap-x-6 bg-white p-4 drop-shadow-2xl'>
-			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue'>{total_proposals_added_in_Cart} proposal added</p>
+			<p className='m-0 mr-auto p-0 text-xs text-bodyBlue'>New proposal added</p>
 			<div className='ml-auto flex gap-x-1'>
 				<CustomButton
 					variant='primary'

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
 import { EVoteDecisionType } from '~src/types';
 import { useApiContext } from '~src/context';
@@ -11,15 +11,18 @@ import BN from 'bn.js';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useDispatch } from 'react-redux';
+import { batchVotesActions } from '~src/redux/batchVoting';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
-	const [votesData, setVotesData] = useState<any>([]);
+	const { vote_cart_data } = useBatchVotesSelector();
 
 	console.log('userid --> ', user?.id, user?.loginAddress);
 
@@ -33,7 +36,7 @@ const VoteCart: React.FC = () => {
 			return;
 		} else {
 			console.log('cards in cart --> ', data);
-			setVotesData(data?.votes);
+			dispatch(batchVotesActions.setVoteCartData(data?.votes));
 		}
 	};
 
@@ -44,7 +47,7 @@ const VoteCart: React.FC = () => {
 
 	const getGASFees = () => {
 		const batchCall: any[] = [];
-		votesData.map((vote: any) => {
+		vote_cart_data.map((vote: any) => {
 			console.log('individual --> ', vote);
 			let voteTx = null;
 			if ([EVoteDecisionType.AYE, EVoteDecisionType.NAY].includes(vote?.decision as EVoteDecisionType)) {
@@ -74,12 +77,12 @@ const VoteCart: React.FC = () => {
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-		console.log('here is vote data guys --> ', votesData);
-		if (votesData && votesData?.length > 0) {
+		console.log('here is vote data guys --> ', vote_cart_data);
+		if (vote_cart_data && vote_cart_data?.length > 0) {
 			getGASFees();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [votesData]);
+	}, [vote_cart_data]);
 
 	return (
 		<section>
@@ -87,9 +90,9 @@ const VoteCart: React.FC = () => {
 				<div className='h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md dark:bg-black'>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
-						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({votesData?.length})</p>
+						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
-					{votesData.map((voteCardInfo: any, index: number) => (
+					{vote_cart_data.map((voteCardInfo: any, index: number) => (
 						<ProposalInfoCard
 							key={index}
 							voteInfo={voteCardInfo}
@@ -105,7 +108,7 @@ const VoteCart: React.FC = () => {
 				<div className='flex flex-col gap-y-2'>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{votesData?.length}</p>
+						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
 					</div>
 					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
 						<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>

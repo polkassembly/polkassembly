@@ -63,7 +63,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			console.error(error);
 			return;
 		} else {
-			router.reload();
+			dispatch(batchVotesActions.updateVoteCartItem(voteInfo?.id));
 		}
 	};
 
@@ -75,7 +75,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			console.error(error);
 			return;
 		} else {
-			router.reload();
+			dispatch(batchVotesActions.setRemoveVoteCartItem(voteInfo?.id));
 		}
 	};
 

@@ -13,6 +13,7 @@ export interface IBatchVoteStore {
 	voted_post_ids_array: number[];
 	voted_proposal_id: number;
 	post_ids_array: number[];
+	vote_cart_data: any[];
 }
 
 export type IVoteCardInfo = {

@@ -40,6 +40,7 @@ const initialState: IBatchVoteStore = {
 		voteConviction: 0.1
 	},
 	vote_card_info_array: [],
+	vote_cart_data: [],
 	voted_post_ids_array: [],
 	voted_proposal_id: 0
 };
@@ -91,6 +92,7 @@ export const batchVoteStore = createSlice({
 					voteConviction: 0.1
 				},
 				vote_card_info_array: [],
+				vote_cart_data: [],
 				voted_post_ids_array: [],
 				voted_proposal_id: 0
 			};
@@ -157,6 +159,9 @@ export const batchVoteStore = createSlice({
 			state.vote_card_info_array = state.vote_card_info_array.filter((voteCard) => voteCard.post_id !== action.payload);
 			state.total_proposals_added_in_Cart = state.vote_card_info_array.length;
 		},
+		setRemoveVoteCartItem: (state, action: PayloadAction<number>) => {
+			state.vote_cart_data = state.vote_cart_data.filter((item) => item.id !== action.payload);
+		},
 		setShowCartMenu: (state, action: PayloadAction<boolean>) => {
 			state.show_cart_menu = action.payload;
 		},
@@ -168,6 +173,9 @@ export const batchVoteStore = createSlice({
 		},
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
+		},
+		setVoteCartData: (state, action: PayloadAction<[]>) => {
+			state.vote_cart_data = action.payload;
 		},
 		setVotedPostsIdsArray: (state, action: PayloadAction<number[]>) => {
 			state.voted_post_ids_array = action.payload;
@@ -219,6 +227,10 @@ export const batchVoteStore = createSlice({
 						break;
 				}
 			}
+		},
+		updateVoteCartItem: (state, action: PayloadAction<any>) => {
+			const updatedItem = action.payload;
+			state.vote_cart_data = state.vote_cart_data.map((item) => (item.id === updatedItem.id ? updatedItem : item));
 		}
 	}
 });

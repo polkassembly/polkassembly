@@ -25,17 +25,19 @@ import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
+import { poppins } from 'pages/_app';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
 interface ITreasuryOverviewProps {
 	inTreasuryProposals?: boolean;
+	isUsedinPolkadot?: boolean;
 	className?: string;
 	theme?: string;
 }
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
-	const { className, inTreasuryProposals, theme } = props;
+	const { className, inTreasuryProposals, isUsedinPolkadot, theme } = props;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
@@ -326,306 +328,311 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	}, [currentTokenPrice, network]);
 
 	return (
-		<div
-			className={`${className} grid ${
-				!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
-			} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}
-		>
-			{/* Available */}
-			<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-				<div className='w-full flex-col gap-x-0 lg:flex'>
-					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/AvailableDark.svg'
-								alt='available dark icon'
-								imgClassName='lg:hidden'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/available.svg'
-								alt='available icon'
-								imgClassName='lg:hidden'
-							/>
-						)}
-					</div>
-					{!available.isLoading ? (
-						<>
-							<div className='mb-4'>
-								<div className='my-1 flex items-center'>
-									<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
-									<HelperTooltip
-										text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-										className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-									/>
-								</div>
-								<div className='flex justify-between font-medium'>
-									{available.value ? (
-										<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-										</span>
-									) : (
-										<span>N/A</span>
-									)}
-								</div>
+		<section>
+			{isUsedinPolkadot ? (
+				<div className={`${poppins.className} ${poppins.variable} grid grid-cols-2 gap-x-8`}>
+					<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+						<div className='flex items-start justify-between'>
+							<div>
+								{!available.isLoading ? (
+									<>
+										<div className='mb-4 '>
+											<div className='my-1 flex items-center gap-x-[6px]'>
+												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<HelperTooltip
+													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+												/>
+												<span className='rounded-lg bg-[#F4F5F6] px-[6px] py-[2px] text-[10px] font-medium text-[#485F7DCC] dark:bg-[#333843] dark:text-[#F4F5F6]'>Monthly</span>
+											</div>
+											<div className='flex items-baseline justify-between font-medium'>
+												{available.value ? (
+													<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+														{available.value}{' '}
+														<span className='text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
+													</span>
+												) : (
+													<span>N/A</span>
+												)}
+												{!['polymesh', 'polymesh-test'].includes(network) && (
+													<span className='ml-2 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
+														{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+													</span>
+												)}
+											</div>
+										</div>
+									</>
+								) : (
+									<div className='flex min-h-[89px] w-full items-center justify-center'>
+										<LoadingOutlined />
+									</div>
+								)}
 							</div>
-							{!['polymesh', 'polymesh-test'].includes(network) && (
-								<>
-									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
-											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
-										</span>
-									</div>
-								</>
-							)}
-						</>
-					) : (
-						<div className='flex min-h-[89px] w-full items-center justify-center'>
-							<LoadingOutlined />
-						</div>
-					)}
-				</div>
-				<div>
-					{theme === 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/AvailableDark.svg'
-							alt='available dark icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					) : (
-						// <Available className='xs:hidden lg:block' />
-						<ImageIcon
-							src='/assets/icons/available.svg'
-							alt='available icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					)}
-				</div>
-			</div>
-
-			{/* CurrentPrice */}
-			{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
-				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-					<div className='w-full flex-col gap-x-0 lg:flex'>
-						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							{theme === 'dark' ? (
-								<ImageIcon
-									src='/assets/icons/CurrentPriceDark.svg'
-									alt='current price dark icon'
-									imgClassName='lg:hidden'
-								/>
-							) : (
-								<ImageIcon
-									src='/assets/icons/currentprice.svg'
-									alt='current price icon'
-									imgClassName='lg:hidden'
-								/>
-							)}
-						</div>
-						{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-							<>
-								<div className='mb-4'>
-									<div className='my-1 flex items-center'>
-										<span className='mr-2 hidden text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'>
-											Current Price of {chainProperties[network]?.tokenSymbol}
-										</span>
-										<span className='flex text-xs font-medium text-lightBlue dark:text-blue-dark-medium md:hidden'>Price {chainProperties[network]?.tokenSymbol}</span>
-									</div>
-									<div className='text-lg font-medium'>
-										{currentTokenPrice.value === 'N/A' ? (
-											<span>N/A</span>
-										) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-											<>
-												<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
-												<span className='text-bodyBlue dark:text-blue-dark-high'>{currentTokenPrice.value}</span>
-											</>
-										) : null}
-									</div>
-								</div>
-								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
-										{priceWeeklyChange.value === 'N/A' ? (
-											'N/A'
-										) : priceWeeklyChange.value ? (
-											<>
-												<span className='mr-1 sm:mr-2'>Weekly Change</span>
-												<div className='flex items-center'>
-													<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
+							<div>
+								{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1`}>
+										<span className={` hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex`}>{chainProperties[network]?.tokenSymbol} Price</span>
+										<div className='flex items-center gap-x-1 text-lg font-semibold'>
+											{currentTokenPrice.value === 'N/A' ? (
+												<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
+											) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+												<span className='ml-[2px] text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
+											) : null}
+											<div className='ml-2 flex items-baseline'>
+												<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+													{Math.abs(Number(priceWeeklyChange.value))}%
+												</span>
+												<span>
 													{Number(priceWeeklyChange.value) < 0 ? (
 														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
 													) : (
 														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
 													)}
-												</div>
-											</>
-										) : null}
+												</span>
+											</div>
+										</div>
 									</div>
-								</div>
-							</>
-						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
-								<LoadingOutlined />
+								) : (
+									<div className='flex min-h-[89px] w-full items-center justify-center'>
+										<LoadingOutlined />
+									</div>
+								)}
 							</div>
-						)}
+						</div>
+						{/* graph */}
+						<div></div>
 					</div>
-					<div>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/CurrentPriceDark.svg'
-								alt='current price dark icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/currentprice.svg'
-								alt='current price icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						)}
+
+					<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+						<div className='w-full flex-col gap-x-0 lg:flex'>
+							{!spendPeriod.isLoading ? (
+								<>
+									<div className='mb-4 sm:mb-0'>
+										<div className='flex items-center'>
+											<span className={`${poppins.className} ${poppins.variable} mr-2 mt-1 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0`}>
+												Spend Period Remaining
+											</span>
+
+											<HelperTooltip
+												text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
+												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+											/>
+										</div>
+
+										<div className={`${poppins.className} ${poppins.variable} mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0`}>
+											{spendPeriod.value?.total ? (
+												<>
+													{spendPeriod.value?.days ? (
+														<>
+															<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
+															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>days&nbsp;</span>
+														</>
+													) : null}
+													<>
+														<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>hrs&nbsp;</span>
+													</>
+													{!spendPeriod.value?.days ? (
+														<>
+															<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
+														</>
+													) : null}
+													<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
+												</>
+											) : (
+												'N/A'
+											)}
+										</div>
+									</div>
+									<span className='flex items-center'>
+										<ProgressBar
+											className='m-0 flex items-center p-0'
+											percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
+											trailColor={trailColor}
+											strokeColor='#E5007A'
+											size='small'
+										/>
+									</span>
+								</>
+							) : (
+								<div className='flex min-h-[89px] w-full items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+							)}
+						</div>
+						<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+						<div>
+							<div className='w-full gap-x-0 lg:flex'>
+								{!nextBurn.isLoading ? (
+									<>
+										<div className='mb-2 h-12 w-[28%]'>
+											<div className={`${poppins.className} ${poppins.variable} flex w-full flex-col text-xs`}>
+												<span className='mr-2 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
+												<div className='flex items-baseline gap-x-[6px]'>
+													{nextBurn.value ? (
+														<div className='flex items-baseline gap-x-[3px]'>
+															<span className='text-lg font-medium'>{nextBurn.value}</span>
+															<span className='text-base font-medium text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+														</div>
+													) : null}
+													<span className=' text-xs font-normal text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
+												</div>
+											</div>
+										</div>
+										<div
+											className={`${poppins.className} ${poppins.variable} ml-2 h-12 w-[72%] rounded-lg bg-[#F4F5F6] px-3 py-2 text-xs font-normal text-[#333843] dark:bg-[#333843] dark:text-[#F4F5F6]`}
+										>
+											If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.
+										</div>
+									</>
+								) : (
+									<div className='flex min-h-[89px] w-full items-center justify-center'>
+										<LoadingOutlined />
+									</div>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
-			)}
-
-			{/* Next Burn */}
-			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
-				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-					<div className='w-full flex-col gap-x-0 lg:flex'>
-						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+			) : (
+				<div
+					className={`${className} grid ${
+						!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
+					} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}
+				>
+					{/* Available */}
+					<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
+						<div className='w-full flex-col gap-x-0 lg:flex'>
+							<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+								{theme === 'dark' ? (
+									<ImageIcon
+										src='/assets/icons/AvailableDark.svg'
+										alt='available dark icon'
+										imgClassName='lg:hidden'
+									/>
+								) : (
+									<ImageIcon
+										src='/assets/icons/available.svg'
+										alt='available icon'
+										imgClassName='lg:hidden'
+									/>
+								)}
+							</div>
+							{!available.isLoading ? (
+								<>
+									<div className='mb-4'>
+										<div className='my-1 flex items-center'>
+											<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
+											<HelperTooltip
+												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+											/>
+										</div>
+										<div className='flex justify-between font-medium'>
+											{available.value ? (
+												<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+													{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+												</span>
+											) : (
+												<span>N/A</span>
+											)}
+										</div>
+									</div>
+									{!['polymesh', 'polymesh-test'].includes(network) && (
+										<>
+											<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
+												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+												<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
+													{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+												</span>
+											</div>
+										</>
+									)}
+								</>
+							) : (
+								<div className='flex min-h-[89px] w-full items-center justify-center'>
+									<LoadingOutlined />
+								</div>
+							)}
+						</div>
+						<div>
 							{theme === 'dark' ? (
 								<ImageIcon
-									src='/assets/icons/NextBurnDark.svg'
-									alt='next burn dark icon'
-									imgClassName='lg:hidden'
+									src='/assets/icons/AvailableDark.svg'
+									alt='available dark icon'
+									imgClassName='xs:hidden lg:block w-full'
 								/>
 							) : (
+								// <Available className='xs:hidden lg:block' />
 								<ImageIcon
-									src='/assets/icons/nextburn.svg'
-									alt='next burn icon'
-									imgClassName='lg:hidden'
+									src='/assets/icons/available.svg'
+									alt='available icon'
+									imgClassName='xs:hidden lg:block w-full'
 								/>
 							)}
 						</div>
-						{!nextBurn.isLoading ? (
-							<>
-								<div className='mb-4'>
-									<div className='my-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<span className='mr-2 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
-
-										<HelperTooltip text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.' />
-									</div>
-
-									<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{nextBurn.value ? (
-											<span>
-												{nextBurn.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-											</span>
-										) : null}
-									</div>
-								</div>
-								<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
-									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
-								</div>
-							</>
-						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-						)}
 					</div>
-					<div>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/NextBurnDark.svg'
-								alt='next burn dark icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/nextburn.svg'
-								alt='next burn icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						)}
-					</div>
-				</div>
-			)}
 
-			{/* Spend Period */}
-			{!['polymesh', 'polymesh-test'].includes(network) && (
-				<>
-					{!inTreasuryProposals && (
+					{/* CurrentPrice */}
+					{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
 						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 							<div className='w-full flex-col gap-x-0 lg:flex'>
 								<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
 									{theme === 'dark' ? (
 										<ImageIcon
-											src='/assets/icons/SpendPeriodDark.svg'
-											alt='spend period dark icon'
+											src='/assets/icons/CurrentPriceDark.svg'
+											alt='current price dark icon'
 											imgClassName='lg:hidden'
 										/>
 									) : (
 										<ImageIcon
-											src='/assets/icons/spendperiod.svg'
-											alt='spend period icon'
+											src='/assets/icons/currentprice.svg'
+											alt='current price icon'
 											imgClassName='lg:hidden'
 										/>
 									)}
 								</div>
-								{!spendPeriod.isLoading ? (
+								{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 									<>
-										<div className='mb-5 sm:mb-4'>
+										<div className='mb-4'>
 											<div className='my-1 flex items-center'>
-												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period</span>
-
-												<HelperTooltip
-													text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
-													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-												/>
+												<span className='mr-2 hidden text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'>
+													Current Price of {chainProperties[network]?.tokenSymbol}
+												</span>
+												<span className='flex text-xs font-medium text-lightBlue dark:text-blue-dark-medium md:hidden'>Price {chainProperties[network]?.tokenSymbol}</span>
 											</div>
-
-											<div className='mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0'>
-												{spendPeriod.value?.total ? (
+											<div className='text-lg font-medium'>
+												{currentTokenPrice.value === 'N/A' ? (
+													<span>N/A</span>
+												) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
 													<>
-														{spendPeriod.value?.days ? (
-															<>
-																<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
-																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>days&nbsp;</span>
-															</>
-														) : null}
-														<>
-															<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
-															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>hrs&nbsp;</span>
-														</>
-														{!spendPeriod.value?.days ? (
-															<>
-																<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
-																<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
-															</>
-														) : null}
-														<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
+														<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
+														<span className='text-bodyBlue dark:text-blue-dark-high'>{currentTokenPrice.value}</span>
 													</>
-												) : (
-													'N/A'
-												)}
+												) : null}
 											</div>
 										</div>
-										{
-											<div className='flex flex-col justify-center gap-y-3 font-medium'>
-												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-												<span className='flex items-center'>
-													<ProgressBar
-														className='m-0 flex items-center p-0'
-														percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
-														trailColor={trailColor}
-														strokeColor='#E5007A'
-														size='small'
-													/>
-												</span>
+										<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
+											<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+											<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
+												{priceWeeklyChange.value === 'N/A' ? (
+													'N/A'
+												) : priceWeeklyChange.value ? (
+													<>
+														<span className='mr-1 sm:mr-2'>Weekly Change</span>
+														<div className='flex items-center'>
+															<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
+															{Number(priceWeeklyChange.value) < 0 ? (
+																<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
+															) : (
+																<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
+															)}
+														</div>
+													</>
+												) : null}
 											</div>
-										}
+										</div>
 									</>
 								) : (
 									<div className='flex min-h-[89px] w-full items-center justify-center'>
@@ -636,23 +643,188 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							<div>
 								{theme === 'dark' ? (
 									<ImageIcon
-										src='/assets/icons/SpendPeriodDark.svg'
-										alt='spend period dark icon'
-										imgClassName='mt-2 xs:hidden lg:block w-full'
+										src='/assets/icons/CurrentPriceDark.svg'
+										alt='current price dark icon'
+										imgClassName='xs:hidden lg:block w-full'
 									/>
 								) : (
 									<ImageIcon
-										src='/assets/icons/spendperiod.svg'
-										alt='spend period icon'
-										imgClassName='mt-2 xs:hidden lg:block w-full'
+										src='/assets/icons/currentprice.svg'
+										alt='current price icon'
+										imgClassName='xs:hidden lg:block w-full'
 									/>
 								)}
 							</div>
 						</div>
 					)}
-				</>
+
+					{/* Next Burn */}
+					{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
+						<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
+							<div className='w-full flex-col gap-x-0 lg:flex'>
+								<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+									{theme === 'dark' ? (
+										<ImageIcon
+											src='/assets/icons/NextBurnDark.svg'
+											alt='next burn dark icon'
+											imgClassName='lg:hidden'
+										/>
+									) : (
+										<ImageIcon
+											src='/assets/icons/nextburn.svg'
+											alt='next burn icon'
+											imgClassName='lg:hidden'
+										/>
+									)}
+								</div>
+								{!nextBurn.isLoading ? (
+									<>
+										<div className='mb-4'>
+											<div className='my-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
+												<span className='mr-2 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
+
+												<HelperTooltip text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.' />
+											</div>
+
+											<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+												{nextBurn.value ? (
+													<span>
+														{nextBurn.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+													</span>
+												) : null}
+											</div>
+										</div>
+										<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
+											<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+											<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
+										</div>
+									</>
+								) : (
+									<div className='flex min-h-[89px] w-full items-center justify-center'>
+										<LoadingOutlined />
+									</div>
+								)}
+							</div>
+							<div>
+								{theme === 'dark' ? (
+									<ImageIcon
+										src='/assets/icons/NextBurnDark.svg'
+										alt='next burn dark icon'
+										imgClassName='xs:hidden lg:block w-full'
+									/>
+								) : (
+									<ImageIcon
+										src='/assets/icons/nextburn.svg'
+										alt='next burn icon'
+										imgClassName='xs:hidden lg:block w-full'
+									/>
+								)}
+							</div>
+						</div>
+					)}
+
+					{/* Spend Period */}
+					{!['polymesh', 'polymesh-test'].includes(network) && (
+						<>
+							{!inTreasuryProposals && (
+								<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
+									<div className='w-full flex-col gap-x-0 lg:flex'>
+										<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
+											{theme === 'dark' ? (
+												<ImageIcon
+													src='/assets/icons/SpendPeriodDark.svg'
+													alt='spend period dark icon'
+													imgClassName='lg:hidden'
+												/>
+											) : (
+												<ImageIcon
+													src='/assets/icons/spendperiod.svg'
+													alt='spend period icon'
+													imgClassName='lg:hidden'
+												/>
+											)}
+										</div>
+										{!spendPeriod.isLoading ? (
+											<>
+												<div className='mb-5 sm:mb-4'>
+													<div className='my-1 flex items-center'>
+														<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period</span>
+
+														<HelperTooltip
+															text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
+															className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+														/>
+													</div>
+
+													<div className='mt-1 flex items-baseline whitespace-pre font-medium text-bodyBlue dark:text-blue-dark-high sm:mt-0'>
+														{spendPeriod.value?.total ? (
+															<>
+																{spendPeriod.value?.days ? (
+																	<>
+																		<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
+																		<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>days&nbsp;</span>
+																	</>
+																) : null}
+																<>
+																	<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+																	<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>hrs&nbsp;</span>
+																</>
+																{!spendPeriod.value?.days ? (
+																	<>
+																		<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+																		<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
+																	</>
+																) : null}
+																<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
+															</>
+														) : (
+															'N/A'
+														)}
+													</div>
+												</div>
+												{
+													<div className='flex flex-col justify-center gap-y-3 font-medium'>
+														<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+														<span className='flex items-center'>
+															<ProgressBar
+																className='m-0 flex items-center p-0'
+																percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
+																trailColor={trailColor}
+																strokeColor='#E5007A'
+																size='small'
+															/>
+														</span>
+													</div>
+												}
+											</>
+										) : (
+											<div className='flex min-h-[89px] w-full items-center justify-center'>
+												<LoadingOutlined />
+											</div>
+										)}
+									</div>
+									<div>
+										{theme === 'dark' ? (
+											<ImageIcon
+												src='/assets/icons/SpendPeriodDark.svg'
+												alt='spend period dark icon'
+												imgClassName='mt-2 xs:hidden lg:block w-full'
+											/>
+										) : (
+											<ImageIcon
+												src='/assets/icons/spendperiod.svg'
+												alt='spend period icon'
+												imgClassName='mt-2 xs:hidden lg:block w-full'
+											/>
+										)}
+									</div>
+								</div>
+							)}
+						</>
+					)}
+				</div>
 			)}
-		</div>
+		</section>
 	);
 };
 

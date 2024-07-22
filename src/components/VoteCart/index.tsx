@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
 import { EVoteDecisionType } from '~src/types';
 import { useApiContext } from '~src/context';
@@ -13,7 +13,6 @@ import { chainProperties } from '~src/global/networkConstants';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const VoteCart: React.FC = () => {
-	const { vote_card_info_array } = useBatchVotesSelector();
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -21,7 +20,6 @@ const VoteCart: React.FC = () => {
 	const { loginAddress } = useUserDetailsSelector();
 	const [gasFees, setGasFees] = useState<any>();
 	const [votesData, setVotesData] = useState<any>([]);
-	console.log(vote_card_info_array);
 
 	console.log('userid --> ', user?.id, user?.loginAddress);
 
@@ -78,7 +76,7 @@ const VoteCart: React.FC = () => {
 		if (!api || !apiReady) return;
 		console.log('here is vote data guys --> ', votesData);
 		if (votesData && votesData?.length > 0) {
-			// getGASFees();
+			getGASFees();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [votesData]);

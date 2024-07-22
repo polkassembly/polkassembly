@@ -75,7 +75,6 @@ export const editBatchValueChanged = createAsyncThunk('house/editProfileFieldVal
 
 export const editCartPostValueChanged = createAsyncThunk('house/editProfileFieldValueChanged', async (params: IBatchVotingDefaults, { dispatch }) => {
 	const { values } = params;
-	console.log(values);
 	if (values?.voteOption) {
 		dispatch(
 			batchVotesActions.setEditCartPost_Field({

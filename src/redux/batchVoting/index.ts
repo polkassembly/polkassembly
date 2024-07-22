@@ -7,17 +7,33 @@ import { IBatchVotesDetails, IBatchVoteStore, IVoteCardInfo } from './@types';
 import { HYDRATE } from 'next-redux-wrapper';
 
 const initialState: IBatchVoteStore = {
-	batch_vote_details: {},
-	edit_vote_details: {},
+	batch_vote_details: {
+		abstainAyeVoteBalance: '0',
+		abstainNyeVoteBalance: '0',
+		abstainVoteBalance: '0',
+		ayeVoteBalance: '0',
+		conviction: 0.1,
+		nyeVoteBalance: '0',
+		voteOption: 'aye'
+	},
+	edit_vote_details: {
+		abstainAyeVoteBalance: '0',
+		abstainNyeVoteBalance: '0',
+		abstainVoteBalance: '0',
+		ayeVoteBalance: '0',
+		conviction: 0.1,
+		nyeVoteBalance: '0',
+		voteOption: 'aye'
+	},
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
 	total_active_posts: 0,
 	total_proposals_added_in_Cart: 0,
 	vote_card_info: {
-		abstainAyeBalance: '',
-		abstainNayBalance: '',
-		decision: '',
+		abstainAyeBalance: '0',
+		abstainNayBalance: '0',
+		decision: 'aye',
 		post_id: 0,
 		post_title: '',
 		voteBalance: 0,
@@ -164,11 +180,10 @@ export const batchVoteStore = createSlice({
 			state.vote_card_info_array = action.payload;
 		},
 		setvoteCardInfo: (state, action: PayloadAction<IVoteCardInfo>) => {
-			console.log('action pp --> ', action.payload);
 			state.vote_card_info = action.payload;
+			console.log('action pp --> ', state.vote_card_info);
 			state.vote_card_info_array.push(action.payload);
 
-			// Ensure unique post_id entries by keeping only the last one
 			const uniqueVoteCardInfoMap = new Map();
 			state.vote_card_info_array.forEach((voteCard) => {
 				uniqueVoteCardInfoMap.set(voteCard.post_id, voteCard);

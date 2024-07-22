@@ -18,6 +18,8 @@ import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } fro
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CardPostInfo from '../Post/CardPostInfo';
 import { useRouter } from 'next/router';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -29,9 +31,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { index, voteInfo } = props;
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const { vote_card_info } = useBatchVotesSelector();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
+	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
@@ -42,15 +44,16 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	};
 
 	const editPostVoteDetails = async () => {
-		console.log('vote infos --> ', vote_card_info);
-		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
-				abstain_balance: vote_card_info?.decision === 'abstain' ? vote_card_info?.voteBalance : '0',
-				aye_balance: vote_card_info?.decision === 'aye' ? vote_card_info.voteBalance : vote_card_info?.decision === 'abstain' ? vote_card_info.abstainAyeBalance : '0',
-				decision: vote_card_info?.decision,
+				abstain_balance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
+				aye_balance:
+					edit_vote_details?.voteOption === 'aye' ? edit_vote_details.ayeVoteBalance : edit_vote_details?.voteOption === 'abstain' ? edit_vote_details.abstainAyeVoteBalance : '0',
+				decision: edit_vote_details?.voteOption,
 				id: voteInfo?.id,
-				locked_period: vote_card_info?.voteConviction,
-				nay_balance: vote_card_info?.decision === 'nay' ? vote_card_info.voteBalance : vote_card_info?.decision === 'abstain' ? vote_card_info.abstainNayBalance : '0',
+				locked_period: edit_vote_details?.conviction,
+				nay_balance:
+					edit_vote_details?.voteOption === 'nay' ? edit_vote_details.nyeVoteBalance : edit_vote_details?.voteOption === 'abstain' ? edit_vote_details.abstainNyeVoteBalance : '0',
 				network: network,
 				referendum_index: voteInfo.referendumIndex,
 				user_address: user?.loginAddress
@@ -60,23 +63,24 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			console.error(error);
 			return;
 		} else {
-			console.log(data);
+			router.reload();
 		}
 	};
 
 	const deletePostDetails = async () => {
-		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			id: voteInfo?.id
 		});
 		if (error) {
 			console.error(error);
 			return;
 		} else {
-			console.log(data);
+			router.reload();
 		}
 	};
 
-	console.log(voteInfo);
+	const voteBalance = voteInfo?.decision === 'aye' ? voteInfo.ayeBalance : voteInfo?.decision === 'nay' ? voteInfo?.nayBalance : '0';
+
 	return (
 		<section
 			key={index}
@@ -122,8 +126,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</p>
 				</div>
 				<div className='flex items-center justify-center gap-x-2'>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.balance} DOT</p>
-					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.lockedPeriod || '0x'}</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{formatedBalance(voteBalance, unit, 0)} DOT</p>
+					<p className='m-0 p-0 text-xs text-bodyBlue dark:text-blue-dark-medium'>{voteInfo?.lockedPeriod || '0'}x</p>
 				</div>
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button
@@ -166,7 +170,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								text='Done'
 								buttonsize='sm'
 								onClick={() => {
-									console.log('edit infos --> ', edit_vote_details);
 									dispatch(
 										batchVotesActions.setvoteCardInfo({
 											abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,

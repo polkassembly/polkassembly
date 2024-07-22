@@ -20,6 +20,7 @@ const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 
 const VotingCards = () => {
 	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
+	console.log('batch details -> ', batch_vote_details);
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -53,7 +54,7 @@ const VotingCards = () => {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
 				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',
 				decision: direction === 'left' ? 'nay' : direction === 'right' ? 'aye' : 'Abstain',
-				locked_period: batch_vote_details.conviction || 0.1,
+				locked_period: batch_vote_details.conviction,
 				nay_balance: direction === 'left' ? batch_vote_details.nyeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainNyeVoteBalance || '0' : '0',
 				network: network,
 				referendum_index: postId,
@@ -101,7 +102,7 @@ const VotingCards = () => {
 	}, [network, user?.loginAddress]);
 
 	const swiped = async (direction: string, index: number, postId: number, postTitle: string) => {
-		console.log(batch_vote_details?.conviction);
+		console.log(batch_vote_details);
 		dispatch(batchVotesActions.setShowCartMenu(true));
 		dispatch(batchVotesActions.setVotedProposalId(postId));
 		dispatch(batchVotesActions.setTotalVotesAddedInCart(total_proposals_added_in_Cart + 1));

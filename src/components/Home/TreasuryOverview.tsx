@@ -371,7 +371,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 							<div>
 								{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
 									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1`}>
-										<span className={` hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex`}>{chainProperties[network]?.tokenSymbol} Price</span>
+										<span className={' hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'}>{chainProperties[network]?.tokenSymbol} Price</span>
 										<div className='flex items-center gap-x-1 text-lg font-semibold'>
 											{currentTokenPrice.value === 'N/A' ? (
 												<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>

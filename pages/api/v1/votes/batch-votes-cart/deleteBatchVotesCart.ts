@@ -13,7 +13,7 @@ import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 
 interface Args {
-	id: string[];
+	id: string;
 	deleteWholeCart: boolean;
 }
 

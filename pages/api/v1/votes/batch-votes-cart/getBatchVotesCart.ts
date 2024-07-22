@@ -132,7 +132,7 @@ const handler: NextApiHandler<{ votes: IBatchVoteCartResponse[] } | MessageType>
 						abstainBalance: data?.abstain_balance || '0',
 						ayeBalance: data?.aye_balance || '0',
 						createAt: data?.created_at?.toDate ? data?.created_at.toDate().toString() : data?.created_at,
-						decision: data?.decison || 'aye',
+						decision: data?.decision || 'aye',
 						id: data?.id || '',
 						lockedPeriod: data?.locked_period || 0.1,
 						nayBalance: data?.nay_balance || '0',

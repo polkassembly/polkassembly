@@ -1070,8 +1070,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const postDocRef = postsByTypeRef(network, strProposalType.toString() === 'open_gov' ? ProposalType.REFERENDUM_V2 : strProposalType).doc(strPostId);
 		const firestorePost = await postDocRef.get();
+
+		//FIXME: idk why this is here ? firestorePost will always be true, check for .exists if that's the intent
 		if (firestorePost) {
 			let data = firestorePost.data();
+
 			post.history = [];
 			try {
 				data = await getAndSetNewData({
@@ -1085,6 +1088,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			} catch (e) {
 				data = undefined;
 			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
@@ -1140,6 +1144,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
+
+				// check for faulty post (subsquare has stored invalid data)
+				if (network === 'polkadot' && strProposalType === ProposalType.CHILD_BOUNTIES && strPostId === '532') {
+					post.content = '';
+					post.title = '';
+				}
 			}
 		}
 

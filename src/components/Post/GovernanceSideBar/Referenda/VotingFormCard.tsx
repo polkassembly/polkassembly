@@ -87,6 +87,8 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 					<Slider
 						marks={marks}
 						step={null}
+						className='dark:text-white'
+						rootClassName='dark:text-white'
 						onChange={(value) => {
 							const markValue = getMarkValue(value as number);
 							if (!forSpecificPost) {

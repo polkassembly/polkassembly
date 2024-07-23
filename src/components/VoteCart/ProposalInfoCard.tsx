@@ -225,7 +225,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 								className='w-full'
 								buttonsize='sm'
 								onClick={() => {
-									router.push(`/refernda/${voteInfo?.proposal?.id}`);
+									router.push(`/referenda/${voteInfo?.proposal?.id}`);
 									setOpenViewProposalModal(false);
 								}}
 							/>

@@ -139,17 +139,17 @@ const VotingCards = () => {
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='mb-4 flex w-full justify-between'>
 				<button
-					className='mr-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
+					className='mr-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl dark:bg-transparent'
 					onClick={() => goBack()}
 				>
-					<LeftOutlined className='text-black' />
+					<LeftOutlined className='text-black dark:text-white' />
 				</button>
-				<p className='m-0 p-0 text-base font-semibold text-bodyBlue'>Active Proposals</p>
+				<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Active Proposals</p>
 				<button
-					className='ml-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl'
+					className='ml-auto flex h-[24px] w-[24px] items-center justify-center rounded-full border-none bg-[#ffffff] drop-shadow-2xl dark:bg-transparent'
 					onClick={() => goBack()}
 				>
-					<RightOutlined className='text-black' />
+					<RightOutlined className='text-black dark:text-white' />
 				</button>
 			</div>
 
@@ -166,7 +166,7 @@ const VotingCards = () => {
 			)}
 
 			{isLoading && (
-				<div className='flex h-[500px] items-center justify-center'>
+				<div className='flex h-[700px] items-center justify-center'>
 					<Spin
 						spinning={isLoading}
 						size='large'

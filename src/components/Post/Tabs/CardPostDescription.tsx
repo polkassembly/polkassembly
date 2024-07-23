@@ -18,7 +18,7 @@ const CardPostDescription: FC<ICardPostDescription> = (props) => {
 			<p
 				className='m-0 my-4 flex cursor-pointer justify-start p-0 text-xs text-pink_primary'
 				onClick={() => {
-					router.push(`/refernda/${postId}`);
+					router.push(`/referenda/${postId}`);
 				}}
 			>
 				Read Full Proposal

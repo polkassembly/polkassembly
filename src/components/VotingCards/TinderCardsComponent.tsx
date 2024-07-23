@@ -25,6 +25,18 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 		return newMd;
 	};
 
+	const handleReadFullProposal = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if (proposal?.id) {
+			router.push(`/referenda/${proposal.id}`).catch((err) => {
+				console.error('Failed to navigate:', err);
+			});
+		} else {
+			console.error('Proposal ID is missing');
+		}
+	};
+
 	return (
 		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
 			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
@@ -47,9 +59,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 				</div>
 				<p
 					className='m-0 my-4 flex cursor-pointer justify-start p-0 text-xs text-pink_primary'
-					onClick={() => {
-						router.push(`/refernda/${proposal?.id}`);
-					}}
+					onClick={handleReadFullProposal}
 				>
 					Read Full Proposal
 				</p>

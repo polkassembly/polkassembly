@@ -34,7 +34,7 @@ const DefaultVotingOptionsModal: FC<IDefaultVotingOptionsModal> = (props) => {
 				<Alert
 					type='info'
 					showIcon
-					message='Select default values for votes. These can be edited before making a final transaction'
+					message={<span className='text-[13px] dark:text-black'>Select default values for votes. These can be edited before making a final transaction</span>}
 				/>
 			)}
 			<VoteReferendumCard

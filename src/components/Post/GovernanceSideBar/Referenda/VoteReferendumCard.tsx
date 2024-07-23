@@ -222,7 +222,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
 			<Segmented
 				block
-				className={`${className} -ml-4 mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white pt-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
+				className={`${className} mb-6 w-full rounded-[4px] border-[1px] border-solid border-section-light-container bg-white pt-1 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay`}
 				size='large'
 				value={vote}
 				onChange={(value) => {

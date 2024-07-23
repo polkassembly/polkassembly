@@ -16,7 +16,7 @@ import BN from 'bn.js';
 import { BN_HUNDRED } from '@polkadot/util';
 import styled from 'styled-components';
 
-const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess'), {
+const CuratorProposalSuccessPopup = dynamic(() => import('./CuratorProposalSuccess'), {
 	ssr: false
 });
 
@@ -76,7 +76,8 @@ const CuratorActionModal = ({
 	const [isDiscussionLinked, setIsDiscussionLinked] = useState<boolean | null>(null);
 	const [discussionLink, setDiscussionLink] = useState<string>('');
 	const [openSuccess, setOpenSuccess] = useState<boolean>(false);
-	// const [postId, setPostId] = useState<number | null>(null);
+	const [curatorAddress, setCuratorAddress] = useState('');
+	const [createdPostId, setCreatedPostId] = useState<number | null>(null);
 	const [selectedTrack, setSelectedTrack] = useState('');
 	const [isPreimage, setIsPreimage] = useState<boolean | null>(null);
 	const [preimageHash, setPreimageHash] = useState<string>('');
@@ -238,10 +239,12 @@ const CuratorActionModal = ({
 								isPreimage={isPreimage}
 								setIsPreimage={setIsPreimage}
 								enactment={enactment}
+								curatorAddress={curatorAddress}
+								setCuratorAddress={setCuratorAddress}
 								setEnactment={setEnactment}
 								selectedTrack={selectedTrack}
 								setSelectedTrack={setSelectedTrack}
-								// setPostId={setPostId}
+								setCreatedPostId={setCreatedPostId}
 								setOpenModal={setOpenModal}
 								setOpenSuccess={setOpenSuccess}
 								proposerAddress={proposerAddress}
@@ -263,14 +266,18 @@ const CuratorActionModal = ({
 					)}
 				</div>
 			</Modal>
-			<TreasuryProposalSuccessPopup
+			<CuratorProposalSuccessPopup
 				open={openSuccess}
 				onCancel={() => {
 					setOpenSuccess(false);
 					handleClose();
 				}}
-				postId={postId || undefined}
-				isCuratorAdded
+				postId={createdPostId || undefined}
+				preimageHash={preimageHash}
+				preimageLength={preimageLength}
+				fundingAmount={bountyAmount}
+				proposerAddress={proposerAddress}
+				curatorAddress={curatorAddress}
 				selectedTrack={selectedTrack}
 			/>
 			<ReferendaLoginPrompts

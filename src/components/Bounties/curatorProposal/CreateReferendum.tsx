@@ -46,10 +46,12 @@ interface Props {
 	enactment: IEnactment;
 	setEnactment: (pre: IEnactment) => void;
 	proposerAddress: string;
+	curatorAddress: string;
 	selectedTrack: string;
 	setSelectedTrack: (pre: string) => void;
 	setPreimageHash: (pre: string) => void;
-	// setPostId: (pre: number) => void;
+	setCuratorAddress: (pre: string) => void;
+	setCreatedPostId: (pre: number) => void;
 	setOpenModal: (pre: boolean) => void;
 	setOpenSuccess: (pre: boolean) => void;
 	allowedCommentors?: EAllowedCommentor;
@@ -81,8 +83,10 @@ const CreateReferendum = ({
 	setEnactment,
 	selectedTrack,
 	setSelectedTrack,
-	// setPostId,
+	setCreatedPostId,
 	proposerAddress,
+	setCuratorAddress,
+	curatorAddress,
 	preimageHash,
 	preimageLength,
 	allowedCommentors,
@@ -107,7 +111,6 @@ const CreateReferendum = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bountyAmount, setBountyAmount] = useState<BN>(ZERO_BN);
 	const [bountyProposer, setBountyProposer] = useState<string | null>(null);
-	const [curatorAddress, setNewCuratorAddress] = useState('');
 	const [error, setError] = useState('');
 	const baseDeposit = new BN(chainProperties[network]?.preImageBaseDeposit || 0);
 	const [eligibleToCreateRef, setEligibleToCreateRef] = useState<boolean>(false);
@@ -271,7 +274,7 @@ const CreateReferendum = ({
 
 			const onSuccess = async () => {
 				handleSaveTreasuryProposal(post_id);
-				// setPostId(post_id);
+				setCreatedPostId(post_id);
 				setLoading(false);
 				setOpenModal(false);
 				setOpenSuccess(true);
@@ -343,7 +346,7 @@ const CreateReferendum = ({
 
 				setPreimageLength(data?.length);
 				form.setFieldValue('preimage_length', data?.length);
-				setNewCuratorAddress(data.proposedCall?.args?.curator?.value);
+				setCuratorAddress(data.proposedCall?.args?.curator?.value);
 				setFee(data?.proposedCall?.args?.fee);
 
 				setSteps({ percent: 100, step: 1 });
@@ -384,7 +387,7 @@ const CreateReferendum = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [bountyAmount]);
 
-	const onValueChange = (address: string) => setNewCuratorAddress(address);
+	const onValueChange = (address: string) => setCuratorAddress(address);
 
 	useEffect(() => {
 		if (proposerAddress !== bountyProposer) {

@@ -197,7 +197,7 @@ const Web2Login: FC<Props> = ({
 						<WalletButtons
 							disabled={loading}
 							onWalletSelect={onWalletSelect}
-							showPolkasafe={canUsePolkasafe(network)}
+							showPolkasafe={false}
 							onPolkasafeSelect={setWithPolkasafe}
 							isOptionalLogin={true}
 							isLoginFlow={true}

@@ -323,15 +323,13 @@ const Web3Login: FC<Props> = ({
 						if (confirmData.token) {
 							const user: any = {};
 							user.loginWallet = chosenWallet;
-							user.loginAddress = multisigAddress || address;
+							user.loginAddress = address;
 							user.multisigAssociatedAddress = address;
-							user.delegationDashboardAddress = multisigAddress || address;
+							user.delegationDashboardAddress = address;
 							localStorage.setItem('delegationWallet', chosenWallet);
-							localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
-							localStorage.setItem('multisigDelegationAssociatedAddress', address);
+							localStorage.setItem('delegationDashboardAddress', address);
 							localStorage.setItem('loginWallet', chosenWallet);
 							localStorage.setItem('loginAddress', address);
-							localStorage.setItem('multisigAssociatedAddress', address);
 							handleTokenChange(confirmData.token, { ...currentUser, ...user }, dispatch);
 							if (isModal) {
 								const localCurrentUser: any = decodeToken<JWTPayloadType>(confirmData.token);
@@ -364,16 +362,13 @@ const Web3Login: FC<Props> = ({
 			if (addressLoginData?.token) {
 				const user: any = {};
 				user.loginWallet = chosenWallet;
-				user.loginAddress = multisigAddress || address;
-				user.delegationDashboardAddress = multisigAddress || address;
+				user.loginAddress = address;
+				user.delegationDashboardAddress = address;
 				user.multisigAssociatedAddress = address;
 				localStorage.setItem('delegationWallet', chosenWallet);
-				localStorage.setItem('delegationDashboardAddress', multisigAddress || address);
-				localStorage.setItem('multisigDelegationAssociatedAddress', address);
+				localStorage.setItem('delegationDashboardAddress', address);
 				localStorage.setItem('loginWallet', chosenWallet);
 				localStorage.setItem('loginAddress', address);
-
-				localStorage.setItem('multisigAssociatedAddress', address);
 				handleTokenChange(addressLoginData.token, { ...currentUser, ...user }, dispatch);
 
 				if (isModal) {

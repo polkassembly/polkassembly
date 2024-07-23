@@ -243,7 +243,7 @@ const Web3Signup: FC<Props> = ({
 			}
 
 			setLoading(true);
-			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address: substrate_address, multisig: multiWallet });
+			const { data, error } = await nextApiClientFetch<ChallengeMessage>('api/v1/auth/actions/addressSignupStart', { address: substrate_address });
 			if (error || !data) {
 				setErr(error || 'Something went wrong');
 				setLoading(false);
@@ -265,7 +265,6 @@ const Web3Signup: FC<Props> = ({
 
 			const { data: confirmData, error: confirmError } = await nextApiClientFetch<TokenType>('api/v1/auth/actions/addressSignupConfirm', {
 				address: substrate_address,
-				multisig: multiWallet,
 				signature,
 				wallet: chosenWallet
 			});

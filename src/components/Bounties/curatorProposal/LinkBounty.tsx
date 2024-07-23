@@ -67,7 +67,7 @@ const LinkBounty = ({
 	};
 	const isDiscussionLinkedValid = (value: string) => {
 		const regex = /^https:\/\/\w+\.polkassembly\.io\/referanda\/\d+$/;
-		return !regex.test(value) || value.split('https://')[1].split('.')[0] !== network;
+		return !regex.test(value) || value.split('https://')[1].split('.')?.[0] !== network;
 	};
 
 	const getDiscussionPostData = async (link: string) => {
@@ -85,7 +85,7 @@ const LinkBounty = ({
 			setContent(data.content || '');
 			setTags(data?.tags || []);
 			form.setFieldValue('title', 'Add Curator -' + data?.title || '');
-			form.setFieldValue('bounty_id', data?.proposed_call?.args?.bountyId || '');
+			form.setFieldValue('bounty_id', data?.proposed_call?.args?.bountyId || (data?.post_link?.type === 'bounties' && data?.post_link?.id) || '');
 			form.setFieldValue('content', data?.content || '');
 			form.setFieldValue('tags', data?.tags || []);
 			setSteps({ percent: 100, step: 0 });
@@ -106,13 +106,13 @@ const LinkBounty = ({
 		console.log('Post Data', data);
 		if (data) {
 			setDiscussionLink('');
-			setBountyId(data?.proposed_call?.args?.bountyId || null);
+			setBountyId(data?.proposed_call?.args?.bountyId || (data?.post_link?.type === 'bounties' && data?.post_link?.id) || null);
 			setTitle('Add Curator -' + data.title || '');
 			setContent(data.content || '');
 			setTags(data?.tags || []);
 			form.setFieldValue('discussion_link', `https://polkadot.polkassembly.io/referanda/${data?.post_id}`);
 			form.setFieldValue('title', 'Add Curator -' + data?.title || '');
-			form.setFieldValue('bounty_id', data?.proposed_call?.args?.bountyId || '');
+			form.setFieldValue('bounty_id', data?.proposed_call?.args?.bountyId || (data?.post_link?.type === 'bounties' && data?.post_link?.id) || '');
 			form.setFieldValue('content', data?.content || '');
 			form.setFieldValue('tags', data?.tags || []);
 			setSteps({ percent: 100, step: 0 });

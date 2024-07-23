@@ -76,7 +76,7 @@ const Curator = ({ curator, proposer, postId }: Props) => {
 					}
 				/>
 			)}
-			{proposer !== defaultAddress && (
+			{proposer === defaultAddress && (
 				<Alert
 					className='mb-2 rounded-[4px] dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon

@@ -270,6 +270,7 @@ const CuratorActionModal = ({
 					handleClose();
 				}}
 				postId={postId || undefined}
+				isCuratorAdded
 				selectedTrack={selectedTrack}
 			/>
 			<ReferendaLoginPrompts

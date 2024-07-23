@@ -146,7 +146,7 @@ const CreateReferendum = ({
 
 	const fetchBountyProposer = async (id: number | null) => {
 		if (id === null) return;
-		// setLoading(true);
+		setLoading(true);
 		const { data: bountyProposerData, error } = await nextApiClientFetch<IBountyProposerResponse>('/api/v1/bounty/getProposerInfo', {
 			bountyId: id
 		});
@@ -155,16 +155,16 @@ const CreateReferendum = ({
 			console.log('Error in fetching bounty proposer data');
 			setBountyAmount(ZERO_BN);
 			setError(error || 'Error in fetching bounty proposer data. Please input valid details.');
-			// setLoading(true);
+			setLoading(false);
 			return;
 		}
-		setBountyProposer(bountyProposerData?.proposals[0]?.proposer);
-		const amount = new BN(String(bountyProposerData?.proposals[0]?.reward));
+		setBountyProposer(bountyProposerData?.proposals?.[0]?.proposer);
+		const amount = new BN(String(bountyProposerData?.proposals?.[0]?.reward));
 		setBountyAmount(amount);
 		form.setFieldsValue({
 			bounty_amount: Number(formatedBalance(amount.toString(), unit).replaceAll(',', ''))
 		});
-		// setLoading(true);
+		setLoading(false);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -343,6 +343,8 @@ const CreateReferendum = ({
 
 				setPreimageLength(data?.length);
 				form.setFieldValue('preimage_length', data?.length);
+				setNewCuratorAddress(data.proposedCall?.args?.curator?.value);
+				setFee(data?.proposedCall?.args?.fee);
 
 				setSteps({ percent: 100, step: 1 });
 			} else {
@@ -370,6 +372,7 @@ const CreateReferendum = ({
 		setSteps({ percent: 60, step: 1 });
 		debounceExistPreimageFn(preimageHash);
 		setPreimageHash(preimageHash);
+		setError('');
 	};
 
 	useEffect(() => {
@@ -385,9 +388,10 @@ const CreateReferendum = ({
 
 	useEffect(() => {
 		if (proposerAddress !== bountyProposer) {
-			setEligibleToCreateRef(false);
 			setError(error || 'Please login with bounty proposer account');
 			return;
+		} else {
+			setError('');
 		}
 
 		const calculateGasFee = async () => {
@@ -432,7 +436,7 @@ const CreateReferendum = ({
 
 		calculateGasFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, proposerAddress, curatorAddress, fee, bountyId, isPreimage, preimageHash, preimageLength, selectedTrack, enactment]);
+	}, [api, apiReady, proposerAddress, curatorAddress, bountyProposer, fee, bountyId, isPreimage, preimageHash, preimageLength, selectedTrack, enactment]);
 
 	const handleSubmit = async () => {
 		if (!proposerAddress || !api || !apiReady || !curatorAddress || !bountyId || !fee) return;
@@ -442,6 +446,8 @@ const CreateReferendum = ({
 		if (isPreimage && !preimageLength) {
 			setError('Your Preimage length is not valid');
 			return;
+		} else {
+			setError('');
 		}
 
 		if (!isPreimage) {

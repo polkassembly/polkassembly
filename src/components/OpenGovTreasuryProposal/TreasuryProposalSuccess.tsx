@@ -36,6 +36,7 @@ interface Props {
 	beneficiaryAddresses?: IBeneficiary[];
 	postId?: number;
 	isCancelReferendaForm?: boolean;
+	isCuratorAdded?: boolean;
 	isKillReferendumForm?: boolean;
 	isCreateReferendumForm?: boolean;
 	genralIndex?: string | null;
@@ -70,6 +71,7 @@ const TreasuryProposalSuccessPopup = ({
 	isCreateReferendumForm,
 	isKillReferendumForm,
 	isCancelReferendaForm,
+	isCuratorAdded,
 	genralIndex,
 	inputAmountValue
 }: Props) => {
@@ -129,6 +131,8 @@ const TreasuryProposalSuccessPopup = ({
 						? 'Referendum Killed successfully'
 						: isCreateReferendumForm
 						? 'Referendum created successfully'
+						: isCuratorAdded
+						? 'Curator added successfully'
 						: 'Proposal created successfully for'}
 				</label>
 				{fundingAmount && (

@@ -679,6 +679,19 @@ const Web3Login: FC<Props> = ({
 										</div>
 									</AuthForm>
 								)}
+								{!extensionNotFound && !accounts.length && !!chosenWallet && !loading && (
+									<Alert
+										message={<span className='text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your {chosenWallet}:</span>}
+										description={
+											<ul className='mt-[-5px] text-xs text-lightBlue dark:text-blue-dark-high'>
+												<li>Add an address to the selected wallet by your extension.</li>
+											</ul>
+										}
+										showIcon
+										className='mt-4'
+										type='info'
+									/>
+								)}
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<CustomButton

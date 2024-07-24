@@ -94,8 +94,8 @@ const TopicsRadio = ({ className, onTopicSelection, govType, topicId }: Props) =
 	};
 
 	return (
-		<div className={`${className} overflow-x-auto`}>
-			<div className='mt-2 flex gap-2'>
+		<div className={`${className} scroll-hidden overflow-x-auto`}>
+			<div className='mt-2 flex w-max gap-2'>
 				{topicOptions.map((topic) => (
 					<div
 						onClick={() => onTopicChange(topic)}

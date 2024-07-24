@@ -831,6 +831,30 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
+	if (['polkadot'].includes(network)) {
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				<div className='ml-[2px] flex items-center gap-1.5'>
+					Bounties
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/bounty',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+
 	const gov2OverviewItems = [
 		!isMobile
 			? getSiderMenuItem(
@@ -870,31 +894,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			3,
 			0,
 			getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-		);
-	}
-	if (network == 'polkadot') {
-		gov2OverviewItems.splice(
-			4,
-			0,
-			getSiderMenuItem(
-				<div className='ml-[2px] flex items-center gap-1.5'>
-					Bounty
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
-				</div>,
-				'/bounty',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						NEW
-					</div>
-				</div>
-			)
 		);
 	}
 	if (['polkadot'].includes(network)) {
@@ -970,7 +969,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			items = items.concat(
 				getSiderMenuItem(
 					<div className='flex items-center gap-1.5'>
-						Bounties
+						{network == 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
 							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
 						</span>

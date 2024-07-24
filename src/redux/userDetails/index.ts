@@ -59,10 +59,15 @@ export const userDetailsStore = createSlice({
 			localStorage.removeItem('identityAddress');
 			localStorage.removeItem('identityNudgeStatus');
 			localStorage.removeItem('identityForm');
+			localStorage.removeItem('selectedWallet');
+			localStorage.removeItem('multisigAssociatedAddress');
+			localStorage.removeItem('delegationDashboardAddress');
+			localStorage.removeItem('multisigDelegationAssociatedAddress');
 			state.addresses = [];
 			state.allowed_roles = [];
 			state.defaultAddress = null;
 			state.delegationDashboardAddress = '';
+			state.multisigAssociatedAddress = '';
 			state.isUserOnchainVerified = false;
 			state.email = null;
 			state.email_verified = false;

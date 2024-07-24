@@ -15,6 +15,8 @@ export default async function fetchTokenToUSDPrice(network: string) {
 		const responseJSON = await response.json();
 		if (Object.keys(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network] || {}).length == 0) {
 			return 'N/A';
+		} else if (network == 'cere') {
+			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network]['usd'], 4);
 		} else {
 			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network]['usd']);
 		}

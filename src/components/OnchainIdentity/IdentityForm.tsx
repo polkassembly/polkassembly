@@ -102,6 +102,7 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async (requestJudgement: boolean) => {
+		if (!identityAddress) return;
 		const onSuccess = async () => {
 			const identityHash = await api?.query?.identity
 				?.identityOf(identityAddress)

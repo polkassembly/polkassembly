@@ -14,6 +14,7 @@ const initialState: IUserDetailsStore = {
 	coverImage: 'https://polkadot.polkassembly.io/assets/profile/cover-image1.svg',
 	defaultAddress: '',
 	delegationDashboardAddress: '',
+	delegationMultisigSignatoryAddress: '',
 	email: null,
 	email_verified: false,
 	id: null,
@@ -99,8 +100,9 @@ export const userDetailsStore = createSlice({
 		setWalletConnectProvider: (state, action: PayloadAction<WalletConnectProvider | null>) => {
 			state.walletConnectProvider = action.payload;
 		},
-		updateDelegationDashboardAddress: (state, action: PayloadAction<string>) => {
-			state.delegationDashboardAddress = action.payload;
+		updateDelegationDashboardAddress: (state, action: PayloadAction<{ signatory: string; address: string }>) => {
+			state.delegationDashboardAddress = action.payload.address;
+			state.delegationMultisigSignatoryAddress = action.payload.signatory;
 		}
 	}
 });

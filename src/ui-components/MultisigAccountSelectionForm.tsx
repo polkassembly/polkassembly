@@ -74,6 +74,7 @@ const MultisigAccountSelectionForm = ({
 	const client = new Polkasafe();
 	const { network } = useNetworkSelector();
 	const [loader, setLoader] = useState<boolean>(false);
+
 	const handleGetMultisig = async (address: string, network: string) => {
 		setLoader(true);
 		const { data } = await client.getAllMultisigByAddress(address, network);

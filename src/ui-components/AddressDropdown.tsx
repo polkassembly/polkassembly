@@ -131,7 +131,7 @@ const AddressDropdown = ({
 						setSelectedAddress(e.key);
 						onAccountChange(e.key);
 						if (setSwitchModalOpen) {
-							dispatch(userDetailsActions.updateDelegationDashboardAddress(e?.key));
+							dispatch(userDetailsActions.updateDelegationDashboardAddress({ address: e.key, signatory: '' }));
 						}
 					}
 				}

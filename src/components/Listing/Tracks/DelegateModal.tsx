@@ -38,7 +38,7 @@ import Popover from '~src/basic-components/Popover';
 import blockToDays from '~src/util/blockToDays';
 import Alert from '~src/basic-components/Alert';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
-
+import usePolkasafe from '~src/hooks/usePolkasafe';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -53,10 +53,10 @@ interface Props {
 const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onConfirm }: Props) => {
 	const { api, apiReady } = useContext(ApiContext);
 	const { network } = useNetworkSelector();
+	const user = useUserDetailsSelector();
 	const [form] = Form.useForm();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [target, setTarget] = useState<string>(defaultTarget || '');
 	const [bnBalance, setBnBalance] = useState<BN>(ZERO_BN);
 	const [conviction, setConviction] = useState<number>(0);
@@ -77,11 +77,13 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [days, setDays] = useState<number>(0);
+	const { client, connect } = usePolkasafe(user?.delegationMultisigSignatoryAddress || user?.delegationDashboardAddress);
+
 	const isTargetAddressSame =
-		delegationDashboardAddress && target ? delegationDashboardAddress === target || delegationDashboardAddress === getEncodedAddress(target, network) : false;
+		user?.delegationDashboardAddress && target ? user?.delegationDashboardAddress === target || user?.delegationDashboardAddress === getEncodedAddress(target, network) : false;
 	const delegateButtonDisable =
 		!form.getFieldValue('targetAddress') ||
-		!delegationDashboardAddress ||
+		!user?.delegationDashboardAddress ||
 		bnBalance.lte(ZERO_BN) ||
 		isNaN(conviction) ||
 		isTargetAddressSame ||
@@ -128,7 +130,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 
 		const delegateTo = form.getFieldValue('targetAddress');
 		if (!api || !apiReady || !delegateTo) return;
-		if (!delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
+		if (!user?.delegationDashboardAddress || !delegateTo || !getEncodedAddress(delegateTo, network) || isNaN(convictionVal) || !bnBalance || isTargetAddressSame) return;
 
 		if (!checkedTrack && !checkedTracksList.length) return;
 
@@ -145,7 +147,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		const delegateTxn = api.tx.utility.batchAll(txArr);
 
 		(async () => {
-			const info = await delegateTxn.paymentInfo(delegationDashboardAddress);
+			const info = await delegateTxn.paymentInfo(user?.delegationDashboardAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
 			setLoading(false);
 			setShowAlert(true);
@@ -153,16 +155,16 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	};
 
 	const getData = async () => {
-		if (!api || !apiReady || !delegationDashboardAddress) return;
+		if (!api || !apiReady || !user?.delegationDashboardAddress) return;
 		const res = api.consts.convictionVoting.voteLockingPeriod;
 		const num = res.toJSON();
 		const days = blockToDays(num, network);
 		setDays(days);
 		setLoading(true);
-		form.setFieldValue('dashboardAddress', delegationDashboardAddress);
+		form.setFieldValue('dashboardAddress', user?.delegationDashboardAddress);
 
 		const { data, error } = await nextApiClientFetch<ITrackDelegation[]>('api/v1/delegations', {
-			address: delegationDashboardAddress
+			address: user?.delegationDashboardAddress
 		});
 		if (data) {
 			const trackData = data.filter((item) => !item.status.includes(ETrackDelegationStatus.DELEGATED));
@@ -242,7 +244,49 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 		);
 		const delegateTxn = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
 
-		await executeTx({ address: delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
+		if (user?.delegationMultisigSignatoryAddress?.length) {
+			const delegateByMultisig = async (tx: any) => {
+				try {
+					await connect();
+					setLoading(true);
+
+					// setLoadingStatus({ isLoading: true, message: 'Creating a multisig transaction' });
+					const { error } = await client.customTransactionAsMulti(user.delegationDashboardAddress, tx);
+					if (error) {
+						setLoading(false);
+						// setLoadingStatus({ isLoading: false, message: '' });
+						throw new Error(error.error);
+					}
+					// setShowModal(false);
+					// setSuccessModal(true);
+					setLoading(false);
+
+					queueNotification({
+						header: 'Success!',
+						message: 'Delegation Successfull',
+						status: NotificationStatus.SUCCESS
+					});
+					setLoading(false);
+
+					// setLoadingStatus({ isLoading: false, message: '' });
+				} catch (error) {
+					console.log(':( transaction failed');
+					console.error('ERROR:', error);
+					queueNotification({
+						header: 'Failed!',
+						message: error.message,
+						status: NotificationStatus.ERROR
+					});
+					setLoading(false);
+				}
+			};
+			setLoading(true);
+			// setLoadingStatus({ isLoading: true, message: 'Please login to polkasafe' });
+			await delegateByMultisig(delegateTxn);
+			return;
+		}
+
+		await executeTx({ address: user?.delegationDashboardAddress, api, apiReady, errorMessageFallback: 'Delegation failed.', network, onFailed, onSuccess, tx: delegateTxn });
 	};
 
 	const handleOnBalanceChange = (balanceStr: string) => {
@@ -284,7 +328,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [open, delegationDashboardAddress, api, apiReady]);
+	}, [open, user?.delegationDashboardAddress, api, apiReady]);
 
 	useEffect(() => {
 		if (!network || !api || !apiReady) return;
@@ -378,7 +422,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 						<Form
 							form={form}
 							disabled={loading}
-							initialValues={{ dashboardAddress: delegationDashboardAddress }}
+							initialValues={{ dashboardAddress: user?.delegationDashboardAddress }}
 						>
 							<div className='flex flex-col'>
 								{availableBalance.lte(bnBalance) && txFee.gt(ZERO_BN) && (
@@ -393,7 +437,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 									<label className='mb-[2px] text-sm text-lightBlue dark:text-blue-dark-medium'>Your Address</label>
 									<AddressInput
 										name='dashboardAddress'
-										defaultAddress={delegationDashboardAddress}
+										defaultAddress={user?.delegationDashboardAddress}
 										onChange={() => setLoading(false)}
 										inputClassName={' font-normal text-sm h-[40px] text-lightBlue dark:text-blue-dark-medium dark:bg-[#1D1D1D]'}
 										className='-mt-6 text-sm font-normal text-bodyBlue dark:bg-[#1D1D1D] dark:text-blue-dark-high'
@@ -445,7 +489,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										}}
 									>
 										<Balance
-											address={delegationDashboardAddress}
+											address={user?.delegationDashboardAddress}
 											onChange={handleOnBalanceChange}
 											isDelegating={true}
 											isBalanceUpdated={isBalanceUpdated}
@@ -456,7 +500,7 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 								<BalanceInput
 									placeholder={'Enter balance'}
 									className='text-sm font-normal text-lightBlue dark:text-blue-dark-high'
-									address={delegationDashboardAddress}
+									address={user?.delegationDashboardAddress}
 									onAccountBalanceChange={handleOnBalanceChange}
 									onChange={(balance) => setBnBalance(balance)}
 									size='middle'

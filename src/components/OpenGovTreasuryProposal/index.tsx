@@ -173,6 +173,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [genralIndex, setGenralIndex] = useState<string | null>(null);
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
+	const [multisigSignatory, setMultisigSignatory] = useState<string>('');
 
 	const handleClose = () => {
 		setProposerAddress('');
@@ -302,6 +303,22 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		}
 	};
 
+	const handleProposerAndProposerMultisigSet = (address: string, multisigSignatory: string) => {
+		setOpenModal(true);
+		setProposerAddress(address);
+		setMultisigSignatory(multisigSignatory || '');
+		let data: any = localStorage?.getItem('treasuryProposalData');
+		data = JSON.parse(data);
+		localStorage.setItem(
+			'treasuryProposalData',
+			JSON.stringify({
+				...(data || {}),
+				multisigSignatory: multisigSignatory,
+				propser: address
+			})
+		);
+	};
+
 	return (
 		<div className={className}>
 			{isUsedInReferedumComponent ? (
@@ -345,15 +362,15 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					closable
 					linkAddressNeeded
 					accountSelectionFormTitle='Select Proposer Address'
-					onConfirm={(address: string) => {
-						setOpenModal(true);
-						setProposerAddress(address);
+					onConfirm={(address: string, _, multisigSignatory: string) => {
+						handleProposerAndProposerMultisigSet(address, multisigSignatory);
 					}}
 					walletAlertTitle='Treasury proposal creation'
 					accountAlertTitle='Please install a wallet and create an address to start creating a proposal.'
 					localStorageWalletKeyName='treasuryProposalProposerWallet'
 					localStorageAddressKeyName='treasuryProposalProposerAddress'
 					usedInIdentityFlow={false}
+					usingMultisig
 				/>
 			)}
 			<Modal
@@ -473,6 +490,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 
 					{steps?.step === 1 && (
 						<CreatePreimage
+							multisigSignatory={multisigSignatory}
 							inputAmountValue={inputAmountValue}
 							setInputAmountValue={setInputAmountValue}
 							setGenralIndex={setGenralIndex}
@@ -503,6 +521,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					)}
 					{steps.step === 2 && (
 						<CreateProposal
+							multisigSignatory={multisigSignatory}
 							inputAmountValue={inputAmountValue}
 							genralIndex={genralIndex}
 							discussionLink={discussionLink}

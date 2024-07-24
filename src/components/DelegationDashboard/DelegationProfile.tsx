@@ -48,6 +48,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleData = async () => {
+		if (!username) return;
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
 		if (data?.length) {
@@ -80,7 +81,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 
 	return (
 		<Spin
-			spinning={loading || !username}
+			spinning={loading}
 			className='h-[150px]'
 		>
 			<div className={`shadow-[0px 4px 6px rgba(0, 0, 0, 0.08)] flex justify-between rounded-[14px] bg-white dark:bg-section-dark-overlay ${className} dark:border-none`}>
@@ -93,7 +94,7 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 							iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 						/>
 					</div>
-					{!!address && !!username && (
+					{!!address && (
 						<div className='w-7/10 gap-1 text-bodyBlue dark:text-blue-dark-high'>
 							<div className='flex gap-1'>
 								<Address

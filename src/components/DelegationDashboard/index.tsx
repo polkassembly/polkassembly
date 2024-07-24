@@ -77,7 +77,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 			setIsMobile(true);
 		}
 		if (!userDetails.delegationDashboardAddress && !!userDetails.loginAddress) {
-			dispatch(userDetailsActions.updateDelegationDashboardAddress(userDetails.loginAddress));
+			dispatch(userDetailsActions.updateDelegationDashboardAddress({ address: userDetails.loginAddress || '', signatory: '' }));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userDetails?.username, userDetails?.delegationDashboardAddress]);

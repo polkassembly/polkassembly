@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { EASSETS, IBeneficiary, ILoading, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -51,6 +51,7 @@ import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -87,6 +88,7 @@ interface Props {
 	genralIndex: string | null;
 	setInputAmountValue: (pre: string) => void;
 	inputAmountValue: string;
+	multisigSignatory: string;
 }
 
 export interface IAdvancedDetails {
@@ -120,7 +122,8 @@ const CreatePreimage = ({
 	genralIndex,
 	setGenralIndex,
 	inputAmountValue,
-	setInputAmountValue
+	setInputAmountValue,
+	multisigSignatory
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -138,7 +141,9 @@ const CreatePreimage = ({
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 
-	const [loading, setLoading] = useState<boolean>(false);
+	const { client, connect } = usePolkasafe(multisigSignatory);
+
+	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const currentBlock = useCurrentBlock();
 
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
@@ -472,7 +477,7 @@ const CreatePreimage = ({
 
 		const proposal = txArr.length > 1 ? api.tx.utility.batchAll(txArr) : txArr[0];
 		const preimage: any = getState(api, proposal);
-		setLoading(true);
+		setLoading({ isLoading: true, message: 'Awating Confirmation' });
 		const onSuccess = () => {
 			setPreimage(preimage);
 			setPreimageHash(preimage.preimageHash);
@@ -483,7 +488,7 @@ const CreatePreimage = ({
 				Boolean(isPreimage),
 				true
 			);
-			setLoading(false);
+			setLoading({ isLoading: false, message: '' });
 			setSteps({ percent: 100, step: 2 });
 		};
 
@@ -493,11 +498,55 @@ const CreatePreimage = ({
 				message: 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
-			setLoading(false);
+			setLoading({ isLoading: false, message: '' });
 		};
 
-		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
+		if (multisigSignatory?.length) {
+			const createPreimageByMultisig = async (tx: any) => {
+				try {
+					await connect();
+					setLoading({ isLoading: true, message: 'Creating a multisig transaction' });
+					const { error } = await client.customTransactionAsMulti(proposerAddress, tx);
+					if (error) {
+						setLoading({ isLoading: false, message: '' });
+						throw new Error(error.error);
+					}
+
+					setLoading({ isLoading: false, message: '' });
+
+					queueNotification({
+						header: 'Success!',
+						message: 'Delegation Successfull',
+						status: NotificationStatus.SUCCESS
+					});
+					onSuccess();
+					setLoading({ isLoading: false, message: '' });
+				} catch (error) {
+					console.log(':( transaction failed');
+					console.error('ERROR:', error);
+					queueNotification({
+						header: 'Failed!',
+						message: error.message,
+						status: NotificationStatus.ERROR
+					});
+					setLoading({ isLoading: false, message: '' });
+				}
+			};
+			setLoading({ isLoading: true, message: 'Please login to polkasafe' });
+			await createPreimageByMultisig(preimage.notePreimageTx);
+			return;
+		}
+		await executeTx({
+			address: proposerAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			setStatus: (msg: string) => setLoading({ isLoading: true, message: msg || '' }),
+			tx: preimage.notePreimageTx
+		});
 	};
 
 	const handleSubmit = async () => {
@@ -647,7 +696,7 @@ const CreatePreimage = ({
 		setPreimageLength(0);
 		form.setFieldValue('preimage_length', 0);
 		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
-		setLoading(true);
+		setLoading({ isLoading: true, message: '' });
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 
 		if (data && !data?.message) {
@@ -720,7 +769,7 @@ const CreatePreimage = ({
 			console.log('fetching data from polkadotjs');
 			getExistPreimageDataFromPolkadot(preimageHash, Boolean(isPreimage));
 		}
-		setLoading(false);
+		setLoading({ isLoading: false, message: '' });
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -883,8 +932,9 @@ const CreatePreimage = ({
 
 	return (
 		<Spin
-			spinning={loading}
+			spinning={loading.isLoading}
 			indicator={<LoadingOutlined />}
+			tip={loading.message}
 		>
 			<div className={`${className} create-preimage`}>
 				<div className='my-8 flex flex-col'>
@@ -915,7 +965,7 @@ const CreatePreimage = ({
 				</div>
 				<Form
 					form={form}
-					disabled={loading}
+					disabled={loading.isLoading}
 					onFinish={handleSubmit}
 					initialValues={{
 						after_blocks: String(advancedDetails.afterNoOfBlocks?.toString()),
@@ -946,7 +996,7 @@ const CreatePreimage = ({
 										onChange={(e) => handlePreimageHash(e.target.value, Boolean(isPreimage))}
 									/>
 								</Form.Item>
-								{invalidPreimageHash() && !loading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
+								{invalidPreimageHash() && !loading.isLoading && <span className='text-sm text-[#ff4d4f]'>Invalid Preimage hash</span>}
 							</div>
 							<div className='mt-6'>
 								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>Preimage Length</label>
@@ -988,7 +1038,7 @@ const CreatePreimage = ({
 								<AddressInput
 									name='proposer_address'
 									defaultAddress={getEncodedAddress(proposerAddress, network) || ''}
-									onChange={() => setLoading(false)}
+									onChange={() => setLoading({ isLoading: false, message: '' })}
 									inputClassName={' font-normal text-sm h-10'}
 									className='-mt-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'
 									disabled
@@ -1357,7 +1407,7 @@ const CreatePreimage = ({
 											selectedTrack &&
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
-											!loading
+											!loading.isLoading
 									  )
 									: preimageHash?.length === 0 || invalidPreimageHash()) && 'opacity-50'
 							}`}
@@ -1370,7 +1420,7 @@ const CreatePreimage = ({
 											selectedTrack &&
 											!txFee.gte(availableBalance) &&
 											!txFee.eq(ZERO_BN) &&
-											!loading
+											!loading.isLoading
 									  )
 									: preimageHash?.length === 0 || invalidPreimageHash()
 							}

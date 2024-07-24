@@ -129,7 +129,7 @@ const ProfileBalances = ({ className }: Props) => {
 						className='cursor-pointer text-sm text-[#788698]'
 						onAccountChange={(address) => {
 							setAddress(address);
-							dispatch(userDetailsActions.updateDelegationDashboardAddress(address));
+							dispatch(userDetailsActions.updateDelegationDashboardAddress({ address: address || '', signatory: '' }));
 						}}
 						inputClassName='text-white border-[1.5px] border-section-light-container dark:border-separatorDark bg-[#850c4d] text-sm border-solid px-3 rounded-[8px] py-[6px]'
 						isSwitchButton={true}
@@ -146,8 +146,9 @@ const ProfileBalances = ({ className }: Props) => {
 				setOpen={setOpenModal}
 				walletAlertTitle={'Delegation'}
 				closable={true}
-				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
+				usingMultisig
 				usedInIdentityFlow={false}
+				onConfirm={(address: string, _, signatory: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress({ address: address || '', signatory: signatory || '' }))}
 			/>
 		</div>
 	);

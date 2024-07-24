@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EAllowedCommentor, IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, IBeneficiary, ILoading, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -33,6 +33,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import usePolkasafe from '~src/hooks/usePolkasafe';
 
 const ZERO_BN = new BN(0);
 
@@ -58,6 +59,7 @@ interface Props {
 	genralIndex?: string | null;
 	inputAmountValue: string;
 	allowedCommentors?: EAllowedCommentor;
+	multisigSignatory: string;
 }
 export const getDiscussionIdFromLink = (discussion: string) => {
 	const splitedArr = discussion?.split('/');
@@ -85,7 +87,8 @@ const CreateProposal = ({
 	isDiscussionLinked,
 	genralIndex = null,
 	inputAmountValue,
-	allowedCommentors
+	allowedCommentors,
+	multisigSignatory
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
@@ -96,10 +99,12 @@ const CreateProposal = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
-	const [loading, setLoading] = useState<boolean>(false);
+	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const { id: userId } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+
+	const { client, connect } = usePolkasafe(multisigSignatory);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -129,10 +134,9 @@ const CreateProposal = ({
 
 		if (!proposerAddress || !api || !apiReady || !fundingAmount || fundingAmount.lte(ZERO_BN)) return;
 		if (selectedTrack.length === 0) return;
-		setLoading(true);
+		setLoading({ isLoading: true, message: '' });
 
 		const origin: any = { Origins: selectedTrack };
-		setLoading(true);
 		const tx = api.tx.referenda.submit(
 			origin,
 			{ Lookup: { hash: preimageHash, len: String(preimageLength) } },
@@ -141,12 +145,12 @@ const CreateProposal = ({
 		(async () => {
 			const info = await tx.paymentInfo(proposerAddress);
 			setTxFee(new BN(info.partialFee.toString() || 0));
-			setLoading(false);
+			setLoading({ isLoading: false, message: '' });
 			setShowAlert(true);
 		})();
 		const submissionDeposite = api.consts.referenda.submissionDeposit;
 		setSubmissionDeposite(submissionDeposite);
-		setLoading(false);
+		setLoading({ isLoading: false, message: '' });
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
@@ -172,7 +176,7 @@ const CreateProposal = ({
 			console.error(apiError);
 		}
 
-		setLoading(false);
+		setLoading({ isLoading: false, message: '' });
 	};
 
 	const handleSubmitTreasuryProposal = async () => {
@@ -221,7 +225,7 @@ const CreateProposal = ({
 		}
 		api.setSigner(injected.signer);
 
-		setLoading(true);
+		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 		try {
 			const proposal = api.tx.referenda.submit(
 				origin,
@@ -236,7 +240,7 @@ const CreateProposal = ({
 				localStorage.removeItem('treasuryProposalProposerAddress');
 				localStorage.removeItem('treasuryProposalProposerWallet');
 				localStorage.removeItem('treasuryProposalData');
-				setLoading(false);
+				setLoading({ isLoading: false, message: '' });
 				setOpenSuccess(true);
 				setOpenModal(false);
 			};
@@ -248,12 +252,57 @@ const CreateProposal = ({
 					status: NotificationStatus.ERROR
 				});
 
-				setLoading(false);
+				setLoading({ isLoading: false, message: '' });
 			};
-			setLoading(true);
-			await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
+
+			if (multisigSignatory?.length) {
+				const createPreimageByMultisig = async (tx: any) => {
+					try {
+						await connect();
+						setLoading({ isLoading: true, message: 'Creating a multisig transaction' });
+						const { error } = await client.customTransactionAsMulti(proposerAddress, tx);
+						if (error) {
+							setLoading({ isLoading: false, message: '' });
+							throw new Error(error.error);
+						}
+						queueNotification({
+							header: 'Success!',
+							message: 'Delegation Successfull',
+							status: NotificationStatus.SUCCESS
+						});
+						onSuccess();
+						setLoading({ isLoading: false, message: '' });
+					} catch (error) {
+						console.log(':( transaction failed');
+						console.error('ERROR:', error);
+						queueNotification({
+							header: 'Failed!',
+							message: error.message,
+							status: NotificationStatus.ERROR
+						});
+						setLoading({ isLoading: false, message: '' });
+					}
+				};
+				setLoading({ isLoading: true, message: 'Please login to polkasafe' });
+				await createPreimageByMultisig(proposal);
+				return;
+			}
+
+			setLoading({ isLoading: true, message: '' });
+
+			await executeTx({
+				address: proposerAddress,
+				api,
+				apiReady,
+				errorMessageFallback: 'failed.',
+				network,
+				onFailed,
+				onSuccess,
+				setStatus: (msg: string) => setLoading({ isLoading: true, message: msg || '' }),
+				tx: proposal
+			});
 		} catch (error) {
-			setLoading(false);
+			setLoading({ isLoading: false, message: '' });
 			console.log(':( transaction failed');
 			console.error('ERROR:', error);
 			queueNotification({
@@ -266,8 +315,9 @@ const CreateProposal = ({
 
 	return (
 		<Spin
-			spinning={loading}
+			spinning={loading.isLoading}
 			indicator={<LoadingOutlined />}
+			tip={loading?.message || ''}
 		>
 			<div className={`create-proposal ${className}`}>
 				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
@@ -440,9 +490,9 @@ const CreateProposal = ({
 						variant='primary'
 						height={40}
 						width={155}
-						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
+						disabled={txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lte(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
+						className={`${(txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
 					/>
 				</div>
 			</div>

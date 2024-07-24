@@ -49,7 +49,7 @@ interface Props {
 	closable?: boolean;
 	localStorageWalletKeyName?: string;
 	localStorageAddressKeyName?: string;
-	onConfirm?: (pre?: any, sec?: any) => void;
+	onConfirm?: (pre?: any, sec?: any, th?: any) => void;
 	linkAddressNeeded?: boolean;
 	usingMultisig?: boolean;
 	walletAlertTitle?: string;
@@ -295,12 +295,12 @@ const AddressConnectModal = ({
 			setLoading(true);
 			localStorageWalletKeyName && localStorage.setItem(localStorageWalletKeyName, String(wallet));
 			localStorageAddressKeyName && localStorage.setItem(localStorageAddressKeyName, showMultisig ? multisig : address);
-			localStorage.setItem('delegationDashboardAddress', address);
-			localStorage.setItem('multisigDelegationAssociatedAddress', address);
+			localStorage.setItem('delegationDashboardAddress', showMultisig ? multisig : address);
+			localStorage.setItem('multisigDelegationAssociatedAddress', showMultisig ? multisig : address);
 			dispatch(setUserDetailsState({ ...currentUser, delegationDashboardAddress: showMultisig ? multisig : address, loginWallet: wallet || null }));
 			setShowMultisig(false);
-			setMultisig('');
-			onConfirm?.(address, wallet);
+			// setMultisig('');
+			onConfirm?.(showMultisig ? multisig : address, wallet, address);
 			setOpen(false);
 			setLoading(false);
 			dispatch(setConnectAddress(address));
@@ -380,10 +380,8 @@ const AddressConnectModal = ({
 				setTotalDeposit(ZERO_BN);
 			} finally {
 				//initiator balance
-				if (multisig) {
-					const initiatorBalance = await api?.query?.system?.account(address);
-					setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
-				}
+				const initiatorBalance = await api?.query?.system?.account(address);
+				setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString()));
 			}
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -551,7 +549,6 @@ const AddressConnectModal = ({
 									withBalance
 									onAccountChange={(address) => {
 										setAddress(address);
-										setMultisig('');
 									}}
 									onBalanceChange={handleOnBalanceChange}
 									className='text-sm text-lightBlue dark:text-blue-dark-medium'

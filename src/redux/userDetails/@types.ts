@@ -16,6 +16,7 @@ export interface IUserDetailsStore {
 	walletConnectProvider: WalletConnectProvider | null;
 	loginWallet: Wallet | null;
 	delegationDashboardAddress: string;
+	delegationMultisigSignatoryAddress: string;
 	loginAddress: string;
 	multisigAssociatedAddress?: string;
 	networkPreferences: INetworkPreferences;

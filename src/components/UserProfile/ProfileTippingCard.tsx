@@ -7,7 +7,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { ProfileDetailsResponse } from '~src/auth/types';
 import { TIPS } from '../Tipping';
-import { Divider, Empty, Segmented, Spin, Tooltip, message } from 'antd';
+import { Divider, Segmented, Spin, Tooltip, message } from 'antd';
 import Address from '~src/ui-components/Address';
 import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { chainProperties } from '~src/global/networkConstants';
@@ -25,9 +25,8 @@ import dynamic from 'next/dynamic';
 import { TippingUnavailableNetworks } from '~src/ui-components/QuickView';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
-import EmptyStateDarkMode from '~assets/EmptyStateDark.svg';
-import EmptyStateLightMode from '~assets/EmptyStateLight.svg';
 import { useTheme } from 'next-themes';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -278,12 +277,14 @@ const ProfileTippingCard = ({ className, selectedAddresses, userProfile, address
 							</div>
 						))
 					) : (
-						<Empty
-							image={theme === 'dark' ? <EmptyStateDarkMode style={{ transform: 'scale(0.8)' }} /> : <EmptyStateLightMode style={{ transform: 'scale(0.8)' }} />}
-							imageStyle={{ height: 300 }}
-							description={<p className='m-0 p-0 text-lightBlue dark:text-blue-dark-high'>No tip Found</p>}
-							className='my-6 dark:text-[#9e9e9e]'
-						/>
+						<div className='my-[60px] flex flex-col items-center gap-6'>
+							<ImageIcon
+								src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+								alt='Empty Icon'
+								imgClassName='w-[225px] h-[225px]'
+							/>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No tip found</h3>
+						</div>
 					)}
 				</div>
 			</div>

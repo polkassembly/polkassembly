@@ -21,8 +21,13 @@ import { IPreimage } from '../OpenGovTreasuryProposal';
 import { HexString } from '@polkadot/util/types';
 import { blake2AsHex } from '@polkadot/util-crypto';
 import { ApiPromise } from '@polkadot/api';
+import BN from 'bn.js';
+import Alert from '~src/basic-components/Alert';
+import { formatedBalance } from '~src/util/formatedBalance';
+import { chainProperties } from '~src/global/networkConstants';
 
 const EMPTY_HASH = blake2AsHex('');
+const ZERO_BN = new BN(0);
 
 const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentModal }: ICreateAmassadorPreimge) => {
 	const dispatch = useDispatch();
@@ -31,6 +36,9 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 	const { loginAddress } = useUserDetailsSelector();
 	const { applicantAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
+	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
+	const unit = `${chainProperties[network]?.tokenSymbol}`;
+	const baseDeposit = new BN(`${chainProperties[network]?.preImageBaseDeposit}` || 0);
 
 	const getState = (api: ApiPromise, encodedProposal: HexString): IPreimage => {
 		let preimageHash = EMPTY_HASH;
@@ -49,7 +57,16 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 		};
 	};
 
+	const getGasFee = async () => {
+		if (!api || !apiReady || !xcmCallData || !proposer) return;
+
+		const info = await api.tx.preimage.notePreimage(xcmCallData as HexString).paymentInfo(proposer);
+		const gasFee: BN = new BN((info as any)?.partialFee);
+		setGasFee(gasFee);
+	};
+
 	const onSuccess = (preimage: IPreimage) => {
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(true));
 		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 }));
 		closeCurrentModal();
 		setOpenSuccessModal(true);
@@ -63,6 +80,8 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
+		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 }));
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(false));
 	};
 
 	const handleCreatePreimage = async () => {
@@ -90,6 +109,11 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		getGasFee();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, network, xcmCallData]);
 
 	return (
 		<Spin
@@ -129,6 +153,23 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 					</div>
 				</div>
 			</div>
+			{!gasFee.eq(ZERO_BN) && (
+				<Alert
+					type='info'
+					className='mt-6 rounded-[4px] text-bodyBlue '
+					showIcon
+					description={
+						<span className='text-xs dark:text-blue-dark-high'>
+							Gas Fees of {formatedBalance(String(gasFee.toString()), unit)} {unit} will be applied to create preimage.
+						</span>
+					}
+					message={
+						<span className='text-[13px] dark:text-blue-dark-high'>
+							{formatedBalance(String(baseDeposit.toString()), unit)} {unit} Base deposit is required to create a preimage.
+						</span>
+					}
+				/>
+			)}
 			<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 				<Button
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'

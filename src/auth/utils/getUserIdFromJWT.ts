@@ -13,8 +13,7 @@ import messages from './messages';
  */
 export default function getUserIdFromJWT(token: string, publicKey: string | undefined): number {
 	if (!publicKey) {
-		const key = process.env.NODE_ENV === 'test' ? process.env.JWT_PUBLIC_KEY_TEST : process.env.JWT_PUBLIC_KEY?.replace(/\\n/gm, '\n');
-		throw apiErrorWithStatusCode(`${key} not set. Aborting.`, 403);
+		throw apiErrorWithStatusCode('JWT_PUBLIC_KEY_TEST not set. Aborting.', 403);
 	}
 
 	// verify a token asymmetric - synchronous

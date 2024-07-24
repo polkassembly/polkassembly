@@ -24,4 +24,5 @@ export interface IAmbassadorSeedingStore {
 	xcmCallData: string;
 	ambassadorPreimage: { hash: string; length: number };
 	discussion: IAmbassadorProposalContent;
+	isPreimageCreationDone: boolean;
 }

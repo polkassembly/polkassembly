@@ -175,6 +175,8 @@ import VoterIconSVG from '~assets/icons/vote-small-icon.svg';
 import ConvictionIconSVG from '~assets/icons/conviction-small-icon.svg';
 import CapitalIconSVG from '~assets/icons/capital-small-icom.svg';
 import EmailIconSVG from '~assets/icons/email_icon.svg';
+import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
+import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1306,6 +1308,19 @@ export const CapitalIcon = (props: Partial<CustomIconComponentProps>) => (
 export const EmailIconNew = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={EmailIconSVG}
+		{...props}
+	/>
+);
+export const CuratorIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={CuratorSVG}
+		{...props}
+	/>
+);
+
+export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={BountyCriteriaSVG}
 		{...props}
 	/>
 );

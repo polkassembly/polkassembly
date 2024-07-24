@@ -108,7 +108,7 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama' || !usedInIdentityFlow) {
+		if (network === 'kusama' && usedInIdentityFlow) {
 			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
@@ -444,7 +444,7 @@ const AddressConnectModal = ({
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			<Spin
-				spinning={loading || !api || !apiReady}
+				spinning={loading}
 				indicator={<LoadingOutlined />}
 			>
 				<div className='flex flex-col'>

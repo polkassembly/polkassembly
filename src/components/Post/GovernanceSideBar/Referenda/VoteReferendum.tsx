@@ -171,7 +171,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const getDelegateData = async () => {
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
 		const { data, error } = await nextApiClientFetch<IDelegateBalance>('/api/v1/delegations/total-delegate-balance', {
-			addresses: [address]
+			addresses: [address],
+			trackNo: trackNumber
 		});
 		if (data) {
 			const bnVotingPower = new BN(data?.votingPower || '0');

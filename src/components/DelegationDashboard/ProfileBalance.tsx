@@ -147,6 +147,7 @@ const ProfileBalances = ({ className }: Props) => {
 				walletAlertTitle={'Delegation'}
 				closable={true}
 				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
+				usedInIdentityFlow={false}
 			/>
 		</div>
 	);

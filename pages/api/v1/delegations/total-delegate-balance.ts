@@ -19,6 +19,7 @@ const ZERO_BN = new BN(0);
 
 interface Props {
 	addresses: string[];
+	trackNo: number;
 }
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalance | MessageType>) {
 	storeApiKeyUsage(req);
@@ -26,9 +27,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-	const { addresses } = req.body as Props;
+	const { addresses, trackNo } = req.body as Props;
 
-	if (!addresses.length) return res.status(400).json({ message: messages.INVALID_PARAMS });
+	if (!addresses.length || isNaN(trackNo)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 	try {
 		const data = await fetchSubsquid({
@@ -36,6 +37,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateBalanc
 			query: TOTAL_DELEGATE_BALANCE,
 			variables: {
 				to_in: addresses.map((item) => getEncodedAddress(item, network)),
+				track_eq: trackNo,
 				type_eq: isOpenGovSupported(network) ? 'OpenGov' : 'Democracy'
 			}
 		});

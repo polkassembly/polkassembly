@@ -830,39 +830,41 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args) {
-				if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-					const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
-					assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-				}
+			if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
+				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
+			}
+			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 
-				proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
-				if (proposedCall.args.amount) {
-					requested = proposedCall.args.amount;
-					if (proposedCall.args.beneficiary) {
-						beneficiaries.push({
-							address: proposedCall.args.beneficiary as string,
-							amount: proposedCall.args.amount
-						});
-					}
-				} else {
-					const calls = proposedCall.args.calls;
-					if (calls && Array.isArray(calls) && calls.length > 0) {
-						calls.forEach((call) => {
-							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-								remark += call.remark + '\n';
+			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
+				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
+			}
+
+			if (proposedCall.args.amount) {
+				requested = proposedCall.args.amount;
+				if (proposedCall.args.beneficiary) {
+					beneficiaries.push({
+						address: proposedCall.args.beneficiary as string,
+						amount: proposedCall.args.amount
+					});
+				}
+			} else {
+				const calls = proposedCall.args.calls;
+				if (calls && Array.isArray(calls) && calls.length > 0) {
+					calls.forEach((call) => {
+						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+							remark += call.remark + '\n';
+						}
+						if (call && call.amount) {
+							requested += BigInt(call.amount);
+							if (call.beneficiary) {
+								beneficiaries.push({
+									address: call.beneficiary as string,
+									amount: call.amount
+								});
 							}
-							if (call && call.amount) {
-								requested += BigInt(call.amount);
-								if (call.beneficiary) {
-									beneficiaries.push({
-										address: call.beneficiary as string,
-										amount: call.amount
-									});
-								}
-							}
-						});
-					}
+						}
+					});
 				}
 			}
 		}
@@ -1068,8 +1070,11 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const postDocRef = postsByTypeRef(network, strProposalType.toString() === 'open_gov' ? ProposalType.REFERENDUM_V2 : strProposalType).doc(strPostId);
 		const firestorePost = await postDocRef.get();
+
+		//FIXME: idk why this is here ? firestorePost will always be true, check for .exists if that's the intent
 		if (firestorePost) {
 			let data = firestorePost.data();
+
 			post.history = [];
 			try {
 				data = await getAndSetNewData({
@@ -1083,6 +1088,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			} catch (e) {
 				data = undefined;
 			}
+
 			// Populate firestore post data into the post object
 			if (data && post) {
 				post.allowedCommentors = (data?.allowedCommentors?.[0] as EAllowedCommentor) || EAllowedCommentor.ALL;
@@ -1138,6 +1144,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
+
+				// check for faulty post (subsquare has stored invalid data)
+				if (network === 'polkadot' && strProposalType === ProposalType.CHILD_BOUNTIES && strPostId === '532') {
+					post.content = '';
+					post.title = '';
+				}
 			}
 		}
 

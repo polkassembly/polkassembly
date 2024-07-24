@@ -74,7 +74,7 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 	const isTreasuryProposal = trackData.group === 'Treasury';
 	const isProposalPassed = ['Executed', 'Confirmed', 'Approved'].includes(status);
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed', 'ExecutionFailed'].includes(status);
-	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
+	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'DecisionDepositPlaced');
 	const confirmStartedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'ConfirmStarted');
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const awardedStatusBlock = getStatusBlock(timeline || [], ['TreasuryProposal'], 'Awarded');
@@ -421,11 +421,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								>
 									1
 								</span>
-								<span>
+								<span className='flex items-center gap-x-2'>
 									<PreparePeriodIcon className={`${prepare.periodPercent > 0 ? 'text-pink_primary' : 'text-[#FFD3EC]'} text-xl`} />
+									<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>Prepare Period</h4>
 								</span>
 							</div>
-							<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>Prepare Period</h4>
 							<p className='text-sm leading-[21px] tracking-[0.01em]'>The prepare period is used to avoid decision sniping. It occurs before a referendum goes into voting.</p>
 						</div>
 					</article>
@@ -447,11 +447,11 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								>
 									2
 								</span>
-								<span>
+								<span className='flex items-center gap-x-2'>
 									<DecisionPeriodIcon className={`${decision.periodPercent > 0 && decidingStatusBlock ? 'text-pink_primary' : 'text-[#FFD3EC]'} text-xl`} />
+									<h4 className='mt-2 text-base font-medium leading-[24px] tracking-[0.01em]'>Voting Period</h4>
 								</span>
 							</div>
-							<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>Voting Period</h4>
 							<ul className='px-5 text-sm leading-[21px] tracking-[0.01em]'>
 								<li>A referendum will be in voting till the decision period is completed or the proposal is passed.</li>
 								<li>For a referendum to enter confirmation, the support and approval should be greater than the threshold for the track.</li>
@@ -481,11 +481,12 @@ const ReferendaV2Messages: FC<IReferendaV2Messages> = (props) => {
 								>
 									3
 								</span>
-								<span>
+								<div></div>
+								<span className='flex items-center gap-x-2'>
 									<EnactmentPeriodIcon className={`${minEnactment.periodPercent > 0 ? 'text-pink_primary' : 'text-[#FFD3EC]'} text-xl`} />
+									<h4 className='mt-2 text-base font-medium leading-[24px] tracking-[0.01em]'>After Voting Period</h4>
 								</span>
 							</div>
-							<h4 className='text-base font-medium leading-[24px] tracking-[0.01em]'>After Voting Period</h4>
 							<ul className='m-0 p-0 px-5 text-sm leading-[21px] tracking-[0.01em]'>
 								<li>A referendum is executed after the completion of the enactment period.</li>
 								<li>For treasury referenda, the funds will be disbursed after completion of the funds disbursal period.</li>

@@ -25,6 +25,7 @@ import dynamic from 'next/dynamic';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Markdown from '~src/ui-components/Markdown';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import BN from 'bn.js';
 
 const BecomeDelegateModal = dynamic(() => import('~src/ui-components/BecomeDelegateModal'), {
 	ssr: false
@@ -375,7 +376,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 												<ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
 											<span className='flex items-center justify-center gap-1'>
-												Voting Power <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
+												Tracks <ExpandIcon className='text-xl text-bodyBlue dark:text-[#909090]' />
 											</span>
 											<span className='w-[10%] max-lg:w-[5%]' />
 										</div>
@@ -408,7 +409,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																usernameMaxLength={isMobile ? 5 : 30}
 															/>
 														</div>
-														<div className='flex w-[50%] items-center justify-center text-sm'>{parseBalance(String(value?.votingPower), 2, true, network)} </div>
+														<div className='flex w-[50%] items-center justify-center text-sm'>{value?.delegations?.length || 0} </div>
 														<span className=''>
 															<DownArrowIcon className={`cursor-pointer text-2xl ${value?.expand && 'pink-color rotate-180'}`} />
 														</span>
@@ -445,7 +446,16 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${parseBalance(String(value?.votingPower), 2, true, network)}`
+																				? `${parseBalance(
+																						String(
+																							value?.delegations[0]?.lockPeriod
+																								? new BN(value?.delegations[0]?.balance).mul(new BN(value?.delegations[0]?.lockPeriod)).toString()
+																								: new BN(value?.delegations[0]?.balance).div(new BN(10)).toString()
+																						),
+																						2,
+																						true,
+																						network
+																				  )}`
 																				: 'Multiple'}
 																		</span>
 																	</div>
@@ -463,7 +473,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
-																				? `${parseBalance(String(value?.capital), 2, true, network)}`
+																				? `${parseBalance(String(value?.delegations[0]?.balance), 2, true, network)}`
 																				: 'Multiple'}
 																		</span>
 																	</div>
@@ -473,7 +483,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																		</div>
 																		<div
 																			className={`text-xs font-normal capitalize text-bodyBlue dark:text-blue-dark-high ${
-																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col gap-1'
+																				getIsSingleDelegation(value?.delegations) ? 'flex flex-wrap justify-end gap-0.5 break-words' : 'flex flex-col items-end justify-end gap-1'
 																			}`}
 																		>
 																			{value?.delegations.map((delegate, trackIndex) => (
@@ -494,7 +504,6 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																						: trackIndex !== value.delegations.length - 1
 																						? ', '
 																						: ''}
-																					{}
 																				</span>
 																			))}
 																		</div>

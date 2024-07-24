@@ -3070,5 +3070,323 @@ export const networkTrackInfo: INetworkTrackInfo = {
 				}
 			}
 		}
+	},
+	cere: {
+		[PostOrigin.ROOT]: {
+			trackId: 0,
+			description: 'Origin for General network-wide improvements',
+			group: 'Main',
+			name: 'root',
+			maxDeciding: 1,
+			decisionDeposit: 1000000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 14400,
+			minEnactmentPeriod: 14400,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				linearDecreasing: {
+					length: 10000,
+					floor: 2000,
+					ceil: 5000
+				}
+			}
+		},
+		[PostOrigin.WHITELISTED_CALLER]: {
+			trackId: 1,
+			description: 'Origin able to dispatch a whitelisted call.',
+			group: 'Whitelist',
+			name: 'whitelisted_caller',
+			maxDeciding: 100,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 300,
+			decisionPeriod: 403200,
+			confirmPeriod: 100,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				reciprocal: {
+					factor: 270899180,
+					xOffset: 389830523,
+					yOffset: 305084738
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 27823,
+					xOffset: 55670,
+					yOffset: 222179
+				}
+			}
+		},
+		[PostOrigin.STAKING_ADMIN]: {
+			trackId: 10,
+			description: 'Origin for cancelling slashes.',
+			group: 'Main',
+			name: 'staking_admin',
+			maxDeciding: 10,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 1800,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				linearDecreasing: {
+					length: 607142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 7996925,
+					xOffset: 19607844,
+					yOffset: 92156862
+				}
+			}
+		},
+		[PostOrigin.TREASURER]: {
+			trackId: 11,
+			description: 'Origin for spending (any amount of) funds.',
+			group: 'Treasury',
+			name: 'treasurer',
+			maxSpend: 333333,
+			maxDeciding: 10,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 1800,
+			minEnactmentPeriod: 14400,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				linearDecreasing: {
+					length: 1000000000,
+					floor: 0,
+					ceil: 500000000
+				}
+			}
+		},
+		[PostOrigin.GENERAL_ADMIN]: {
+			trackId: 14,
+			description: 'Origin for managing the registrar.',
+			group: 'Governance',
+			name: 'general_admin',
+			maxDeciding: 10,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 1800,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				reciprocal: {
+					factor: 222222224,
+					xOffset: 333333335,
+					yOffset: 333333332
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 56250000,
+					xOffset: 125000000,
+					yOffset: 50000000
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_CANCELLER]: {
+			trackId: 20,
+			description: 'Origin able to cancel referenda.',
+			group: 'Governance',
+			name: 'referendum_canceller',
+			maxDeciding: 1000,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 100800,
+			confirmPeriod: 1800,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				linearDecreasing: {
+					length: 607142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 7996925,
+					xOffset: 19607844,
+					yOffset: 92156862
+				}
+			}
+		},
+		[PostOrigin.REFERENDUM_KILLER]: {
+			trackId: 21,
+			description: 'Origin able to kill referenda.',
+			group: 'Governance',
+			name: 'referendum_killer',
+			maxDeciding: 1000,
+			decisionDeposit: 500000000000000,
+			preparePeriod: 1200,
+			decisionPeriod: 403200,
+			confirmPeriod: 1800,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				linearDecreasing: {
+					length: 607142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 7996925,
+					xOffset: 19607844,
+					yOffset: 92156862
+				}
+			}
+		},
+		[PostOrigin.SMALL_TIPPER]: {
+			trackId: 30,
+			description: 'Origin able to spend up to 1 KSM from the treasury at once.',
+			group: 'Treasury',
+			name: 'small_tipper',
+			maxSpend: 1,
+			maxDeciding: 200,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 10,
+			decisionPeriod: 100800,
+			confirmPeriod: 100,
+			minEnactmentPeriod: 10,
+			minApproval: {
+				linearDecreasing: {
+					length: 357142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 1659723,
+					xOffset: 4132231,
+					yOffset: 98347107
+				}
+			}
+		},
+
+		[PostOrigin.BIG_TIPPER]: {
+			trackId: 31,
+			description: 'Origin able to spend up to 5 KSM from the treasury at once.',
+			group: 'Treasury',
+			name: 'big_tipper',
+			maxDeciding: 100,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 100,
+			decisionPeriod: 100800,
+			confirmPeriod: 600,
+			minEnactmentPeriod: 100,
+			minApproval: {
+				linearDecreasing: {
+					length: 357142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 4188032,
+					xOffset: 10362694,
+					yOffset: 95854922
+				}
+			}
+		},
+		[PostOrigin.BIG_SPENDER]: {
+			trackId: 34,
+			description: 'Origin able to spend up to 1,000,000 DOT from the treasury at once',
+			group: 'Treasury',
+			name: 'big_spender',
+			maxDeciding: 50,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 2400,
+			decisionPeriod: 403200,
+			confirmPeriod: 28800,
+			minEnactmentPeriod: 14400,
+			minApproval: {
+				linearDecreasing: {
+					length: 1000000000,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 29273788,
+					xOffset: 68493157,
+					yOffset: 72602737
+				}
+			}
+		},
+		[PostOrigin.MEDIUM_SPENDER]: {
+			trackId: 33,
+			description: 'Origin able to spend up to 100,000 DOT from the treasury at once',
+			group: 'Treasury',
+			name: 'medium_spender',
+			maxDeciding: 50,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 2400,
+			decisionPeriod: 403200,
+			confirmPeriod: 14400,
+			minEnactmentPeriod: 14400,
+			minApproval: {
+				linearDecreasing: {
+					length: 821428571,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 14660507,
+					xOffset: 35398231,
+					yOffset: 85840707
+				}
+			}
+		},
+		[PostOrigin.SMALL_SPENDER]: {
+			trackId: 32,
+			description: 'Origin able to spend up to 10,000 DOT from the treasury at once',
+			group: 'Treasury',
+			name: 'small_spender',
+			maxSpend: 10000,
+			maxDeciding: 50,
+			decisionDeposit: 100000000000000,
+			preparePeriod: 2400,
+			decisionPeriod: 403200,
+			confirmPeriod: 7200,
+			minEnactmentPeriod: 14400,
+			minApproval: {
+				linearDecreasing: {
+					length: 607142857,
+					floor: 500000000,
+					ceil: 1000000000
+				}
+			},
+			minSupport: {
+				reciprocal: {
+					factor: 7996925,
+					xOffset: 19607844,
+					yOffset: 92156862
+				}
+			}
+		}
 	}
 };

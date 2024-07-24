@@ -11,7 +11,9 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { StatItem } from './utils/Statitem';
-import { getDisplayValue } from './utils/formatBalanceUsd';
+import { formatNumberWithSuffix, getDisplayValue } from './utils/formatBalanceUsd';
+import formatBnBalance from '~src/util/formatBnBalance';
+import { poppins } from 'pages/_app';
 
 const BountiesHeader = () => {
 	const { network } = useNetworkSelector();
@@ -65,7 +67,17 @@ const BountiesHeader = () => {
 					<div className='hidden gap-6 md:flex'>
 						<div>
 							<span className='font-pixelify text-[18px] font-semibold text-[#2D2D2D] dark:text-[#737373]'>Available Bounty pool</span>
-							<div className='font-pixeboy text-[46px]'>{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}</div>
+							<div className='font-pixeboy text-[46px]'>
+								{getDisplayValue(statsData.availableBountyPool, network, currentTokenPrice, unit)}
+								{!isNaN(Number(currentTokenPrice.value)) && (
+									<>
+										<span className={`${poppins.className} ${poppins.variable} ml-2 text-[22px] font-medium `}>
+											~{formatNumberWithSuffix(Number(formatBnBalance(statsData.availableBountyPool, { numberAfterComma: 1, withThousandDelimitor: false }, network)))}
+										</span>
+										<span className={`${poppins.className} ${poppins.variable} ml-1 text-[22px] font-medium`}>{unit}</span>
+									</>
+								)}
+							</div>
 							<div className='-mb-6 -ml-6 mt-4 flex h-[185px] w-[420px] items-end rounded-bl-3xl rounded-tr-[125px] bg-pink_primary'>
 								<div className='mb-8 ml-6 flex items-end gap-3'>
 									<ImageIcon
@@ -86,7 +98,7 @@ const BountiesHeader = () => {
 								value={statsData.activeBounties}
 							/>
 							<StatItem
-								label='No. of People Earned'
+								label='Claimants'
 								value={statsData.peopleEarned}
 							/>
 							<StatItem

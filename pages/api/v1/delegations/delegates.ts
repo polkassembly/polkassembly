@@ -94,6 +94,12 @@ const w3fDelegatesPolkadot = [
 		longDescription: '',
 		name: 'Scytaledigital',
 		shortDescription: ''
+	},
+	{
+		address: '12pXignPnq8sZvPtEsC3RdhDLAscqzFQz97pX2tpiNp3xLqo',
+		longDescription: '',
+		name: 'Lucky Friday - OpenGov',
+		shortDescription: ''
 	}
 ];
 

@@ -286,6 +286,8 @@ export const callTrackLevelAnalytics = functions
 export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
 		try {
+			logger.info('req: ', req);
+
 			res.set('x-vercel-verify', 'a9899c2456a9f905c339cb25184d41968f5a4c21');
 
 			// Validate the request
@@ -320,13 +322,14 @@ export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 			const logData = req.body;
 
 			// Check if logData is valid
-			if (!logData || !logData.message) {
-				res.status(400).send('Bad Request: Missing log data');
+			if (!logData || !Array.isArray(logData) || logData.length === 0) {
+				res.status(400).send('Bad Request: Missing or invalid log data');
 				return;
 			}
 
 			// Write the log data to Firestore
-			await firestoreDB.collection('vercelLogs').add(logData);
+			const writePromises = logData.map((logEntry) => firestoreDB.collection('vercelLogs').add(logEntry));
+			await Promise.all(writePromises);
 
 			return res.status(200).send('Log data stored successfully');
 		} catch (err: unknown) {

@@ -285,11 +285,7 @@ export const callTrackLevelAnalytics = functions
 export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
 		try {
-			if (req.headers['x-vercel-verify']) {
-				res.set('x-vercel-verify', 'a9899c2456a9f905c339cb25184d41968f5a4c21');
-				res.status(200).send('URL verification successful');
-				return;
-			}
+			res.set('x-vercel-verify', 'a9899c2456a9f905c339cb25184d41968f5a4c21');
 
 			// Validate the request
 			if (req.method !== 'POST') {

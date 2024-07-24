@@ -5,6 +5,7 @@ import fetchSubsquid from './utils/fetchSubsquid';
 import { htmlOrMarkdownToText } from './utils/htmlOrMarkdownToText';
 import dayjs from 'dayjs';
 import trackLevelAnalytics from './trackLevelAnalytics';
+import crypto from 'crypto';
 
 import cors = require('cors');
 const corsHandler = cors({ origin: true });
@@ -290,6 +291,19 @@ export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 			// Validate the request
 			if (req.method !== 'POST') {
 				res.status(405).send('Method Not Allowed');
+				return;
+			}
+
+			const LOG_DRAIN_SECRET = process.env.LOG_DRAIN_SECRET || '';
+
+			if (!LOG_DRAIN_SECRET) {
+				res.status(500).send('Internal server error, no LOG_DRAIN_SECRET key set');
+				return;
+			}
+
+			const signature = crypto.createHmac('sha1', LOG_DRAIN_SECRET).update(JSON.stringify(req.body)).digest('hex');
+			if (signature !== req.headers['x-vercel-signature']) {
+				res.status(405).send('Invalid signature');
 				return;
 			}
 

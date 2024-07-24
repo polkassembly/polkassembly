@@ -286,8 +286,6 @@ export const callTrackLevelAnalytics = functions
 export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
 		try {
-			logger.info('req: ', req);
-
 			res.set('x-vercel-verify', 'a9899c2456a9f905c339cb25184d41968f5a4c21');
 
 			// Validate the request
@@ -327,9 +325,7 @@ export const vercelLogDrain = functions.https.onRequest(async (req, res) => {
 				return;
 			}
 
-			// Write the log data to Firestore
-			const writePromises = logData.map((logEntry) => firestoreDB.collection('vercelLogs').add(logEntry));
-			await Promise.all(writePromises);
+			logger.info('Received log data:', { logData });
 
 			return res.status(200).send('Log data stored successfully');
 		} catch (err: unknown) {

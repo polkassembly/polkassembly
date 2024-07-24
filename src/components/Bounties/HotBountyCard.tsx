@@ -123,7 +123,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 	}, [post_id, user_id, network, proposer]);
 
 	return (
-		<section className='w-full md:w-[383px]'>
+		<section className='mx-3 flex w-full items-center justify-between md:w-[383px]'>
 			{loading ? (
 				<Skeleton active />
 			) : (
@@ -186,76 +186,65 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 										imgWrapperClassName=''
 									/>
 								</Link>
-								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable}`}>
+								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} h-7 overflow-y-auto`}>
 									<span className='mr-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>#{post_id}</span>
-									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'>{title}</span>
+									<span className='text-lg font-bold text-blue-light-high dark:text-blue-dark-high'> {title.length <= 28 ? title : `${title.slice(0, 28)}...`}</span>
 								</div>
 
-								<div className={`${spaceGrotesk.className} ${spaceGrotesk.variable} break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-									{content ? removeSymbols(content).slice(0, 140) : getAscciiFromHex(description).slice(0, 140)}...
+								<div
+									className={`${spaceGrotesk.className} ${spaceGrotesk.variable} scroll-hidden mb-2 h-[40px] overflow-y-auto break-words text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}
+								>
+									{content ? removeSymbols(content).slice(0, 90) : getAscciiFromHex(description).slice(0, 90)}...
 								</div>
-								{tags && tags.length > 0 && (
-									<div className='mb-1 flex gap-x-1'>
-										{tags?.slice(0, 3).map((tag: string, index: number) => (
-											<div
-												key={index}
-												style={{ fontSize: '10px' }}
-												className=' w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
+								<div className='h-7'>
+									{tags && tags.length > 0 && (
+										<div className='flex gap-x-1'>
+											{tags?.slice(0, 3).map((tag: string, index: number) => (
+												<div
+													key={index}
+													className='w-min rounded-xl border-[1px] border-solid border-section-light-container px-[14px] py-[4px] text-[10px] font-medium text-lightBlue dark:border-[#3B444F] dark:border-separatorDark dark:text-blue-dark-high'
+												>
+													{tag}
+												</div>
+											))}
+										</div>
+									)}
+								</div>
+								<div className='my-1 flex h-[22px] items-center justify-between'>
+									<div>
+										{profileDetails?.username && (
+											<Link
+												href={`/address/${proposer}`}
+												target='_blank'
 											>
-												{tag}
-											</div>
-										))}
-										{tags.length > 3 && (
-											<span
-												className='text-bodyBlue dark:text-blue-dark-high'
-												style={{ background: '#D2D8E050', borderRadius: '20px', fontSize: '10px', padding: '4px 8px' }}
-											>
-												+{tags.length - 3}
-											</span>
+												<ImageComponent
+													alt='user img'
+													src={profileDetails.image}
+													className='-mt-[2px] mr-[2px] h-[17px] w-[17px]'
+												/>
+												<span className={`${poppins.variable} ${poppins.className} text-sm font-medium text-blue-light-high dark:text-blue-dark-high`}>
+													{profileDetails?.username.length <= 12 ? profileDetails.username : `${profileDetails.username.slice(0, 12)}...`}
+												</span>
+											</Link>
 										)}
 									</div>
-								)}
-								<div className='my-[2px] flex items-center justify-between'>
-									<Link
-										href={`/address/${proposer}`}
-										target='_blank'
-									>
-										<span className={`${poppins.variable} ${poppins.className} mr-1 text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium`}>Proposer:</span>
-										<ImageComponent
-											alt='user img'
-											src={profileDetails.image}
-											className='-mt-[1px] mr-[1px] h-[16px] w-[16px]'
-										/>
-										<span className={`${poppins.variable} ${poppins.className} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>{profileDetails.username}</span>
-									</Link>
-									<div className={'flex cursor-pointer items-center '}>
+									<div className={'cursor-pointer'}>
 										{curator && (
-											<>
-												<Popover
-													content={<CuratorPopover address={curator} />}
-													title=''
-													placement='top'
-												>
-													<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
-														<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
-														<button
-															className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
-														>
-															Curator
-														</button>
-													</div>
-												</Popover>
-												{/* <div className='mr-1 h-[5px] w-[5px] rounded-full bg-blue-light-medium dark:bg-blue-dark-medium'></div> */}
-											</>
+											<Popover
+												content={<CuratorPopover address={curator} />}
+												title=''
+												placement='top'
+											>
+												<div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
+													<CuratorIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
+													<button
+														className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium `}
+													>
+														Curator
+													</button>
+												</div>
+											</Popover>
 										)}
-										{/* <div className='flex items-center rounded-md p-1 hover:bg-[#f5f5f5] dark:hover:bg-section-dark-garyBackground'>
-										<BountyCriteriaIcon className='-mt-[2px] text-blue-light-medium dark:text-blue-dark-medium ' />
-										<button
-											className={`cursor-pointer ${spaceGrotesk.className} ${spaceGrotesk.variable} border-none bg-transparent px-[5px] py-[2px] text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium`}
-										>
-											Criteria
-										</button>
-									</div> */}
 									</div>
 								</div>
 							</div>

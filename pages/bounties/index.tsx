@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import React, { FC, useEffect, useState } from 'react';
-
+import { LeftOutlined } from '@ant-design/icons';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import Listing from '~src/components/Listing';
 import { LISTING_LIMIT } from '~src/global/listingLimit';
@@ -25,6 +25,7 @@ import { useTheme } from 'next-themes';
 import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import FilterByStatus from '~src/ui-components/FilterByStatus';
 import { RoundedDollarIcon } from '~src/ui-components/CustomIcons';
+import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 	const network = getNetworkFromReqHeaders(req.headers);
@@ -86,6 +87,15 @@ const Bounties: FC<IBountiesProps> = (props) => {
 				desc='Discover and participate in treasury-funded bounties on Polkassembly, where members can propose and work on projects to improve the governance and growth of our community.'
 				network={network}
 			/>
+			<Link
+				className='inline-flex items-center text-sidebarBlue hover:text-pink_primary dark:text-white'
+				href={'/bounty'}
+			>
+				<div className='flex items-center'>
+					<LeftOutlined className='mr-2 text-xs' />
+					<span className='text-sm font-medium'>Back to Bounties </span>
+				</div>
+			</Link>
 			<div className='mt-3 flex sm:items-center'>
 				<RoundedDollarIcon className='text-2xl text-lightBlue dark:text-white xs:mt-1 sm:-mt-3.5' />
 				<h1 className='mx-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>On Chain Bounties ({count})</h1>

@@ -62,6 +62,7 @@ import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalanc
 import Input from '~src/basic-components/Input';
 import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -167,6 +168,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
 
 	const getDelegateData = async () => {
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
@@ -230,6 +232,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!api || !apiReady) return;
 		if (loginWallet) {
 			setWallet(loginWallet);
+			const injectedWindow = window as Window & InjectedWindow;
+			const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+			if (!extensionAvailable) {
+				setExtensionNotFound(true);
+			} else {
+				setExtensionNotFound(false);
+			}
 			(async () => {
 				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
@@ -242,6 +251,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			const loginWallet = localStorage.getItem('loginWallet');
 			if (loginWallet) {
 				setWallet(loginWallet as Wallet);
+				const injectedWindow = window as Window & InjectedWindow;
+				const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+				if (!extensionAvailable) {
+					setExtensionNotFound(true);
+				} else {
+					setExtensionNotFound(false);
+				}
 				(async () => {
 					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 					setAccounts(accountsData?.accounts || []);
@@ -401,6 +417,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setWalletErr(checkWalletForSubstrateNetwork(network) as INetworkWalletErr);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, availableWallets]);
+
+	useEffect(() => {}, []);
 
 	if (!id) {
 		return <LoginToVote />;
@@ -860,6 +878,19 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
+										type='info'
+									/>
+								)}
+								{!extensionNotFound && !accounts.length && !!wallet && !loadingStatus.isLoading && (
+									<Alert
+										description={
+											<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
+												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your wallet</h3>
+												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
+											</div>
+										}
+										showIcon
+										className='mb-2 mt-1 p-3'
 										type='info'
 									/>
 								)}

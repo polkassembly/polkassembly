@@ -689,7 +689,7 @@ const Web3Login: FC<Props> = ({
 											</div>
 										}
 										showIcon
-										className='mb-2 mt-4 p-3'
+										className='mb-3 p-3'
 										type='info'
 									/>
 								)}

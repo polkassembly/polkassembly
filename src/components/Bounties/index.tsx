@@ -40,15 +40,15 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 	const activeDataChunks = activeBountyData ? chunkArray(activeBountyData.posts, isMobile ? 1 : 3) : [];
 
 	return (
-		<main>
+		<main className='mx-3'>
 			<div className='flex items-center justify-between'>
-				<h2 className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</h2>
+				<span className='font-pixelify text-[32px] font-bold text-blue-light-high dark:text-blue-dark-high'>Bounties</span>
 				<BountyProposalActionButton className='hidden md:block' />
 			</div>
 			<BountiesHeader />
 
-			{/* // Hot Bounties */}
-			<div className='mt-7 flex items-center justify-between'>
+			{/* Hot Bounties */}
+			<div className='mt-8 flex items-center justify-between'>
 				<div className='flex items-center gap-2'>
 					<ImageIcon
 						src='/assets/bounty-icons/fire-icon.svg'
@@ -66,7 +66,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					onClick={() => {
 						router.push('/bounties');
 					}}
-					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} mb:text-[26px] cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary`}
+					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
 				>
 					View All
 				</button>
@@ -94,19 +94,22 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					dots={false}
 					afterChange={handleBeforeChange1}
 				>
-					{extendedDataChunks.map((chunk, index) => (
-						<div
-							key={index}
-							className='flex justify-center space-x-4 overflow-hidden md:justify-between'
-						>
-							{chunk.map((post, postIndex) => (
-								<HotBountyCard
-									key={postIndex}
-									extendedData={post}
-								/>
-							))}
-						</div>
-					))}
+					{extendedDataChunks.map((chunk, index) => {
+						const chunkClass = chunk.length % 3 === 0 ? 'flex justify-center md:justify-around' : 'flex justify-start';
+						return (
+							<div
+								key={index}
+								className={chunkClass}
+							>
+								{chunk.map((post, postIndex) => (
+									<HotBountyCard
+										key={postIndex}
+										extendedData={post}
+									/>
+								))}
+							</div>
+						);
+					})}
 				</Carousel>
 				{currentSlide1 < extendedDataChunks.length - 1 && (
 					<span
@@ -130,16 +133,18 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			</div>
 
 			{/* Bounty Proposals */}
-			<div className='mt-8 flex items-center justify-between'>
-				<div className='flex items-center gap-2'>
-					<ImageIcon
-						src='/assets/bounty-icons/bounty-proposals.svg'
-						alt='bounty icon'
-						imgClassName='-mt-[18px]'
-					/>
-					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+			{extendedData && extendedData?.count > 1 && (
+				<div className='mt-8 flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						<ImageIcon
+							src='/assets/bounty-icons/bounty-proposals.svg'
+							alt='bounty icon'
+							imgClassName='-mt-[18px]'
+						/>
+						<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+					</div>
 				</div>
-			</div>
+			)}
 
 			<div className='relative '>
 				{currentSlide2 > 0 && (
@@ -163,19 +168,22 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					dots={false}
 					afterChange={handleBeforeChange2}
 				>
-					{activeDataChunks.map((chunk, index) => (
-						<div
-							key={index}
-							className='flex justify-between space-x-4'
-						>
-							{chunk.map((post, proposalIndex) => (
-								<BountiesProposalsCard
-									key={proposalIndex}
-									activeData={post}
-								/>
-							))}
-						</div>
-					))}
+					{activeDataChunks.map((chunk, index) => {
+						const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4' : 'mx-3 flex justify-start space-x-4';
+						return (
+							<div
+								key={index}
+								className={chunkClass}
+							>
+								{chunk.map((post, proposalIndex) => (
+									<BountiesProposalsCard
+										key={proposalIndex}
+										activeData={post}
+									/>
+								))}
+							</div>
+						);
+					})}
 				</Carousel>
 				{currentSlide2 < activeDataChunks.length - 1 && (
 					<span

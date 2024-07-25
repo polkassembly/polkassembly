@@ -229,10 +229,6 @@ export const batchVoteStore = createSlice({
 						break;
 				}
 			}
-		},
-		updateVoteCartItem: (state, action: PayloadAction<any>) => {
-			const updatedItem = action.payload;
-			state.vote_cart_data = state.vote_cart_data.map((item) => (item.id === updatedItem.id ? updatedItem : item));
 		}
 	}
 });

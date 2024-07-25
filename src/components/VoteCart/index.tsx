@@ -150,8 +150,8 @@ const VoteCart: React.FC = () => {
 
 	return (
 		<section>
-			<article className='px-1'>
-				<div className='h-[662px] w-full overflow-y-auto rounded-md bg-white px-4 pb-10 shadow-md dark:bg-black'>
+			<article className='px-2'>
+				<div className='max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md dark:bg-black'>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>

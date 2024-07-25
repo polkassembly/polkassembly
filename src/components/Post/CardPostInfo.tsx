@@ -17,6 +17,7 @@ interface ICardPostInfo {
 const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	const { post, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
+	console.log('console p[ost vmk --> ', post);
 
 	const getOnChainTabs = () => {
 		const tabs: any[] = [];

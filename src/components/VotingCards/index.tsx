@@ -170,7 +170,8 @@ const VotingCards = () => {
 					<Spin
 						spinning={isLoading}
 						size='default'
-					/>
+						className='mt-[48px]'
+					></Spin>
 				</div>
 			)}
 

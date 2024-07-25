@@ -88,8 +88,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		if (error) {
 			console.error(error);
 			return;
-		} else {
-			dispatch(batchVotesActions.updateVoteCartItem(voteInfo?.id));
 		}
 	};
 

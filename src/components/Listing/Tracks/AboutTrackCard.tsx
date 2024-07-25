@@ -162,7 +162,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [showDetails, setShowDetails] = useState(false);
 	const [trackNum, setTrackNum] = useState<number | null>(null);
 	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
-
 	const [data, setData] = useState<any>({
 		datasets: [],
 		labels: []
@@ -551,5 +550,18 @@ export default styled(AboutTrackCard)`
 		.text-container {
 			display: block !important;
 		}
+	}
+	.image-button-wrapper {
+		position: relative;
+		display: flex;
+		justify-content: center;
+		width: fit-content;
+	}
+
+	.begin-button {
+		position: absolute;
+		top: 63%;
+		left: 50%;
+		transform: translate(-50%, -50%);
 	}
 `;

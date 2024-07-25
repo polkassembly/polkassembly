@@ -45,20 +45,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	};
 
 	const editPostVoteDetails = async () => {
-		const updatedVoteInfo = {
-			abstainAyeBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainAyeVoteBalance,
-			abstainNayBalance: edit_vote_details?.voteOption === 'aye' || edit_vote_details?.voteOption === 'nay' ? '0' : edit_vote_details?.abstainNyeVoteBalance,
-			decision: edit_vote_details?.voteOption || batch_vote_details?.voteOption || 'aye',
-			post_id: voteInfo.id,
-			post_title: voteInfo?.proposal?.title,
-			voteBalance:
-				edit_vote_details?.voteOption === 'aye'
-					? edit_vote_details?.ayeVoteBalance
-					: edit_vote_details?.voteOption === 'nay'
-					? edit_vote_details?.nyeVoteBalance
-					: edit_vote_details?.abstainVoteBalance,
-			voteConviction: edit_vote_details?.conviction || 0.1
-		};
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
 				abstain_balance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
@@ -77,11 +63,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		if (error) {
 			console.error(error);
 			return;
-		} else {
-			dispatch(batchVotesActions.setvoteCardInfo(updatedVoteInfo));
-			dispatch(batchVotesActions.setUpdateVoteCartData(updatedVoteInfo));
-			setOpenEditModal(false);
-			router.reload();
 		}
 	};
 

@@ -177,13 +177,6 @@ export const batchVoteStore = createSlice({
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
 		},
-		setUpdateVoteCartData: (state, action: PayloadAction<IVoteCardInfo>) => {
-			const updatedItem = action.payload;
-			const index = state.vote_cart_data.findIndex((item) => {
-				item.id === updatedItem.post_id;
-			});
-			state.vote_cart_data[index] = { ...state.vote_cart_data[index], ...updatedItem };
-		},
 		setVoteCartData: (state, action: PayloadAction<[]>) => {
 			state.vote_cart_data = action.payload;
 		},

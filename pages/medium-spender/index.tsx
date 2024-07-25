@@ -5,6 +5,7 @@
 import { GetServerSideProps } from 'next';
 import { getOnChainPosts, IPostsListingResponse } from 'pages/api/v1/listing/on-chain-posts';
 import { getOnChainPostsCount } from 'pages/api/v1/listing/on-chain-posts-count';
+import { getActiveProposalsForTrack } from 'pages/api/v1/posts/non-voted-active-proposals';
 import { IReferendumV2PostsByStatus } from 'pages/root';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -38,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 			}
 		};
 	}
+
 
 	if (!networkTrackInfo[network][PostOrigin.MEDIUM_SPENDER]) {
 		return { props: { error: `Invalid track for ${network}` } };

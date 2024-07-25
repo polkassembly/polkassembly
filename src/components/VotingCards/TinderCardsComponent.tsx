@@ -8,8 +8,8 @@ import Markdown from '~src/ui-components/Markdown';
 // import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
 import ReferendumV2CardInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2CardInfo';
-import { useRouter } from 'next/router';
 import CardComments from './CardComments';
+import Link from 'next/link';
 
 interface ITinderCardsComponent {
 	proposal: any;
@@ -17,24 +17,11 @@ interface ITinderCardsComponent {
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;
-	const router = useRouter();
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
 		const newMd = (md || '').trim();
 		return newMd;
-	};
-
-	const handleReadFullProposal = (e: React.MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		if (proposal?.id) {
-			router.push(`/referenda/${proposal.id}`).catch((err) => {
-				console.error('Failed to navigate:', err);
-			});
-		} else {
-			console.error('Proposal ID is missing');
-		}
 	};
 
 	return (
@@ -57,12 +44,13 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 						md={sanitizeSummary(proposal?.summary || '')}
 					/>
 				</div>
-				<p
+				<Link
 					className='m-0 my-4 flex cursor-pointer justify-start p-0 text-xs text-pink_primary'
-					onClick={handleReadFullProposal}
+					href={`/referenda/${proposal.id}`}
+					target='_blank'
 				>
 					Read Full Proposal
-				</p>
+				</Link>
 				{proposal?.comments?.length > 0 && <CardComments proposal={proposal} />}
 			</div>
 			<div className='h-full rounded-2xl bg-white p-4 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
@@ -71,6 +59,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 					tally={proposal?.tally}
 					post={proposal}
+					hideInfo={true}
 				/>
 			</div>
 		</section>

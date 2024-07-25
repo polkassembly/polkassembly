@@ -31,11 +31,12 @@ interface IReferendumV2CardInfoProps {
 	setUpdatetally?: (pre: boolean) => void;
 	updateTally?: boolean;
 	post?: any;
+	hideInfo?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
 	const { network } = useNetworkSelector();
 	const { status, postIndex, postType } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
@@ -177,12 +178,14 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 								isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}
 							/>
 						)}
-						<button
-							onClick={() => setVoteCalculationModalOpen(true)}
-							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
-						>
-							<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-						</button>
+						{!hideInfo && (
+							<button
+								onClick={() => setVoteCalculationModalOpen(true)}
+								className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
+							>
+								<InfoCircleOutlined style={{ color: '#90A0B7' }} />
+							</button>
+						)}
 					</div>
 				</div>
 				<Spin

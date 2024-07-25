@@ -39,7 +39,6 @@ const ZERO = new BN(0);
 const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
 	const { network } = useNetworkSelector();
 	const { status } = post;
-	console.log('data is here --> ', status, post?.id, post?.type, tally);
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();

@@ -180,12 +180,9 @@ export const batchVoteStore = createSlice({
 		setUpdateVoteCartData: (state, action: PayloadAction<IVoteCardInfo>) => {
 			const updatedItem = action.payload;
 			const index = state.vote_cart_data.findIndex((item) => {
-				console.log('lets compare --> ', item, updatedItem);
 				item.id === updatedItem.post_id;
 			});
-			console.log('index --> ', index);
 			state.vote_cart_data[index] = { ...state.vote_cart_data[index], ...updatedItem };
-			console.log('here guys --> ', state.vote_cart_data);
 		},
 		setVoteCartData: (state, action: PayloadAction<[]>) => {
 			state.vote_cart_data = action.payload;

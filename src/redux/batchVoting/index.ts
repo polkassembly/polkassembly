@@ -177,7 +177,7 @@ export const batchVoteStore = createSlice({
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
 		},
-		setVoteCartData: (state, action: PayloadAction<[]>) => {
+		setVoteCartData: (state, action: PayloadAction<any[]>) => {
 			state.vote_cart_data = action.payload;
 		},
 		setVotedPostsIdsArray: (state, action: PayloadAction<number[]>) => {

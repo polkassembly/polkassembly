@@ -36,7 +36,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
-	const { edit_vote_details, batch_vote_details } = useBatchVotesSelector();
+	const { edit_vote_details, batch_vote_details, vote_cart_data } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [openViewProposalModal, setOpenViewProposalModal] = useState<boolean>(false);
 	const handleRemove = (postId: number) => {
@@ -45,6 +45,31 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	};
 
 	const editPostVoteDetails = async () => {
+		console.log(vote_cart_data, voteInfo, edit_vote_details);
+
+		const updatedCartVotes: any[] = vote_cart_data.map((item) => {
+			if (item.id === voteInfo.id) {
+				return {
+					...item,
+					abstainBalance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
+					ayeBalance:
+						edit_vote_details?.voteOption === 'aye'
+							? edit_vote_details.ayeVoteBalance
+							: edit_vote_details?.voteOption === 'abstain'
+							? edit_vote_details.abstainAyeVoteBalance
+							: '0',
+					conviction: edit_vote_details.conviction,
+					decision: edit_vote_details.voteOption,
+
+					nayBalance:
+						edit_vote_details?.voteOption === 'nay' ? edit_vote_details.nyeVoteBalance : edit_vote_details?.voteOption === 'abstain' ? edit_vote_details.abstainNyeVoteBalance : '0'
+				};
+			}
+			return item;
+		});
+
+		dispatch(batchVotesActions.setVoteCartData(updatedCartVotes));
+
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
 				abstain_balance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',

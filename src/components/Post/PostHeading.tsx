@@ -30,7 +30,6 @@ import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
 import Curator from './Curator';
-import { bountyStatus } from '~src/global/statuses';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -104,6 +103,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			postIndex: onchainId,
 			title,
 			description,
+			post_link,
 			proposer,
 			curator,
 			username,
@@ -217,9 +217,12 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 	return (
 		<div className={className}>
 			{/* Assign Curator Flow */}
-			{proposalType === ProposalType.REFERENDUM_V2 && status === bountyStatus.ACTIVE && method === 'unassign_curator' && (
+			{proposalType === ProposalType.REFERENDUM_V2 && (
 				<Curator
 					curator={curator}
+					bountyId={post_link?.id}
+					method={method}
+					status={status}
 					proposer={proposer}
 					postId={onchainId ? Number(onchainId) : (onchainId as any)}
 				/>

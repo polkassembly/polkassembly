@@ -2,13 +2,20 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
+import { useTheme } from 'next-themes';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import VotingCards from '~src/components/VotingCards';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
+import ImageIcon from '~src/ui-components/ImageIcon';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
+import CopyContentIcon from '~assets/icons/content_copy_small.svg';
+import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
+import copyToClipboard from '~src/util/copyToClipboard';
+import { message } from 'antd';
+import { useRouter } from 'next/router';
 
 interface IBatchVoting {
 	network: string;
@@ -28,11 +35,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const BatchVoting: FC<IBatchVoting> = (props) => {
 	const { network } = props;
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
+	const { asPath } = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleCopylink = () => {
+		const url = `https://${network}.polkassembly.io${asPath.split('#')[0]}`;
+
+		copyToClipboard(url);
+
+		message.success('Link copied to clipboard');
+	};
 
 	return (
 		<>
@@ -40,7 +57,27 @@ const BatchVoting: FC<IBatchVoting> = (props) => {
 				title='Batch Voting'
 				network={network}
 			/>
-			<VotingCards />
+			<div className='batch-voting-mobile-container block sm:hidden'>
+				<VotingCards />
+			</div>
+			<div className='batch-voting-desktop-container hidden sm:block'>
+				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Batch Voting</h1>
+				<div className='mt-12 flex flex-col items-center justify-center'>
+					<ImageIcon
+						src='/assets/icons/delegation-empty-state.svg'
+						alt='delegation empty state icon'
+					/>
+					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Batch Voting Page from your Mobile Device</p>
+					<button
+						className='mt-5 flex items-center justify-center rounded-full border border-solid border-section-light-container bg-transparent px-3.5 py-1.5 text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
+						onClick={() => {
+							handleCopylink();
+						}}
+					>
+						Copy Page Link <span className='ml-1'>{theme === 'dark' ? <CopyContentIconWhite /> : <CopyContentIcon />}</span>
+					</button>
+				</div>
+			</div>
 		</>
 	);
 };

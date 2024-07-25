@@ -38,7 +38,8 @@ const ZERO = new BN(0);
 
 const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
 	const { network } = useNetworkSelector();
-	const { status, postIndex, postType } = post;
+	const { status } = post;
+	console.log('data is here --> ', status, post?.id, post?.type, tally);
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
@@ -57,7 +58,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
 			'/api/v1/votes/ayeNayTotalCount',
 			{
-				postId: postIndex,
+				postId: post?.id,
 				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)
 			}
 		);
@@ -81,7 +82,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
+		const referendumInfoOf = await api.query.referenda.referendumInfoFor(post?.id);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
 			setTallyData({
@@ -130,7 +131,7 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 	useEffect(() => {
 		handleAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
+	}, [post?.id]);
 
 	const handleSummaryReload = async () => {
 		setIsLoading(true);
@@ -142,8 +143,8 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 				bareAyes: string;
 			};
 		}>('/api/v1/getTallyVotesData', {
-			postId: postIndex,
-			proposalType: postType
+			postId: post?.id,
+			proposalType: post?.type
 		});
 
 		if (data) {

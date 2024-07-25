@@ -177,6 +177,16 @@ export const batchVoteStore = createSlice({
 		setTotalVotesAddedInCart: (state, action: PayloadAction<number>) => {
 			state.total_proposals_added_in_Cart = action.payload;
 		},
+		setUpdateVoteCartData: (state, action: PayloadAction<IVoteCardInfo>) => {
+			const updatedItem = action.payload;
+			const index = state.vote_cart_data.findIndex((item) => {
+				console.log('lets compare --> ', item, updatedItem);
+				item.id === updatedItem.post_id;
+			});
+			console.log('index --> ', index);
+			state.vote_cart_data[index] = { ...state.vote_cart_data[index], ...updatedItem };
+			console.log('here guys --> ', state.vote_cart_data);
+		},
 		setVoteCartData: (state, action: PayloadAction<[]>) => {
 			state.vote_cart_data = action.payload;
 		},
@@ -229,10 +239,6 @@ export const batchVoteStore = createSlice({
 						break;
 				}
 			}
-		},
-		updateVoteCartItem: (state, action: PayloadAction<any>) => {
-			const updatedItem = action.payload;
-			state.vote_cart_data = state.vote_cart_data.map((item) => (item.id === updatedItem.id ? updatedItem : item));
 		}
 	}
 });

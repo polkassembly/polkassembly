@@ -171,7 +171,7 @@ const VoteCart: React.FC = () => {
 						<div className='flex h-[171px] items-center justify-center'>
 							<Spin
 								spinning={isLoading}
-								size='large'
+								size='default'
 								className='mt-[48px]'
 							></Spin>
 						</div>

@@ -115,6 +115,7 @@ const PostOnChainInfo: FC<IPostOnChainInfoProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { className, onChainInfo, proposalType } = props;
+	console.log('onChainInfo -->', onChainInfo);
 	const currentBlock = useCurrentBlock();
 	if (!onChainInfo) return null;
 

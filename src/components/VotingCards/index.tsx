@@ -168,7 +168,7 @@ const VotingCards = () => {
 				<div className='flex h-[700px] items-center justify-center'>
 					<Spin
 						spinning={isLoading}
-						size='large'
+						size='default'
 						className='mt-[48px]'
 					></Spin>
 				</div>

@@ -71,6 +71,7 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 					setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 					tally={proposal?.tally}
 					post={proposal}
+					hideInfo={true}
 				/>
 			</div>
 		</section>

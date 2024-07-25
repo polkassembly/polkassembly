@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Modal } from 'antd';
+import { Button, Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ProposalInfoCard from './ProposalInfoCard';
@@ -31,17 +31,21 @@ const VoteCart: React.FC = () => {
 	const [gasFees, setGasFees] = useState<any>();
 	const [isDisable, setIsDisable] = useState<boolean>(false);
 	const { vote_cart_data } = useBatchVotesSelector();
+	const [isLoading, setIsLoading] = useState(false);
 	const [openSuccessModal, setOpenSuccessModal] = useState<boolean>(false);
 
 	const getVoteCartData = async () => {
+		setIsLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
 			isExternalApiCall: true,
 			userAddress: user?.loginAddress
 		});
 		if (error) {
+			setIsLoading(false);
 			console.error(error);
 			return;
 		} else {
+			setIsLoading(false);
 			dispatch(batchVotesActions.setVoteCartData(data?.votes));
 			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
 		}
@@ -160,6 +164,15 @@ const VoteCart: React.FC = () => {
 					))}
 				</div>
 			</article>
+			{isLoading && (
+				<div className='flex h-[171px] items-center justify-center'>
+					<Spin
+						spinning={isLoading}
+						size='large'
+						className='mt-[48px]'
+					></Spin>
+				</div>
+			)}
 			<article
 				className='h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
 				style={{ borderRadius: '8px 8px 0 0' }}

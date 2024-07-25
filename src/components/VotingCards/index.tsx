@@ -47,7 +47,6 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		console.log(direction);
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',

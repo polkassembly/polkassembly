@@ -160,7 +160,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
 						vote === EVoteDecisionType.AYE ? 'bg-ayeGreenColor text-white dark:bg-ayeDarkGreenColor' : ''
 					}`}
 				>
@@ -179,7 +179,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 		{
 			label: (
 				<div
-					className={`ml-1 mr-1 flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
+					className={`flex h-[32px] w-full items-center justify-center rounded-[4px] text-textGreyColor ${
 						vote === EVoteDecisionType.NAY ? 'bg-nayRedColor text-white dark:bg-nayDarkRedColor' : ''
 					}`}
 				>
@@ -203,7 +203,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 				{
 					label: (
 						<div
-							className={` ml-2 flex h-[32px] w-full items-center  justify-center rounded-[4px] text-textGreyColor ${
+							className={`flex h-[32px] w-full items-center  justify-center rounded-[4px] text-textGreyColor ${
 								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
@@ -466,5 +466,8 @@ export default styled(VoteReferendumCard)`
 	}
 	.ant-segmented .ant-segmented-lg .ant-segmented-item-label {
 		padding: 0 !important;
+	}
+	.ant-segmented.ant-segmented-lg {
+		padding: 0 8px !important;
 	}
 `;

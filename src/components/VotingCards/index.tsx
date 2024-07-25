@@ -157,7 +157,7 @@ const VotingCards = () => {
 					<PostEmptyState
 						description={
 							<div className='p-5'>
-								<p>urrently no active proposals found</p>
+								<p>Currently no active proposals found</p>
 							</div>
 						}
 					/>

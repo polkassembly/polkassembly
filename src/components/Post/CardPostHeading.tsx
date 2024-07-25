@@ -100,7 +100,9 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 		username,
 		topic,
 		last_edited_at,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		requested,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		reward,
 		tags,
 		track_name,
@@ -112,6 +114,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 		hash,
 		preimageHash
 	} = post;
+	console.log('here is post --> ', post);
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');
@@ -140,8 +143,6 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 		getHistoryData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [onchainId, proposalType, network]);
-
-	const requestedAmt = proposalType === ProposalType.REFERENDUM_V2 ? requested : reward;
 
 	const handleTagClick = (pathname: string, filterBy: string) => {
 		if (pathname)
@@ -246,12 +247,12 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				</div>
 			) : (
 				<div className='flex items-center justify-between'>
-					{requestedAmt && (
+					{post?.requested && (
 						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}
-								requestedAmt={requestedAmt.toString()}
+								requestedAmt={post?.requested?.toString()}
 								className={classNames(className, 'flex')}
 								postId={onchainId ? Number(onchainId) : (onchainId as any)}
 								proposalCreatedAt={created_at as any}
@@ -264,6 +265,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 			)}
 
 			<h2 className={`${proposalType === ProposalType.TIPS ? 'break-words' : ''} mb-3 text-lg font-medium leading-7 text-bodyBlue dark:text-blue-dark-high`}>
+				#{post?.id}
 				{newTitle === noTitle ? (
 					`${(getProposalTypeTitle(proposalType) || '')
 						?.split(' ')
@@ -281,7 +283,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 				<>
 					<CreationLabel
 						assetId={assetId}
-						className='md post-user-container  dark:bg-section-dark-overlay'
+						className='md post-user-container dark:bg-black'
 						created_at={dayjs(created_at).toDate()}
 						defaultAddress={proposer || curator || polkadotProposer}
 						username={username}

@@ -20,6 +20,7 @@ import CardPostInfo from '../Post/CardPostInfo';
 import { useRouter } from 'next/router';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import Image from 'next/image';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -84,21 +85,23 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	return (
 		<section
 			key={index}
-			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'
+			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-blue-dark-medium dark:bg-transparent'
 		>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
-				<p className='text-bodyblue m-0 p-0 text-xs'>{voteInfo?.proposal?.title?.substring(0, 50)}...</p>
+				<p className='text-bodyblue m-0 p-0 text-xs dark:text-blue-dark-medium'>{voteInfo?.proposal?.title?.substring(0, 50)}...</p>
 				<Button
 					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0'
 					onClick={() => {
 						setOpenViewProposalModal(true);
 					}}
 				>
-					<ImageIcon
-						src='/assets/icons/eye-icon-grey.svg'
+					<Image
+						src={'/assets/icons/eye-icon-grey.svg'}
 						alt='eye-icon'
-						imgWrapperClassName='ml-auto'
+						height={20}
+						width={20}
+						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 					/>
 				</Button>
 			</article>
@@ -119,7 +122,11 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					)}
 					<p
 						className={`${
-							voteInfo?.decision === 'aye' ? 'text-aye_green dark:text-aye_green_Dark' : voteInfo?.decision === 'nay' ? 'text-nye_red dark:text-nay_red_Dark' : 'text-bodyBlue'
+							voteInfo?.decision === 'aye'
+								? 'text-aye_green dark:text-aye_green_Dark'
+								: voteInfo?.decision === 'nay'
+								? 'text-nye_red dark:text-nay_red_Dark'
+								: 'text-bodyBlue dark:text-blue-dark-medium'
 						} text-capitalize m-0 p-0 text-xs`}
 					>
 						{voteInfo?.decision}
@@ -136,18 +143,24 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 							setOpenEditModal(true);
 						}}
 					>
-						<ImageIcon
-							src='/assets/icons/edit-option-icon.svg'
+						<Image
+							src={'/assets/icons/edit-option-icon.svg'}
 							alt='edit-icon'
+							height={20}
+							width={20}
+							className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 						/>
 					</Button>
 					<Button
 						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
 						onClick={() => handleRemove(voteInfo.post_id)}
 					>
-						<ImageIcon
-							src='/assets/icons/bin-icon-grey.svg'
+						<Image
+							src={'/assets/icons/bin-icon-grey.svg'}
 							alt='bin-icon'
+							height={20}
+							width={20}
+							className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
 						/>
 					</Button>
 				</div>

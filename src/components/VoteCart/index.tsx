@@ -20,6 +20,7 @@ import VoteSuccessModal from './VoteSuccessModal';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { PostEmptyState } from '~src/ui-components/UIStates';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
@@ -155,24 +156,36 @@ const VoteCart: React.FC = () => {
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
-					{vote_cart_data.map((voteCardInfo: any, index: number) => (
-						<ProposalInfoCard
-							key={index}
-							voteInfo={voteCardInfo}
-							index={index}
-						/>
-					))}
+					{!isLoading && vote_cart_data.length <= 0 && (
+						<div className='flex h-[600px] items-center justify-center'>
+							<PostEmptyState
+								description={
+									<div className='p-5'>
+										<p>Currently no active proposals found in cart</p>
+									</div>
+								}
+							/>
+						</div>
+					)}
+					{isLoading && (
+						<div className='flex h-[171px] items-center justify-center'>
+							<Spin
+								spinning={isLoading}
+								size='large'
+								className='mt-[48px]'
+							></Spin>
+						</div>
+					)}
+					{!isLoading &&
+						vote_cart_data.map((voteCardInfo: any, index: number) => (
+							<ProposalInfoCard
+								key={index}
+								voteInfo={voteCardInfo}
+								index={index}
+							/>
+						))}
 				</div>
 			</article>
-			{isLoading && (
-				<div className='flex h-[171px] items-center justify-center'>
-					<Spin
-						spinning={isLoading}
-						size='large'
-						className='mt-[48px]'
-					></Spin>
-				</div>
-			)}
 			<article
 				className='h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
 				style={{ borderRadius: '8px 8px 0 0' }}

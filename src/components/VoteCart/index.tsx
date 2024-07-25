@@ -161,7 +161,7 @@ const VoteCart: React.FC = () => {
 				</div>
 			</article>
 			<article
-				className='h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
+				className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
 				style={{ borderRadius: '8px 8px 0 0' }}
 			>
 				<div className='flex flex-col gap-y-2'>

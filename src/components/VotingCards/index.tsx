@@ -14,6 +14,7 @@ import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+
 const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -47,7 +48,6 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		console.log(direction);
 		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
@@ -158,7 +158,7 @@ const VotingCards = () => {
 					<PostEmptyState
 						description={
 							<div className='p-5'>
-								<p>urrently no active proposals found</p>
+								<p>Currently no active proposals found</p>
 							</div>
 						}
 					/>
@@ -166,12 +166,11 @@ const VotingCards = () => {
 			)}
 
 			{isLoading && (
-				<div className='flex h-[700px] items-center justify-center'>
+				<div className='flex min-h-[400px] items-center justify-center'>
 					<Spin
 						spinning={isLoading}
-						size='large'
-						className='mt-[48px]'
-					></Spin>
+						size='default'
+					/>
 				</div>
 			)}
 
@@ -200,6 +199,7 @@ const VotingCards = () => {
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}
 				childRefs={childRefs}
+				className={show_cart_menu ? 'bottom-10' : 'bottom-1'}
 			/>
 			{show_cart_menu && <CartOptionMenu />}
 		</div>

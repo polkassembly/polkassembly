@@ -874,13 +874,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										type='warning'
 									/>
 								)}
-								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
-									<Alert
-										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
-										showIcon
-										type='info'
-									/>
-								)}
 								{!extensionNotFound && !accounts.length && !!wallet && !loadingStatus.isLoading && (
 									<Alert
 										description={
@@ -892,6 +885,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										showIcon
 										className='mb-2 mt-1 p-3'
 										type='info'
+									/>
+								)}
+								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
+									<Alert
+										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
+										showIcon
+										type='info'
+										className='mt-2'
 									/>
 								)}
 								{accounts.length > 0 ? (

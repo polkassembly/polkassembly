@@ -14,6 +14,7 @@ import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+
 const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -165,7 +166,7 @@ const VotingCards = () => {
 			)}
 
 			{isLoading && (
-				<div className='flex h-[700px] items-center justify-center'>
+				<div className='flex min-h-[400px] items-center justify-center'>
 					<Spin
 						spinning={isLoading}
 						size='default'
@@ -199,6 +200,7 @@ const VotingCards = () => {
 				trackPosts={activeProposal}
 				currentIndex={currentIndex}
 				childRefs={childRefs}
+				className={show_cart_menu ? 'bottom-10' : 'bottom-1'}
 			/>
 			{show_cart_menu && <CartOptionMenu />}
 		</div>

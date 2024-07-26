@@ -10,7 +10,6 @@ import GovSidebarCard from 'src/ui-components/GovSidebarCard';
 import VoteProgress from 'src/ui-components/VoteProgress';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { useApiContext } from '~src/context';
-import { usePostDataContext } from '~src/context';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { CastVoteIcon, CloseIcon, ConvictionPeriodIcon, LikeDislikeIcon, RightArrowIcon, VoteAmountIcon } from '~src/ui-components/CustomIcons';
 import PassingInfoTag from '~src/ui-components/PassingInfoTag';
@@ -24,22 +23,22 @@ import { IVotesCount } from '~src/types';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import _ from 'lodash';
 
-interface IReferendumV2VoteInfoProps {
+interface IReferendumV2CardInfoProps {
 	className?: string;
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
 	setUpdatetally?: (pre: boolean) => void;
 	updateTally?: boolean;
+	post?: any;
+	hideInfo?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally }) => {
+const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally, post, hideInfo }) => {
 	const { network } = useNetworkSelector();
-	const {
-		postData: { status, postIndex, postType }
-	} = usePostDataContext();
+	const { status } = post;
 	const [voteCalculationModalOpen, setVoteCalculationModalOpen] = useState(false);
 
 	const { api, apiReady } = useApiContext();
@@ -58,7 +57,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		const { data, error } = await nextApiClientFetch<{ aye: { totalCount: number }; nay: { totalCount: number }; abstain: { totalCount: number } }>(
 			'/api/v1/votes/ayeNayTotalCount',
 			{
-				postId: postIndex,
+				postId: post?.id,
 				proposalType: getSubsquidLikeProposalType(ProposalType.REFERENDUM_V2)
 			}
 		);
@@ -82,7 +81,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
+		const referendumInfoOf = await api.query.referenda.referendumInfoFor(post?.id);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
 			setTallyData({
@@ -131,7 +130,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	useEffect(() => {
 		handleAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
+	}, [post?.id]);
 
 	const handleSummaryReload = async () => {
 		setIsLoading(true);
@@ -143,8 +142,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 				bareAyes: string;
 			};
 		}>('/api/v1/getTallyVotesData', {
-			postId: postIndex,
-			proposalType: postType
+			postId: post?.id,
+			proposalType: post?.type
 		});
 
 		if (data) {
@@ -153,7 +152,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			console.log(error);
 		}
 		setUpdatetally?.(false);
-		setIsLoading(false);
 	};
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -163,7 +161,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	useEffect(() => {
 		if (!updateTally) return;
-		setIsLoading(true);
 		handleDebounceTallyData();
 		handleDebounceAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,12 +178,14 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 								isPassing={['Executed', 'Confirmed', 'Approved'].includes(status)}
 							/>
 						)}
-						<button
-							onClick={() => setVoteCalculationModalOpen(true)}
-							className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
-						>
-							<InfoCircleOutlined style={{ color: '#90A0B7' }} />
-						</button>
+						{!hideInfo && (
+							<button
+								onClick={() => setVoteCalculationModalOpen(true)}
+								className='flex cursor-pointer items-center justify-center border-none bg-transparent text-lg text-navBlue outline-none hover:text-pink_primary'
+							>
+								<InfoCircleOutlined style={{ color: '#90A0B7' }} />
+							</button>
+						)}
 					</div>
 				</div>
 				<Spin
@@ -401,7 +400,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	);
 };
 
-export default styled(React.memo(ReferendumV2VoteInfo))`
+export default styled(React.memo(ReferendumV2CardInfo))`
 	.ant-modal .ant-modal-header {
 		background-color: ${({ theme }: { theme: any }) => (theme === 'dark' ? '#1E1E1E' : '#F5F7FF')} !important;
 	}

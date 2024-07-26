@@ -1109,7 +1109,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={className}>
+		<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
 			<NavHeader
 				theme={theme as any}
 				sidedrawer={sidedrawer}
@@ -1199,7 +1199,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
+					<Layout className={'min-h-[calc(100vh - 10rem)] overflow-x-none overflow-y-none flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 						<CustomContent

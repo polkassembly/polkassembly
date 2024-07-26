@@ -26,7 +26,7 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import SelectOption from '~src/basic-components/Select/SelectOption';
-import VotingFormCard, { EFormType } from './VotingFormCard';
+import VotingFormCard, { EFormType } from '../../../TinderStyleVoting/PostInfoComponents/VotingFormCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batchVoting/actions';
 import { useAppDispatch } from '~src/redux/store';

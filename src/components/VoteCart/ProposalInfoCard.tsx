@@ -21,6 +21,7 @@ import { useRouter } from 'next/router';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import Image from 'next/image';
+import { IDeleteBatchVotes, IupdateBatchVotes } from '../VotingCards/types';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -70,7 +71,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 
 		dispatch(batchVotesActions.setVoteCartData(updatedCartVotes));
 
-		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
+		const { error } = await nextApiClientFetch<IupdateBatchVotes>('api/v1/votes/batch-votes-cart/updateBatchVoteCart', {
 			vote: {
 				abstain_balance: edit_vote_details?.voteOption === 'abstain' ? edit_vote_details?.abstainVoteBalance : '0',
 				aye_balance:
@@ -92,7 +93,7 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	};
 
 	const deletePostDetails = async () => {
-		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+		const { error } = await nextApiClientFetch<IDeleteBatchVotes>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			id: voteInfo?.id
 		});
 		if (error) {

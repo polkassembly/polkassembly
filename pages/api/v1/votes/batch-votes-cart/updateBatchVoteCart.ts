@@ -10,21 +10,8 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { IupdateBatchVotes } from '~src/components/VotingCards/types';
 import { firestore_db } from '~src/services/firebaseInit';
-
-interface Args {
-	vote: {
-		referendum_index: number;
-		network: string;
-		decision: 'aye' | 'nay' | 'abstain';
-		aye_balance: string;
-		nay_balance: string;
-		abstain_balance: string;
-		locked_period: number;
-		user_address: string;
-		id: string;
-	};
-}
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -41,7 +28,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user = await authServiceInstance.GetUser(token);
 		if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		const { vote } = req.body as unknown as Args;
+		const { vote } = req.body as unknown as IupdateBatchVotes;
 
 		if (
 			typeof vote?.aye_balance !== 'string' ||

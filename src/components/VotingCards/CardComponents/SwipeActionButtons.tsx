@@ -6,13 +6,7 @@ import LikeWhite from '~assets/icons/like-white.svg';
 import DislikeWhite from '~assets/icons/dislike-white.svg';
 import { StopOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
-
-interface ISwipeActionButtons {
-	currentIndex: number;
-	trackPosts: any;
-	childRefs: any;
-	className?: string;
-}
+import { ISwipeActionButtons } from '../types';
 
 const SwipeActionButtons: FC<ISwipeActionButtons> = (props) => {
 	const { currentIndex, trackPosts, childRefs, className } = props;

@@ -9,13 +9,14 @@ import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { IDeleteBatchVotes } from '../types';
 
 const CartOptionMenu = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 
 	const deletePostDetails = async () => {
-		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+		const { error } = await nextApiClientFetch<IDeleteBatchVotes>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			deleteWholeCart: true
 		});
 		if (error) {

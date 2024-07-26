@@ -21,6 +21,7 @@ import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+import { IDeleteBatchVotes } from '../VotingCards/types';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
@@ -73,7 +74,7 @@ const VoteCart: React.FC = () => {
 		});
 		setIsDisable(true);
 		setOpenSuccessModal(true);
-		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
+		const { error } = await nextApiClientFetch<IDeleteBatchVotes>('api/v1/votes/batch-votes-cart/deleteBatchVotesCart', {
 			deleteWholeCart: true
 		});
 		if (error) {

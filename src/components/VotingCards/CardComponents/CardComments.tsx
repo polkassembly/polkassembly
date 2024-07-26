@@ -3,10 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { ICardComments } from '../types';
 
-interface ICardComments {
-	proposal: any;
-}
 const CardComments: FC<ICardComments> = (props) => {
 	const { proposal } = props;
 	return (

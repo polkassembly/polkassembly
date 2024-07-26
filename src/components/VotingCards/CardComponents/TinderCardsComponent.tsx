@@ -10,10 +10,7 @@ import { IVotesCount } from '~src/types';
 import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
 import Link from 'next/link';
-
-interface ITinderCardsComponent {
-	proposal: any;
-}
+import { ITinderCardsComponent } from '../types';
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	const { proposal } = props;

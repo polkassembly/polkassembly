@@ -14,6 +14,7 @@ import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
+import { IAddBatchVotes } from './types';
 
 const CartOptionMenu = dynamic(() => import('./CardComponents/CartOptionMenu'), {
 	loading: () => <Skeleton active />,
@@ -48,7 +49,7 @@ const VotingCards = () => {
 	const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
-		const { error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
+		const { error } = await nextApiClientFetch<IAddBatchVotes>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
 				aye_balance: direction === 'right' ? batch_vote_details.ayeVoteBalance || '0' : direction === 'up' ? batch_vote_details.abstainAyeVoteBalance || '0' : '0',

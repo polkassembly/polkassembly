@@ -10,12 +10,8 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { IDeleteBatchVotes } from '~src/components/VotingCards/types';
 import { firestore_db } from '~src/services/firebaseInit';
-
-interface Args {
-	id?: string;
-	deleteWholeCart: boolean;
-}
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -32,7 +28,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		const user = await authServiceInstance.GetUser(token);
 		if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-		const { id, deleteWholeCart } = req.body as unknown as Args;
+		const { id, deleteWholeCart } = req.body as unknown as IDeleteBatchVotes;
 		const batch = firestore_db.batch();
 
 		if (deleteWholeCart) {

@@ -38,7 +38,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
-	console.log('hello vaibhav');
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;

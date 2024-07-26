@@ -84,8 +84,6 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 	// return () => clearInterval(interval);
 	// }, []);
 
-	console.log(router?.pathname?.includes('batch-voting'));
-
 	useEffect(() => {
 		const handleRouteChange = () => {
 			if ((window as any).DocsBotAI?.isChatbotOpen) {

@@ -46,8 +46,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	};
 
 	const editPostVoteDetails = async () => {
-		console.log(vote_cart_data, voteInfo, edit_vote_details);
-
 		const updatedCartVotes: any[] = vote_cart_data.map((item) => {
 			if (item.id === voteInfo.id) {
 				return {

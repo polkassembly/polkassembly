@@ -114,7 +114,6 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 		hash,
 		preimageHash
 	} = post;
-	console.log('here is post --> ', post);
 	const { api, apiReady } = useApiContext();
 	const [openModal, setOpenModal] = useState<boolean>(false);
 	const [polkadotProposer, setPolkadotProposer] = useState<string>('');

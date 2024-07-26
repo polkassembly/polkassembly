@@ -59,9 +59,11 @@ const CouncilBoard = (props: { network: string }) => {
 				title='Votes Cart'
 				network={props.network}
 			/>
-			<div className='batch-voting-mobile-container block sm:hidden'>
-				<VoteCart />
-			</div>
+			{props?.network === 'polkadot' && (
+				<div className='batch-voting-mobile-container block sm:hidden'>
+					<VoteCart />
+				</div>
+			)}
 			<div className='batch-voting-desktop-container hidden sm:block'>
 				<h1 className='text-center text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Cart Page</h1>
 				<div className='mt-12 flex flex-col items-center justify-center'>
@@ -69,7 +71,9 @@ const CouncilBoard = (props: { network: string }) => {
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'
 					/>
-					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>Please visit Cart Page from your Mobile Device</p>
+					<p className='mt-6 text-center text-base text-bodyBlue dark:text-blue-dark-high'>
+						{props?.network === ' polkadot' ? 'Please visit Batch Voting Page from your Mobile Device' : 'Feature is currently active only for polkadot network'}
+					</p>
 					<button
 						className='mt-5 flex items-center justify-center rounded-full border border-solid border-section-light-container bg-transparent px-3.5 py-1.5 text-bodyBlue dark:border-[#3B444F] dark:text-blue-dark-high'
 						onClick={() => {

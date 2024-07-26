@@ -238,8 +238,8 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 							eventObj.type === 'stakingEpoch'
 								? `Start of a new staking session ${eventObj?.data?.index}`
 								: eventObj.type === 'stakingEra'
-								? `Start of a new staking era ${eventObj?.data?.index}`
-								: `${eventObj.type} ${eventObj?.data?.index}`,
+									? `Start of a new staking era ${eventObj?.data?.index}`
+									: `${eventObj.type} ${eventObj?.data?.index}`,
 						end_time: dayjs(eventObj.startDate).toDate(),
 						id: `stakingInfoEvent_${i}`,
 						location: '',

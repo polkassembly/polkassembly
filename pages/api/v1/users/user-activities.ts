@@ -82,11 +82,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 				refs[activityData?.reaction_id] = postDocRef.collection('post_reactions').doc(String(activityData.reaction_id));
 			}
 			if (activityData?.reaction_id?.length && activityData?.comment_id?.length && !activityData?.reply_id?.length) {
-				refs[activityData?.reaction_id] = postDocRef
-					.collection('comments')
-					.doc(String(activityData.comment_id))
-					.collection('comment_reactions')
-					.doc(activityData?.reaction_id);
+				refs[activityData?.reaction_id] = postDocRef.collection('comments').doc(String(activityData.comment_id)).collection('comment_reactions').doc(activityData?.reaction_id);
 			}
 			if (activityData?.reaction_id?.length && activityData?.comment_id?.length && activityData?.reply_id?.length) {
 				refs[activityData?.reaction_id] = postDocRef

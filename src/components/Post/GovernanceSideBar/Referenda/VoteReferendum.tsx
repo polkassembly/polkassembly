@@ -683,7 +683,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	const VoteUI = (

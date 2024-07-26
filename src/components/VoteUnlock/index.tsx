@@ -317,7 +317,7 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 									isReferendaPage
 										? 'border-pink_primary bg-pink_primary text-white dark:text-white'
 										: 'border-pink_primary bg-[#FDEDF7] text-pink_primary dark:bg-pink-dark-primary'
-							  }`
+								}`
 					} w-full rounded-[8px] ${isReferendaPage ? 'h-10 font-semibold' : 'h-8 '}`}
 				>
 					{!totalUnlockableBalance.eq(ZERO_BN)
@@ -325,8 +325,8 @@ const VoteUnlock = ({ className, addresses, isReferendaPage, referendumIndex }: 
 							? 'Clear expired referenda locks'
 							: 'Unlock Your Tokens'
 						: handlePrevData(totalLockData).length
-						? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
-						: 'No Unlocks Available'}
+							? `Next Unlock in ${blockToTime(handlePrevData(totalLockData)[0]?.endBlock, network).time}`
+							: 'No Unlocks Available'}
 				</Button>
 			</div>
 			<Modal

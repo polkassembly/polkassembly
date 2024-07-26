@@ -211,7 +211,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 										)}
 									</div>
 								);
-						  })
+							})
 						: !loading && (
 								<div className='my-[60px] flex flex-col items-center gap-6'>
 									<ImageIcon
@@ -221,7 +221,7 @@ const ProfileUserActivity = ({ className, userProfile }: Props) => {
 									/>
 									<h3 className='text-blue-light-high dark:text-blue-dark-high'>No current activities</h3>
 								</div>
-						  )}
+							)}
 				</div>
 				<div className='flex items-center justify-center'>
 					{!!userActivities?.length && (

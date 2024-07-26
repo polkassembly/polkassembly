@@ -109,12 +109,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 				proposalType === ProposalType.ALLIANCE_MOTION
 					? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 					: proposalType === ProposalType.ANNOUNCEMENT
-					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
-					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
-					? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-					: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
-					? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
-					: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+						? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
+						: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
+							? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
+							: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
+								? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
+								: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
 			if (network === 'polymesh') {
 				postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;
@@ -212,12 +212,12 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			proposalType === ProposalType.ALLIANCE_MOTION
 				? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE
 				: proposalType === ProposalType.ANNOUNCEMENT
-				? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
-				: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
-				? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
-				: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
-				? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
-				: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
+					? GET_ALLIANCE_ANNOUNCEMENT_BY_CID_AND_TYPE
+					: proposalType === ProposalType.FELLOWSHIP_REFERENDUMS && ['collectives', 'westend-collectives'].includes(network)
+						? GET_COLLECTIVE_FELLOWSHIP_POST_BY_INDEX_AND_PROPOSALTYPE
+						: proposalType === ProposalType.ADVISORY_COMMITTEE && network === 'zeitgeist'
+							? GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE
+							: GET_PROPOSAL_BY_INDEX_AND_TYPE_V2;
 
 		if (network === 'polymesh') {
 			postQuery = GET_POLYMESH_PROPOSAL_BY_INDEX_AND_TYPE;

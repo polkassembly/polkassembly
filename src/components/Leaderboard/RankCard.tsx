@@ -36,12 +36,12 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					1: '/assets/FirstPlaceDark.svg',
 					2: '/assets/SecondPlaceDark.svg',
 					3: '/assets/ThirdPlaceDark.svg'
-			  }
+				}
 			: {
 					1: '/assets/FirstPlace.svg',
 					2: '/assets/SecondPlace.svg',
 					3: '/assets/ThirdPlace.svg'
-			  };
+				};
 
 	const iconSources =
 		theme === 'dark'
@@ -49,12 +49,12 @@ const RankCard: React.FC<IRankCardProps> = ({ place, data, theme, type, classNam
 					bookmark: '/assets/icons/auctionIcons/BookmarkDark.svg',
 					delegate: '/assets/icons/auctionIcons/delegateDarkIcon.svg',
 					monetization: '/assets/icons/auctionIcons/monetizationDarkIcon.svg'
-			  }
+				}
 			: {
 					bookmark: '/assets/icons/auctionIcons/BookmarkLight.svg',
 					delegate: '/assets/icons/auctionIcons/delegateLightIcon.svg',
 					monetization: '/assets/icons/auctionIcons/monetizationLightIcon.svg'
-			  };
+				};
 
 	return (
 		<div

@@ -147,7 +147,7 @@ export default function Parachain({ primaryNetwork, onSetPrimaryNetwork, onSetNe
 								primaryNetwork !== network
 									? () => {
 											setCopyPreferencesModal(true);
-									  }
+										}
 									: () => {}
 							}
 						>

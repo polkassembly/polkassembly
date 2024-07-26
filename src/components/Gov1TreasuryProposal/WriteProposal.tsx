@@ -202,7 +202,7 @@ const WriteProposal = ({ setStep, className }: Props) => {
 															}
 														}
 													}
-											  ]
+												]
 									}
 								>
 									<Input

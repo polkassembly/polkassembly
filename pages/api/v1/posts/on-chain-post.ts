@@ -203,11 +203,11 @@ export const getTopicFromFirestoreData = (data: any, proposalType: ProposalType)
 		return topic
 			? topic
 			: isTopicIdValid(topic_id)
-			? {
-					id: topic_id,
-					name: getTopicNameFromTopicId(topic_id)
-			  }
-			: getTopicFromType(proposalType);
+				? {
+						id: topic_id,
+						name: getTopicNameFromTopicId(topic_id)
+					}
+				: getTopicFromType(proposalType);
 	}
 	return null;
 };
@@ -331,11 +331,11 @@ const getAndSetNewData = async (params: IParams) => {
 								content: value.data.content && !isDefaultStringExist(value?.data?.content, pathPostType) ? value.data.content : newData.content,
 								title: value.data?.title ? value.data?.title : newData?.title,
 								user_id: newData.user_id ? newData.user_id : value.data.user_id
-						  }
+							}
 						: {
 								...newData,
 								id: postId
-						  };
+							};
 					if (pathPostType !== 'tips') {
 						const numPostId = Number(dummyData.id);
 						if (!isNaN(numPostId)) {
@@ -397,7 +397,7 @@ export async function getComments(
 			const history = data?.history
 				? data.history.map((item: any) => {
 						return { ...item, created_at: item?.created_at?.toDate ? item?.created_at.toDate() : item?.created_at };
-				  })
+					})
 				: [];
 			const commentDocRef = postDocRef.collection('comments').doc(String(doc.id));
 			const commentsReactionsSnapshot = await commentDocRef.collection('comment_reactions').get();
@@ -434,7 +434,7 @@ export async function getComments(
 						user_id: data.user_id,
 						username: data.username,
 						votes: [] as any[]
-				  }
+					}
 				: {
 						comment_reactions: comment_reactions,
 						comment_source: data.comment_source || 'polkassembly',
@@ -454,7 +454,7 @@ export async function getComments(
 						user_id: data.user_id,
 						username: data.username,
 						votes: [] as any[]
-				  };
+					};
 
 			const replyIds: string[] = [];
 			const repliesSnapshot = await commentDocRef.collection('replies').orderBy('created_at', 'asc').get();
@@ -709,12 +709,12 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				? {
 						cid: postId,
 						type_eq: subsquidProposalType
-				  }
+					}
 				: {
 						index_eq: numPostId,
 						type_eq: subsquidProposalType,
 						voter_eq: voterAddress ? String(voterAddress) : ''
-				  };
+					};
 
 		let postQuery =
 			network === AllNetworks.COLLECTIVES || network === AllNetworks.WESTENDCOLLECTIVES ? GET_ALLIANCE_POST_BY_INDEX_AND_PROPOSALTYPE : GET_PROPOSAL_BY_INDEX_AND_TYPE;

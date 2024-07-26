@@ -2,17 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Alert, Skeleton } from 'antd';
+import { Alert } from 'antd';
 import React, { FC, useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { ProposalType } from '~src/global/proposalType';
 import { ILastVote } from '~src/types';
-import dynamic from 'next/dynamic';
-const VoteReferendumCard = dynamic(() => import('src/components/Post/GovernanceSideBar/Referenda/VoteReferendumCard'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
-
+import VoteReferendumCard from '~src/components/Post/GovernanceSideBar/Referenda/VoteReferendumCard';
 interface IDefaultVotingOptionsModal {
 	theme?: string;
 	forSpecificPost?: boolean;

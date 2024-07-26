@@ -111,7 +111,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 	if (!id) {
-		return <LoginToVote />;
+		return <LoginToVote isUsedInDefaultValueModal={true} />;
 	}
 
 	const handleModalReset = () => {

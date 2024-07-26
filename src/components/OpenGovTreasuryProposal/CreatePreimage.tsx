@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -51,6 +51,8 @@ import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { getDiscussionIdFromLink } from './CreateProposal';
+import { EProposalCheckTypes } from 'pages/api/v1/logs/proposalChecksLogs';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -87,6 +89,11 @@ interface Props {
 	genralIndex: string | null;
 	setInputAmountValue: (pre: string) => void;
 	inputAmountValue: string;
+	discussionLink: string;
+	content: string;
+	title: string;
+	tags: string[];
+	allowedCommentors: EAllowedCommentor;
 }
 
 export interface IAdvancedDetails {
@@ -120,7 +127,12 @@ const CreatePreimage = ({
 	genralIndex,
 	setGenralIndex,
 	inputAmountValue,
-	setInputAmountValue
+	setInputAmountValue,
+	discussionLink,
+	content,
+	title,
+	tags,
+	allowedCommentors
 }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
@@ -137,6 +149,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
@@ -474,6 +487,7 @@ const CreatePreimage = ({
 		const preimage: any = getState(api, proposal);
 		setLoading(true);
 		const onSuccess = () => {
+			createPreimageLogs();
 			setPreimage(preimage);
 			setPreimageHash(preimage.preimageHash);
 			setPreimageLength(preimage.preimageLength);
@@ -498,6 +512,21 @@ const CreatePreimage = ({
 
 		setLoading(true);
 		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
+	};
+
+	const createPreimageLogs = async () => {
+		const { error } = await nextApiClientFetch('/api/v1/logs/proposalChecksLogs', {
+			activity: EProposalCheckTypes.PREIMAGE,
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
+			content: content || '',
+			discussionId: discussionId || null,
+			tags: tags || [],
+			title: title || ''
+		});
+
+		if (error) {
+			console.log({ error });
+		}
 	};
 
 	const handleSubmit = async () => {

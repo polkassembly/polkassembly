@@ -33,6 +33,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { EProposalCheckTypes } from 'pages/api/v1/logs/proposalChecksLogs';
 
 const ZERO_BN = new BN(0);
 
@@ -151,6 +152,21 @@ const CreateProposal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
+	const createProposalLogs = async () => {
+		const { error } = await nextApiClientFetch('/api/v1/logs/proposalChecksLogs', {
+			activity: EProposalCheckTypes.PROPOSAL,
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
+			content: content || '',
+			discussionId: discussionId || null,
+			tags: tags || [],
+			title: title || ''
+		});
+
+		if (error) {
+			console.log({ error });
+		}
+	};
+
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
 			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
@@ -182,6 +198,7 @@ const CreateProposal = ({
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
 		if (!api || !apiReady) return;
 		const post_id = Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
@@ -230,6 +247,7 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
+				createProposalLogs();
 				await handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);

@@ -10,7 +10,7 @@ import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
-import { IDeleteBatchVotes } from '~src/components/VotingCards/types';
+import { IDeleteBatchVotes } from '~src/components/TinderStyleVoting/types';
 import { firestore_db } from '~src/services/firebaseInit';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {

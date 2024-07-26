@@ -551,17 +551,4 @@ export default styled(AboutTrackCard)`
 			display: block !important;
 		}
 	}
-	.image-button-wrapper {
-		position: relative;
-		display: flex;
-		justify-content: center;
-		width: fit-content;
-	}
-
-	.begin-button {
-		position: absolute;
-		top: 63%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
 `;

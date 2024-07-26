@@ -21,7 +21,7 @@ import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { PostEmptyState } from '~src/ui-components/UIStates';
-import { IDeleteBatchVotes } from '../VotingCards/types';
+import { IDeleteBatchVotes } from '../types';
 
 const VoteCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();

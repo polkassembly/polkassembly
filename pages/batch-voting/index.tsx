@@ -6,7 +6,7 @@ import { useTheme } from 'next-themes';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
-import VotingCards from '~src/components/VotingCards';
+import VotingCards from '~src/components/TinderStyleVoting';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';

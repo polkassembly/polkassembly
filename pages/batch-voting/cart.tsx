@@ -21,7 +21,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import CopyContentIcon from '~assets/icons/content_copy_small.svg';
 import CopyContentIconWhite from '~assets/icons/content_copy_small_white.svg';
 
-const VoteCart = dynamic(() => import('src/components/VoteCart'), {
+const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCart'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

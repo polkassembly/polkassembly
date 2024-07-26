@@ -9,19 +9,19 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useDispatch } from 'react-redux';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import DefaultVotingOptionsModal from '../Listing/Tracks/DefaultVotingOptionsModal';
+import DefaultVotingOptionsModal from '../../Listing/Tracks/DefaultVotingOptionsModal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import CardPostInfo from '../VotingCards/PostInfoComponents/CardPostInfo';
+import CardPostInfo from '../PostInfoComponents/CardPostInfo';
 import { useRouter } from 'next/router';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import Image from 'next/image';
-import { IDeleteBatchVotes, IupdateBatchVotes } from '../VotingCards/types';
+import { IDeleteBatchVotes, IupdateBatchVotes } from '../types';
 
 interface IProposalInfoCard {
 	voteInfo: any;

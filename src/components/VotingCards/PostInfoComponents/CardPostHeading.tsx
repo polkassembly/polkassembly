@@ -22,7 +22,7 @@ import { IPostHistory } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
-import getPreimageWarning from './utils/getPreimageWarning';
+import getPreimageWarning from '../../Post/utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
 
@@ -35,7 +35,7 @@ const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	),
 	ssr: false
 });
-const BeneficiaryAmoutTooltip = dynamic(() => import('../BeneficiaryAmoutTooltip'), {
+const BeneficiaryAmoutTooltip = dynamic(() => import('../../BeneficiaryAmoutTooltip'), {
 	loading: () => <div className='flex gap-x-6'></div>,
 	ssr: false
 });

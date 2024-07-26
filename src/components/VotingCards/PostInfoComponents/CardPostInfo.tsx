@@ -2,11 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC } from 'react';
-import PostOnChainInfo from './Tabs/PostOnChainInfo';
+import PostOnChainInfo from '../../Post/Tabs/PostOnChainInfo';
 import { isOffChainProposalTypeValid } from '~src/api-utils';
 import CardPostHeading from './CardPostHeading';
 import { useTheme } from 'next-themes';
-import CardPostDescription from './Tabs/CardPostDescription';
+import CardPostDescription from './CardPostDescription';
 import { Tabs } from '~src/ui-components/Tabs';
 
 interface ICardPostInfo {

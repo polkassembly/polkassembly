@@ -7,15 +7,15 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import SwipeActionButtons from './SwipeActionButtons';
-import TinderCardsComponent from './TinderCardsComponent';
+import SwipeActionButtons from './CardComponents/SwipeActionButtons';
+import TinderCardsComponent from './CardComponents/TinderCardsComponent';
 import dynamic from 'next/dynamic';
 import { Skeleton, Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 
-const CartOptionMenu = dynamic(() => import('./CartOptionMenu'), {
+const CartOptionMenu = dynamic(() => import('./CardComponents/CartOptionMenu'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

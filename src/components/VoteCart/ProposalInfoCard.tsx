@@ -16,7 +16,7 @@ import { poppins } from 'pages/_app';
 import { useTheme } from 'next-themes';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import CardPostInfo from '../Post/CardPostInfo';
+import CardPostInfo from '../VotingCards/PostInfoComponents/CardPostInfo';
 import { useRouter } from 'next/router';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';

@@ -2,12 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
-import CardPostHeading from '../Post/CardPostHeading';
+import CardPostHeading from '../PostInfoComponents/CardPostHeading';
 import { Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
 // import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
-import ReferendumV2CardInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2CardInfo';
+import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
 import Link from 'next/link';
 

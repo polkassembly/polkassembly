@@ -10,12 +10,14 @@ import { useDispatch } from 'react-redux';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import DefaultVotingOptionsModal from '~src/components/Listing/Tracks/DefaultVotingOptionsModal';
 import { batchVotesActions } from '~src/redux/batchVoting';
-import { useBatchVotesSelector } from '~src/redux/selectors';
+import { useBatchVotesSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const BatchVotingBadge = () => {
 	const dispatch = useDispatch();
+	const user = useUserDetailsSelector();
+	const { id } = user;
 	const router = useRouter();
 	const { show_default_options_modal } = useBatchVotesSelector();
 	return (
@@ -41,26 +43,28 @@ const BatchVotingBadge = () => {
 				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
 				open={show_default_options_modal}
 				footer={
-					<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
-						<CustomButton
-							variant='default'
-							text='Skip'
-							buttonsize='sm'
-							onClick={() => {
-								router.push('/batch-voting');
-								dispatch(batchVotesActions.setShowDefaultOptionsModal(false));
-							}}
-						/>
-						<CustomButton
-							variant='primary'
-							text='Next'
-							buttonsize='sm'
-							onClick={() => {
-								router.push('/batch-voting');
-								dispatch(batchVotesActions.setShowDefaultOptionsModal(false));
-							}}
-						/>
-					</div>
+					!id ? (
+						<div className='-mx-6 mt-9 flex items-center justify-center gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
+							<CustomButton
+								variant='default'
+								text='Skip'
+								buttonsize='sm'
+								onClick={() => {
+									router.push('/batch-voting');
+									dispatch(batchVotesActions.setShowDefaultOptionsModal(false));
+								}}
+							/>
+							<CustomButton
+								variant='primary'
+								text='Next'
+								buttonsize='sm'
+								onClick={() => {
+									router.push('/batch-voting');
+									dispatch(batchVotesActions.setShowDefaultOptionsModal(false));
+								}}
+							/>
+						</div>
+					) : null
 				}
 				maskClosable={false}
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}

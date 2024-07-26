@@ -351,12 +351,13 @@ const handler: NextApiHandler<IPostResponse[] | MessageType> = async (req, res) 
 	const user = await authServiceInstance.GetUser(token);
 	if (!user || isNaN(user.id)) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-	const { proposalType, userAddress, isExternalApiCall = false } = req.body;
+	const { proposalType, userAddress, isExternalApiCall = false, skippedIndexes } = req.body;
 	const network = String(req.headers['x-network']);
 	const { data, error } = await getActiveProposalsForTrack({
 		isExternalApiCall: isExternalApiCall,
 		network: network,
 		proposalType: proposalType || ProposalType.REFERENDUM_V2,
+		skippedIndexes: skippedIndexes || [],
 		userAddress: userAddress,
 		userId: user?.id
 	});

@@ -43,6 +43,7 @@ export interface ISwipeActionButtons {
 
 export interface ITinderCardsComponent {
 	proposal: any;
+	onSkip: (pre: number) => void;
 }
 
 export interface ICardComments {

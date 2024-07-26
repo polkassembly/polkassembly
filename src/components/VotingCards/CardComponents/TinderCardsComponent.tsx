@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { FC, useState } from 'react';
 import CardPostHeading from '../PostInfoComponents/CardPostHeading';
-import { Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import Markdown from '~src/ui-components/Markdown';
 // import ReferendumV2VoteInfo from '../Post/GovernanceSideBar/Referenda/ReferendumV2VoteInfo';
 import { IVotesCount } from '~src/types';
@@ -11,9 +11,10 @@ import ReferendumV2CardInfo from '../PostInfoComponents/ReferendumV2CardInfo';
 import CardComments from './CardComments';
 import Link from 'next/link';
 import { ITinderCardsComponent } from '../types';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
 
 const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
-	const { proposal } = props;
+	const { proposal, onSkip } = props;
 	const [ayeNayAbstainCounts, setAyeNayAbstainCounts] = useState<IVotesCount>({ abstain: 0, ayes: 0, nays: 0 });
 
 	const sanitizeSummary = (md: string) => {
@@ -24,13 +25,21 @@ const TinderCardsComponent: FC<ITinderCardsComponent> = (props) => {
 	return (
 		<section className='flex flex-col gap-y-4 overflow-x-hidden'>
 			<div className='overflow-y-auto rounded-2xl bg-white p-4 px-4 py-6 shadow-md dark:border dark:border-solid dark:border-[#D2D8E0] dark:bg-transparent'>
-				<CardPostHeading
-					method={proposal?.method}
-					motion_method={proposal?.motion_method}
-					postArguments={proposal?.proposed_call?.args}
-					className='mb-5'
-					post={proposal}
-				/>
+				<div className='flex items-start justify-between'>
+					<CardPostHeading
+						method={proposal?.method}
+						motion_method={proposal?.motion_method}
+						postArguments={proposal?.proposed_call?.args}
+						className='mb-5'
+						post={proposal}
+					/>
+					<Button
+						className='border-none bg-transparent p-0'
+						onClick={() => onSkip(proposal.id)}
+					>
+						<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />
+					</Button>
+				</div>
 				<Divider
 					type='horizontal'
 					className='border-l-1 border-[#D2D8E0] dark:border-icon-dark-inactive max-lg:hidden xs:mt-0.5 xs:inline-block'

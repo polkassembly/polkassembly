@@ -2643,6 +2643,9 @@ export const NON_VOTED_OPEN_GOV_ACTIVE_PROPOSALS = `query MyQuery ($status_in: [
     enactmentAfterBlock
     enactmentAtBlock
   }
+proposalsConnection(where: {status_in: $status_in, convictionVoting_none:{voter_in: $addresses}, type_eq: $type_eq, index_not_in:$index_not_in} orderBy: index_DESC,){
+  totalCount
+}
 }`;
 
 export const ACTIVE_PROPOSALS_FROM_PROPOSALS_INDEXES = `query MyQuery ($status_in: [ProposalStatus!] =[DecisionDepositPlaced, Submitted, Deciding, ConfirmStarted, ConfirmAborted] , $type_eq: ProposalType = ReferendumV2, $index_in:[Int!]){

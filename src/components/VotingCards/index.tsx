@@ -26,11 +26,12 @@ const VotingCards = () => {
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const [activeProposal, setActiveProposals] = useState([]);
+	const [activeProposal, setActiveProposals] = useState<any[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(activeProposal?.length - 1);
 	const currentIndexRef = useRef(currentIndex);
 	const [tempActiveProposals, setTempActiveProposals] = useState([]);
+	const [skippedProposals, setSkippedProposals] = useState<number[]>([]);
 
 	const childRefs: any = useMemo(
 		() =>
@@ -67,13 +68,14 @@ const VotingCards = () => {
 		}
 	};
 
-	const getActiveProposals = async (callingFirstTime: boolean) => {
-		setIsLoading(true);
+	const getActiveProposals = async (callingFirstTime?: boolean) => {
+		setIsLoading(callingFirstTime === true);
+
 		const { data, error } = await nextApiClientFetch<any>('api/v1/posts/non-voted-active-proposals', {
 			isExternalApiCall: true,
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
-			skippedIndexes: voted_post_ids_array || [],
+			skippedIndexes: [...voted_post_ids_array, ...skippedProposals] || [],
 			userAddress: user?.loginAddress,
 			userId: user?.id
 		});
@@ -89,6 +91,24 @@ const VotingCards = () => {
 				setTempActiveProposals(data);
 			}
 		}
+	};
+
+	const handleSkipProposalCard = (id: number) => {
+		const updateActiveProposals: any[] = [];
+		activeProposal.map((proposal) => {
+			if (id !== proposal.id) {
+				updateActiveProposals.push(proposal);
+			}
+		});
+		if (activeProposal.length === 5) {
+			getActiveProposals();
+		}
+		if (activeProposal.length < 4) {
+			setActiveProposals([...updateActiveProposals, ...tempActiveProposals]);
+		} else {
+			setActiveProposals(updateActiveProposals);
+		}
+		setSkippedProposals([...skippedProposals, id]);
 	};
 
 	useEffect(() => {
@@ -117,7 +137,7 @@ const VotingCards = () => {
 		updateCurrentIndex(index - 1);
 		addVotedPostToDB(postId, direction);
 		if (total_active_posts > 5) {
-			getActiveProposals(false);
+			getActiveProposals();
 		}
 		if (total_active_posts === 9) {
 			dispatch(batchVotesActions.setTotalActivePosts(0));
@@ -153,7 +173,6 @@ const VotingCards = () => {
 					<RightOutlined className='text-black dark:text-white' />
 				</button>
 			</div>
-
 			{!isLoading && activeProposal.length <= 0 && (
 				<div className='flex h-[600px] items-center justify-center'>
 					<PostEmptyState
@@ -190,7 +209,10 @@ const VotingCards = () => {
 							preventSwipe={['down']}
 						>
 							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
-								<TinderCardsComponent proposal={proposal} />
+								<TinderCardsComponent
+									proposal={proposal}
+									onSkip={handleSkipProposalCard}
+								/>
 							</div>
 						</TinderCard>
 					))}

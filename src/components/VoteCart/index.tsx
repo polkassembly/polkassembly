@@ -157,7 +157,7 @@ const VoteCart: React.FC = () => {
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
-					{!isLoading && vote_cart_data.length <= 0 && (
+					{!isLoading && vote_cart_data.length <= 0 && !!loginAddress.length && (
 						<div className='flex h-[600px] items-center justify-center'>
 							<PostEmptyState
 								description={

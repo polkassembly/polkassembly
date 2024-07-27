@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EAllowedCommentor, EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, EASSETS, EProposalCheckTypes, IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -52,7 +52,6 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { getDiscussionIdFromLink } from './CreateProposal';
-import { EProposalCheckTypes } from 'pages/api/v1/logs/proposalChecksLogs';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false

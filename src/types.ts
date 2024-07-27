@@ -836,3 +836,8 @@ export interface IBountyProposalsResponse {
 		reward: string | null;
 	}[];
 }
+
+export enum EProposalCheckTypes {
+	PREIMAGE = 'preiamge_creation',
+	PROPOSAL = 'proposal_creation'
+}

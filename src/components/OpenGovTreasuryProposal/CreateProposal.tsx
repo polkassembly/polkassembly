@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EAllowedCommentor, IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, EProposalCheckTypes, IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -33,7 +33,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import { EProposalCheckTypes } from 'pages/api/v1/logs/proposalChecksLogs';
 
 const ZERO_BN = new BN(0);
 

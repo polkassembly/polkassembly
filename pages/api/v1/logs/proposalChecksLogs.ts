@@ -6,7 +6,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { isValidNetwork } from '~src/api-utils';
 
-import { EAllowedCommentor } from '~src/types';
+import { EAllowedCommentor, EProposalCheckTypes } from '~src/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import authServiceInstance from '~src/auth/auth';
 import { MessageType } from '~src/auth/types';
@@ -20,10 +20,6 @@ interface Args {
 	title: string | null;
 	tags: string[];
 	allowedCommentors: EAllowedCommentor[];
-}
-export enum EProposalCheckTypes {
-	PREIMAGE = 'preiamge_creation',
-	PROPOSAL = 'proposal_creation'
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {

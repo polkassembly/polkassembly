@@ -32,6 +32,10 @@ const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOver
 	loading: () => <Skeleton active />,
 	ssr: false
 });
+const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivity/BatchVotingBadge'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 interface Props {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
@@ -113,6 +117,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -142,7 +147,11 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					/>
 				)}
 			</div>
-
+			{network === 'polkadot' && isMobile && (window as any).walletExtension?.isNovaWallet && (
+				<div className='mx-1 mt-8'>
+					<BatchVotingBadge />
+				</div>
+			)}
 			<div className='mx-1 mt-8'>
 				<TreasuryOverview theme={theme} />
 			</div>

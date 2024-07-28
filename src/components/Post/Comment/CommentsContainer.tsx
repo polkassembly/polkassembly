@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
-
+import { AiStarIcon } from '~src/ui-components/CustomIcons';
 import PostCommentForm from '../PostCommentForm';
 import Comments from './Comments';
 import RefendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
@@ -45,6 +45,8 @@ import Alert from '~src/basic-components/Alert';
 import getIsCommentAllowed from './utils/getIsCommentAllowed';
 import getCommentDisabledMessage from './utils/getCommentDisabledMessage';
 import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import Skeleton from '~src/basic-components/Skeleton';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -119,6 +121,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 	const [aiContentSummary, setAiContentSummary] = useState<String | null>(null);
+	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -191,12 +194,14 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 			setTimelines(timelines);
 		}
+		setFetchingAISummary(true);
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
 
 		if (!commentResponse || Object.keys(commentResponse).length == 0) {
 			setComments(comments);
 		} else {
 			setAiContentSummary(commentResponse?.aiSummary);
+			setFetchingAISummary(false);
 			setComments(getSortedComments(commentResponse.comments));
 			setOverallSentiments(commentResponse.overallSentiments);
 		}
@@ -274,46 +279,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	return (
 		<div className={className}>
-			{allComments?.length > 0 && (
-				<div className='border-1 rounded-2xl p-4'>
-					<div className='flex items-center justify-center'>
-						<h2 className='text-[16px]'>Users are saying...</h2>
-						<div className='flex gap-2 max-sm:-ml-2 max-sm:gap-[2px]'>
-							{sentimentsData.map((data) => (
-								<Tooltip
-									key={data.sentiment}
-									color='#E5007A'
-									title={
-										<div className='flex flex-col px-1 text-xs'>
-											<span className='text-center font-medium'>{data.title}</span>
-											<span className='pt-1 text-center'>Select to filter</span>
-										</div>
-									}
-								>
-									<div
-										onClick={() => getFilteredComments(data.sentiment)}
-										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] ${
-											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
-										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${
-											overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''
-										} dark:hover:bg-[#33071E]`}
-									>
-										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
-										<span className={'flex justify-center font-medium dark:font-normal dark:text-[#ffffff99]'}>{data.percentage}%</span>
-									</div>
-								</Tooltip>
-							))}
-						</div>
-						<span className='ml-auto text-[12px]'>
-							<span className='mr-1'>Based on</span>
-							{allComments.length || 0}
-							<span className='ml-1'>Comments</span>
-						</span>
-					</div>
-					<p className='mt-4'>{aiContentSummary}</p>
-					<h2 className='mt-2 text-[12px]'>AI-generated from comments</h2>
-				</div>
-			)}
 			{id ? (
 				<>
 					{isGrantClosed ? (
@@ -330,7 +295,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						/>
 					) : (
 						<PostCommentForm
-							className='mb-8'
+							className='mb-2'
 							setCurrentState={handleCurrentCommentAndTimeline}
 						/>
 					)}
@@ -360,6 +325,26 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
+			{fetchingAISummary ? (
+				<Skeleton />
+			) : allComments?.length > 0 ? (
+				<div className='mb-6 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+					<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+						<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+						<span
+							className={`${poppins.variable} ${poppins.className} ml-auto rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+						>
+							<span className='mr-1 '>Based on</span>
+							{allComments.length || 0}
+							<span className='ml-1'>Comments</span>
+						</span>
+					</div>
+					<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{aiContentSummary}</p>
+					<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+						<AiStarIcon className='text-base' /> AI-generated from comments
+					</h2>
+				</div>
+			) : null}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'

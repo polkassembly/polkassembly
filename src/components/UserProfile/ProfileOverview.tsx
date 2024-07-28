@@ -24,6 +24,9 @@ const ProfileLinkedAddress = dynamic(() => import('./ProfileLinkedAddresses'), {
 const TotalProfileBalances = dynamic(() => import('./TotalProfileBalances'), {
 	ssr: false
 });
+const ProfileBadges = dynamic(() => import('./ProfileBadges'), {
+	ssr: false
+});
 
 interface Props {
 	className?: string;
@@ -197,6 +200,11 @@ const ProfileOverview = ({
 									addressWithIdentity={addressWithIdentity}
 									theme={theme}
 								/>
+								<ProfileBadges
+									theme={theme}
+									selectedAddresses={selectedAddresses}
+									userProfile={userProfile}
+								/>
 							</div>
 						)}
 						{delegationSupportedNetworks.includes(network) && (
@@ -231,6 +239,11 @@ const ProfileOverview = ({
 								userProfile={userProfile}
 								addressWithIdentity={addressWithIdentity}
 								theme={theme}
+							/>
+							<ProfileBadges
+								theme={theme}
+								selectedAddresses={selectedAddresses}
+								userProfile={userProfile}
 							/>
 						</div>
 					)}

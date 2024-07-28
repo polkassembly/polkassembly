@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { Anchor, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
@@ -119,6 +118,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
+	const [aiContentSummary, setAiContentSummary] = useState<String | null>(null);
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -192,9 +192,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			setTimelines(timelines);
 		}
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
+
 		if (!commentResponse || Object.keys(commentResponse).length == 0) {
 			setComments(comments);
 		} else {
+			setAiContentSummary(commentResponse?.aiSummary);
 			setComments(getSortedComments(commentResponse.comments));
 			setOverallSentiments(commentResponse.overallSentiments);
 		}
@@ -272,6 +274,46 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	return (
 		<div className={className}>
+			{allComments?.length > 0 && (
+				<div className='border-1 rounded-2xl p-4'>
+					<div className='flex items-center justify-center'>
+						<h2 className='text-[16px]'>Users are saying...</h2>
+						<div className='flex gap-2 max-sm:-ml-2 max-sm:gap-[2px]'>
+							{sentimentsData.map((data) => (
+								<Tooltip
+									key={data.sentiment}
+									color='#E5007A'
+									title={
+										<div className='flex flex-col px-1 text-xs'>
+											<span className='text-center font-medium'>{data.title}</span>
+											<span className='pt-1 text-center'>Select to filter</span>
+										</div>
+									}
+								>
+									<div
+										onClick={() => getFilteredComments(data.sentiment)}
+										className={`flex cursor-pointer items-center gap-[3.46px] rounded-[4px] p-[3.17px] text-xs hover:bg-[#FEF2F8] ${
+											checkActive(data.sentiment) && 'bg-[#FEF2F8] text-pink_primary dark:bg-[#33071E]'
+										} ${loading ? 'pointer-events-none cursor-not-allowed opacity-50' : ''} ${
+											overallSentiments[data.sentiment] == 0 ? 'pointer-events-none' : ''
+										} dark:hover:bg-[#33071E]`}
+									>
+										{checkActive(data.sentiment) ? data.iconActive : data.iconInactive}
+										<span className={'flex justify-center font-medium dark:font-normal dark:text-[#ffffff99]'}>{data.percentage}%</span>
+									</div>
+								</Tooltip>
+							))}
+						</div>
+						<span className='ml-auto text-[12px]'>
+							<span className='mr-1'>Based on</span>
+							{allComments.length || 0}
+							<span className='ml-1'>Comments</span>
+						</span>
+					</div>
+					<p className='mt-4'>{aiContentSummary}</p>
+					<h2 className='mt-2 text-[12px]'>AI-generated from comments</h2>
+				</div>
+			)}
 			{id ? (
 				<>
 					{isGrantClosed ? (

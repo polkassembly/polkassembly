@@ -119,7 +119,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								/>
 							</div>
 						)}
-						{profileScore !== undefined && (
+						{!!profileScore?.toString() && (
 							<ScoreTag
 								score={profileScore}
 								className='ml-1 px-1 pr-3'

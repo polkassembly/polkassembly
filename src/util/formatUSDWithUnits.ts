@@ -23,7 +23,7 @@ export default function formatUSDWithUnits(usd: String, numberAfterDot?: number)
 			: // Three Zeroes for Thousands
 			Math.abs(Number(newUsd)) >= 1.0e3
 			? (Math.abs(Number(newUsd)) / 1.0e3).toFixed(toFixed) + 'K'
-			: Math.abs(Number(newUsd)).toFixed(2);
+			: Math.abs(Number(newUsd)).toFixed(toFixed);
 
 	return formattedUSD.toString() + suffix;
 }

@@ -13,6 +13,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import debounce from 'lodash/debounce';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import { algolia_client } from '~src/components/Search';
+import ImageComponent from '~src/components/ImageComponent';
 
 const StyledTextArea = styled.div`
 	textarea {
@@ -174,6 +175,20 @@ interface Props {
 	theme?: string;
 }
 
+function CustomSuggestionItem({ suggestion }: any) {
+	return (
+		<div className='flex items-center gap-[2px]'>
+			<ImageComponent
+				src={suggestion.imageSrc}
+				alt='User Picture'
+				className='flex h-[20px] w-[20px] items-center justify-center bg-transparent'
+				iconClassName='flex items-center justify-center text-[#FCE5F2] text-xxl w-full h-full rounded-full'
+			/>
+			<span>{suggestion.preview}</span>
+		</div>
+	);
+}
+
 function MarkdownEditor(props: Props): React.ReactElement {
 	const { id, username } = useUserDetailsSelector();
 	const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
@@ -196,9 +211,8 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			.search(queries, { strategy: 'none' })
 			.then((response) => {
 				const usernameHits = response.results[0]?.hits || [];
-
-				const suggestions: Suggestion[] = usernameHits.map((user: any) => ({
-					preview: `@${user.username}`,
+				const suggestions = usernameHits.map((user: any) => ({
+					preview: <CustomSuggestionItem suggestion={{ imageSrc: user.profile?.image, preview: `${user.username}` }} />,
 					value: `[@${user.username}](/user/${user.username})`
 				}));
 

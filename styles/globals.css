@@ -886,3 +886,7 @@ z-index: 105 !important;
 .bounty-button {
   background: linear-gradient(180deg, #FF50AD 0%, #E5007A 100%, #E5007A 100%);
 }
+
+.ant-slider .ant-slider-mark-text {
+  color: #777b80 !important;
+}

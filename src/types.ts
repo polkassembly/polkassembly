@@ -641,8 +641,7 @@ export enum EUserActivityIn {
 export enum EActivityAction {
 	CREATE = 'CREATE',
 	EDIT = 'EDIT',
-	DELETE = 'DELETE',
-	SUBSCRIBED = 'SUBSCRIBED'
+	DELETE = 'DELETE'
 }
 
 export enum ESteps {

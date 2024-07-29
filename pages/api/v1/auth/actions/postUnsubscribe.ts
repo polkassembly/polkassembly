@@ -13,7 +13,7 @@ import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import createUserActivity from '../../utils/create-activity';
-import { EActivityAction } from '~src/types';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -53,14 +53,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 			console.log(' Error while removing user from post subscribers : ', error);
 			return res.status(400).json({ message: 'Error while removing user from post subscribers.' });
 		});
+
+	res.status(200).json({ message: messages.SUBSCRIPTION_REMOVE_SUCCESSFUL });
 	try {
 		if (typeof postAuthorId == 'number' && Number(post_id) && strProposalType !== 'undefined') {
-			await createUserActivity({ action: EActivityAction.SUBSCRIBED, is_deleted: true, network, postAuthorId, postId: post_id, postType: strProposalType, userId: user.id });
+			await createUserActivity({
+				action: EActivityAction.DELETE,
+				network,
+				postAuthorId,
+				postId: post_id,
+				postType: strProposalType,
+				type: EUserActivityType.SUBSCRIBED,
+				userId: user.id
+			});
+			return;
 		}
 	} catch (err) {
 		console.log(err);
+		return;
 	}
-	return res.status(200).json({ message: messages.SUBSCRIPTION_REMOVE_SUCCESSFUL });
 }
 
 export default withErrorHandling(handler);

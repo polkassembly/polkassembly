@@ -13,7 +13,7 @@ import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import createUserActivity from '../../utils/create-activity';
-import { EActivityAction } from '~src/types';
+import { EActivityAction, EUserActivityType } from '~src/types';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -56,7 +56,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	});
 	try {
 		if (typeof postAuthorId == 'number' && Number(post_id) && strProposalType !== 'undefined') {
-			await createUserActivity({ action: EActivityAction.SUBSCRIBED, is_deleted: false, network, postAuthorId, postId: post_id, postType: strProposalType, userId: user.id });
+			await createUserActivity({
+				action: EActivityAction.CREATE,
+				network,
+				postAuthorId,
+				postId: post_id,
+				postType: strProposalType,
+				type: EUserActivityType.SUBSCRIBED,
+				userId: user.id
+			});
 		}
 	} catch (err) {
 		console.log(err);

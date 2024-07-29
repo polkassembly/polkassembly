@@ -48,7 +48,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			<BountiesHeader />
 
 			{/* Hot Bounties */}
-			<div className='mt-6 flex items-center justify-between'>
+			<div className='mt-8 flex items-center justify-between'>
 				<div className='flex items-center gap-2'>
 					<ImageIcon
 						src='/assets/bounty-icons/fire-icon.svg'
@@ -134,7 +134,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 
 			{/* Bounty Proposals */}
 			{extendedData && extendedData?.count > 1 && (
-				<div className='mt-6 flex items-center justify-between'>
+				<div className='mt-8 flex items-center justify-between'>
 					<div className='flex items-center gap-2'>
 						<ImageIcon
 							src='/assets/bounty-icons/bounty-proposals.svg'
@@ -207,13 +207,12 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			</div>
 
 			{/* Footer */}
-			<div className='mt-10 flex flex-col-reverse items-center gap-8 md:flex-row'>
+			<div className='mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>
 				<Image
 					src={'assets/bounty-icons/bounty-coming-soon.svg'}
-					width={753}
-					height={400}
+					fill
 					alt='curator'
-					className='h-auto w-full md:w-auto'
+					className='relative h-auto w-full md:w-[50%] xl:w-[60%]'
 				/>
 				<BountyActivities />
 			</div>

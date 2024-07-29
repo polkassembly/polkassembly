@@ -138,6 +138,7 @@ export interface IPostResponse {
 	beneficiaries?: IBeneficiary[];
 	[key: string]: any;
 	preimageHash?: string;
+	dataSource: string;
 }
 
 export type IReaction = '👍' | '👎';
@@ -920,6 +921,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			created_at: postData?.createdAt,
 			curator: postData?.curator,
 			curator_deposit: postData?.curatorDeposit,
+			dataSource: 'polkassembly',
 			deciding: postData?.deciding,
 			decision_deposit_amount: postData?.decisionDeposit?.amount,
 			delay: postData?.delay,
@@ -1158,6 +1160,10 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				const res = await getSubSquareContentAndTitle(proposalType, network, numPostId);
 				post.content = res.content;
 				post.title = res.title;
+
+				if (post.title || post.content) {
+					post.dataSource = 'subsquare';
+				}
 
 				// check for faulty post (subsquare has stored invalid data)
 				if (network === 'polkadot' && strProposalType === ProposalType.CHILD_BOUNTIES && strPostId === '532') {

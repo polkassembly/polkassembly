@@ -41,6 +41,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSet } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { getSubSquareComments } from './comments/subsquare-comments';
 
 export const isDataExist = (data: any) => {
 	return (data && data.proposals && data.proposals.length > 0 && data.proposals[0]) || (data && data.announcements && data.announcements.length > 0 && data.announcements[0]);
@@ -148,6 +149,7 @@ interface IGetOnChainPostParams {
 	proposalType: string | string[];
 	isExternalApiCall?: boolean;
 	noComments?: boolean;
+	includeSubsquareComments?: boolean;
 }
 
 export function getDefaultReactionObj(): IReactions {
@@ -388,7 +390,8 @@ export async function getComments(
 	postDocRef: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>,
 	network: string,
 	postType: string,
-	postIndex: number | string
+	postIndex: number | string,
+	includeSubsquareComments?: boolean
 ): Promise<any[]> {
 	const userIds = new Set<number>();
 	const commentsPromise = commentsSnapshot.docs.map(async (doc) => {
@@ -538,8 +541,18 @@ export async function getComments(
 		}
 	});
 
+	const subsquareComments = [];
+
+	if (includeSubsquareComments) {
+		//get subsquare comments
+		const fetchedSubsquareComments = await getSubSquareComments(postType, network, String(postIndex));
+		subsquareComments.push(...fetchedSubsquareComments);
+	}
+
 	const commentIds: string[] = [];
 	let comments = await Promise.all(commentsPromise);
+	comments = comments.concat(subsquareComments);
+
 	comments = comments.reduce((prev, comment) => {
 		if (comment) {
 			const { id } = comment;
@@ -559,6 +572,7 @@ export async function getComments(
 			is_custom_username: boolean;
 		};
 	} = {};
+
 	if (newIds.length > 0) {
 		const chunkSize = 30;
 		const totalChunks = Math.ceil(newIds.length / chunkSize);
@@ -667,7 +681,7 @@ export async function getComments(
 
 export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IApiResponse<IPostResponse>> {
 	try {
-		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true } = params;
+		const { network, postId, voterAddress, proposalType, isExternalApiCall, noComments = true, includeSubsquareComments = false } = params;
 
 		const numPostId = Number(postId);
 		const strPostId = String(postId);
@@ -1183,7 +1197,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					const type = getFirestoreProposalType(timeline.type) as ProposalType;
 					const postDocRef = postsByTypeRef(network, type).doc(String(post_index));
 					const commentsSnapshot = await postDocRef.collection('comments').get();
-					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index);
+					const comments = await getComments(commentsSnapshot, postDocRef, network, type, post_index, includeSubsquareComments);
 					return comments;
 				});
 				const commentPromiseSettledResults = await Promise.allSettled(commentPromises);
@@ -1200,7 +1214,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					const { id, type } = post.post_link;
 					const postDocRef = postsByTypeRef(network, type).doc(String(id));
 					const commentsSnapshot = await postDocRef.collection('comments').get();
-					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id);
+					post.comments = await getComments(commentsSnapshot, postDocRef, network, type, id, includeSubsquareComments);
 				}
 				const commentsSnapshot = await postDocRef.collection('comments').get();
 				const comments = await getComments(
@@ -1208,7 +1222,8 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 					postDocRef,
 					network,
 					strProposalType.toString() === 'open_gov' ? ProposalType.REFERENDUM_V2 : strProposalType,
-					strProposalType === ProposalType.TIPS ? strPostId : numPostId
+					strProposalType === ProposalType.TIPS ? strPostId : numPostId,
+					includeSubsquareComments
 				);
 				if (post.comments && Array.isArray(post.comments)) {
 					post.comments = post.comments.concat(comments);
@@ -1360,13 +1375,14 @@ export const updatePostTimeline = (post: any, postData: any) => {
 const handler: NextApiHandler<IPostResponse | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
-	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress } = req.query;
+	const { postId = 0, proposalType = ProposalType.DEMOCRACY_PROPOSALS, voterAddress, includeSubsquareComments = false } = req.query;
 
 	// TODO: take proposalType and postId in dynamic pi route
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Invalid network in request header' });
 	const { data, error, status } = await getOnChainPost({
+		includeSubsquareComments: Boolean(includeSubsquareComments),
 		isExternalApiCall: true,
 		network,
 		noComments: false,

@@ -47,7 +47,7 @@ const badgeData = () => {
 		},
 		{
 			active: true,
-			badge: EProfileBadges.WHALE_BADGE,
+			badge: EProfileBadges.WHALE,
 			icon: '/assets/badges/whale-badge.svg',
 			unlockTime: 'September 17, 2023'
 		}
@@ -125,7 +125,7 @@ const ProfileBadges = ({ className, theme }: Props) => {
 			<BadgeUnlockedModal
 				open={false}
 				setOpen={() => null}
-				badge={EProfileBadges.WHALE_BADGE}
+				badge={EProfileBadges.WHALE}
 				icon='/assets/badges/whale-badge.svg'
 			/>
 		</div>

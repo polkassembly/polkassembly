@@ -662,7 +662,7 @@ export enum EProfileBadges {
 	COUNCIL = 'Council',
 	DECENTRALISED_VOICE = 'Decentralised Voice',
 	FELLOW = 'Fellow',
-	WHALE_BADGE = 'Whale'
+	WHALE = 'Whale'
 }
 
 export interface ITrackAnalyticsStats {

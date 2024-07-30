@@ -284,7 +284,7 @@ const WriteProposal = ({
 															}
 														}
 													}
-											  ]
+												]
 									}
 								>
 									<Input

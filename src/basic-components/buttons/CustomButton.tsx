@@ -39,7 +39,7 @@ const CustomButton: FC<PropsWithChildren<ICustomButton>> = (props) => {
 							variant === 'primary'
 								? 'border-pink_primary bg-pink_primary text-white hover:bg-pink_secondary dark:text-white'
 								: 'border border-pink_primary bg-transparent text-pink_primary'
-					  }`
+						}`
 					: `border-${customBorderColor} text-${customTextColor} bg-${customColor}`
 			} ${className} `}
 			style={{ height: `${height}px`, width: `${width}px`, ...style }}

@@ -171,7 +171,7 @@ const BalanceInput = ({
 										}
 									}
 								}
-						  ]
+							]
 				}
 			>
 				<Input

@@ -416,7 +416,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 							</div>
 						</div>
-				  )
+					)
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -446,7 +446,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						'/referenda',
 						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: [],
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -461,7 +461,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -483,7 +483,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						'/tips',
 						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: [],
 		techCommItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -497,7 +497,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						'/tech-comm-proposals',
 						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					)
-			  ]
+				]
 			: [],
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -505,7 +505,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
+				]
 			: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
@@ -540,7 +540,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							'/community',
 							<CommunityPIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						)
-				  ]
+					]
 				: [],
 		AdvisoryCommittee:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
@@ -556,7 +556,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
+					]
 				: []
 	};
 	if (isGrantsSupported(network)) {
@@ -608,8 +608,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						? ![AllNetworks.MOONBEAM, AllNetworks.MOONBASE, AllNetworks.MOONRIVER].includes(network)
 							? [...gov1Items.treasuryItems]
 							: network === AllNetworks.MOONBEAM
-							? [
-									...[
+								? [
+										...[
+											getSiderMenuItem(
+												<div className='flex items-center gap-1.5'>
+													Bounties
+													<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+														{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+													</span>
+												</div>,
+												'/bounties',
+												<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+											),
+											getSiderMenuItem(
+												<div className='flex items-center gap-1.5'>
+													Child Bounties
+													<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
+														{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+													</span>
+												</div>,
+												'/child_bounties',
+												<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+											)
+										]
+									]
+								: [
+										...gov1Items.treasuryItems,
 										getSiderMenuItem(
 											<div className='flex items-center gap-1.5'>
 												Bounties
@@ -631,7 +655,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 										)
 									]
-							  ]
+						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
+							? [...gov1Items.treasuryItems.slice(0, 1)]
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem(
@@ -654,32 +679,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										'/child_bounties',
 										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 									)
-							  ]
-						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
-						? [...gov1Items.treasuryItems.slice(0, 1)]
-						: [
-								...gov1Items.treasuryItems,
-								getSiderMenuItem(
-									<div className='flex items-center gap-1.5'>
-										Bounties
-										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-											{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
-										</span>
-									</div>,
-									'/bounties',
-									<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-								),
-								getSiderMenuItem(
-									<div className='flex items-center gap-1.5'>
-										Child Bounties
-										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-											{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
-										</span>
-									</div>,
-									'/child_bounties',
-									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
-								)
-						  ]
+								]
 				),
 
 				getSiderMenuItem('Council', 'council_group', null, [...gov1Items.councilItems]),
@@ -879,7 +879,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<div className={`${sidedrawer ? 'ml-[38px] w-[255px]' : ''} border-bottom border-b-1 -mx-4 my-2 dark:border-separatorDark`}></div>
 						</div>
 					</div>
-			  )
+				)
 			: null,
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),

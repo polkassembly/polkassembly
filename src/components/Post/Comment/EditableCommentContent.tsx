@@ -538,7 +538,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							</span>
 						</div>
 					)
-			  }
+				}
 			: null,
 		{
 			key: 2,
@@ -570,7 +570,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							isButtonOnComment={true}
 						/>
 					)
-			  }
+				}
 			: null,
 		isEditable
 			? {
@@ -591,23 +591,23 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							Delete
 						</div>
 					)
-			  }
+				}
 			: allowed_roles?.includes('moderator') && ['polkadot', 'kusama'].includes(network)
-			? {
-					key: 4,
-					label: (
-						<ReportButton
-							isDeleteModal={true}
-							proposalType={(comment.post_type as any) || postType}
-							className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
-							type={EReportType.COMMENT}
-							onSuccess={removeCommentContent}
-							commentId={commentId}
-							postId={(comment.post_index as any) || postIndex}
-						/>
-					)
-			  }
-			: null
+				? {
+						key: 4,
+						label: (
+							<ReportButton
+								isDeleteModal={true}
+								proposalType={(comment.post_type as any) || postType}
+								className={`flex rounded-none p-0 text-[10px] leading-4 text-slate-400 shadow-none hover:bg-transparent ${poppins.variable} ${poppins.className} `}
+								type={EReportType.COMMENT}
+								onSuccess={removeCommentContent}
+								commentId={commentId}
+								postId={(comment.post_index as any) || postIndex}
+							/>
+						)
+					}
+				: null
 	];
 
 	const handleSentimentText = () => {

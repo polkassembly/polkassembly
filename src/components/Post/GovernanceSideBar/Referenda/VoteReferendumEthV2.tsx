@@ -496,7 +496,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 					),
 					value: 'abstain'
 				}
-		  ]
+			]
 		: ayeNayVotesArr;
 
 	return (

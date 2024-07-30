@@ -66,10 +66,7 @@ const VoteHistoryExpandModal = ({ className, open, setOpen, expandViewVote, setE
 					<div>
 						<span className='dark:text-white'>
 							<span className='flex items-center gap-1 text-xs text-bodyBlue dark:text-blue-dark-high'>
-								<CalenderIcon />{' '}
-								{dayjs(expandViewVote?.proposal?.createdAt)
-									.format('MM/DD/YYYY h:mm A')
-									.toString()}
+								<CalenderIcon /> {dayjs(expandViewVote?.proposal?.createdAt).format('MM/DD/YYYY h:mm A').toString()}
 							</span>
 						</span>
 						<div className='mt-4 border-0 border-t-[1px] border-dashed border-[#DCDFE3] pb-6 pt-4 text-sm text-lightBlue dark:border-separatorDark dark:text-blue-dark-medium max-md:bg-transparent'>

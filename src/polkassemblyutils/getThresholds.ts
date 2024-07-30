@@ -108,10 +108,10 @@ export function getFailingThreshold({ ayes, ayesWithoutConviction, totalIssuance
 			? {
 					failingThreshold: result.result as BN,
 					isValid: true
-			  }
+				}
 			: {
 					isValid: false
-			  };
+				};
 	} else {
 		// SuperMajorityRejection
 		// with v: votes, vc: votes without conviction, t: total issuance
@@ -161,10 +161,10 @@ export function getPassingThreshold({ nays, naysWithoutConviction, totalIssuance
 			? {
 					isValid: true,
 					passingThreshold: result.result as BN
-			  }
+				}
 			: {
 					isValid: false
-			  };
+				};
 	} else {
 		// SuperMajorityRejection
 		// with v: votes, vc: votes without conviction, t: total issuance

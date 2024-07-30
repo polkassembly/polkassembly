@@ -18,12 +18,12 @@ export default function formatUSDWithUnits(usd: String, numberAfterDot?: number)
 		Math.abs(Number(newUsd)) >= 1.0e9
 			? (Math.abs(Number(newUsd)) / 1.0e9).toFixed(toFixed) + 'B'
 			: // Six Zeroes for Millions
-			Math.abs(Number(newUsd)) >= 1.0e6
-			? (Math.abs(Number(newUsd)) / 1.0e6).toFixed(toFixed) + 'M'
-			: // Three Zeroes for Thousands
-			Math.abs(Number(newUsd)) >= 1.0e3
-			? (Math.abs(Number(newUsd)) / 1.0e3).toFixed(toFixed) + 'K'
-			: Math.abs(Number(newUsd)).toFixed(toFixed);
+				Math.abs(Number(newUsd)) >= 1.0e6
+				? (Math.abs(Number(newUsd)) / 1.0e6).toFixed(toFixed) + 'M'
+				: // Three Zeroes for Thousands
+					Math.abs(Number(newUsd)) >= 1.0e3
+					? (Math.abs(Number(newUsd)) / 1.0e3).toFixed(toFixed) + 'K'
+					: Math.abs(Number(newUsd)).toFixed(toFixed);
 
 	return formattedUSD.toString() + suffix;
 }

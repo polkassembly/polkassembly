@@ -31,8 +31,8 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 					typeof beneficiary.address === 'string'
 						? beneficiary.address
 						: (beneficiary.address as any)?.value?.length
-						? (beneficiary.address as any)?.value
-						: ((beneficiary?.address as any)?.value?.interior?.value?.id as string) || ''
+							? (beneficiary.address as any)?.value
+							: ((beneficiary?.address as any)?.value?.interior?.value?.id as string) || ''
 				}
 				inPostHeading={inPostHeading}
 			/>
@@ -45,11 +45,11 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
 								network,
 								isProposalCreationFlow
-						  )
+							)
 						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString(), network)
 					: disableBalanceFormatting
-					? beneficiary.amount.toString()
-					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}
+						? beneficiary.amount.toString()
+						: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}
 				&nbsp;
 				{!assetId && chainProperties[network]?.tokenSymbol})
 			</span>

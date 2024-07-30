@@ -27,6 +27,7 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -147,7 +148,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					/>
 				)}
 			</div>
-			{network === 'polkadot' && isMobile && (window as any).walletExtension?.isNovaWallet && (
+			{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
 				<div className='mx-1 mt-8'>
 					<BatchVotingBadge />
 				</div>

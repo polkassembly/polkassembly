@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { ICreateAmassadorPreimge } from './types';
+import { ICreateAmassadorPreimge, EAmbassadorActions } from './types';
 import classNames from 'classnames';
-import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import getRankNameByRank from './utils/getRankNameByRank';
 import { Button, Spin } from 'antd';
@@ -25,16 +25,17 @@ import BN from 'bn.js';
 import Alert from '~src/basic-components/Alert';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import { ambassadorRemovalActions } from '~src/redux/ambassadorRemoval';
+import { EAmbassadorRemovalSteps } from '~src/redux/ambassadorRemoval/@types';
 
 const EMPTY_HASH = blake2AsHex('');
 const ZERO_BN = new BN(0);
 
-const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentModal }: ICreateAmassadorPreimge) => {
+const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentModal, action, applicantAddress, proposer, rank, xcmCallData }: ICreateAmassadorPreimge) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
-	const { applicantAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -66,8 +67,17 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 	};
 
 	const onSuccess = (preimage: IPreimage) => {
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(true));
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 }));
+		dispatch(
+			action == EAmbassadorActions.CREATE_AMBASSADOR
+				? ambassadorSeedingActions.updateIsPreimageCreationDone(true)
+				: ambassadorRemovalActions.updateRemovalIsPreimageCreationDone(true)
+		);
+
+		dispatch(
+			action == EAmbassadorActions.CREATE_AMBASSADOR
+				? ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 })
+				: ambassadorRemovalActions.updateRemovalAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 })
+		);
 		closeCurrentModal();
 		setOpenSuccessModal(true);
 		setLoading({ isLoading: false, message: '' });
@@ -80,8 +90,16 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 }));
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(false));
+		dispatch(
+			action == EAmbassadorActions.CREATE_AMBASSADOR
+				? ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 })
+				: ambassadorRemovalActions.updateRemovalAmbassadorPreimage({ hash: '', length: 0 })
+		);
+		dispatch(
+			action == EAmbassadorActions.CREATE_AMBASSADOR
+				? ambassadorSeedingActions.updateIsPreimageCreationDone(false)
+				: ambassadorRemovalActions.updateRemovalIsPreimageCreationDone(false)
+		);
 	};
 
 	const handleCreatePreimage = async () => {
@@ -105,7 +123,9 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 
 	useEffect(() => {
 		if (loginAddress && !proposer) {
-			dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
+			dispatch(
+				action === EAmbassadorActions.CREATE_AMBASSADOR ? ambassadorSeedingActions.updateProposer(loginAddress) : ambassadorRemovalActions.updateRemovalProposer(loginAddress)
+			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -173,7 +193,13 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 				<Button
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
-					onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL))}
+					onClick={() =>
+						dispatch(
+							action === EAmbassadorActions.CREATE_AMBASSADOR
+								? ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL)
+								: ambassadorRemovalActions.updateRemovalAmbassadorSteps(EAmbassadorRemovalSteps.REMOVAL_CALL)
+						)
+					}
 				>
 					Back
 				</Button>

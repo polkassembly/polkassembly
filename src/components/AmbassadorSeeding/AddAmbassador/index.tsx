@@ -11,18 +11,18 @@ import PromoteCall from './PromoteCall';
 import { useDispatch } from 'react-redux';
 import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import { EAmbassadorSeedingRanks, IAmbassadorSeeding } from './types';
-import CreateAmassadorPreimge from './CreateAmassadorPreimge';
-import getModalTitleFromSteps from './utils/getModalTitleFromSteps';
+import { EAmbassadorActions, EAmbassadorSeedingRanks, IAmbassadorSeeding } from '../types';
+import CreateAmassadorPreimge from '../CreateAmassadorPreimge';
+import getModalTitleFromSteps from '../utils/getModalTitleFromSteps';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import AmbassadorSuccess from './AmbassadorSuccess';
-import WriteAmbassadorProposal from './CreateAmbassadorProposal';
+import AmbassadorSuccess from '../AmbassadorSuccess';
+import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => {
 	const dispatch = useDispatch();
 	const { loginAddress } = useUserDetailsSelector();
-	const { step, ambassadorPreimage, isPreimageCreationDone } = useAmbassadorSeedingSelector();
+	const { step, ambassadorPreimage, isPreimageCreationDone, rank, proposer, applicantAddress, xcmCallData, discussion } = useAmbassadorSeedingSelector();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
@@ -105,7 +105,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(step)}
+						{getModalTitleFromSteps(step, EAmbassadorActions.CREATE_AMBASSADOR)}
 					</div>
 				}
 			>
@@ -116,6 +116,11 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
+							action={EAmbassadorActions.CREATE_AMBASSADOR}
+							applicantAddress={applicantAddress}
+							proposer={proposer}
+							rank={rank}
+							xcmCallData={xcmCallData}
 						/>
 					)}
 					{step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
@@ -123,6 +128,10 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
+							action={EAmbassadorActions.CREATE_AMBASSADOR}
+							ambassadorPreimage={ambassadorPreimage}
+							discussion={discussion}
+							proposer={proposer}
 						/>
 					)}
 				</div>

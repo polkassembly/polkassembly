@@ -35,7 +35,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
-import AmbassadorSeeding from '~src/components/AmbassadorSeeding';
+import RemoveAmbassador from '~src/components/AmbassadorSeeding/RemoveAmbassador';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -305,7 +305,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								>
 									Create Ambassador Application
 								</Button>
-								<AmbassadorSeeding
+								<RemoveAmbassador
 									open={openAmbassadorModal}
 									setOpen={setOpenAmbassadorModal}
 								/>
@@ -513,7 +513,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 								>
 									Create Ambassador Application
 								</Button>
-								<AmbassadorSeeding
+								<RemoveAmbassador
 									open={openAmbassadorModal}
 									setOpen={setOpenAmbassadorModal}
 								/>

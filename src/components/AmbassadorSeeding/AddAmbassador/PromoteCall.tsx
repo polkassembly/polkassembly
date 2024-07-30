@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { EAmbassadorSeedingRanks, IPromoteCall } from './types';
+import { EAmbassadorSeedingRanks, IPromoteCall } from '../types';
 import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import AddressInput from '~src/ui-components/AddressInput';
 import { Button, Form, Radio, Spin } from 'antd';
@@ -12,14 +12,14 @@ import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getRankNameByRank from './utils/getRankNameByRank';
-import Balance from '../Balance';
 import Address from '~src/ui-components/Address';
 import { useApiContext } from '~src/context';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import classNames from 'classnames';
+import Balance from '~src/components/Balance';
+import getRankNameByRank from '../utils/getRankNameByRank';
 
 const PromoteCall = ({ className }: IPromoteCall) => {
 	const { api, apiReady } = useApiContext();
@@ -121,7 +121,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 					clearTimeout(timer);
 
 					setCollectivesApiReady(true);
-					console.log('People Kusama API ready');
+					console.log('Collective API ready');
 				})
 				.catch(async (error) => {
 					clearTimeout(timer);

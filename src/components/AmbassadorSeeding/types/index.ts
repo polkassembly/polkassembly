@@ -2,6 +2,8 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { IAmbassadorProposalContent } from '~src/redux/ambassadorSeeding/@types';
+
 export interface IAmbassadorSeeding {
 	className?: string;
 	open: boolean;
@@ -21,8 +23,28 @@ export enum EAmbassadorSeedingRanks {
 	HEAD_AMBASSADOR = 3
 }
 
+export enum EAmbassadorActions {
+	CREATE_AMBASSADOR = 'create_ambassador',
+	REMOVE_AMBASSADOR = 'remove_ambassador'
+}
+
+export interface ICreateAmbassadorProposal {
+	className?: string;
+	setOpen: (pre: boolean) => void;
+	openSuccessModal: () => void;
+	action: EAmbassadorActions;
+	ambassadorPreimage: { hash: string; length: number };
+	proposer: string;
+	discussion: IAmbassadorProposalContent;
+}
+
 export interface ICreateAmassadorPreimge {
 	className?: string;
+	action: EAmbassadorActions;
 	setOpenSuccessModal: (pre: boolean) => void;
 	closeCurrentModal: () => void;
+	applicantAddress: string;
+	proposer: string;
+	rank: EAmbassadorSeedingRanks;
+	xcmCallData: string;
 }

@@ -15,18 +15,14 @@ import RemoveIcon from '~assets/icons/cancel-referendum-icon.svg';
 import ReplaceIcon from '~assets/icons/kill-referendum-icon.svg';
 import classNames from 'classnames';
 import dynamic from 'next/dynamic';
-import Skeleton from '~src/basic-components/Skeleton';
 
 const AddAmbassador = dynamic(() => import('./AddAmbassador'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 const RemoveAmbassador = dynamic(() => import('./RemoveAmbassador'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 const ReplaceAmbassador = dynamic(() => import('./ReplaceAmbassador'), {
-	loading: () => <Skeleton active />,
 	ssr: false
 });
 interface Props {

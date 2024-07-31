@@ -41,7 +41,6 @@ const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
-
 // import DelegateModalEthV2 from './DelegateModalEthV2';
 
 interface IAboutTrackCardProps {

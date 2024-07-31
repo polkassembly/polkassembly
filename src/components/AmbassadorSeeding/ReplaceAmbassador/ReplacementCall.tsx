@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useApiContext } from '~src/context';
@@ -10,7 +10,6 @@ import { EAmbassadorActions, EAmbassadorSeedingRanks } from '../types';
 import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { Button, Form, Radio, Spin } from 'antd';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { chainProperties } from '~src/global/networkConstants';
 import Balance from '~src/components/Balance';
 import Address from '~src/ui-components/Address';
 import AddressInput from '~src/ui-components/AddressInput';
@@ -18,7 +17,8 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getRankNameByRank from '../utils/getRankNameByRank';
 import classNames from 'classnames';
 import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import getCollectiveApi from '../utils/getCollectiveApi';
+import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 
 interface IReplacementCall {
 	className?: string;
@@ -53,42 +53,6 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 		return check;
 	};
 
-	const getXcmCallHash = (promoteCallData: string) => {
-		const xcmCall = api?.tx.xcmPallet.send(
-			{
-				V4: {
-					interior: {
-						X1: [{ Parachain: '1001' }]
-					},
-					parenets: 0
-				}
-			},
-			{
-				V4: [
-					{
-						UnpaidExecution: {
-							checkOrigin: null,
-							weightLimit: 'Unlimited'
-						}
-					},
-					{
-						Transact: {
-							call: {
-								encoded: promoteCallData
-							},
-							originKind: 'Xcm',
-							requireWeightAtMost: {
-								proofSize: '250000',
-								refTime: '4000000000'
-							}
-						}
-					}
-				]
-			}
-		);
-		return xcmCall;
-	};
-
 	const handlePromotesCall = async () => {
 		if (!collectivesApi || !collectivesApiReady || !replaceAmbassadorForm?.applicantAddress || !api || !apiReady || !replaceAmbassadorForm?.removingApplicantAddress) return;
 		if (!getEncodedAddress(replaceAmbassadorForm?.applicantAddress, network) || !getEncodedAddress(replaceAmbassadorForm?.removingApplicantAddress, network)) return;
@@ -106,16 +70,16 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 		}
 
 		const removelCollectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember({ id: replaceAmbassadorForm?.removingApplicantAddress }, replaceAmbassadorForm?.rank);
-		const removePromoteCallData = removelCollectivePreimage.method.toHex();
+		const removeAmbassadorCallData = removelCollectivePreimage.method.toHex();
 		const collectivePreimage = collectivesApi.tx.utility.forceBatch([inductCall, ...payload]);
 		const promoteCallData = collectivePreimage.method.toHex();
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: promoteCallData }));
 
-		if (promoteCallData && removePromoteCallData) {
-			const removeXcmCallData = getXcmCallHash(removePromoteCallData);
-			const addXcmCallData = getXcmCallHash(promoteCallData);
+		if (promoteCallData && removeAmbassadorCallData) {
+			const removeXcmCallData = getAmbassadorXcmTx(removeAmbassadorCallData, api);
+			const addXcmCallData = getAmbassadorXcmTx(promoteCallData, api);
 
-			const tx = api.tx.utility.batchAll([removeXcmCallData as any, addXcmCallData as any]);
+			const tx = api.tx.utility.batchAll([removeXcmCallData, addXcmCallData]);
 			const xcmCallData = tx?.method?.toHex() || '';
 
 			dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: xcmCallData }));
@@ -130,25 +94,9 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 
 	useEffect(() => {
 		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.COLLECTIVES]?.rpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setCollectivesApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-
-					setCollectivesApiReady(true);
-					console.log('Collective API ready');
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
+			const { collectiveApi, collectiveApiReady } = await getCollectiveApi();
+			setCollectivesApi(collectiveApi);
+			setCollectivesApiReady(collectiveApiReady);
 		})();
 	}, []);
 

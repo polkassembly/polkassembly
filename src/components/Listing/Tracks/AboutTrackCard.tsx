@@ -282,7 +282,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	return (
 		<div className={`${className}`}>
 			<article className='flex justify-between xs:py-2 md:py-0'>
-				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
+				<div className='flex items-center gap-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
 					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
 					<Tooltip
@@ -294,10 +294,10 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					</Tooltip>
 				</div>
 				<div className='justify-end xs:hidden md:flex md:p-1'>
-					<div className='flex gap-x-4'>
+					<div className='flex gap-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
-							<div className='flex gap-2'>
+							<div className=''>
 								<AmbassadorActionButtons />
 							</div>
 						)}

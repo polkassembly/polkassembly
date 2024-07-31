@@ -75,28 +75,30 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 		}
 	];
 	return (
-		<div className={classNames('flex items-center justify-between space-x-2 sm:space-x-4', className)}>
-			<Button
-				disabled={!loginAddress}
-				className={`h-10 border-pink_primary bg-pink_primary text-white ${!loginAddress ? 'opacity-50' : ''} flex items-center`}
-				onClick={() => setOpenAmbassadorModal({ action: EAmbassadorActions.ADD_AMBASSADOR, open: true })}
-			>
-				<CreateIcon className='mr-2' />
-				Create Ambassador Application
-			</Button>
-			<div className='-mt-1'>
+		<div className={classNames('flex items-center justify-between', className)}>
+			<div>
+				<Button
+					disabled={!loginAddress}
+					className={`h-10 border-pink_primary bg-pink_primary text-white ${!loginAddress ? 'opacity-50' : ''} flex items-center`}
+					onClick={() => setOpenAmbassadorModal({ action: EAmbassadorActions.ADD_AMBASSADOR, open: true })}
+				>
+					<CreateIcon className='mr-2' />
+					Create Ambassador Application
+				</Button>
+			</div>
+			<div className='ml-2'>
 				<Dropdown
 					theme={theme}
 					overlayStyle={{ marginTop: '20px' }}
-					className={`flex h-10 w-8 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
-						theme === 'dark' ? 'border-none bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
+					className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-md border border-solid border-section-light-container ${
+						theme === 'dark' ? 'border-none max-md:bg-section-dark-background md:bg-section-dark-overlay' : isDropdownActive ? 'bg-section-light-container' : 'bg-white'
 					}`}
-					overlayClassName='z-[1056'
+					overlayClassName='z-[1056]'
 					placement='bottomRight'
 					menu={{ items }}
 					onOpenChange={() => setIsDropdownActive(!isDropdownActive)}
 				>
-					<span className='ml-1 mt-1'>
+					<span className='ml-1'>
 						<ThreeDotsIcon />
 					</span>
 				</Dropdown>

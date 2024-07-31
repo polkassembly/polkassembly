@@ -14,12 +14,12 @@ import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import Address from '~src/ui-components/Address';
 import { useApiContext } from '~src/context';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { chainProperties } from '~src/global/networkConstants';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { ApiPromise } from '@polkadot/api';
 import classNames from 'classnames';
 import Balance from '~src/components/Balance';
 import getRankNameByRank from '../utils/getRankNameByRank';
+import getCollectiveApi from '../utils/getCollectiveApi';
+import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 
 const PromoteCall = ({ className }: IPromoteCall) => {
 	const { api, apiReady } = useApiContext();
@@ -64,38 +64,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: promoteCallData }));
 
 		if (promoteCallData) {
-			const xcmCall = api?.tx.xcmPallet.send(
-				{
-					V4: {
-						interior: {
-							X1: [{ Parachain: '1001' }]
-						},
-						parenets: 0
-					}
-				},
-				{
-					V4: [
-						{
-							UnpaidExecution: {
-								checkOrigin: null,
-								weightLimit: 'Unlimited'
-							}
-						},
-						{
-							Transact: {
-								call: {
-									encoded: promoteCallData
-								},
-								originKind: 'Xcm',
-								requireWeightAtMost: {
-									proofSize: '250000',
-									refTime: '4000000000'
-								}
-							}
-						}
-					]
-				}
-			);
+			const xcmCall = getAmbassadorXcmTx(promoteCallData, api);
 			const xcmCallData = xcmCall?.method?.toHex() || '';
 			dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: xcmCallData }));
 		}
@@ -109,25 +78,9 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 
 	useEffect(() => {
 		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.COLLECTIVES]?.rpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setCollectivesApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-
-					setCollectivesApiReady(true);
-					console.log('Collective API ready');
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
+			const { collectiveApi, collectiveApiReady } = await getCollectiveApi();
+			setCollectivesApi(collectiveApi);
+			setCollectivesApiReady(collectiveApiReady);
 		})();
 	}, []);
 

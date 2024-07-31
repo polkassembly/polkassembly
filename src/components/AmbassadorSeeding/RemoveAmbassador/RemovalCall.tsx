@@ -3,9 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 import { Button, Form, Radio, Spin } from 'antd';
-import { network as AllNetworks, chainProperties } from '~src/global/networkConstants';
 import Balance from '~src/components/Balance';
 import Address from '~src/ui-components/Address';
 import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -19,6 +18,8 @@ import { EAmbassadorActions, EAmbassadorSeedingRanks } from '../types';
 import { useApiContext } from '~src/context';
 import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
+import getCollectiveApi from '../utils/getCollectiveApi';
+import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
 
 interface IRemovalCall {
 	className?: string;
@@ -48,38 +49,8 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: promoteCallData }));
 
 		if (promoteCallData) {
-			const xcmCall = api?.tx.xcmPallet.send(
-				{
-					V4: {
-						interior: {
-							X1: [{ Parachain: '1001' }]
-						},
-						parenets: 0
-					}
-				},
-				{
-					V4: [
-						{
-							UnpaidExecution: {
-								checkOrigin: null,
-								weightLimit: 'Unlimited'
-							}
-						},
-						{
-							Transact: {
-								call: {
-									encoded: promoteCallData
-								},
-								originKind: 'Xcm',
-								requireWeightAtMost: {
-									proofSize: '250000',
-									refTime: '4000000000'
-								}
-							}
-						}
-					]
-				}
-			);
+			const xcmCall = getAmbassadorXcmTx(promoteCallData, api);
+
 			const xcmCallData = xcmCall?.method?.toHex() || '';
 			dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: xcmCallData }));
 		}
@@ -101,24 +72,9 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 
 	useEffect(() => {
 		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.COLLECTIVES]?.rpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setCollectivesApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-					setCollectivesApiReady(true);
-					console.log('Collective API ready');
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
+			const { collectiveApi, collectiveApiReady } = await getCollectiveApi();
+			setCollectivesApi(collectiveApi);
+			setCollectivesApiReady(collectiveApiReady);
 		})();
 	}, []);
 

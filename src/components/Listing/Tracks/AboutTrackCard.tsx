@@ -35,6 +35,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -42,7 +43,7 @@ const Curves = dynamic(() => import('./Curves'), {
 });
 
 const AmbassadorActionButtons = dynamic(() => import('~src/components/AmbassadorSeeding/AmbassadorActionButtons'), {
-	loading: () => <Skeleton active />,
+	loading: () => <SkeletonButton active />,
 	ssr: false
 });
 // import DelegateModalEthV2 from './DelegateModalEthV2';
@@ -297,7 +298,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] dark:text-blue-dark-high'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
-				<div className='justify-end xs:hidden md:flex md:p-1'>
+				<div className='flex justify-end xs:hidden md:flex md:p-1'>
 					<div className='flex gap-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (

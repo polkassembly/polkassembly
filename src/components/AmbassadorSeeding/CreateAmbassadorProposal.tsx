@@ -5,7 +5,7 @@ import { Form, Input, Spin } from 'antd';
 import React, { useState } from 'react';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import AddTags from '~src/ui-components/AddTags';
-import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { EAllowedCommentor, ILoading, NotificationStatus } from '~src/types';
 import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
@@ -19,19 +19,14 @@ import classNames from 'classnames';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
+import { IAmbassadorProposalCreation } from './types';
 
-interface Props {
-	className?: string;
-	setOpen: (pre: boolean) => void;
-	openSuccessModal: () => void;
-}
-const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Props) => {
+const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const [form] = Form.useForm();
 	const { loginAddress, id: userId } = useUserDetailsSelector();
-	const { discussion, proposer, ambassadorPreimage } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [allowedCommentor, setAllowedCommentor] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
@@ -68,7 +63,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 		const postId = Number(await api.query.referenda.referendumCount());
 
 		const onSuccess = () => {
-			dispatch(ambassadorSeedingActions.updateAmbassadorProposalIndex(postId));
+			dispatch(ambassadorSeedingActions.updateAmbassadorProposalIndex({ type: action, value: postId }));
 			setOpen(false);
 			openSuccessModal();
 			setLoading({ isLoading: false, message: '' });
@@ -135,7 +130,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 									name='title'
 									className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									onChange={(e) => {
-										dispatch(ambassadorSeedingActions.updateDiscussionTitle(e.target.value || ''));
+										dispatch(ambassadorSeedingActions.updateDiscussionTitle({ type: action, value: e.target.value || '' }));
 									}}
 									value={discussion?.discussionTitle || ''}
 								/>
@@ -146,7 +141,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 							<Form.Item name='tags'>
 								<AddTags
 									tags={discussion.discussionTags}
-									setTags={(tags: string[]) => dispatch(ambassadorSeedingActions.updateDiscussionTags(tags || []))}
+									setTags={(tags: string[]) => dispatch(ambassadorSeedingActions.updateDiscussionTags({ type: action, value: tags || [] }))}
 								/>
 							</Form.Item>
 						</div>
@@ -160,7 +155,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal }: Prop
 									value={discussion.discussionContent}
 									height={250}
 									onChange={(content: string) => {
-										dispatch(ambassadorSeedingActions.updateDiscussionContent(content || ''));
+										dispatch(ambassadorSeedingActions.updateDiscussionContent({ type: action, value: content || '' }));
 									}}
 								/>
 							</Form.Item>

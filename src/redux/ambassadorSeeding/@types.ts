@@ -9,13 +9,12 @@ export interface IAmbassadorProposalContent {
 }
 
 export enum EAmbassadorSeedingSteps {
-	PROMOTES_CALL = 1,
+	CREATE_APPLICANT = 1,
 	CREATE_PREIMAGE = 2,
 	CREATE_PROPOSAL = 3
 }
 
-export interface IAmbassadorSeedingStore {
-	step: EAmbassadorSeedingSteps;
+export interface IAmbassadorStore {
 	ambassadorPostIndex: number | null;
 	rank: number;
 	proposer: string;
@@ -25,4 +24,14 @@ export interface IAmbassadorSeedingStore {
 	ambassadorPreimage: { hash: string; length: number };
 	discussion: IAmbassadorProposalContent;
 	isPreimageCreationDone: boolean;
+	step: EAmbassadorSeedingSteps;
+}
+
+export interface IAmbassadorReplaceStore extends IAmbassadorStore {
+	removingApplicantAddress: string;
+}
+export interface IAddAmbassadorSeedingStore {
+	addAmbassadorForm: IAmbassadorStore;
+	removeAmbassadorForm: IAmbassadorStore;
+	replaceAmbassadorForm: IAmbassadorReplaceStore;
 }

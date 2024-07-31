@@ -92,7 +92,6 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 				web3signup: false
 			};
 		}
-
 		// Return what you want rehydrated
 		return outboundState;
 	},

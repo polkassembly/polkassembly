@@ -3,19 +3,47 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import { EAmbassadorSeedingSteps, IAmbassadorProposalContent, IAmbassadorSeedingStore } from './@types';
+import { EAmbassadorSeedingSteps, IAddAmbassadorSeedingStore, IAmbassadorProposalContent } from './@types';
+import { EAmbassadorActions } from '~src/components/AmbassadorSeeding/types';
 
-const initialState: IAmbassadorSeedingStore = {
-	ambassadorPostIndex: null,
-	ambassadorPreimage: { hash: '', length: 0 },
-	applicantAddress: '',
-	discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
-	isPreimageCreationDone: false,
-	promoteCallData: '',
-	proposer: '',
-	rank: 3,
-	step: EAmbassadorSeedingSteps.PROMOTES_CALL,
-	xcmCallData: ''
+const initialState: IAddAmbassadorSeedingStore = {
+	addAmbassadorForm: {
+		ambassadorPostIndex: null,
+		ambassadorPreimage: { hash: '', length: 0 },
+		applicantAddress: '',
+		discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone: false,
+		promoteCallData: '',
+		proposer: '',
+		rank: 3,
+		step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData: ''
+	},
+	removeAmbassadorForm: {
+		ambassadorPostIndex: null,
+		ambassadorPreimage: { hash: '', length: 0 },
+		applicantAddress: '',
+		discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone: false,
+		promoteCallData: '',
+		proposer: '',
+		rank: 3,
+		step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData: ''
+	},
+	replaceAmbassadorForm: {
+		ambassadorPostIndex: null,
+		ambassadorPreimage: { hash: '', length: 0 },
+		applicantAddress: '',
+		discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone: false,
+		promoteCallData: '',
+		proposer: '',
+		rank: 3,
+		removingApplicantAddress: '',
+		step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData: ''
+	}
 };
 
 export const ambassadorSeedingStore = createSlice({
@@ -31,58 +59,215 @@ export const ambassadorSeedingStore = createSlice({
 	name: 'ambassadorSeeding',
 	reducers: {
 		resetAmbassadorSeeding: (state) => {
-			state.discussion = {
-				discussionContent: '',
-				discussionTags: [],
-				discussionTitle: ''
+			state.addAmbassadorForm = {
+				ambassadorPostIndex: null,
+				ambassadorPreimage: { hash: '', length: 0 },
+				applicantAddress: '',
+				discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+				isPreimageCreationDone: false,
+				promoteCallData: '',
+				proposer: '',
+				rank: 3,
+				step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+				xcmCallData: ''
 			};
-			state.applicantAddress = '';
-			state.promoteCallData = '';
-			state.proposer = '';
-			state.xcmCallData = '';
-			state.step = EAmbassadorSeedingSteps.PROMOTES_CALL;
-			state.ambassadorPreimage = { hash: '', length: 0 };
-			state.ambassadorPostIndex = null;
-			state.isPreimageCreationDone = false;
+			state.removeAmbassadorForm = {
+				ambassadorPostIndex: null,
+				ambassadorPreimage: { hash: '', length: 0 },
+				applicantAddress: '',
+				discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+				isPreimageCreationDone: false,
+				promoteCallData: '',
+				proposer: '',
+				rank: 3,
+				step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+				xcmCallData: ''
+			};
+			state.replaceAmbassadorForm = {
+				ambassadorPostIndex: null,
+				ambassadorPreimage: { hash: '', length: 0 },
+				applicantAddress: '',
+				discussion: { discussionContent: '', discussionTags: [], discussionTitle: '' },
+				isPreimageCreationDone: false,
+				promoteCallData: '',
+				proposer: '',
+				rank: 3,
+				removingApplicantAddress: '',
+				step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
+				xcmCallData: ''
+			};
 		},
-		updateAmbassadorPreimage: (state, action: PayloadAction<{ hash: string; length: number }>) => {
-			state.ambassadorPreimage = action.payload;
+		updateAmbassadorPreimage: (state, action: PayloadAction<{ type: EAmbassadorActions; value: { hash: string; length: number } }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.ambassadorPreimage = action.payload.value;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.ambassadorPreimage = action.payload.value;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.ambassadorPreimage = action.payload.value;
+					break;
+			}
 		},
-		updateAmbassadorProposalIndex: (state, action: PayloadAction<number | null>) => {
-			state.ambassadorPostIndex = action.payload;
+		updateAmbassadorProposalIndex: (state, action: PayloadAction<{ type: EAmbassadorActions; value: number | null }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.ambassadorPostIndex = action.payload.value;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.ambassadorPostIndex = action.payload.value;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.ambassadorPostIndex = action.payload.value;
+					break;
+			}
 		},
-		updateAmbassadorRank: (state, action: PayloadAction<number>) => {
-			state.rank = action.payload;
+		updateAmbassadorRank: (state, action: PayloadAction<{ type: EAmbassadorActions; value: number }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.rank = action.payload.value;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.rank = action.payload.value;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.rank = action.payload.value;
+					break;
+			}
 		},
-		updateAmbassadorSteps: (state, action: PayloadAction<EAmbassadorSeedingSteps>) => {
-			state.step = action.payload;
+		updateAmbassadorSteps: (state, action: PayloadAction<{ type: EAmbassadorActions; value: EAmbassadorSeedingSteps }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.step = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.step = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.step = action.payload.value as any;
+					break;
+			}
 		},
-		updateApplicantAddress: (state, action: PayloadAction<string>) => {
-			state.applicantAddress = action.payload;
+		updateApplicantAddress: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.applicantAddress = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.applicantAddress = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.applicantAddress = action.payload.value as any;
+					break;
+			}
 		},
-		updateDiscussionContent: (state, action: PayloadAction<string>) => {
-			state.discussion.discussionContent = action.payload;
+		updateDiscussionContent: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.discussion.discussionContent = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.discussion.discussionContent = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.discussion.discussionContent = action.payload.value as any;
+					break;
+			}
 		},
-		updateDiscussionTags: (state, action: PayloadAction<string[]>) => {
-			state.discussion.discussionTags = action.payload;
+		updateDiscussionTags: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string[] }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.discussion.discussionTags = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.discussion.discussionTags = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.discussion.discussionTags = action.payload.value as any;
+					break;
+			}
 		},
-		updateDiscussionTitle: (state, action: PayloadAction<string>) => {
-			state.discussion.discussionTitle = action.payload;
+		updateDiscussionTitle: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.discussion.discussionTitle = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.discussion.discussionTitle = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.discussion.discussionTitle = action.payload.value as any;
+					break;
+			}
 		},
-		updateIsPreimageCreationDone: (state, action: PayloadAction<boolean>) => {
-			state.isPreimageCreationDone = action.payload;
+		updateIsPreimageCreationDone: (state, action: PayloadAction<{ type: EAmbassadorActions; value: boolean }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.isPreimageCreationDone = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.isPreimageCreationDone = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.isPreimageCreationDone = action.payload.value as any;
+					break;
+			}
 		},
-		updatePromoteCallData: (state, action: PayloadAction<string>) => {
-			state.promoteCallData = action.payload;
+		updatePromoteCallData: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.promoteCallData = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.promoteCallData = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.promoteCallData = action.payload.value as any;
+					break;
+			}
 		},
-		updateProposer: (state, action: PayloadAction<string>) => {
-			state.proposer = action.payload;
+		updateProposer: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.proposer = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.proposer = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.proposer = action.payload.value as any;
+					break;
+			}
 		},
-		updateXcmCallData: (state, action: PayloadAction<string>) => {
-			state.xcmCallData = action.payload;
+		updateRemovingAmbassadorApplicantAddress: (state, action: PayloadAction<string>) => {
+			state.replaceAmbassadorForm.removingApplicantAddress = action.payload as any;
 		},
-		writeProposal: (state, action: PayloadAction<IAmbassadorProposalContent>) => {
-			state.discussion = action.payload;
+		updateXcmCallData: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.xcmCallData = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.xcmCallData = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.xcmCallData = action.payload.value as any;
+					break;
+			}
+		},
+		writeProposal: (state, action: PayloadAction<{ type: EAmbassadorActions; value: IAmbassadorProposalContent }>) => {
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.discussion = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.discussion = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.discussion = action.payload.value as any;
+					break;
+			}
 		}
 	}
 });

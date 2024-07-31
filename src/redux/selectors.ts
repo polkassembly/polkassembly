@@ -18,8 +18,8 @@ import { IRemoveIdentityStore } from './removeIdentity/@types';
 import { ITrackLevelAnalyticsStore } from './trackLevelAnalytics/@types';
 import { IOnChainIdentityStore } from './onchainIdentity/@types';
 import { IInAppNotificationsStore } from './inAppNotifications/@types';
-import { IAmbassadorSeedingStore } from './ambassadorSeeding/@types';
 import { IBatchVoteStore } from './batchVoting/@types';
+import { IAddAmbassadorSeedingStore } from './ambassadorSeeding/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -77,7 +77,7 @@ const useInAppNotificationsSelector = () => {
 };
 
 const useAmbassadorSeedingSelector = () => {
-	return useSelector<TAppState, IAmbassadorSeedingStore>((state) => state.ambassadorSeeding);
+	return useSelector<TAppState, IAddAmbassadorSeedingStore>((state) => state.ambassadorSeeding);
 };
 
 const useBatchVotesSelector = () => {

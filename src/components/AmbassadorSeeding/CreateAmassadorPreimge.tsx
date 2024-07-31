@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { ICreateAmassadorPreimge } from './types';
 import classNames from 'classnames';
-import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import getRankNameByRank from './utils/getRankNameByRank';
 import { Button, Spin } from 'antd';
@@ -29,12 +29,21 @@ import { chainProperties } from '~src/global/networkConstants';
 const EMPTY_HASH = blake2AsHex('');
 const ZERO_BN = new BN(0);
 
-const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentModal }: ICreateAmassadorPreimge) => {
+const CreateAmassadorPreimge = ({
+	className,
+	setOpenSuccessModal,
+	closeCurrentModal,
+	action,
+	applicantAddress,
+	proposer,
+	rank,
+	xcmCallData,
+	removingApplicantAddress
+}: ICreateAmassadorPreimge) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
-	const { applicantAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -66,8 +75,8 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 	};
 
 	const onSuccess = (preimage: IPreimage) => {
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(true));
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 }));
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone({ type: action, value: true }));
+		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ type: action, value: { hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 } }));
 		closeCurrentModal();
 		setOpenSuccessModal(true);
 		setLoading({ isLoading: false, message: '' });
@@ -80,8 +89,8 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 }));
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(false));
+		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ type: action, value: { hash: '', length: 0 } }));
+		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone({ type: action, value: false }));
 	};
 
 	const handleCreatePreimage = async () => {
@@ -89,7 +98,6 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
 
 		const preimage: any = getState(api, xcmCallData as HexString);
-
 		await executeTx({
 			address: proposer || loginAddress,
 			api,
@@ -105,7 +113,7 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 
 	useEffect(() => {
 		if (loginAddress && !proposer) {
-			dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
+			dispatch(ambassadorSeedingActions.updateProposer({ type: action, value: loginAddress }));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -145,6 +153,19 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 							disableTooltip
 						/>
 					</div>
+
+					{!!removingApplicantAddress && (
+						<div className='flex items-start justify-start gap-5'>
+							<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Removing Address:</span>
+							<Address
+								iconSize={22}
+								address={removingApplicantAddress}
+								displayInline
+								isTruncateUsername={false}
+								disableTooltip
+							/>
+						</div>
+					)}
 					<div className='flex items-start justify-start gap-5'>
 						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Rank:</span>
 						<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -173,7 +194,7 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 				<Button
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
-					onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL))}
+					onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: action, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }))}
 				>
 					Back
 				</Button>

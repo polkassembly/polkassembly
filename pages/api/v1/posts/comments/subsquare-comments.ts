@@ -99,17 +99,31 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 				comment_reactions: {
 					'👍': {
 						count: reactionUsers.length,
+						userIds: [],
 						usernames: reactionUsers
 					},
 					'👎': {
 						count: 0,
+						userIds: [],
 						usernames: []
 					}
 				},
 				comment_source: 'subsquare',
 				content: comment.content,
 				created_at: comment.createdAt,
+				history: [],
 				id: comment._id,
+				is_custom_username: false,
+				post_index: String(id),
+				post_type: proposalType,
+				profile: {
+					badges: [],
+					bio: '',
+					email: '',
+					image: '',
+					social_links: [],
+					title: ''
+				},
 				proposer: comment.author?.address || '',
 				replies: [
 					...replies,
@@ -119,9 +133,12 @@ const convertDataToComment = async (data: any[], network: string | string[] | un
 						updated_at: doc.data().updated_at?.toDate()
 					}))
 				],
+				sentiment: 0,
+				spam_users_count: 0,
 				updated_at: comment?.updatedAt,
 				user_id: uuid(),
-				username: getTrimmedUsername(comment.author?.username)
+				username: getTrimmedUsername(comment.author?.username),
+				votes: []
 			});
 		}
 	}

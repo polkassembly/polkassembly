@@ -230,7 +230,7 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
-				handleSaveTreasuryProposal(post_id);
+				await handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);
 				localStorage.removeItem('treasuryProposalProposerAddress');

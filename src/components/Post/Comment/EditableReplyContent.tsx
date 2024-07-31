@@ -258,7 +258,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 			console.error('Error saving reply: ', error);
 			queueNotification({
 				header: 'Error!',
-				message: 'There was an error in saving your reply.',
+				message: error || 'There was an error in saving your reply.',
 				status: NotificationStatus.ERROR
 			});
 		}
@@ -373,7 +373,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 				console.error('Error saving reply: ', error);
 				queueNotification({
 					header: 'Error!',
-					message: 'There was an error in saving your reply.',
+					message: error || 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
 				setComments((prev) => {

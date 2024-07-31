@@ -24,6 +24,8 @@ import { trackLevelAnalyticsStore } from './trackLevelAnalytics';
 import { onchainIdentityStore } from './onchainIdentity';
 import { inAppNotificationsStore } from './inAppNotifications';
 import { ambassadorSeedingStore } from './ambassadorSeeding';
+import { useDispatch } from 'react-redux';
+import { batchVoteStore } from './batchVoting';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -116,7 +118,8 @@ export const makeStore = () => {
 		[trackLevelAnalyticsStore.name]: trackLevelAnalyticsStore.reducer,
 		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
-		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer
+		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
+		[batchVoteStore.name]: batchVoteStore.reducer
 	});
 
 	if (isServer) {
@@ -161,4 +164,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, TAppState, unk
 
 export const wrapper = createWrapper<TAppStore>(makeStore);
 
+export const useAppDispatch = () => useDispatch<typeof store.dispatch>();
 export const store = makeStore();

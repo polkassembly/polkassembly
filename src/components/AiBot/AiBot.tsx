@@ -167,43 +167,45 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				{'DocsBotAI.init({id: "X6zGLB8jx6moWVb6L5S9/D7XT9ksDuTZCvdf99KSW"});'}
 			</Script> */}
 
-			<FloatButton.Group
-				trigger='click'
-				type='primary'
-				style={{ bottom: 35, right: 40 }}
-				icon={
-					<Button
-						type='text'
-						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => {
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
-							trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
-								userId: id || '',
-								userName: username || ''
-							});
-						}}
-					>
-						<FabButton className='mt-1' />
-					</Button>
-				}
-				closeIcon={
-					<Button
-						type='text'
-						style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
-						onClick={() => {
-							setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
-							// (window as any).DocsBotAI.close();
-							// setIsAIChatBotOpen(false);
-						}}
-					>
-						<CloseWhite className='mt-1' />
-					</Button>
-				}
-				open={floatButtonOpen}
-				className={`${className}`}
-			>
-				<></>
-			</FloatButton.Group>
+			{!router?.pathname?.includes('batch-voting') && (
+				<FloatButton.Group
+					trigger='click'
+					type='primary'
+					style={{ bottom: 35, right: 40 }}
+					icon={
+						<Button
+							type='text'
+							style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
+							onClick={() => {
+								setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+								trackEvent('fab_floating_button_clicked', 'clicked_fab_floating_button', {
+									userId: id || '',
+									userName: username || ''
+								});
+							}}
+						>
+							<FabButton className='mt-1' />
+						</Button>
+					}
+					closeIcon={
+						<Button
+							type='text'
+							style={{ borderRadius: '50%', height: '56px', marginLeft: '-8px', width: '56px' }}
+							onClick={() => {
+								setTimeout(() => setFloatButtonOpen(!floatButtonOpen), 200);
+								// (window as any).DocsBotAI.close();
+								// setIsAIChatBotOpen(false);
+							}}
+						>
+							<CloseWhite className='mt-1' />
+						</Button>
+					}
+					open={floatButtonOpen}
+					className={`${className}`}
+				>
+					<></>
+				</FloatButton.Group>
+			)}
 
 			{
 				<List

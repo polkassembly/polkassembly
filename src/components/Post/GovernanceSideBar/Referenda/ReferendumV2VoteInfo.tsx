@@ -29,8 +29,8 @@ interface IReferendumV2VoteInfoProps {
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
-	setUpdatetally: (pre: boolean) => void;
-	updateTally: boolean;
+	setUpdatetally?: (pre: boolean) => void;
+	updateTally?: boolean;
 }
 
 const ZERO = new BN(0);
@@ -152,7 +152,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		} else if (error) {
 			console.log(error);
 		}
-		setUpdatetally(false);
+		setUpdatetally?.(false);
 		setIsLoading(false);
 	};
 

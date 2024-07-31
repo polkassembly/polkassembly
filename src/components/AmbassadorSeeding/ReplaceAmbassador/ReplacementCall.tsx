@@ -29,7 +29,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
-	const { replaceAmbassadorForm } = useAmbassadorSeedingSelector();
+	const ambassadorStoreData = useAmbassadorSeedingSelector();
 	const [form] = Form.useForm();
 	const [collectivesApi, setCollectivesApi] = useState<ApiPromise | null>(null);
 	const [collectivesApiReady, setCollectivesApiReady] = useState<boolean>(false);
@@ -41,35 +41,50 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 	const checkDisabled = () => {
 		let check = false;
 		check =
-			!replaceAmbassadorForm?.applicantAddress ||
-			!replaceAmbassadorForm?.promoteCallData ||
-			!replaceAmbassadorForm?.xcmCallData ||
+			!ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress ||
+			!ambassadorStoreData?.replaceAmbassadorForm?.promoteCallData ||
+			!ambassadorStoreData?.replaceAmbassadorForm?.xcmCallData ||
 			!collectivesApi ||
 			!collectivesApiReady ||
-			!replaceAmbassadorForm.removingApplicantAddress;
-		if (replaceAmbassadorForm?.applicantAddress) {
-			check = !getEncodedAddress(replaceAmbassadorForm?.applicantAddress, network);
+			!ambassadorStoreData?.replaceAmbassadorForm.removingApplicantAddress;
+		if (ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress) {
+			check = !getEncodedAddress(ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress, network);
 		}
 		return check;
 	};
 
 	const handlePromotesCall = async () => {
-		if (!collectivesApi || !collectivesApiReady || !replaceAmbassadorForm?.applicantAddress || !api || !apiReady || !replaceAmbassadorForm?.removingApplicantAddress) return;
-		if (!getEncodedAddress(replaceAmbassadorForm?.applicantAddress, network) || !getEncodedAddress(replaceAmbassadorForm?.removingApplicantAddress, network)) return;
+		if (
+			!collectivesApi ||
+			!collectivesApiReady ||
+			!ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress ||
+			!api ||
+			!apiReady ||
+			!ambassadorStoreData?.replaceAmbassadorForm?.removingApplicantAddress
+		)
+			return;
+		if (
+			!getEncodedAddress(ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress, network) ||
+			!getEncodedAddress(ambassadorStoreData?.replaceAmbassadorForm?.removingApplicantAddress, network)
+		)
+			return;
 
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: '' }));
 		dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: '' }));
 
 		setLoading(true);
 
-		const inductCall = collectivesApi.tx.ambassadorCore.induct(replaceAmbassadorForm?.applicantAddress);
+		const inductCall = collectivesApi.tx.ambassadorCore.induct(ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress);
 		const payload: any = [];
-		for (let i = 1; i <= replaceAmbassadorForm?.rank; i++) {
-			const promoteCall = collectivesApi.tx.ambassadorCore.promote(replaceAmbassadorForm?.applicantAddress, i);
+		for (let i = 1; i <= ambassadorStoreData?.replaceAmbassadorForm?.rank; i++) {
+			const promoteCall = collectivesApi.tx.ambassadorCore.promote(ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress, i);
 			payload.push(promoteCall);
 		}
 
-		const removelCollectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember({ id: replaceAmbassadorForm?.removingApplicantAddress }, replaceAmbassadorForm?.rank);
+		const removelCollectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember(
+			{ id: ambassadorStoreData?.replaceAmbassadorForm?.removingApplicantAddress },
+			ambassadorStoreData?.replaceAmbassadorForm?.rank
+		);
 		const removeAmbassadorCallData = removelCollectivePreimage.method.toHex();
 		const collectivePreimage = collectivesApi.tx.utility.forceBatch([inductCall, ...payload]);
 		const promoteCallData = collectivePreimage.method.toHex();
@@ -90,7 +105,15 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 	useEffect(() => {
 		handlePromotesCall();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collectivesApi, collectivesApiReady, replaceAmbassadorForm?.applicantAddress, replaceAmbassadorForm.removingApplicantAddress, replaceAmbassadorForm?.rank, api, apiReady]);
+	}, [
+		collectivesApi,
+		collectivesApiReady,
+		ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress,
+		ambassadorStoreData?.replaceAmbassadorForm.removingApplicantAddress,
+		ambassadorStoreData?.replaceAmbassadorForm?.rank,
+		api,
+		apiReady
+	]);
 
 	useEffect(() => {
 		(async () => {
@@ -105,7 +128,10 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 			<div className={className}>
 				<Form
 					form={form}
-					initialValues={{ applicantAddress: replaceAmbassadorForm?.applicantAddress || '', removalApplicantAddress: replaceAmbassadorForm.removingApplicantAddress || '' }}
+					initialValues={{
+						applicantAddress: ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress || '',
+						removalApplicantAddress: ambassadorStoreData?.replaceAmbassadorForm.removingApplicantAddress || ''
+					}}
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -116,9 +142,9 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 									text='Please note the verification cannot be transferred to another address.'
 								/> */}
 							</label>
-							{(!!replaceAmbassadorForm?.proposer || loginAddress) && (
+							{(!!ambassadorStoreData?.replaceAmbassadorForm?.proposer || loginAddress) && (
 								<Balance
-									address={replaceAmbassadorForm?.proposer || loginAddress}
+									address={ambassadorStoreData?.replaceAmbassadorForm?.proposer || loginAddress}
 									usedInIdentityFlow
 								/>
 							)}
@@ -126,7 +152,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 						<div className='flex w-full items-end gap-2 text-sm '>
 							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
-									address={replaceAmbassadorForm?.proposer || loginAddress}
+									address={ambassadorStoreData?.replaceAmbassadorForm?.proposer || loginAddress}
 									displayInline
 									disableTooltip
 									isTruncateUsername={false}
@@ -140,7 +166,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
-								defaultAddress={replaceAmbassadorForm?.applicantAddress || ''}
+								defaultAddress={ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress || ''}
 								name={'applicantAddress'}
 								placeholder='Enter Applicant Address'
 								iconClassName={'ml-[10px]'}
@@ -156,7 +182,7 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
-								defaultAddress={replaceAmbassadorForm?.removingApplicantAddress || ''}
+								defaultAddress={ambassadorStoreData?.replaceAmbassadorForm?.removingApplicantAddress || ''}
 								name={'removalApplicantAddress'}
 								placeholder='Enter Removal Address'
 								iconClassName={'ml-[10px]'}
@@ -173,12 +199,12 @@ const ReplacementCall = ({ className }: IReplacementCall) => {
 					<div>
 						<Radio.Group
 							onChange={({ target }) => dispatch(ambassadorSeedingActions.updateAmbassadorRank(target?.value))}
-							value={replaceAmbassadorForm?.rank}
+							value={ambassadorStoreData?.replaceAmbassadorForm?.rank}
 							className='radio-input-group mt-2 dark:text-white'
 						>
 							<Radio
 								value={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
-								checked={replaceAmbassadorForm?.rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
+								checked={ambassadorStoreData?.replaceAmbassadorForm?.rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 								className='capitalize text-lightBlue dark:text-white'
 								key={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 							>

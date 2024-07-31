@@ -26,13 +26,13 @@ interface IRemoveAmbassador {
 }
 
 const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
-	const { removeAmbassadorForm } = useAmbassadorSeedingSelector();
+	const ambassadorStoreData = useAmbassadorSeedingSelector();
 	const dispatch = useDispatch();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
 	const handleClose = () => {
-		if (removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
+		if (ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
 		} else {
 			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
@@ -99,33 +99,33 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(removeAmbassadorForm?.step, EAmbassadorActions.REMOVE_AMBASSADOR)}
+						{getModalTitleFromSteps(ambassadorStoreData?.removeAmbassadorForm?.step, EAmbassadorActions.REMOVE_AMBASSADOR)}
 					</div>
 				}
 			>
 				<div>
-					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <RemovalCall className='mt-6' />}
-					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
+					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <RemovalCall className='mt-6' />}
+					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
 						<CreateAmassadorPreimge
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							applicantAddress={removeAmbassadorForm?.applicantAddress}
-							proposer={removeAmbassadorForm?.proposer}
-							rank={removeAmbassadorForm?.rank}
-							xcmCallData={removeAmbassadorForm?.xcmCallData}
+							applicantAddress={ambassadorStoreData?.removeAmbassadorForm?.applicantAddress}
+							proposer={ambassadorStoreData?.removeAmbassadorForm?.proposer}
+							rank={ambassadorStoreData?.removeAmbassadorForm?.rank}
+							xcmCallData={ambassadorStoreData?.removeAmbassadorForm?.xcmCallData}
 						/>
 					)}
-					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
+					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
 						<WriteAmbassadorProposal
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							ambassadorPreimage={removeAmbassadorForm?.ambassadorPreimage}
-							discussion={removeAmbassadorForm?.discussion}
-							proposer={removeAmbassadorForm?.proposer}
+							ambassadorPreimage={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPreimage}
+							discussion={ambassadorStoreData?.removeAmbassadorForm?.discussion}
+							proposer={ambassadorStoreData?.removeAmbassadorForm?.proposer}
 						/>
 					)}
 				</div>
@@ -134,11 +134,11 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				openPrevModal={() => setOpen(true)}
-				isPreimageSuccess={removeAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
+				isPreimageSuccess={ambassadorStoreData?.removeAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
 				action={EAmbassadorActions.REMOVE_AMBASSADOR}
-				ambassadorPostIndex={removeAmbassadorForm?.ambassadorPostIndex}
-				ambassadorPreimage={removeAmbassadorForm?.ambassadorPreimage}
-				step={removeAmbassadorForm?.step}
+				ambassadorPostIndex={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPostIndex}
+				ambassadorPreimage={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPreimage}
+				step={ambassadorStoreData?.removeAmbassadorForm?.step}
 			/>
 		</div>
 	);

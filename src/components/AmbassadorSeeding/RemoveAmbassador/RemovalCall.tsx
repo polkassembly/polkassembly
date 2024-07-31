@@ -29,22 +29,25 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
-	const { removeAmbassadorForm } = useAmbassadorSeedingSelector();
+	const ambassadorStoreData = useAmbassadorSeedingSelector();
 	const [collectivesApi, setCollectivesApi] = useState<ApiPromise | null>(null);
 	const [collectivesApiReady, setCollectivesApiReady] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [form] = Form.useForm();
 
 	const handleRemoveAmbassador = async () => {
-		if (!collectivesApi || !collectivesApiReady || !removeAmbassadorForm?.applicantAddress || !api || !apiReady) return;
-		if (!getEncodedAddress(removeAmbassadorForm?.applicantAddress, network)) return;
+		if (!collectivesApi || !collectivesApiReady || !ambassadorStoreData?.removeAmbassadorForm?.applicantAddress || !api || !apiReady) return;
+		if (!getEncodedAddress(ambassadorStoreData?.removeAmbassadorForm?.applicantAddress, network)) return;
 
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: '' }));
 		dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: '' }));
 
 		setLoading(true);
 
-		const collectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember({ id: removeAmbassadorForm?.applicantAddress }, removeAmbassadorForm?.rank);
+		const collectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember(
+			{ id: ambassadorStoreData?.removeAmbassadorForm?.applicantAddress },
+			ambassadorStoreData?.removeAmbassadorForm?.rank
+		);
 		const promoteCallData = collectivePreimage.method.toHex();
 		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: promoteCallData }));
 
@@ -63,9 +66,14 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 
 	const checkDisabled = () => {
 		let check = false;
-		check = !removeAmbassadorForm?.applicantAddress || !removeAmbassadorForm?.promoteCallData || !removeAmbassadorForm?.xcmCallData || !collectivesApi || !collectivesApiReady;
-		if (removeAmbassadorForm?.applicantAddress) {
-			check = !getEncodedAddress(removeAmbassadorForm?.applicantAddress, network);
+		check =
+			!ambassadorStoreData?.removeAmbassadorForm?.applicantAddress ||
+			!ambassadorStoreData?.removeAmbassadorForm?.promoteCallData ||
+			!ambassadorStoreData?.removeAmbassadorForm?.xcmCallData ||
+			!collectivesApi ||
+			!collectivesApiReady;
+		if (ambassadorStoreData?.removeAmbassadorForm?.applicantAddress) {
+			check = !getEncodedAddress(ambassadorStoreData?.removeAmbassadorForm?.applicantAddress, network);
 		}
 		return check;
 	};
@@ -81,14 +89,14 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 	useEffect(() => {
 		handleRemoveAmbassador();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collectivesApi, collectivesApiReady, removeAmbassadorForm?.applicantAddress, removeAmbassadorForm?.rank, api, apiReady]);
+	}, [collectivesApi, collectivesApiReady, ambassadorStoreData?.removeAmbassadorForm?.applicantAddress, ambassadorStoreData?.removeAmbassadorForm?.rank, api, apiReady]);
 
 	return (
 		<Spin spinning={loading}>
 			<div className={className}>
 				<Form
 					form={form}
-					initialValues={{ removalApplicantAddress: removeAmbassadorForm?.applicantAddress || '' }}
+					initialValues={{ removalApplicantAddress: ambassadorStoreData?.removeAmbassadorForm?.applicantAddress || '' }}
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -99,9 +107,9 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 									text='Please note the verification cannot be transferred to another address.'
 								/> */}
 							</label>
-							{(!!removeAmbassadorForm?.proposer || loginAddress) && (
+							{(!!ambassadorStoreData?.removeAmbassadorForm?.proposer || loginAddress) && (
 								<Balance
-									address={removeAmbassadorForm?.proposer || loginAddress}
+									address={ambassadorStoreData?.removeAmbassadorForm?.proposer || loginAddress}
 									usedInIdentityFlow
 								/>
 							)}
@@ -109,7 +117,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 						<div className='flex w-full items-end gap-2 text-sm '>
 							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
-									address={removeAmbassadorForm?.proposer || loginAddress}
+									address={ambassadorStoreData?.removeAmbassadorForm?.proposer || loginAddress}
 									displayInline
 									disableTooltip
 									isTruncateUsername={false}
@@ -123,7 +131,7 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
-								defaultAddress={removeAmbassadorForm?.applicantAddress || ''}
+								defaultAddress={ambassadorStoreData?.removeAmbassadorForm?.applicantAddress || ''}
 								name={'removalApplicantAddress'}
 								placeholder='Enter Removal Address'
 								iconClassName={'ml-[10px]'}
@@ -139,12 +147,12 @@ const RemovalCall = ({ className }: IRemovalCall) => {
 					<div>
 						<Radio.Group
 							onChange={({ target }) => dispatch(ambassadorSeedingActions.updateAmbassadorRank({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: target?.value }))}
-							value={removeAmbassadorForm?.rank}
+							value={ambassadorStoreData?.removeAmbassadorForm?.rank}
 							className='radio-input-group mt-2 dark:text-white'
 						>
 							<Radio
 								value={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
-								checked={removeAmbassadorForm?.rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
+								checked={ambassadorStoreData?.removeAmbassadorForm?.rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 								className='capitalize text-lightBlue dark:text-white'
 								key={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 							>

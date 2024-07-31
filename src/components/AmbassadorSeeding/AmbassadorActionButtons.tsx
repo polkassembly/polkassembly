@@ -10,14 +10,25 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { EAmbassadorActions } from './types';
-import AddAmbassador from './AddAmbassador';
-import RemoveAmbassador from './RemoveAmbassador';
-import ReplaceAmbassador from './ReplaceAmbassador';
 import CreateIcon from '~assets/icons/CreateProposalWhite.svg';
 import RemoveIcon from '~assets/icons/cancel-referendum-icon.svg';
 import ReplaceIcon from '~assets/icons/kill-referendum-icon.svg';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
+import Skeleton from '~src/basic-components/Skeleton';
 
+const AddAmbassador = dynamic(() => import('./AddAmbassador'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const RemoveAmbassador = dynamic(() => import('./RemoveAmbassador'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const ReplaceAmbassador = dynamic(() => import('./ReplaceAmbassador'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 interface Props {
 	className?: string;
 }

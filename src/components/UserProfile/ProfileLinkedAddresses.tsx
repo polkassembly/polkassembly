@@ -16,7 +16,7 @@ import { ClearIdentityOutlinedIcon, DownArrowIcon } from '~src/ui-components/Cus
 import Proxy from '../Settings/Account/Proxy';
 import MultiSignatureAddress from '../Settings/Account/MultiSignatureAddress';
 import getEncodedAddress from '~src/util/getEncodedAddress';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -40,7 +40,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	const dispatch = useDispatch();
 	const { id, loginAddress } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { network } = useNetworkSelector();
 	const { addresses } = userProfile;
 	const [openAddressLinkModal, setOpenAddressLinkModal] = useState<boolean>(false);
@@ -93,8 +93,8 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
+		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady) return;
 
 		let promiseArr: any[] = [];
@@ -117,7 +117,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 		if (!api || !apiReady) return;
 		handleBeneficiaryIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [addresses, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
+	}, [addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	const handleRemoveIdentity = () => {
 		if (loginAddress) {

@@ -46,8 +46,8 @@ interface IPostDescriptionProps {
 	id: number | null | undefined;
 	isEditing: boolean;
 	isOnchainPost: boolean;
-	toggleEdit: () => void;
-	TrackerButtonComp: JSX.Element;
+	toggleEdit?: () => void;
+	TrackerButtonComp?: JSX.Element;
 	Sidebar: ({ className }: { className?: string | undefined }) => JSX.Element;
 }
 
@@ -170,7 +170,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 							<button
 								className='cursor-pointer rounded-md border-none bg-transparent shadow-none'
 								onClick={() => {
-									toggleEdit();
+									toggleEdit?.();
 									trackEvent('post_edit_button_clicked', 'clicked_edit_post_button', {
 										postIndex: postIndex,
 										postType: postType,

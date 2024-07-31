@@ -11,7 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext } from 'src/context';
+import { useApiContext, usePeopleChainApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -299,7 +299,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -330,12 +330,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (['kusama', 'polkadot'].includes(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -831,6 +831,30 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		}
 	}
 
+	if (['polkadot'].includes(network)) {
+		gov2TrackItems.mainItems.push(
+			getSiderMenuItem(
+				<div className='ml-[2px] flex items-center gap-1.5'>
+					Bounties
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/bounty',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+
 	const gov2OverviewItems = [
 		!isMobile
 			? getSiderMenuItem(
@@ -870,31 +894,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			3,
 			0,
 			getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-		);
-	}
-	if (network == 'polkadot') {
-		gov2OverviewItems.splice(
-			4,
-			0,
-			getSiderMenuItem(
-				<div className='ml-[2px] flex items-center gap-1.5'>
-					Bounty
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
-				</div>,
-				'/bounty',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						NEW
-					</div>
-				</div>
-			)
 		);
 	}
 	if (['polkadot'].includes(network)) {
@@ -970,7 +969,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			items = items.concat(
 				getSiderMenuItem(
 					<div className='flex items-center gap-1.5'>
-						Bounties
+						{network == 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
 							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
 						</span>
@@ -1110,7 +1109,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={className}>
+		<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
 			<NavHeader
 				theme={theme as any}
 				sidedrawer={sidedrawer}
@@ -1200,7 +1199,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
+					<Layout className={'min-h-[calc(100vh - 10rem)] overflow-x-none overflow-y-none flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 						<CustomContent

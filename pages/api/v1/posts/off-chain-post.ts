@@ -116,6 +116,7 @@ export async function getOffChainPost(params: IGetOffChainPostParams): Promise<I
 			comments: [],
 			content: data?.content,
 			created_at: data?.created_at?.toDate ? data?.created_at?.toDate() : data?.created_at,
+			dataSource: 'polkassembly',
 			gov_type: gov_type,
 			history,
 			isSpam: data?.isSpam,

@@ -33,7 +33,7 @@ import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 
@@ -59,7 +59,7 @@ const IdentityForm = ({
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
@@ -75,12 +75,12 @@ const IdentityForm = ({
 	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (['kusama', 'polkadot'].includes(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -117,69 +117,65 @@ const IdentityForm = ({
 			await handleIdentityHashSave(identityHash);
 		};
 
-		if (requestJudgement && network == 'polkadot') {
-			onSuccess();
+		if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
+			// GAEvent for request judgement button clicked
+			trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
 		} else {
-			if (identityInfo?.email && identityInfo?.displayName && allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) {
-				// GAEvent for request judgement button clicked
-				trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
-					userId: currentUser?.id || '',
-					userName: currentUser?.username || ''
-				});
-			} else {
-				// GAEvent for set identity button clicked
-				trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
-					userId: currentUser?.id || '',
-					userName: currentUser?.username || ''
-				});
-			}
-			const registrarIndex = getIdentityRegistrarIndex({ network: network });
-
-			if (!api || !apiReady || !okAll || registrarIndex === null) return;
-			if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
-
-			let tx;
-			if (requestJudgement) {
-				tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-			} else {
-				const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-				const identityTx = api.tx?.identity?.setIdentity(info);
-				tx = network === 'polkadot' ? identityTx : api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
-			}
-
-			setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
-
-			const onFailed = () => {
-				queueNotification({
-					header: 'failed!',
-					message: 'Transaction failed!',
-					status: NotificationStatus.ERROR
-				});
-				setLoading(false);
-				setStartLoading({ isLoading: false, message: '' });
-			};
-
-			let payload: any = {
-				address: identityAddress,
-				api,
-				apiReady,
-				errorMessageFallback: 'failed.',
-				network,
-				onFailed,
-				onSuccess,
-				setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
-				tx
-			};
-
-			if (selectedProxyAddress?.length && showProxyDropdown) {
-				payload = {
-					...payload,
-					proxyAddress: selectedProxyAddress || ''
-				};
-			}
-
-			await executeTx(payload);
+			// GAEvent for set identity button clicked
+			trackEvent('set_identity_cta_clicked', 'clicked_set_identity_cta', {
+				userId: currentUser?.id || '',
+				userName: currentUser?.username || ''
+			});
 		}
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+
+		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+		if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
+
+		let tx;
+		if (requestJudgement) {
+			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+		} else {
+			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			const identityTx = api.tx?.identity?.setIdentity(info);
+			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+		}
+
+		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
+
+		const onFailed = () => {
+			queueNotification({
+				header: 'failed!',
+				message: 'Transaction failed!',
+				status: NotificationStatus.ERROR
+			});
+			setLoading(false);
+			setStartLoading({ isLoading: false, message: '' });
+		};
+
+		let payload: any = {
+			address: identityAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed,
+			onSuccess,
+			setStatus: (message: string) => setStartLoading({ isLoading: true, message }),
+			tx
+		};
+
+		if (selectedProxyAddress?.length && showProxyDropdown) {
+			payload = {
+				...payload,
+				proxyAddress: selectedProxyAddress || ''
+			};
+		}
+
+		await executeTx(payload);
 	};
 
 	const handleOnAvailableBalanceChange = (balanceStr: string) => {
@@ -273,7 +269,7 @@ const IdentityForm = ({
 				form={form}
 				initialValues={{ displayName, email: email?.value, legalName, twitter: twitter?.value }}
 			>
-				{onchainIdentitySupportedNetwork.includes(network) && network === 'kusama' && (
+				{onchainIdentitySupportedNetwork.includes(network) && ['kusama', 'polkadot'].includes(network) && (
 					<div
 						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}

@@ -540,6 +540,7 @@ const Web3Login: FC<Props> = ({
 										onClick={() => handleBackToLogin()}
 										className='web3-button mr-3 w-[144px]'
 									/>
+
 									{!withPolkasafe && (
 										<CustomButton
 											icon={<CheckOutlined />}
@@ -678,6 +679,19 @@ const Web3Login: FC<Props> = ({
 											)}
 										</div>
 									</AuthForm>
+								)}
+								{!extensionNotFound && !accounts.length && !!chosenWallet && !loading && (
+									<Alert
+										description={
+											<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
+												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your {chosenWallet} wallet</h3>
+												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
+											</div>
+										}
+										showIcon
+										className='mb-3 p-3'
+										type='info'
+									/>
 								)}
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>

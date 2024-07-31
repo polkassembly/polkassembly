@@ -6,6 +6,7 @@ import { useUserDetailsSelector } from '~src/redux/selectors';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import BountyActionModal from './BountyActionModal';
+import { spaceGrotesk } from 'pages/_app';
 
 interface IBountyProposalActionButtonProps {
 	className?: string;
@@ -46,7 +47,7 @@ const BountyProposalActionButton = ({ className }: IBountyProposalActionButtonPr
 					alt='bounty icon'
 					imgClassName=''
 				/>
-				<span className='font-bold text-white'>Create Bounty Proposal</span>
+				<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} font-bold text-white`}>Create Bounty Proposal</span>
 			</button>
 			<BountyActionModal
 				theme={theme}

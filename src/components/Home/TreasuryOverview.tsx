@@ -28,7 +28,6 @@ import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { poppins } from 'pages/_app';
-import { formatedBalance } from '~src/util/formatedBalance';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import { formatNumberWithSuffix } from '../Bounties/utils/formatBalanceUsd';
 
@@ -40,8 +39,6 @@ interface ITreasuryOverviewProps {
 	className?: string;
 	theme?: string;
 }
-
-const ZERO_BN = new BN(0);
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals, isUsedinPolkadot, theme } = props;
@@ -170,11 +167,13 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 					console.error(error);
 				});
 		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
 		if (!assethubApi || !assethubApiReady) return;
 		fetchAssetsAmount();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [assethubApi, assethubApiReady]);
 
 	useEffect(() => {
@@ -431,7 +430,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		};
 	}, [currentTokenPrice, network]);
 
-	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withUnit: false, withThousandDelimitor: false }, network);
+	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatBnBalance(assethubValues.usdcValue, { numberAfterComma: 0, withUnit: false }, network);
 	const assetValueUSDT = formatBnBalance(assethubValues.usdtValue, { numberAfterComma: 0, withUnit: false }, network);
 

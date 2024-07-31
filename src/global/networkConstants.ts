@@ -185,6 +185,10 @@ export const tokenSymbol = {
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
+		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
+		assetHubAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
+		assetHubUSDCId: '1337',
+		assetHubUSDTId: '1984',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,

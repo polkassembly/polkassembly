@@ -122,6 +122,10 @@ export interface ChainProps {
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	assetHubRpcEndpoint?: string;
+	assetHubAddress?: string;
+	assetHubUSDTId?: string;
+	assetHubUSDCId?: string;
 }
 
 export type TRPCEndpoint = {

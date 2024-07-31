@@ -9,7 +9,7 @@ import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import BN from 'bn.js';
@@ -45,7 +45,7 @@ const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const [open, setOpen] = useState<boolean>(false);
@@ -81,8 +81,8 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	}, [network, delegate?.address]);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
+		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady || !delegate?.address) return;
 		setLoading(true);
 
@@ -100,7 +100,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		if (!api || !apiReady || !delegate?.address) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, delegate, network, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [address, api, apiReady, delegate, network, peopleChainApi, peopleChainApiReady]);
 
 	const handleClick = () => {
 		// GAEvent for delegate CTA clicked

@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { EAmbassadorSeedingRanks, IPromoteCall } from '../types';
+import { EAmbassadorActions, EAmbassadorSeedingRanks, IPromoteCall } from '../types';
 import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import AddressInput from '~src/ui-components/AddressInput';
 import { Button, Form, Radio, Spin } from 'antd';
@@ -26,42 +26,42 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
-	const { applicantAddress, rank, proposer, promoteCallData, xcmCallData } = useAmbassadorSeedingSelector();
+	const { addAmbassadorForm } = useAmbassadorSeedingSelector();
 	const [form] = Form.useForm();
 	const [collectivesApi, setCollectivesApi] = useState<ApiPromise | null>(null);
 	const [collectivesApiReady, setCollectivesApiReady] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleInductAddressChange = (address: string) => {
-		dispatch(ambassadorSeedingActions.updateApplicantAddress(address));
+		dispatch(ambassadorSeedingActions.updateApplicantAddress({ type: EAmbassadorActions.ADD_AMBASSADOR, value: address }));
 	};
 	const checkDisabled = () => {
 		let check = false;
-		check = !applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady;
-		if (applicantAddress) {
-			check = !getEncodedAddress(applicantAddress, network);
+		check = !addAmbassadorForm?.applicantAddress || !addAmbassadorForm?.promoteCallData || !addAmbassadorForm?.xcmCallData || !collectivesApi || !collectivesApiReady;
+		if (addAmbassadorForm?.applicantAddress) {
+			check = !getEncodedAddress(addAmbassadorForm?.applicantAddress, network);
 		}
 		return check;
 	};
 
 	const handlePromotesCall = async () => {
-		if (!collectivesApi || !collectivesApiReady || !applicantAddress || !api || !apiReady) return;
-		if (!getEncodedAddress(applicantAddress, network)) return;
+		if (!collectivesApi || !collectivesApiReady || !addAmbassadorForm?.applicantAddress || !api || !apiReady) return;
+		if (!getEncodedAddress(addAmbassadorForm?.applicantAddress, network)) return;
 
-		dispatch(ambassadorSeedingActions.updatePromoteCallData(''));
-		dispatch(ambassadorSeedingActions.updateXcmCallData(''));
+		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: '' }));
+		dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: '' }));
 
 		setLoading(true);
 
-		const inductCall = collectivesApi.tx.ambassadorCore.induct(applicantAddress);
+		const inductCall = collectivesApi.tx.ambassadorCore.induct(addAmbassadorForm?.applicantAddress);
 		const payload: any = [];
-		for (let i = 1; i <= rank; i++) {
-			const promoteCall = collectivesApi.tx.ambassadorCore.promote(applicantAddress, i);
+		for (let i = 1; i <= addAmbassadorForm?.rank; i++) {
+			const promoteCall = collectivesApi.tx.ambassadorCore.promote(addAmbassadorForm?.applicantAddress, i);
 			payload.push(promoteCall);
 		}
 		const collectivePreimage = collectivesApi.tx.utility.forceBatch([inductCall, ...payload]);
 		const promoteCallData = collectivePreimage.method.toHex();
-		dispatch(ambassadorSeedingActions.updatePromoteCallData(promoteCallData));
+		dispatch(ambassadorSeedingActions.updatePromoteCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: promoteCallData }));
 
 		if (promoteCallData) {
 			const xcmCall = api?.tx.xcmPallet.send(
@@ -97,7 +97,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 				}
 			);
 			const xcmCallData = xcmCall?.method?.toHex() || '';
-			dispatch(ambassadorSeedingActions.updateXcmCallData(xcmCallData));
+			dispatch(ambassadorSeedingActions.updateXcmCallData({ type: EAmbassadorActions.ADD_AMBASSADOR, value: xcmCallData }));
 		}
 		setLoading(false);
 	};
@@ -105,7 +105,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	useEffect(() => {
 		handlePromotesCall();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
+	}, [collectivesApi, collectivesApiReady, addAmbassadorForm?.applicantAddress, addAmbassadorForm?.rank, api, apiReady]);
 
 	useEffect(() => {
 		(async () => {
@@ -136,7 +136,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 			<div className={className}>
 				<Form
 					form={form}
-					initialValues={{ applicantAddress: applicantAddress || '' }}
+					initialValues={{ applicantAddress: addAmbassadorForm?.applicantAddress || '' }}
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -147,9 +147,9 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 									text='Please note the verification cannot be transferred to another address.'
 								/> */}
 							</label>
-							{(!!proposer || loginAddress) && (
+							{(!!addAmbassadorForm?.proposer || loginAddress) && (
 								<Balance
-									address={proposer || loginAddress}
+									address={addAmbassadorForm?.proposer || loginAddress}
 									usedInIdentityFlow
 								/>
 							)}
@@ -157,7 +157,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 						<div className='flex w-full items-end gap-2 text-sm '>
 							<div className='flex h-10 w-full items-center justify-between rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f5f5f5] px-2 dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay'>
 								<Address
-									address={proposer || loginAddress}
+									address={addAmbassadorForm?.proposer || loginAddress}
 									displayInline
 									disableTooltip
 									isTruncateUsername={false}
@@ -171,7 +171,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 							<AddressInput
 								skipFormatCheck
 								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
-								defaultAddress={applicantAddress || ''}
+								defaultAddress={addAmbassadorForm?.applicantAddress || ''}
 								name={'applicantAddress'}
 								placeholder='Enter Applicant Address'
 								iconClassName={'ml-[10px]'}
@@ -188,12 +188,12 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 					<div>
 						<Radio.Group
 							onChange={({ target }) => dispatch(ambassadorSeedingActions.updateAmbassadorRank(target?.value))}
-							value={rank}
+							value={addAmbassadorForm?.rank}
 							className='radio-input-group mt-2 dark:text-white'
 						>
 							<Radio
 								value={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
-								checked={rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
+								checked={addAmbassadorForm?.rank === EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 								className='capitalize text-lightBlue dark:text-white'
 								key={EAmbassadorSeedingRanks.HEAD_AMBASSADOR}
 							>
@@ -206,7 +206,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 						<Button
 							disabled={checkDisabled()}
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
-							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
+							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_PREIMAGE }))}
 						>
 							Next
 						</Button>

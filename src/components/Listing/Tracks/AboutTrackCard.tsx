@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -35,7 +35,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
-import RemoveAmbassador from '~src/components/AmbassadorSeeding/RemoveAmbassador';
+import AmbassadorActionButtons from '~src/components/AmbassadorSeeding/AmbassadorActionButtons';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -161,7 +161,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [showDetails, setShowDetails] = useState(false);
 	const [trackNum, setTrackNum] = useState<number | null>(null);
-	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
+
 	const [data, setData] = useState<any>({
 		datasets: [],
 		labels: []
@@ -297,18 +297,8 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 					<div className='flex gap-x-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
-							<div>
-								<Button
-									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-pink_primary text-white'
-									onClick={() => setOpenAmbassadorModal(true)}
-								>
-									Create Ambassador Application
-								</Button>
-								<RemoveAmbassador
-									open={openAmbassadorModal}
-									setOpen={setOpenAmbassadorModal}
-								/>
+							<div className='flex gap-2'>
+								<AmbassadorActionButtons />
 							</div>
 						)}
 						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
@@ -506,17 +496,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
-								<Button
-									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-pink_primary text-white'
-									onClick={() => setOpenAmbassadorModal(true)}
-								>
-									Create Ambassador Application
-								</Button>
-								<RemoveAmbassador
-									open={openAmbassadorModal}
-									setOpen={setOpenAmbassadorModal}
-								/>
+								<AmbassadorActionButtons />
 							</div>
 						)}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (

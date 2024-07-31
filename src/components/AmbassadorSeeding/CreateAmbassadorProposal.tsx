@@ -19,10 +19,9 @@ import classNames from 'classnames';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
-import { EAmbassadorActions, ICreateAmbassadorProposal } from './types';
-import { ambassadorRemovalActions } from '~src/redux/ambassadorRemoval';
+import { IAmbassadorProposalCreation } from './types';
 
-const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: ICreateAmbassadorProposal) => {
+const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
@@ -64,11 +63,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 		const postId = Number(await api.query.referenda.referendumCount());
 
 		const onSuccess = () => {
-			dispatch(
-				action === EAmbassadorActions.CREATE_AMBASSADOR
-					? ambassadorSeedingActions.updateAmbassadorProposalIndex(postId)
-					: ambassadorRemovalActions.updateRemovalAmbassadorProposalIndex(postId)
-			);
+			dispatch(ambassadorSeedingActions.updateAmbassadorProposalIndex({ type: action, value: postId }));
 			setOpen(false);
 			openSuccessModal();
 			setLoading({ isLoading: false, message: '' });
@@ -135,11 +130,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 									name='title'
 									className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									onChange={(e) => {
-										dispatch(
-											action === EAmbassadorActions.CREATE_AMBASSADOR
-												? ambassadorSeedingActions.updateDiscussionTitle(e.target.value || '')
-												: ambassadorRemovalActions.updateRemovalDiscussionTitle(e.target.value || '')
-										);
+										dispatch(ambassadorSeedingActions.updateDiscussionTitle({ type: action, value: e.target.value || '' }));
 									}}
 									value={discussion?.discussionTitle || ''}
 								/>
@@ -150,13 +141,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 							<Form.Item name='tags'>
 								<AddTags
 									tags={discussion.discussionTags}
-									setTags={(tags: string[]) =>
-										dispatch(
-											action === EAmbassadorActions.CREATE_AMBASSADOR
-												? ambassadorSeedingActions.updateDiscussionTags(tags || [])
-												: ambassadorRemovalActions.updateRemovalDiscussionTags(tags || [])
-										)
-									}
+									setTags={(tags: string[]) => dispatch(ambassadorSeedingActions.updateDiscussionTags({ type: action, value: tags || [] }))}
 								/>
 							</Form.Item>
 						</div>
@@ -170,11 +155,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 									value={discussion.discussionContent}
 									height={250}
 									onChange={(content: string) => {
-										dispatch(
-											action === EAmbassadorActions.CREATE_AMBASSADOR
-												? ambassadorSeedingActions.updateDiscussionContent(content || '')
-												: ambassadorRemovalActions.updateRemovalDiscussionContent(content || '')
-										);
+										dispatch(ambassadorSeedingActions.updateDiscussionContent({ type: action, value: content || '' }));
 									}}
 								/>
 							</Form.Item>

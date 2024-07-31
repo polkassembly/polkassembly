@@ -26,7 +26,6 @@ import { inAppNotificationsStore } from './inAppNotifications';
 import { ambassadorSeedingStore } from './ambassadorSeeding';
 import { useDispatch } from 'react-redux';
 import { batchVoteStore } from './batchVoting';
-import { ambassadorRemovalStore } from './ambassadorRemoval';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -93,7 +92,6 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 				web3signup: false
 			};
 		}
-
 		// Return what you want rehydrated
 		return outboundState;
 	},
@@ -120,8 +118,7 @@ export const makeStore = () => {
 		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
-		[batchVoteStore.name]: batchVoteStore.reducer,
-		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer
+		[batchVoteStore.name]: batchVoteStore.reducer
 	});
 
 	if (isServer) {
@@ -141,7 +138,7 @@ export const makeStore = () => {
 			key: 'polkassembly',
 			storage,
 			transforms: [userDetailsTransform],
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications', 'ambassadorSeeding', 'ambassadorRemoval'] // make sure it does not clash with server keys
+			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications', 'ambassadorSeeding'] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

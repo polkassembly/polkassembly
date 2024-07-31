@@ -24,8 +24,9 @@ export enum EAmbassadorSeedingRanks {
 }
 
 export enum EAmbassadorActions {
-	CREATE_AMBASSADOR = 'create_ambassador',
-	REMOVE_AMBASSADOR = 'remove_ambassador'
+	ADD_AMBASSADOR = 'addAmbassadorForm',
+	REMOVE_AMBASSADOR = 'removeAmbassadorForm',
+	REPLACE_AMBASSADOR = 'replaceAmbassadorForm'
 }
 
 export interface ICreateAmbassadorProposal {
@@ -47,4 +48,15 @@ export interface ICreateAmassadorPreimge {
 	proposer: string;
 	rank: EAmbassadorSeedingRanks;
 	xcmCallData: string;
+	removingApplicantAddress?: string;
+}
+
+export interface IAmbassadorProposalCreation {
+	className?: string;
+	setOpen: (pre: boolean) => void;
+	openSuccessModal: () => void;
+	action: EAmbassadorActions;
+	ambassadorPreimage: { hash: string; length: number };
+	proposer: string;
+	discussion: IAmbassadorProposalContent;
 }

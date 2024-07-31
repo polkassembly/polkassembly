@@ -13,11 +13,11 @@ import AmbassadorSuccess from '../AmbassadorSuccess';
 import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useDispatch } from 'react-redux';
-import { EAmbassadorRemovalSteps } from '~src/redux/ambassadorRemoval/@types';
-import { ambassadorRemovalActions } from '~src/redux/ambassadorRemoval';
-import { useAmbassadorRemovalSelector } from '~src/redux/selectors';
 import RemovalCall from './RemovalCall';
 import { EAmbassadorActions } from '../types';
+import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
+import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
+import { useAmbassadorSeedingSelector } from '~src/redux/selectors';
 
 interface IRemoveAmbassador {
 	className?: string;
@@ -26,24 +26,16 @@ interface IRemoveAmbassador {
 }
 
 const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
-	const {
-		removalAmbassadorStep,
-		removalAmbassadorProposer,
-		removalAmbassadorAddress,
-		removalAmbassadorXcmCallData,
-		removalAmbassadorRank,
-		removalAmbassadorDiscussion,
-		removalAmbassadorPreimage
-	} = useAmbassadorRemovalSelector();
+	const { removeAmbassadorForm } = useAmbassadorSeedingSelector();
 	const dispatch = useDispatch();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
 	const handleClose = () => {
-		if (removalAmbassadorStep === EAmbassadorRemovalSteps.CREATE_PROPOSAL) {
+		if (removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
 		} else {
-			dispatch(ambassadorRemovalActions.updateRemovalAmbassadorSteps(EAmbassadorRemovalSteps.REMOVAL_CALL));
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
 		}
 		setOpen(false);
 	};
@@ -55,7 +47,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				open={openWarningModal}
 				onCancel={() => {
 					setOpenWarningModal(false);
-					dispatch(ambassadorRemovalActions.updateRemovalAmbassadorSteps(EAmbassadorRemovalSteps.REMOVAL_CALL));
+					dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
 				}}
 				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
@@ -74,7 +66,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
-								dispatch(ambassadorRemovalActions.updateRemovalAmbassadorSteps(EAmbassadorRemovalSteps.REMOVAL_CALL));
+								dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
 								setOpen(false);
 								setOpenWarningModal(false);
 							}}
@@ -107,33 +99,33 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(removalAmbassadorStep, EAmbassadorActions.REMOVE_AMBASSADOR)}
+						{getModalTitleFromSteps(removeAmbassadorForm?.step, EAmbassadorActions.REMOVE_AMBASSADOR)}
 					</div>
 				}
 			>
 				<div>
-					{removalAmbassadorStep === EAmbassadorRemovalSteps.REMOVAL_CALL && <RemovalCall className='mt-6' />}
-					{removalAmbassadorStep === EAmbassadorRemovalSteps.CREATE_PREIMAGE && (
+					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <RemovalCall className='mt-6' />}
+					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
 						<CreateAmassadorPreimge
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							applicantAddress={removalAmbassadorAddress}
-							proposer={removalAmbassadorProposer}
-							rank={removalAmbassadorRank}
-							xcmCallData={removalAmbassadorXcmCallData}
+							applicantAddress={removeAmbassadorForm?.applicantAddress}
+							proposer={removeAmbassadorForm?.proposer}
+							rank={removeAmbassadorForm?.rank}
+							xcmCallData={removeAmbassadorForm?.xcmCallData}
 						/>
 					)}
-					{removalAmbassadorStep === EAmbassadorRemovalSteps.CREATE_PROPOSAL && (
+					{removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
 						<WriteAmbassadorProposal
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							ambassadorPreimage={removalAmbassadorPreimage}
-							discussion={removalAmbassadorDiscussion}
-							proposer={removalAmbassadorProposer}
+							ambassadorPreimage={removeAmbassadorForm?.ambassadorPreimage}
+							discussion={removeAmbassadorForm?.discussion}
+							proposer={removeAmbassadorForm?.proposer}
 						/>
 					)}
 				</div>
@@ -142,7 +134,11 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				openPrevModal={() => setOpen(true)}
-				isPreimageSuccess={removalAmbassadorStep == EAmbassadorRemovalSteps.CREATE_PREIMAGE}
+				isPreimageSuccess={removeAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
+				action={EAmbassadorActions.REMOVE_AMBASSADOR}
+				ambassadorPostIndex={removeAmbassadorForm?.ambassadorPostIndex}
+				ambassadorPreimage={removeAmbassadorForm?.ambassadorPreimage}
+				step={removeAmbassadorForm?.step}
 			/>
 		</div>
 	);

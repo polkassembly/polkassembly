@@ -35,9 +35,13 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
-import AmbassadorActionButtons from '~src/components/AmbassadorSeeding/AmbassadorActionButtons';
 
 const Curves = dynamic(() => import('./Curves'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+
+const AmbassadorActionButtons = dynamic(() => import('~src/components/AmbassadorSeeding/AmbassadorActionButtons'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

@@ -97,18 +97,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{network === 'polkadot' && (
-				<Alert
-					className='mb-6 rounded-[4px]'
-					type='warning'
-					showIcon
-					message={
-						<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-							Identity is unavailable for Polkadot as People Chain is getting migrated <a href='polkadot.polkass/'>Check here</a>
-						</p>
-					}
-				/>
-			)}
+
 			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
@@ -200,17 +189,12 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
 					}}
 					height={40}
-					//temp
-					disabled={network === 'polkadot'}
-					className={classNames('w-full', network === 'polkadot' ? 'opacity-50' : '')}
+					className={classNames('w-full')}
 					variant='primary'
 				/>
 				<button
 					onClick={handleRequestJudgement}
-					className={classNames(
-						'mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay',
-						network === 'polkadot' ? 'opacity-50' : ''
-					)}
+					className={classNames('mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay')}
 				>
 					Request Judgement
 					<HelperTooltip

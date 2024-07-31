@@ -142,10 +142,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	};
 
 	useEffect(() => {
-		fetchAssetsAmount();
-	}, [assethubApi, assethubApiReady]);
-
-	useEffect(() => {
 		(async () => {
 			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.POLKADOT]?.assetHubRpcEndpoint);
 			const apiPromise = await ApiPromise.create({ provider: wsProvider });

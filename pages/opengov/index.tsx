@@ -154,11 +154,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				</div>
 			)}
 			<div className='mx-1 mt-8'>
-				{/* Here */}
-				<TreasuryOverview
-					theme={theme}
-					isUsedinPolkadot={true}
-				/>
+				<TreasuryOverview theme={theme} />
 			</div>
 
 			<div className='mx-1 mt-8'>

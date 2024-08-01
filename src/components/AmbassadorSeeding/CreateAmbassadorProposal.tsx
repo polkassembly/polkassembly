@@ -10,7 +10,6 @@ import { EAllowedCommentor, ILoading, NotificationStatus } from '~src/types';
 import ContentForm from '../ContentForm';
 import { useDispatch } from 'react-redux';
 import AllowedCommentorsRadioButtons from '../AllowedCommentorsRadioButtons';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { useApiContext } from '~src/context';
 import { BN_HUNDRED } from '@polkadot/util';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -18,8 +17,10 @@ import executeTx from '~src/util/executeTx';
 import classNames from 'classnames';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
-import { ProposalType } from '~src/global/proposalType';
-import { IAmbassadorProposalCreation } from './types';
+import { EAmbassadorActions, IAmbassadorProposalCreation } from './types';
+import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
+import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
+import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
 
 const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action, ambassadorPreimage, discussion, proposer }: IAmbassadorProposalCreation) => {
 	const dispatch = useDispatch();
@@ -30,13 +31,65 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [allowedCommentor, setAllowedCommentor] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
+	const handleAmbassadorProposalIndexChange = (proposalIndex: number) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateAmbassadorProposalIndex(proposalIndex));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateAmbassadorProposalIndex(proposalIndex));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateAmbassadorProposalIndex(proposalIndex));
+				break;
+		}
+	};
+	const handleAmbassadorDiscussionTitleChange = (title: string) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateDiscussionTitle(title || ''));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateDiscussionTitle(title || ''));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateDiscussionTitle(title || ''));
+				break;
+		}
+	};
+	const handleAmbassadorDiscussionTagsChange = (tags: string[]) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateDiscussionTags(tags || []));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateDiscussionTags(tags || []));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateDiscussionTags(tags || []));
+				break;
+		}
+	};
+	const handleAmbassadorDiscussionContentChange = (content: string) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateDiscussionContent(content || ''));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateDiscussionContent(content || ''));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateDiscussionContent(content || ''));
+				break;
+		}
+	};
+
 	const handleSaveProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
 			allowedCommentors: [allowedCommentor] || [EAllowedCommentor.ALL],
 			content: discussion.discussionContent,
 			discussionId: null,
 			postId,
-			proposalType: ProposalType.FELLOWSHIP_REFERENDUMS,
 			proposerAddress: proposer || loginAddress,
 			tags: discussion.discussionTags,
 			title: discussion.discussionTitle,
@@ -63,7 +116,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 		const postId = Number(await api.query.referenda.referendumCount());
 
 		const onSuccess = () => {
-			dispatch(ambassadorSeedingActions.updateAmbassadorProposalIndex({ type: action, value: postId }));
+			handleAmbassadorProposalIndexChange(postId);
 			setOpen(false);
 			openSuccessModal();
 			setLoading({ isLoading: false, message: '' });
@@ -87,7 +140,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 			network,
 			onFailed,
 			onSuccess: onSuccess,
-			setStatus: (message: string) => setLoading({ ...loading, message: message }),
+			setStatus: (message: string) => setLoading({ isLoading: true, message: message }),
 			tx: tx
 		});
 	};
@@ -130,7 +183,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 									name='title'
 									className='h-10 rounded-[4px] dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 									onChange={(e) => {
-										dispatch(ambassadorSeedingActions.updateDiscussionTitle({ type: action, value: e.target.value || '' }));
+										handleAmbassadorDiscussionTitleChange(e?.target?.value || '');
 									}}
 									value={discussion?.discussionTitle || ''}
 								/>
@@ -141,7 +194,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 							<Form.Item name='tags'>
 								<AddTags
 									tags={discussion.discussionTags}
-									setTags={(tags: string[]) => dispatch(ambassadorSeedingActions.updateDiscussionTags({ type: action, value: tags || [] }))}
+									setTags={(tags: string[]) => handleAmbassadorDiscussionTagsChange(tags || [])}
 								/>
 							</Form.Item>
 						</div>
@@ -155,7 +208,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 									value={discussion.discussionContent}
 									height={250}
 									onChange={(content: string) => {
-										dispatch(ambassadorSeedingActions.updateDiscussionContent({ type: action, value: content || '' }));
+										handleAmbassadorDiscussionContentChange(content || '');
 									}}
 								/>
 							</Form.Item>

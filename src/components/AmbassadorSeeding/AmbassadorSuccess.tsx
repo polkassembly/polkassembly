@@ -6,8 +6,6 @@ import React from 'react';
 import { Button, Modal, message } from 'antd';
 import { poppins } from 'pages/_app';
 import { useDispatch } from 'react-redux';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 import { CloseIcon, CopyIcon } from '~src/ui-components/CustomIcons';
 import SuccessIcon from '~assets/delegation-tracks/success-delegate.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -15,6 +13,10 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import Link from 'next/link';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { EAmbassadorActions } from './types';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
+import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
+import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 
 interface Props {
 	open: boolean;
@@ -44,6 +46,34 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 	const copyLink = (address: string) => {
 		copyToClipboard(address);
 	};
+
+	const handleAmbassadorStepChange = (step: EAmbassadorSeedingSteps) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateAmbassadorSteps(step));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateAmbassadorSteps(step));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateAmbassadorSteps(step));
+				break;
+		}
+	};
+	const handleAmbassadorReset = () => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.resetAmbassadorSeeding());
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.resetAmbassadorRemovalSeeding());
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.resetAmbassadorReplacenentSeeding());
+				break;
+		}
+	};
+
 	return (
 		<Modal
 			zIndex={1000}
@@ -52,11 +82,11 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 			onCancel={() => {
-				dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: action, value: EAmbassadorSeedingSteps.CREATE_PROPOSAL }));
+				handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_PROPOSAL);
 				setOpen(false);
 				openPrevModal();
 				if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
-					dispatch(ambassadorSeedingActions.resetAmbassadorSeeding());
+					handleAmbassadorReset();
 				}
 			}}
 			footer={
@@ -65,7 +95,7 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 						<Button
 							className='h-10 w-full border-none bg-pink_primary text-white'
 							onClick={() => {
-								dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: action, value: EAmbassadorSeedingSteps.CREATE_PROPOSAL }));
+								handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_PROPOSAL);
 								setOpen(false);
 								openPrevModal();
 							}}
@@ -99,7 +129,6 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 				</div>
 				{isPreimageSuccess && (
 					<div className='pb-4'>
-						{ambassadorPreimage?.hash}
 						<span
 							className='text ml-1 flex cursor-pointer items-center justify-center text-bodyBlue dark:text-blue-dark-high'
 							onClick={(e) => {

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 import { EAmbassadorActions } from '../types';
 
 const getModalTitleFromSteps = (step: EAmbassadorSeedingSteps, action: EAmbassadorActions) => {

@@ -9,8 +9,6 @@ import { useAmbassadorSeedingSelector, useUserDetailsSelector } from '~src/redux
 import styled from 'styled-components';
 import PromoteCall from './PromoteCall';
 import { useDispatch } from 'react-redux';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 import { EAmbassadorActions, EAmbassadorSeedingRanks, IAmbassadorSeeding } from '../types';
 import CreateAmassadorPreimge from '../CreateAmassadorPreimge';
 import getModalTitleFromSteps from '../utils/getModalTitleFromSteps';
@@ -18,35 +16,43 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import AmbassadorSuccess from '../AmbassadorSuccess';
 import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
 
 const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => {
 	const dispatch = useDispatch();
 	const { loginAddress } = useUserDetailsSelector();
-	const ambassadorStoreData = useAmbassadorSeedingSelector();
+	const {
+		ambassadorPostIndex = null,
+		ambassadorPreimage = { hash: '', length: 0 },
+		applicantAddress = '',
+		discussion = { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone = false,
+		proposer = loginAddress,
+		rank = 3,
+		step = EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData = ''
+	} = useAmbassadorSeedingSelector();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
 	const handleClose = () => {
-		if (ambassadorStoreData?.addAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
+		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
 		} else {
-			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
 		setOpen(false);
 	};
 
 	useEffect(() => {
-		dispatch(ambassadorSeedingActions.updateProposer({ type: EAmbassadorActions.ADD_AMBASSADOR, value: loginAddress }));
-		if (
-			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage?.hash &&
-			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage?.length &&
-			ambassadorStoreData?.addAmbassadorForm?.isPreimageCreationDone
-		) {
-			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_PROPOSAL }));
+		dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
+		if (ambassadorPreimage?.hash && ambassadorPreimage?.length && isPreimageCreationDone) {
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL));
 		} else {
-			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
-		dispatch(ambassadorSeedingActions.updateAmbassadorRank({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingRanks.HEAD_AMBASSADOR }));
+		dispatch(ambassadorSeedingActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -57,7 +63,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 				open={openWarningModal}
 				onCancel={() => {
 					setOpenWarningModal(false);
-					dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+					dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 				}}
 				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
@@ -76,7 +82,7 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
-								dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+								dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 								setOpen(false);
 								setOpenWarningModal(false);
 							}}
@@ -109,33 +115,33 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(ambassadorStoreData?.addAmbassadorForm?.step, EAmbassadorActions.ADD_AMBASSADOR)}
+						{getModalTitleFromSteps(step, EAmbassadorActions.ADD_AMBASSADOR)}
 					</div>
 				}
 			>
 				<div>
-					{ambassadorStoreData?.addAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <PromoteCall className='mt-6' />}
-					{ambassadorStoreData?.addAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
+					{step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <PromoteCall className='mt-6' />}
+					{step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
 						<CreateAmassadorPreimge
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
 							action={EAmbassadorActions.ADD_AMBASSADOR}
-							applicantAddress={ambassadorStoreData?.addAmbassadorForm?.applicantAddress}
-							proposer={ambassadorStoreData?.addAmbassadorForm?.proposer}
-							rank={ambassadorStoreData?.addAmbassadorForm?.rank}
-							xcmCallData={ambassadorStoreData?.addAmbassadorForm?.xcmCallData}
+							applicantAddress={applicantAddress}
+							proposer={proposer}
+							rank={rank}
+							xcmCallData={xcmCallData}
 						/>
 					)}
-					{ambassadorStoreData?.addAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
+					{step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
 						<WriteAmbassadorProposal
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
 							action={EAmbassadorActions.ADD_AMBASSADOR}
-							ambassadorPreimage={ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage}
-							discussion={ambassadorStoreData?.addAmbassadorForm?.discussion}
-							proposer={ambassadorStoreData?.addAmbassadorForm?.proposer}
+							ambassadorPreimage={ambassadorPreimage}
+							discussion={discussion}
+							proposer={proposer}
 						/>
 					)}
 				</div>
@@ -144,11 +150,11 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				openPrevModal={() => setOpen(true)}
-				isPreimageSuccess={ambassadorStoreData?.addAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
+				isPreimageSuccess={step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
 				action={EAmbassadorActions.ADD_AMBASSADOR}
-				ambassadorPostIndex={ambassadorStoreData?.addAmbassadorForm?.ambassadorPostIndex}
-				ambassadorPreimage={ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage}
-				step={ambassadorStoreData?.addAmbassadorForm?.step}
+				ambassadorPostIndex={ambassadorPostIndex}
+				ambassadorPreimage={ambassadorPreimage}
+				step={step}
 			/>
 		</div>
 	);

@@ -6,6 +6,7 @@ import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
+import console_pretty from '~src/api-utils/console_pretty';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import authServiceInstance from '~src/auth/auth';
 import { CreatePostResponseType } from '~src/auth/types';
@@ -83,8 +84,10 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 		user_id: user.id
 	};
 
+	console_pretty({ newPost, title, content });
+
 	await postDocRef
-		.set(newPost)
+		.set(newPost, {merge: true})
 		.then(() => {
 			return res.status(200).json({ message: messages.TREASURY_PROPOSAL_CREATION_SUCCESS, post_id: postId });
 		})

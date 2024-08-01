@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
@@ -14,10 +14,10 @@ import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useDispatch } from 'react-redux';
 import RemovalCall from './RemovalCall';
-import { EAmbassadorActions } from '../types';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import { useAmbassadorSeedingSelector } from '~src/redux/selectors';
+import { EAmbassadorActions, EAmbassadorSeedingRanks } from '../types';
+import { useAmbassadorRemovalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 
 interface IRemoveAmbassador {
 	className?: string;
@@ -26,19 +26,41 @@ interface IRemoveAmbassador {
 }
 
 const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
-	const ambassadorStoreData = useAmbassadorSeedingSelector();
+	const { loginAddress } = useUserDetailsSelector();
+	const {
+		ambassadorPostIndex = null,
+		ambassadorPreimage = { hash: '', length: 0 },
+		applicantAddress = '',
+		discussion = { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone = false,
+		proposer = loginAddress,
+		rank = 3,
+		step = EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData = ''
+	} = useAmbassadorRemovalSelector();
 	const dispatch = useDispatch();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
 	const handleClose = () => {
-		if (ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
+		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
 		} else {
-			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+			dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
 		setOpen(false);
 	};
+
+	useEffect(() => {
+		dispatch(ambassadorRemovalActions.updateProposer(loginAddress));
+		if (ambassadorPreimage?.hash && ambassadorPreimage?.length && isPreimageCreationDone) {
+			dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL));
+		} else {
+			dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
+		}
+		dispatch(ambassadorRemovalActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<div className={className}>
@@ -47,7 +69,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				open={openWarningModal}
 				onCancel={() => {
 					setOpenWarningModal(false);
-					dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+					dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 				}}
 				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
@@ -66,7 +88,7 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
-								dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REMOVE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+								dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 								setOpen(false);
 								setOpenWarningModal(false);
 							}}
@@ -99,33 +121,33 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(ambassadorStoreData?.removeAmbassadorForm?.step, EAmbassadorActions.REMOVE_AMBASSADOR)}
+						{getModalTitleFromSteps(step, EAmbassadorActions.REMOVE_AMBASSADOR)}
 					</div>
 				}
 			>
 				<div>
-					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <RemovalCall className='mt-6' />}
-					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
+					{step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <RemovalCall className='mt-6' />}
+					{step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
 						<CreateAmassadorPreimge
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							applicantAddress={ambassadorStoreData?.removeAmbassadorForm?.applicantAddress}
-							proposer={ambassadorStoreData?.removeAmbassadorForm?.proposer}
-							rank={ambassadorStoreData?.removeAmbassadorForm?.rank}
-							xcmCallData={ambassadorStoreData?.removeAmbassadorForm?.xcmCallData}
+							applicantAddress={applicantAddress}
+							proposer={proposer}
+							rank={rank}
+							xcmCallData={xcmCallData}
 						/>
 					)}
-					{ambassadorStoreData?.removeAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
+					{step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
 						<WriteAmbassadorProposal
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
 							action={EAmbassadorActions.REMOVE_AMBASSADOR}
-							ambassadorPreimage={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPreimage}
-							discussion={ambassadorStoreData?.removeAmbassadorForm?.discussion}
-							proposer={ambassadorStoreData?.removeAmbassadorForm?.proposer}
+							ambassadorPreimage={ambassadorPreimage}
+							discussion={discussion}
+							proposer={proposer}
 						/>
 					)}
 				</div>
@@ -134,11 +156,11 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				openPrevModal={() => setOpen(true)}
-				isPreimageSuccess={ambassadorStoreData?.removeAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
+				isPreimageSuccess={step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
 				action={EAmbassadorActions.REMOVE_AMBASSADOR}
-				ambassadorPostIndex={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPostIndex}
-				ambassadorPreimage={ambassadorStoreData?.removeAmbassadorForm?.ambassadorPreimage}
-				step={ambassadorStoreData?.removeAmbassadorForm?.step}
+				ambassadorPostIndex={ambassadorPostIndex}
+				ambassadorPreimage={ambassadorPreimage}
+				step={step}
 			/>
 		</div>
 	);

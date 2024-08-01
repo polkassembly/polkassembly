@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
@@ -13,11 +13,11 @@ import AmbassadorSuccess from '../AmbassadorSuccess';
 import WriteAmbassadorProposal from '../CreateAmbassadorProposal';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useDispatch } from 'react-redux';
-import { EAmbassadorActions } from '../types';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import { useAmbassadorSeedingSelector } from '~src/redux/selectors';
+import { EAmbassadorActions, EAmbassadorSeedingRanks } from '../types';
+import { useAmbassadorReplacementSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import ReplacementCall from './ReplacementCall';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
+import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
 
 interface IReplaceAmbassador {
 	className?: string;
@@ -26,19 +26,42 @@ interface IReplaceAmbassador {
 }
 
 const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => {
-	const ambassadorStoreData = useAmbassadorSeedingSelector();
+	const { loginAddress } = useUserDetailsSelector();
+	const {
+		ambassadorPostIndex = null,
+		ambassadorPreimage = { hash: '', length: 0 },
+		applicantAddress = '',
+		discussion = { discussionContent: '', discussionTags: [], discussionTitle: '' },
+		isPreimageCreationDone = false,
+		proposer = loginAddress,
+		rank = 3,
+		step = EAmbassadorSeedingSteps.CREATE_APPLICANT,
+		xcmCallData = '',
+		removingApplicantAddress = ''
+	} = useAmbassadorReplacementSelector();
 	const dispatch = useDispatch();
 	const [openSuccessModal, setOpenSuccessModal] = useState(false);
 	const [openWarningModal, setOpenWarningModal] = useState(false);
 
 	const handleClose = () => {
-		if (ambassadorStoreData?.replaceAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
+		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
 		} else {
-			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+			dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
 		setOpen(false);
 	};
+
+	useEffect(() => {
+		dispatch(ambassadorReplacementActions.updateProposer(loginAddress));
+		if (ambassadorPreimage?.hash && ambassadorPreimage?.length && isPreimageCreationDone) {
+			dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PROPOSAL));
+		} else {
+			dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
+		}
+		dispatch(ambassadorReplacementActions.updateAmbassadorRank(EAmbassadorSeedingRanks.HEAD_AMBASSADOR));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<div className={className}>
@@ -47,7 +70,7 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 				open={openWarningModal}
 				onCancel={() => {
 					setOpenWarningModal(false);
-					dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+					dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 				}}
 				footer={false}
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
@@ -66,7 +89,7 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] dark:border-separatorDark'>
 						<CustomButton
 							onClick={() => {
-								dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.REPLACE_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_APPLICANT }));
+								dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 								setOpen(false);
 								setOpenWarningModal(false);
 							}}
@@ -99,34 +122,34 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 				}}
 				title={
 					<div className='-mx-6 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						{getModalTitleFromSteps(ambassadorStoreData?.replaceAmbassadorForm?.step, EAmbassadorActions.REPLACE_AMBASSADOR)}
+						{getModalTitleFromSteps(step, EAmbassadorActions.REPLACE_AMBASSADOR)}
 					</div>
 				}
 			>
 				<div>
-					{ambassadorStoreData?.replaceAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <ReplacementCall className='mt-6' />}
-					{ambassadorStoreData?.replaceAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
+					{step === EAmbassadorSeedingSteps.CREATE_APPLICANT && <ReplacementCall className='mt-6' />}
+					{step === EAmbassadorSeedingSteps.CREATE_PREIMAGE && (
 						<CreateAmassadorPreimge
 							className='mt-6'
 							setOpenSuccessModal={setOpenSuccessModal}
 							closeCurrentModal={() => setOpen(false)}
 							action={EAmbassadorActions.REPLACE_AMBASSADOR}
-							applicantAddress={ambassadorStoreData?.replaceAmbassadorForm?.applicantAddress}
-							proposer={ambassadorStoreData?.replaceAmbassadorForm?.proposer}
-							rank={ambassadorStoreData?.replaceAmbassadorForm?.rank}
-							xcmCallData={ambassadorStoreData?.replaceAmbassadorForm?.xcmCallData}
-							removingApplicantAddress={ambassadorStoreData?.replaceAmbassadorForm.removingApplicantAddress || ''}
+							applicantAddress={applicantAddress}
+							proposer={proposer}
+							rank={rank}
+							xcmCallData={xcmCallData}
+							removingApplicantAddress={removingApplicantAddress || ''}
 						/>
 					)}
-					{ambassadorStoreData?.replaceAmbassadorForm?.step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
+					{step === EAmbassadorSeedingSteps.CREATE_PROPOSAL && (
 						<WriteAmbassadorProposal
 							setOpen={setOpen}
 							openSuccessModal={() => setOpenSuccessModal(true)}
 							className='mt-6'
 							action={EAmbassadorActions.REPLACE_AMBASSADOR}
-							ambassadorPreimage={ambassadorStoreData?.replaceAmbassadorForm?.ambassadorPreimage}
-							discussion={ambassadorStoreData?.replaceAmbassadorForm?.discussion}
-							proposer={ambassadorStoreData?.replaceAmbassadorForm?.proposer}
+							ambassadorPreimage={ambassadorPreimage}
+							discussion={discussion}
+							proposer={proposer}
 						/>
 					)}
 				</div>
@@ -135,11 +158,11 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 				open={openSuccessModal}
 				setOpen={setOpenSuccessModal}
 				openPrevModal={() => setOpen(true)}
-				isPreimageSuccess={ambassadorStoreData?.replaceAmbassadorForm?.step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
+				isPreimageSuccess={step == EAmbassadorSeedingSteps.CREATE_PREIMAGE}
 				action={EAmbassadorActions.REPLACE_AMBASSADOR}
-				ambassadorPostIndex={ambassadorStoreData?.replaceAmbassadorForm?.ambassadorPostIndex}
-				ambassadorPreimage={ambassadorStoreData?.replaceAmbassadorForm?.ambassadorPreimage}
-				step={ambassadorStoreData?.replaceAmbassadorForm?.step}
+				ambassadorPostIndex={ambassadorPostIndex}
+				ambassadorPreimage={ambassadorPreimage}
+				step={step}
 			/>
 		</div>
 	);

@@ -17,7 +17,7 @@ const getCollectiveApi = async (): Promise<{ collectiveApi: ApiPromise | null; c
 		await apiPromise.disconnect();
 	}, 60000);
 
-	apiPromise?.isReady
+	await apiPromise?.isReady
 		.then(() => {
 			clearTimeout(timer);
 

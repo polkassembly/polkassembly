@@ -98,6 +98,15 @@ export const ambassadorSeedingStore = createSlice({
 			};
 		},
 		updateAmbassadorPreimage: (state, action: PayloadAction<{ type: EAmbassadorActions; value: { hash: string; length: number } }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.ambassadorPreimage = action.payload.value;
@@ -111,6 +120,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateAmbassadorProposalIndex: (state, action: PayloadAction<{ type: EAmbassadorActions; value: number | null }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.ambassadorPostIndex = action.payload.value;
@@ -124,6 +142,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateAmbassadorRank: (state, action: PayloadAction<{ type: EAmbassadorActions; value: number }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.rank = action.payload.value;
@@ -137,6 +164,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateAmbassadorSteps: (state, action: PayloadAction<{ type: EAmbassadorActions; value: EAmbassadorSeedingSteps }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.step = action.payload.value as any;
@@ -150,6 +186,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateApplicantAddress: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.applicantAddress = action.payload.value as any;
@@ -163,6 +208,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateDiscussionContent: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.discussion.discussionContent = action.payload.value as any;
@@ -176,6 +230,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateDiscussionTags: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string[] }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.discussion.discussionTags = action.payload.value as any;
@@ -189,6 +252,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateDiscussionTitle: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.discussion.discussionTitle = action.payload.value as any;
@@ -202,6 +274,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateIsPreimageCreationDone: (state, action: PayloadAction<{ type: EAmbassadorActions; value: boolean }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.isPreimageCreationDone = action.payload.value as any;
@@ -215,6 +296,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updatePromoteCallData: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.promoteCallData = action.payload.value as any;
@@ -228,24 +318,40 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateProposer: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
-			if (state.addAmbassadorForm) {
-				switch (action.payload.type) {
-					case EAmbassadorActions.ADD_AMBASSADOR:
-						state.addAmbassadorForm.proposer = action.payload.value as any;
-						break;
-					case EAmbassadorActions.REMOVE_AMBASSADOR:
-						state.removeAmbassadorForm.proposer = action.payload.value as any;
-						break;
-					case EAmbassadorActions.REPLACE_AMBASSADOR:
-						state.replaceAmbassadorForm.proposer = action.payload.value as any;
-						break;
-				}
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
+			switch (action.payload.type) {
+				case EAmbassadorActions.ADD_AMBASSADOR:
+					state.addAmbassadorForm.proposer = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REMOVE_AMBASSADOR:
+					state.removeAmbassadorForm.proposer = action.payload.value as any;
+					break;
+				case EAmbassadorActions.REPLACE_AMBASSADOR:
+					state.replaceAmbassadorForm.proposer = action.payload.value as any;
+					break;
 			}
 		},
 		updateRemovingAmbassadorApplicantAddress: (state, action: PayloadAction<string>) => {
 			state.replaceAmbassadorForm.removingApplicantAddress = action.payload as any;
 		},
 		updateXcmCallData: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.xcmCallData = action.payload.value as any;
@@ -259,6 +365,15 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		writeProposal: (state, action: PayloadAction<{ type: EAmbassadorActions; value: IAmbassadorProposalContent }>) => {
+			if (!state.addAmbassadorForm) {
+				state.addAmbassadorForm = {} as any;
+			}
+			if (!state.removeAmbassadorForm) {
+				state.removeAmbassadorForm = {} as any;
+			}
+			if (!state.replaceAmbassadorForm) {
+				state.replaceAmbassadorForm = {} as any;
+			}
 			switch (action.payload.type) {
 				case EAmbassadorActions.ADD_AMBASSADOR:
 					state.addAmbassadorForm.discussion = action.payload.value as any;

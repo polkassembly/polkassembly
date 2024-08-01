@@ -114,7 +114,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentors],
 			content,
 			discussionId: isDiscussionLinked ? discussionId : null,

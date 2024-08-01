@@ -46,10 +46,11 @@ const ReplaceAmbassador = ({ className, open, setOpen }: IReplaceAmbassador) => 
 	const handleClose = () => {
 		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
+			setOpen(false);
 		} else {
 			dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
+			setOpen(false);
 		}
-		setOpen(false);
 	};
 
 	useEffect(() => {

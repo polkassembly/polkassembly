@@ -85,7 +85,7 @@ const CreateAmbassadorProposal = ({ className, setOpen, openSuccessModal, action
 	};
 
 	const handleSaveProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentor] || [EAllowedCommentor.ALL],
 			content: discussion.discussionContent,
 			discussionId: null,

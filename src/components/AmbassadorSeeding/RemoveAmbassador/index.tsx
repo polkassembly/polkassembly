@@ -45,10 +45,11 @@ const RemoveAmbassador = ({ className, open, setOpen }: IRemoveAmbassador) => {
 	const handleClose = () => {
 		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
+			setOpen(false);
 		} else {
+			setOpen(false);
 			dispatch(ambassadorRemovalActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
-		setOpen(false);
 	};
 
 	useEffect(() => {

@@ -39,10 +39,11 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 	const handleClose = () => {
 		if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 			setOpenWarningModal(true);
+			setOpen(false);
 		} else {
+			setOpen(false);
 			dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_APPLICANT));
 		}
-		setOpen(false);
 	};
 
 	useEffect(() => {

@@ -84,9 +84,10 @@ const AmbassadorSuccess = ({ className, open, setOpen, openPrevModal, isPreimage
 			onCancel={() => {
 				handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_PROPOSAL);
 				setOpen(false);
-				openPrevModal();
 				if (step === EAmbassadorSeedingSteps.CREATE_PROPOSAL) {
 					handleAmbassadorReset();
+				} else {
+					openPrevModal();
 				}
 			}}
 			footer={

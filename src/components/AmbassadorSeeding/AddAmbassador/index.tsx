@@ -38,8 +38,8 @@ const AmbassadorSeeding = ({ className, open, setOpen }: IAmbassadorSeeding) => 
 	useEffect(() => {
 		dispatch(ambassadorSeedingActions.updateProposer({ type: EAmbassadorActions.ADD_AMBASSADOR, value: loginAddress }));
 		if (
-			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage.hash &&
-			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage.length &&
+			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage?.hash &&
+			ambassadorStoreData?.addAmbassadorForm?.ambassadorPreimage?.length &&
 			ambassadorStoreData?.addAmbassadorForm?.isPreimageCreationDone
 		) {
 			dispatch(ambassadorSeedingActions.updateAmbassadorSteps({ type: EAmbassadorActions.ADD_AMBASSADOR, value: EAmbassadorSeedingSteps.CREATE_PROPOSAL }));

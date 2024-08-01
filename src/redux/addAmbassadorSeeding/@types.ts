@@ -26,12 +26,3 @@ export interface IAmbassadorStore {
 	isPreimageCreationDone: boolean;
 	step: EAmbassadorSeedingSteps;
 }
-
-export interface IAmbassadorReplaceStore extends IAmbassadorStore {
-	removingApplicantAddress: string;
-}
-export interface IAddAmbassadorSeedingStore {
-	addAmbassadorForm: IAmbassadorStore;
-	removeAmbassadorForm: IAmbassadorStore;
-	replaceAmbassadorForm: IAmbassadorReplaceStore;
-}

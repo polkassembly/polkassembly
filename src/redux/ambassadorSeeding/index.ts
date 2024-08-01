@@ -228,16 +228,18 @@ export const ambassadorSeedingStore = createSlice({
 			}
 		},
 		updateProposer: (state, action: PayloadAction<{ type: EAmbassadorActions; value: string }>) => {
-			switch (action.payload.type) {
-				case EAmbassadorActions.ADD_AMBASSADOR:
-					state.addAmbassadorForm.proposer = action.payload.value as any;
-					break;
-				case EAmbassadorActions.REMOVE_AMBASSADOR:
-					state.removeAmbassadorForm.proposer = action.payload.value as any;
-					break;
-				case EAmbassadorActions.REPLACE_AMBASSADOR:
-					state.replaceAmbassadorForm.proposer = action.payload.value as any;
-					break;
+			if (state.addAmbassadorForm) {
+				switch (action.payload.type) {
+					case EAmbassadorActions.ADD_AMBASSADOR:
+						state.addAmbassadorForm.proposer = action.payload.value as any;
+						break;
+					case EAmbassadorActions.REMOVE_AMBASSADOR:
+						state.removeAmbassadorForm.proposer = action.payload.value as any;
+						break;
+					case EAmbassadorActions.REPLACE_AMBASSADOR:
+						state.replaceAmbassadorForm.proposer = action.payload.value as any;
+						break;
+				}
 			}
 		},
 		updateRemovingAmbassadorApplicantAddress: (state, action: PayloadAction<string>) => {

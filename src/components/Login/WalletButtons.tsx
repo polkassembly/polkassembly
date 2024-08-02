@@ -34,7 +34,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 	}
 	const getWallet = () => {
 		const injectedWindow = window as Window & InjectedWindow;
-		setAvailableWallets(injectedWindow.injectedWeb3);
+		setAvailableWallets(injectedWindow.injectedWeb3 || {});
 		setIsMetamaskWallet((injectedWindow as any)?.ethereum?.isMetaMask);
 	};
 
@@ -53,7 +53,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 				<div className={`${isOptionalLogin ? '' : 'flex'} gap-x-4`}>
 					<WalletButton
 						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.SUBWALLET ? 'border border-solid border-pink_primary' : ''}`}
-						// disabled={!availableWallets[Wallet.SUBWALLET]}
+						// disabled={!availableWallets?.[Wallet.SUBWALLET]}
 						onClick={(event) => handleWalletClick(event as any, Wallet.SUBWALLET)}
 						name='SubWallet'
 						icon={
@@ -62,7 +62,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 								className={`h-8 w-8 px-1 ${isOptionalLogin ? 'mr-1' : ''}`}
 							/>
 						}
-						isAvailable={availableWallets[Wallet.SUBWALLET]}
+						isAvailable={availableWallets?.[Wallet.SUBWALLET]}
 						isOptionalLogin={isOptionalLogin}
 						text='SubWallet'
 						isLoginFlow={isLoginFlow}
@@ -70,7 +70,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					{(!['moonbase', 'moonbeam', 'moonriver'].includes(network) || ['polymesh'].includes(network)) && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.POLKADOT ? 'border border-solid border-pink_primary' : ''}`}
-							// disabled={!availableWallets[Wallet.POLKADOT]}
+							// disabled={!availableWallets?.[Wallet.POLKADOT]}
 							onClick={(event) => handleWalletClick(event as any, Wallet.POLKADOT)}
 							name='Polkadot.js'
 							icon={
@@ -80,14 +80,14 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 								/>
 							}
 							isOptionalLogin={isOptionalLogin}
-							isAvailable={availableWallets[Wallet.POLKADOT]}
+							isAvailable={availableWallets?.[Wallet.POLKADOT]}
 							isLoginFlow={isLoginFlow}
 							text='Polkadot.js'
 						/>
 					)}
 					<WalletButton
 						className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${selectedWallet && selectedWallet === Wallet.TALISMAN ? 'border border-solid border-pink_primary' : ''}`}
-						// disabled={!availableWallets[Wallet.TALISMAN]}
+						// disabled={!availableWallets?.[Wallet.TALISMAN]}
 						onClick={(event) => handleWalletClick(event as any, Wallet.TALISMAN)}
 						name='Talisman'
 						icon={
@@ -97,7 +97,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							/>
 						}
 						isOptionalLogin={isOptionalLogin}
-						isAvailable={availableWallets[Wallet.TALISMAN]}
+						isAvailable={availableWallets?.[Wallet.TALISMAN]}
 						text='Talisman'
 						isLoginFlow={isLoginFlow}
 					/>
@@ -108,7 +108,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''} ${
 								selectedWallet && selectedWallet === Wallet.POLKAGATE ? 'border border-solid border-pink_primary' : ''
 							}`}
-							// disabled={!availableWallets[Wallet.POLKAGATE]}
+							// disabled={!availableWallets?.[Wallet.POLKAGATE]}
 							onClick={(event) => handleWalletClick(event as any, Wallet.POLKAGATE)}
 							name='PolkaGate'
 							icon={
@@ -117,7 +117,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 									className='h-8 w-8'
 								/>
 							}
-							isAvailable={availableWallets[Wallet.POLKAGATE]}
+							isAvailable={availableWallets?.[Wallet.POLKAGATE]}
 							isOptionalLogin={isOptionalLogin}
 							text='PolkaGate'
 							isLoginFlow={isLoginFlow}
@@ -126,7 +126,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					{showPolkasafe && onPolkasafeSelect && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
-							// disabled={!availableWallets[Wallet.POLKASAFE]}
+							// disabled={!availableWallets?.[Wallet.POLKASAFE]}
 							onClick={(event) => {
 								onPolkasafeSelect(true);
 								handleWalletClick(event as any, Wallet.POLKASAFE);
@@ -138,7 +138,9 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 									className='ml-1 mt-3 h-9 w-7'
 								/>
 							}
-							isAvailable={availableWallets[Wallet.POLKADOT] || availableWallets[Wallet.TALISMAN] || availableWallets[Wallet.POLKAGATE] || availableWallets[Wallet.SUBWALLET]}
+							isAvailable={
+								availableWallets?.[Wallet.POLKADOT] || availableWallets?.[Wallet.TALISMAN] || availableWallets?.[Wallet.POLKAGATE] || availableWallets?.[Wallet.SUBWALLET]
+							}
 							isOptionalLogin={isOptionalLogin}
 							text='Polkasafe (Multisig)'
 							isLoginFlow={isLoginFlow}
@@ -147,7 +149,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 					{(window as any).walletExtension?.isNovaWallet && (
 						<WalletButton
 							className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
-							// disabled={!availableWallets[Wallet.NOVAWALLET]}
+							// disabled={!availableWallets?.[Wallet.NOVAWALLET]}
 							onClick={(event) => handleWalletClick(event as any, Wallet.NOVAWALLET)}
 							name='Nova Wallet'
 							icon={
@@ -156,7 +158,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 									className='h-6 w-6'
 								/>
 							}
-							isAvailable={availableWallets[Wallet.NOVAWALLET]}
+							isAvailable={availableWallets?.[Wallet.NOVAWALLET]}
 							isOptionalLogin={isOptionalLogin}
 							text='Nova Wallet'
 							isLoginFlow={isLoginFlow}
@@ -186,7 +188,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 						{['polymesh'].includes(network) ? (
 							<WalletButton
 								className={`wallet-buttons ${isOptionalLogin ? 'mb-3' : ''}`}
-								// disabled={!availableWallets[Wallet.POLYWALLET]}
+								// disabled={!availableWallets?.[Wallet.POLYWALLET]}
 								onClick={(event) => handleWalletClick(event as any, Wallet.POLYWALLET)}
 								name='PolyWallet'
 								icon={
@@ -195,7 +197,7 @@ const WalletButtons = ({ onWalletSelect, disabled, showPolkasafe, onPolkasafeSel
 										className='h-6 w-6'
 									/>
 								}
-								isAvailable={availableWallets[Wallet.POLYWALLET]}
+								isAvailable={availableWallets?.[Wallet.POLYWALLET]}
 								isOptionalLogin={isOptionalLogin}
 								text='PolyWallet'
 								isLoginFlow={isLoginFlow}

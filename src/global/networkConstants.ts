@@ -205,6 +205,7 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://polkadot.api.subscan.io',
+		assethubExternalLinks: 'https://assethub-polkadot.api.subscan.io',
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{

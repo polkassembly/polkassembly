@@ -119,6 +119,7 @@ export interface ChainProps {
 	treasuryProposalMinBond: string | null;
 	treasuryProposalMaxBond: string | null;
 	externalLinks: string;
+	assethubExternalLinks?: string;
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;

@@ -28,7 +28,7 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import getAssetHubPolkadotBalance from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import { stringToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
-import LatestTreasuryOverview from './LatestTreasuryOverview';
+import LatestTreasuryOverview from './overviewData/LatestTreasuryOverview';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
@@ -153,9 +153,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
-		// console.log('Account', u8aToHex(0x70792f7472737279));
-		// const treasuryAddress = encodeAddress(stringToU8a('modlpy/trsry'.padEnd(32, '\0')));
-		// console.log('Account', treasuryAddress);
 
 		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
 			api.query.system

@@ -9,8 +9,9 @@ import messages from '~src/auth/utils/messages';
 import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
+import { firestore_db } from '~src/services/firebaseInit';
 
-interface IHistoryItem {
+export interface IHistoryItem {
 	date: string;
 	balance: string;
 }
@@ -39,9 +40,22 @@ function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	return { start, end };
 }
 
-// Helper function to format date as "year-monthName" using dayjs
+// Helper function to generate a complete date range
+const generateDateRange = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): string[] => {
+	const dates: string[] = [];
+	let currentDate = startDate.startOf('day');
+
+	while (currentDate.isBefore(endDate.endOf('day'))) {
+		dates.push(currentDate.format('YYYY-MM-DD'));
+		currentDate = currentDate.add(1, 'day');
+	}
+
+	return dates;
+};
+
+// Helper function to format date as "YYYY-MM-DD"
 const formatDate = (date: dayjs.Dayjs): string => {
-	return date.format('YYYY-MMMM');
+	return date.format('YYYY-MM-DD');
 };
 
 // Aggregate and sum balances
@@ -65,15 +79,65 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		});
 	};
 
-	addToAggregated(data1);
-	addToAggregated(data2);
+	const getLatestBalance = (history: IHistoryItem[]): number => {
+		const sortedHistory = history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		return parseFloat(sortedHistory[0].balance) || 0;
+	};
 
-	// Convert aggregated result to the expected format
-	return Object.keys(aggregated).map((date) => ({
+	const combinedData: { [key: string]: number } = {};
+
+	data1.forEach(({ history }) => {
+		if (history) {
+			history.forEach(({ date, balance }) => {
+				const key = formatDate(dayjs(date));
+				const balanceValue = getLatestBalance(history);
+
+				if (combinedData[key]) {
+					combinedData[key] += balanceValue;
+				} else {
+					combinedData[key] = balanceValue;
+				}
+			});
+		}
+	});
+
+	data2.forEach(({ history }) => {
+		if (history) {
+			history.forEach(({ date, balance }) => {
+				const key = formatDate(dayjs(date));
+				const balanceValue = getLatestBalance(history);
+
+				if (combinedData[key]) {
+					combinedData[key] += balanceValue;
+				} else {
+					combinedData[key] = balanceValue;
+				}
+			});
+		}
+	});
+
+	// Generate a full date range from 2024-01-01 to today
+	const today = dayjs();
+	const startDate = dayjs('2024-01-01');
+	const allDates = generateDateRange(startDate, today);
+
+	// Create a map of all dates with zero balance
+	const fullData: { [key: string]: number } = {};
+	allDates.forEach((date) => {
+		fullData[date] = 0;
+	});
+
+	// Update fullData with actual balances
+	Object.keys(combinedData).forEach((date) => {
+		fullData[date] = combinedData[date];
+	});
+
+	// Convert fullData result to the expected format
+	return Object.keys(fullData).map((date) => ({
 		history: [
 			{
 				date,
-				balance: aggregated[date].toFixed(2)
+				balance: fullData[date].toFixed(2)
 			}
 		],
 		status: 'Success'
@@ -95,7 +159,6 @@ export const getAssetHubPolkadotBalance = async (network: string, address: strin
 		const results: IResponseData[] = [];
 		for (let i = 0; i < 7; i++) {
 			const { start, end } = getMonthRange(i);
-			console.log('Start is', start, end);
 
 			const requestBody = {
 				address,
@@ -128,12 +191,47 @@ export const getAssetHubPolkadotBalance = async (network: string, address: strin
 		}
 
 		returnResponse.data = results.length > 0 ? results : null;
-		console.log('RESPONSE', returnResponse);
-
 		return returnResponse;
 	} catch (error) {
 		returnResponse.error = error instanceof Error ? error.message : 'Data Not Available';
 		return returnResponse;
+	}
+};
+
+const documentExists = async (network: string, date: string): Promise<boolean> => {
+	const networkRef = firestore_db.collection('networks').doc(network);
+	const treasuryRef = networkRef.collection('treasury_amount_history').doc(date);
+
+	const doc = await treasuryRef.get();
+	return doc.exists;
+};
+
+const saveToFirestore = async (network: string, data: IResponseData[]) => {
+	try {
+		const batch = firestore_db.batch();
+
+		const networkRef = firestore_db.collection('networks').doc(network);
+		const treasuryRef = networkRef.collection('treasury_amount_history');
+
+		for (const item of data) {
+			if (item.history) {
+				for (const { date, balance } of item.history) {
+					const docRef = treasuryRef.doc(date);
+					const exists = await documentExists(network, date);
+
+					if (!exists) {
+						batch.set(docRef, { date, balance });
+					} else {
+						batch.update(docRef, { balance });
+					}
+				}
+			}
+		}
+
+		await batch.commit();
+	} catch (error) {
+		console.error('Error writing data to Firestore:', error);
+		throw new Error('Error writing data to Firestore');
 	}
 };
 
@@ -152,13 +250,12 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 	}
 
 	const response1 = await getAssetHubPolkadotBalance(network, address1, apiUrl1);
-	console.log('response1', response1);
-
 	const response2 = await getAssetHubPolkadotBalance(network, address2, apiUrl2);
-	console.log('response2', response2);
 
 	const combinedData = aggregateBalances(response1.data || [], response2.data || []);
 	const combinedError = response1.error || response2.error;
+
+	await saveToFirestore(network, combinedData);
 
 	return {
 		data: combinedData.length > 0 ? combinedData : null,

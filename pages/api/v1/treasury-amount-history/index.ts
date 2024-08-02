@@ -13,31 +13,27 @@ import messages from '~src/util/messages';
 interface IGetTreasuryHistoryParams {
 	network: string;
 }
-interface IAmountDataPerMonth {
-	month: string;
-	amount: string;
-}
-interface ITreasuryAmountData {
-	data: IAmountDataPerMonth[];
+
+interface IHistoryItem {
+	date: string;
+	balance: string;
 }
 
-export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams): Promise<IApiResponse<ITreasuryAmountData>> {
+export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams): Promise<IApiResponse<IHistoryItem[]>> {
 	try {
 		const { network } = params;
-		const networkDoc = await firestore_db.collection('networks').doc(network).get();
-		if (!networkDoc.exists) {
-			throw apiErrorWithStatusCode('Invalid network name', 400);
-		}
 
-		const networkData = networkDoc.data();
-		if (!networkData?.treasury_amount_history) {
+		const treasuryAmountHistoryRef = firestore_db.collection('networks').doc(network).collection('treasury_amount_history');
+		const snapshot = await treasuryAmountHistoryRef.get();
+
+		if (snapshot.empty) {
 			throw apiErrorWithStatusCode('No treasury history found for this network', 404);
 		}
 
-		const treasuryAmount = networkData.treasury_amount_history as ITreasuryAmountData;
+		const treasuryAmountHistory: IHistoryItem[] = snapshot.docs.map((doc) => doc.data() as IHistoryItem);
 
 		return {
-			data: JSON.parse(JSON.stringify(treasuryAmount)),
+			data: treasuryAmountHistory,
 			error: null,
 			status: 200
 		};
@@ -50,11 +46,11 @@ export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams
 	}
 }
 
-const handler: NextApiHandler<ITreasuryAmountData | { error: string }> = async (req, res) => {
+const handler: NextApiHandler<IHistoryItem[] | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = req.headers['x-network'] as string;
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Missing network in request headers' });
 
 	const { data, error, status } = await getTreasuryAmountHistory({
 		network

@@ -8,15 +8,16 @@ import { poppins } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
-import { formatNumberWithSuffix } from '../Bounties/utils/formatBalanceUsd';
+import { formatNumberWithSuffix } from '../../Bounties/utils/formatBalanceUsd';
 import { useNetworkSelector } from '~src/redux/selectors';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
-import { getAssetHubPolkadotBalance, getCombinedBalances } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
+import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import OverviewDataGraph from './OverviewDataGraph';
 
 interface Props {
 	currentTokenPrice: {
@@ -65,6 +66,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdcValue: '',
 		usdtValue: ''
 	});
+	const [graphData, setGraphData] = useState<IHistoryItem[]>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatBnBalance(assethubValues.usdcValue, { numberAfterComma: 0, withUnit: false }, network);
@@ -122,49 +124,39 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	};
 
 	useEffect(() => {
-		// Define an async function inside useEffect
-		const fetchData = async () => {
+		const fetchDataFromApi = async () => {
 			try {
-				// Call the API function
-				const response = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
+				const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
 
-				// Log the response data
-				const data = await response.data;
-				if (data) {
+				if (error) {
 					console.error('Error fetching data:', data);
-				} else {
-					console.log('Balance data:', data);
 				}
 			} catch (error) {
 				console.error('Unexpected error:', error);
 			}
 		};
 
-		// Call the async function
-		fetchData();
+		fetchDataFromApi();
 	}, [network]);
 
-	// useEffect(() => {
-	// 	// Define an async function inside useEffect
-	// 	const fetchData = async () => {
-	// 		try {
-	// 			// Call the API function
-	// 			const response = await getCombinedBalances(network);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const { data, error } = await nextApiClientFetch<IHistoryItem[]>('/api/v1/treasury-amount-history');
 
-	// 			// Log the response data
-	// 			if (response.error) {
-	// 				console.error('Error fetching data:', response.error);
-	// 			} else {
-	// 				console.log('Balance data:', response.data);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error('Unexpected error:', error);
-	// 		}
-	// 	};
+				if (error) {
+					console.error('Error fetching data:', error);
+				}
+				if (data) {
+					setGraphData(data);
+				}
+			} catch (error) {
+				console.error('Unexpected error:', error);
+			}
+		};
 
-	// 	// Call the async function
-	// 	fetchData();
-	// }, []);
+		fetchData();
+	}, [network]);
 
 	useEffect(() => {
 		(async () => {
@@ -178,9 +170,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 			apiPromise?.isReady
 				.then(() => {
 					clearTimeout(timer);
-
 					setAssethubApiReady(true);
-					console.log('Asset Hub Chain API ready');
 				})
 				.catch(async (error) => {
 					clearTimeout(timer);
@@ -303,7 +293,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					)}
 				</div>
 				{/* graph */}
-				<div></div>
+				<div>
+					<OverviewDataGraph graphData={graphData} />
+				</div>
 			</div>
 			<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
 				{/* Current Price */}

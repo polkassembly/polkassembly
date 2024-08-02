@@ -25,9 +25,6 @@ import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
-import getAssetHubPolkadotBalance from 'pages/api/v1/treasury-amount-history/old-treasury-data';
-import { stringToU8a } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
 import LatestTreasuryOverview from './overviewData/LatestTreasuryOverview';
 
 const EMPTY_U8A_32 = new Uint8Array(32);

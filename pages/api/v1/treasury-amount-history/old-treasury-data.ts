@@ -1,6 +1,9 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+/* eslint-disable sort-keys */
+
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
@@ -40,7 +43,6 @@ function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	return { start, end };
 }
 
-// Helper function to generate a complete date range
 const generateDateRange = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): string[] => {
 	const dates: string[] = [];
 	let currentDate = startDate.startOf('day');
@@ -53,32 +55,11 @@ const generateDateRange = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): string
 	return dates;
 };
 
-// Helper function to format date as "YYYY-MM-DD"
 const formatDate = (date: dayjs.Dayjs): string => {
 	return date.format('YYYY-MM-DD');
 };
 
-// Aggregate and sum balances
 const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IResponseData[] => {
-	const aggregated: { [key: string]: number } = {};
-
-	const addToAggregated = (data: IResponseData[]) => {
-		data.forEach(({ history }) => {
-			if (history) {
-				history.forEach(({ date, balance }) => {
-					const key = formatDate(dayjs(date));
-					const balanceValue = parseFloat(balance) || 0;
-
-					if (aggregated[key]) {
-						aggregated[key] += balanceValue;
-					} else {
-						aggregated[key] = balanceValue;
-					}
-				});
-			}
-		});
-	};
-
 	const getLatestBalance = (history: IHistoryItem[]): number => {
 		const sortedHistory = history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 		return parseFloat(sortedHistory[0].balance) || 0;
@@ -88,7 +69,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 
 	data1.forEach(({ history }) => {
 		if (history) {
-			history.forEach(({ date, balance }) => {
+			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
 				const balanceValue = getLatestBalance(history);
 
@@ -103,7 +84,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 
 	data2.forEach(({ history }) => {
 		if (history) {
-			history.forEach(({ date, balance }) => {
+			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
 				const balanceValue = getLatestBalance(history);
 

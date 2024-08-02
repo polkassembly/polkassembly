@@ -1169,7 +1169,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
 							items={sidebarItems}
 							onClick={handleMenuClick}
-							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+							className={`msm:mt-0 mt-[60px] ${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
 
 						<BigToggleButton />

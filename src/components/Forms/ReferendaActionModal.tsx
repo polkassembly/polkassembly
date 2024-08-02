@@ -97,7 +97,7 @@ const ReferendaActionModal = ({
 	const handleCreateDiscussion = async (postId: number) => {
 		setPostId(postId);
 		const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			content,
 			discussionId: discussionId || null,
 			postId,

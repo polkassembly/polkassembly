@@ -362,14 +362,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</Link>
 
 					<div className='type-container flex items-center gap-1'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+						<span className='line-container ml-2 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:ml-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
+				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
 					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>

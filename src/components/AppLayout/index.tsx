@@ -83,6 +83,7 @@ interface IUserDropdown {
 	isIdentityUnverified: boolean;
 	isGood: boolean;
 	handleLogout: any;
+	setSidedrawer: any;
 	network: string;
 	handleRemoveIdentity: (pre?: any) => void;
 	img?: string | null;
@@ -135,6 +136,7 @@ const getUserDropDown = ({
 	handleSetIdentityClick,
 	isGood,
 	isIdentityExists,
+	setSidedrawer,
 	isIdentityUnverified,
 	network,
 	className,
@@ -150,6 +152,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href={`/user/${username}`}
+					onClick={() => setSidedrawer(false)}
 				>
 					<UserOutlined />
 					<span>View Profile</span>
@@ -162,6 +165,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href='/settings?tab=account'
+					onClick={() => setSidedrawer(false)}
 				>
 					<SettingOutlined />
 					<span>Settings</span>
@@ -177,6 +181,7 @@ const getUserDropDown = ({
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
+						setSidedrawer(false);
 						handleLogout(username);
 					}}
 				>
@@ -198,6 +203,7 @@ const getUserDropDown = ({
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
+							setSidedrawer(false);
 							handleSetIdentityClick();
 						}}
 					>
@@ -1088,6 +1094,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
 		isGood: isGood,
+		setSidedrawer: setSidedrawer,
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,

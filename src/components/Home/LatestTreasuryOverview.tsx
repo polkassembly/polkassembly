@@ -15,6 +15,8 @@ import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import { getAssetHubPolkadotBalance, getCombinedBalances } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 interface Props {
 	currentTokenPrice: {
@@ -124,20 +126,14 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		const fetchData = async () => {
 			try {
 				// Call the API function
-				const response = await fetch('/api/getAssetHubPolkadotBalance', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ network })
-				});
+				const response = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
 
 				// Log the response data
-				const data = await response.json();
-				if (data.error) {
-					console.error('Error fetching data:', data.error);
+				const data = await response.data;
+				if (data) {
+					console.error('Error fetching data:', data);
 				} else {
-					console.log('Balance data:', data.data);
+					console.log('Balance data:', data);
 				}
 			} catch (error) {
 				console.error('Unexpected error:', error);
@@ -153,7 +149,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	// 	const fetchData = async () => {
 	// 		try {
 	// 			// Call the API function
-	// 			const response = await getAssetHubPolkadotBalance();
+	// 			const response = await getCombinedBalances(network);
 
 	// 			// Log the response data
 	// 			if (response.error) {

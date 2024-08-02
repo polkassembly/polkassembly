@@ -2,10 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 import { chainProperties } from '~src/global/networkConstants';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import messages from '~src/auth/utils/messages';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 interface IHistoryItem {
 	date: string;
@@ -22,25 +24,27 @@ interface IReturnResponse {
 	error?: null | string;
 }
 
-// Helper function to get the date range for the previous months
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const today = new Date();
 	const startDate = new Date(today.getFullYear(), today.getMonth() - monthsAgo, 1);
-	const endDate = new Date(today.getFullYear(), today.getMonth() - monthsAgo + 1, 0);
-
 	const start = startDate.toISOString().split('T')[0];
-	const end = endDate.toISOString().split('T')[0];
+	const end = new Date(today.getFullYear(), today.getMonth() - monthsAgo + 1, 0).toISOString().split('T')[0];
 
 	return { start, end };
 }
 
-export default async function getAssetHubPolkadotBalance(): Promise<IReturnResponse> {
+export const getAssetHubPolkadotBalance = async (network: string): Promise<IReturnResponse> => {
 	const returnResponse: IReturnResponse = {
 		data: null,
 		error: null
 	};
 
-	const apiUrl = `${chainProperties[AllNetworks.POLKADOT]?.assethubExternalLinks}/api/scan/account/balance_history`;
+	if (!network || !(network in chainProperties)) {
+		returnResponse.error = messages.INVALID_NETWORK;
+		return returnResponse;
+	}
+
+	const apiUrl = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
 
 	try {
 		const results: IResponseData[] = [];
@@ -48,7 +52,7 @@ export default async function getAssetHubPolkadotBalance(): Promise<IReturnRespo
 			const { start, end } = getMonthRange(i);
 
 			const requestBody = {
-				address: `${chainProperties[AllNetworks.POLKADOT]?.assetHubAddress}`,
+				address: chainProperties[network]?.assetHubAddress,
 				end,
 				start
 			};
@@ -60,30 +64,50 @@ export default async function getAssetHubPolkadotBalance(): Promise<IReturnRespo
 			});
 
 			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
+				throw new Error(messages.API_FETCH_ERROR);
 			}
 
 			const data = await response.json();
-			console.log(`Data for ${start} to ${end}:`, data);
 
-			if (data.message === 'Success') {
-				// Check if history is null and handle accordingly
+			if (data?.message === 'Success') {
 				const responseData: IResponseData = data?.data as IResponseData;
 				if (responseData.history === null) {
 					responseData.history = [{ date: start, balance: '0' }];
 				}
 				results.push(responseData);
 			} else {
-				returnResponse.error = `API error: ${data.message}`;
+				returnResponse.error = messages.API_FETCH_ERROR;
 				break;
 			}
 		}
 
 		returnResponse.data = results.length > 0 ? results : null;
-		console.log('results', results);
+		return returnResponse;
 	} catch (error) {
-		returnResponse.error = error instanceof Error ? error.message : 'Assethub Data Not Available';
+		returnResponse.error = error instanceof Error ? error.message : 'Data Not Available';
+		return returnResponse;
+	}
+};
+
+const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {
+	storeApiKeyUsage(req);
+
+	const { network } = req.body;
+
+	if (typeof network !== 'string') {
+		res.status(400).json({
+			data: null,
+			error: 'Invalid network'
+		});
+		return;
 	}
 
-	return returnResponse;
-}
+	const response = await getAssetHubPolkadotBalance(network);
+	if (response.error) {
+		res.status(500).json(response);
+	} else {
+		res.status(200).json(response);
+	}
+};
+
+export default withErrorHandling(handler);

@@ -115,6 +115,7 @@ export interface ChainProps {
 	rpcEndpoint: string;
 	category: string;
 	subsquidUrl: string;
+	treasuryAddress?: string;
 	treasuryProposalBondPercent: string | null;
 	treasuryProposalMinBond: string | null;
 	treasuryProposalMaxBond: string | null;

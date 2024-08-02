@@ -75,28 +75,6 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		}
 	});
 
-	// useEffect(() => {
-	// 	// Define an async function inside useEffect
-	// 	const fetchData = async () => {
-	// 		try {
-	// 			// Call the API function
-	// 			const response = await getAssetHubPolkadotBalance();
-
-	// 			// Log the response data
-	// 			if (response.error) {
-	// 				console.error('Error fetching data:', response.error);
-	// 			} else {
-	// 				console.log('Balance data:', response.data);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error('Unexpected error:', error);
-	// 		}
-	// 	};
-
-	// 	// Call the async function
-	// 	fetchData();
-	// }, []);
-
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;

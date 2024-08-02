@@ -77,7 +77,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				?.account(chainProperties?.[AllNetworks.POLKADOT]?.assetHubAddress)
 				.then((result: any) => {
 					const free = result.data?.free?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
-					setAssethubValues((values) => ({ ...values, dotValue: free }));
+					setAssethubValues((values) => ({ ...values, dotValue: free.toString() }));
 				})
 				.catch((e) => console.error(e));
 
@@ -91,7 +91,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					}
 					const data = result.unwrap();
 					const freeBalanceBigInt = data.balance.toBigInt();
-					// TODO
 					const free = freeBalanceBigInt.toString();
 					setAssethubValues((values) => ({ ...values, usdcValue: free }));
 				})
@@ -109,7 +108,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					}
 					const data = result.unwrap();
 					const freeBalanceBigInt = data.balance.toBigInt();
-					// TODO
 					const free = freeBalanceBigInt.toString();
 					setAssethubValues((values) => ({ ...values, usdtValue: free }));
 				})
@@ -120,6 +118,57 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 		return;
 	};
+
+	useEffect(() => {
+		// Define an async function inside useEffect
+		const fetchData = async () => {
+			try {
+				// Call the API function
+				const response = await fetch('/api/getAssetHubPolkadotBalance', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ network })
+				});
+
+				// Log the response data
+				const data = await response.json();
+				if (data.error) {
+					console.error('Error fetching data:', data.error);
+				} else {
+					console.log('Balance data:', data.data);
+				}
+			} catch (error) {
+				console.error('Unexpected error:', error);
+			}
+		};
+
+		// Call the async function
+		fetchData();
+	}, [network]);
+
+	// useEffect(() => {
+	// 	// Define an async function inside useEffect
+	// 	const fetchData = async () => {
+	// 		try {
+	// 			// Call the API function
+	// 			const response = await getAssetHubPolkadotBalance();
+
+	// 			// Log the response data
+	// 			if (response.error) {
+	// 				console.error('Error fetching data:', response.error);
+	// 			} else {
+	// 				console.log('Balance data:', response.data);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error('Unexpected error:', error);
+	// 		}
+	// 	};
+
+	// 	// Call the async function
+	// 	fetchData();
+	// }, []);
 
 	useEffect(() => {
 		(async () => {

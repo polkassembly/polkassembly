@@ -201,6 +201,7 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
+		treasuryAddress: '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',

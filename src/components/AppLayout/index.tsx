@@ -1176,6 +1176,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
 							items={sidebarItems}
 							onClick={handleMenuClick}
+							// eslint-disable-next-line prettier/prettier
 							className={`mt-[60px] msm:mt-0 ${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
 

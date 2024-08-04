@@ -350,7 +350,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				<div className='flex items-center'>
 					<Link
 						className='logo-size flex lg:hidden'
-						href={'/'}
+						href={isOpenGovSupported(network) ? '/opengov' : '/'}
 					>
 						{theme === 'dark' && isMobile ? (
 							<PaLogoDark className='' />

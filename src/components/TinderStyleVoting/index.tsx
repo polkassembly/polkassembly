@@ -75,7 +75,7 @@ const VotingCards = () => {
 			isExternalApiCall: true,
 			network: network,
 			proposalType: ProposalType.REFERENDUM_V2,
-			skippedIndexes: [...voted_post_ids_array, ...skippedProposals] || [],
+			skippedIndexes: [...voted_post_ids_array, ...skippedProposals],
 			userAddress: user?.loginAddress,
 			userId: user?.id
 		});
@@ -110,6 +110,12 @@ const VotingCards = () => {
 		}
 		setSkippedProposals([...skippedProposals, id]);
 	};
+
+	useEffect(() => {
+		if (activeProposal.length > 0) {
+			setCurrentIndex(activeProposal.length - 1);
+		}
+	}, [activeProposal]);
 
 	useEffect(() => {
 		if (!network || !user?.loginAddress?.length) return;
@@ -201,11 +207,11 @@ const VotingCards = () => {
 						<TinderCard
 							ref={childRefs[index]}
 							className='absolute h-full w-full'
-							key={proposal.name}
+							key={proposal.title}
 							onSwipe={(dir) => {
 								swiped(dir, index, proposal?.id, proposal?.title);
 							}}
-							onCardLeftScreen={() => outOfFrame(proposal.title, index)}
+							onCardLeftScreen={() => outOfFrame(proposal?.title, index)}
 							preventSwipe={['down']}
 						>
 							<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>

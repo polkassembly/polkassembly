@@ -108,6 +108,9 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 		<section
 			key={index}
 			className='mb-4 h-[106px] w-full rounded-xl border border-solid border-grey_border bg-white dark:border dark:border-solid dark:border-blue-dark-medium dark:bg-transparent'
+			onClick={() => {
+				setOpenViewProposalModal(true);
+			}}
 		>
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
@@ -161,7 +164,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 				<div className='ml-auto flex items-center gap-x-4'>
 					<Button
 						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
-						onClick={() => {
+						onClick={(e) => {
+							e.stopPropagation();
 							setOpenEditModal(true);
 						}}
 					>
@@ -175,7 +179,10 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					</Button>
 					<Button
 						className='m-0 flex items-center justify-center border-none bg-transparent p-0'
-						onClick={() => handleRemove(voteInfo.post_id)}
+						onClick={(e) => {
+							e.stopPropagation();
+							handleRemove(voteInfo.post_id);
+						}}
 					>
 						<Image
 							src={'/assets/icons/bin-icon-grey.svg'}
@@ -229,7 +236,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					}
 					maskClosable={false}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-					onCancel={() => {
+					onCancel={(e) => {
+						e.stopPropagation();
 						setOpenEditModal(false);
 					}}
 					title={
@@ -268,7 +276,8 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					}
 					maskClosable={false}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
-					onCancel={() => {
+					onCancel={(e) => {
+						e.stopPropagation();
 						setOpenViewProposalModal(false);
 					}}
 				>

@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable sort-keys */
-
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
@@ -67,7 +66,20 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 
 	const combinedData: { [key: string]: number } = {};
 
-	data1.forEach(({ history }) => {
+	const filterNonZeroBalances = (data: IResponseData[]) => {
+		return data.filter(({ history }) => {
+			if (history) {
+				const balanceValue = getLatestBalance(history);
+				return balanceValue > 0;
+			}
+			return false;
+		});
+	};
+
+	const filteredData1 = filterNonZeroBalances(data1);
+	const filteredData2 = filterNonZeroBalances(data2);
+
+	filteredData1.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
@@ -82,7 +94,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		}
 	});
 
-	data2.forEach(({ history }) => {
+	filteredData2.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
@@ -97,23 +109,19 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		}
 	});
 
-	// Generate a full date range from 2024-01-01 to today
 	const today = dayjs();
 	const startDate = dayjs('2024-01-01');
 	const allDates = generateDateRange(startDate, today);
 
-	// Create a map of all dates with zero balance
 	const fullData: { [key: string]: number } = {};
 	allDates.forEach((date) => {
 		fullData[date] = 0;
 	});
 
-	// Update fullData with actual balances
 	Object.keys(combinedData).forEach((date) => {
 		fullData[date] = combinedData[date];
 	});
 
-	// Convert fullData result to the expected format
 	return Object.keys(fullData).map((date) => ({
 		history: [
 			{
@@ -200,6 +208,10 @@ const saveToFirestore = async (network: string, data: IResponseData[]) => {
 					const docRef = treasuryRef.doc(date);
 					const exists = await documentExists(network, date);
 
+					if (dayjs(date).date() === 1) {
+						continue;
+					}
+
 					if (!exists) {
 						batch.set(docRef, { date, balance });
 					} else {
@@ -212,7 +224,6 @@ const saveToFirestore = async (network: string, data: IResponseData[]) => {
 		await batch.commit();
 	} catch (error) {
 		console.error('Error writing data to Firestore:', error);
-		throw new Error('Error writing data to Firestore');
 	}
 };
 

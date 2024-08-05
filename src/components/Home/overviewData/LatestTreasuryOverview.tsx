@@ -191,7 +191,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		<div
 			className={`${poppins.className} ${poppins.variable} ${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
 		>
-			<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+			<div className='flex w-full flex-1 flex-col rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
 				<div className=''>
 					<div>
 						{!available.isLoading ? (
@@ -364,7 +364,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						<div className='w-full flex-col gap-x-0 lg:flex'>
 							{!spendPeriod.isLoading ? (
 								<>
-									<div className='mb-2 sm:mb-0 md:mb-4'>
+									<div className='mb-2 sm:mb-0'>
 										<div className='flex items-center'>
 											<span className={`${poppins.className} ${poppins.variable} mr-2 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}>
 												Spend Period Remaining
@@ -427,7 +427,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					<div>
 						<div className='w-full gap-x-0 lg:flex'>
 							{!nextBurn.isLoading ? (
-								<div className='flex items-start space-x-2'>
+								<div className='flex items-start gap-x-2'>
 									<div className='h-12'>
 										<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
 											<span className='text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>

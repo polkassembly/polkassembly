@@ -25,7 +25,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData.map((item) => ({
+			data: filteredData.slice(0, -1).map((item) => ({
 				x: item.date,
 				y: parseFloat(item.balance)
 			}))
@@ -52,7 +52,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 				}}
 				tooltip={CustomTooltip}
 				tooltipFormat={(value) => `${Number(value).toFixed(2)}`}
-				colors={['#978FED']}
+				colors={['#ADC2F9']}
 				pointSize={10}
 				pointColor={{ theme: 'background' }}
 				pointBorderWidth={2}

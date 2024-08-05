@@ -115,20 +115,6 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 			<article className='flex h-[53px] items-center justify-start gap-x-4 px-4'>
 				<p className='text-bodyblue m-0 p-0 text-xs'>#{voteInfo.referendumIndex}</p>
 				<p className='text-bodyblue m-0 p-0 text-xs dark:text-blue-dark-medium'>{voteInfo?.proposal?.title?.substring(0, 50)}...</p>
-				<Button
-					className='m-0 ml-auto flex items-center justify-center border-none bg-transparent p-0'
-					onClick={() => {
-						setOpenViewProposalModal(true);
-					}}
-				>
-					<Image
-						src={'/assets/icons/eye-icon-grey.svg'}
-						alt='eye-icon'
-						height={20}
-						width={20}
-						className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
-					/>
-				</Button>
 			</article>
 			<Divider
 				type='horizontal'

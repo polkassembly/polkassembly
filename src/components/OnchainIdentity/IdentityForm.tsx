@@ -330,7 +330,8 @@ const IdentityForm = ({
 					isPeopleChainSupportedNetwork(network) &&
 					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
 					availableBalance &&
-					availableBalance.lt(totalFee) && (
+					availableBalance.lt(totalFee) &&
+					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
 						<div>
 							<PeopleChainTeleport
 								defaultAmount={totalFee.sub(availableBalance)}

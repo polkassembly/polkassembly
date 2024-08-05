@@ -189,7 +189,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 							onClick={() => getPeopleChainTeleportTx()}
 							// loading={loading}
 							disabled={!(availableBalance && availableBalance.gt(amount)) || loading.isLoading}
-							className={classNames('rounded-[4px] text-xs tracking-wide', !(availableBalance && availableBalance.gt(amount)) ? 'opacity-50' : '')}
+							className={classNames('rounded-[4px] text-xs tracking-wide', !(availableBalance && availableBalance.gt(amount)) || loading.isLoading ? 'opacity-50' : '')}
 							text='Confirm'
 							variant='primary'
 							width={140}

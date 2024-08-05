@@ -18,7 +18,7 @@ import BalanceInput from '~src/ui-components/BalanceInput';
 import { useTheme } from 'next-themes';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { poppins } from 'pages/_app';
 import { formatedBalance } from '~src/util/formatedBalance';
 import Alert from '~src/basic-components/Alert';
@@ -47,7 +47,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	const { network } = useNetworkSelector();
 	const { id: userId, loginAddress, username } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
@@ -114,7 +114,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentors],
 			content,
 			discussionId: isDiscussionLinked ? discussionId : null,
@@ -188,8 +188,8 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
+		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady || !address) {
 			setShowIdentityInfoCardForProposer(false);
 			return;
@@ -228,7 +228,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 		checkProposerIdentity(proposer || loginAddress);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, proposer, api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [loginAddress, proposer, api, apiReady, network, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		const networkChainProperties = chainProperties[network];

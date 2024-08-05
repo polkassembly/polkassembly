@@ -152,7 +152,7 @@ const CreateProposal = ({
 	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,

@@ -128,7 +128,8 @@ module.exports = {
 				}
 			},
 			screens: {
-				xs: '320px'
+				xs: '320px',
+				msm: '380px' // mobile small
 			},
 			borderRadius: {
 				xxl: '0.875rem'

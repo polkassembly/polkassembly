@@ -16,7 +16,7 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 const firestore_db = admin.firestore();
 
-const w3fDelegatesPolkadot = [
+export const w3fDelegatesPolkadot = [
 	{
 		address: '13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC',
 		longDescription: '',
@@ -103,7 +103,7 @@ const w3fDelegatesPolkadot = [
 	}
 ];
 
-const w3fDelegatesKusama = [
+export const w3fDelegatesKusama = [
 	{
 		address: 'GqC37KSFFeGAoL7YxSeP1YDwr85WJvLmDDQiSaprTDAm8Jj',
 		longDescription: '',

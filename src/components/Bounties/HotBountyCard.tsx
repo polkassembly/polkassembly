@@ -128,7 +128,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 				<Skeleton active />
 			) : (
 				<>
-					<div className='w-full md:w-[383px]'>
+					<div className='w-full sm:w-[340px] xl:w-[383px]'>
 						<Link
 							key={post_id}
 							href={`/bounty/${post_id}`}
@@ -182,7 +182,7 @@ const HotBountyCard = ({ extendedData }: { extendedData: any }) => {
 									<ImageIcon
 										src='/assets/bounty-icons/bounty-image.svg'
 										alt='bounty icon'
-										imgClassName='mt-5 mb-3 w-full md:w-auto'
+										imgClassName='mt-5 mb-3 w-full'
 										imgWrapperClassName=''
 									/>
 								</Link>

@@ -249,7 +249,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 			console.error('Error saving reply: ', addCommentError);
 			queueNotification({
 				header: 'Error!',
-				message: 'There was an error in saving your reply.',
+				message: error || 'There was an error in saving your reply.',
 				status: NotificationStatus.ERROR
 			});
 		} else {
@@ -357,7 +357,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 				setComments(oldComment);
 				queueNotification({
 					header: 'Error!',
-					message: 'There was an error in saving your reply.',
+					message: error || 'There was an error in saving your reply.',
 					status: NotificationStatus.ERROR
 				});
 				setComments((prev) => {

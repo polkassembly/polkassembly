@@ -32,7 +32,7 @@ import { isAddress } from 'ethers';
 import { poppins } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { usePeopleKusamaApiContext } from '~src/context';
+import { usePeopleChainApiContext } from '~src/context';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -117,7 +117,7 @@ const Address = (props: Props) => {
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise | null>(null);
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
@@ -162,16 +162,16 @@ const Address = (props: Props) => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
-		} else if (network === 'kusama') {
-			setApi(peopleKusamaApi || null);
-			setApiReady(peopleKusamaApiReady);
+		} else if (['kusama', 'polkadot'].includes(network)) {
+			setApi(peopleChainApi || null);
+			setApiReady(peopleChainApiReady);
 		} else {
 			if (!apiContext.api || !apiContext.apiReady) return;
 			setApi(apiContext.api);
 			setApiReady(apiContext.apiReady);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address, peopleChainApi, peopleChainApiReady]);
 
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 

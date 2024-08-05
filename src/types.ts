@@ -102,7 +102,7 @@ export type ChainPropType = {
 };
 
 export interface ChainProps {
-	peopleKusamaRpcEndpoint?: string;
+	peopleChainRpcEndpoint?: string;
 	preImageBaseDeposit?: string;
 	palletInstance?: string;
 	parachain?: string;

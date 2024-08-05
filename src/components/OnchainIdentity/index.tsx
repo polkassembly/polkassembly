@@ -74,13 +74,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;
-		const bondFee = api?.consts?.identity?.byteDeposit || ZERO_BN;
+		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
 
 		const registerars: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
 		const registerarIndex = getIdentityRegistrarIndex({ network });
 		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
 		const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
-		console.log(minDeposite.toString());
 		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 		setPerSocialBondFee(bondFee as any);
 		setLoading({ ...loading, isLoading: false });

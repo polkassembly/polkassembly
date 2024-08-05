@@ -77,7 +77,9 @@ const IdentityForm = ({
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [defaultChainUserBalance, setDefaultChainUserBalance] = useState<BN>(ZERO_BN);
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+	const totalFee = gasFee
+		.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)))
+		.add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))));
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
 
@@ -235,22 +237,16 @@ const IdentityForm = ({
 		}
 
 		if (identityInfo.isIdentitySet) {
-			console.log(1);
-
 			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
 				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
-				console.log(paymentInfo.partialFee.toString());
-				console.log(2);
 			} else {
 				const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
-				console.log(3);
 			}
 		} else {
 			const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
 			setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
-			console.log(4);
 		}
 
 		setLoading(false);
@@ -336,7 +332,7 @@ const IdentityForm = ({
 					availableBalance.lte(totalFee) && (
 						<div>
 							<PeopleChainTeleport
-								defaultAmount={totalFee.sub(availableBalance).add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))))}
+								defaultAmount={totalFee.sub(availableBalance)}
 								defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
 								onConfirm={(amount: BN) => {
 									setIsBalanceUpdatedLoading(true);

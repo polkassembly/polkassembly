@@ -4,7 +4,7 @@
 
 import type { NextApiHandler } from 'next';
 import { firestore_db } from '~src/services/firebaseInit';
-import { Badge, ProfileDetailsResponse, BadgeName, MessageType } from '~src/auth/types';
+import { Badge, ProfileDetailsResponse, BadgeName, MessageType, BadgeCriterion, BadgeCheckContext } from '~src/auth/types';
 import { getProfileWithAddress } from '../auth/data/profileWithAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getUserPostCount } from '../posts/user-total-post-counts';
@@ -18,53 +18,13 @@ import BN from 'bn.js';
 import { GET_TOTAL_VOTES_FOR_PROPOSAL } from '~src/queries';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
+import { getWSProvider } from '~src/global/achievementbadges';
 
-interface BadgeCheckContext {
-	commentsCount?: number;
-	delegatedTokens?: number;
-	isGov1Chain?: boolean;
-	proposals?: any;
-	rank?: number;
-	totalSupply?: any;
-	votesCount?: number;
-	votingPower?: number;
-}
-
-export const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int!) {
+const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int!) {
   proposals(where: {trackNumber_eq: $track_eq}) {
     index
   }
 }`;
-
-interface BadgeCriterion {
-	check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => Promise<boolean> | boolean;
-	name: BadgeName;
-}
-
-export const getWSProvider = (network: string) => {
-	switch (network) {
-		case 'kusama':
-			return 'wss://kusama-rpc.polkadot.io';
-		case 'polkadot':
-			return 'wss://rpc.polkadot.io';
-		case 'vara':
-			return 'wss://rpc.vara.network';
-		case 'rococo':
-			return 'wss://rococo-rpc.polkadot.io';
-		case 'moonbeam':
-			return 'wss://wss.api.moonbeam.network';
-		case 'moonriver':
-			return 'wss://wss.moonriver.moonbeam.network';
-		case 'moonbase':
-			return 'wss://wss.api.moonbase.moonbeam.network';
-		case 'picasso':
-			return 'wss://picasso-rpc.composable.finance';
-		case 'westend':
-			return 'wss://westend-rpc.dwellir.com';
-		default:
-			return null;
-	}
-};
 
 const badgeCriteria: BadgeCriterion[] = [
 	{

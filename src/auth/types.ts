@@ -279,3 +279,19 @@ export interface Badge {
 	name: BadgeName;
 	check: Boolean;
 }
+
+export interface BadgeCheckContext {
+	commentsCount?: number;
+	delegatedTokens?: number;
+	isGov1Chain?: boolean;
+	proposals?: any;
+	rank?: number;
+	totalSupply?: any;
+	votesCount?: number;
+	votingPower?: number;
+}
+
+export interface BadgeCriterion {
+	check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => Promise<boolean> | boolean;
+	name: BadgeName;
+}

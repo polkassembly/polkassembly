@@ -19,6 +19,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 
 interface Props {
 	currentTokenPrice: {
@@ -189,7 +190,34 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, [assethubApi, assethubApiReady]);
 
 	const balanceDifference = graphData.length >= 31 ? parseFloat(graphData[graphData.length - 1].balance) - parseFloat(graphData[graphData.length - 30].balance) : null;
-	const formatedBalanceDifference = balanceDifference && formatBnBalance(String(balanceDifference), { numberAfterComma: 0, withUnit: false }, network);
+
+	const formatedBalanceDifference =
+		balanceDifference &&
+		formatUSDWithUnits(
+			formatBnBalance(
+				balanceDifference.toString(),
+				{
+					numberAfterComma: 0,
+					withThousandDelimitor: false,
+					withUnit: true
+				},
+				network
+			)
+		);
+	const totalAmountUsd =
+		balanceDifference && currentTokenPrice.value
+			? formatUSDWithUnits(
+					formatBnBalance(
+						String(balanceDifference * parseFloat(currentTokenPrice.value)),
+						{
+							numberAfterComma: 0,
+							withThousandDelimitor: false,
+							withUnit: false
+						},
+						network
+					)
+			  )
+			: null;
 
 	return (
 		<div
@@ -208,12 +236,26 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
 												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 											/>
-											<span className='rounded-lg bg-[#F4F5F6] px-[6px] py-[2px] text-[10px] font-medium text-[#485F7DCC] dark:bg-[#333843] dark:text-[#F4F5F6]'>Monthly</span>
+											<span className='rounded-lg bg-[#F4F5F6] px-[6px] py-[2px] text-xs font-medium text-[#485F7DCC] dark:bg-[#333843] dark:text-[#F4F5F6]'>Monthly</span>
 										</div>
 										{formatedBalanceDifference && (
-											<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
-												{formatNumberWithSuffix(Number(formatedBalanceDifference))}
-											</span>
+											<>
+												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+													{formatedBalanceDifference}
+												</span>
+												{totalAmountUsd && (
+													<span className={`${poppins.className} ${poppins.variable} ml-[6px] text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
+														~ ${totalAmountUsd}
+													</span>
+												)}
+												<span>
+													{Number(balanceDifference) < 0 ? (
+														<CaretDownOutlined style={{ color: 'red', marginLeft: '6px' }} />
+													) : (
+														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '6px' }} />
+													)}
+												</span>
+											</>
 										)}
 									</div>
 									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1 self-end`}>
@@ -257,12 +299,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<PolkadotIcon />
 												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
 													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
-													<span className='ml-1 text-[11px] text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
+													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
 													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>
 												{!['polymesh', 'polymesh-test'].includes(network) && (
 													<>
-														<span className='ml-1 whitespace-nowrap text-[10px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+														<span className='ml-1 whitespace-nowrap text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
 															{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
 														</span>
 													</>
@@ -280,29 +322,29 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												Asset Hub
 											</span>
 											<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
-												<div className=''>
-													{formatNumberWithSuffix(Number(assetValue))} <span className='ml-[2px] font-normal'>{unit}</span>
+												<div className='text-xs'>
+													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 												</div>
 												<Divider
 													className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
 													type='vertical'
 												/>
-												<div className=''>
-													{Number(assetValueUSDC) / 100}m<span className='ml-[3px] font-normal'>USDC</span>
+												<div className='text-xs'>
+													{Number(assetValueUSDC) / 100}M<span className='ml-[3px] font-normal'>USDC</span>
 												</div>
 												<Divider
 													className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
 													type='vertical'
 												/>
-												<div className=''>
-													{Number(assetValueUSDT) / 100}m<span className='ml-[3px] font-normal'>USDT</span>
+												<div className='text-xs'>
+													{Number(assetValueUSDT) / 100}M<span className='ml-[3px] font-normal'>USDT</span>
 												</div>
 											</div>
 										</div>
 									)}
 								</div>
 							) : (
-								<div className='flex min-h-[89px] w-full items-center justify-center'>
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
 									<LoadingOutlined />
 								</div>
 							)}
@@ -366,7 +408,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									)}
 								</div>
 							) : (
-								<div className='flex min-h-[89px] w-full items-center justify-center'>
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
 									<LoadingOutlined />
 								</div>
 							)}
@@ -412,7 +454,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
 														</>
 													) : null}
-													<span className='text-[10px] text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
+													<span className='text-xs text-lightBlue dark:text-blue-dark-medium sm:text-xs'>/ {spendPeriod.value.total} days </span>
 												</>
 											) : (
 												'N/A'
@@ -430,7 +472,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									</span>
 								</>
 							) : (
-								<div className='flex min-h-[89px] w-full items-center justify-center'>
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
 									<LoadingOutlined />
 								</div>
 							)}
@@ -466,7 +508,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									</p>
 								</div>
 							) : (
-								<div className='flex min-h-[89px] w-full items-center justify-center'>
+								<div className='flex min-h-[50px] w-full items-center justify-center'>
 									<LoadingOutlined />
 								</div>
 							)}

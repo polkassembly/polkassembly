@@ -7,17 +7,23 @@ import React from 'react';
 import { useTheme } from 'next-themes';
 import { ResponsiveLine } from '@nivo/line';
 import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
+import dayjs from 'dayjs';
+import formatBnBalance from '~src/util/formatBnBalance';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { useNetworkSelector } from '~src/redux/selectors';
 
 const CustomTooltip = ({ point }: any) => {
+	const { network } = useNetworkSelector();
 	return (
 		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
 			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{point.data.x}</div>
-			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.y).toFixed(2)}</div>
+			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.y).toFixed(2)}M</div>
 		</div>
 	);
 };
 
 const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
+	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
 	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0);
@@ -26,8 +32,18 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 		{
 			id: 'balance',
 			data: filteredData.slice(0, -1).map((item) => ({
-				x: item.date,
-				y: parseFloat(item.balance)
+				x: dayjs(item.date).format('MMM'),
+				y: formatUSDWithUnits(
+					formatBnBalance(
+						item.balance,
+						{
+							numberAfterComma: 0,
+							withThousandDelimitor: false,
+							withUnit: false
+						},
+						network
+					)
+				)
 			}))
 		}
 	];
@@ -37,23 +53,21 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	}
 
 	return (
-		<div style={{ height: '100px' }}>
+		<div style={{ height: '80px' }}>
 			<ResponsiveLine
 				data={formattedData}
-				margin={{ bottom: 10, left: 30, right: 0, top: 10 }}
+				margin={{ bottom: 26, left: 10, right: 11.5, top: 20 }}
 				xScale={{ type: 'point' }}
 				yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 				axisTop={null}
 				axisRight={null}
-				axisBottom={null}
-				axisLeft={{
+				axisBottom={{
 					tickSize: 3,
-					tickPadding: 0,
+					tickPadding: 10,
 					tickRotation: 0,
-					legend: 'Balance',
-					legendOffset: -40,
 					format: (value) => `${value}`
 				}}
+				axisLeft={null}
 				tooltip={CustomTooltip}
 				tooltipFormat={(value) => `${Number(value).toFixed(2)}`}
 				colors={['#ADC2F9']}

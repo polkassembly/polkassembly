@@ -11,6 +11,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 export interface PeopleChainApiContextType {
 	peopleChainApi: ApiPromise | undefined;
@@ -33,7 +34,7 @@ export function PeopleChainApiContextProvider(props: PeopleChainApiContextProvid
 	const provider = useRef<ScProvider | WsProvider | null>(null);
 
 	useEffect(() => {
-		if ((!wsProvider && !props.network) || !['kusama', 'polkadot'].includes(props?.network as any)) return;
+		if ((!wsProvider && !props.network) || !isPeopleChainSupportedNetwork(props?.network as any)) return;
 		provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.peopleChainRpcEndpoint);
 
 		setPeopleChainApiReady(false);
@@ -46,7 +47,7 @@ export function PeopleChainApiContextProvider(props: PeopleChainApiContextProvid
 	}, [props.network, wsProvider]);
 
 	useEffect(() => {
-		if (!['kusama', 'polkadot'].includes(props?.network as any)) return;
+		if (!isPeopleChainSupportedNetwork(props?.network as any)) return;
 		if (peopleChainApi) {
 			const timer = setTimeout(async () => {
 				queueNotification({
@@ -75,7 +76,7 @@ export function PeopleChainApiContextProvider(props: PeopleChainApiContextProvid
 					clearTimeout(timer);
 
 					setPeopleChainApiReady(true);
-					console.log('People Kusama API ready');
+					console.log(`${props.network} People chain API ready`);
 				})
 				.catch(async (error) => {
 					clearTimeout(timer);

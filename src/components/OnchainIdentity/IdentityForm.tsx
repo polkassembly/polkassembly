@@ -327,9 +327,10 @@ const IdentityForm = ({
 				)}
 
 				{!!totalFee.gt(ZERO_BN) &&
+					isPeopleChainSupportedNetwork(network) &&
 					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
 					availableBalance &&
-					availableBalance.lte(totalFee) && (
+					availableBalance.lt(totalFee) && (
 						<div>
 							<PeopleChainTeleport
 								defaultAmount={totalFee.sub(availableBalance)}
@@ -343,7 +344,7 @@ const IdentityForm = ({
 						</div>
 					)}
 
-				{isBalanceUpdatedLoading && (
+				{isBalanceUpdatedLoading && isPeopleChainSupportedNetwork(network) && (
 					<Alert
 						className='mb-6 rounded-[4px]'
 						type='info'

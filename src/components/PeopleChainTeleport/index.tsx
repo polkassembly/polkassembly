@@ -91,7 +91,7 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 			{
 				V3: {
 					interior: {
-						X1: { Parachain: '1004' }
+						X1: { Parachain: chainProperties[network]?.peopleChainParachain }
 					},
 					parenets: 0
 				}

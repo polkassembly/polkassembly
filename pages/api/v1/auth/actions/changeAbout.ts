@@ -36,6 +36,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 		badges: [],
 		bio: description,
 		image: '',
+		achievement_badges: [],
 		title
 	};
 

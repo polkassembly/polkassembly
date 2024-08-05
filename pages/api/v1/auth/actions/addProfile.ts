@@ -83,7 +83,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 		email: email || '',
 		image: image || '',
 		social_links: newSocialLinks || [],
-		title: title || ''
+		title: title || '',
+		achievement_badges: []
 	};
 	let updatedToken: any;
 	if (email && email?.length) {

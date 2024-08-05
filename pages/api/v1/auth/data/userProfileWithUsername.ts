@@ -116,6 +116,7 @@ export async function getUserProfileWithUserId(userId: number): Promise<IApiResp
 			title: '',
 			user_id: userDoc.id,
 			username: data?.username,
+			achievement_badges: [],
 			...data?.profile
 		};
 
@@ -152,7 +153,8 @@ export async function getUserProfileWithUsername(username: string): Promise<IApi
 			title: '',
 			user_id: userDoc.id,
 			username: userDoc.username,
-			...userDoc.profile
+			...userDoc.profile,
+			achievement_badges: userDoc.profile?.achievement_badges || []
 		};
 
 		return {

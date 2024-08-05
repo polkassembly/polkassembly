@@ -74,6 +74,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -330,7 +331,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network)) {
+		if (isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

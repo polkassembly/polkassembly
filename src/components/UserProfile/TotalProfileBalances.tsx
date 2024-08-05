@@ -11,7 +11,7 @@ import { CheckCircleFilled } from '@ant-design/icons';
 import LockIcon from '~assets/icons/vote-lock.svg';
 import { Divider } from 'antd';
 import styled from 'styled-components';
-import userProfileBalances from '~src/util/userProfieBalances';
+import userProfileBalances from '~src/util/userProfileBalances';
 import BN from 'bn.js';
 import { useApiContext } from '~src/context';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';

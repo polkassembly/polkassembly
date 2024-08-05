@@ -16,6 +16,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	address: string;
@@ -41,7 +42,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		if (!['kusama', 'polkadot'].includes(network) || !usedInIdentityFlow) {
+		if (!isPeopleChainSupportedNetwork(network) || !usedInIdentityFlow) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });

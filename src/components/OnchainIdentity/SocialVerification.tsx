@@ -22,6 +22,7 @@ import Image from 'next/image';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import messages from '~src/auth/utils/messages';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
@@ -40,7 +41,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const items: TimelineItemProps[] = [];
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network)) {
+		if (isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

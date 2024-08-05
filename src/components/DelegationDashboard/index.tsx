@@ -20,6 +20,7 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -53,8 +54,8 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [isMobile, userDetails]);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
-		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady) return;
 
 		const info = await getIdentityInformation({

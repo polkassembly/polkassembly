@@ -18,8 +18,25 @@ interface Args {
 	onFailed: (errorMessageFallback: string) => Promise<void> | void;
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
+	setIsTxFinalized?: (pre: string) => void;
+	waitTillFinalizedHash?: boolean;
 }
-const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Args) => {
+const executeTx = async ({
+	api,
+	apiReady,
+	network,
+	tx,
+	address,
+	proxyAddress,
+	params = {},
+	errorMessageFallback,
+	onSuccess,
+	onFailed,
+	onBroadcast,
+	setStatus,
+	setIsTxFinalized,
+	waitTillFinalizedHash = false
+}: Args) => {
 	if (!api || !apiReady || !tx) return;
 
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
@@ -43,7 +60,9 @@ const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, pa
 				for (const { event } of events) {
 					if (event.method === 'ExtrinsicSuccess') {
 						setStatus?.('Transaction Success');
-						await onSuccess(txHash);
+						if (!waitTillFinalizedHash) {
+							await onSuccess(txHash);
+						}
 					} else if (event.method === 'ExtrinsicFailed') {
 						setStatus?.('Transaction failed');
 						console.log('Transaction failed');
@@ -67,6 +86,8 @@ const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, pa
 			} else if (status.isFinalized) {
 				console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 				console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
+				setIsTxFinalized?.(txHash);
+				await onSuccess(txHash);
 			}
 		})
 		.catch((error: unknown) => {

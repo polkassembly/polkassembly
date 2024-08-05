@@ -220,17 +220,39 @@ const IdentityForm = ({
 			return;
 		}
 
-		let tx = api.tx.identity.setIdentity(info);
+		let setIdentityTx = api.tx.identity.setIdentity(info);
+		let requestJudgementTx;
 		let signingAddress = identityAddress;
 		setLoading(true);
 		if (selectedProxyAddress?.length && showProxyDropdown) {
-			tx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
+			setIdentityTx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
 			signingAddress = selectedProxyAddress;
 		}
 
-		const paymentInfo = await tx.paymentInfo(signingAddress);
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+		if (registrarIndex) {
+			requestJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+		}
 
-		setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+		if (identityInfo.isIdentitySet) {
+			console.log(1);
+
+			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
+				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
+				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+				console.log(paymentInfo.partialFee.toString());
+				console.log(2);
+			} else {
+				const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+				console.log(3);
+			}
+		} else {
+			const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+			setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+			console.log(4);
+		}
+
 		setLoading(false);
 	};
 
@@ -314,7 +336,7 @@ const IdentityForm = ({
 					availableBalance.lte(totalFee) && (
 						<div>
 							<PeopleChainTeleport
-								defaultAmount={totalFee.sub(availableBalance).add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2)))))}
+								defaultAmount={totalFee.sub(availableBalance).add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))))}
 								defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
 								onConfirm={(amount: BN) => {
 									setIsBalanceUpdatedLoading(true);
@@ -632,7 +654,7 @@ const IdentityForm = ({
 				availableBalance={availableBalance?.add(defaultChainUserBalance) || ZERO_BN}
 				handleSetIdentity={handleSetIdentity}
 				isProxyExistsOnWallet={isProxyExistsOnWallet}
-				loading={loading}
+				loading={loading || isBalanceUpdatedLoading}
 				okAll={okAll}
 				onCancel={onCancel}
 				proxyAddresses={proxyAddresses}

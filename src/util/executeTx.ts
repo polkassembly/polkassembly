@@ -37,6 +37,7 @@ const executeTx = async ({
 	setIsTxFinalized,
 	waitTillFinalizedHash = false
 }: Args) => {
+	let isSuccess = false;
 	if (!api || !apiReady || !tx) return;
 
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
@@ -60,6 +61,7 @@ const executeTx = async ({
 				for (const { event } of events) {
 					if (event.method === 'ExtrinsicSuccess') {
 						setStatus?.('Transaction Success');
+						isSuccess = true;
 						if (!waitTillFinalizedHash) {
 							await onSuccess(txHash);
 						}
@@ -68,6 +70,7 @@ const executeTx = async ({
 						console.log('Transaction failed');
 						setStatus?.('Transaction failed');
 						const dispatchError = (event.data as any)?.dispatchError;
+						isSuccess = false;
 
 						if (dispatchError?.isModule) {
 							const errorModule = (event.data as any)?.dispatchError?.asModule;
@@ -87,7 +90,9 @@ const executeTx = async ({
 				console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 				console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 				setIsTxFinalized?.(txHash);
-				await onSuccess(txHash);
+				if (isSuccess) {
+					await onSuccess(txHash);
+				}
 			}
 		})
 		.catch((error: unknown) => {

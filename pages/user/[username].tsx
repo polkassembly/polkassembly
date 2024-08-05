@@ -93,6 +93,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		},
 		userProfile: {
 			data: userProfile.data || {
+				achievement_badges: [],
 				addresses: [],
 				badges: [],
 				bio: '',

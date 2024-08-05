@@ -20,13 +20,13 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 
 interface BadgeCheckContext {
-	proposals?: any;
-	totalSupply?: any;
-	rank?: number;
-	isGov1Chain?: boolean;
 	commentsCount?: number;
-	votesCount?: number;
 	delegatedTokens?: number;
+	isGov1Chain?: boolean;
+	proposals?: any;
+	rank?: number;
+	totalSupply?: any;
+	votesCount?: number;
 	votingPower?: number;
 }
 
@@ -37,10 +37,8 @@ export const GET_ALL_TRACK_PROPOSALS = `query ActiveTrackProposals($track_eq:Int
 }`;
 
 interface BadgeCriterion {
-	name: BadgeName;
-	description?: (user: ProfileDetailsResponse) => string;
-	requirements?: string;
 	check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => Promise<boolean> | boolean;
+	name: BadgeName;
 }
 
 export const getWSProvider = (network: string) => {
@@ -70,55 +68,53 @@ export const getWSProvider = (network: string) => {
 
 const badgeCriteria: BadgeCriterion[] = [
 	{
-		name: BadgeName.DecentralisedVoice_polkodot,
-		check: async (user: ProfileDetailsResponse, context?: BadgeCheckContext) => {
+		check: async (user: ProfileDetailsResponse) => {
 			return w3fDelegatesPolkadot.some((delegate) => delegate.address === user.addresses[0]);
-		}
+		},
+		name: BadgeName.DecentralisedVoice_polkodot
 	},
 	{
-		name: BadgeName.DecentralisedVoice_kusama,
-		check: async (user: ProfileDetailsResponse, context?: BadgeCheckContext) => {
+		check: async (user: ProfileDetailsResponse) => {
 			return w3fDelegatesKusama.some((delegate) => delegate.address === user.addresses[0]);
-		}
+		},
+		name: BadgeName.DecentralisedVoice_kusama
 	},
 	{
-		name: BadgeName.Fellow,
-		description: (user: ProfileDetailsResponse) => `Rank ${user.profile_score || ''} Fellow`,
-		requirements: 'Rank 1 and above',
-		check: async (user: ProfileDetailsResponse, context?: BadgeCheckContext) => {
+		check: async (user: ProfileDetailsResponse) => {
 			const rank = await calculateRank(user);
 			return rank >= 1;
-		}
+		},
+		name: BadgeName.Fellow
 	},
 	{
-		name: BadgeName.Council,
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.isGov1Chain ?? false
+		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.isGov1Chain ?? false,
+		name: BadgeName.Council
 	},
 	{
-		name: BadgeName.ActiveVoter,
 		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => {
 			if (!context?.proposals) return false;
 			const userVotes = context.proposals.filter((proposal: any) => proposal.voters.includes(user.addresses[0]));
 			return userVotes.length / context.proposals.length >= 0.15 && context.proposals.length >= 5;
-		}
+		},
+		name: BadgeName.ActiveVoter
 	},
 	{
-		name: BadgeName.Whale,
 		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) =>
-			context?.votingPower !== undefined && context?.totalSupply !== undefined && context.votingPower >= context.totalSupply * 0.0005
+			context?.votingPower !== undefined && context?.totalSupply !== undefined && context.votingPower >= context.totalSupply * 0.0005,
+		name: BadgeName.Whale
 	},
 	{
-		name: BadgeName.SteadfastCommentor,
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.commentsCount !== undefined && context.commentsCount > 50
+		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.commentsCount !== undefined && context.commentsCount > 50,
+		name: BadgeName.SteadfastCommentor
 	},
 	{
-		name: BadgeName.GMVoter,
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.votesCount !== undefined && context.votesCount > 50
+		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.votesCount !== undefined && context.votesCount > 50,
+		name: BadgeName.GMVoter
 	},
 	{
-		name: BadgeName.PopularDelegate,
 		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) =>
-			context?.delegatedTokens !== undefined && context?.totalSupply !== undefined && context.delegatedTokens >= context.totalSupply * 0.0001
+			context?.delegatedTokens !== undefined && context?.totalSupply !== undefined && context.delegatedTokens >= context.totalSupply * 0.0001,
+		name: BadgeName.PopularDelegate
 	}
 ];
 
@@ -154,7 +150,7 @@ async function evaluateBadges(user: ProfileDetailsResponse, network: string): Pr
 	const commentsCount = commentsSnapshot.size;
 
 	const wsProvider = new WsProvider(getWSProvider(network) as string);
-	const api = await ApiPromise.create({ provider: wsProvider });
+	await ApiPromise.create({ provider: wsProvider });
 	const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
 
 	let totalSupply = new BN(0);
@@ -198,13 +194,13 @@ async function evaluateBadges(user: ProfileDetailsResponse, network: string): Pr
 	}
 
 	const context: BadgeCheckContext = {
-		proposals: activeProposals,
-		totalSupply: totalSupply.toString(),
-		rank,
-		isGov1Chain,
 		commentsCount,
-		votesCount: postCountData.votes,
 		delegatedTokens: Number(delegationStats.totalDelegatedBalance),
+		isGov1Chain,
+		proposals: activeProposals,
+		rank,
+		totalSupply: totalSupply.toString(),
+		votesCount: postCountData.votes,
 		votingPower: Number(delegationStats.totalDelegatedBalance)
 	};
 
@@ -212,8 +208,8 @@ async function evaluateBadges(user: ProfileDetailsResponse, network: string): Pr
 		const checkResult = await badge.check(user, context);
 		return checkResult
 			? {
-					name: badge.name,
-					check: true
+					check: true,
+					name: badge.name
 			  }
 			: null;
 	});
@@ -250,7 +246,7 @@ const handler: NextApiHandler = async (req, res) => {
 
 		const { data: user, error } = await getProfileWithAddress({ address: userAddress });
 		if (error || !user) {
-			return res.status(404).json({ success: false, message: 'User not found.' });
+			return res.status(404).json({ message: 'User not found.', success: false });
 		}
 
 		const newBadges: Badge[] = await evaluateBadges(user as unknown as ProfileDetailsResponse, network);
@@ -259,9 +255,9 @@ const handler: NextApiHandler = async (req, res) => {
 			await updateUserAchievementBadges(user.user_id.toString(), newBadges);
 		}
 
-		res.status(200).json({ success: true, achievement_badges: newBadges });
+		res.status(200).json({ achievement_badges: newBadges, success: true });
 	} else {
-		res.status(405).json({ success: false, message: 'Method not allowed.' });
+		res.status(405).json({ message: 'Method not allowed.', success: false });
 	}
 };
 

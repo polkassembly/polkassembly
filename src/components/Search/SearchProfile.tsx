@@ -33,6 +33,7 @@ interface Props {
 const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 	const userProfile = useUserDetailsSelector();
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		achievement_badges: [],
 		addresses: [],
 		badges: [],
 		bio: '',

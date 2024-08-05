@@ -33,10 +33,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 
 	let userId: number;
 	let newProfile: ProfileDetails = {
+		achievement_badges: [],
 		badges: [],
 		bio: description,
 		image: '',
-		achievement_badges: [],
 		title
 	};
 

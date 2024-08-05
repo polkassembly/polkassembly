@@ -109,6 +109,7 @@ export async function getUserProfileWithUserId(userId: number): Promise<IApiResp
 		const user_addresses = await getAddressesFromUserId(userId);
 
 		const user: ProfileDetailsResponse = {
+			achievement_badges: [],
 			addresses: user_addresses.map((a) => a?.address) || [],
 			badges: [],
 			bio: '',
@@ -116,7 +117,6 @@ export async function getUserProfileWithUserId(userId: number): Promise<IApiResp
 			title: '',
 			user_id: userDoc.id,
 			username: data?.username,
-			achievement_badges: [],
 			...data?.profile
 		};
 

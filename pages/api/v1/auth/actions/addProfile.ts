@@ -77,14 +77,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 
 	//update profile field in userRef
 	const profile = {
+		achievement_badges: [],
 		badges,
 		bio: bio || '',
 		cover_image: cover_image || '',
 		email: email || '',
 		image: image || '',
 		social_links: newSocialLinks || [],
-		title: title || '',
-		achievement_badges: []
+		title: title || ''
 	};
 	let updatedToken: any;
 	if (email && email?.length) {

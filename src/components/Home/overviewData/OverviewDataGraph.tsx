@@ -32,6 +32,10 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 		}
 	];
 
+	if (filteredData.length == 0) {
+		return <div>Oops , something went wrong , Please try after sometime</div>;
+	}
+
 	return (
 		<div style={{ height: '100px' }}>
 			<ResponsiveLine

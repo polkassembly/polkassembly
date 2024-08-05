@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
 import { poppins } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
+import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatNumberWithSuffix } from '../../Bounties/utils/formatBalanceUsd';
@@ -187,6 +188,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [assethubApi, assethubApiReady]);
 
+	const balanceDifference = graphData.length >= 31 ? parseFloat(graphData[graphData.length - 1].balance) - parseFloat(graphData[graphData.length - 30].balance) : null;
+	const formatedBalanceDifference = balanceDifference && formatBnBalance(String(balanceDifference), { numberAfterComma: 0, withUnit: false }, network);
+
 	return (
 		<div
 			className={`${poppins.className} ${poppins.variable} ${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`}
@@ -197,13 +201,20 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						{!available.isLoading ? (
 							<>
 								<div className='mb-2 flex justify-between'>
-									<div className='my-1 flex items-center gap-x-[6px]'>
-										<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
-										<HelperTooltip
-											text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-											className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-										/>
-										<span className='rounded-lg bg-[#F4F5F6] px-[6px] py-[2px] text-[10px] font-medium text-[#485F7DCC] dark:bg-[#333843] dark:text-[#F4F5F6]'>Monthly</span>
+									<div>
+										<div className='my-1 flex items-center gap-x-[6px]'>
+											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+											<HelperTooltip
+												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+											/>
+											<span className='rounded-lg bg-[#F4F5F6] px-[6px] py-[2px] text-[10px] font-medium text-[#485F7DCC] dark:bg-[#333843] dark:text-[#F4F5F6]'>Monthly</span>
+										</div>
+										{formatedBalanceDifference && (
+											<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+												{formatNumberWithSuffix(Number(formatedBalanceDifference))}
+											</span>
+										)}
 									</div>
 									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1 self-end`}>
 										<span className={' hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'}>{chainProperties[network]?.tokenSymbol} Price</span>
@@ -242,17 +253,23 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								<div className='flex flex-col justify-between gap-2 xl:flex-row'>
 									<div className='flex items-baseline justify-start font-medium xl:justify-between'>
 										{available.value ? (
-											<div className='flex items-baseline whitespace-nowrap'>
-												<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
-												<span className='ml-1 text-base font-medium text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
+											<div className='flex items-center'>
+												<PolkadotIcon />
+												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
+													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
+													<span className='ml-1 text-[11px] text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
+													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
+												</div>
+												{!['polymesh', 'polymesh-test'].includes(network) && (
+													<>
+														<span className='ml-1 whitespace-nowrap text-[10px] font-medium text-bodyBlue dark:text-blue-dark-high'>
+															{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+														</span>
+													</>
+												)}
 											</div>
 										) : (
 											<span>N/A</span>
-										)}
-										{!['polymesh', 'polymesh-test'].includes(network) && (
-											<span className='ml-2 whitespace-nowrap text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>
-												{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
-											</span>
 										)}
 									</div>
 

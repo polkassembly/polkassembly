@@ -99,7 +99,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 							},
 							text: {
 								fill: theme === 'dark' ? '#fff' : '#576D8B',
-								fontSize: 11,
+								fontSize: 10,
 								outlineColor: 'transparent',
 								outlineWidth: 0
 							}
@@ -114,7 +114,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 					},
 					legends: {
 						text: {
-							fontSize: 12,
+							fontSize: 10,
 							textTransform: 'capitalize'
 						}
 					}

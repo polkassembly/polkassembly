@@ -41,6 +41,7 @@ import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initia
 import Alert from '~src/basic-components/Alert';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -108,7 +109,7 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network) && usedInIdentityFlow) {
+		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

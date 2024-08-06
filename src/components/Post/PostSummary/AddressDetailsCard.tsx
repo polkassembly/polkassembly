@@ -14,6 +14,7 @@ import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/util
 import Address from '~src/ui-components/Address';
 import { shortenString } from '~src/util/shortenString';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 interface Props {
 	address: string;
 	showAddress?: boolean;
@@ -30,8 +31,8 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const [isMultisigProposer, setIsMultisigProposer] = useState(false);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = ['kusama', 'polkadot'].includes(network) ? peopleChainApi : api;
-		const apiPromiseReady = ['kusama', 'polkadot'].includes(network) ? peopleChainApiReady : apiReady;
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady || !address) return;
 
 		const info = await getIdentityInformation({

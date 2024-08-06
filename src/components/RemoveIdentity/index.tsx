@@ -25,6 +25,7 @@ import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 import { useRouter } from 'next/router';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -51,7 +52,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network)) {
+		if (isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

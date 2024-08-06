@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Checkbox, Divider, Form } from 'antd';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Alert from '~src/basic-components/Alert';
@@ -32,10 +32,14 @@ import Input from '~src/basic-components/Input';
 import IdentityTxBreakdown from './identityTxFeeBreakDown';
 import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
-import { network as AllNetworks } from 'src/global/networkConstants';
+import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
+import userProfileBalances from '~src/util/userProfileBalances';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
+import PeopleChainTeleport from '../PeopleChainTeleport';
+import _ from 'lodash';
 
 const ZERO_BN = new BN(0);
 
@@ -72,15 +76,33 @@ const IdentityForm = ({
 	const [showProxyDropdown, setShowProxyDropdown] = useState<boolean>(false);
 	const [isProxyExistsOnWallet, setIsProxyExistsOnWallet] = useState<boolean>(true);
 	const [loading, setLoading] = useState<boolean>(false);
-	const totalFee = gasFee.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)));
+	const [defaultChainUserBalance, setDefaultChainUserBalance] = useState<BN>(ZERO_BN);
+	const totalFee = gasFee
+		.add(bondFee?.add(registerarFee?.add(!!identityInfo?.alreadyVerified || !!identityInfo.isIdentitySet ? ZERO_BN : minDeposite)))
+		.add(new BN('5').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 1)))));
+	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
+	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network)) {
+		if (isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
 	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
+
+	const getDefaultChainBalance = async () => {
+		if (!defaultApi || !defaultApiReady) return;
+
+		const { transferableBalance } = await userProfileBalances({ address: identityAddress || currentUser?.loginAddress, api: defaultApi, apiReady: defaultApiReady, network });
+		setDefaultChainUserBalance(transferableBalance);
+	};
+
+	useEffect(() => {
+		if (!defaultApi || !defaultApiReady || !isPeopleChainSupportedNetwork(network)) return;
+		getDefaultChainBalance();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [defaultApi, defaultApiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -190,6 +212,8 @@ const IdentityForm = ({
 	};
 
 	const getGasFee = async (initialLoading?: boolean, txFeeVal?: ITxFee) => {
+		setIsBalanceUpdated(false);
+
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
@@ -198,19 +222,43 @@ const IdentityForm = ({
 			return;
 		}
 
-		let tx = api.tx.identity.setIdentity(info);
+		let setIdentityTx = api.tx.identity.setIdentity(info);
+		let requestJudgementTx;
 		let signingAddress = identityAddress;
 		setLoading(true);
 		if (selectedProxyAddress?.length && showProxyDropdown) {
-			tx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
+			setIdentityTx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
 			signingAddress = selectedProxyAddress;
 		}
 
-		const paymentInfo = await tx.paymentInfo(signingAddress);
+		const registrarIndex = getIdentityRegistrarIndex({ network: network });
+		if (registrarIndex) {
+			requestJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+		}
 
-		setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+		if (identityInfo.isIdentitySet) {
+			if (allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) && requestJudgementTx) {
+				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
+				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+			} else {
+				const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+			}
+		} else {
+			const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+			setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
+		}
+
 		setLoading(false);
 	};
+
+	const handleUpdateAvailableBalance = () => {
+		setIsBalanceUpdated(!isBalanceUpdated);
+		setIsBalanceUpdatedLoading(false);
+	};
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const debounceUpdateAvailableBalance = useCallback(_.debounce(handleUpdateAvailableBalance, 10000), []);
 
 	const handleInfo = (initialLoading?: boolean) => {
 		const displayNameVal = form.getFieldValue('displayName')?.trim();
@@ -277,10 +325,37 @@ const IdentityForm = ({
 						<span className='font-semibold text-white'>People Chain is now LIVE for {network.charAt(0).toUpperCase() + network.slice(1)} network</span>
 					</div>
 				)}
-				{totalFee.gt(ZERO_BN) &&
+
+				{!!totalFee.gt(ZERO_BN) &&
+					isPeopleChainSupportedNetwork(network) &&
 					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
 					availableBalance &&
-					availableBalance.lte(totalFee) && (
+					availableBalance.lt(totalFee) &&
+					!totalFee.sub(availableBalance).lte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
+						<div>
+							<PeopleChainTeleport
+								defaultAmount={totalFee.sub(availableBalance)}
+								defaultBeneficiaryAddress={identityAddress || currentUser.loginAddress}
+								onConfirm={(amount: BN) => {
+									setIsBalanceUpdatedLoading(true);
+									debounceUpdateAvailableBalance();
+									setAvailableBalance(availableBalance.add(amount));
+								}}
+							/>
+						</div>
+					)}
+
+				{isBalanceUpdatedLoading && isPeopleChainSupportedNetwork(network) && (
+					<Alert
+						className='mb-6 rounded-[4px]'
+						type='info'
+						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Teleporting funds. This may take a few seconds...</p>}
+					/>
+				)}
+				{!!totalFee.gt(ZERO_BN) &&
+					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
+					availableBalance &&
+					availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
 						<Alert
 							className='mb-6 rounded-[4px]'
 							type='warning'
@@ -301,7 +376,7 @@ const IdentityForm = ({
 					!identityInfo.verifiedByPolkassembly &&
 					allowSetIdentity({ displayName, email, identityInfo, legalName, twitter }) &&
 					availableBalance &&
-					availableBalance.gt(totalFee) && (
+					availableBalance.add(defaultChainUserBalance).gt(totalFee) && (
 						<Alert
 							className='mb-6 rounded-[4px]'
 							type='warning'
@@ -341,6 +416,7 @@ const IdentityForm = ({
 						<Balance
 							address={identityAddress || currentUser.loginAddress}
 							onChange={handleOnAvailableBalanceChange}
+							isBalanceUpdated={isBalanceUpdated}
 							usedInIdentityFlow
 						/>
 					)}
@@ -573,10 +649,10 @@ const IdentityForm = ({
 				txFee={txFee}
 			/>
 			<IdentityFormActionButtons
-				availableBalance={availableBalance}
+				availableBalance={availableBalance?.add(defaultChainUserBalance) || ZERO_BN}
 				handleSetIdentity={handleSetIdentity}
 				isProxyExistsOnWallet={isProxyExistsOnWallet}
-				loading={loading}
+				loading={loading || isBalanceUpdatedLoading}
 				okAll={okAll}
 				onCancel={onCancel}
 				proxyAddresses={proxyAddresses}

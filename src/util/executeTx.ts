@@ -90,7 +90,7 @@ const executeTx = async ({
 				console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 				console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 				setIsTxFinalized?.(txHash);
-				if (isSuccess) {
+				if (isSuccess && waitTillFinalizedHash) {
 					await onSuccess(txHash);
 				}
 			}

@@ -9,7 +9,7 @@ import copyToClipboard from '~src/util/copyToClipboard';
 import dayjs from 'dayjs';
 import { useTheme } from 'next-themes';
 import Address from '~src/ui-components/Address';
-import userProfileBalances from '~src/util/userProfieBalances';
+import userProfileBalances from '~src/util/userProfileBalances';
 import { useApiContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
 import BN from 'bn.js';

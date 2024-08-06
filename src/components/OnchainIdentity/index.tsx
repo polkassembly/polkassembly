@@ -29,6 +29,7 @@ import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -63,7 +64,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	useEffect(() => {
-		if (![AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network)) {
+		if (!isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });

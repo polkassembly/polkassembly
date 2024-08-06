@@ -7,7 +7,7 @@ import { Button, Modal, Spin } from 'antd';
 import { poppins } from 'pages/_app';
 import { useApiContext } from '~src/context';
 import { chainProperties } from '~src/global/networkConstants';
-import userProfileBalances from '~src/util/userProfieBalances';
+import userProfileBalances from '~src/util/userProfileBalances';
 import BN from 'bn.js';
 import { BN_MAX_INTEGER, formatBalance } from '@polkadot/util';
 import { useNetworkSelector, useUserDetailsSelector, useUserUnlockTokensDataSelector } from '~src/redux/selectors';

@@ -33,6 +33,7 @@ import { poppins } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -162,7 +163,7 @@ const Address = (props: Props) => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
-		} else if (['kusama', 'polkadot'].includes(network)) {
+		} else if (isPeopleChainSupportedNetwork(network)) {
 			setApi(peopleChainApi || null);
 			setApiReady(peopleChainApiReady);
 		} else {

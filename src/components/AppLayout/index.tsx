@@ -75,6 +75,9 @@ import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleCha
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
+const RemoveIdentity = dynamic(() => import('../RemoveIdentity'), {
+	ssr: false
+});
 interface IUserDropdown {
 	handleSetIdentityClick: any;
 	isIdentityUnverified: boolean;
@@ -225,8 +228,8 @@ const getUserDropDown = ({
 							handleRemoveIdentity?.();
 						}}
 					>
-						<span className='ml-0.5 text-[22px]'>
-							<ClearIdentityOutlinedIcon />
+						<span className='ml-0.5 text-[22px] max-sm:text-xl'>
+							<ClearIdentityOutlinedIcon className='max-sm:text-base' />
 						</span>
 						<span>Remove Identity</span>
 					</Link>
@@ -1212,6 +1215,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						openAddressModal={openAddressLinkedModal}
 						setOpenAddressModal={setOpenAddressLinkedModal}
 					/>
+					<RemoveIdentity />
 				</>
 			)}
 

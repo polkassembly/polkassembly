@@ -261,20 +261,22 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1 self-end`}>
 										<span className={' hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'}>{chainProperties[network]?.tokenSymbol} Price</span>
 										<div className='flex items-center gap-x-1 text-lg font-semibold'>
-											{currentTokenPrice.value === 'N/A' ? (
-												<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-											) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-												<span className='ml-[2px] text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
-											) : null}
-											<div className='ml-2 flex items-baseline'>
+											<div>
+												{currentTokenPrice.value === 'N/A' ? (
+													<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
+												) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+													<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
+												) : null}
+											</div>
+											<div className='-mb-[2px] ml-2 flex items-center'>
 												<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
 													{Math.abs(Number(priceWeeklyChange.value))}%
 												</span>
 												<span>
 													{Number(priceWeeklyChange.value) < 0 ? (
-														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
+														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px', marginBottom: '0px' }} />
 													) : (
-														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
+														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px', marginTop: '10px' }} />
 													)}
 												</span>
 											</div>
@@ -302,13 +304,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
 													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>
-												{!['polymesh', 'polymesh-test'].includes(network) && (
-													<>
-														<span className='ml-1 whitespace-nowrap text-xs font-medium text-bodyBlue dark:text-blue-dark-high'>
-															{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
-														</span>
-													</>
-												)}
 											</div>
 										) : (
 											<span>N/A</span>

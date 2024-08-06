@@ -27,10 +27,13 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 
 	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0);
 
+	const firstMonth = dayjs(filteredData[0]?.date).format('MMM');
+	const lastMonth = dayjs(filteredData[filteredData.length - 1]?.date).format('MMM');
+
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData.slice(0, -1).map((item) => ({
+			data: filteredData.map((item) => ({
 				x: dayjs(item.date).format('MMM'),
 				y: formatUSDWithUnits(
 					formatBnBalance(
@@ -47,24 +50,24 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 		}
 	];
 
-	if (filteredData.length == 0) {
-		return <div>Oops , something went wrong , Please try after sometime</div>;
+	if (filteredData.length === 0) {
+		return <div>Oops, something went wrong. Please try again later.</div>;
 	}
 
 	return (
 		<div style={{ height: '80px' }}>
 			<ResponsiveLine
 				data={formattedData}
-				margin={{ bottom: 26, left: 10, right: 11.5, top: 20 }}
+				margin={{ bottom: 36, left: 0, right: 0, top: 15 }}
 				xScale={{ type: 'point' }}
 				yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 				axisTop={null}
 				axisRight={null}
 				axisBottom={{
 					tickSize: 3,
-					tickPadding: 10,
+					tickPadding: 20,
 					tickRotation: 0,
-					format: (value) => `${value}`
+					format: (value) => (value === firstMonth || value === lastMonth ? '' : value)
 				}}
 				axisLeft={null}
 				tooltip={CustomTooltip}
@@ -80,7 +83,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 				enableGridY={false}
 				curve='monotoneX'
 				enableArea={true}
-				areaOpacity={0.1}
+				areaOpacity={0.2}
 				enablePoints={false}
 				theme={{
 					axis: {

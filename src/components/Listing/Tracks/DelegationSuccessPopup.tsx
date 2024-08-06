@@ -96,10 +96,11 @@ const DelegationSuccessPopup = ({
 						width={220}
 						height={220}
 					/>
-					<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
+					<span className='mt-2 flex flex-wrap items-center justify-center text-center text-base font-semibold tracking-[0.0015em] dark:text-blue-dark-high'>
 						{title ? title : isDelegate ? `${title} successfully` : 'Undelegated successfully'}
-					</h2>
+					</span>
 				</div>
+
 				{isDelegate && (
 					<div className='flex flex-col items-center justify-center gap-[14px]'>
 						{balance && (

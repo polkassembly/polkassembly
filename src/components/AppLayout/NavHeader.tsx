@@ -24,7 +24,6 @@ import Arrow from '~assets/icons/arrow.svg';
 import ArrowWhite from '~assets/icons/arrow-white.svg';
 import PolkaSafe from '~assets/icons/PolkaSafe.svg';
 import PaLogo from './PaLogo';
-import PaLogoDark from '~assets/PALogoDark.svg';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
@@ -352,19 +351,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						className='logo-size flex lg:hidden'
 						href={'/'}
 					>
-						{theme === 'dark' && isMobile ? (
-							<PaLogoDark className='' />
-						) : (
-							<PaLogo
-								className=''
-								sidedrawer={isMobile}
-							/>
-						)}
+						<PaLogo
+							className='logo-container ml-2'
+							sidedrawer={isMobile}
+						/>
 					</Link>
 
-					<div className='type-container hidden items-center gap-1 sm:flex'>
-						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
-						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
+					<div className='type-container flex items-center gap-1'>
+						<span className='line-container ml-4 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
+						<h2 className='text-container m-0 ml-[84px] p-0 text-sm text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
 						</h2>
 					</div>
@@ -668,7 +663,7 @@ export default styled(NavHeader)`
 
 	@media (max-width: 380px) and (min-width: 319px) {
 		.logo-container {
-			margin-left: -15px !important;
+			// margin-left: -15px !important;
 		}
 
 		.type-container {

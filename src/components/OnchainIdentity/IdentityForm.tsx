@@ -319,10 +319,12 @@ const IdentityForm = ({
 			>
 				{onchainIdentitySupportedNetwork.includes(network) && ['kusama', 'polkadot'].includes(network) && (
 					<div
-						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
+						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2 max-sm:h-10 max-sm:text-xs'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}
 					>
-						<span className='font-semibold text-white'>People Chain is now LIVE for {network.charAt(0).toUpperCase() + network.slice(1)} network</span>
+						<span className='font-semibold text-white'>
+							People Chain is now LIVE for<span className=' capitalize'> {network}</span> network
+						</span>
 					</div>
 				)}
 
@@ -355,7 +357,7 @@ const IdentityForm = ({
 				{!!totalFee.gt(ZERO_BN) &&
 					(!identityInfo?.alreadyVerified || allowSetIdentity({ displayName, email, identityInfo, legalName, twitter })) &&
 					availableBalance &&
-					availableBalance.add(defaultChainUserBalance).lte(totalFee) && (
+					totalFee.sub(availableBalance || ZERO_BN).gte(new BN('1').mul(new BN(String(10 ** (chainProperties[network].tokenDecimals - 2))))) && (
 						<Alert
 							className='mb-6 rounded-[4px]'
 							type='warning'

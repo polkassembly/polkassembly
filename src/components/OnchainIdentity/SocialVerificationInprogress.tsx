@@ -34,7 +34,6 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 
 	return (
 		<Modal
-			centered
 			open={open}
 			className={`${poppins.variable} ${poppins.className} w-[650px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			wrapClassName={`${className} dark:bg-modalOverlayDark`}
@@ -54,8 +53,8 @@ const SocialVerificationInprogress = ({ className, open, close, openPreModal, ha
 						src='/assets/icons/identity-success.svg'
 						alt='identity success icon'
 					/>
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
-					<div className='mt-4 text-2xl font-semibold text-pink_primary'>Check primary inbox or spam</div>
+					<label className='mt-4 text-center text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>Email verification in progress</label>
+					<div className='mt-4 flex text-center text-2xl font-semibold text-pink_primary'>Check primary inbox or spam</div>
 					<div className=' mt-4 flex w-full shrink-0 flex-col items-center justify-center text-center text-sm tracking-wide '>
 						<span className='flex shrink-0 dark:text-blue-dark-high'>A verification link has been sent to your mail address</span>
 						<u className='font-medium text-pink_primary'>

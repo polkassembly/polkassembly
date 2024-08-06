@@ -5,7 +5,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
 import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
-import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
+import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
@@ -50,7 +50,6 @@ import { isGrantsSupported } from '~src/global/grantsNetworks';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { IActiveProposalCount, PostOrigin } from '~src/types';
-
 import Footer from './Footer';
 import NavHeader from './NavHeader';
 import { chainProperties } from '~src/global/networkConstants';
@@ -58,9 +57,7 @@ import { network as AllNetworks } from '~src/global/networkConstants';
 import OpenGovHeaderBanner from './OpenGovHeaderBanner';
 import dynamic from 'next/dynamic';
 import { poppins } from 'pages/_app';
-
 import IdentityCaution from '~assets/icons/identity-caution.svg';
-import { CloseIcon } from '~src/ui-components/CustomIcons';
 import PaLogo from './PaLogo';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
@@ -69,7 +66,6 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import ToggleButton from '~src/ui-components/ToggleButton';
 import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
@@ -308,7 +304,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
-	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [isIdentityUnverified, setIsIdentityUnverified] = useState<boolean>(true);
@@ -1034,16 +1029,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	const handleIdentityButtonClick = () => {
 		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
+
+		if (address?.length) {
+			setOpen(!open);
 		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
+			setOpenAddressLinkedModal(true);
 		}
 	};
+
 	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2Items = gov2Items.concat(
 			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
@@ -1223,25 +1216,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)}
 
 			<Footer theme={theme as any} />
-			<Modal
-				zIndex={100}
-				open={identityMobileModal}
-				footer={false}
-				closeIcon={<CloseIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />}
-				onCancel={() => setIdentityMobileModal(false)}
-				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full`}
-				title={<span className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold'>On-chain identity</span>}
-				wrapClassName='dark:bg-modalOverlayDark'
-			>
-				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
-					<ImageIcon
-						src='/assets/icons/delegation-empty-state.svg'
-						alt='delegation empty state icon'
-					/>
-					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
-				</div>
-			</Modal>
 		</Layout>
 	);
 };

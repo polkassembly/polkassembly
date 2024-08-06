@@ -228,7 +228,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					<div>
 						{!available.isLoading ? (
 							<>
-								<div className='mb-2 flex justify-between'>
+								<div className='mb-2 justify-between sm:flex'>
 									<div>
 										<div className='my-1 flex items-center gap-x-[6px]'>
 											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
@@ -259,7 +259,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										)}
 									</div>
 									<div className={`${poppins.className} ${poppins.variable} flex items-baseline gap-x-1 self-end`}>
-										<span className={' hidden text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'}>{chainProperties[network]?.tokenSymbol} Price</span>
+										<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 										<div className='flex items-center gap-x-1 text-lg font-semibold'>
 											<div>
 												{currentTokenPrice.value === 'N/A' ? (
@@ -418,7 +418,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 						<div className='w-full flex-col gap-x-0 lg:flex'>
 							{!spendPeriod.isLoading ? (
 								<>
-									<div className='mb-2 sm:mb-0'>
+									<div className='sm:mb-2'>
 										<div className='flex items-center'>
 											<span className={`${poppins.className} ${poppins.variable} mr-2 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium md:mt-1 lg:mt-0`}>
 												Spend Period Remaining
@@ -435,17 +435,17 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<>
 													{spendPeriod.value?.days ? (
 														<>
-															<span className='text-base sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
+															<span className='text-base font-medium sm:text-lg'>{spendPeriod.value.days}&nbsp;</span>
 															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>days&nbsp;</span>
 														</>
 													) : null}
 													<>
-														<span className='text-base sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
+														<span className='text-base font-medium sm:text-lg'>{spendPeriod.value.hours}&nbsp;</span>
 														<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>hrs&nbsp;</span>
 													</>
 													{!spendPeriod.value?.days ? (
 														<>
-															<span className='text-base sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
+															<span className='text-base font-medium sm:text-lg'>{spendPeriod.value.minutes}&nbsp;</span>
 															<span className='text-xs text-lightBlue dark:text-blue-dark-medium'>mins&nbsp;</span>
 														</>
 													) : null}
@@ -481,7 +481,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 					<div>
 						<div className='w-full gap-x-0 lg:flex'>
 							{!nextBurn.isLoading ? (
-								<div className='flex items-start gap-x-2'>
+								<div className='items-start sm:flex sm:gap-2'>
 									<div className='h-12'>
 										<div className={`${poppins.className} ${poppins.variable} flex flex-col text-xs`}>
 											<span className='text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
@@ -497,7 +497,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 									</div>
 									<p
-										className={`${poppins.className} ${poppins.variable} flex-1 rounded-lg bg-[#F4F5F6] px-3 py-2 text-xs font-normal text-[#333843] dark:bg-[#333843] dark:text-[#F4F5F6]`}
+										className={`${poppins.className} ${poppins.variable} mt-2 flex-1 rounded-lg bg-[#F4F5F6] px-3 py-2 text-xs font-normal text-[#333843] dark:bg-[#333843] dark:text-[#F4F5F6] sm:mt-0`}
 									>
 										If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.
 									</p>

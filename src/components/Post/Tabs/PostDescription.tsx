@@ -209,7 +209,7 @@ const PostDescription: FC<IPostDescriptionProps> = (props) => {
 				{/* <div className='flex flex-wrap items-center gap-x-1'>{TrackerButtonComp}</div> */}
 			</div>
 
-			<Divider className='border-1 -mr-4 bg-lightBlue text-lightBlue dark:bg-separatorDark' />
+			<Divider className='border-1 -mr-4 bg-[#f4f5f6] text-lightBlue dark:bg-separatorDark' />
 
 			{!isEditing && (
 				<div className='mx-2 mb-8 flex xl:hidden'>

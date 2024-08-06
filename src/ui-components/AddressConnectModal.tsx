@@ -41,6 +41,7 @@ import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initia
 import Alert from '~src/basic-components/Alert';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -75,7 +76,7 @@ const AddressConnectModal = ({
 	usingMultisig = false,
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address',
+	accountSelectionFormTitle = 'Select address',
 	isProposalCreation = false,
 	isBalanceUpdated,
 	usedInIdentityFlow = false
@@ -108,7 +109,7 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network) && usedInIdentityFlow) {
+		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
@@ -421,8 +422,8 @@ const AddressConnectModal = ({
 					disabled={
 						!accounts ||
 						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+						(showMultisig && initiatorBalance.lt(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false)
 					}
 					width={155}
 					height={40}
@@ -430,8 +431,8 @@ const AddressConnectModal = ({
 					className={`mt-4 ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+						(((showMultisig && initiatorBalance.lt(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false) ||
 							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
 							'opacity-50')
 					}`}

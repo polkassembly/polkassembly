@@ -76,7 +76,7 @@ const AddressConnectModal = ({
 	usingMultisig = false,
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address',
+	accountSelectionFormTitle = 'Select address',
 	isProposalCreation = false,
 	isBalanceUpdated,
 	usedInIdentityFlow = false
@@ -422,8 +422,8 @@ const AddressConnectModal = ({
 					disabled={
 						!accounts ||
 						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+						(showMultisig && initiatorBalance.lt(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false)
 					}
 					width={155}
 					height={40}
@@ -431,8 +431,8 @@ const AddressConnectModal = ({
 					className={`mt-4 ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+						(((showMultisig && initiatorBalance.lt(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false) ||
 							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
 							'opacity-50')
 					}`}

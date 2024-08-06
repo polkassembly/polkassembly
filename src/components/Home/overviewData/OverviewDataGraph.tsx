@@ -13,7 +13,6 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 
 const CustomTooltip = ({ point }: any) => {
-	const { network } = useNetworkSelector();
 	return (
 		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
 			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{point.data.x}</div>

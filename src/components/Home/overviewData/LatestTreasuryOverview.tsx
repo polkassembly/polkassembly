@@ -274,9 +274,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												</span>
 												<span>
 													{Number(priceWeeklyChange.value) < 0 ? (
-														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px', marginBottom: '0px' }} />
+														<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
 													) : (
-														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px', marginTop: '10px' }} />
+														<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
 													)}
 												</span>
 											</div>

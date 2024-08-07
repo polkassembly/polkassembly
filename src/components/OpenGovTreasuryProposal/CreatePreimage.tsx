@@ -173,7 +173,6 @@ const CreatePreimage = ({
 		const txSelectedTrack = selectedTrackVal || selectedTrack;
 		const txFundingAmount = fundingAmountVal || fundingAmount;
 		latestBenefeciaries = latestBenefeciaries || beneficiaryAddresses;
-
 		//validate beneficiaryAddresses
 		if (
 			!latestBenefeciaries.length ||
@@ -328,7 +327,7 @@ const CreatePreimage = ({
 	}, [genralIndex]);
 
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
-		setTxFee(ZERO_BN);
+		// setTxFee(ZERO_BN);
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if (data) {
 			data = JSON.parse(data);
@@ -781,6 +780,8 @@ const CreatePreimage = ({
 			)
 		);
 
+		getPreimageTxFee(Boolean(isPreimage));
+
 		setPreimageCreated(false);
 		setPreimageLinked(false);
 		!isPreimage && onChangeLocalStorageSet({ beneficiaryAddresses: beneficiaryAddresses }, Boolean(isPreimage));
@@ -880,7 +881,6 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
 		return fundingAmt;
 	};
-
 	return (
 		<Spin
 			spinning={loading}

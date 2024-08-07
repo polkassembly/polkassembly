@@ -48,6 +48,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		achievement_badges: [],
 		addresses: addresses,
 		badges: [],
 		bio: bio,

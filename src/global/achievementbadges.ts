@@ -1,95 +1,106 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
-
-/* eslint-disable sort-keys */
 
 import { BadgeName } from '~src/auth/types';
 
 export interface BadgeDetails {
-	id: string;
-	name: BadgeName;
 	description: string;
-	requirements: string;
+	id: string;
 	img: string;
 	active?: boolean;
+	name: BadgeName;
+	requirements: string;
 }
 
 export const badgeDetails: BadgeDetails[] = [
 	{
-		id: '1',
-		name: BadgeName.DecentralisedVoice_polkodot,
 		active: true,
 		description: 'Awarded to Polkadot delegates who have significant influence.',
-		requirements: 'Must be a delegate on the Polkadot network.',
-		img: '/assets/badges/DV.svg'
+		id: '1',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_polkodot,
+		requirements: 'Must be a delegate on the Polkadot network.'
 	},
 	{
-		id: '2',
-		name: BadgeName.DecentralisedVoice_kusama,
 		active: false,
 		description: 'Awarded to Kusama delegates who have significant influence.',
-		requirements: 'Must be a delegate on the Kusama network.',
-		img: '/assets/badges/DV.svg'
+		id: '2',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_kusama,
+		requirements: 'Must be a delegate on the Kusama network.'
 	},
 	{
-		id: '3',
-		name: BadgeName.Fellow,
 		active: true,
 		description: 'Rank 1 and above Fellow.',
-		requirements: 'Must achieve a rank of 1 or higher.',
-		img: '/assets/badges/fellow.svg'
+		id: '3',
+		img: '/assets/badges/fellow.svg',
+		name: BadgeName.Fellow,
+		requirements: 'Must achieve a rank of 1 or higher.'
 	},
 	{
-		id: '4',
-		name: BadgeName.Council,
-		active: true,
-		description: 'Member of the governance council.',
-		requirements: 'Must be a member of the governance council.',
-		img: '/assets/badges/council.svg'
-	},
-	{
-		id: '5',
-		name: BadgeName.ActiveVoter,
 		active: true,
 		description: 'Actively participates in voting on proposals.',
-		requirements: 'Must vote on at least 15% of proposals with a minimum of 5 proposals.',
-		img: '/assets/badges/active-voter.svg'
+		id: '5',
+		img: '/assets/badges/active-voter.svg',
+		name: BadgeName.ActiveVoter,
+		requirements: 'Must vote on at least 15% of proposals with a minimum of 5 proposals.'
 	},
 	{
-		id: '6',
-		name: BadgeName.Whale,
 		active: true,
 		description: 'Holds a significant amount of voting power.',
-		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.',
-		img: '/assets/badges/whale-badge.svg'
+		id: '6',
+		img: '/assets/badges/whale-badge.svg',
+		name: BadgeName.Whale,
+		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.'
 	},
 	{
-		id: '7',
-		name: BadgeName.SteadfastCommentor,
+		active: true,
+		description: 'Awarded to Polkadot delegates who have significant influence.',
+		id: '1',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_polkodot,
+		requirements: 'Must be a delegate on the Polkadot network.'
+	},
+	{
 		active: false,
 		description: 'Regularly contributes comments.',
-		requirements: 'Must have more than 50 comments.',
-		img: ''
+		id: '7',
+		img: '',
+		name: BadgeName.SteadfastCommentor,
+		requirements: 'Must have more than 50 comments.'
 	},
 	{
-		id: '8',
-		name: BadgeName.GMVoter,
+		active: false,
+		description: 'Awarded to Kusama delegates who have significant influence.',
+		id: '2',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_kusama,
+		requirements: 'Must be a delegate on the Kusama network.'
+	},
+	{
+		active: true,
+		description: 'Member of the governance council.',
+		id: '4',
+		img: '/assets/badges/council.svg',
+		name: BadgeName.Council,
+		requirements: 'Must be a member of the governance council.'
+	},
+	{
 		active: false,
 		description: 'Regularly votes on proposals.',
-		requirements: 'Must have voted on more than 50 proposals.',
-		img: ''
+		id: '8',
+		img: '',
+		name: BadgeName.GMVoter,
+		requirements: 'Must have voted on more than 50 proposals.'
 	},
 	{
-		id: '9',
-		name: BadgeName.PopularDelegate,
 		active: false,
 		description: 'Received significant delegated tokens.',
-		requirements: 'Must have received delegated tokens equal to or greater than 0.01% of the total supply.',
-		img: ''
+		id: '9',
+		img: '',
+		name: BadgeName.PopularDelegate,
+		requirements: 'Must have received delegated tokens equal to or greater than 0.01% of the total supply.'
 	}
 ];
 

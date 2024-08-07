@@ -4,58 +4,26 @@
 import classNames from 'classnames';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { ProfileDetailsResponse } from '~src/auth/types';
+import { Badge, BadgeName, ProfileDetailsResponse } from '~src/auth/types';
 import styled from 'styled-components';
-import { EProfileBadges } from '~src/types';
 import { Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
+import { badgeDetails } from '~src/global/achievementbadges';
 
 interface Props {
 	className?: string;
 	theme?: string;
+	badges?: Badge[];
 	addressWithIdentity?: string;
 	userProfile: ProfileDetailsResponse;
 	selectedAddresses: string[];
 }
 
-const badgeData = () => {
-	return [
-		{
-			active: true,
-			badge: EProfileBadges.DECENTRALISED_VOICE,
-			icon: '/assets/badges/DV.svg',
-			unlockTime: 'May 17, 2024'
-		},
-		{
-			active: false,
-			badge: EProfileBadges.ACTIVE_VOTER,
-			icon: '/assets/badges/active-voter.svg',
-			unlockTime: ''
-		},
-		{
-			active: true,
-			badge: EProfileBadges.COUNCIL,
-			icon: '/assets/badges/council.svg',
-			unlockTime: 'June 17, 2024'
-		},
-		{
-			active: true,
-			badge: EProfileBadges.FELLOW,
-			icon: '/assets/badges/fellow.svg',
-			unlockTime: 'July 17, 2024'
-		},
-		{
-			active: true,
-			badge: EProfileBadges.WHALE,
-			icon: '/assets/badges/whale-badge.svg',
-			unlockTime: 'September 17, 2023'
-		}
-	];
-};
-
-const ProfileBadges = ({ className, theme }: Props) => {
+const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const [showMore, setShowMore] = useState<boolean>(false);
+	const [openModal, setOpenModal] = useState<boolean>(false);
+	const [selectedBadge, setSelectedBadge] = useState<any>(null);
 
 	return (
 		<div
@@ -87,46 +55,49 @@ const ProfileBadges = ({ className, theme }: Props) => {
 			</div>
 
 			<div className='grid grid-cols-2 gap-4'>
-				{badgeData()
-					.slice(0, showMore ? 5 : 4)
+				{badgeDetails
+					.filter((item) => item.active)
+					.slice(0, showMore ? 6 : 4)
 					.map((item) => (
 						<div
-							key={item.badge}
+							key={item.id}
+							onClick={() => {
+								setOpenModal(true);
+								setSelectedBadge(item);
+							}}
 							className='col-span-1 flex flex-col items-center rounded-lg bg-[#F6F7F9] py-8 dark:bg-[#161616]'
 						>
 							<Tooltip
 								color='#363636'
 								title={
-									item.active ? (
-										<span className='flex items-center gap-1 break-all text-xs'>
-											<ImageIcon
-												src='/assets/icons/hourglass_light.svg'
-												alt='hourglass'
-											/>{' '}
-											Unlocked on {item.unlockTime}
-										</span>
-									) : (
-										'Not yet unlocked'
-									)
+									<span className='flex items-center gap-1 break-all text-xs'>
+										<ImageIcon
+											src='/assets/icons/hourglass_light.svg'
+											alt='hourglass'
+										/>{' '}
+										Unlocked on 17th Sept
+									</span>
 								}
 							>
 								<Image
-									src={item.icon}
+									src={item.img}
 									alt=''
-									className={!item.active ? 'grayscale' : ''}
+									className={badges?.some((badge) => badge.name === item.name) ? '' : 'grayscale'}
 									width={132}
 									height={82}
 								/>
 							</Tooltip>
-							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>{item.badge}</span>
+							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>
+								{item.name === BadgeName.DecentralisedVoice_polkodot || item.name === BadgeName.DecentralisedVoice_kusama ? 'Decentralised Voice' : item.name}
+							</span>
 						</div>
 					))}
 			</div>
 			<BadgeUnlockedModal
-				open={false}
-				setOpen={() => null}
-				badge={EProfileBadges.WHALE}
-				icon='/assets/badges/whale-badge.svg'
+				open={openModal}
+				setOpen={setOpenModal}
+				badge={selectedBadge}
+				badges={badges}
 			/>
 		</div>
 	);

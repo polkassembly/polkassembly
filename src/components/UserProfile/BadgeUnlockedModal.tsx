@@ -10,19 +10,25 @@ import Image from 'next/image';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Link from 'next/link';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { Badge } from '~src/auth/types';
 
 interface Props {
 	className?: string;
 	open: boolean;
 	setOpen: (pre: boolean) => void;
-	badge: string;
-	icon: string;
+	badge: any;
+	badges?: Badge[];
 }
 
-const BadgeUnlockedModal = ({ className, open, setOpen, badge, icon }: Props) => {
+const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { username } = currentUser;
+
+	if (!badge) return <></>;
+
+	const isUnlocked = badges?.some((badge) => badge.name === badge.name);
+
 	return (
 		<Modal
 			open={open}
@@ -58,14 +64,15 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, icon }: Props) =>
 		>
 			<div className='-mt-[100px] flex flex-col items-center justify-center'>
 				<Image
-					src={icon}
+					src={badge?.img}
 					alt=''
+					className={isUnlocked ? '' : 'grayscale'}
 					width={218}
 					height={136}
 				/>
 				<h1 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>Achievement Unlocked</h1>
 				<h2 className='mt-2 text-[20px] tracking-[0.0015em] dark:text-white'>
-					You Earned <span className='font-semibold text-pink_primary'>{badge}</span> Badge
+					You Earned <span className='font-semibold text-pink_primary'>{badge.name}</span> Badge
 				</h2>
 			</div>
 		</Modal>

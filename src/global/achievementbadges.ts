@@ -8,54 +8,62 @@ export interface BadgeDetails {
 	description: string;
 	id: string;
 	img: string;
+	active?: boolean;
 	name: BadgeName;
 	requirements: string;
 }
 
 export const badgeDetails: BadgeDetails[] = [
 	{
+		active: true,
 		description: 'Awarded to Polkadot delegates who have significant influence.',
 		id: '1',
-		img: '',
+		img: '/assets/badges/DV.svg',
 		name: BadgeName.DecentralisedVoice_polkodot,
 		requirements: 'Must be a delegate on the Polkadot network.'
 	},
 	{
+		active: false,
 		description: 'Awarded to Kusama delegates who have significant influence.',
 		id: '2',
-		img: '',
+		img: '/assets/badges/DV.svg',
 		name: BadgeName.DecentralisedVoice_kusama,
 		requirements: 'Must be a delegate on the Kusama network.'
 	},
 	{
+		active: true,
 		description: 'Rank 1 and above Fellow.',
 		id: '3',
-		img: '',
+		img: '/assets/badges/fellow.svg',
 		name: BadgeName.Fellow,
 		requirements: 'Must achieve a rank of 1 or higher.'
 	},
 	{
-		description: 'Member of the governance council.',
-		id: '4',
-		img: '',
-		name: BadgeName.Council,
-		requirements: 'Must be a member of the governance council.'
-	},
-	{
+		active: true,
 		description: 'Actively participates in voting on proposals.',
 		id: '5',
-		img: '',
+		img: '/assets/badges/active-voter.svg',
 		name: BadgeName.ActiveVoter,
 		requirements: 'Must vote on at least 15% of proposals with a minimum of 5 proposals.'
 	},
 	{
+		active: true,
 		description: 'Holds a significant amount of voting power.',
 		id: '6',
-		img: '',
+		img: '/assets/badges/whale-badge.svg',
 		name: BadgeName.Whale,
 		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.'
 	},
 	{
+		active: true,
+		description: 'Awarded to Polkadot delegates who have significant influence.',
+		id: '1',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_polkodot,
+		requirements: 'Must be a delegate on the Polkadot network.'
+	},
+	{
+		active: false,
 		description: 'Regularly contributes comments.',
 		id: '7',
 		img: '',
@@ -63,6 +71,23 @@ export const badgeDetails: BadgeDetails[] = [
 		requirements: 'Must have more than 50 comments.'
 	},
 	{
+		active: false,
+		description: 'Awarded to Kusama delegates who have significant influence.',
+		id: '2',
+		img: '/assets/badges/DV.svg',
+		name: BadgeName.DecentralisedVoice_kusama,
+		requirements: 'Must be a delegate on the Kusama network.'
+	},
+	{
+		active: true,
+		description: 'Member of the governance council.',
+		id: '4',
+		img: '/assets/badges/council.svg',
+		name: BadgeName.Council,
+		requirements: 'Must be a member of the governance council.'
+	},
+	{
+		active: false,
 		description: 'Regularly votes on proposals.',
 		id: '8',
 		img: '',
@@ -70,6 +95,7 @@ export const badgeDetails: BadgeDetails[] = [
 		requirements: 'Must have voted on more than 50 proposals.'
 	},
 	{
+		active: false,
 		description: 'Received significant delegated tokens.',
 		id: '9',
 		img: '',

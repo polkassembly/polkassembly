@@ -56,7 +56,8 @@ const ProfileOverview = ({
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
 	const [showFullBio, setShowFullBio] = useState<boolean>(false);
-	const { bio, badges } = profileDetails;
+	const { bio, badges, achievement_badges } = profileDetails;
+
 	return (
 		<div className={classNames(className, 'mt-6')}>
 			{TippingUnavailableNetworks.includes(network) && !delegationSupportedNetworks.includes(network) ? (
@@ -201,6 +202,7 @@ const ProfileOverview = ({
 									theme={theme}
 								/>
 								<ProfileBadges
+									badges={achievement_badges}
 									theme={theme}
 									selectedAddresses={selectedAddresses}
 									userProfile={userProfile}
@@ -241,6 +243,7 @@ const ProfileOverview = ({
 								theme={theme}
 							/>
 							<ProfileBadges
+								badges={achievement_badges}
 								theme={theme}
 								selectedAddresses={selectedAddresses}
 								userProfile={userProfile}

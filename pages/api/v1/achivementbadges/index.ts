@@ -169,7 +169,8 @@ async function evaluateBadges(user: ProfileDetailsResponse, network: string): Pr
 		return checkResult
 			? {
 					check: true,
-					name: badge.name
+					name: badge.name,
+					unlockedAt: new Date().toISOString()
 			  }
 			: null;
 	});
@@ -191,7 +192,7 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 	const userDoc = await userDocRef.get();
 	const existingBadges = userDoc.data()?.achievement_badges || [];
 
-	const mergedBadges = [...new Set([...existingBadges, ...newBadges.map((badge) => badge.name)])];
+	const mergedBadges = [...existingBadges, ...newBadges];
 
 	await userDocRef.update({
 		achievement_badges: mergedBadges

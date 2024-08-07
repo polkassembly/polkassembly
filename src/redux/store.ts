@@ -33,7 +33,7 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 	// transform state on its way to being serialized and persisted.
 	(inboundState) => {
 		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
+		if (!authToken || (authToken && isExpired(authToken))) {
 			deleteLocalStorageToken();
 			return {
 				addresses: [],
@@ -68,7 +68,7 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 	// transform state being rehydrated
 	(outboundState) => {
 		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
+		if (!authToken || (authToken && isExpired(authToken))) {
 			deleteLocalStorageToken();
 			return {
 				addresses: [],

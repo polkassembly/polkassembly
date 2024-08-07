@@ -14,7 +14,7 @@ import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_whi
 import { BN_HUNDRED } from '@polkadot/util';
 import { CloseIcon, CreatePropoosalIcon } from '~src/ui-components/CustomIcons';
 import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import { useTheme } from 'next-themes';
@@ -33,6 +33,7 @@ import {
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -138,7 +139,7 @@ export const INIT_BENEFICIARIES = [
 
 const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInReferedumComponent, onClick }: Props) => {
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const dispatch = useDispatch();
 	const [beneficiaryAddresses, dispatchBeneficiaryAddresses] = useReducer(beneficiaryAddressesReducer, INIT_BENEFICIARIES);
 	const currentUser = useUserDetailsSelector();
@@ -204,8 +205,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			dispatch(setShowIdentityInfoCardForBeneficiary(false));
 			return;
 		}
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
 
 		let promiseArr: any[] = [];
@@ -253,7 +254,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	useEffect(() => {
 		handleBeneficiaryIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, beneficiaryAddresses]);
+	}, [network, api, apiReady, peopleChainApi, peopleChainApiReady, beneficiaryAddresses]);
 
 	useEffect(() => {
 		handleBeneficiariesMultisigCheck();

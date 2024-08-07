@@ -39,8 +39,9 @@ import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -75,14 +76,14 @@ const AddressConnectModal = ({
 	usingMultisig = false,
 	walletAlertTitle,
 	accountAlertTitle = 'Wallet extension not detected.',
-	accountSelectionFormTitle = 'Select an address',
+	accountSelectionFormTitle = 'Select address',
 	isProposalCreation = false,
 	isBalanceUpdated,
 	usedInIdentityFlow = false
 }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const currentUser = useUserDetailsSelector();
 	const { loginWallet, loginAddress, addresses } = currentUser;
@@ -108,13 +109,13 @@ const AddressConnectModal = ({
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama' && usedInIdentityFlow) {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady, usedInIdentityFlow]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady, usedInIdentityFlow]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -421,8 +422,8 @@ const AddressConnectModal = ({
 					disabled={
 						!accounts ||
 						(showMultisig && !multisig) ||
-						(showMultisig && initiatorBalance.lte(totalDeposit)) ||
-						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false)
+						(showMultisig && initiatorBalance.lt(totalDeposit)) ||
+						(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false)
 					}
 					width={155}
 					height={40}
@@ -430,8 +431,8 @@ const AddressConnectModal = ({
 					className={`mt-4 ${
 						accounts.length === 0 ||
 						(showMultisig && !multisig) ||
-						(((showMultisig && initiatorBalance.lte(totalDeposit)) ||
-							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lte(submissionDeposite) : false) ||
+						(((showMultisig && initiatorBalance.lt(totalDeposit)) ||
+							(isProposalCreation && !isUnlinkedAddress ? availableBalance.lt(submissionDeposite) : false) ||
 							(Object.keys(availableWallets || {}).length === 0 && !loading)) &&
 							'opacity-50')
 					}`}

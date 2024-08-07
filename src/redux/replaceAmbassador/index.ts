@@ -3,9 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import { EAmbassadorSeedingSteps, IAmbassadorProposalContent, IAmbassadorSeedingStore } from './@types';
+import { EAmbassadorSeedingSteps, IAmbassadorProposalContent } from '../addAmbassadorSeeding/@types';
+import { IAmbassadorReplaceStore } from './@types';
 
-const initialState: IAmbassadorSeedingStore = {
+const initialState: IAmbassadorReplaceStore = {
 	ambassadorPostIndex: null,
 	ambassadorPreimage: { hash: '', length: 0 },
 	applicantAddress: '',
@@ -14,11 +15,12 @@ const initialState: IAmbassadorSeedingStore = {
 	promoteCallData: '',
 	proposer: '',
 	rank: 3,
-	step: EAmbassadorSeedingSteps.PROMOTES_CALL,
+	removingApplicantAddress: '',
+	step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
 	xcmCallData: ''
 };
 
-export const ambassadorSeedingStore = createSlice({
+export const ambassadorReplacementStore = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
@@ -28,9 +30,9 @@ export const ambassadorSeedingStore = createSlice({
 		});
 	},
 	initialState,
-	name: 'ambassadorSeeding',
+	name: 'ambassadorReplacement',
 	reducers: {
-		resetAmbassadorSeeding: (state) => {
+		resetAmbassadorReplacenentSeeding: (state) => {
 			state.discussion = {
 				discussionContent: '',
 				discussionTags: [],
@@ -40,7 +42,7 @@ export const ambassadorSeedingStore = createSlice({
 			state.promoteCallData = '';
 			state.proposer = '';
 			state.xcmCallData = '';
-			state.step = EAmbassadorSeedingSteps.PROMOTES_CALL;
+			state.step = EAmbassadorSeedingSteps.CREATE_APPLICANT;
 			state.ambassadorPreimage = { hash: '', length: 0 };
 			state.ambassadorPostIndex = null;
 			state.isPreimageCreationDone = false;
@@ -78,6 +80,9 @@ export const ambassadorSeedingStore = createSlice({
 		updateProposer: (state, action: PayloadAction<string>) => {
 			state.proposer = action.payload;
 		},
+		updateRemovingAddress: (state, action: PayloadAction<string>) => {
+			state.removingApplicantAddress = action.payload;
+		},
 		updateXcmCallData: (state, action: PayloadAction<string>) => {
 			state.xcmCallData = action.payload;
 		},
@@ -86,7 +91,7 @@ export const ambassadorSeedingStore = createSlice({
 		}
 	}
 });
-const ambassadorSeedingActions = ambassadorSeedingStore.actions;
+const ambassadorReplacementActions = ambassadorReplacementStore.actions;
 
-export default ambassadorSeedingStore.reducer;
-export { ambassadorSeedingActions };
+export default ambassadorReplacementStore.reducer;
+export { ambassadorReplacementActions };

@@ -11,7 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext } from 'src/context';
+import { useApiContext, usePeopleChainApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -74,6 +74,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -299,7 +300,7 @@ interface Props {
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
@@ -330,12 +331,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (isPeopleChainSupportedNetwork(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -1169,7 +1170,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
 							items={sidebarItems}
 							onClick={handleMenuClick}
-							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+							// eslint-disable-next-line prettier/prettier
+							className={`mt-[60px] msm:mt-0 ${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
 
 						<BigToggleButton />

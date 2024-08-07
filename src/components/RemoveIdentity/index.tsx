@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector, useRemoveIdentity, useUserDetailsSelector } from '~src/redux/selectors';
 import { ILoading, NotificationStatus } from '~src/types';
 import Address from '~src/ui-components/Address';
@@ -25,6 +25,7 @@ import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 import { useRouter } from 'next/router';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -39,7 +40,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
 	const [address, setAddress] = useState<string>(loginAddress);
@@ -51,12 +52,12 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (isPeopleChainSupportedNetwork(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;

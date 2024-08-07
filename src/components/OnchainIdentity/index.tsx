@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useDispatch } from 'react-redux';
@@ -29,6 +29,7 @@ import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -38,7 +39,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const router = useRouter();
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
@@ -63,13 +64,13 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	useEffect(() => {
-		if (network !== AllNetworks.KUSAMA) {
+		if (!isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, defaultApi, defaultApiReady, peopleChainApi, peopleChainApiReady]);
 
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;

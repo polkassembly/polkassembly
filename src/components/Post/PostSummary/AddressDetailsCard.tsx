@@ -7,13 +7,14 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SingleSignatoryAlertIcon from '~assets/icons/info-alert.svg';
 import NonVerifiedAlertIcon from '~assets/icons/red-info-alert.svg';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { MinusCircleFilled } from '@ant-design/icons';
 import MultisigIcon from '~assets/icons/multisig-address.svg';
 import { checkIsAddressMultisig } from '~src/components/DelegationDashboard/utils/checkIsAddressMultisig';
 import Address from '~src/ui-components/Address';
 import { shortenString } from '~src/util/shortenString';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 interface Props {
 	address: string;
 	showAddress?: boolean;
@@ -21,7 +22,7 @@ interface Props {
 const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const judgements = identity?.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid);
 	const isGood = judgements?.some(([, judgement]: any[]): boolean => ['KnownGood', 'Reasonable'].includes(judgement));
@@ -30,8 +31,8 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const [isMultisigProposer, setIsMultisigProposer] = useState(false);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise || !apiPromiseReady || !address) return;
 
 		const info = await getIdentityInformation({
@@ -47,7 +48,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 		handleIdentityInfo();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, api, apiReady, address, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, api, apiReady, address, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		setIsMultisigProposer(false);

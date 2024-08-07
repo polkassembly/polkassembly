@@ -6,7 +6,7 @@ import BN from 'bn.js';
 
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext, usePostDataContext } from 'src/context';
+import { useApiContext, usePeopleChainApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
@@ -16,6 +16,7 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	address: string;
@@ -31,7 +32,7 @@ const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const { network } = useNetworkSelector();
@@ -41,13 +42,13 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		if (network !== 'kusama' || !usedInIdentityFlow) {
+		if (!isPeopleChainSupportedNetwork(network) || !usedInIdentityFlow) {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		} else {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		if (!network) return;

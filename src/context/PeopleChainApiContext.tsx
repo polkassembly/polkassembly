@@ -11,43 +11,44 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
-export interface PeopleKusamaApiContextType {
-	peopleKusamaApi: ApiPromise | undefined;
-	peopleKusamaApiReady: boolean;
+export interface PeopleChainApiContextType {
+	peopleChainApi: ApiPromise | undefined;
+	peopleChainApiReady: boolean;
 }
 
-export const PeopleKusamaApiContext: React.Context<PeopleKusamaApiContextType> = React.createContext({} as PeopleKusamaApiContextType);
+export const PeopleChainApiContext: React.Context<PeopleChainApiContextType> = React.createContext({} as PeopleChainApiContextType);
 
-export interface PeopleKusamaApiContextProviderProps {
+export interface PeopleChainApiContextProviderProps {
 	network?: string;
 	children?: React.ReactElement;
 }
 
-export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProviderProps): React.ReactElement {
+export function PeopleChainApiContextProvider(props: PeopleChainApiContextProviderProps): React.ReactElement {
 	const { children = null } = props;
-	const [peopleKusamaApi, setPeopleKusamaApi] = useState<ApiPromise>();
-	const [peopleKusamaApiReady, setPeopleKusamaApiReady] = useState(false);
+	const [peopleChainApi, setPeopleChainApi] = useState<ApiPromise>();
+	const [peopleChainApiReady, setPeopleChainApiReady] = useState(false);
 	const [wsProvider, setWsProvider] = useState<string>('');
 
 	const provider = useRef<ScProvider | WsProvider | null>(null);
 
 	useEffect(() => {
-		if ((!wsProvider && !props.network) || props.network !== 'kusama') return;
-		provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.peopleKusamaRpcEndpoint);
+		if ((!wsProvider && !props.network) || !isPeopleChainSupportedNetwork(props?.network as any)) return;
+		provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.peopleChainRpcEndpoint);
 
-		setPeopleKusamaApiReady(false);
-		setPeopleKusamaApi(undefined);
+		setPeopleChainApiReady(false);
+		setPeopleChainApi(undefined);
 		let api = undefined;
 		if (!provider.current) return;
 
 		api = new ApiPromise({ provider: provider.current, typesBundle });
-		setPeopleKusamaApi(api);
+		setPeopleChainApi(api);
 	}, [props.network, wsProvider]);
 
 	useEffect(() => {
-		if (props.network !== 'kusama') return;
-		if (peopleKusamaApi) {
+		if (!isPeopleChainSupportedNetwork(props?.network as any)) return;
+		if (peopleChainApi) {
 			const timer = setTimeout(async () => {
 				queueNotification({
 					header: 'Error!',
@@ -55,12 +56,12 @@ export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProv
 					status: NotificationStatus.ERROR
 				});
 
-				await peopleKusamaApi.disconnect();
+				await peopleChainApi.disconnect();
 				if (props.network) {
 					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
 				}
 			}, 60000);
-			peopleKusamaApi.on('error', async () => {
+			peopleChainApi.on('error', async () => {
 				clearTimeout(timer);
 				queueNotification({
 					header: 'Error!',
@@ -68,14 +69,14 @@ export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProv
 					status: NotificationStatus.ERROR
 				});
 
-				await peopleKusamaApi.disconnect();
+				await peopleChainApi.disconnect();
 			});
-			peopleKusamaApi.isReady
+			peopleChainApi.isReady
 				.then(() => {
 					clearTimeout(timer);
 
-					setPeopleKusamaApiReady(true);
-					console.log('People Kusama API ready');
+					setPeopleChainApiReady(true);
+					console.log(`${props.network} People chain API ready`);
 				})
 				.catch(async (error) => {
 					clearTimeout(timer);
@@ -85,13 +86,13 @@ export function PeopleKusamaApiContextProvider(props: PeopleKusamaApiContextProv
 						status: NotificationStatus.ERROR
 					});
 
-					await peopleKusamaApi.disconnect();
+					await peopleChainApi.disconnect();
 					console.error(error);
 				});
 			return () => clearTimeout(timer);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [peopleKusamaApi]);
+	}, [peopleChainApi]);
 
-	return <PeopleKusamaApiContext.Provider value={{ peopleKusamaApi, peopleKusamaApiReady }}>{children}</PeopleKusamaApiContext.Provider>;
+	return <PeopleChainApiContext.Provider value={{ peopleChainApi, peopleChainApiReady }}>{children}</PeopleChainApiContext.Provider>;
 }

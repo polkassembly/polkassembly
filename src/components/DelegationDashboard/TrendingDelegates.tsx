@@ -8,7 +8,7 @@ import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
-import { Alert, Button, Checkbox, Spin } from 'antd';
+import { Alert, Button, Checkbox, Radio, Spin } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -35,6 +35,7 @@ const TrendingDelegates = () => {
 	const [address, setAddress] = useState<string>('');
 	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
 	const [checkAll, setCheckAll] = useState(true);
+	const [sortOption, setSortOption] = useState('');
 
 	useEffect(() => {
 		if (!address) return;
@@ -47,21 +48,26 @@ const TrendingDelegates = () => {
 	}, [network, address]);
 
 	useEffect(() => {
-		// Modify to set checkedList based on allDataSource after fetching data
 		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
 		setCheckedList(allDataSource);
-		setCheckAll(true); // Ensure check all is always true initially
+		setCheckAll(true);
 	}, [delegatesData]);
 
 	useEffect(() => {
-		// Adjusted to consider checkAll state
-		if (checkAll) {
-			setFilteredDelegates(delegatesData);
-		} else {
-			const filtered = delegatesData?.filter((delegate) => delegate?.dataSource?.some((dataSource) => checkedList.includes(dataSource)));
-			setFilteredDelegates(filtered);
+		let updatedDelegates = [...delegatesData];
+
+		if (!checkAll) {
+			updatedDelegates = delegatesData.filter((delegate) => delegate.dataSource.some((dataSource) => checkedList.includes(dataSource)));
 		}
-	}, [delegatesData, checkedList, checkAll]);
+
+		if (sortOption === 'receivedDelegations') {
+			updatedDelegates.sort((a, b) => b.active_delegation_count - a.active_delegation_count);
+		} else if (sortOption === 'votedProposals') {
+			updatedDelegates.sort((a, b) => b.voted_proposals_count - a.voted_proposals_count);
+		}
+
+		setFilteredDelegates(updatedDelegates);
+	}, [delegatesData, checkedList, checkAll, sortOption]);
 
 	const getData = async () => {
 		if (!getEncodedAddress(address, network) && address.length > 0) return;
@@ -136,7 +142,7 @@ const TrendingDelegates = () => {
 		setCheckAll(e.target.checked);
 	};
 
-	const content = (
+	const fitlerContent = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
 				className='flex max-h-[200px] flex-col overflow-y-auto'
@@ -157,6 +163,34 @@ const TrendingDelegates = () => {
 					</div>
 				))}
 			</Checkbox.Group>
+		</div>
+	);
+
+	const sortContent = (
+		<div className='flex flex-col'>
+			<Radio.Group
+				className='flex flex-col overflow-y-auto'
+				onChange={(e) => setSortOption(e.target.value)}
+			>
+				<Radio
+					value='receivedDelegations'
+					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Received Delegation(s)
+				</Radio>
+				<Radio
+					value='votedProposals'
+					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Voted proposals (past 30 days)
+				</Radio>
+				<Radio
+					value='votingPower'
+					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Voting Power
+				</Radio>
+			</Radio.Group>
 		</div>
 	);
 
@@ -200,7 +234,7 @@ const TrendingDelegates = () => {
 
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
-			<div className='flex items-center gap-2'>
+			<div className='flex items-center gap-3'>
 				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-section-light-container text-sm font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
 					{/* Input Component */}
 					<Input
@@ -227,8 +261,9 @@ const TrendingDelegates = () => {
 						<span className='text-sm font-medium text-white'>Delegate</span>
 					</CustomButton>
 				</div>
+
 				<Popover
-					content={content}
+					content={fitlerContent}
 					placement='bottomRight'
 					zIndex={1056}
 				>
@@ -236,6 +271,19 @@ const TrendingDelegates = () => {
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
+						/>
+					</Button>
+				</Popover>
+
+				<Popover
+					content={sortContent}
+					placement='topRight'
+					zIndex={1056}
+				>
+					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+						<ImageIcon
+							src='/assets/icons/sort-icon-delegates.svg'
+							alt='sort icon'
 						/>
 					</Button>
 				</Popover>

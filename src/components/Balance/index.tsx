@@ -34,9 +34,9 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const [balance, setBalance] = useState<string>('0');
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;

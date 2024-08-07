@@ -4,7 +4,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
-import { DownOutlined, LogoutOutlined, SettingOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { DownOutlined, LogoutOutlined, SettingOutlined, VerticalRightOutlined, VerticalLeftOutlined, UserOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { Avatar, Drawer, Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { NextComponentType, NextPageContext } from 'next';
@@ -118,6 +118,17 @@ const Menu = styled(AntdMenu)`
 `;
 
 function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
+	label = <span className='text-xs font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
+	return {
+		children,
+		icon,
+		key,
+		label,
+		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
+	} as MenuItem;
+}
+
+function getSiderMenuItem2(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
 	label = <span className='text-xs font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
 	return {
 		children,
@@ -303,11 +314,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress } = useUserDetailsSelector();
-	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
+	const [sidedrawer, setSidedrawer] = useState<boolean>(true);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
 	const [open, setOpen] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false); // New state for sidebar collapsed
 	const [identityMobileModal, setIdentityMobileModal] = useState<boolean>(false);
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -882,6 +894,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					</div>
 			  )
 			: null,
+
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
@@ -1110,119 +1123,160 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
-			<NavHeader
-				theme={theme as any}
-				sidedrawer={sidedrawer}
-				setSidedrawer={setSidedrawer}
-				previousRoute={previousRoute}
-				displayName={mainDisplay}
-				isVerified={isGood && !isIdentityUnverified}
-				isIdentityExists={isIdentitySet}
-			/>
-
-			{/* {userId && <TopNudges />} */}
-			<Layout hasSider>
-				<Sider
-					trigger={null}
-					collapsible={false}
-					collapsed={true}
-					onMouseOver={() => setSidedrawer(true)}
-					style={{ transform: sidedrawer ? 'translateX(-80px)' : 'translateX(0px)', transitionDuration: '0.3s' }}
-					className={'sidebar fixed bottom-0 left-0 z-[101] hidden h-screen overflow-y-hidden bg-white dark:bg-section-dark-overlay lg:block'}
-				>
-					<div className='flex h-full flex-col justify-between'>
-						<Menu
-							theme={theme as any}
-							mode='inline'
-							selectedKeys={[router.pathname]}
-							items={sidebarItems}
-							onClick={handleMenuClick}
-							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-						/>
-						<ToggleButton />
-					</div>
-				</Sider>
-				<Drawer
-					placement='left'
-					closable={false}
-					className={`menu-container dark:bg-section-dark-overlay ${sidedrawer && 'open-sider'}`}
-					onClose={() => setSidedrawer(false)}
-					open={sidedrawer}
-					getContainer={false}
-					style={{
-						zIndex: '1005',
-						position: 'fixed',
-						height: '100vh',
-						bottom: 0,
-						left: 0
-					}}
-					contentWrapperStyle={{ position: 'fixed', height: '100vh', bottom: 0, left: 0 }}
-				>
-					<div
-						className='flex h-full flex-col justify-between'
-						onMouseLeave={() => setSidedrawer(false)}
-					>
-						<Menu
-							theme={theme as any}
-							mode='inline'
-							selectedKeys={[router.pathname]}
-							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
-							items={sidebarItems}
-							onClick={handleMenuClick}
-							// eslint-disable-next-line prettier/prettier
-							className={`mt-[60px] msm:mt-0 ${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
-						/>
-
-						<BigToggleButton />
-					</div>
-				</Drawer>
-				{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
-						{/* Dummy Collapsed Sidebar for auto margins */}
-						<OpenGovHeaderBanner network={network} />
-						<div className='flex flex-row'>
-							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
-							<CustomContent
-								Component={Component}
-								pageProps={pageProps}
+		<div>
+			<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
+				<NavHeader
+					theme={theme as any}
+					sidedrawer={sidedrawer}
+					className={` ${sidebarCollapsed ? '' : 'pl-[140px]'} `}
+					setSidedrawer={setSidedrawer}
+					previousRoute={previousRoute}
+					displayName={mainDisplay}
+					isVerified={isGood && !isIdentityUnverified}
+					isIdentityExists={isIdentitySet}
+				/>
+				<Layout hasSider>
+					<div className='flex gap-2'>
+						<Sider
+							trigger={null}
+							collapsible
+							collapsed={sidebarCollapsed}
+							onCollapse={(collapsed) => {
+								setSidebarCollapsed(collapsed);
+							}}
+							style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
+							className={`sidebar fixed bottom-0 left-0 z-[101] h-screen ${
+								sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[210px]'
+							} overflow-y-hidden bg-white dark:bg-section-dark-overlay`}
+						>
+							<div className='flex h-full flex-col'>
+								<div className='flex flex-col'>
+									<Menu
+										theme={theme as any}
+										mode='inline'
+										selectedKeys={[router.pathname]}
+										items={gov2Items.slice(0, 1)}
+										className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+									/>
+									{!sidebarCollapsed && (
+										<>
+											<div className='flex justify-center gap-2'>
+												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+													<img
+														src='/assets/head1.svg'
+														alt='Head 1'
+													/>
+												</div>
+												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+													<img
+														src='/assets/head2.svg'
+														alt='Head 2'
+													/>
+												</div>
+												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+													<img
+														src='/assets/head3.svg'
+														alt='Head 3'
+													/>
+												</div>
+												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+													<img
+														src='/assets/head4.svg'
+														alt='Head 4'
+													/>
+												</div>
+											</div>
+										</>
+									)}
+								</div>
+								<div className={`hide-scrollbar ${!sidebarCollapsed && 'h-[650px] overflow-y-auto'} `}>
+									<Menu
+										theme={theme as any}
+										mode='inline'
+										selectedKeys={[router.pathname]}
+										items={sidebarItems.slice(1)}
+										onClick={handleMenuClick}
+										className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+									/>
+								</div>
+								{!sidebarCollapsed && (
+									<>
+										<div className='fixed bottom-0 left-0 w-full py-3'>
+											<div className='flex items-center justify-center gap-3'>
+												<img
+													src='/assets/foot1.svg'
+													alt='Foot1'
+													className='rounded-xl bg-[#F3F4F6] p-2'
+												/>
+												<img
+													src='/assets/foot2.svg'
+													alt='Foot2'
+													className='rounded-xl bg-[#F3F4F6] p-2'
+												/>
+											</div>
+										</div>
+									</>
+								)}
+							</div>
+						</Sider>
+						<div className={`fixed ${sidebarCollapsed ? 'left-16' : 'left-48'} top-12 z-[102]`}>
+							{sidebarCollapsed ? (
+								<div
+									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
+									className='dark:bg-black dark:text-white'
+								>
+									<VerticalLeftOutlined
+										onClick={() => {
+											setSidebarCollapsed(false);
+											setSidedrawer(true);
+										}}
+									/>
+								</div>
+							) : (
+								<div
+									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
+									className='dark:bg-black dark:text-white'
+								>
+									<VerticalRightOutlined
+										onClick={() => {
+											setSidebarCollapsed(true);
+											setSidedrawer(false);
+										}}
+									/>
+								</div>
+							)}
+						</div>
+						<div className='w-full'>
+							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
+								<Layout className={`min-h-[calc(100vh - 10rem)] flex w-full flex-row overflow-x-hidden overflow-y-hidden bg-[#F5F6F8] dark:bg-section-dark-background`}>
+									<OpenGovHeaderBanner network={network} />
+									<Content className={`mx-auto my-6  w-full max-w-[1500px] ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+										<Component {...pageProps} />
+									</Content>
+								</Layout>
+							) : (
+								<Layout className={`min-h-[calc(100vh - 10rem)] flex w-full flex-row overflow-x-hidden overflow-y-hidden bg-[#F5F6F8] dark:bg-section-dark-background`}>
+									<Content className={`mx-auto my-6  w-full max-w-[1500px] ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+										<Component {...pageProps} />
+									</Content>
+								</Layout>
+							)}
+							<Footer
+								className={` ${sidebarCollapsed ? '' : 'pl-[210px] pr-20'} `}
+								theme={theme as any}
 							/>
 						</div>
-					</Layout>
-				) : ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-					<Layout className='min-h-[calc(100vh - 10rem)] bg-[#F5F6F8] dark:bg-section-dark-background'>
-						{/* Dummy Collapsed Sidebar for auto margins */}
-						<div className='flex flex-row'>
-							<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
-							<CustomContent
-								Component={Component}
-								pageProps={pageProps}
-							/>
-						</div>
-					</Layout>
-				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] overflow-x-none overflow-y-none flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
-						{/* Dummy Collapsed Sidebar for auto margins */}
-						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
-						<CustomContent
-							Component={Component}
-							pageProps={pageProps}
-						/>
-					</Layout>
-				)}
-			</Layout>
-			{onchainIdentitySupportedNetwork.includes(network) && (
-				<>
+					</div>
+				</Layout>
+				{onchainIdentitySupportedNetwork.includes(network) && (
 					<OnchainIdentity
 						open={open}
 						setOpen={setOpen}
 						openAddressModal={openAddressLinkedModal}
 						setOpenAddressModal={setOpenAddressLinkedModal}
 					/>
-				</>
-			)}
-
-			<Footer theme={theme as any} />
+				)}
+			</Layout>
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}
@@ -1234,7 +1288,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'
@@ -1242,19 +1295,29 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					<span className='dark:text-white'>Please use your desktop computer to verify on chain identity</span>
 				</div>
 			</Modal>
-		</Layout>
+		</div>
 	);
 };
 
-const CustomContent = memo(function CustomContent({ Component, pageProps }: Props) {
-	return (
-		<Content className={'mx-auto my-6 min-h-[90vh] w-[94vw] max-w-7xl flex-initial lg:w-[85vw] lg:opacity-100 2xl:w-5/6'}>
-			<Component {...pageProps} />
-		</Content>
-	);
-});
-
 export default styled(AppLayout)`
+	.ant-layout {
+		position: relative;
+	}
+
+	.ant-layout-sider {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+	@media (max-width: 768px) {
+		.ant-layout-header,
+		.ant-layout-content {
+			margin-left: 0;
+		}
+	}
+
 	.svgLogo svg {
 		height: 60%;
 	}

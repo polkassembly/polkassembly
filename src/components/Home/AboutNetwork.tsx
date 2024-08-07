@@ -18,7 +18,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 	return (
 		<Space
 			size={19}
-			className='items-center'
+			className='mt-3 flex flex-wrap items-center'
 		>
 			{blockchain_socials.homepage ? (
 				<Tooltip
@@ -167,10 +167,9 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
-				<div className='hidden lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</div>
 
-			<p className='medium mt-1.5 items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
+			<p className='medium  items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
 				Join our Community to discuss, contribute and get regular updates from us!
 				{showGallery && showGov2Links && (
 					<span
@@ -180,9 +179,10 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 						Minimize Gallery
 					</span>
 				)}
+				<div className='hidden  lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 				{!showGallery && showGov2Links && (
 					<span
-						className={'m-0 ml-2 cursor-pointer p-0 text-xs text-pink_primary'}
+						className={'m-0 cursor-pointer p-0 pt-3 text-xs text-pink_primary'}
 						onClick={() => setShowGallery(true)}
 					>
 						View Gallery

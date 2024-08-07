@@ -140,34 +140,40 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>
-			<div className='mx-1 mt-2 md:mt-6'>
-				{networkSocialsData && (
-					<AboutNetwork
-						networkSocialsData={networkSocialsData?.data}
-						showGov2Links
-					/>
-				)}
-			</div>
-			{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
-				<div className='mx-1 mt-8'>
-					<BatchVotingBadge />
+			<div className='flex flex-col xl:flex-row'>
+				<div className='flex-1'>
+					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+						<div className='mx-1 mt-8'>
+							<BatchVotingBadge />
+						</div>
+					)}
+
+					<div className='mx-1 mt-8 max-w-[950px]'>
+						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+					</div>
+
+					<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
+						<div className='w-full xl:w-[60%]'>
+							<UpcomingEvents />
+						</div>
+
+						<div className='w-full xl:w-[40%]'>
+							<News twitter={networkSocialsData?.data?.twitter || ''} />
+						</div>
+					</div>
 				</div>
-			)}
-			<div className='mx-1 mt-8'>
-				<TreasuryOverview theme={theme} />
-			</div>
-
-			<div className='mx-1 mt-8'>
-				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
-			</div>
-
-			<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
-				<div className='w-full xl:w-[60%]'>
-					<UpcomingEvents />
-				</div>
-
-				<div className='w-full xl:w-[40%]'>
-					<News twitter={networkSocialsData?.data?.twitter || ''} />
+				<div className='w-full xl:w-[380px] xl:pl-6'>
+					<div className='mx-1 mt-2 md:mt-6'>
+						{networkSocialsData && (
+							<AboutNetwork
+								networkSocialsData={networkSocialsData?.data}
+								showGov2Links
+							/>
+						)}
+					</div>
+					<div className='mx-1 mt-8'>
+						<TreasuryOverview theme={theme} />
+					</div>
 				</div>
 			</div>
 		</>

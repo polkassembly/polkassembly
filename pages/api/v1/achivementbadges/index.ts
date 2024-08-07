@@ -192,7 +192,7 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 	const userDoc = await userDocRef.get();
 	const existingBadges = userDoc.data()?.achievement_badges || [];
 
-	const mergedBadges = [...existingBadges, ...newBadges];
+	const mergedBadges = [...existingBadges, ...newBadges.filter((newBadge) => !existingBadges.some((existingBadge: Badge) => existingBadge.name === newBadge.name))];
 
 	await userDocRef.update({
 		achievement_badges: mergedBadges

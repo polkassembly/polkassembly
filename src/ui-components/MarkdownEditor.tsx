@@ -253,6 +253,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const [input, setInput] = useState<string>(props.value || '');
 	const [validUsers, setValidUsers] = useState<string[]>([]);
 	const [replacedUsernames, setReplacedUsernames] = useState<string[]>([]);
+	const [lastCalledUsername, setLastCalledUsername] = useState('');
 
 	async function getUserData(usernameQuery: string, content: string) {
 		let inputData = content;
@@ -277,25 +278,21 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const debouncedAPIcall = useCallback(debounce(getUserData, 1000), []);
 
 	const onChange = async (content: string) => {
-		const inputValue = content;
-		setInput(inputValue);
+		setInput(content);
+		const matches = content.match(/@(\w+)/g);
 
-		const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
 		if (matches && matches.length > 0) {
-			const usernameQuery = matches[matches.length - 1].replace('@', '');
-			if (!validUsers.includes(usernameQuery)) {
-				debouncedAPIcall(usernameQuery, content);
-			} else if (validUsers.includes(usernameQuery)) {
-				let inputData = content;
-				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
-				inputData = inputData.replace(regex, `[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`);
-				setInput(inputData);
+			const potentialUsername = matches[matches.length - 1].slice(1);
+
+			if (potentialUsername !== lastCalledUsername) {
+				setLastCalledUsername(potentialUsername);
+				debouncedAPIcall(potentialUsername, content);
+			}
+		} else {
+			if (props.onChange) {
+				props.onChange(content);
 			}
 		}
-		if (props.onChange) {
-			return props?.onChange(content);
-		}
-		return content;
 	};
 
 	return (

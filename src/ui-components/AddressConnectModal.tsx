@@ -446,7 +446,9 @@ const AddressConnectModal = ({
 			closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 		>
 			{!api || !apiReady ? (
-				<Skeleton className='h-[180px] w-full' />
+				<div className='flex h-[160px] items-center justify-center '>
+					<Skeleton className='mt-10 w-full' />
+				</div>
 			) : (
 				<Spin
 					spinning={loading}

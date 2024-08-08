@@ -21,6 +21,7 @@ import checkPayoutForUserAddresses from '~src/util/checkPayoutForUserAddresses';
 import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
 import { IPayout } from '~src/types';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 const InAppNotification = ({ className }: { className?: string }) => {
 	const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
-		if (!api || !apiReady || !loginAddress || !currentBlock || !['polkadot'].includes(network)) return;
+		if (!api || !apiReady || !loginAddress || !currentBlock || !isMultiassetSupportedNetwork(network)) return;
 		if (currentBlock) {
 			(async () => {
 				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });

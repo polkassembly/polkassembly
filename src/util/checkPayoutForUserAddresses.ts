@@ -7,6 +7,7 @@ import { IPayout } from '~src/types';
 import { convertAnyHexToASCII } from './decodingOnChainInfo';
 import blockToSeconds from './test';
 import getEncodedAddress from './getEncodedAddress';
+import isMultiassetSupportedNetwork from './isMultiassetSupportedNetwork';
 
 interface Args {
 	api: ApiPromise | null;
@@ -18,7 +19,7 @@ interface Args {
 const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBlockNumber }: Args): Promise<IPayout[]> => {
 	const data: IPayout[] = [];
 
-	if (!api || !apiReady || !network || !['polkadot'].includes(network)) return data;
+	if (!api || !apiReady || !network || !isMultiassetSupportedNetwork(network)) return data;
 
 	const values = await api.query.treasury.spends.entries();
 	values.map((value) => {

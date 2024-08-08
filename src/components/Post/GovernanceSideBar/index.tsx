@@ -78,6 +78,7 @@ import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/Vote
 import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -1072,7 +1073,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 						{/* claim payout */}
-						{['polkadot'].includes(network) && (
+						{isMultiassetSupportedNetwork(network) && (
 							<ClaimAssetPayoutInfo
 								className={'mb-4 flex w-full items-center justify-center'}
 								open={openClaimModal}

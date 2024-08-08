@@ -25,6 +25,7 @@ import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import dynamic from 'next/dynamic';
 import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 const ClaimAssetPayoutInfo = dynamic(() => import('~src/ui-components/ClaimAssetPayoutInfo'), {
 	loading: () => (
@@ -274,7 +275,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 
 				{/*ClaimAssetPayoutInfo  */}
 
-				{['polkadot'].includes(network) && (
+				{isMultiassetSupportedNetwork(network) && (
 					<ClaimAssetPayoutInfo
 						className={classNames('my-2 rounded-[4px]', inPage ? 'ml-10 w-[500px]' : 'px-8')}
 						open={openClaimModal}

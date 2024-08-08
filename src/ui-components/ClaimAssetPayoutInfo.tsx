@@ -22,6 +22,7 @@ import BN from 'bn.js';
 import AddressConnectModal from './AddressConnectModal';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import getEncodedAddress from '~src/util/getEncodedAddress';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 interface IProps {
 	className?: string;
@@ -59,7 +60,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	};
 
 	const getTxFee = async () => {
-		if (!api || !apiReady || !address || !['polkadot'].includes(network) || !payouts?.length) return;
+		if (!api || !apiReady || !address || !isMultiassetSupportedNetwork(network) || !payouts?.length) return;
 
 		const batchData = payouts?.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
 		const tx = batchData.length > 1 ? api.tx.utility.batch(batchData) : batchData[0];

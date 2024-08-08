@@ -256,7 +256,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 			if (!voteData) return;
 
 			setUserVotesData({
-				amount: parseBalance((voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(), 2, true, network),
+				amount: (voteData?.decision === 'abstain' ? voteData?.balance?.abstain || 0 : voteData?.balance?.value || 0).toString(),
 				conviction: `${voteData.lockPeriod}`,
 				decision: decisionType[`${voteData.decision}`]
 			});
@@ -324,13 +324,25 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 									color='#363636'
 									title={
 										<span className='break-all text-xs'>
-											{userVotesData.decision === 'ABSTAIN'
-												? `Voted ${userVotesData.decision} with ${userVotesData.amount}`
-												: `Voted ${userVotesData.decision} with ${userVotesData.amount}, ${userVotesData.conviction}x Conviction`}
+											{userVotesData.decision === 'ABSTAIN' && +userVotesData.amount
+												? `Voted ${userVotesData.decision} with ${parseBalance(userVotesData?.amount, 2, true, network)}`
+												: userVotesData.decision === 'ABSTAIN' && !+userVotesData.amount
+												? `Voted SPLIT with ${userVotesData.amount}`
+												: `Voted ${userVotesData.decision} with ${parseBalance(userVotesData?.amount, 2, true, network)}, ${userVotesData.conviction}x Conviction`}
 										</span>
 									}
 								>
-									<VoteIcon className={`mx-2 ${userVotesData.decision === 'NAY' ? 'fill-red-600' : userVotesData.decision === 'AYE' ? 'fill-green-700' : 'fill-blue-400'}`} />
+									<VoteIcon
+										className={`mx-2 ${
+											userVotesData.decision === 'NAY'
+												? 'fill-red-600'
+												: userVotesData.decision === 'AYE'
+												? 'fill-green-700'
+												: userVotesData.decision === 'ABSTAIN' && +userVotesData.amount
+												? 'fill-blue-400'
+												: 'fill-yellow-400'
+										}`}
+									/>
 								</Tooltip>
 							)}
 						</div>

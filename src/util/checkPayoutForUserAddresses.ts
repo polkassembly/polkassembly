@@ -6,6 +6,7 @@ import { ApiPromise } from '@polkadot/api';
 import { IPayout } from '~src/types';
 import { convertAnyHexToASCII } from './decodingOnChainInfo';
 import blockToSeconds from './test';
+import getEncodedAddress from './getEncodedAddress';
 
 interface Args {
 	api: ApiPromise | null;
@@ -30,7 +31,7 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 		if (startedAt <= currentBlockNumber && payoutData.status == 'Pending') {
 			const res: IPayout = {
 				amount: payoutData.amount.split(',').join(''),
-				beneficiary: beneficiary || '',
+				beneficiary: getEncodedAddress(beneficiary, network) || '',
 				expireAt: blockToSeconds(network, Number(payoutData?.expireAt?.split(',')?.join('')), currentBlockNumber) || '',
 				generalIndex:
 					(payoutData?.assetKind?.V4?.assetId?.interior?.X2?.[1]?.GeneralIndex || payoutData?.assetKind?.V3?.assetId?.Concrete.interior?.X2?.[1]?.GeneralIndex || '')

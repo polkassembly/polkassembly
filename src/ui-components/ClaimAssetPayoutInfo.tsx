@@ -254,7 +254,7 @@ const ClaimAssetPayoutInfo = ({ className, closePreviousModal }: IProps) => {
 						{txFee.gt(ZERO_BN) && (
 							<Alert
 								type='info'
-								message={`Removing Identity would unlock bond amount of ${parseBalance(txFee.toString(), 2, true, network)} `}
+								message={`Gas fee of ${parseBalance(txFee.toString(), 2, true, network)} will be required.`}
 								showIcon
 								className='mt-4 rounded-[4px]'
 							/>

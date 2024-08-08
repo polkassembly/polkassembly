@@ -167,6 +167,7 @@ const ClaimAssetPayoutInfo = ({ className, closePreviousModal }: IProps) => {
 							variant='primary'
 							width={120}
 							height={38}
+							disabled={loading.isLoading || availableBalance?.lt(txFee)}
 						/>
 					</div>
 				}
@@ -178,7 +179,7 @@ const ClaimAssetPayoutInfo = ({ className, closePreviousModal }: IProps) => {
 					<div className='flex flex-col gap-2'>
 						{!!txFee.gt(ZERO_BN) && availableBalance && availableBalance.lte(txFee) && (
 							<Alert
-								className='mb-6 rounded-[4px]'
+								className='my-2 rounded-[4px]'
 								type='warning'
 								showIcon
 								message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Insufficient available balance</p>}
@@ -197,7 +198,7 @@ const ClaimAssetPayoutInfo = ({ className, closePreviousModal }: IProps) => {
 									<Balance
 										address={address || loginAddress}
 										onChange={handleOnAvailableBalanceChange}
-										usedInIdentityFlow
+										usedInIdentityFlow={false}
 										isBalanceUpdated={updateAvailableBalance}
 									/>
 								)}

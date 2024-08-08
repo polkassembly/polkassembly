@@ -21,7 +21,20 @@ import AllNotificationsTab from './FiltersTabs/AllNotificationsTab';
 import CommentsNotificationsTab from './FiltersTabs/CommentsNotificationsTab';
 import MentionsNotificationsTab from './FiltersTabs/MentionsNotificationsTab';
 import ProposalsNotificationsTab from './FiltersTabs/ProposalsNotificationsTab';
-import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import dynamic from 'next/dynamic';
+
+const ClaimAssetPayoutInfo = dynamic(() => import('~src/ui-components/ClaimAssetPayoutInfo'), {
+	loading: () => (
+		<div className='mt-4 w-[400px] px-8'>
+			<SkeletonButton
+				active
+				className='w-[400px]'
+			/>
+		</div>
+	),
+	ssr: false
+});
 
 interface INotificationsContent {
 	className?: string;

@@ -29,6 +29,7 @@ import Alert from '~src/basic-components/Alert';
 import getPreimageWarning from './utils/getPreimageWarning';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import classNames from 'classnames';
+import Curator from './Curator';
 
 const CreationLabel = dynamic(() => import('src/ui-components/CreationLabel'), {
 	loading: () => (
@@ -102,6 +103,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 			postIndex: onchainId,
 			title,
 			description,
+			post_link,
 			proposer,
 			curator,
 			username,
@@ -214,6 +216,17 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 
 	return (
 		<div className={className}>
+			{/* Assign Curator Flow */}
+			{proposalType === ProposalType.REFERENDUM_V2 && (
+				<Curator
+					curator={curator}
+					bountyId={post_link?.id}
+					method={method}
+					status={status}
+					proposer={proposer}
+					postId={onchainId ? Number(onchainId) : (onchainId as any)}
+				/>
+			)}
 			{isTreasuryProposal && preimageWarning && proposalType == ProposalType.REFERENDUM_V2 && (
 				<Alert
 					key={preimageHash}
@@ -263,7 +276,7 @@ const PostHeading: FC<IPostHeadingProps> = (props) => {
 						/>
 					)}
 					{requestedAmt && (
-						<div className='flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
+						<div className='relative flex gap-1 text-sm font-medium text-bodyBlue dark:text-blue-dark-high'>
 							<span> Requested: </span>
 							<BeneficiaryAmoutTooltip
 								assetId={assetId}

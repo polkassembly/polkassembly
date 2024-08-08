@@ -12,23 +12,23 @@ import { chainProperties } from '~src/global/networkConstants';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
-import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import Link from 'next/link';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
-import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+// import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { blocksToRelevantTime, getTrackData } from '~src/components/Listing/Tracks/AboutTrackCard';
 
 interface Props {
 	className?: string;
 	open: boolean;
 	onCancel: () => void;
 	proposerAddress?: string;
+	curatorAddress?: string;
 	fundingAmount?: BN;
 	selectedTrack?: string;
 	preimageHash?: string;
@@ -57,21 +57,17 @@ const getDefaultTrackMetaData = () => {
 	};
 };
 
-const TreasuryProposalSuccessPopup = ({
+const CuratorProposalSuccessPopup = ({
 	className,
 	open,
 	onCancel,
 	fundingAmount,
 	preimageHash,
 	proposerAddress,
-	beneficiaryAddresses,
+	curatorAddress,
 	preimageLength,
 	selectedTrack,
 	postId,
-	isCreateReferendumForm,
-	isKillReferendumForm,
-	isCancelReferendaForm,
-	isCuratorAdded,
 	genralIndex,
 	inputAmountValue
 }: Props) => {
@@ -124,23 +120,13 @@ const TreasuryProposalSuccessPopup = ({
 					src='/assets/delegation-tracks/success-delegate.svg'
 					alt='success delegate icon'
 				/>
-				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>
-					{isCancelReferendaForm
-						? 'Referendum Canceled Successfully '
-						: isKillReferendumForm
-						? 'Referendum Killed successfully'
-						: isCreateReferendumForm
-						? 'Referendum created successfully'
-						: isCuratorAdded
-						? 'Curator added successfully'
-						: 'Proposal created successfully for'}
-				</label>
+				<label className='text-xl font-semibold text-bodyBlue dark:text-blue-dark-high'>Curator added successfully</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
-						{formatedBalance(fundingAmount.toString(), unit)} {unit}
+						{/* {formatedBalance(fundingAmount.toString(), unit)} {unit} */}#{postId}
 					</span>
 				)}
-				{proposerAddress && beneficiaryAddresses && beneficiaryAddresses?.[0]?.address?.length > 0 && selectedTrack && preimageHash && preimageLength && (
+				{proposerAddress && selectedTrack && preimageHash && preimageLength && (
 					<div className='my-2 flex'>
 						<div className='mt-[10px] flex flex-col gap-1.5 text-sm text-lightBlue dark:text-blue-dark-medium'>
 							<span className='flex'>
@@ -152,20 +138,17 @@ const TreasuryProposalSuccessPopup = ({
 									iconSize={18}
 								/>
 							</span>
-							<span className='flex'>
-								<span className='w-[172px]'>Beneficiary Address:</span>
-								<div className='flex flex-col gap-2'>
-									{beneficiaryAddresses?.map((beneficiary, index) => (
-										<Beneficiary
-											beneficiary={beneficiary}
-											key={index}
-											disableBalanceFormatting
-											assetId={genralIndex}
-											isProposalCreationFlow
-										/>
-									))}
-								</div>
-							</span>
+							{curatorAddress && (
+								<span className='flex'>
+									<span className='w-[172px]'>Curator Address:</span>
+									<Address
+										addressClassName='text-bodyBlue dark:text-blue-dark-high font-semibold text-sm'
+										address={curatorAddress}
+										isTruncateUsername={false}
+										iconSize={18}
+									/>
+								</span>
+							)}
 
 							<span className='flex'>
 								<span className='w-[172px]'>Track:</span>
@@ -180,7 +163,8 @@ const TreasuryProposalSuccessPopup = ({
 									{fundingAmount ? (
 										genralIndex ? (
 											<div className='flex items-center gap-1'>
-												{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}
+												{/* {getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)} */}
+												{formatedBalance(fundingAmount.toString(), unit)}
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
@@ -220,6 +204,17 @@ const TreasuryProposalSuccessPopup = ({
 								<span className='w-[172px]'>Preimage Length:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{preimageLength}</span>
 							</span>
+							<span className='flex'>
+								<span className='w-[172px]'>Link to referendum:</span>
+								<Link
+									href={`https://${network}.polkassembly.io/referenda/${postId}`}
+									className='cursor-pointer text-xs font-medium text-pink_primary'
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									{`https://${network}.polkassembly.io/referenda/${postId}`}
+								</Link>
+							</span>
 						</div>
 					</div>
 				)}
@@ -249,7 +244,7 @@ const TreasuryProposalSuccessPopup = ({
 	);
 };
 
-export default styled(TreasuryProposalSuccessPopup)`
+export default styled(CuratorProposalSuccessPopup)`
 	.ant-alert-with-description {
 		padding-block: 12px !important;
 	}

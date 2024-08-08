@@ -14,7 +14,6 @@ import { isOffChainProposalTypeValid } from '~src/api-utils';
 import PostDataContextProvider from '~src/context/PostDataContext';
 import { checkIsOnChainPost, getFirestoreProposalType, ProposalType } from '~src/global/proposalType';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-
 import SidebarRight from '../SidebarRight';
 import OptionPoll from './ActionsBar/OptionPoll';
 import TrackerButton from './ActionsBar/TrackerButton';

@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import copyToClipboard from '~src/util/copyToClipboard';
 import { LoadingOutlined } from '@ant-design/icons';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EAllowedCommentor, IBeneficiary, NotificationStatus } from '~src/types';
+import { EAllowedCommentor, EProposalCheckTypes, IBeneficiary, NotificationStatus } from '~src/types';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { APPNAME } from '~src/global/appName';
@@ -151,6 +151,21 @@ const CreateProposal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
+	const createProposalLogs = async () => {
+		const { error } = await nextApiClientFetch('/api/v1/logs/proposalChecksLogs', {
+			activity: EProposalCheckTypes.PROPOSAL,
+			allowedCommentors: allowedCommentors ? [allowedCommentors] : [EAllowedCommentor.ALL],
+			content: content || '',
+			discussionId: discussionId || null,
+			tags: tags || [],
+			title: title || ''
+		});
+
+		if (error) {
+			console.log({ error });
+		}
+	};
+
 	const handleSaveTreasuryProposal = async (postId: number) => {
 		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
@@ -182,6 +197,7 @@ const CreateProposal = ({
 			userId: currentUser?.id || '',
 			userName: currentUser?.username || ''
 		});
+
 		if (!api || !apiReady) return;
 		const post_id = Number(await api.query.referenda.referendumCount());
 		const origin: any = { Origins: selectedTrack };
@@ -230,6 +246,7 @@ const CreateProposal = ({
 			);
 
 			const onSuccess = async () => {
+				createProposalLogs();
 				await handleSaveTreasuryProposal(post_id);
 				setPostId(post_id);
 				console.log('Saved referenda ID: ', post_id);

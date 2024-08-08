@@ -20,7 +20,6 @@ import { useApiContext } from '~src/context';
 import checkPayoutForUserAddresses from '~src/util/checkPayoutForUserAddresses';
 import { useCurrentBlock } from '~src/hooks';
 import { claimPayoutActions } from '~src/redux/claimProposalPayout';
-import getEncodedAddress from '~src/util/getEncodedAddress';
 import { IPayout } from '~src/types';
 
 const InAppNotification = ({ className }: { className?: string }) => {
@@ -30,7 +29,7 @@ const InAppNotification = ({ className }: { className?: string }) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const currentBlock = useCurrentBlock();
-	const { id: userId, addresses, loginAddress } = currentUser;
+	const { id: userId, loginAddress } = currentUser;
 	const { unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
@@ -41,15 +40,10 @@ const InAppNotification = ({ className }: { className?: string }) => {
 		if (currentBlock) {
 			(async () => {
 				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
-				const encodedAddresses = addresses?.map((addr) => getEncodedAddress(addr, network) || addr);
 				const usersPayouts: IPayout[] = [];
-				if (encodedAddresses?.length) {
-					payoutsData?.map((payout: IPayout) => {
-						if (encodedAddresses.includes(payout.beneficiary)) {
-							usersPayouts.push(payout);
-						}
-					});
-				}
+				payoutsData?.map((payout: IPayout) => {
+					usersPayouts.push(payout);
+				});
 
 				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!usersPayouts?.length, payouts: usersPayouts }));
 			})();

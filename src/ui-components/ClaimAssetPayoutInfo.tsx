@@ -33,15 +33,13 @@ interface IProps {
 
 const ZERO_BN = new BN(0);
 
-const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPage }: IProps) => {
+const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPage = false }: IProps) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
-	const { loginAddress } = useUserDetailsSelector();
+	const { loginAddress, addresses } = useUserDetailsSelector();
 	const { payouts: allPayouts } = useClaimPayoutSelector();
-	const {
-		postData: { beneficiaries, assetId, postIndex }
-	} = usePostDataContext();
-	const [payouts, setPayouts] = useState<IPayout[]>(allPayouts);
+	const { postData } = usePostDataContext();
+	const [payouts, setPayouts] = useState<IPayout[]>([]);
 	const [openAddressSelectModal, setOpenAddressSelectModal] = useState(false);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [availableBalance, setAvailableBalance] = useState<BN | null>(null);
@@ -61,9 +59,9 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	};
 
 	const getTxFee = async () => {
-		if (!api || !apiReady || !address || !['polkadot'].includes(network) || !payouts.length) return;
+		if (!api || !apiReady || !address || !['polkadot'].includes(network) || !payouts?.length) return;
 
-		const batchData = payouts.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
+		const batchData = payouts?.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
 		const tx = batchData.length > 1 ? api.tx.utility.batch(batchData) : batchData[0];
 
 		const paymentInfo = await tx.paymentInfo(address);
@@ -90,10 +88,10 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	};
 
 	const handleSubmitTx = async () => {
-		if (!api || !apiReady || !loginAddress || !payouts.length) return;
+		if (!api || !apiReady || !loginAddress || !payouts?.length) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
 
-		const batchData = payouts.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
+		const batchData = payouts?.map((payout) => api.tx.treasury.payout(payout?.payoutIndex));
 		const tx = batchData.length > 1 ? api.tx.utility.batch(batchData) : batchData[0];
 
 		await executeTx({
@@ -110,31 +108,35 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	};
 
 	useEffect(() => {
-		if (!postIndex || !usingInRefPage) return;
+		if (!usingInRefPage) {
+			const encodedAddresses = addresses?.map((addr) => getEncodedAddress(addr, network) || addr);
+			const filterdPayouts = allPayouts.filter((payout) => payout.generalIndex == postData?.assetId && encodedAddresses?.includes(payout.beneficiary));
+			setPayouts(filterdPayouts);
+		} else {
+			if (!postData?.assetId || !postData?.beneficiaries?.length) {
+				setPayouts([]);
+				return;
+			}
+			setLoading({ isLoading: true, message: '' });
 
-		if (!assetId || !beneficiaries?.length) {
-			setPayouts([]);
-			return;
+			const encodedAddresses = postData?.beneficiaries?.map(
+				(addr) =>
+					getEncodedAddress(
+						typeof addr.address === 'string'
+							? addr.address
+							: (addr.address as any)?.value?.length
+							? (addr.address as any)?.value
+							: ((addr?.address as any)?.value?.interior?.value?.id as string) || '',
+						network
+					) || addr
+			);
+			const filterdPayouts = allPayouts.filter((payout) => payout.generalIndex == postData?.assetId && encodedAddresses?.includes(payout.beneficiary));
+			setPayouts(filterdPayouts);
+			setLoading({ isLoading: false, message: '' });
 		}
-		setLoading({ isLoading: true, message: '' });
-
-		const encodedAddresses = beneficiaries?.map(
-			(addr) =>
-				getEncodedAddress(
-					typeof addr.address === 'string'
-						? addr.address
-						: (addr.address as any)?.value?.length
-						? (addr.address as any)?.value
-						: ((addr?.address as any)?.value?.interior?.value?.id as string) || '',
-					network
-				) || addr
-		);
-		const filterdPayouts = allPayouts.filter((payout) => payout.generalIndex == assetId && encodedAddresses?.includes(payout.beneficiary));
-		setPayouts(filterdPayouts);
-		setLoading({ isLoading: false, message: '' });
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [usingInRefPage, postIndex]);
+	}, [usingInRefPage, postData?.postIndex]);
 
 	useEffect(() => {
 		setAddress(loginAddress || '');
@@ -145,7 +147,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 	return (
 		<section>
 			{!payouts.length ? null : <div className={className}>{children}</div>}
-			{payouts.length && (
+			{!!payouts.length && (
 				<div>
 					<Modal
 						open={open}

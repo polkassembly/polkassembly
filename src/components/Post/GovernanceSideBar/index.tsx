@@ -1073,7 +1073,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 						{/* claim payout */}
-						{isMultiassetSupportedNetwork(network) && (
+						{isMultiassetSupportedNetwork(network) && proposalType == ProposalType.REFERENDUM_V2 && (
 							<ClaimAssetPayoutInfo
 								className={'mb-4 flex w-full items-center justify-center'}
 								open={openClaimModal}

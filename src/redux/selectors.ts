@@ -21,6 +21,7 @@ import { IInAppNotificationsStore } from './inAppNotifications/@types';
 import { IBatchVoteStore } from './batchVoting/@types';
 import { IAmbassadorStore } from './addAmbassadorSeeding/@types';
 import { IAmbassadorReplaceStore } from './replaceAmbassador/@types';
+import { IClaimPayoutStore } from './claimProposalPayout/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -90,6 +91,9 @@ const useAmbassadorReplacementSelector = () => {
 const useBatchVotesSelector = () => {
 	return useSelector<TAppState, IBatchVoteStore>((state) => state.batchVote);
 };
+const useClaimPayoutSelector = () => {
+	return useSelector<TAppState, IClaimPayoutStore>((state) => state.claimPayout);
+};
 
 export {
 	useNetworkSelector,
@@ -109,5 +113,6 @@ export {
 	useAmbassadorSeedingSelector,
 	useBatchVotesSelector,
 	useAmbassadorRemovalSelector,
-	useAmbassadorReplacementSelector
+	useAmbassadorReplacementSelector,
+	useClaimPayoutSelector
 };

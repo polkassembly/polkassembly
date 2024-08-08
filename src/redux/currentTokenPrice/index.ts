@@ -14,7 +14,7 @@ export const currentTokenPriceStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.network
+				...(action as PayloadAction<any>).payload.currentTokenPrice
 			};
 		});
 	},

@@ -9,7 +9,7 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useInAppNotificationsSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
 import { ECustomNotificationFilters, EInAppNotificationsType } from './types';
@@ -21,6 +21,7 @@ import AllNotificationsTab from './FiltersTabs/AllNotificationsTab';
 import CommentsNotificationsTab from './FiltersTabs/CommentsNotificationsTab';
 import MentionsNotificationsTab from './FiltersTabs/MentionsNotificationsTab';
 import ProposalsNotificationsTab from './FiltersTabs/ProposalsNotificationsTab';
+import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 
 interface INotificationsContent {
 	className?: string;
@@ -76,6 +77,7 @@ const handleRenderTab = (
 };
 const NotificationsContent = ({ className, inPage = false, closePopover }: INotificationsContent) => {
 	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
 	const router = useRouter();
 	const page = Number(router.query.page as string) || 1;
 	const { resolvedTheme: theme } = useTheme();
@@ -252,6 +254,15 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 						}}
 					/>
 				</div>
+
+				{/*ClaimAssetPayoutInfo  */}
+
+				{['polkadot'].includes(network) && (
+					<ClaimAssetPayoutInfo
+						className={classNames('my-2 rounded-[4px]', inPage ? 'ml-10 w-[500px]' : 'px-8')}
+						closePreviousModal={() => closePopover?.(true)}
+					/>
+				)}
 
 				{/* content */}
 				{handleRenderTab(activeFilter, inPage, isStopInterval, setStopInterval, closePopover as any)}

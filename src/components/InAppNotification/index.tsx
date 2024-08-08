@@ -16,17 +16,46 @@ import ReferendaLoginPrompts from '~src/ui-components/ReferendaLoginPrompts';
 import { setUserDetailsState } from '~src/redux/userDetails';
 import { ACTIONS } from '../Settings/Notifications/Reducer/action';
 import { ECustomNotificationFilters } from './types';
+import { useApiContext } from '~src/context';
+import checkPayoutForUserAddresses from '~src/util/checkPayoutForUserAddresses';
+import { useCurrentBlock } from '~src/hooks';
+import { claimPayoutActions } from '~src/redux/claimProposalPayout';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { IPayout } from '~src/types';
 
 const InAppNotification = ({ className }: { className?: string }) => {
-	const { resolvedTheme: theme } = useTheme();
-	const { network } = useNetworkSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
+	const { api, apiReady } = useApiContext();
+	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	const { id: userId } = currentUser;
+	const currentBlock = useCurrentBlock();
+	const { id: userId, addresses, loginAddress } = currentUser;
 	const { unreadNotificationsCount } = useInAppNotificationsSelector();
 	const [openLoginPrompt, setOpenLoginPrompt] = useState<boolean>(false);
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [open, setOpen] = useState(false);
+
+	useEffect(() => {
+		if (!api || !apiReady || !loginAddress || !currentBlock || !['polkadot'].includes(network)) return;
+		if (currentBlock) {
+			(async () => {
+				const payoutsData = await checkPayoutForUserAddresses({ api: api || null, apiReady, currentBlockNumber: currentBlock?.toNumber(), network });
+				const encodedAddresses = addresses?.map((addr) => getEncodedAddress(addr, network) || addr);
+				const usersPayouts: IPayout[] = [];
+				if (encodedAddresses?.length) {
+					payoutsData?.map((payout: IPayout) => {
+						if (encodedAddresses.includes(payout.beneficiary)) {
+							usersPayouts.push(payout);
+						}
+					});
+				}
+
+				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!usersPayouts?.length, payouts: usersPayouts }));
+			})();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [api, apiReady, loginAddress, currentBlock]);
 
 	const getNotificationSettings = async (network: string) => {
 		if (!network) {

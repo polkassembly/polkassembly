@@ -286,7 +286,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 							showIcon
 							message={
 								<div className='m-0 flex items-center justify-between p-0 text-xs dark:text-blue-dark-high'>
-									<span>You have {payouts?.length} payouts from your proposals </span>
+									<span>You have {payouts?.length || 0} payouts from your proposals </span>
 									<CustomButton
 										text='Claim'
 										onClick={() => {

@@ -18,7 +18,7 @@ interface SortByDropdownProps {
 	className?: string;
 }
 
-const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, isUsedInTrackListing, className }) => {
+const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, sortBy, isUsedInTrackListing, className }) => {
 	const router = useRouter();
 
 	const dropdownMenu = (
@@ -27,9 +27,11 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, isU
 				onClick={() => handleSortByClick('clear_filter')}
 				className='pt-3'
 			>
-				<div className='flex justify-end'>
-					<span className='my-1 mr-2 text-[10px] text-pink_primary'>Clear Filter</span>
-				</div>
+				{sortBy && (
+					<div className='flex justify-end'>
+						<span className='my-1 mr-2 cursor-pointer text-[10px] text-pink_primary'>Clear Filter</span>
+					</div>
+				)}
 				<Divider
 					style={{ background: '#D2D8E0', flexGrow: 1 }}
 					className='mb-1 mt-0 dark:bg-separatorDark'
@@ -40,7 +42,7 @@ const SortByDropdownComponent: React.FC<SortByDropdownProps> = ({ setSortBy, isU
 					<div
 						key={option.key}
 						onClick={() => handleSortByClick(option.key)}
-						className='cursor-pointer px-4 py-2 text-xs hover:text-pink_primary'
+						className={`cursor-pointer px-4 py-2 text-xs ${sortBy === option.key && 'text-pink_primary'} hover:text-pink_primary`}
 					>
 						{option.label}
 					</div>

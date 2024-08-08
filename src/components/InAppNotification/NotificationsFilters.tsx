@@ -46,7 +46,7 @@ const NotificationsFilters = ({ className, inPage, onChange }: INotificationsFil
 					key={value}
 					onClick={() => onChange(value as ECustomNotificationFilters)}
 				>
-					<span className={classNames(activeFilter === value ? 'pink-icon' : '', 'flex items-center')}>{getFiltersIcon(value as ECustomNotificationFilters)}</span>
+					<span className={classNames(activeFilter === value ? 'pink-icon' : '', 'hidden items-center msm:flex')}>{getFiltersIcon(value as ECustomNotificationFilters)}</span>
 					<span> {value}</span>
 				</div>
 			))}

@@ -26,7 +26,6 @@ const checkPayoutForUserAddresses = async ({ api, apiReady, network, currentBloc
 		const beneficiary =
 			convertAnyHexToASCII(payoutData?.beneficiary?.V4?.interior?.X1?.[0]?.AccountId32?.id || payoutData?.beneficiary?.V3?.interior?.X1?.AccountId32?.id, network) || '';
 		const startedAt = Number(payoutData?.validFrom?.split(',')?.join(''));
-		console.log({ payoutData });
 
 		if (startedAt <= currentBlockNumber && payoutData.status == 'Pending') {
 			const res: IPayout = {

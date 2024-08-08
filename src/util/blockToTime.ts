@@ -19,7 +19,6 @@ function secondsToDhm(seconds: number) {
 
 export default function blockToTime(blocks: BN | number, network: string, blocktime?: number): { time: string; seconds: number } {
 	if (!blocktime) {
-		console.log('herre');
 		blocktime = chainProperties?.[network]?.blockTime / 1000;
 	} else {
 		blocktime = blocktime / 1000;

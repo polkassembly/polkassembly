@@ -232,7 +232,6 @@ const ClaimAssetPayoutInfo = ({ className, closePreviousModal }: IProps) => {
 							<span>Expire In</span>
 						</div>
 						{payouts.map((payout) => {
-							// console.log({payout})
 							return (
 								<div
 									key={payout.payoutIndex}

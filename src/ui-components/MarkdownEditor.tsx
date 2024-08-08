@@ -277,7 +277,7 @@ function MarkdownEditor(props: Props): React.ReactElement {
 	const debouncedAPIcall = useCallback(debounce(getUserData, 1000), []);
 
 	const onChange = async (content: string) => {
-		const inputValue = content;
+		let inputValue = content;
 		setInput(inputValue);
 
 		const matches = inputValue.match(/(?<!\S)@(\w+)(?!\.\w)/g);
@@ -286,16 +286,17 @@ function MarkdownEditor(props: Props): React.ReactElement {
 			if (!validUsers.includes(usernameQuery)) {
 				debouncedAPIcall(usernameQuery, content);
 			} else if (validUsers.includes(usernameQuery)) {
-				let inputData = content;
-				const regex = new RegExp(`@${usernameQuery}(?!.*@${usernameQuery})`);
-				inputData = inputData.replace(regex, `[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`);
-				setInput(inputData);
+				// Remove existing replacement before applying new replacement
+				const cleanedInput = inputValue.replace(new RegExp(`\\[@${usernameQuery}\\]\\(.*?\\)`, 'g'), `@${usernameQuery}`);
+				const regex = new RegExp(`@${usernameQuery}(?!\\]\\()`, 'g');
+				inputValue = cleanedInput.replace(regex, `[@${usernameQuery}](${window.location.origin}/user/${usernameQuery})`);
+				setInput(inputValue);
 			}
 		}
 		if (props.onChange) {
-			return props?.onChange(content);
+			return props.onChange(inputValue);
 		}
-		return content;
+		return inputValue;
 	};
 
 	return (

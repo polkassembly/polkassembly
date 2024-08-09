@@ -9,7 +9,7 @@ interface Args {
 	network: string;
 	asset: EAssets;
 }
-export const getGenralIndexFromAsset = ({ asset, network }: Args) => {
+export const getGeneralIndexFromAsset = ({ asset, network }: Args) => {
 	switch (network) {
 		case AllNetworks.POLKADOT:
 			switch (asset) {

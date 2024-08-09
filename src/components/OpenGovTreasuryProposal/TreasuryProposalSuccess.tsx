@@ -39,7 +39,7 @@ interface Props {
 	isCancelReferendaForm?: boolean;
 	isKillReferendumForm?: boolean;
 	isCreateReferendumForm?: boolean;
-	genralIndex?: string | null;
+	generalIndex?: string | null;
 	inputAmountValue?: string;
 }
 
@@ -71,7 +71,7 @@ const TreasuryProposalSuccessPopup = ({
 	isCreateReferendumForm,
 	isKillReferendumForm,
 	isCancelReferendaForm,
-	genralIndex,
+	generalIndex,
 	inputAmountValue
 }: Props) => {
 	const { network } = useNetworkSelector();
@@ -136,8 +136,8 @@ const TreasuryProposalSuccessPopup = ({
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-							{genralIndex ? (
-								<div className='flex items-center gap-1'>{getBeneficiaryAmountAndAsset(genralIndex, fundingAmount.toString(), network, true)}</div>
+							{generalIndex ? (
+								<div className='flex items-center gap-1'>{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}</div>
 							) : (
 								<div className='flex items-center gap-1'>
 									<span className='flex items-center gap-1'>
@@ -169,7 +169,7 @@ const TreasuryProposalSuccessPopup = ({
 											beneficiary={beneficiary}
 											key={index}
 											disableBalanceFormatting
-											assetId={genralIndex}
+											assetId={generalIndex}
 											isProposalCreationFlow
 										/>
 									))}
@@ -187,9 +187,9 @@ const TreasuryProposalSuccessPopup = ({
 								<span className='w-[172px]'>Funding Amount:</span>
 								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 									{fundingAmount ? (
-										genralIndex ? (
+										generalIndex ? (
 											<div className='flex items-center gap-1'>
-												{getBeneficiaryAmountAndAsset(genralIndex, fundingAmount.toString(), network, true)}
+												{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
@@ -198,7 +198,7 @@ const TreasuryProposalSuccessPopup = ({
 																{getUsdValueFromAsset({
 																	currentTokenPrice: currentTokenPrice || '0',
 																	dedTokenUsdPrice: dedTokenUsdPrice || '0',
-																	genralIndex,
+																	generalIndex,
 																	inputAmountValue: inputAmountValue || '0',
 																	network
 																}) || 0}{' '}
@@ -225,7 +225,7 @@ const TreasuryProposalSuccessPopup = ({
 											</div>
 										)
 									) : null}
-									{!genralIndex && unit}
+									{!generalIndex && unit}
 								</span>
 							</span>
 							<span className='flex items-center'>

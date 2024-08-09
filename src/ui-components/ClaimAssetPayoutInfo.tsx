@@ -8,7 +8,6 @@ import Alert from '~src/basic-components/Alert';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useApiContext, usePostDataContext } from '~src/context';
 import { useClaimPayoutSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import Address from './Address';
 import classNames from 'classnames';
 import { ILoading, IPayout, NotificationStatus } from '~src/types';
@@ -23,6 +22,7 @@ import AddressConnectModal from './AddressConnectModal';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
 
 interface IProps {
 	className?: string;
@@ -144,7 +144,6 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 		getTxFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, api, apiReady]);
-
 	return (
 		<section>
 			{!payouts.length ? null : <div className={className}>{children}</div>}

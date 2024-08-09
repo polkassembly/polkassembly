@@ -3,33 +3,42 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { chainProperties } from '~src/global/networkConstants';
+import { AssetsNetwork, chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from './formatedBalance';
+import { EASSETS } from '~src/types';
 
 const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
 	const bnAmount = new BN(amount || 0);
 	if (isProposalCreationFlow) {
 		const divBn = new BN(`${10 ** chainProperties[network]?.tokenDecimals}`);
 		switch (assetId) {
-			case '1984':
+			case EASSETS.USDT:
 				return `${bnAmount.div(divBn).toString()} USDT`;
-			case '1337':
+			case EASSETS.USDC:
 				return `${bnAmount.div(divBn).toString()} USDC`;
+			case EASSETS.DED:
+				return `${bnAmount.div(divBn).toString()} DED`;
 		}
 	} else {
 		switch (assetId) {
-			case '1984':
+			case EASSETS.USDT:
 				return `${formatedBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN('1000000'))).toString(),
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.USDT.tokenDecimal))).toString(),
 					chainProperties[network]?.tokenSymbol,
 					0
 				)} USDT`;
-			case '1337':
+			case EASSETS.USDC:
 				return `${formatedBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN('1000000'))).toString(),
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.USDT.tokenDecimal))).toString(),
 					chainProperties[network]?.tokenSymbol,
 					0
 				)} USDC`;
+			case EASSETS.DED:
+				return `${formatedBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.DED.tokenDecimal))).toString(),
+					chainProperties[network]?.tokenSymbol,
+					0
+				)} DED`;
 		}
 	}
 };

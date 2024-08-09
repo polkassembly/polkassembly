@@ -21,6 +21,7 @@ import { IInAppNotificationsStore } from './inAppNotifications/@types';
 import { IBatchVoteStore } from './batchVoting/@types';
 import { IAmbassadorStore } from './addAmbassadorSeeding/@types';
 import { IAmbassadorReplaceStore } from './replaceAmbassador/@types';
+import { IAssetsCurrentPriceStore } from './assetsCurrentPrices/@types';
 
 const useNetworkSelector = () => {
 	return useSelector<TAppState, INetworkStore>((state) => state?.network);
@@ -91,6 +92,10 @@ const useBatchVotesSelector = () => {
 	return useSelector<TAppState, IBatchVoteStore>((state) => state.batchVote);
 };
 
+const useAssetsCurrentPriceSelectior = () => {
+	return useSelector<TAppState, IAssetsCurrentPriceStore>((state) => state.assetsCurrentPrice);
+};
+
 export {
 	useNetworkSelector,
 	useUserDetailsSelector,
@@ -109,5 +114,6 @@ export {
 	useAmbassadorSeedingSelector,
 	useBatchVotesSelector,
 	useAmbassadorRemovalSelector,
-	useAmbassadorReplacementSelector
+	useAmbassadorReplacementSelector,
+	useAssetsCurrentPriceSelectior
 };

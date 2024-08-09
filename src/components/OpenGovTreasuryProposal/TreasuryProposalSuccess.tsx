@@ -14,7 +14,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import styled from 'styled-components';
 import { blocksToRelevantTime, getTrackData } from '../Listing/Tracks/AboutTrackCard';
 import Link from 'next/link';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { IBeneficiary } from '~src/types';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
@@ -23,6 +23,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
 interface Props {
 	className?: string;
@@ -77,6 +78,7 @@ const TreasuryProposalSuccessPopup = ({
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [trackMetaData, setTrackMetaData] = useState(getDefaultTrackMetaData());
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 
 	useEffect(() => {
 		setTrackMetaData(getTrackData(network, selectedTrack));
@@ -133,7 +135,18 @@ const TreasuryProposalSuccessPopup = ({
 				</label>
 				{fundingAmount && (
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
-						{formatedBalance(fundingAmount.toString(), unit)} {unit}
+						<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+							{genralIndex ? (
+								<div className='flex items-center gap-1'>{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}</div>
+							) : (
+								<div className='flex items-center gap-1'>
+									<span className='flex items-center gap-1'>
+										{formatedBalance(fundingAmount.toString(), unit)}
+										{unit}
+									</span>
+								</div>
+							)}
+						</div>
 					</span>
 				)}
 				{proposerAddress && beneficiaryAddresses && beneficiaryAddresses?.[0]?.address?.length > 0 && selectedTrack && preimageHash && preimageLength && (
@@ -182,7 +195,13 @@ const TreasuryProposalSuccessPopup = ({
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 															<span>Current value:</span>
 															<span>
-																{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+																{getUsdValueFromAsset({
+																	currentTokenPrice: currentTokenPrice || '0',
+																	dedTokenUsdPrice: dedTokenUsdPrice || '0',
+																	genralIndex,
+																	inputAmountValue: inputAmountValue || '0'
+																})}{' '}
+																{chainProperties[network].tokenSymbol}
 															</span>
 														</div>
 													}

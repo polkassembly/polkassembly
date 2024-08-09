@@ -26,7 +26,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { LoadingOutlined } from '@ant-design/icons';
-import { chainProperties } from '~src/global/networkConstants';
+import { AssetsNetwork, chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useCurrentBlock } from '~src/hooks';
 import { Proposal } from '@polkadot/types/interfaces';
@@ -39,7 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -51,6 +51,7 @@ import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -137,9 +138,19 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
+
+	const getFormatedBalanceFromAsset = (balance: BN) => {
+		console.log(balance.toString());
+		switch (genralIndex) {
+			case EASSETS.DED:
+				return balance.mul(new BN((10 ** AssetsNetwork.DED.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+			default:
+				return balance.mul(new BN((10 ** AssetsNetwork.USDT.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+		}
+	};
 
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
@@ -432,7 +443,7 @@ const CreatePreimage = ({
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 			//USDT or USDT denominated 10^6   >>
-			balance = balance.mul(new BN('1000000')).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+			balance = getFormatedBalanceFromAsset(balance);
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -1165,7 +1176,13 @@ const CreatePreimage = ({
 											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
 										) : (
 											<span className='text-pink_primary'>
-												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+												{getUsdValueFromAsset({
+													currentTokenPrice: currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													genralIndex,
+													inputAmountValue: inputAmountValue || '0'
+												})}{' '}
+												{chainProperties[network].tokenSymbol}
 											</span>
 										)}
 									</span>

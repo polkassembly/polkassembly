@@ -96,6 +96,11 @@ const BalanceInput = ({
 			img: '/assets/icons/usdc.svg',
 			label: 'USDC',
 			value: EASSETS.USDC
+		},
+		{
+			img: '/assets/icons/ded-asset.png',
+			label: 'DED',
+			value: EASSETS.DED
 		}
 	];
 

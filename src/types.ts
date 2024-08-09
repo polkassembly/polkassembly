@@ -801,7 +801,8 @@ export interface IActiveProposalCount {
 
 export enum EASSETS {
 	USDT = '1984',
-	USDC = '1337'
+	USDC = '1337',
+	DED = '30'
 }
 
 export interface IBountyStats {

@@ -182,6 +182,11 @@ export const tokenSymbol = {
 	CGT: 'CGT'
 };
 
+export const AssetsNetwork = {
+	DED: { name: 'dot-is-ded', tokenDecimal: 10 },
+	USDT: { name: 'usdt', tokenDecimal: 6 }
+};
+
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',

@@ -848,6 +848,6 @@ export interface IPayout {
 	expireAt: string;
 	startedAt: string;
 	payoutIndex: number;
-	generalIndex: EASSETS;
+	generalIndex: string;
 	status: 'Pending';
 }

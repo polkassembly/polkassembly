@@ -211,7 +211,7 @@ const BalanceInput = ({
 										<Image
 											className='h-4 w-4 rounded-full object-contain'
 											src={asset.img}
-											alt='Log0'
+											alt='Logo'
 											width={20}
 											height={20}
 										/>

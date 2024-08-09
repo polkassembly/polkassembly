@@ -171,7 +171,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [isUpdatedAvailableBalance, setIsUpdatedAvailableBalance] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
-	const [genralIndex, setGenralIndex] = useState<string | null>(null);
+	const [generalIndex, setGeneralIndex] = useState<string | null>(null);
 	const [inputAmountValue, setInputAmountValue] = useState<string>('0');
 	const [allowedCommentors, setAllowedCommentors] = useState<EAllowedCommentor>(EAllowedCommentor.ALL);
 
@@ -197,7 +197,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 		setSteps({ percent: 0, step: 0 });
 		setOpenModal(false);
 		setCloseConfirm(false);
-		setGenralIndex(null);
+		setGeneralIndex(null);
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
@@ -388,7 +388,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						<CustomButton
 							onClick={() => {
 								setCloseConfirm(false);
-								setGenralIndex(null);
+								setGeneralIndex(null);
 								setOpenModal(true);
 							}}
 							height={40}
@@ -401,7 +401,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			</Modal>
 			<TreasuryProposalSuccessPopup
 				inputAmountValue={inputAmountValue}
-				genralIndex={genralIndex}
+				generalIndex={generalIndex}
 				open={openSuccess}
 				onCancel={() => {
 					setOpenSuccess(false);
@@ -476,8 +476,8 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 						<CreatePreimage
 							inputAmountValue={inputAmountValue}
 							setInputAmountValue={setInputAmountValue}
-							setGenralIndex={setGenralIndex}
-							genralIndex={genralIndex}
+							setGeneralIndex={setGeneralIndex}
+							generalIndex={generalIndex}
 							availableBalance={availableBalance}
 							setAvailableBalance={setAvailableBalance}
 							preimageLength={preimageLength}
@@ -505,7 +505,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 					{steps.step === 2 && (
 						<CreateProposal
 							inputAmountValue={inputAmountValue}
-							genralIndex={genralIndex}
+							generalIndex={generalIndex}
 							discussionLink={discussionLink}
 							availableBalance={availableBalance}
 							title={title}

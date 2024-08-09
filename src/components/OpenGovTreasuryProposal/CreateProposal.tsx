@@ -31,7 +31,7 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
@@ -56,7 +56,7 @@ interface Props {
 	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
-	genralIndex?: string | null;
+	generalIndex?: string | null;
 	inputAmountValue: string;
 	allowedCommentors?: EAllowedCommentor;
 }
@@ -84,7 +84,7 @@ const CreateProposal = ({
 	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
-	genralIndex = null,
+	generalIndex = null,
 	inputAmountValue,
 	allowedCommentors
 }: Props) => {
@@ -310,7 +310,7 @@ const CreateProposal = ({
 										beneficiary={beneficiary}
 										key={index}
 										disableBalanceFormatting
-										assetId={genralIndex}
+										assetId={generalIndex}
 										isProposalCreationFlow={!isPreimage}
 									/>
 								))}
@@ -325,9 +325,9 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{genralIndex ? (
+								{generalIndex ? (
 									<div className='flex items-center gap-1'>
-										{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}
+										{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}
 										<HelperTooltip
 											text={
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
@@ -336,7 +336,7 @@ const CreateProposal = ({
 														{getUsdValueFromAsset({
 															currentTokenPrice: currentTokenPrice || '0',
 															dedTokenUsdPrice: dedTokenUsdPrice || '0',
-															genralIndex,
+															generalIndex,
 															inputAmountValue: inputAmountValue || '0',
 															network
 														}) || 0}

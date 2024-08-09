@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -39,7 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -51,6 +51,8 @@ import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import { getFormatedBalanceFromAsset } from './utils/getFormatedBalanceFromAsset';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -137,7 +139,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -310,7 +312,7 @@ const CreatePreimage = ({
 	}, [network]);
 
 	useEffect(() => {
-		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+		if (!genralIndex) return;
 		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
 			payload: {
@@ -431,8 +433,8 @@ const CreatePreimage = ({
 			const beneficiary = beneficiaryAddresses?.[0];
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
-			//USDT or USDT denominated 10^6   >>
-			balance = balance.mul(new BN('1000000')).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+			//asset associated balance;
+			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, genralIndex: genralIndex, network }) || ZERO_BN;
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -1162,10 +1164,17 @@ const CreatePreimage = ({
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
 										Current Value:{' '}
 										{!genralIndex ? (
-											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0) || 0} USD</span>
 										) : (
 											<span className='text-pink_primary'>
-												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+												{getUsdValueFromAsset({
+													currentTokenPrice: currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													genralIndex,
+													inputAmountValue: inputAmountValue || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network].tokenSymbol}
 											</span>
 										)}
 									</span>

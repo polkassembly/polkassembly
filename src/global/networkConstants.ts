@@ -59,6 +59,7 @@ import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
 
 import * as types from '../types';
+import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 
 export const network = {
 	POLKADOT: 'polkadot',
@@ -182,6 +183,22 @@ export const tokenSymbol = {
 	CGT: 'CGT'
 };
 
+export const treasuryAssets = {
+	DED: { name: 'dot-is-ded', img: '/assets/icons/ded-asset.png', tokenDecimal: 10, symbol: EAssets.DED },
+	USDT: {
+		name: 'usdt',
+		img: '/assets/icons/usdt.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDT
+	},
+	USDC: {
+		name: 'usdc',
+		img: '/assets/icons/usdc.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDC
+	}
+};
+
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
@@ -236,7 +253,8 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-polkadot.luckyfriday.io'
 			}
-		]
+		],
+		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
 	},
 	[network.KUSAMA]: {
 		preImageBaseDeposit: '1330000000000',
@@ -287,7 +305,8 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
-		]
+		],
+		supportedAssets: [treasuryAssets.USDT]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -1861,7 +1880,8 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via Parity',
 				key: 'wss://rococo-rpc.polkadot.io'
 			}
-		]
+		],
+		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
 	},
 	[network.XX]: {
 		blockTime: 6000,

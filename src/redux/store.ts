@@ -29,6 +29,7 @@ import { batchVoteStore } from './batchVoting';
 import { ambassadorRemovalStore } from './removeAmbassador';
 import { ambassadorReplacementStore } from './replaceAmbassador';
 import { claimPayoutStore } from './claimProposalPayout';
+import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -124,7 +125,8 @@ export const makeStore = () => {
 		[batchVoteStore.name]: batchVoteStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
-		[claimPayoutStore.name]: claimPayoutStore.reducer
+		[claimPayoutStore.name]: claimPayoutStore.reducer,
+		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer
 	});
 
 	if (isServer) {

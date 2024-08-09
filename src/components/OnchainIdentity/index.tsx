@@ -216,14 +216,16 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				className={`${poppins.className} ${poppins.variable} opengov-proposals w-[600px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				closable={false}
 				title={
-					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high'>
+					<div className='-mx-6 items-center gap-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-4 text-lg font-semibold text-bodyBlue dark:border-[#3B444F] dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high max-sm:text-base'>
 						Exit Verification
 					</div>
 				}
 			>
 				<div className='mt-6'>
-					<span className='text-sm text-bodyBlue dark:text-blue-dark-high'>Your verification is pending. Are you sure you want to exit verification process? </span>
-					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F]'>
+					<span className='flex justify-center text-center text-sm text-bodyBlue dark:text-blue-dark-high'>
+						Your verification is pending. Are you sure you want to exit verification process?{' '}
+					</span>
+					<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 pt-4 dark:border-[#3B444F] max-sm:gap-1'>
 						<CustomButton
 							onClick={() => {
 								setIsExitModal(false);
@@ -260,7 +262,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
 				className={`${poppins.className} ${poppins.variable} w-[600px] max-sm:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 				title={
-					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white'>
+					<div className='-mx-6 flex items-center gap-2 border-0 border-b-[1px] border-solid border-[#E1E6EB] px-6 pb-3 text-xl font-semibold dark:border-separatorDark dark:bg-section-dark-overlay dark:text-white max-sm:gap-1 max-sm:text-sm'>
 						{step !== ESetIdentitySteps.SOCIAL_VERIFICATION ? (
 							<SetIdentityIcon className='text-2xl text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
@@ -279,7 +281,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 							</div>
 						) : null}
 						{!identityInfo.alreadyVerified && step === ESetIdentitySteps.SOCIAL_VERIFICATION && !loading?.isLoading && (
-							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high'>
+							<span className='flex items-center gap-2 rounded-[4px] border-[1px] border-solid border-section-light-container bg-[#f6f7f9] px-3 py-[6px] text-xs font-medium  text-bodyBlue dark:border-[#3B444F] dark:bg-section-dark-container dark:text-blue-dark-high max-sm:gap-1 max-sm:px-1 max-sm:py-0 max-sm:text-[10px]'>
 								<span className='mt-1'>{theme === 'dark' ? <IdentityProgressDarkIcon /> : <IdentityProgressIcon />}</span>
 								In Progress
 							</span>

@@ -67,9 +67,16 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					verified={email?.verified}
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
+					fieldName={ESocials.EMAIL}
 				/>
 			),
-			dot: <EmailIcon className={`${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
+			dot: (
+				<EmailIcon
+					className={`${
+						email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'
+					} rounded-full p-2.5 text-xl max-sm:p-1.5 max-sm:text-sm`}
+				/>
+			),
 			key: 1
 		});
 	}
@@ -88,7 +95,11 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 				/>
 			),
 			dot: (
-				<TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />
+				<TwitterIcon
+					className={` ${
+						twitter?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'
+					} rounded-full p-2.5 text-xl max-sm:p-1.5 max-sm:text-sm`}
+				/>
 			),
 			key: 2
 		});
@@ -251,7 +262,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	return (
 		<div className={`${className} border-solid border-white pl-4 dark:border-transparent`}>
 			<Timeline
-				className='mt-8'
+				className='mt-10'
 				items={items}
 			/>
 

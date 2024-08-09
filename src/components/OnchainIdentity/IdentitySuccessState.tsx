@@ -45,12 +45,14 @@ const IdentitySuccessState = ({ className, open, close, openPreModal, changeStep
 			maskClosable={false}
 		>
 			<>
-				<div className='-mt-[132px] flex flex-col items-center justify-center'>
+				<div className='-mt-[132px] flex flex-col items-center text-center'>
 					<ImageIcon
 						src='/assets/icons/identity-success.svg'
 						alt='identity success icon'
 					/>
-					<label className='mt-4 text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>On-chain identity registration initiated</label>
+					<div className='mt-4 flex items-center justify-center text-center text-xl font-semibold tracking-[0.0015em] text-bodyBlue dark:text-blue-dark-high'>
+						On-chain identity registration initiated
+					</div>
 					<div className='mt-4 text-2xl font-semibold text-pink_primary'>{displayName}</div>
 					<div className='mt-4 flex flex-col gap-2'>
 						<span className='flex items-center gap-1'>

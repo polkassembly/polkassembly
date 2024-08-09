@@ -85,6 +85,7 @@ const handler: NextApiHandler<IVerificationResponse | MessageType> = async (req,
 				html: `Hello ${user.username},
 				<br/>
 				<br>Click on the following link to complete email verification for your on chain identity: <a href="https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}">Verify Email</a></br>
+				<br>If you're on mobile please paste this link to Nova wallet browser to continue: https://${network}.polkassembly.io/verify-email?token=${verificationToken}&identityVerification=${true}</br>
 				<br/>
 				<br>
 				Thank you,

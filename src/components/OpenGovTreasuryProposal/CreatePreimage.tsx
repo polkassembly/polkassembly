@@ -21,12 +21,12 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { LoadingOutlined } from '@ant-design/icons';
-import { AssetsNetwork, chainProperties } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useCurrentBlock } from '~src/hooks';
 import { Proposal } from '@polkadot/types/interfaces';
@@ -52,6 +52,7 @@ import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import { getFormatedBalanceFromAsset } from './utils/getFormatedBalanceFromAsset';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -141,16 +142,6 @@ const CreatePreimage = ({
 	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
-
-	const getFormatedBalanceFromAsset = (balance: BN) => {
-		console.log(balance.toString());
-		switch (genralIndex) {
-			case EASSETS.DED:
-				return balance.mul(new BN((10 ** AssetsNetwork.DED.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
-			default:
-				return balance.mul(new BN((10 ** AssetsNetwork.USDT.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
-		}
-	};
 
 	const checkPreimageHash = (preimageLength: number | null, preimageHash: string) => {
 		if (!preimageHash || preimageLength === null) return false;
@@ -321,7 +312,7 @@ const CreatePreimage = ({
 	}, [network]);
 
 	useEffect(() => {
-		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+		if (!genralIndex) return;
 		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
 			payload: {
@@ -442,8 +433,8 @@ const CreatePreimage = ({
 			const beneficiary = beneficiaryAddresses?.[0];
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
-			//USDT or USDT denominated 10^6   >>
-			balance = getFormatedBalanceFromAsset(balance);
+			//asset associated balance;
+			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, genralIndex: genralIndex, network });
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{

@@ -3,41 +3,44 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import BN from 'bn.js';
-import { AssetsNetwork, chainProperties } from '~src/global/networkConstants';
-import { formatedBalance } from './formatedBalance';
-import { EASSETS } from '~src/types';
+import { treasuryAssets, chainProperties } from '~src/global/networkConstants';
+import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
+import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 
 const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
 	const bnAmount = new BN(amount || 0);
 	if (isProposalCreationFlow) {
 		const divBn = new BN(`${10 ** chainProperties[network]?.tokenDecimals}`);
 		switch (assetId) {
-			case EASSETS.USDT:
+			case EAssets.USDT:
 				return `${bnAmount.div(divBn).toString()} USDT`;
-			case EASSETS.USDC:
+			case EAssets.USDC:
 				return `${bnAmount.div(divBn).toString()} USDC`;
-			case EASSETS.DED:
+			case EAssets.DED:
 				return `${bnAmount.div(divBn).toString()} DED`;
 		}
 	} else {
 		switch (assetId) {
-			case EASSETS.USDT:
-				return `${formatedBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.USDT.tokenDecimal))).toString(),
-					chainProperties[network]?.tokenSymbol,
-					0
+			case EAssets.USDT:
+				return `${parseBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.USDT.tokenDecimal))).toString(),
+					0,
+					false,
+					network
 				)} USDT`;
-			case EASSETS.USDC:
-				return `${formatedBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.USDT.tokenDecimal))).toString(),
-					chainProperties[network]?.tokenSymbol,
-					0
+			case EAssets.USDC:
+				return `${parseBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.USDT.tokenDecimal))).toString(),
+					0,
+					false,
+					network
 				)} USDC`;
-			case EASSETS.DED:
-				return `${formatedBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** AssetsNetwork.DED.tokenDecimal))).toString(),
-					chainProperties[network]?.tokenSymbol,
-					0
+			case EAssets.DED:
+				return `${parseBalance(
+					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.DED.tokenDecimal))).toString(),
+					0,
+					false,
+					network
 				)} DED`;
 		}
 	}

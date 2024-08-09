@@ -5,6 +5,7 @@
 import { coinGeckoNetworks } from '~src/global/coinGeckoNetworkMappings';
 
 import formatUSDWithUnits from './formatUSDWithUnits';
+import { treasuryAssets } from '~src/global/networkConstants';
 
 export default async function fetchTokenToUSDPrice(network: string) {
 	try {
@@ -16,7 +17,7 @@ export default async function fetchTokenToUSDPrice(network: string) {
 
 		if (Object.keys(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network] || {}).length == 0) {
 			return 'N/A';
-		} else if (['cere', 'dot-is-ded'].includes(network)) {
+		} else if (['cere', treasuryAssets.DED.name].includes(network)) {
 			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network]['usd'], 4);
 		} else {
 			return formatUSDWithUnits(responseJSON[coinGeckoNetworks[network] ? coinGeckoNetworks[network] : network]['usd']);

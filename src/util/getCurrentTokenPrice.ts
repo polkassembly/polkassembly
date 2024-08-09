@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AssetsNetwork } from '~src/global/networkConstants';
+import { treasuryAssets } from '~src/global/networkConstants';
 import fetchTokenToUSDPrice from './fetchTokenToUSDPrice';
 
 export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre: { isLoading: boolean; value: string }) => void) => {
@@ -25,7 +25,7 @@ export const GetCurrentTokenPrice = (network: string, setCurrentTokenPrice: (pre
 
 			setCurrentTokenPrice({
 				isLoading: false,
-				value: ['cere' || 'picasso', AssetsNetwork.DED.name].includes(network) ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
+				value: ['cere' || 'picasso', treasuryAssets.DED.name].includes(network) ? parseFloat(formattedUSD).toFixed(4) : parseFloat(formattedUSD).toFixed(2)
 			});
 		})
 		.catch(() => {

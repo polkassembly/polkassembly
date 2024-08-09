@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { EASSETS } from '~src/types';
+import { EAssets } from '../types';
 
 interface Args {
 	inputAmountValue: string;
@@ -13,9 +13,13 @@ interface Args {
 
 export const getUsdValueFromAsset = ({ currentTokenPrice, dedTokenUsdPrice, genralIndex, inputAmountValue }: Args) => {
 	switch (genralIndex) {
-		case EASSETS.DED:
+		case EAssets.DED:
 			return Math.floor((Number(inputAmountValue) * Number(dedTokenUsdPrice)) / Number(currentTokenPrice) || 0);
-		default:
+		case EAssets.USDC:
 			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
+		case EAssets.USDT:
+			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
+		default:
+			return null;
 	}
 };

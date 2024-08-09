@@ -22,8 +22,8 @@ import Popover from '~src/basic-components/Popover';
 import { ArrowDownIcon } from './CustomIcons';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import getAssetFromGenralIndex from '~src/util/getAssetFromGernralndex';
-import { EASSETS } from '~src/types';
+import { getGenralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGenralIndexFromAsset';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -85,24 +85,14 @@ const BalanceInput = ({
 	});
 	const [open, setOpen] = useState<boolean>(false);
 
-	const options = [
-		{ img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: chainProperties[network]?.tokenSymbol, value: null },
-		{
-			img: '/assets/icons/usdt.svg',
-			label: 'USDT',
-			value: EASSETS.USDT
-		},
-		{
-			img: '/assets/icons/usdc.svg',
-			label: 'USDC',
-			value: EASSETS.USDC
-		},
-		{
-			img: '/assets/icons/ded-asset.png',
-			label: 'DED',
-			value: EASSETS.DED
-		}
-	];
+	const options = isMultiassetSupportedNetwork(network)
+		? [
+				{ img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: chainProperties[network]?.tokenSymbol, value: null },
+				...(chainProperties?.[network]?.supportedAssets?.map((item) => {
+					return { img: item?.img, label: item.symbol.toUpperCase(), value: getGenralIndexFromAsset({ asset: item.symbol, network }) || null };
+				}) || [])
+		  ]
+		: [];
 
 	const onBalanceChange = (value: string | null): void => {
 		const [balance, isValid] = inputToBn(`${value}`, network, false);
@@ -221,7 +211,7 @@ const BalanceInput = ({
 										<Image
 											className='h-4 w-4 rounded-full object-contain'
 											src={asset.img}
-											alt='Logo'
+											alt='Log0'
 											width={20}
 											height={20}
 										/>
@@ -233,13 +223,13 @@ const BalanceInput = ({
 						) : deafultAsset ? (
 							<div className='flex cursor-pointer items-center gap-1 p-3'>
 								<Image
-									className='h-4 w-4 rounded-full object-contain'
+									className='h-4 w-4 rounded-full object-contain capitalize'
 									src={options.find((option) => option.value == deafultAsset)?.img || ''}
 									alt='Logo'
 									width={20}
 									height={20}
 								/>
-								{getAssetFromGenralIndex(deafultAsset, network)}
+								{options.find((option) => option.value == deafultAsset)?.label.toUpperCase() || ''}
 							</div>
 						) : (
 							<div className='flex items-center justify-center gap-1 px-3 dark:text-white'>

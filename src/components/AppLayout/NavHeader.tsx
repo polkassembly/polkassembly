@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import NetworkDropdown from 'src/ui-components/NetworkDropdown';
 import styled from 'styled-components';
-import { AssetsNetwork, chainProperties } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 import SearchBar from '~src/ui-components/SearchBar';
 import TownHall from '~assets/icons/TownHall.svg';
 import Mail from '~assets/icons/mail.svg';
@@ -52,8 +52,6 @@ const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import InAppNotification from '../InAppNotification';
-import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
-import { assetsCurrentPriceActions } from '~src/redux/assetsCurrentPrices';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -87,19 +85,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const [openAddressModal, setOpenAddressModal] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
-
-	const getAssetUsdPrice = async () => {
-		const price = await fetchTokenToUSDPrice(AssetsNetwork.DED.name);
-
-		if (price !== 'N/A') {
-			dispatch(assetsCurrentPriceActions.setDEDTokenPrice(price));
-		}
-	};
-
-	useEffect(() => {
-		getAssetUsdPrice();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	const handleLogout = async (username: string) => {
 		dispatch(logout());

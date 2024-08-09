@@ -22,7 +22,7 @@ import AddressConnectModal from './AddressConnectModal';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 
 interface IProps {
 	className?: string;
@@ -260,7 +260,7 @@ const ClaimAssetPayoutInfo = ({ className, children, open, setOpen, usingInRefPa
 													displayInline
 												/>
 											</span>
-											<span>{getBeneficiaryAmoutAndAsset(payout.generalIndex, String(payout.amount || '0'), network)}</span>
+											<span>{getBeneficiaryAmountAndAsset(payout.generalIndex, String(payout.amount || '0'), network)}</span>
 											<span>{payout.expireAt}</span>
 										</div>
 									);

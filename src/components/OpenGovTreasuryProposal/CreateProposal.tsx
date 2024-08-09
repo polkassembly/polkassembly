@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
@@ -31,8 +31,9 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
 const ZERO_BN = new BN(0);
 
@@ -100,6 +101,7 @@ const CreateProposal = ({
 	const { id: userId } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -331,7 +333,14 @@ const CreateProposal = ({
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 													<span>Current value:</span>
 													<span>
-														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+														{getUsdValueFromAsset({
+															currentTokenPrice: currentTokenPrice || '0',
+															dedTokenUsdPrice: dedTokenUsdPrice || '0',
+															genralIndex,
+															inputAmountValue: inputAmountValue || '0',
+															network
+														}) || 0}
+														{chainProperties[network]?.tokenSymbol}
 													</span>
 												</div>
 											}

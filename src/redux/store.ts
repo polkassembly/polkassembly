@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { batchVoteStore } from './batchVoting';
 import { ambassadorRemovalStore } from './removeAmbassador';
 import { ambassadorReplacementStore } from './replaceAmbassador';
+import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
@@ -122,7 +123,8 @@ export const makeStore = () => {
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
 		[batchVoteStore.name]: batchVoteStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
-		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer
+		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
+		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer
 	});
 
 	if (isServer) {

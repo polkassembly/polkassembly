@@ -6,6 +6,7 @@ import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
+import { EAssets } from './components/OpenGovTreasuryProposal/types';
 
 declare global {
 	interface Window {
@@ -101,6 +102,13 @@ export type ChainPropType = {
 	[index: string]: ChainProps;
 };
 
+export interface IAssets {
+	tokenDecimal: number;
+	name: string;
+	img: string;
+	symbol: EAssets;
+}
+
 export interface ChainProps {
 	peopleChainRpcEndpoint?: string;
 	peopleChainParachain?: string;
@@ -123,6 +131,7 @@ export interface ChainProps {
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	supportedAssets?: IAssets[];
 }
 
 export type TRPCEndpoint = {
@@ -797,11 +806,6 @@ export interface IActiveProposalCount {
 			| 'advisoryCommitteeMotionsCount'
 			| string
 	]: number;
-}
-
-export enum EASSETS {
-	USDT = '1984',
-	USDC = '1337'
 }
 
 export interface IBountyStats {

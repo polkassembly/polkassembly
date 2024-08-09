@@ -243,17 +243,26 @@ const CreateProposal = ({
 				setOpenModal(false);
 			};
 
-			const onFailed = async () => {
+			const onFailed = async (error: string) => {
 				queueNotification({
 					header: 'Failed!',
-					message: 'Transaction failed!',
+					message: error || 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
 
 				setLoading(false);
 			};
 			setLoading(true);
-			await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: proposal });
+			await executeTx({
+				address: proposerAddress,
+				api,
+				apiReady,
+				errorMessageFallback: 'failed.',
+				network,
+				onFailed: (error: string) => onFailed(error),
+				onSuccess,
+				tx: proposal
+			});
 		} catch (error) {
 			setLoading(false);
 			console.log(':( transaction failed');

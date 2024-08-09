@@ -488,17 +488,26 @@ const CreatePreimage = ({
 			setSteps({ percent: 100, step: 2 });
 		};
 
-		const onFailed = () => {
+		const onFailed = (error: string) => {
 			queueNotification({
 				header: 'failed!',
-				message: 'Transaction failed!',
+				message: error || 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
+		await executeTx({
+			address: proposerAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed: (error: string) => onFailed(error),
+			onSuccess,
+			tx: preimage.notePreimageTx
+		});
 	};
 
 	const handleSubmit = async () => {

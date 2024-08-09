@@ -116,13 +116,19 @@ export interface ChainProps {
 	rpcEndpoint: string;
 	category: string;
 	subsquidUrl: string;
+	treasuryAddress?: string;
 	treasuryProposalBondPercent: string | null;
 	treasuryProposalMinBond: string | null;
 	treasuryProposalMaxBond: string | null;
 	externalLinks: string;
+	assethubExternalLinks?: string;
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	assetHubRpcEndpoint?: string;
+	assetHubAddress?: string;
+	assetHubUSDTId?: string;
+	assetHubUSDCId?: string;
 }
 
 export type TRPCEndpoint = {

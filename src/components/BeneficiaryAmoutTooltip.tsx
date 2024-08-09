@@ -27,20 +27,15 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
-const getBalanceFromGeneralIndex = (
-	generalIndex: string,
-	currentTokenPrice: string,
-	usdValueOnClosed: string | null = '0',
-	isProposalClosed: Boolean,
-	dedTokenUsdPrice: string
-) => {
+const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: string, usdvalue: string | null = '0', isProposalClosed: Boolean, dedTokenUsdPrice: string) => {
+	if (isNaN(Number(currentTokenPrice))) return '0';
 	switch (generalIndex) {
 		case '30':
-			return String(((Number(currentTokenPrice) || 1) / (Number(dedTokenUsdPrice) || 1)) * 10 ** treasuryAssets.DED.tokenDecimal) || '0';
+			return String(((Number(currentTokenPrice || 1) || 1) / (Number(dedTokenUsdPrice) || 1)) * 10 ** treasuryAssets?.DED?.tokenDecimal) || '0';
 		case '1337':
-			return String(10 ** treasuryAssets.USDC.tokenDecimal * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1));
+			return String(10 ** treasuryAssets.USDC.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
 		case '1984':
-			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1));
+			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
 		default:
 			return 0;
 	}

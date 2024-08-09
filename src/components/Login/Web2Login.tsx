@@ -193,7 +193,12 @@ const Web2Login: FC<Props> = ({
 						className='mx-8 mb-4 rounded-[4px]'
 						type='warning'
 						showIcon
-						message={<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>Polkadot.js wallet is experiencing unexpected errors. We suggest using another wallet for login.</p>}
+						message={
+							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
+								Polkadot.js wallet users may encounter some unexpected errors due to issues with the wallet. We suggest checking Polkadot.js official channels for update on how to
+								fix wallet{' '}
+							</p>
+						}
 					/>
 					<AuthForm
 						onSubmit={handleSubmitForm}

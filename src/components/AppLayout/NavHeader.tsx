@@ -46,12 +46,14 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
-import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
-import InAppNotification from '../InAppNotification';
+const InAppNotification = dynamic(() => import('../InAppNotification'), {
+	ssr: false
+});
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,

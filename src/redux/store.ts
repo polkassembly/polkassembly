@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { batchVoteStore } from './batchVoting';
 import { ambassadorRemovalStore } from './removeAmbassador';
 import { ambassadorReplacementStore } from './replaceAmbassador';
+import { claimPayoutStore } from './claimProposalPayout';
 import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
@@ -124,6 +125,7 @@ export const makeStore = () => {
 		[batchVoteStore.name]: batchVoteStore.reducer,
 		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
 		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
+		[claimPayoutStore.name]: claimPayoutStore.reducer,
 		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer
 	});
 
@@ -153,7 +155,8 @@ export const makeStore = () => {
 				'inAppNotifications',
 				'addAmbassador',
 				'ambassadorRemoval',
-				'ambassadorReplacement'
+				'ambassadorReplacement',
+				'claimPayout'
 			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -841,3 +841,13 @@ export interface IBountyProposalsResponse {
 		reward: string | null;
 	}[];
 }
+
+export interface IPayout {
+	beneficiary: string;
+	amount: string;
+	expireAt: string;
+	startedAt: string;
+	payoutIndex: number;
+	generalIndex: EASSETS;
+	status: 'Pending';
+}

@@ -29,10 +29,9 @@ const ZERO_BN = new BN(0);
 
 const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: string, usdvalue: string | null = '0', isProposalClosed: Boolean, dedTokenUsdPrice: string) => {
 	if (isNaN(Number(currentTokenPrice))) return '0';
-	console.log(generalIndex, currentTokenPrice, dedTokenUsdPrice);
 	switch (generalIndex) {
 		case '30':
-			return String(((Number(currentTokenPrice || 1) || 1) / (Number(dedTokenUsdPrice) || 1)) * 10 ** treasuryAssets?.DED?.tokenDecimal) || '0';
+			return String(((Number(currentTokenPrice || 1) || 1) * 10 ** treasuryAssets?.DED?.tokenDecimal || 0) / (Number(dedTokenUsdPrice) || 1)) || '0';
 		case '1337':
 			return String(10 ** treasuryAssets.USDC.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
 		case '1984':

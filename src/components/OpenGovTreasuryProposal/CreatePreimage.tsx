@@ -434,7 +434,7 @@ const CreatePreimage = ({
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 			//asset associated balance;
-			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, genralIndex: genralIndex, network });
+			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, genralIndex: genralIndex, network }) || ZERO_BN;
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -1164,15 +1164,16 @@ const CreatePreimage = ({
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
 										Current Value:{' '}
 										{!genralIndex ? (
-											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0) || 0} USD</span>
 										) : (
 											<span className='text-pink_primary'>
 												{getUsdValueFromAsset({
 													currentTokenPrice: currentTokenPrice || '0',
 													dedTokenUsdPrice: dedTokenUsdPrice || '0',
 													genralIndex,
-													inputAmountValue: inputAmountValue || '0'
-												})}{' '}
+													inputAmountValue: inputAmountValue || '0',
+													network
+												}) || 0}{' '}
 												{chainProperties[network].tokenSymbol}
 											</span>
 										)}

@@ -31,7 +31,7 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
@@ -337,8 +337,9 @@ const CreateProposal = ({
 															currentTokenPrice: currentTokenPrice || '0',
 															dedTokenUsdPrice: dedTokenUsdPrice || '0',
 															genralIndex,
-															inputAmountValue: inputAmountValue || '0'
-														})}
+															inputAmountValue: inputAmountValue || '0',
+															network
+														}) || 0}
 														{chainProperties[network]?.tokenSymbol}
 													</span>
 												</div>

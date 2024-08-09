@@ -306,7 +306,7 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDT]
+		supportedAssets: [treasuryAssets.USDT]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,

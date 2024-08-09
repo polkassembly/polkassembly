@@ -21,7 +21,7 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
@@ -199,8 +199,9 @@ const TreasuryProposalSuccessPopup = ({
 																	currentTokenPrice: currentTokenPrice || '0',
 																	dedTokenUsdPrice: dedTokenUsdPrice || '0',
 																	genralIndex,
-																	inputAmountValue: inputAmountValue || '0'
-																})}{' '}
+																	inputAmountValue: inputAmountValue || '0',
+																	network
+																}) || 0}{' '}
 																{chainProperties[network].tokenSymbol}
 															</span>
 														</div>

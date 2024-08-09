@@ -6,7 +6,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
 import dayjs from 'dayjs';
 import { CustomStatus } from './Listing/Tracks/TrackListingCard';
 import { getStatusesFromCustomStatus } from '~src/global/proposalType';

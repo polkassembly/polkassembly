@@ -5,24 +5,30 @@
 import BN from 'bn.js';
 import { chainProperties, treasuryAssets } from '~src/global/networkConstants';
 import { EAssets } from '../types';
-import { getGenralIndexFromAsset } from './getGenralIndexFromAsset';
+import { getGeneralIndexFromAsset } from './getGeneralIndexFromAsset';
 
 interface Args {
-	genralIndex: string;
+	generalIndex: string;
 	network: string;
 	balance: BN;
 }
 
 const ZERO_BN = new BN(0);
 
-export const getFormatedBalanceFromAsset = ({ balance, genralIndex, network }: Args) => {
-	switch (genralIndex) {
-		case getGenralIndexFromAsset({ asset: EAssets.DED, network }):
-			return balance.mul(new BN((10 ** treasuryAssets.DED.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
-		case getGenralIndexFromAsset({ asset: EAssets.USDC, network }):
-			return balance.mul(new BN((10 ** treasuryAssets.USDC.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
-		case getGenralIndexFromAsset({ asset: EAssets.USDT, network }):
-			return balance.mul(new BN((10 ** treasuryAssets.USDT.tokenDecimal).toString())).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+export const getFormatedBalanceFromAsset = ({ balance, generalIndex, network }: Args) => {
+	switch (generalIndex) {
+		case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
+			return balance
+				.mul(new BN('10').pow(new BN(String(treasuryAssets.DED.tokenDecimal || 0))))
+				.div(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))));
+		case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
+			return balance
+				.mul(new BN('10').pow(new BN(String(treasuryAssets.USDC.tokenDecimal || 0))))
+				.div(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))));
+		case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
+			return balance
+				.mul(new BN('10').pow(new BN(String(treasuryAssets.USDT.tokenDecimal || 0))))
+				.div(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))));
 		default:
 			return ZERO_BN;
 	}

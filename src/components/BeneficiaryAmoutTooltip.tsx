@@ -3,10 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
-import { chainProperties } from '~src/global/networkConstants';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { chainProperties, treasuryAssets } from '~src/global/networkConstants';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
 import { CustomStatus } from './Listing/Tracks/TrackListingCard';
 import { getStatusesFromCustomStatus } from '~src/global/proposalType';
@@ -27,6 +27,25 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
+const getBalanceFromGeneralIndex = (
+	generalIndex: string,
+	currentTokenPrice: string,
+	usdValueOnClosed: string | null = '0',
+	isProposalClosed: Boolean,
+	dedTokenUsdPrice: string
+) => {
+	switch (generalIndex) {
+		case '30':
+			return String(((Number(currentTokenPrice) || 1) / (Number(dedTokenUsdPrice) || 1)) * 10 ** treasuryAssets.DED.tokenDecimal) || '0';
+		case '1337':
+			return String(10 ** treasuryAssets.USDC.tokenDecimal * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1));
+		case '1984':
+			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1));
+		default:
+			return 0;
+	}
+};
+
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
@@ -38,6 +57,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
@@ -82,7 +102,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 			{assetId ? (
 				<div className={'flex items-center gap-1'}>
 					<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
-						{getBeneficiaryAmoutAndAsset(assetId, requestedAmt.toString(), network)}
+						{getBeneficiaryAmountAndAsset(assetId, requestedAmt.toString(), network)}
 					</span>
 					<HelperTooltip
 						usedInPostPage={usedInPostPage}
@@ -95,7 +115,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 										<span>
 											{parseBalance(
 												new BN(requestedAmt)
-													.div(new BN(String(1000000 * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1))))
+													.div(new BN(getBalanceFromGeneralIndex(assetId, currentTokenPrice, usdValueOnClosed, isProposalClosed, dedTokenUsdPrice)))
 													.mul(new BN(String(10 ** (chainProperties?.[network]?.tokenDecimals || 0))))
 													.toString(),
 												0,
@@ -110,8 +130,8 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 										<span>
 											{parseBalance(
 												new BN(requestedAmt)
-													.div(new BN(String(1000000 * Number(usdValueOnCreation || currentTokenPrice || 1))))
-													.mul(new BN(String(10 ** (chainProperties[network]?.tokenDecimals || 0))))
+													.div(new BN(String(getBalanceFromGeneralIndex(assetId, currentTokenPrice, usdValueOnCreation, isProposalClosed, dedTokenUsdPrice))))
+													.mul(new BN(10).pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))))
 													.toString(),
 												0,
 												false,

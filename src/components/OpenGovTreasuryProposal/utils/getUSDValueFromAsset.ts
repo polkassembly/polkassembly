@@ -3,24 +3,24 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { EAssets } from '../types';
-import { getGenralIndexFromAsset } from './getGenralIndexFromAsset';
+import { getGeneralIndexFromAsset } from './getGeneralIndexFromAsset';
 
 interface Args {
 	inputAmountValue: string;
 	dedTokenUsdPrice: string;
 	currentTokenPrice: string;
-	genralIndex: string;
+	generalIndex: string;
 	network: string;
 }
 
-export const getUsdValueFromAsset = ({ currentTokenPrice, dedTokenUsdPrice, genralIndex, inputAmountValue, network }: Args) => {
+export const getUsdValueFromAsset = ({ currentTokenPrice, dedTokenUsdPrice, generalIndex, inputAmountValue, network }: Args) => {
 	if (!Number(currentTokenPrice)) return 0;
-	switch (genralIndex) {
-		case getGenralIndexFromAsset({ asset: EAssets.DED, network }):
+	switch (generalIndex) {
+		case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
 			return Math.floor((Number(inputAmountValue) * Number(dedTokenUsdPrice)) / Number(currentTokenPrice) || 0);
-		case getGenralIndexFromAsset({ asset: EAssets.USDC, network }):
+		case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
 			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
-		case getGenralIndexFromAsset({ asset: EAssets.USDT, network }):
+		case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
 			return Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0);
 		default:
 			return '0';

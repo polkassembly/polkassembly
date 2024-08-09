@@ -8,7 +8,7 @@ import Address from '../Address';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { formatedBalance } from '~src/util/formatedBalance';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import BN from 'bn.js';
 
 interface Props {
@@ -40,13 +40,13 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 				(
 				{assetId
 					? isProposalCreationFlow
-						? getBeneficiaryAmoutAndAsset(
+						? getBeneficiaryAmountAndAsset(
 								assetId,
-								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
+								new BN(beneficiary.amount).mul(new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)))).toString(),
 								network,
 								isProposalCreationFlow
 						  )
-						: getBeneficiaryAmoutAndAsset(assetId, beneficiary.amount.toString(), network)
+						: getBeneficiaryAmountAndAsset(assetId, beneficiary.amount.toString(), network)
 					: disableBalanceFormatting
 					? beneficiary.amount.toString()
 					: formatedBalance(beneficiary.amount.toString(), chainProperties[network]?.tokenSymbol, 2)}

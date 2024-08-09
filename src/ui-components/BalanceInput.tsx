@@ -22,7 +22,7 @@ import Popover from '~src/basic-components/Popover';
 import { ArrowDownIcon } from './CustomIcons';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
-import { getGenralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGenralIndexFromAsset';
+import { getGeneralIndexFromAsset } from '~src/components/OpenGovTreasuryProposal/utils/getGeneralIndexFromAsset';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 const ZERO_BN = new BN(0);
@@ -89,7 +89,7 @@ const BalanceInput = ({
 		? [
 				{ img: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: chainProperties[network]?.tokenSymbol, value: null },
 				...(chainProperties?.[network]?.supportedAssets?.map((item) => {
-					return { img: item?.img, label: item.symbol.toUpperCase(), value: getGenralIndexFromAsset({ asset: item.symbol, network }) || null };
+					return { img: item?.img, label: item.symbol.toUpperCase(), value: getGeneralIndexFromAsset({ asset: item.symbol, network }) || null };
 				}) || [])
 		  ]
 		: [];

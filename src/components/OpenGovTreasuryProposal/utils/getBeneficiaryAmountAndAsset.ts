@@ -8,7 +8,7 @@ import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 import { parseBalance } from '~src/components/Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { getGenralIndexFromAsset } from './getGenralIndexFromAsset';
 
-const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
+const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
 	const bnAmount = new BN(amount || 0);
 	if (isProposalCreationFlow) {
 		const divBn = new BN(`${10 ** chainProperties[network]?.tokenDecimals}`);
@@ -47,4 +47,4 @@ const getBeneficiaryAmoutAndAsset = (assetId: string, amount: string, network: s
 	}
 };
 
-export default getBeneficiaryAmoutAndAsset;
+export default getBeneficiaryAmountAndAsset;

@@ -21,7 +21,7 @@ import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
 
@@ -137,7 +137,7 @@ const TreasuryProposalSuccessPopup = ({
 					<span className='mt-2 text-2xl font-semibold text-pink_primary'>
 						<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
 							{genralIndex ? (
-								<div className='flex items-center gap-1'>{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}</div>
+								<div className='flex items-center gap-1'>{getBeneficiaryAmountAndAsset(genralIndex, fundingAmount.toString(), network, true)}</div>
 							) : (
 								<div className='flex items-center gap-1'>
 									<span className='flex items-center gap-1'>
@@ -189,7 +189,7 @@ const TreasuryProposalSuccessPopup = ({
 									{fundingAmount ? (
 										genralIndex ? (
 											<div className='flex items-center gap-1'>
-												{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}
+												{getBeneficiaryAmountAndAsset(genralIndex, fundingAmount.toString(), network, true)}
 												<HelperTooltip
 													text={
 														<div className='flex items-center gap-1 dark:text-blue-dark-high'>

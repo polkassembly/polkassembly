@@ -6,7 +6,7 @@ import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
 import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getBeneficiaryAmoutAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
 import { CustomStatus } from './Listing/Tracks/TrackListingCard';
 import { getStatusesFromCustomStatus } from '~src/global/proposalType';
@@ -82,7 +82,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 			{assetId ? (
 				<div className={'flex items-center gap-1'}>
 					<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
-						{getBeneficiaryAmoutAndAsset(assetId, requestedAmt.toString(), network)}
+						{getBeneficiaryAmountAndAsset(assetId, requestedAmt.toString(), network)}
 					</span>
 					<HelperTooltip
 						usedInPostPage={usedInPostPage}

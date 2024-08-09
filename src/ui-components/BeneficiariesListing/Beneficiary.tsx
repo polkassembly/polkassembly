@@ -42,7 +42,7 @@ const Beneficiary = ({ className, beneficiary, disableBalanceFormatting, inPostH
 					? isProposalCreationFlow
 						? getBeneficiaryAmountAndAsset(
 								assetId,
-								new BN(beneficiary.amount).mul(new BN(`${10 ** chainProperties[network].tokenDecimals}`)).toString(),
+								new BN(beneficiary.amount).mul(new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)))).toString(),
 								network,
 								isProposalCreationFlow
 						  )

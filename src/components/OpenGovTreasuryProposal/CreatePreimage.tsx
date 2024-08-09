@@ -691,7 +691,7 @@ const CreatePreimage = ({
 								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '';
 
 						newBeneficiaryAddress.address = beneficiaryAddress;
-						balance = balance.div(new BN('1000000')).mul(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+						balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex || '', network }) || ZERO_BN;
 					}
 					dispatchBeneficiaryAddresses({
 						payload: {

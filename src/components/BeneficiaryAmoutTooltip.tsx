@@ -131,7 +131,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 											{parseBalance(
 												new BN(requestedAmt)
 													.div(new BN(String(getBalanceFromGeneralIndex(assetId, currentTokenPrice, usdValueOnCreation, isProposalClosed, dedTokenUsdPrice))))
-													.mul(new BN(String(10 ** (chainProperties[network]?.tokenDecimals || 0))))
+													.mul(new BN(10).pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))))
 													.toString(),
 												0,
 												false,

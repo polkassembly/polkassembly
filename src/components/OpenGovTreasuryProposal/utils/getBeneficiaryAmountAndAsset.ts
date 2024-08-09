@@ -11,7 +11,7 @@ import { getGeneralIndexFromAsset } from './getGeneralIndexFromAsset';
 const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: string, isProposalCreationFlow?: boolean) => {
 	const bnAmount = new BN(amount || 0);
 	if (isProposalCreationFlow) {
-		const divBn = new BN(`${10 ** chainProperties[network]?.tokenDecimals}`);
+		const divBn = new BN(10).pow(new BN(String(chainProperties[network].tokenDecimals || 0)));
 		switch (assetId) {
 			case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
 				return `${bnAmount.div(divBn).toString()} USDT`;
@@ -24,21 +24,27 @@ const getBeneficiaryAmountAndAsset = (assetId: string, amount: string, network: 
 		switch (assetId) {
 			case getGeneralIndexFromAsset({ asset: EAssets.USDT, network }):
 				return `${parseBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.USDT.tokenDecimal))).toString(),
+					bnAmount
+						.mul(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))).div(new BN('10').pow(new BN(String(treasuryAssets.USDT.tokenDecimal || 0)))))
+						.toString(),
 					0,
 					false,
 					network
 				)} USDT`;
 			case getGeneralIndexFromAsset({ asset: EAssets.USDC, network }):
 				return `${parseBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.USDT.tokenDecimal))).toString(),
+					bnAmount
+						.mul(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))).div(new BN('10').pow(new BN(String(treasuryAssets.USDC.tokenDecimal || 0)))))
+						.toString(),
 					0,
 					false,
 					network
 				)} USDC`;
 			case getGeneralIndexFromAsset({ asset: EAssets.DED, network }):
 				return `${parseBalance(
-					bnAmount.mul(new BN(10 ** chainProperties[network]?.tokenDecimals).div(new BN(10 ** treasuryAssets.DED.tokenDecimal))).toString(),
+					bnAmount
+						.mul(new BN('10').pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))).div(new BN('10').pow(new BN(String(treasuryAssets.DED.tokenDecimal || 0)))))
+						.toString(),
 					0,
 					false,
 					network

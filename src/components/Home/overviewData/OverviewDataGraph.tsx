@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
+import Loader from '~src/ui-components/Loader';
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -51,7 +52,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	];
 
 	if (filteredData.length === 0) {
-		return <div>Oops, something went wrong. Please try again later.</div>;
+		return <Loader />;
 	}
 
 	return (

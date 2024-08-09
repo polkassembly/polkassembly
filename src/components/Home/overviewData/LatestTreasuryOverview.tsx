@@ -15,7 +15,6 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { network as AllNetworks } from '~src/global/networkConstants';
 import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
@@ -77,10 +76,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
 
-		if (assethubApiReady) {
-			// Fetching balance in DOT
+		if (assethubApiReady && chainProperties?.[network]?.assetHubAddress) {
+			// Fetching balance in token
 			assethubApi?.query?.system
-				?.account(chainProperties?.[AllNetworks.POLKADOT]?.assetHubAddress)
+				?.account(chainProperties?.[network]?.assetHubAddress)
 				.then((result: any) => {
 					const free = result.data?.free?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
 					setAssethubValues((values) => ({ ...values, dotValue: free.toString() }));
@@ -88,38 +87,40 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				.catch((e) => console.error(e));
 
 			// Fetch balance in USDC
-			assethubApi?.query.assets
-				.account(chainProperties?.[AllNetworks.POLKADOT]?.assetHubUSDCId, chainProperties?.[AllNetworks.POLKADOT]?.assetHubAddress)
-				.then((result: any) => {
-					if (result.isNone) {
-						console.log('No data found for the specified asset and address');
-						return;
-					}
-					const data = result.unwrap();
-					const freeBalanceBigInt = data.balance.toBigInt();
-					const free = freeBalanceBigInt.toString();
-					setAssethubValues((values) => ({ ...values, usdcValue: free }));
-				})
-				.catch((e) => {
-					console.error('Error fetching asset balance:', e);
-				});
+			chainProperties?.[network]?.assetHubUSDCId &&
+				assethubApi?.query.assets
+					.account(chainProperties?.[network]?.assetHubUSDCId, chainProperties?.[network]?.assetHubAddress)
+					.then((result: any) => {
+						if (result.isNone) {
+							console.log('No data found for the specified asset and address');
+							return;
+						}
+						const data = result.unwrap();
+						const freeBalanceBigInt = data.balance.toBigInt();
+						const free = freeBalanceBigInt.toString();
+						setAssethubValues((values) => ({ ...values, usdcValue: free }));
+					})
+					.catch((e) => {
+						console.error('Error fetching asset balance:', e);
+					});
 
 			// Fetch balance in USDT
-			assethubApi?.query.assets
-				.account(chainProperties?.[AllNetworks.POLKADOT]?.assetHubUSDTId, chainProperties?.[AllNetworks.POLKADOT]?.assetHubAddress)
-				.then((result: any) => {
-					if (result.isNone) {
-						console.log('No data found for the specified asset and address');
-						return;
-					}
-					const data = result.unwrap();
-					const freeBalanceBigInt = data.balance.toBigInt();
-					const free = freeBalanceBigInt.toString();
-					setAssethubValues((values) => ({ ...values, usdtValue: free }));
-				})
-				.catch((e) => {
-					console.error('Error fetching asset balance:', e);
-				});
+			chainProperties?.[network]?.assetHubUSDTId &&
+				assethubApi?.query.assets
+					.account(chainProperties?.[network]?.assetHubUSDTId, chainProperties?.[network]?.assetHubAddress)
+					.then((result: any) => {
+						if (result.isNone) {
+							console.log('No data found for the specified asset and address');
+							return;
+						}
+						const data = result.unwrap();
+						const freeBalanceBigInt = data.balance.toBigInt();
+						const free = freeBalanceBigInt.toString();
+						setAssethubValues((values) => ({ ...values, usdtValue: free }));
+					})
+					.catch((e) => {
+						console.error('Error fetching asset balance:', e);
+					});
 		}
 
 		return;
@@ -162,7 +163,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	useEffect(() => {
 		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.POLKADOT]?.assetHubRpcEndpoint);
+			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
 			const apiPromise = await ApiPromise.create({ provider: wsProvider });
 			setAssethubApi(apiPromise);
 			const timer = setTimeout(async () => {
@@ -248,12 +249,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														~ ${totalAmountUsd}
 													</span>
 												)}
-												<span>
-													{Number(balanceDifference) < 0 ? (
-														<CaretDownOutlined style={{ color: 'red', marginLeft: '6px' }} />
-													) : (
-														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '6px' }} />
-													)}
+												<span className='ml-1 text-lg'>
+													{Number(balanceDifference) < 0 ? <CaretDownOutlined style={{ color: 'red' }} /> : <CaretUpOutlined style={{ color: '#52C41A' }} />}
 												</span>
 											</>
 										)}
@@ -320,20 +317,28 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='text-xs'>
 													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 												</div>
-												<Divider
-													className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-													type='vertical'
-												/>
-												<div className='text-xs'>
-													{Number(assetValueUSDC) / 100}M<span className='ml-[3px] font-normal'>USDC</span>
-												</div>
-												<Divider
-													className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
-													type='vertical'
-												/>
-												<div className='text-xs'>
-													{Number(assetValueUSDT) / 100}M<span className='ml-[3px] font-normal'>USDT</span>
-												</div>
+												{chainProperties?.[network]?.assetHubUSDCId && (
+													<>
+														<Divider
+															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='text-xs'>
+															{Number(assetValueUSDC) / 100}M<span className='ml-[3px] font-normal'>USDC</span>
+														</div>
+													</>
+												)}
+												{chainProperties?.[network]?.assetHubUSDTId && (
+													<>
+														<Divider
+															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
+															type='vertical'
+														/>
+														<div className='text-xs'>
+															{Number(assetValueUSDT) / 100}M<span className='ml-[3px] font-normal'>USDT</span>
+														</div>
+													</>
+												)}
 											</div>
 										</div>
 									)}

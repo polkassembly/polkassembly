@@ -37,7 +37,7 @@ const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: str
 		case '1984':
 			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
 		default:
-			return 0;
+			return '0';
 	}
 };
 
@@ -45,6 +45,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
+	const requestedAmountBN = new BN(requestedAmt);
 	const requestedAmountFormatted = requestedAmt ? new BN(requestedAmt).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? currentTokenPrice : null);

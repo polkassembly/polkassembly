@@ -45,7 +45,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const { network } = useNetworkSelector();
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
-	const requestedAmountBN = new BN(requestedAmt);
 	const requestedAmountFormatted = requestedAmt ? new BN(requestedAmt).div(new BN(10).pow(new BN(chainProperties?.[network]?.tokenDecimals))) : ZERO_BN;
 	const [isProposalClosed, setIsProposalClosed] = useState<boolean>(false);
 	const [usdValueOnCreation, setUsdValueOnCreation] = useState<string | null>(dayjs(proposalCreatedAt).isSame(dayjs()) ? currentTokenPrice : null);

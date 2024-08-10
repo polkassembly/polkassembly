@@ -25,11 +25,9 @@ import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
-import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -38,9 +36,8 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
 	const [form] = Form.useForm();
@@ -62,15 +59,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		setStep(isRequestedJudgmentFromPolkassembly ? ESetIdentitySteps.SOCIAL_VERIFICATION : ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
-
-	useEffect(() => {
-		if (!isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		} else {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, peopleChainApi, peopleChainApiReady]);
 
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;
@@ -115,13 +103,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	const getIdentityInfo = async () => {
-		if (!api || !apiReady) return;
+		if (!api && !peopleChainApi) return;
 
 		try {
 			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 
@@ -185,7 +172,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		getIdentityInfo();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, identityAddress, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, identityAddress, network]);
 
 	return (
 		<div>

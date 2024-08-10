@@ -23,9 +23,7 @@ import { useDispatch } from 'react-redux';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
 import { useRouter } from 'next/router';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const ZERO_BN = new BN(0);
 
@@ -39,9 +37,8 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const router = useRouter();
 	const { loginAddress, id, username } = useUserDetailsSelector();
 	const dispatch = useDispatch();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { openAddressSelectModal, openRemoveIdentityModal } = useRemoveIdentity();
 	const [address, setAddress] = useState<string>(loginAddress);
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
@@ -50,14 +47,6 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleAvailableBalanceChange = (balanceStr: string) => {
 		let balance = ZERO_BN;
@@ -71,15 +60,14 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const checkIsIdentityAvailable = async (addr: string) => {
-		if (!api || !apiReady || !addr) {
+		if ((!api && !peopleChainApi) || !addr) {
 			setIsIdentityAvailable(false);
 			return;
 		}
 		setLoading({ ...loading, isLoading: true });
 		const info = await getIdentityInformation({
 			address: addr,
-			api: api,
-			apiReady: apiReady,
+			api: peopleChainApi ?? api,
 			network: network
 		});
 		setIsIdentityAvailable(!!info?.display);
@@ -149,9 +137,13 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		if (!api || !apiReady) return;
 		getGasFee(address || loginAddress);
 		getBondFee();
-		checkIsIdentityAvailable(address || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, api, apiReady, address]);
+
+	useEffect(() => {
+		checkIsIdentityAvailable(address || loginAddress);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [address, loginAddress, api, apiReady, peopleChainApi, peopleChainApiReady]);
 
 	return (
 		<div className={className}>

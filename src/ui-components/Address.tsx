@@ -215,13 +215,12 @@ const Address = (props: Props) => {
 	};
 
 	const handleIdentityInfo = () => {
-		if (!api || !apiReady) return;
+		if (!api && !peopleChainApi) return;
 
 		(async () => {
 			const info = await getIdentityInformation({
 				address: address,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? (api || undefined),
 				network: network
 			});
 			setIdentity(info);
@@ -265,7 +264,7 @@ const Address = (props: Props) => {
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady || !address || !encodedAddr) return;
+		if ((!api && !peopleChainApi) || !address || !encodedAddr) return;
 
 		try {
 			fetchUsername(address);
@@ -279,7 +278,7 @@ const Address = (props: Props) => {
 			getKiltName();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, address, encodedAddr, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, address, encodedAddr, network]);
 
 	useEffect(() => {
 		setUsername(passedUsername || username);

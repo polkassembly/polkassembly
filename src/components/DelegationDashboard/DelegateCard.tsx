@@ -27,7 +27,6 @@ import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import userProfileBalances from '~src/util/userProfileBalances';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	delegate: IDelegate;
@@ -82,15 +81,12 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	}, [network, delegate?.address]);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-		if (!apiPromise || !apiPromiseReady || !delegate?.address) return;
+		if ((!api && !peopleChainApi) || !delegate?.address) return;
 		setLoading(true);
 
 		const info = await getIdentityInformation({
 			address: delegate?.address,
-			api: apiPromise,
-			apiReady: apiPromiseReady,
+			api: peopleChainApi ?? api,
 			network: network
 		});
 		setIdentity(info);
@@ -98,7 +94,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady || !delegate?.address) return;
+		if ((!api && !peopleChainApi) || !delegate?.address) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, delegate, network, peopleChainApi, peopleChainApiReady]);

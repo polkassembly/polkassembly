@@ -162,7 +162,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
 				allNotifications: [
-					...allNotifications.map((notification) => {
+					...(allNotifications || []).map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.RECENT };
 					})
 				],

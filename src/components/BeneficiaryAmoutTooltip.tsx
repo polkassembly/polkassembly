@@ -37,7 +37,7 @@ const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: str
 		case '1984':
 			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
 		default:
-			return 0;
+			return '0';
 	}
 };
 

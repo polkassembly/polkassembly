@@ -75,6 +75,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { getSpanStyle } from '~src/ui-components/TopicTag';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -440,20 +441,28 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Proposals
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-								{totalActiveProposalsCount?.democracyProposalsCount ? `[${totalActiveProposalsCount['democracyProposalsCount']}]` : ''}
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.democracyProposalsCount ? getSpanStyle('Democracy', totalActiveProposalsCount['democracyProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.democracyProposalsCount ? `${totalActiveProposalsCount['democracyProposalsCount']}` : ''}
 							</span>
 						</div>,
 						'/proposals',
 						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Referenda
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-								{totalActiveProposalsCount?.referendumsCount ? `[${totalActiveProposalsCount['referendumsCount']}]` : ''}
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.referendumsCount ? getSpanStyle('Referendum', totalActiveProposalsCount['referendumsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.referendumsCount ? `${totalActiveProposalsCount['referendumsCount']}` : ''}
 							</span>
 						</div>,
 						'/referenda',
@@ -464,10 +473,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		councilItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Motions
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-								{totalActiveProposalsCount?.councilMotionsCount ? `[${totalActiveProposalsCount['councilMotionsCount']}]` : ''}
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
 							</span>
 						</div>,
 						'/motions',
@@ -479,19 +492,25 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		treasuryItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Proposals
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-								{totalActiveProposalsCount?.treasuryProposalsCount ? `[${totalActiveProposalsCount['treasuryProposalsCount']}]` : ''}
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.treasuryProposalsCount ? getSpanStyle('Treasury', totalActiveProposalsCount['treasuryProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.treasuryProposalsCount ? `${totalActiveProposalsCount['treasuryProposalsCount']}` : ''}
 							</span>
 						</div>,
 						'/treasury-proposals',
 						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					),
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Tips
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.tips ? `[${totalActiveProposalsCount['tips']}]` : ''}</span>
+							<span className={`text-[10px] ${totalActiveProposalsCount?.tips ? getSpanStyle('Tips', totalActiveProposalsCount['tips']) : ''} rounded-lg px-2 py-1`}>
+								{totalActiveProposalsCount?.tips ? `${totalActiveProposalsCount['tips']}` : ''}
+							</span>
 						</div>,
 						'/tips',
 						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
@@ -501,10 +520,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		techCommItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem(
-						<div className='flex items-center gap-1.5'>
+						<div className='flex items-center justify-between'>
 							Proposals
-							<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `[${totalActiveProposalsCount['techCommetteeProposalsCount']}]` : ''}
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.techCommetteeProposalsCount ? getSpanStyle('Technical', totalActiveProposalsCount['techCommetteeProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `${totalActiveProposalsCount['techCommetteeProposalsCount']}` : ''}
 							</span>
 						</div>,
 						'/tech-comm-proposals',
@@ -515,7 +538,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		allianceItems: chainProperties[network]?.subsquidUrl
 			? [
 					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Motions', '/alliance/motions', <MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Motions
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.allianceMotionsCount ? getSpanStyle('Motions', totalActiveProposalsCount['allianceMotionsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.allianceMotionsCount ? `${totalActiveProposalsCount['allianceMotionsCount']}` : ''}
+							</span>
+						</div>,
+						'/alliance/motions',
+						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
 					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			  ]
@@ -524,30 +560,42 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
 						getSiderMenuItem(
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center justify-between'>
 								Technical Committee
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-									{totalActiveProposalsCount?.technicalPipsCount ? `[${totalActiveProposalsCount['technicalPipsCount']}]` : ''}
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.technicalPipsCount ? getSpanStyle('TechnicalCommittee', totalActiveProposalsCount['technicalPipsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.technicalPipsCount ? `${totalActiveProposalsCount['technicalPipsCount']}` : ''}
 								</span>
 							</div>,
 							'/technical',
 							<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem(
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center justify-between'>
 								Upgrade Committee
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-									{totalActiveProposalsCount?.upgradePipsCount ? `[${totalActiveProposalsCount['upgradePipsCount']}]` : ''}{' '}
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.upgradePipsCount ? getSpanStyle('UpgradeCommittee', totalActiveProposalsCount['upgradePipsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.upgradePipsCount ? `${totalActiveProposalsCount['upgradePipsCount']}` : ''}{' '}
 								</span>
 							</div>,
 							'/upgrade',
 							<UpgradeCommitteePIPsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 						),
 						getSiderMenuItem(
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center justify-between'>
 								Community
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-									{totalActiveProposalsCount?.communityPipsCount ? `[${totalActiveProposalsCount['communityPipsCount']}]` : ''}{' '}
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.communityPipsCount ? getSpanStyle('Community', totalActiveProposalsCount['communityPipsCount']) : ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.communityPipsCount ? `${totalActiveProposalsCount['communityPipsCount']}` : ''}{' '}
 								</span>
 							</div>,
 							'/community',
@@ -559,10 +607,16 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
 				? [
 						getSiderMenuItem(
-							<div className='flex items-center gap-1.5'>
+							<div className='flex items-center justify-between'>
 								Motions
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `[${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}]` : ''}
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.advisoryCommitteeMotionsCount
+											? getSpanStyle('AdvisoryCommitteeMotions', totalActiveProposalsCount['advisoryCommitteeMotionsCount'])
+											: ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}` : ''}
 								</span>
 							</div>,
 							'/advisory-committee/motions',
@@ -613,6 +667,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		} else {
 			items = items.concat([
 				getSiderMenuItem('Democracy', 'democracy_group', null, [...gov1Items.democracyItems]),
+
 				getSiderMenuItem(
 					'Treasury',
 					'treasury_group',
@@ -624,48 +679,64 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							? [
 									...[
 										getSiderMenuItem(
-											<div className='flex items-center gap-1.5'>
+											<div className='flex items-center justify-between'>
 												Bounties
-												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-													{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+												<span
+													className={`text-[10px] ${
+														totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
+													} rounded-lg px-2 py-1`}
+												>
+													{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 												</span>
 											</div>,
 											'/bounties',
-											<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+											<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 										),
 										getSiderMenuItem(
-											<div className='flex items-center gap-1.5'>
+											<div className='flex items-center justify-between'>
 												Child Bounties
-												<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-													{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+												<span
+													className={`text-[10px] ${
+														totalActiveProposalsCount?.['childBountiesCount'] ? getSpanStyle('ChildBounties', totalActiveProposalsCount['childBountiesCount']) : ''
+													} rounded-lg px-2 py-1`}
+												>
+													{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
 												</span>
 											</div>,
 											'/child_bounties',
-											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+											<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 										)
 									]
 							  ]
 							: [
 									...gov1Items.treasuryItems,
 									getSiderMenuItem(
-										<div className='flex items-center gap-1.5'>
+										<div className='flex items-center justify-between'>
 											Bounties
-											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-												{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+											<span
+												className={`text-[10px] ${
+													totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
+												} rounded-lg px-2 py-1`}
+											>
+												{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 											</span>
 										</div>,
 										'/bounties',
-										<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+										<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									),
 									getSiderMenuItem(
-										<div className='flex items-center gap-1.5'>
+										<div className='flex items-center justify-center'>
 											Child Bounties
-											<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-												{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+											<span
+												className={`text-[10px] ${
+													totalActiveProposalsCount?.['childBountiesCount'] ? getSpanStyle('ChildBounties', totalActiveProposalsCount['childBountiesCount']) : ''
+												} rounded-lg px-2 py-1`}
+											>
+												{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
 											</span>
 										</div>,
 										'/child_bounties',
-										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+										<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 									)
 							  ]
 						: [AllNetworks.POLIMEC, AllNetworks.ROLIMEC].includes(network)
@@ -673,24 +744,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						: [
 								...gov1Items.treasuryItems,
 								getSiderMenuItem(
-									<div className='flex items-center gap-1.5'>
+									<div className='flex items-center justify-between'>
 										Bounties
-										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-											{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+										<span
+											className={`text-[10px] ${
+												totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
+											} rounded-lg px-2 py-1`}
+										>
+											{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 										</span>
 									</div>,
 									'/bounties',
-									<BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+									<BountiesIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								),
 								getSiderMenuItem(
-									<div className='flex items-center gap-1.5'>
+									<div className='flex items-center justify-between'>
 										Child Bounties
-										<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-											{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+										<span
+											className={`text-[10px] ${
+												totalActiveProposalsCount?.['childBountiesCount'] ? getSpanStyle('ChildBounties', totalActiveProposalsCount['childBountiesCount']) : ''
+											} rounded-lg px-2 py-1`}
+										>
+											{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
 										</span>
 									</div>,
 									'/child_bounties',
-									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+									<ChildBountiesIcon className='ml-0.5 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)
 						  ]
 				),
@@ -757,9 +836,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network && networkTrackInfo[network]) {
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
-				<div className='flex items-center gap-1.5'>
+				<div className='flex items-center justify-between'>
 					All
-					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{totalActiveProposalsCount?.allCount ? `[${totalActiveProposalsCount?.allCount}]` : ''}</span>
+					<span className={`text-[10px] ${totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''} rounded-lg px-2 py-1`}>
+						{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
+					</span>
 				</div>,
 				'/all-posts',
 				<OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
@@ -771,9 +852,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			const activeProposal = totalActiveProposalsCount?.[networkTrackInfo[network][trackName]?.trackId];
 
 			const menuItem = getSiderMenuItem(
-				<div className='flex gap-1.5'>
+				<div className='flex justify-between'>
 					{trackName.split(/(?=[A-Z])/).join(' ')}
-					<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+					<span
+						className={`text-[10px] ${
+							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+						} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+					>
+						{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+					</span>{' '}
 				</div>,
 				`/${trackName
 					.split(/(?=[A-Z])/)
@@ -788,9 +875,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							<div className='flex gap-1.5'>
+							<div className='flex justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+								<span
+									className={`text-[10px] ${
+										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+								>
+									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+								</span>{' '}
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
@@ -802,9 +895,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				case 'Whitelist':
 					gov2TrackItems.fellowshipItems.push(
 						getSiderMenuItem(
-							<div className='flex gap-1.5'>
+							<div className='flex justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+								<span
+									className={`text-[10px] ${
+										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+								>
+									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+								</span>{' '}
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
@@ -826,11 +925,18 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						) : (
 							<StakingAdminIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						);
+
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
-							<div className='flex gap-1.5'>
+							<div className='flex justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
-								<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>{activeProposal ? `[${activeProposal}]` : ''}</span>
+								<span
+									className={`text-[10px] ${
+										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+								>
+									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+								</span>
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
@@ -982,20 +1088,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if (isOpenGovSupported(network)) {
 			items = items.concat(
 				getSiderMenuItem(
-					<div className='flex items-center gap-1.5'>
-						{network == 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
-						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-							{totalActiveProposalsCount?.['bountiesCount'] ? `[${totalActiveProposalsCount?.['bountiesCount']}]` : ''}
+					<div className='flex items-center justify-between'>
+						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
+									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
+									: ''
+							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 						</span>
 					</div>,
 					'/bounties',
 					null
 				),
 				getSiderMenuItem(
-					<div className='flex items-center gap-1.5'>
+					<div className='flex items-center justify-between'>
 						Child Bounties
-						<span className='text-[10px] text-[#96A4B6] dark:text-[#595959]'>
-							{totalActiveProposalsCount?.['childBountiesCount'] ? `[${totalActiveProposalsCount?.['childBountiesCount']}]` : ''}
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
+									? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
+									: ''
+							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
 						</span>
 					</div>,
 					'/child_bounties',
@@ -1128,7 +1246,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				<NavHeader
 					theme={theme as any}
 					sidedrawer={sidedrawer}
-					className={` ${sidebarCollapsed ? '' : 'pl-[140px]'} `}
+					className={` ${sidebarCollapsed ? '' : 'pl-[160px]'} `}
 					setSidedrawer={setSidedrawer}
 					previousRoute={previousRoute}
 					displayName={mainDisplay}
@@ -1146,7 +1264,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							}}
 							style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
 							className={`sidebar fixed bottom-0 left-0 z-[101] h-screen ${
-								sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[210px]'
+								sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 							} overflow-y-hidden bg-white dark:bg-section-dark-overlay`}
 						>
 							<div className='flex h-full flex-col'>
@@ -1160,36 +1278,56 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									/>
 									{!sidebarCollapsed && (
 										<>
-											<div className='flex justify-center gap-2'>
-												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+											<div className=' flex justify-center gap-2'>
+												<div className='group relative '>
 													<img
 														src='/assets/head1.svg'
 														alt='Head 1'
+														className='h-10 w-10 cursor-pointer'
 													/>
+													<div className='absolute bottom-10 left-12 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														On-chain identity
+														<div className='absolute left-4 top-7 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
 												</div>
-												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+												<div className='group relative '>
 													<img
 														src='/assets/head2.svg'
 														alt='Head 2'
+														className='h-10 w-10 cursor-pointer'
 													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Leaderboard
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
 												</div>
-												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+												<div className='group relative '>
 													<img
 														src='/assets/head3.svg'
 														alt='Head 3'
+														className='h-10 w-10 cursor-pointer'
 													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Delegation
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
 												</div>
-												<div className='rounded-xl bg-[#F3F4F6] p-2'>
+												<div className='group relative '>
 													<img
 														src='/assets/head4.svg'
 														alt='Head 4'
+														className='h-10 w-10 cursor-pointer'
 													/>
+													<div className='absolute -left-4 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Calendar
+														<div className='absolute left-16 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
 												</div>
 											</div>
 										</>
 									)}
 								</div>
-								<div className={`hide-scrollbar ${!sidebarCollapsed && 'h-[650px] overflow-y-auto'} `}>
+								<div className={`hide-scrollbar ${!sidebarCollapsed && 'h-[650px] overflow-y-auto pb-2'} `}>
 									<Menu
 										theme={theme as any}
 										mode='inline'
@@ -1202,24 +1340,58 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								{!sidebarCollapsed && (
 									<>
 										<div className='fixed bottom-0 left-0 w-full py-3'>
-											<div className='flex items-center justify-center gap-3'>
-												<img
-													src='/assets/foot1.svg'
-													alt='Foot1'
-													className='rounded-xl bg-[#F3F4F6] p-2'
-												/>
-												<img
-													src='/assets/foot2.svg'
-													alt='Foot2'
-													className='rounded-xl bg-[#F3F4F6] p-2'
-												/>
+											<div className='mt-10 flex items-center justify-center gap-2'>
+												<div className='group relative'>
+													<img
+														src='/assets/foot1.svg'
+														alt='Foot1'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Townhall
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot2.svg'
+														alt='Foot2'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Polkasafe
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot3.svg'
+														alt='Foot3'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Fellowship
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot4.svg'
+														alt='Foot4'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+														Staking
+														<div className='absolute left-14  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</>
 								)}
 							</div>
 						</Sider>
-						<div className={`fixed ${sidebarCollapsed ? 'left-16' : 'left-48'} top-12 z-[102]`}>
+						<div className={`fixed ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
 								<div
 									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}

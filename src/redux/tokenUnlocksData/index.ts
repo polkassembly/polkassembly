@@ -19,7 +19,7 @@ export const userUnlockTokensDataStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.userDetails
+				...(action as PayloadAction<any>).payload.userUnlockTokensData
 			};
 		});
 	},

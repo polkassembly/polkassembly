@@ -9,7 +9,7 @@ import { useTheme } from 'next-themes';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useInAppNotificationsSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useClaimPayoutSelector, useInAppNotificationsSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { inAppNotificationsActions } from '~src/redux/inAppNotifications';
 import { ECustomNotificationFilters, EInAppNotificationsType } from './types';
@@ -21,6 +21,23 @@ import AllNotificationsTab from './FiltersTabs/AllNotificationsTab';
 import CommentsNotificationsTab from './FiltersTabs/CommentsNotificationsTab';
 import MentionsNotificationsTab from './FiltersTabs/MentionsNotificationsTab';
 import ProposalsNotificationsTab from './FiltersTabs/ProposalsNotificationsTab';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import dynamic from 'next/dynamic';
+import Alert from '~src/basic-components/Alert';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+
+const ClaimAssetPayoutInfo = dynamic(() => import('~src/ui-components/ClaimAssetPayoutInfo'), {
+	loading: () => (
+		<div className='mt-4 w-[400px] px-8'>
+			<SkeletonButton
+				active
+				className='w-[400px]'
+			/>
+		</div>
+	),
+	ssr: false
+});
 
 interface INotificationsContent {
 	className?: string;
@@ -76,6 +93,8 @@ const handleRenderTab = (
 };
 const NotificationsContent = ({ className, inPage = false, closePopover }: INotificationsContent) => {
 	const dispatch = useDispatch();
+	const { network } = useNetworkSelector();
+	const { payouts } = useClaimPayoutSelector();
 	const router = useRouter();
 	const page = Number(router.query.page as string) || 1;
 	const { resolvedTheme: theme } = useTheme();
@@ -94,6 +113,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isStopInterval, setStopInterval] = useState(false);
 	const activeFilter = inPage ? (router.query.filter as ECustomNotificationFilters) || ECustomNotificationFilters.ALL : popupActiveFilter || ECustomNotificationFilters.ALL;
+	const [openClaimModal, setOpenClaimModal] = useState(false);
 
 	const handleUpdateLastSeen = async () => {
 		const { data, error } = await nextApiClientFetch<MessageType>('/api/v1/inAppNotifications/add-last-seen', {
@@ -142,7 +162,7 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 		dispatch(
 			inAppNotificationsActions.updateInAppNotifications({
 				allNotifications: [
-					...allNotifications.map((notification) => {
+					...(allNotifications || []).map((notification) => {
 						return { ...notification, type: EInAppNotificationsType.RECENT };
 					})
 				],
@@ -252,6 +272,37 @@ const NotificationsContent = ({ className, inPage = false, closePopover }: INoti
 						}}
 					/>
 				</div>
+
+				{/*ClaimAssetPayoutInfo  */}
+
+				{isMultiassetSupportedNetwork(network) && (
+					<ClaimAssetPayoutInfo
+						className={classNames('my-2 rounded-[4px]', inPage ? 'ml-10 w-[500px]' : 'px-8')}
+						open={openClaimModal}
+						setOpen={setOpenClaimModal}
+					>
+						<Alert
+							type='info'
+							showIcon
+							message={
+								<div className='m-0 flex items-center justify-between p-0 text-xs dark:text-blue-dark-high'>
+									<span>You have {payouts?.length || 0} payouts from your proposals </span>
+									<CustomButton
+										text='Claim'
+										onClick={() => {
+											setOpenClaimModal(true);
+											closePopover?.(true);
+										}}
+										width={91}
+										className='_button mr-1 flex w-[70px] items-center justify-center text-[10px] tracking-wide'
+										height={21}
+										variant='primary'
+									/>
+								</div>
+							}
+						/>
+					</ClaimAssetPayoutInfo>
+				)}
 
 				{/* content */}
 				{handleRenderTab(activeFilter, inPage, isStopInterval, setStopInterval, closePopover as any)}

@@ -65,7 +65,7 @@ export const batchVoteStore = createSlice({
 			console.log('hydrate campaigns', (action as PayloadAction<any>).payload);
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.campaigns
+				...(action as PayloadAction<any>).payload.batchVote
 			};
 		});
 	},

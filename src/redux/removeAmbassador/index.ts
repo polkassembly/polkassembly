@@ -23,7 +23,7 @@ export const ambassadorRemovalStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.inAppNotifications
+				...(action as PayloadAction<any>).payload.ambassadorRemoval
 			};
 		});
 	},

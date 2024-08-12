@@ -6,7 +6,7 @@ import '@polkadot/api-augment';
 
 import { ApiPromise, ScProvider, WsProvider } from '@polkadot/api';
 import React, { useEffect, useRef, useState } from 'react';
-import { chainProperties, network } from 'src/global/networkConstants';
+import { chainProperties, network, treasuryAssets } from 'src/global/networkConstants';
 import { typesBundleGenshiro } from '../typesBundle/typeBundleGenshiro';
 import { typesBundleCrust } from '../typesBundle/typesBundleCrust';
 import { typesBundleEquilibrium } from '../typesBundle/typesBundleEquilibrium';
@@ -15,6 +15,10 @@ import { NotificationStatus } from '~src/types';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { dropdownLabel } from '~src/ui-components/RPCDropdown';
 import { typesBundle } from '@kiltprotocol/type-definitions';
+import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
+import { assetsCurrentPriceActions } from '~src/redux/assetsCurrentPrices';
+import { useDispatch } from 'react-redux';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 export interface ApiContextType {
 	api: ApiPromise | undefined;
@@ -35,6 +39,7 @@ export interface ApiContextProviderProps {
 
 export function ApiContextProvider(props: ApiContextProviderProps): React.ReactElement {
 	const { children = null } = props;
+	const dispatch = useDispatch();
 	const [api, setApi] = useState<ApiPromise>();
 	const [apiReady, setApiReady] = useState(false);
 	const [relayApi, setRelayApi] = useState<ApiPromise>();
@@ -43,6 +48,21 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
 
 	const provider = useRef<ScProvider | WsProvider | null>(null);
+
+	const getAssetUsdPrice = async () => {
+		const price = await fetchTokenToUSDPrice(treasuryAssets.DED.name);
+
+		if (price !== 'N/A') {
+			dispatch(assetsCurrentPriceActions.setDEDTokenPrice(price));
+		}
+	};
+
+	useEffect(() => {
+		if (!props?.network) return;
+		if (!isMultiassetSupportedNetwork(props?.network)) return;
+		getAssetUsdPrice();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.network]);
 
 	useEffect(() => {
 		if (props.network === network.COLLECTIVES) {

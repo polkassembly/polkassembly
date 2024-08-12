@@ -18,7 +18,6 @@ import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IDelegate } from '~src/types';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
 
@@ -42,16 +41,17 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
+		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
 			address: address
 		});
 		if (data) {
-			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+			setIsW3FDelegate(data?.isW3fDelegate || false);
 		} else {
 			console.log(error);
 			setIsW3FDelegate(false);
 		}
 	};
+
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

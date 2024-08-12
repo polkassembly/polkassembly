@@ -134,9 +134,7 @@ export interface ChainProps {
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
 	assetHubRpcEndpoint?: string;
-	assetHubAddress?: string;
-	assetHubUSDTId?: string;
-	assetHubUSDCId?: string;
+	assetHubTreasuryAddress?: string;
 	supportedAssets?: IAssets[];
 }
 
@@ -856,4 +854,40 @@ export interface IPayout {
 	payoutIndex: number;
 	generalIndex: string;
 	status: 'Pending';
+}
+
+export interface IHistoryItem {
+	date: string;
+	balance: string;
+}
+
+export interface IOverviewProps {
+	priceWeeklyChange: {
+		isLoading: boolean;
+		value: string;
+	};
+	currentTokenPrice: {
+		isLoading: boolean;
+		value: string;
+	};
+	available: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
+	spendPeriod: {
+		isLoading: boolean;
+		percentage: number;
+		value: {
+			days: number;
+			hours: number;
+			minutes: number;
+			total: number;
+		};
+	};
+	nextBurn: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
 }

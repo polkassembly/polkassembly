@@ -189,13 +189,15 @@ export const treasuryAssets = {
 		name: 'usdt',
 		img: '/assets/icons/usdt.svg',
 		tokenDecimal: 6,
-		symbol: EAssets.USDT
+		symbol: EAssets.USDT,
+		id: '1984'
 	},
 	USDC: {
 		name: 'usdc',
 		img: '/assets/icons/usdc.svg',
 		tokenDecimal: 6,
-		symbol: EAssets.USDC
+		symbol: EAssets.USDC,
+		id: '1337'
 	}
 };
 
@@ -203,9 +205,7 @@ export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
 		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
-		assetHubAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
-		assetHubUSDCId: '1337',
-		assetHubUSDTId: '1984',
+		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,

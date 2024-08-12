@@ -6,12 +6,12 @@
 import React from 'react';
 import { useTheme } from 'next-themes';
 import { ResponsiveLine } from '@nivo/line';
-import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import dayjs from 'dayjs';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
-import Loader from '~src/ui-components/Loader';
+import { LoadingOutlined } from '@ant-design/icons';
+import { IHistoryItem } from '~src/types';
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -26,7 +26,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0);
+	const filteredData = graphData.filter((item) => item.balance !== '0');
 
 	const firstMonth = dayjs(filteredData[0]?.date).format('MMM');
 	const lastMonth = dayjs(filteredData[filteredData.length - 1]?.date).format('MMM');
@@ -52,7 +52,11 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	];
 
 	if (filteredData.length === 0) {
-		return <Loader />;
+		return (
+			<div className='mx-auto mt-2'>
+				<LoadingOutlined />
+			</div>
+		);
 	}
 
 	return (

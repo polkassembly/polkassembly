@@ -15,43 +15,12 @@ import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
 import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { IHistoryItem } from 'pages/api/v1/treasury-amount-history/old-treasury-data';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import { IHistoryItem, IOverviewProps } from '~src/types';
 
-interface Props {
-	currentTokenPrice: {
-		isLoading: boolean;
-		value: string;
-	};
-	available: {
-		isLoading: boolean;
-		value: string;
-		valueUSD: string;
-	};
-	priceWeeklyChange: {
-		isLoading: boolean;
-		value: string;
-	};
-	spendPeriod: {
-		isLoading: boolean;
-		percentage: number;
-		value: {
-			days: number;
-			hours: number;
-			minutes: number;
-			total: number;
-		};
-	};
-	nextBurn: {
-		isLoading: boolean;
-		value: string;
-		valueUSD: string;
-	};
-}
-
-const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn }: Props) => {
+const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
@@ -72,94 +41,111 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatBnBalance(assethubValues.usdcValue, { numberAfterComma: 0, withUnit: false }, network);
 	const assetValueUSDT = formatBnBalance(assethubValues.usdtValue, { numberAfterComma: 0, withUnit: false }, network);
+	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
+	const formatedBalanceDifference =
+		graphBalanceDifference &&
+		formatUSDWithUnits(
+			formatBnBalance(
+				graphBalanceDifference.toString(),
+				{
+					numberAfterComma: 0,
+					withThousandDelimitor: false,
+					withUnit: true
+				},
+				network
+			)
+		);
+	const totalAmountUsd =
+		graphBalanceDifference && currentTokenPrice.value
+			? formatUSDWithUnits(
+					formatBnBalance(
+						String(graphBalanceDifference * parseFloat(currentTokenPrice.value)),
+						{
+							numberAfterComma: 0,
+							withThousandDelimitor: false,
+							withUnit: false
+						},
+						network
+					)
+			  )
+			: null;
 
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
 
-		if (assethubApiReady && chainProperties?.[network]?.assetHubAddress) {
-			// Fetching balance in token
-			assethubApi?.query?.system
-				?.account(chainProperties?.[network]?.assetHubAddress)
-				.then((result: any) => {
-					const free = result.data?.free?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
-					setAssethubValues((values) => ({ ...values, dotValue: free.toString() }));
-				})
-				.catch((e) => console.error(e));
+		if (assethubApiReady && chainProperties?.[network]?.assetHubTreasuryAddress) {
+			try {
+				// Fetching balance in token (DOT)
+				const tokenResult: any = await assethubApi.query.system.account(chainProperties[network].assetHubTreasuryAddress);
+				if (tokenResult?.data?.free) {
+					const freeTokenBalance = tokenResult.data.free.toBigInt();
+					setAssethubValues((values) => ({ ...values, dotValue: freeTokenBalance.toString() }));
+				}
 
-			// Fetch balance in USDC
-			chainProperties?.[network]?.assetHubUSDCId &&
-				assethubApi?.query.assets
-					.account(chainProperties?.[network]?.assetHubUSDCId, chainProperties?.[network]?.assetHubAddress)
-					.then((result: any) => {
-						if (result.isNone) {
-							console.log('No data found for the specified asset and address');
-							return;
-						}
-						const data = result.unwrap();
-						const freeBalanceBigInt = data.balance.toBigInt();
-						const free = freeBalanceBigInt.toString();
-						setAssethubValues((values) => ({ ...values, usdcValue: free }));
-					})
-					.catch((e) => {
-						console.error('Error fetching asset balance:', e);
-					});
+				// Fetch balance in USDC
+				if (chainProperties[network]?.supportedAssets?.[1]) {
+					const usdcResult = (await assethubApi.query.assets.account(chainProperties[network].supportedAssets?.[1], chainProperties[network].assetHubTreasuryAddress)) as any;
 
-			// Fetch balance in USDT
-			chainProperties?.[network]?.assetHubUSDTId &&
-				assethubApi?.query.assets
-					.account(chainProperties?.[network]?.assetHubUSDTId, chainProperties?.[network]?.assetHubAddress)
-					.then((result: any) => {
-						if (result.isNone) {
-							console.log('No data found for the specified asset and address');
-							return;
-						}
-						const data = result.unwrap();
-						const freeBalanceBigInt = data.balance.toBigInt();
-						const free = freeBalanceBigInt.toString();
-						setAssethubValues((values) => ({ ...values, usdtValue: free }));
-					})
-					.catch((e) => {
-						console.error('Error fetching asset balance:', e);
-					});
+					if (usdcResult.isNone) {
+						console.log('No data found for the USDC assets');
+					} else {
+						const data = usdcResult.unwrap();
+						const freeUSDCBalance = data.balance.toBigInt().toString();
+						setAssethubValues((values) => ({ ...values, usdcValue: freeUSDCBalance }));
+					}
+				}
+
+				// Fetch balance in USDT
+				if (chainProperties[network]?.supportedAssets?.[2]) {
+					const usdtResult = (await assethubApi.query.assets.account(chainProperties[network]?.supportedAssets?.[2], chainProperties[network].assetHubTreasuryAddress)) as any;
+
+					if (usdtResult.isNone) {
+						console.log('No data found for the USDT assets');
+					} else {
+						const data = usdtResult.unwrap();
+						const freeUSDTBalance = data.balance.toBigInt().toString();
+						setAssethubValues((values) => ({ ...values, usdtValue: freeUSDTBalance }));
+					}
+				}
+				return;
+			} catch (e) {
+				console.error('Error fetching asset balance:', e);
+			}
 		}
 
 		return;
 	};
 
-	useEffect(() => {
-		const fetchDataFromApi = async () => {
-			try {
-				const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
+	const fetchDataFromApi = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
 
-				if (error) {
-					console.error('Error fetching data:', data);
-				}
-			} catch (error) {
-				console.error('Unexpected error:', error);
+			if (error) {
+				console.error('Error fetching data:', error);
 			}
-		};
+			if (data) return;
+		} catch (error) {
+			console.error('Unexpected error:', error);
+		}
+	};
+	const getGraphData = async () => {
+		try {
+			const { data, error } = await nextApiClientFetch<IHistoryItem[]>('/api/v1/treasury-amount-history');
 
-		fetchDataFromApi();
-	}, [network]);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const { data, error } = await nextApiClientFetch<IHistoryItem[]>('/api/v1/treasury-amount-history');
-
-				if (error) {
-					console.error('Error fetching data:', error);
-				}
-				if (data) {
-					setGraphData(data);
-				}
-			} catch (error) {
-				console.error('Unexpected error:', error);
+			if (error) {
+				console.error('Error fetching data:', error);
 			}
-		};
-
-		fetchData();
-	}, [network]);
+			if (data) {
+				setGraphData(data);
+				if (data.length >= 31) {
+					const difference = parseFloat(graphData[graphData.length - 1].balance) - parseFloat(graphData[graphData.length - 30].balance);
+					setGraphBalanceDifference(difference);
+				}
+			}
+		} catch (error) {
+			console.error('Unexpected error:', error);
+		}
+	};
 
 	useEffect(() => {
 		(async () => {
@@ -185,40 +171,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, []);
 
 	useEffect(() => {
+		fetchDataFromApi();
+		getGraphData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
+	useEffect(() => {
 		if (!assethubApi || !assethubApiReady) return;
 		fetchAssetsAmount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [assethubApi, assethubApiReady]);
-
-	const balanceDifference = graphData.length >= 31 ? parseFloat(graphData[graphData.length - 1].balance) - parseFloat(graphData[graphData.length - 30].balance) : null;
-
-	const formatedBalanceDifference =
-		balanceDifference &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				balanceDifference.toString(),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: true
-				},
-				network
-			)
-		);
-	const totalAmountUsd =
-		balanceDifference && currentTokenPrice.value
-			? formatUSDWithUnits(
-					formatBnBalance(
-						String(balanceDifference * parseFloat(currentTokenPrice.value)),
-						{
-							numberAfterComma: 0,
-							withThousandDelimitor: false,
-							withUnit: false
-						},
-						network
-					)
-			  )
-			: null;
 
 	return (
 		<div
@@ -250,7 +212,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													</span>
 												)}
 												<span className='ml-1 text-lg'>
-													{Number(balanceDifference) < 0 ? <CaretDownOutlined style={{ color: 'red' }} /> : <CaretUpOutlined style={{ color: '#52C41A' }} />}
+													{Number(graphBalanceDifference) < 0 ? <CaretDownOutlined style={{ color: 'red' }} /> : <CaretUpOutlined style={{ color: '#52C41A' }} />}
 												</span>
 											</>
 										)}
@@ -307,7 +269,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										)}
 									</div>
 
-									{chainProperties[network]?.assetHubAddress && (
+									{chainProperties[network]?.assetHubTreasuryAddress && (
 										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
 											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 												<AssethubIcon />
@@ -317,7 +279,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												<div className='text-xs'>
 													{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 												</div>
-												{chainProperties?.[network]?.assetHubUSDCId && (
+												{chainProperties?.[network]?.supportedAssets?.[1] && (
 													<>
 														<Divider
 															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
@@ -328,7 +290,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 														</div>
 													</>
 												)}
-												{chainProperties?.[network]?.assetHubUSDTId && (
+												{chainProperties?.[network]?.supportedAssets?.[2] && (
 													<>
 														<Divider
 															className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
@@ -379,7 +341,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										)}
 									</div>
 
-									{chainProperties[network]?.assetHubAddress && (
+									{chainProperties[network]?.assetHubTreasuryAddress && (
 										<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center xl:ml-3`}>
 											<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 												<AssethubIcon />

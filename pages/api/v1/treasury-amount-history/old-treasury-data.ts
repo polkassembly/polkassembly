@@ -12,11 +12,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { firestore_db } from '~src/services/firebaseInit';
-
-export interface IHistoryItem {
-	date: string;
-	balance: string;
-}
+import { IHistoryItem } from '~src/types';
 
 interface IResponseData {
 	history: IHistoryItem[] | null;
@@ -46,7 +42,9 @@ const generateDateRange = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): string
 	const dates: string[] = [];
 	let currentDate = startDate.startOf('day');
 
-	while (currentDate.isBefore(endDate.endOf('day'))) {
+	const totalDays = endDate.endOf('day').diff(currentDate, 'day') + 1;
+
+	for (let i = 0; i < totalDays; i++) {
 		dates.push(currentDate.format('YYYY-MM-DD'));
 		currentDate = currentDate.add(1, 'day');
 	}
@@ -76,10 +74,10 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		});
 	};
 
-	const filteredData1 = filterNonZeroBalances(data1);
-	const filteredData2 = filterNonZeroBalances(data2);
+	const networkTreasuryData = filterNonZeroBalances(data1);
+	const assethubTreasuryData = filterNonZeroBalances(data2);
 
-	filteredData1.forEach(({ history }) => {
+	networkTreasuryData.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
@@ -94,7 +92,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		}
 	});
 
-	filteredData2.forEach(({ history }) => {
+	assethubTreasuryData.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
 				const key = formatDate(dayjs(date));
@@ -133,7 +131,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 	}));
 };
 
-export const getAssetHubPolkadotBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
+export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
 	const returnResponse: IReturnResponse = {
 		data: null,
 		error: null
@@ -202,25 +200,27 @@ const saveToFirestore = async (network: string, data: IResponseData[]) => {
 		const networkRef = firestore_db.collection('networks').doc(network);
 		const treasuryRef = networkRef.collection('treasury_amount_history');
 
-		for (const item of data) {
+		const promises = data.map(async (item) => {
 			if (item.history) {
-				for (const { date, balance } of item.history) {
+				return item.history.map(async ({ date, balance }) => {
+					if (dayjs(date).date() === 1) {
+						return null;
+					}
+
 					const docRef = treasuryRef.doc(date);
 					const exists = await documentExists(network, date);
-
-					if (dayjs(date).date() === 1) {
-						continue;
-					}
 
 					if (!exists) {
 						batch.set(docRef, { date, balance });
 					} else {
 						batch.update(docRef, { balance });
 					}
-				}
+				});
 			}
-		}
+			return null;
+		});
 
+		await Promise.all(promises.flat());
 		await batch.commit();
 	} catch (error) {
 		console.error('Error writing data to Firestore:', error);
@@ -228,31 +228,38 @@ const saveToFirestore = async (network: string, data: IResponseData[]) => {
 };
 
 export const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
-	const address1 = chainProperties[network]?.assetHubAddress;
-	const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
+	try {
+		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
+		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
 
-	const address2 = chainProperties[network]?.treasuryAddress;
-	const apiUrl2 = `${chainProperties[network]?.externalLinks}/api/scan/account/balance_history`;
+		const address2 = chainProperties[network]?.treasuryAddress;
+		const apiUrl2 = `${chainProperties[network]?.externalLinks}/api/scan/account/balance_history`;
 
-	if (!address1 || !apiUrl1 || !address2 || !apiUrl2) {
+		if (!address1 || !apiUrl1 || !address2 || !apiUrl2) {
+			return {
+				data: null,
+				error: 'Missing address or API URL for the given network'
+			};
+		}
+
+		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1);
+		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2);
+
+		const combinedData = aggregateBalances(response1.data || [], response2.data || []);
+		const combinedError = response1.error || response2.error;
+
+		await saveToFirestore(network, combinedData);
+
+		return {
+			data: combinedData.length > 0 ? combinedData : null,
+			error: combinedError
+		};
+	} catch (error) {
 		return {
 			data: null,
-			error: 'Missing address or API URL for the given network'
+			error: error.message || 'An unexpected error occurred while getting combined balances'
 		};
 	}
-
-	const response1 = await getAssetHubPolkadotBalance(network, address1, apiUrl1);
-	const response2 = await getAssetHubPolkadotBalance(network, address2, apiUrl2);
-
-	const combinedData = aggregateBalances(response1.data || [], response2.data || []);
-	const combinedError = response1.error || response2.error;
-
-	await saveToFirestore(network, combinedData);
-
-	return {
-		data: combinedData.length > 0 ? combinedData : null,
-		error: combinedError
-	};
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {

@@ -52,6 +52,7 @@ const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 });
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 import InAppNotification from '../InAppNotification';
+import ToggleButton from '~src/ui-components/ToggleButton';
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -132,6 +133,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	};
 
 	const menudropDownItems: ItemType[] = [
+		{
+			className: 'logo-class',
+			key: 'Theme',
+			label: <ToggleButton />
+		},
 		{
 			className: 'logo-class',
 			key: 'Townhall',

@@ -73,6 +73,8 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -297,9 +299,10 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api, apiReady } = useApiContext();
+	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { username, picture, loginAddress } = useUserDetailsSelector();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -313,8 +316,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [isGood, setIsGood] = useState<boolean>(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
-	// const [notificationVisible, setNotificationVisible] = useState(true);
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
+
+	useEffect(() => {
+		if (isPeopleChainSupportedNetwork(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
+		} else {
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		}
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const getTotalActiveProposalsCount = async () => {
 		if (!network) return;
@@ -364,11 +374,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		if (!api && !peopleChainApi) return;
+		if (!api || !apiReady) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
-				api: peopleChainApi ?? api,
+				api: api,
 				network: network
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
@@ -378,7 +388,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsIdentityUnverified(!isVerified);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
+	}, [api, apiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [

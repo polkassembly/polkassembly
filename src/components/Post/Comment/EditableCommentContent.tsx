@@ -17,7 +17,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -90,7 +90,6 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
@@ -123,11 +122,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		(async () => {
-			if ((!api && !peopleChainApi) || !proposer) return;
-			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
+			if (!api || !apiReady || !proposer) return;
+			const onChainUsername = await getOnChainUsername({ address: proposer, api: api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();
-	}, [api, apiReady, network, proposer, peopleChainApi, peopleChainApiReady]);
+	}, [api, apiReady, network, proposer]);
 
 	const toggleReply = async () => {
 		let usernameContent = '';

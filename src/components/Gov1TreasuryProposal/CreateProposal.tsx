@@ -34,6 +34,7 @@ import Image from 'next/image';
 import { checkIsAddressMultisig } from '../DelegationDashboard/utils/checkIsAddressMultisig';
 import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -97,12 +98,12 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkBeneficiaryIdentity = async (address: string) => {
-		if ((!api && !peopleChainApi) || !address) {
+		if (!api || !apiReady || !address) {
 			setShowIdentityInfoCardForBeneficiary(false);
 			return;
 		}
 
-		const info = await getIdentityInformation({ address: address, api: peopleChainApi ?? api, network });
+		const info = await getIdentityInformation({ address: address, api: api, network });
 		setShowIdentityInfoCardForBeneficiary(!info?.isGood);
 	};
 
@@ -188,11 +189,13 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		if ((!api && !peopleChainApi) || !address) {
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
+		if (!apiPromise || !apiPromiseReady || !address) {
 			setShowIdentityInfoCardForProposer(false);
 			return;
 		}
-		const info = await getIdentityInformation({ address: address, api: peopleChainApi ?? api, network });
+		const info = await getIdentityInformation({ address: address, api: api, network });
 		setShowIdentityInfoCardForProposer(!info?.display);
 	};
 

@@ -15,6 +15,7 @@ import { useTheme } from 'next-themes';
 import ProfileStatsCard from './ProfileStatsCard';
 import { IUserPostsListingResponse } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 export interface IActivitiesCounts {
 	totalActivitiesCount: number;
@@ -59,7 +60,14 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		if (!api && !peopleChainApi) {
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
+
+		if (!apiPromise) {
+			return;
+		}
+
+		if (!apiPromiseReady) {
 			return;
 		}
 
@@ -72,7 +80,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 		profileDetails?.addresses.forEach(async (address) => {
 			const info = await getIdentityInformation({
 				address: address,
-				api: peopleChainApi ?? api,
+				api: apiPromise,
 				network: network
 			});
 

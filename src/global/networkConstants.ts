@@ -189,15 +189,13 @@ export const treasuryAssets = {
 		name: 'usdt',
 		img: '/assets/icons/usdt.svg',
 		tokenDecimal: 6,
-		symbol: EAssets.USDT,
-		id: '1984'
+		symbol: EAssets.USDT
 	},
 	USDC: {
 		name: 'usdc',
 		img: '/assets/icons/usdc.svg',
 		tokenDecimal: 6,
-		symbol: EAssets.USDC,
-		id: '1337'
+		symbol: EAssets.USDC
 	}
 };
 

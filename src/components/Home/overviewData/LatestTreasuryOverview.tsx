@@ -82,8 +82,11 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				}
 
 				// Fetch balance in USDC
-				if (chainProperties[network]?.supportedAssets?.[1]) {
-					const usdcResult = (await assethubApi.query.assets.account(chainProperties[network].supportedAssets?.[1], chainProperties[network].assetHubTreasuryAddress)) as any;
+				if (chainProperties[network]?.supportedAssets?.[2].genralIndex) {
+					const usdcResult = (await assethubApi.query.assets.account(
+						chainProperties[network]?.supportedAssets?.[2].genralIndex,
+						chainProperties[network].assetHubTreasuryAddress
+					)) as any;
 
 					if (usdcResult.isNone) {
 						console.log('No data found for the USDC assets');
@@ -95,8 +98,11 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				}
 
 				// Fetch balance in USDT
-				if (chainProperties[network]?.supportedAssets?.[2]) {
-					const usdtResult = (await assethubApi.query.assets.account(chainProperties[network]?.supportedAssets?.[2], chainProperties[network].assetHubTreasuryAddress)) as any;
+				if (chainProperties[network]?.supportedAssets?.[1].genralIndex) {
+					const usdtResult = (await assethubApi.query.assets.account(
+						chainProperties[network]?.supportedAssets?.[1].genralIndex,
+						chainProperties[network].assetHubTreasuryAddress
+					)) as any;
 
 					if (usdtResult.isNone) {
 						console.log('No data found for the USDT assets');

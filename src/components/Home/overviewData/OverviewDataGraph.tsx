@@ -26,7 +26,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const filteredData = graphData.filter((item) => item.balance !== '0');
+	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0);
 
 	const firstMonth = dayjs(filteredData[0]?.date).format('MMM');
 	const lastMonth = dayjs(filteredData[filteredData.length - 1]?.date).format('MMM');
@@ -53,7 +53,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 
 	if (filteredData.length === 0) {
 		return (
-			<div className='mx-auto mt-2'>
+			<div className='mt-3 flex h-full w-full items-center justify-center'>
 				<LoadingOutlined />
 			</div>
 		);

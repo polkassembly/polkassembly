@@ -56,20 +56,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 			)
 		);
 	const totalAmountUsd =
-		graphBalanceDifference && currentTokenPrice.value
-			? formatUSDWithUnits(
-					formatBnBalance(
-						String(graphBalanceDifference * parseFloat(currentTokenPrice.value)),
-						{
-							numberAfterComma: 0,
-							withThousandDelimitor: false,
-							withUnit: false
-						},
-						network
-					)
-			  )
-			: null;
-
+		graphBalanceDifference &&
+		currentTokenPrice.value &&
+		formatUSDWithUnits(
+			formatBnBalance(
+				String(graphBalanceDifference * parseFloat(currentTokenPrice.value)),
+				{
+					numberAfterComma: 0,
+					withThousandDelimitor: false,
+					withUnit: false
+				},
+				network
+			)
+		);
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
 

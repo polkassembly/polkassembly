@@ -46,12 +46,14 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
+import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
 });
-import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
-import InAppNotification from '../InAppNotification';
+const InAppNotification = dynamic(() => import('../InAppNotification'), {
+	ssr: false
+});
 
 const RPCDropdown = dynamic(() => import('~src/ui-components/RPCDropdown'), {
 	loading: () => <Skeleton active />,
@@ -337,13 +339,14 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1060]' : 'z-[101]'
 			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
-			<span
+			<div
 				onClick={() => {
 					setSidedrawer(!sidedrawer);
 				}}
+				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='dashboard-container mr-3 mt-1 text-2xl lg:hidden' />
-			</span>
+				<Dashboard className='text-2xl' />
+			</div>
 			<div className='ml-[84px] hidden lg:block'></div>
 			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
 				<div className='flex items-center'>
@@ -352,16 +355,16 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						href={'/'}
 					>
 						{theme === 'dark' && isMobile ? (
-							<PaLogoDark className='logo-container -ml-[2px]' />
+							<PaLogoDark className='' />
 						) : (
 							<PaLogo
-								className='logo-container -ml-[2px]'
+								className=''
 								sidedrawer={isMobile}
 							/>
 						)}
 					</Link>
 
-					<div className='type-container flex items-center gap-1'>
+					<div className='type-container hidden items-center gap-1 sm:flex'>
 						<span className='line-container ml-4 mr-2 h-5 w-[1.5px] bg-pink_primary dark:mr-4 md:mr-[10px] md:h-10'></span>
 						<h2 className='text-container m-0 ml-[84px] p-0 text-base text-bodyBlue dark:ml-[84px] dark:text-blue-dark-high lg:ml-0 lg:text-sm lg:font-semibold lg:leading-[21px] lg:tracking-[0.02em] dark:lg:ml-0'>
 							{isOpenGovSupported(network) ? 'OpenGov' : 'Gov1'}
@@ -460,29 +463,48 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 											<p className='m-0 p-0 text-left text-sm font-normal leading-[23px] tracking-[0.02em] text-lightBlue dark:text-blue-dark-medium'>Node</p>
 											<RPCDropdown isSmallScreen={true} />
 										</div>
-										<div className={`${username ? 'hidden' : 'block'}`}>
-											<Divider className='my-8' />
-											<div className='flex flex-col gap-y-4'>
-												<button
-													onClick={() => {
-														setOpen(false);
-														router.push('/signup');
-													}}
-													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
-												>
-													Sign Up
-												</button>
-												<button
-													onClick={() => {
-														setOpen(false);
-														router.push('/login');
-													}}
-													className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
-												>
-													Log In
-												</button>
+										{username ? (
+											<div>
+												<Divider className='my-8' />
+												<div className='flex flex-col gap-y-4'>
+													<button
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															handleLogout(username || '');
+															window.location.reload();
+														}}
+														className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+													>
+														Log Out
+													</button>
+												</div>
 											</div>
-										</div>
+										) : (
+											<div className={`${username ? 'hidden' : 'block'}`}>
+												<Divider className='my-8' />
+												<div className='flex flex-col gap-y-4'>
+													<button
+														onClick={() => {
+															setOpen(false);
+															router.push('/signup');
+														}}
+														className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-white px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-pink_primary dark:bg-transparent'
+													>
+														Sign Up
+													</button>
+													<button
+														onClick={() => {
+															setOpen(false);
+															router.push('/login');
+														}}
+														className='flex h-10 items-center justify-center rounded-sm border border-solid border-pink_primary bg-pink_primary px-4 py-1 text-sm font-medium capitalize leading-[21px] tracking-[0.0125em] text-white'
+													>
+														Log In
+													</button>
+												</div>
+											</div>
+										)}
 									</div>
 								</div>
 							</div>

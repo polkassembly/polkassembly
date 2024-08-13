@@ -31,11 +31,12 @@ import { MessageType, ProfileDetails } from '~src/auth/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -61,7 +62,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	const aboutDescription = profileDetails?.bio;
 	const aboutTitle = profileDetails?.title;
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [identity, setIdentity] = useState<DeriveAccountRegistration | null>(null);
 	const [title, setTitle] = useState(aboutTitle || '');
 	const [description, setDescription] = useState(aboutDescription || '');
@@ -100,8 +101,8 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	}, [address, network]);
 
 	useEffect(() => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
+		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
+		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
 		if (!apiPromise) {
 			return;
 		}
@@ -120,7 +121,7 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 			setIdentity(info);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, peopleKusamaApi, peopleKusamaApiReady, network]);
+	}, [address, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
 	const judgements = identity ? identity.judgements.filter(([, judgement]: any[]): boolean => !judgement?.FeePaid) : [];
 	const displayJudgements = judgements.map(([, jud]) => jud.toString()).join(', ');

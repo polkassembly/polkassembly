@@ -10,7 +10,7 @@ import { ModalContext } from './ModalContext';
 import { PostDataContext } from './PostDataContext';
 import { CommentsDataContext } from './CommentDataContext';
 import { QuoteCommentContext } from './QuoteCommentContext';
-import { PeopleKusamaApiContext } from './PeopleKusamaApiContext';
+import { PeopleChainApiContext } from './PeopleChainApiContext';
 
 const useModalContext = () => {
 	return useContext(ModalContext);
@@ -32,8 +32,8 @@ function useQuoteCommentContext() {
 	return useContext(QuoteCommentContext);
 }
 
-function usePeopleKusamaApiContext() {
-	return useContext(PeopleKusamaApiContext);
+function usePeopleChainApiContext() {
+	return useContext(PeopleChainApiContext);
 }
 
-export { useModalContext, useApiContext, usePostDataContext, useCommentDataContext, useQuoteCommentContext, usePeopleKusamaApiContext };
+export { useModalContext, useApiContext, usePostDataContext, useCommentDataContext, useQuoteCommentContext, usePeopleChainApiContext };

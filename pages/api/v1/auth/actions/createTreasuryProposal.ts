@@ -40,7 +40,10 @@ const handler: NextApiHandler<CreatePostResponseType> = async (req, res) => {
 
 	const postDoc = await postDocRef.get();
 	if (postDoc.exists) {
-		return res.status(400).json({ message: `Post with id ${postId} already exists.` });
+		const postData = postDoc.data();
+		if (postData && postData.id && postData.title.length) {
+			return res.status(400).json({ message: `Post with id ${postId} already exists.` });
+		}
 	}
 
 	const current_datetime = new Date();

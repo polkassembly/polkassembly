@@ -3,9 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-import { EAmbassadorSeedingSteps, IAmbassadorProposalContent, IAmbassadorSeedingStore } from './@types';
+import { EAmbassadorSeedingSteps, IAmbassadorProposalContent, IAmbassadorStore } from './@types';
 
-const initialState: IAmbassadorSeedingStore = {
+const initialState: IAmbassadorStore = {
 	ambassadorPostIndex: null,
 	ambassadorPreimage: { hash: '', length: 0 },
 	applicantAddress: '',
@@ -14,7 +14,7 @@ const initialState: IAmbassadorSeedingStore = {
 	promoteCallData: '',
 	proposer: '',
 	rank: 3,
-	step: EAmbassadorSeedingSteps.PROMOTES_CALL,
+	step: EAmbassadorSeedingSteps.CREATE_APPLICANT,
 	xcmCallData: ''
 };
 
@@ -23,12 +23,12 @@ export const ambassadorSeedingStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.inAppNotifications
+				...(action as PayloadAction<any>).payload.addAmbassador
 			};
 		});
 	},
 	initialState,
-	name: 'ambassadorSeeding',
+	name: 'addAmbassador',
 	reducers: {
 		resetAmbassadorSeeding: (state) => {
 			state.discussion = {
@@ -40,7 +40,7 @@ export const ambassadorSeedingStore = createSlice({
 			state.promoteCallData = '';
 			state.proposer = '';
 			state.xcmCallData = '';
-			state.step = EAmbassadorSeedingSteps.PROMOTES_CALL;
+			state.step = EAmbassadorSeedingSteps.CREATE_APPLICANT;
 			state.ambassadorPreimage = { hash: '', length: 0 };
 			state.ambassadorPostIndex = null;
 			state.isPreimageCreationDone = false;

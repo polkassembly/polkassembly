@@ -188,33 +188,46 @@ const Web2Login: FC<Props> = ({
 				className='mt-1 px-0 dark:bg-separatorDark'
 			/>
 			{web3Login && (
-				<AuthForm
-					onSubmit={handleSubmitForm}
-					className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-24' : 'px-12'}`}
-				>
-					<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
-					<div onClick={() => setShowWalletModal?.(false)}>
-						<WalletButtons
-							disabled={loading}
-							onWalletSelect={onWalletSelect}
-							showPolkasafe={canUsePolkasafe(network)}
-							onPolkasafeSelect={setWithPolkasafe}
-							isOptionalLogin={true}
-							isLoginFlow={true}
-						/>
-					</div>
-					{showWeb2Option && (
-						<p
-							className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
-							onClick={() => {
-								setWeb2LoginClicked(true);
-								setWeb3Login(false);
-							}}
-						>
-							Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
-						</p>
-					)}
-				</AuthForm>
+				<>
+					<Alert
+						className='mx-8 mb-4 rounded-[4px]'
+						type='warning'
+						showIcon
+						message={
+							<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
+								Polkadot.js wallet users may encounter some unexpected errors due to issues with the wallet. We suggest checking Polkadot.js official channels for update on how to
+								fix wallet{' '}
+							</p>
+						}
+					/>
+					<AuthForm
+						onSubmit={handleSubmitForm}
+						className={`web3-login-container flex flex-col ${showWeb2Option ? 'px-24' : 'px-12'}`}
+					>
+						<p className='my-0 text-center text-base text-lightBlue dark:text-white'>Select a wallet</p>
+						<div onClick={() => setShowWalletModal?.(false)}>
+							<WalletButtons
+								disabled={loading}
+								onWalletSelect={onWalletSelect}
+								showPolkasafe={canUsePolkasafe(network)}
+								onPolkasafeSelect={setWithPolkasafe}
+								isOptionalLogin={true}
+								isLoginFlow={true}
+							/>
+						</div>
+						{showWeb2Option && (
+							<p
+								className='mb-5 mt-3 cursor-pointer text-center text-sm text-lightBlue'
+								onClick={() => {
+									setWeb2LoginClicked(true);
+									setWeb3Login(false);
+								}}
+							>
+								Or <span className='font-semibold text-pink_primary'>Login with Username/Email</span>
+							</p>
+						)}
+					</AuthForm>
+				</>
 			)}
 			{defaultWallets.length === 0 && isDelegation && (
 				<Alert

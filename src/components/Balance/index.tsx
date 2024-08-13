@@ -6,7 +6,7 @@ import BN from 'bn.js';
 
 import { poppins } from 'pages/_app';
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext, usePostDataContext } from 'src/context';
+import { useApiContext, usePeopleChainApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
@@ -16,6 +16,8 @@ import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { ApiPromise } from '@polkadot/api';
+import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface Props {
 	address: string;
@@ -31,9 +33,10 @@ const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
+	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkSelector();
 	const { postData } = usePostDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -41,13 +44,13 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
 
 	useEffect(() => {
-		if (network !== 'kusama' || !usedInIdentityFlow) {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
+		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
 		} else {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
+			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -60,6 +63,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
 
+		setLoading(true);
 		if (['genshiro'].includes(network)) {
 			api.query.eqBalances
 				.account(address, { '0': 1734700659 })
@@ -122,6 +126,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		}
+		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
 
@@ -141,7 +146,9 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				}
 			/>
 			<span>:</span>
-			<span className='ml-2 text-pink_primary'>{formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}</span>
+			<span className='ml-2 text-pink_primary'>
+				{loading ? <SkeletonButton className='mr-0 h-4 w-[20px] p-0' /> : formatBnBalance(balance, { numberAfterComma: 2, withUnit: true }, network)}
+			</span>
 		</div>
 	);
 };

@@ -19,15 +19,16 @@ import Alert from '~src/basic-components/Alert';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import classNames from 'classnames';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
 	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { registerarFee, minDeposite } = txFee;
@@ -36,15 +37,14 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
+		if (isPeopleChainSupportedNetwork(network)) {
+			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
 		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
+	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleRequestJudgement = async () => {
-		if (network === 'polkadot') return; //temp
 		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {
@@ -98,18 +98,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 					message={<span className='dark:text-blue-dark-high'>No identity request found for judgment.</span>}
 				/>
 			)}
-			{network === 'polkadot' && (
-				<Alert
-					className='mb-6 rounded-[4px]'
-					type='warning'
-					showIcon
-					message={
-						<p className='m-0 p-0 text-xs dark:text-blue-dark-high'>
-							Identity is unavailable for Polkadot as People Chain is getting migrated <a href='polkadot.polkass/'>Check here</a>
-						</p>
-					}
-				/>
-			)}
+
 			{identityInfo.isIdentitySet && showAlert && !identityInfo?.email && !identityInfo?.verifiedByPolkassembly && (
 				<Alert
 					showIcon
@@ -201,19 +190,12 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 						changeStep(ESetIdentitySteps.SET_IDENTITY_FORM);
 					}}
 					height={40}
-					//temp
-					disabled={network === 'polkadot'}
-					className={classNames('w-full', network === 'polkadot' ? 'opacity-50' : '')}
+					className={classNames('w-full')}
 					variant='primary'
 				/>
 				<button
-					//temp
-					disabled={network === 'polkadot'}
 					onClick={handleRequestJudgement}
-					className={classNames(
-						'mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay',
-						network === 'polkadot' ? 'opacity-50' : ''
-					)}
+					className={classNames('mt-2 h-10 w-full cursor-pointer rounded-[4px] bg-white text-sm tracking-wide text-pink_primary dark:bg-section-dark-overlay')}
 				>
 					Request Judgement
 					<HelperTooltip

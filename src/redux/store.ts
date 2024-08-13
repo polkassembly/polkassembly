@@ -23,15 +23,19 @@ import { removeIdentityStore } from './removeIdentity';
 import { trackLevelAnalyticsStore } from './trackLevelAnalytics';
 import { onchainIdentityStore } from './onchainIdentity';
 import { inAppNotificationsStore } from './inAppNotifications';
-import { ambassadorSeedingStore } from './ambassadorSeeding';
+import { ambassadorSeedingStore } from './addAmbassadorSeeding';
 import { useDispatch } from 'react-redux';
 import { batchVoteStore } from './batchVoting';
+import { ambassadorRemovalStore } from './removeAmbassador';
+import { ambassadorReplacementStore } from './replaceAmbassador';
+import { claimPayoutStore } from './claimProposalPayout';
+import { assetsCurrentPriceStore } from './assetsCurrentPrices';
 
 const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStore>(
 	// transform state on its way to being serialized and persisted.
 	(inboundState) => {
 		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
+		if (!authToken || (authToken && isExpired(authToken))) {
 			deleteLocalStorageToken();
 			return {
 				addresses: [],
@@ -66,7 +70,7 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 	// transform state being rehydrated
 	(outboundState) => {
 		const authToken = getLocalStorageToken();
-		if (authToken && isExpired(authToken)) {
+		if (!authToken || (authToken && isExpired(authToken))) {
 			deleteLocalStorageToken();
 			return {
 				addresses: [],
@@ -92,7 +96,6 @@ const userDetailsTransform = createTransform<IUserDetailsStore, IUserDetailsStor
 				web3signup: false
 			};
 		}
-
 		// Return what you want rehydrated
 		return outboundState;
 	},
@@ -119,7 +122,11 @@ export const makeStore = () => {
 		[onchainIdentityStore.name]: onchainIdentityStore.reducer,
 		[inAppNotificationsStore.name]: inAppNotificationsStore.reducer,
 		[ambassadorSeedingStore.name]: ambassadorSeedingStore.reducer,
-		[batchVoteStore.name]: batchVoteStore.reducer
+		[batchVoteStore.name]: batchVoteStore.reducer,
+		[ambassadorRemovalStore.name]: ambassadorRemovalStore.reducer,
+		[ambassadorReplacementStore.name]: ambassadorReplacementStore.reducer,
+		[claimPayoutStore.name]: claimPayoutStore.reducer,
+		[assetsCurrentPriceStore.name]: assetsCurrentPriceStore.reducer
 	});
 
 	if (isServer) {
@@ -139,7 +146,18 @@ export const makeStore = () => {
 			key: 'polkassembly',
 			storage,
 			transforms: [userDetailsTransform],
-			whitelist: ['userDetails', 'userUnlockTokensData', 'currentTokenPrice', 'tipping', 'gov1TreasuryProposal', 'inAppNotifications', 'ambassadorSeeding'] // make sure it does not clash with server keys
+			whitelist: [
+				'userDetails',
+				'userUnlockTokensData',
+				'currentTokenPrice',
+				'tipping',
+				'gov1TreasuryProposal',
+				'inAppNotifications',
+				'addAmbassador',
+				'ambassadorRemoval',
+				'ambassadorReplacement',
+				'claimPayout'
+			] // make sure it does not clash with server keys
 		};
 		const persistedReducer = persistReducer(persistConfig, rootReducer);
 		const store = configureStore({

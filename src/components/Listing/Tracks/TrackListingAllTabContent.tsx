@@ -86,7 +86,7 @@ const TrackListingAllTabContent: FC<ITrackListingAllTabContentProps> = (props) =
 											statusHistory={post?.status_history || []}
 											index={index}
 											proposalType={post?.type}
-											trackNumber={post?.track_no || post?.trackNumber}
+											trackNumber={post?.track_no ?? post?.trackNumber}
 											truncateUsername={false}
 											type={post?.type}
 											showSimilarPost={showSimilarPost}

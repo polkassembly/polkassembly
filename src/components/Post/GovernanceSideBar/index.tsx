@@ -76,6 +76,9 @@ import PredictionCard from '~src/ui-components/PredictionCard';
 import Tooltip from '~src/basic-components/Tooltip';
 import VoteUnlock, { votesUnlockUnavailableNetworks } from '~src/components/VoteUnlock';
 import _ from 'lodash';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
+import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
+import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -188,6 +191,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
 	const showDecisionDeposit = status == gov2ReferendumStatus.SUBMITTED && postType == ProposalType.REFERENDUM_V2;
+	const [openClaimModal, setOpenClaimModal] = useState(false);
 
 	const balance = useMemo(() => {
 		return onChainLastVote?.balance
@@ -1067,6 +1071,24 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								canEdit={canEdit}
 								startTime={startTime}
 							/>
+						)}
+						{/* claim payout */}
+						{isMultiassetSupportedNetwork(network) && proposalType == ProposalType.REFERENDUM_V2 && (
+							<ClaimAssetPayoutInfo
+								className={'mb-4 flex w-full items-center justify-center'}
+								open={openClaimModal}
+								setOpen={setOpenClaimModal}
+								usingInRefPage
+							>
+								<CustomButton
+									variant='primary'
+									fontSize='lg'
+									className='mx-auto w-full rounded-xxl p-7 font-bold lg:w-[480px] xl:w-full'
+									onClick={() => setOpenClaimModal(true)}
+								>
+									Claim payout
+								</CustomButton>
+							</ClaimAssetPayoutInfo>
 						)}
 						{[
 							ProposalType.OPEN_GOV,

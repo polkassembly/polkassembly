@@ -23,7 +23,7 @@ export const trackLevelAnalyticsStore = createSlice({
 		builder.addCase(HYDRATE, (state, action) => {
 			return {
 				...state,
-				...(action as PayloadAction<any>).payload.trackLevelAnalyticsStore
+				...(action as PayloadAction<any>).payload.trackLevelAnalytics
 			};
 		});
 	},

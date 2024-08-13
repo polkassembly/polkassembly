@@ -1,43 +1,46 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
+import { ApiPromise } from '@polkadot/api';
 import React, { useEffect, useState } from 'react';
-import { EAmbassadorSeedingRanks, IPromoteCall } from './types';
-import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import AddressInput from '~src/ui-components/AddressInput';
-import { Button, Form, Radio, Spin } from 'antd';
 import { useDispatch } from 'react-redux';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
-import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getRankNameByRank from './utils/getRankNameByRank';
-import Balance from '../Balance';
-import Address from '~src/ui-components/Address';
 import { useApiContext } from '~src/context';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { chainProperties } from '~src/global/networkConstants';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { useAmbassadorReplacementSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { EAmbassadorSeedingRanks } from '../types';
+import { Button, Form, Radio, Spin } from 'antd';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import Balance from '~src/components/Balance';
+import Address from '~src/ui-components/Address';
+import AddressInput from '~src/ui-components/AddressInput';
+import HelperTooltip from '~src/ui-components/HelperTooltip';
+import getRankNameByRank from '../utils/getRankNameByRank';
 import classNames from 'classnames';
+import getCollectiveApi from '../utils/getCollectiveApi';
+import getAmbassadorXcmTx from '../utils/getAmbassadorXcmTx';
+import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 
-const PromoteCall = ({ className }: IPromoteCall) => {
+interface IReplacementCall {
+	className?: string;
+}
+
+const ReplacementCall = ({ className }: IReplacementCall) => {
 	const { api, apiReady } = useApiContext();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress } = useUserDetailsSelector();
-	const { applicantAddress, rank, proposer, promoteCallData, xcmCallData } = useAmbassadorSeedingSelector();
+	const { applicantAddress = '', proposer = loginAddress, rank = 3, xcmCallData = '', promoteCallData = '', removingApplicantAddress = '' } = useAmbassadorReplacementSelector();
 	const [form] = Form.useForm();
 	const [collectivesApi, setCollectivesApi] = useState<ApiPromise | null>(null);
 	const [collectivesApiReady, setCollectivesApiReady] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleInductAddressChange = (address: string) => {
-		dispatch(ambassadorSeedingActions.updateApplicantAddress(address));
+		dispatch(ambassadorReplacementActions.updateApplicantAddress(address));
 	};
 	const checkDisabled = () => {
 		let check = false;
-		check = !applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady;
+		check = !applicantAddress || !promoteCallData || !xcmCallData || !collectivesApi || !collectivesApiReady || !removingApplicantAddress;
 		if (applicantAddress) {
 			check = !getEncodedAddress(applicantAddress, network);
 		}
@@ -45,11 +48,11 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	};
 
 	const handlePromotesCall = async () => {
-		if (!collectivesApi || !collectivesApiReady || !applicantAddress || !api || !apiReady) return;
-		if (!getEncodedAddress(applicantAddress, network)) return;
+		if (!collectivesApi || !collectivesApiReady || !applicantAddress || !api || !apiReady || !removingApplicantAddress) return;
+		if (!getEncodedAddress(applicantAddress, network) || !getEncodedAddress(removingApplicantAddress, network)) return;
 
-		dispatch(ambassadorSeedingActions.updatePromoteCallData(''));
-		dispatch(ambassadorSeedingActions.updateXcmCallData(''));
+		dispatch(ambassadorReplacementActions.updatePromoteCallData(''));
+		dispatch(ambassadorReplacementActions.updateXcmCallData(''));
 
 		setLoading(true);
 
@@ -59,45 +62,21 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 			const promoteCall = collectivesApi.tx.ambassadorCore.promote(applicantAddress, i);
 			payload.push(promoteCall);
 		}
+
+		const removelCollectivePreimage = collectivesApi.tx.ambassadorCollective.removeMember({ id: removingApplicantAddress }, rank);
+		const removeAmbassadorCallData = removelCollectivePreimage.method.toHex();
 		const collectivePreimage = collectivesApi.tx.utility.forceBatch([inductCall, ...payload]);
 		const promoteCallData = collectivePreimage.method.toHex();
-		dispatch(ambassadorSeedingActions.updatePromoteCallData(promoteCallData));
+		dispatch(ambassadorReplacementActions.updatePromoteCallData(promoteCallData));
 
-		if (promoteCallData) {
-			const xcmCall = api?.tx.xcmPallet.send(
-				{
-					V4: {
-						interior: {
-							X1: [{ Parachain: '1001' }]
-						},
-						parenets: 0
-					}
-				},
-				{
-					V4: [
-						{
-							UnpaidExecution: {
-								checkOrigin: null,
-								weightLimit: 'Unlimited'
-							}
-						},
-						{
-							Transact: {
-								call: {
-									encoded: promoteCallData
-								},
-								originKind: 'Xcm',
-								requireWeightAtMost: {
-									proofSize: '250000',
-									refTime: '4000000000'
-								}
-							}
-						}
-					]
-				}
-			);
-			const xcmCallData = xcmCall?.method?.toHex() || '';
-			dispatch(ambassadorSeedingActions.updateXcmCallData(xcmCallData));
+		if (promoteCallData && removeAmbassadorCallData) {
+			const removeXcmCallData = getAmbassadorXcmTx(removeAmbassadorCallData, api);
+			const addXcmCallData = getAmbassadorXcmTx(promoteCallData, api);
+
+			const tx = api.tx.utility.batchAll([removeXcmCallData, addXcmCallData]);
+			const xcmCallData = tx?.method?.toHex() || '';
+
+			dispatch(ambassadorReplacementActions.updateXcmCallData(xcmCallData));
 		}
 		setLoading(false);
 	};
@@ -105,29 +84,13 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 	useEffect(() => {
 		handlePromotesCall();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [collectivesApi, collectivesApiReady, applicantAddress, rank, api, apiReady]);
+	}, [collectivesApi, collectivesApiReady, applicantAddress, removingApplicantAddress, rank, api, apiReady]);
 
 	useEffect(() => {
 		(async () => {
-			const wsProvider = new WsProvider(chainProperties?.[AllNetworks.COLLECTIVES]?.rpcEndpoint);
-			const apiPromise = await ApiPromise.create({ provider: wsProvider });
-			setCollectivesApi(apiPromise);
-			const timer = setTimeout(async () => {
-				await apiPromise.disconnect();
-			}, 60000);
-
-			apiPromise?.isReady
-				.then(() => {
-					clearTimeout(timer);
-
-					setCollectivesApiReady(true);
-					console.log('People Kusama API ready');
-				})
-				.catch(async (error) => {
-					clearTimeout(timer);
-					await apiPromise.disconnect();
-					console.error(error);
-				});
+			const { collectiveApi, collectiveApiReady } = await getCollectiveApi();
+			setCollectivesApi(collectiveApi);
+			setCollectivesApiReady(collectiveApiReady);
 		})();
 	}, []);
 
@@ -136,7 +99,10 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 			<div className={className}>
 				<Form
 					form={form}
-					initialValues={{ applicantAddress: applicantAddress || '' }}
+					initialValues={{
+						applicantAddress: applicantAddress || '',
+						removalApplicantAddress: removingApplicantAddress || ''
+					}}
 				>
 					<div>
 						<div className='flex items-center justify-between text-lightBlue dark:text-blue-dark-medium'>
@@ -180,6 +146,22 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 							/>
 						</div>
 					</div>
+
+					<div className='mt-4'>
+						<div className='text-sm text-bodyBlue dark:text-blue-dark-medium'>Remove (Who)</div>
+						<div className='flex w-full items-end gap-2 text-sm'>
+							<AddressInput
+								skipFormatCheck
+								className='-mt-6 w-full border-section-light-container dark:border-separatorDark'
+								defaultAddress={removingApplicantAddress || ''}
+								name={'removalApplicantAddress'}
+								placeholder='Enter Removal Address'
+								iconClassName={'ml-[10px]'}
+								identiconSize={26}
+								onChange={(address) => dispatch(ambassadorReplacementActions.updateRemovingAddress(getEncodedAddress(address, network) || address))}
+							/>
+						</div>
+					</div>
 					{/* ambassador ranks */}
 					<div className='mt-4 flex gap-1.5 text-sm text-bodyBlue dark:text-blue-dark-medium'>
 						Promote Rank <HelperTooltip text={<div className='text-xs'>This indicate at what rank you would like to promote yourself</div>} />
@@ -187,7 +169,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 
 					<div>
 						<Radio.Group
-							onChange={({ target }) => dispatch(ambassadorSeedingActions.updateAmbassadorRank(target?.value))}
+							onChange={({ target }) => dispatch(ambassadorReplacementActions.updateAmbassadorRank(target?.value))}
 							value={rank}
 							className='radio-input-group mt-2 dark:text-white'
 						>
@@ -206,7 +188,7 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 						<Button
 							disabled={checkDisabled()}
 							className={classNames('mt-4 h-10 w-[150px] rounded-[4px] border-none bg-pink_primary text-white', checkDisabled() ? 'opacity-50' : '')}
-							onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
+							onClick={() => dispatch(ambassadorReplacementActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.CREATE_PREIMAGE))}
 						>
 							Next
 						</Button>
@@ -216,4 +198,5 @@ const PromoteCall = ({ className }: IPromoteCall) => {
 		</Spin>
 	);
 };
-export default PromoteCall;
+
+export default ReplacementCall;

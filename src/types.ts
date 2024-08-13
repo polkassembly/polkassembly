@@ -6,6 +6,7 @@ import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
+import { EAssets } from './components/OpenGovTreasuryProposal/types';
 
 declare global {
 	interface Window {
@@ -101,8 +102,17 @@ export type ChainPropType = {
 	[index: string]: ChainProps;
 };
 
+export interface IAssets {
+	tokenDecimal: number;
+	name: string;
+	img: string;
+	symbol: EAssets;
+	genralIndex: string;
+}
+
 export interface ChainProps {
-	peopleKusamaRpcEndpoint?: string;
+	peopleChainRpcEndpoint?: string;
+	peopleChainParachain?: string;
 	preImageBaseDeposit?: string;
 	palletInstance?: string;
 	parachain?: string;
@@ -122,6 +132,7 @@ export interface ChainProps {
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	supportedAssets?: IAssets[];
 }
 
 export type TRPCEndpoint = {
@@ -798,11 +809,6 @@ export interface IActiveProposalCount {
 	]: number;
 }
 
-export enum EASSETS {
-	USDT = '1984',
-	USDC = '1337'
-}
-
 export interface IBountyStats {
 	availableBountyPool: string;
 	activeBounties: string;
@@ -835,4 +841,14 @@ export interface IBountyProposalsResponse {
 		bountyId: number;
 		reward: string | null;
 	}[];
+}
+
+export interface IPayout {
+	beneficiary: string;
+	amount: string;
+	expireAt: string;
+	startedAt: string;
+	payoutIndex: number;
+	generalIndex: string;
+	status: 'Pending';
 }

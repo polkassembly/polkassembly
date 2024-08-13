@@ -1,17 +1,13 @@
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
-
-/* eslint-disable sort-keys */
 import React from 'react';
 import { useTheme } from 'next-themes';
 import { ResponsiveLine } from '@nivo/line';
-import dayjs from 'dayjs';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
-import { IHistoryItem } from '~src/types';
+import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+
+const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -22,20 +18,22 @@ const CustomTooltip = ({ point }: any) => {
 	);
 };
 
-const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
+const OverviewDataGraph = ({ graphData }: { graphData: IMonthlyTreasuryTally[] }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const filteredData = graphData.filter((item) => parseFloat(item.balance) !== 0);
+	const filteredData = graphData
+		.filter((item) => parseFloat(item.balance) !== 0)
+		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
 
-	const firstMonth = dayjs(filteredData[0]?.date).format('MMM');
-	const lastMonth = dayjs(filteredData[filteredData.length - 1]?.date).format('MMM');
+	const firstMonth = filteredData[0]?.month;
+	const lastMonth = filteredData[filteredData.length - 1]?.month;
 
 	const formattedData = [
 		{
 			id: 'balance',
 			data: filteredData.map((item) => ({
-				x: dayjs(item.date).format('MMM'),
+				x: item.month.charAt(0).toUpperCase() + item.month.slice(1),
 				y: formatUSDWithUnits(
 					formatBnBalance(
 						item.balance,
@@ -60,7 +58,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 	}
 
 	return (
-		<div style={{ height: '80px' }}>
+		<div style={{ height: '180px' }}>
 			<ResponsiveLine
 				data={formattedData}
 				margin={{ bottom: 36, left: 0, right: 0, top: 15 }}
@@ -72,7 +70,12 @@ const OverviewDataGraph = ({ graphData }: { graphData: IHistoryItem[] }) => {
 					tickSize: 3,
 					tickPadding: 20,
 					tickRotation: 0,
-					format: (value) => (value === firstMonth || value === lastMonth ? '' : value)
+					format: (value) => {
+						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {
+							return '';
+						}
+						return value;
+					}
 				}}
 				axisLeft={null}
 				tooltip={CustomTooltip}

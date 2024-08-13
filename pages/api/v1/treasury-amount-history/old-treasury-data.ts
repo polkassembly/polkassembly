@@ -26,8 +26,18 @@ interface IReturnResponse {
 
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const today = dayjs();
-	const startDate = today.subtract(monthsAgo, 'month').set('date', 3);
-	const endDate = startDate;
+	const startDate = today.subtract(monthsAgo, 'month').set('date', 3); // Set start date to 3nd of the month
+	const endDate = startDate.add(1, 'month').subtract(1, 'day');
+
+	const start = startDate.format('YYYY-MM-DD');
+	const end = endDate.format('YYYY-MM-DD');
+	return { start, end };
+}
+
+function getTodayRange(): { start: string; end: string } {
+	const today = dayjs();
+	const startDate = today.startOf('day');
+	const endDate = today.endOf('day');
 
 	const start = startDate.format('YYYY-MM-DD');
 	const end = endDate.format('YYYY-MM-DD');
@@ -92,15 +102,8 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): { [k
 	return combinedData;
 };
 
-export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
-	// Skip API calls for other dates except 2
-	const today = dayjs();
-	if (today.date() !== 2) {
-		return {
-			data: null,
-			error: 'API should only be called on the 2nd of the month'
-		};
-	}
+export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string, isDaily: boolean = false): Promise<IReturnResponse> => {
+	const { start, end } = isDaily ? getTodayRange() : getMonthRange(0);
 
 	const returnResponse: IReturnResponse = {
 		data: null,
@@ -113,41 +116,34 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	}
 
 	try {
-		const results: IResponseData[] = [];
-		for (let i = 6; i >= 0; i--) {
-			const { start, end } = getMonthRange(i);
+		const requestBody = {
+			address,
+			end,
+			start
+		};
 
-			const requestBody = {
-				address,
-				end,
-				start
-			};
+		const response = await fetch(apiUrl, {
+			body: JSON.stringify(requestBody),
+			headers: subscanApiHeaders,
+			method: 'POST'
+		});
 
-			const response = await fetch(apiUrl, {
-				body: JSON.stringify(requestBody),
-				headers: subscanApiHeaders,
-				method: 'POST'
-			});
-
-			if (!response.ok) {
-				throw new Error(messages.API_FETCH_ERROR);
-			}
-
-			const data = await response.json();
-
-			if (data?.message === 'Success') {
-				const responseData: IResponseData = data?.data as IResponseData;
-				if (responseData.history === null) {
-					responseData.history = [{ date: start, balance: '0' }];
-				}
-				results.push(responseData);
-			} else {
-				returnResponse.error = messages.API_FETCH_ERROR;
-				break;
-			}
+		if (!response.ok) {
+			throw new Error(messages.API_FETCH_ERROR);
 		}
 
-		returnResponse.data = results.length > 0 ? results : null;
+		const data = await response.json();
+
+		if (data?.message === 'Success') {
+			const responseData: IResponseData = data?.data as IResponseData;
+			if (responseData.history === null) {
+				responseData.history = [{ date: start, balance: '0' }];
+			}
+			returnResponse.data = [responseData];
+		} else {
+			returnResponse.error = messages.API_FETCH_ERROR;
+		}
+
 		return returnResponse;
 	} catch (error) {
 		returnResponse.error = error instanceof Error ? error.message : 'Data Not Available';
@@ -155,22 +151,40 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	}
 };
 
-const saveToFirestore = async (network: string, data: { [key: string]: number }) => {
+const saveToFirestore = async (network: string, data: { [key: string]: number }, isDaily: boolean = false) => {
 	try {
 		const networkRef = firestore_db.collection('networks').doc(network);
 
-		await networkRef.set(
-			{
-				monthly_treasury_tally: data
-			},
-			{ merge: true }
-		);
+		if (isDaily) {
+			const today = dayjs().format('YYYY-MM-DD');
+			const balance = Object.values(data).reduce((sum, val) => sum + val, 0); // Sum all balances
+			const dailyRef = networkRef.collection('daily_treasury_tally').doc(today);
+
+			const doc = await dailyRef.get();
+
+			if (doc.exists) {
+				console.log('Data for today already exists, skipping update.');
+				return;
+			} else {
+				await dailyRef.set({
+					created_at: new Date(),
+					balance
+				});
+			}
+		} else {
+			await networkRef.set(
+				{
+					monthly_treasury_tally: data
+				},
+				{ merge: true }
+			);
+		}
 	} catch (error) {
 		console.error('Error writing data to Firestore:', error);
 	}
 };
 
-export const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
+export const getCombinedBalances = async (network: string, isDaily: boolean = false): Promise<IReturnResponse> => {
 	try {
 		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
 		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
@@ -185,13 +199,13 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 			};
 		}
 
-		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1);
-		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2);
+		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1, isDaily);
+		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2, isDaily);
 
 		const combinedData = aggregateBalances(response1.data || [], response2.data || []);
 		const combinedError = response1.error || response2.error;
 
-		await saveToFirestore(network, combinedData);
+		await saveToFirestore(network, combinedData, isDaily);
 
 		return {
 			data: combinedData ? [{ history: null, status: 'Success' }] : null,
@@ -208,7 +222,7 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {
 	storeApiKeyUsage(req);
 
-	const { network } = req.body;
+	const { network, isDaily } = req.body;
 
 	if (typeof network !== 'string') {
 		res.status(400).json({
@@ -218,7 +232,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse
 		return;
 	}
 
-	const response = await getCombinedBalances(network);
+	const response = await getCombinedBalances(network, isDaily);
 	if (response.error) {
 		res.status(500).json(response);
 	} else {

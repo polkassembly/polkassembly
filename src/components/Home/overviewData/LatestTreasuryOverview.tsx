@@ -18,7 +18,8 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IHistoryItem, IOverviewProps } from '~src/types';
+import { IOverviewProps } from '~src/types';
+import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -36,7 +37,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdcValue: '',
 		usdtValue: ''
 	});
-	const [graphData, setGraphData] = useState<IHistoryItem[]>([]);
+	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatBnBalance(assethubValues.usdcValue, { numberAfterComma: 0, withUnit: false }, network);
@@ -128,14 +129,28 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 			if (error) {
 				console.error('Error fetching data:', error);
 			}
-			if (data) return;
+			if (data) {
+				return;
+			}
+
+			// const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', {
+			// 	network,
+			// 	isDaily: true
+			// });
+
+			// if (dailyError) {
+			// 	console.error('Error fetching daily data:', dailyError);
+			// }
+			// if (dailyData) {
+			// }
 		} catch (error) {
 			console.error('Unexpected error:', error);
 		}
 	};
+
 	const getGraphData = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch<IHistoryItem[]>('/api/v1/treasury-amount-history');
+			const { data, error } = await nextApiClientFetch<IMonthlyTreasuryTally[]>('/api/v1/treasury-amount-history');
 
 			if (error) {
 				console.error('Error fetching data:', error);

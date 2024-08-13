@@ -1,6 +1,3 @@
-// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
-// This software may be modified and distributed under the terms
-// of the Apache-2.0 license. See the LICENSE file for details.
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -13,8 +10,12 @@ interface IGetTreasuryHistoryParams {
 	network: string;
 }
 
+export interface IMonthlyTreasuryTally {
+	[key: string]: string;
+}
+
 interface IHistoryItem {
-	date: string;
+	month: string;
 	balance: string;
 }
 
@@ -22,23 +23,32 @@ export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams
 	try {
 		const { network } = params;
 
-		const treasuryAmountHistoryRef = firestore_db.collection('networks').doc(network).collection('treasury_amount_history');
-		const snapshot = await treasuryAmountHistoryRef.get();
+		const networkDocRef = firestore_db.collection('networks').doc(network);
+		const doc = await networkDocRef.get();
 
-		if (snapshot.empty) {
+		if (!doc.exists) {
 			return {
 				data: null,
-				error: 'No treasury history found for this network',
+				error: `No data found for network: ${network}`,
 				status: 404
 			};
 		}
 
-		const treasuryAmountHistory: IHistoryItem[] = snapshot.docs
-			.map((doc) => {
-				const data = doc.data() as IHistoryItem | null;
-				return data ? data : null;
-			})
-			.filter((item) => item !== null) as IHistoryItem[];
+		const data = doc.data();
+		const treasuryData = data ? (data['monthly_treasury_tally'] as IMonthlyTreasuryTally) : null;
+
+		if (!treasuryData) {
+			return {
+				data: null,
+				error: `No treasury history found in monthly_treasury_tally for network: ${network}`,
+				status: 404
+			};
+		}
+
+		const treasuryAmountHistory: IHistoryItem[] = Object.entries(treasuryData).map(([month, balance]) => ({
+			month,
+			balance: balance.toString()
+		}));
 
 		return {
 			data: treasuryAmountHistory,
@@ -58,11 +68,14 @@ const handler: NextApiHandler<IHistoryItem[] | { error: string }> = async (req, 
 	storeApiKeyUsage(req);
 
 	const network = req.headers['x-network'] as string;
+
 	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ error: 'Missing network in request headers' });
+		return res.status(400).json({ error: 'Missing or invalid network in request headers' });
 	}
+
 	try {
 		const { data, error, status } = await getTreasuryAmountHistory({ network });
+		console.log('data', data);
 
 		if (error || !data) {
 			return res.status(status).json({ error: error || messages.API_FETCH_ERROR });

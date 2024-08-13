@@ -169,7 +169,7 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 					afterChange={handleBeforeChange2}
 				>
 					{activeDataChunks.map((chunk, index) => {
-						const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4' : 'mx-3 flex justify-start space-x-4';
+						const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4 md:mx-1 md:justify-around' : 'mx-3 flex justify-start space-x-4';
 						return (
 							<div
 								key={index}

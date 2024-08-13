@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ delegationMan
 	if (data) {
 		return res.status(200).json(data);
 	}
-	return res.status(200).json({ message: error || messages.API_FETCH_ERROR });
+	return res.status(500).json({ message: error || messages.API_FETCH_ERROR });
 }
 
 export default withErrorHandling(handler);

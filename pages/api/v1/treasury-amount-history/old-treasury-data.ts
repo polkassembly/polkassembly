@@ -26,37 +26,19 @@ interface IReturnResponse {
 
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const today = dayjs();
-	let startDate = today.subtract(monthsAgo, 'month').startOf('month');
+	const startDate = today.subtract(monthsAgo, 'month').set('date', 3);
+	const endDate = startDate;
 
-	if (startDate.isAfter(today)) {
-		startDate = today.subtract(monthsAgo + 1, 'month').startOf('month');
-	}
-
-	const endDate = today.isBefore(startDate.add(1, 'month')) ? today : startDate.add(1, 'month').subtract(1, 'day');
 	const start = startDate.format('YYYY-MM-DD');
 	const end = endDate.format('YYYY-MM-DD');
 	return { start, end };
 }
 
-const generateDateRange = (startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): string[] => {
-	const dates: string[] = [];
-	let currentDate = startDate.startOf('day');
-
-	const totalDays = endDate.endOf('day').diff(currentDate, 'day') + 1;
-
-	for (let i = 0; i < totalDays; i++) {
-		dates.push(currentDate.format('YYYY-MM-DD'));
-		currentDate = currentDate.add(1, 'day');
-	}
-
-	return dates;
+const getMonthName = (date: dayjs.Dayjs): string => {
+	return date.format('MMMM').toLowerCase();
 };
 
-const formatDate = (date: dayjs.Dayjs): string => {
-	return date.format('YYYY-MM-DD');
-};
-
-const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IResponseData[] => {
+const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): { [key: string]: number } => {
 	const getLatestBalance = (history: IHistoryItem[]): number => {
 		const sortedHistory = history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 		return parseFloat(sortedHistory[0].balance) || 0;
@@ -80,7 +62,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 	networkTreasuryData.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
-				const key = formatDate(dayjs(date));
+				const key = getMonthName(dayjs(date));
 				const balanceValue = getLatestBalance(history);
 
 				if (combinedData[key]) {
@@ -95,7 +77,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 	assethubTreasuryData.forEach(({ history }) => {
 		if (history) {
 			history.forEach(({ date }) => {
-				const key = formatDate(dayjs(date));
+				const key = getMonthName(dayjs(date));
 				const balanceValue = getLatestBalance(history);
 
 				if (combinedData[key]) {
@@ -107,31 +89,19 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): IRes
 		}
 	});
 
-	const today = dayjs();
-	const startDate = dayjs('2024-01-01');
-	const allDates = generateDateRange(startDate, today);
-
-	const fullData: { [key: string]: number } = {};
-	allDates.forEach((date) => {
-		fullData[date] = 0;
-	});
-
-	Object.keys(combinedData).forEach((date) => {
-		fullData[date] = combinedData[date];
-	});
-
-	return Object.keys(fullData).map((date) => ({
-		history: [
-			{
-				date,
-				balance: fullData[date].toFixed(2)
-			}
-		],
-		status: 'Success'
-	}));
+	return combinedData;
 };
 
 export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
+	// Skip API calls for other dates except 2
+	const today = dayjs();
+	if (today.date() !== 2) {
+		return {
+			data: null,
+			error: 'API should only be called on the 2nd of the month'
+		};
+	}
+
 	const returnResponse: IReturnResponse = {
 		data: null,
 		error: null
@@ -144,7 +114,7 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 
 	try {
 		const results: IResponseData[] = [];
-		for (let i = 0; i < 7; i++) {
+		for (let i = 6; i >= 0; i--) {
 			const { start, end } = getMonthRange(i);
 
 			const requestBody = {
@@ -185,43 +155,16 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	}
 };
 
-const documentExists = async (network: string, date: string): Promise<boolean> => {
-	const networkRef = firestore_db.collection('networks').doc(network);
-	const treasuryRef = networkRef.collection('treasury_amount_history').doc(date);
-
-	const doc = await treasuryRef.get();
-	return doc.exists;
-};
-
-const saveToFirestore = async (network: string, data: IResponseData[]) => {
+const saveToFirestore = async (network: string, data: { [key: string]: number }) => {
 	try {
-		const batch = firestore_db.batch();
-
 		const networkRef = firestore_db.collection('networks').doc(network);
-		const treasuryRef = networkRef.collection('treasury_amount_history');
 
-		const promises = data.map(async (item) => {
-			if (item.history) {
-				return item.history.map(async ({ date, balance }) => {
-					if (dayjs(date).date() === 1) {
-						return null;
-					}
-
-					const docRef = treasuryRef.doc(date);
-					const exists = await documentExists(network, date);
-
-					if (!exists) {
-						batch.set(docRef, { date, balance });
-					} else {
-						batch.update(docRef, { balance });
-					}
-				});
-			}
-			return null;
-		});
-
-		await Promise.all(promises.flat());
-		await batch.commit();
+		await networkRef.set(
+			{
+				monthly_treasury_tally: data
+			},
+			{ merge: true }
+		);
 	} catch (error) {
 		console.error('Error writing data to Firestore:', error);
 	}
@@ -251,7 +194,7 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 		await saveToFirestore(network, combinedData);
 
 		return {
-			data: combinedData.length > 0 ? combinedData : null,
+			data: combinedData ? [{ history: null, status: 'Success' }] : null,
 			error: combinedError
 		};
 	} catch (error) {

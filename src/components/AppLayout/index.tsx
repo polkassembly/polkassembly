@@ -73,8 +73,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -302,7 +301,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { username, picture, loginAddress } = useUserDetailsSelector();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
 	const [previousRoute, setPreviousRoute] = useState(router.asPath);
@@ -317,14 +315,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const getTotalActiveProposalsCount = async () => {
 		if (!network) return;
@@ -374,6 +364,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
+		const { api, apiReady } = getRespectiveApiConnect({ defaultApi: defaultApi || null, defaultApiReady, network, peopleChainApi: peopleChainApi || null, peopleChainApiReady });
 		if (!api || !apiReady) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
@@ -388,7 +379,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsIdentityUnverified(!isVerified);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, network]);
+	}, [defaultApi, defaultApiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [

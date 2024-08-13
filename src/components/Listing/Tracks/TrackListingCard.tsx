@@ -44,6 +44,7 @@ const TrackListingCard = ({ className, posts, trackName }: Props) => {
 	const [initialCountForSubmitted, setInitialCountForSubmitted] = useState<number | undefined>(undefined);
 	const [initialCountForVoting, setInitialCountForVoting] = useState<number | undefined>(undefined);
 	const [initialCountForClosed, setInitialCountForClosed] = useState<number | undefined>(undefined);
+
 	useEffect(() => {
 		if (initialCountForAll === undefined && posts?.all?.data?.count !== undefined) {
 			setInitialCountForAll(posts?.all?.data?.count);

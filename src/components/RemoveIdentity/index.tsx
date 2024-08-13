@@ -25,7 +25,7 @@ import { trackEvent } from 'analytics';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
 import { useRouter } from 'next/router';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 const ZERO_BN = new BN(0);
 
@@ -52,11 +52,15 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	const isDisable = availableBalance.lte(gasFee) || loading.isLoading || !(address.length || loginAddress.length) || !isIdentityAvailable;
 
 	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
+		setApiDetails({ api: api || null, apiReady: apiReady });
 	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleAvailableBalanceChange = (balanceStr: string) => {

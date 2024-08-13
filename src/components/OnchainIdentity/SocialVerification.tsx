@@ -19,17 +19,11 @@ import { onchainIdentityActions } from '~src/redux/onchainIdentity';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SocialVerificationInprogress from './SocialVerificationInprogress';
 import Image from 'next/image';
-import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { ApiPromise } from '@polkadot/api';
 import messages from '~src/auth/utils/messages';
-import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const SocialVerification = ({ className, onCancel, startLoading, closeModal, setOpenSuccessModal, changeStep }: IIdentitySocialVerifications) => {
 	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { socials, identityAddress, identityHash } = useOnchainIdentitySelector();
 	const { email, twitter } = socials;
 	const [open, setOpen] = useState<boolean>(false);
@@ -39,14 +33,6 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const router = useRouter();
 
 	const items: TimelineItemProps[] = [];
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	const handleTwitterVerificationClick = async () => {
 		if (twitterVerificationStart) {
@@ -231,7 +217,7 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 			await handleVerify(ESocials.EMAIL, true);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady]);
+	}, [network]);
 
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;

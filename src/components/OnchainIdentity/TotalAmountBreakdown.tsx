@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import UpArrowIcon from '~assets/icons/up-arrow.svg';
@@ -20,9 +20,8 @@ import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import { ESetIdentitySteps, IAmountBreakDown } from './types';
 import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirection';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { ApiPromise } from '@polkadot/api';
 import classNames from 'classnames';
-import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
@@ -30,21 +29,19 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [amountBreakup, setAmountBreakup] = useState<boolean>(false);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
-
 	const handleRequestJudgement = async () => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
 		if (identityInfo?.verifiedByPolkassembly) return;
 		// GAEvent for request judgement button clicked
 		trackEvent('request_judgement_cta_clicked', 'initiated_judgement_request', {

@@ -39,9 +39,7 @@ import ImageIcon from './ImageIcon';
 import { CloseIcon } from './CustomIcons';
 import { setConnectAddress, setInitialAvailableBalance } from '~src/redux/initialConnectAddress';
 import Alert from '~src/basic-components/Alert';
-import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import { useApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
 
 interface Props {
@@ -83,9 +81,7 @@ const AddressConnectModal = ({
 	usedInIdentityFlow = false
 }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
 	const { loginWallet, loginAddress, addresses } = currentUser;
 	const dispatch = useDispatch();
@@ -108,15 +104,6 @@ const AddressConnectModal = ({
 	const [submissionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [hideDetails, setHideDetails] = useState<boolean>(false);
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady, usedInIdentityFlow]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -324,7 +311,7 @@ const AddressConnectModal = ({
 		setWallet(wallet);
 		(async () => {
 			setLoading(true);
-			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api: api, apiReady: apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 			setLoading(false);
@@ -336,8 +323,8 @@ const AddressConnectModal = ({
 			if (!api || !apiReady) {
 				return;
 			}
-			if (api.query?.system?.account) {
-				balanceStr = (await api.query.system.account(multisig)).data.free.toString();
+			if (api?.query?.system?.account) {
+				balanceStr = ((await api.query?.system?.account(multisig)) as any).data.free.toString();
 			}
 		}
 		const availableBalance = new BN(balanceStr);
@@ -354,8 +341,8 @@ const AddressConnectModal = ({
 		(async () => {
 			setLoading(true);
 			const accountData = await getAccountsFromWallet({
-				api,
-				apiReady,
+				api: api,
+				apiReady: apiReady,
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
 				loginAddress,
@@ -366,7 +353,7 @@ const AddressConnectModal = ({
 			setLoading(false);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginWallet, loginAddress, api, apiReady]);
+	}, [loginWallet, loginAddress, api, api]);
 
 	const handleInitiatorBalance = useCallback(
 		async () => {
@@ -375,8 +362,8 @@ const AddressConnectModal = ({
 			}
 			try {
 				//deposit balance
-				const depositBase = api.consts.multisig?.depositBase?.toString() || '0';
-				const depositFactor = api.consts.multisig?.depositFactor?.toString() || '0';
+				const depositBase = api?.consts?.multisig?.depositBase?.toString() || '0';
+				const depositFactor = api?.consts?.multisig?.depositFactor?.toString() || '0';
 				setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 			} catch (e) {
 				setTotalDeposit(ZERO_BN);

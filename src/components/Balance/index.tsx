@@ -10,14 +10,12 @@ import { useApiContext, usePeopleChainApiContext, usePostDataContext } from 'src
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-
 import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 interface Props {
 	address: string;
@@ -34,7 +32,6 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const [balance, setBalance] = useState<string>('0');
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkSelector();
@@ -42,15 +39,6 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -61,6 +49,15 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	}, [network]);
 
 	useEffect(() => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady,
+			usedInIdentityFlow: usedInIdentityFlow || false
+		});
+
 		if (!api || !apiReady || !address) return;
 
 		setLoading(true);
@@ -128,7 +125,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 		}
 		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
+	}, [address, defaultApi, defaultApiReady, peopleChainApi, peopleChainApi, usedInIdentityFlow, isReferendum, isBalanceUpdated]);
 
 	return (
 		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium ${classname}`}>

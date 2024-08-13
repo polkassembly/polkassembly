@@ -25,11 +25,10 @@ import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
-import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 const ZERO_BN = new BN(0);
 
@@ -40,7 +39,6 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const { network } = useNetworkSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
 	const [form] = Form.useForm();
@@ -63,16 +61,15 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
-	useEffect(() => {
-		if (!isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		} else {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, peopleChainApi, peopleChainApiReady]);
-
 	const getTxFee = async () => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
 		if (!api || !apiReady || !network) return;
 		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
 
@@ -86,6 +83,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	const getIdentityHash = async () => {
+		const { api } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
 		if (!identityAddress && !loginAddress) return;
 		try {
 			const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
@@ -115,6 +120,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	const getIdentityInfo = async () => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
 		if (!api || !apiReady) return;
 
 		try {
@@ -177,14 +190,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
-
 		form.setFieldValue('address', identityAddress || loginAddress);
 		getTxFee();
 		getIdentityInfo();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, identityAddress, network]);
+	}, [defaultApi, defaultApiReady, loginAddress, identityAddress, network, peopleChainApi, peopleChainApiReady]);
 
 	return (
 		<div>

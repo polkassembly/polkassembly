@@ -34,12 +34,12 @@ import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { ApiPromise } from '@polkadot/api';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import userProfileBalances from '~src/util/userProfileBalances';
 import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 import PeopleChainTeleport from '../PeopleChainTeleport';
 import _ from 'lodash';
+import { getRespectiveApiConnect } from '~src/util/getRespectiveApiConnect';
 
 const ZERO_BN = new BN(0);
 
@@ -64,7 +64,6 @@ const IdentityForm = ({
 	const currentUser = useUserDetailsSelector();
 	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { email, twitter } = socials;
@@ -83,14 +82,6 @@ const IdentityForm = ({
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
-
 	const getDefaultChainBalance = async () => {
 		if (!defaultApi || !defaultApiReady) return;
 
@@ -105,7 +96,7 @@ const IdentityForm = ({
 	}, [defaultApi, defaultApiReady]);
 
 	const getProxies = async (address: any) => {
-		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
+		const proxies: any = (await defaultApi?.query?.proxy?.proxies(address))?.toJSON();
 		if (proxies) {
 			const proxyAddr = proxies[0].map((proxy: any) => proxy.delegate);
 			setProxyAddresses(proxyAddr);
@@ -124,6 +115,14 @@ const IdentityForm = ({
 	};
 
 	const handleSetIdentity = async (requestJudgement: boolean) => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
 		const onSuccess = async () => {
 			const identityHash = await api?.query?.identity
 				?.identityOf(identityAddress)
@@ -212,6 +211,14 @@ const IdentityForm = ({
 	};
 
 	const getGasFee = async (initialLoading?: boolean, txFeeVal?: ITxFee) => {
+		const { api, apiReady } = getRespectiveApiConnect({
+			defaultApi: defaultApi || null,
+			defaultApiReady,
+			network,
+			peopleChainApi: peopleChainApi || null,
+			peopleChainApiReady
+		});
+
 		setIsBalanceUpdated(false);
 
 		if (!txFeeVal) {
@@ -309,7 +316,7 @@ const IdentityForm = ({
 		handleInfo(true);
 		getProxies(identityAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [identityAddress]);
+	}, [identityAddress, defaultApi]);
 
 	return (
 		<div className={className}>

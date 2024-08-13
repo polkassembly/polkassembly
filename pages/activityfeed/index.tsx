@@ -10,9 +10,7 @@ import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-c
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect } from 'react';
 import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
-import AboutNetwork from 'src/components/Home/AboutNetwork';
-import News from 'src/components/Home/News';
-import UpcomingEvents from 'src/components/Home/UpcomingEvents';
+import { FaAngleRight } from 'react-icons/fa6';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
@@ -28,6 +26,7 @@ import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import AboutActivity from './AboutActivity';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -135,25 +134,12 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mt-3 flex items-center justify-between'>
-				<h1 className='mx-2 -mb-[6px] pl-5 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
 				<div className='mr-[6px] flex justify-between'>
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>
-			<div className='flex w-full flex-col px-5'>
-				<div className='mx-1 mt-2 md:mt-6'>
-					{networkSocialsData && (
-						<AboutNetwork
-							networkSocialsData={networkSocialsData?.data}
-							showGov2Links
-						/>
-					)}
-				</div>
-				<div className='w-full '>
-					<div className='mx-1 mt-8'>
-						<TreasuryOverview theme={theme} />
-					</div>
-				</div>
+			<div className='flex flex-col px-3 xl:flex-row'>
 				<div className='flex-1'>
 					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
 						<div className='mx-1 mt-8'>
@@ -161,17 +147,28 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						</div>
 					)}
 
-					<div className='mx-1 mt-8 max-w-full'>
+					<div className='mx-1 mt-8 max-w-[1050px]'>
 						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
 					</div>
-
-					<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
-						<div className='w-full xl:w-[60%]'>
-							<UpcomingEvents />
-						</div>
-
-						<div className='w-full xl:w-[40%]'>
-							<News twitter={networkSocialsData?.data?.twitter || ''} />
+				</div>
+				<div className='w-full xl:w-[300px] xl:pl-6'>
+					<div className='mx-1 mt-2 md:mt-6'>
+						{networkSocialsData && (
+							<AboutActivity
+								networkSocialsData={networkSocialsData?.data}
+								showGov2Links
+							/>
+						)}
+					</div>
+					<div>
+						<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+							<div className='flex items-center justify-between gap-2'>
+								<div className='flex gap-1'>
+									<p className='font-semibold'>Voted Proposals</p>
+									<FaAngleRight />
+								</div>
+								<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
+							</div>
 						</div>
 					</div>
 				</div>

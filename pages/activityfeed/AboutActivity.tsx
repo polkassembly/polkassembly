@@ -161,28 +161,28 @@ const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className
 	</a>
 );
 
-const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
+const AboutActivity = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	const [showGallery, setShowGallery] = useState(false);
 	return (
-		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6 md:px-10`}>
+		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high'>About</h2>
-				{showGallery && showGov2Links && <></>}
-				<div className='hidden  lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
-				{!showGallery && showGov2Links && <></>}
-				<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 			</div>
 
-			<p className='medium  items-center pt-2 text-sm text-bodyBlue dark:text-blue-dark-high'>
-				Polkadot is the all-in-one DeFi hub of Polkadot. Acala is an Ethereum-compatible platform for financial applications to use smart contracts or built-in protocols with
-				out-of-the-box cross-chain capabilities and robust security. The platform also offers a suite of financial applications including: a trustless....{' '}
+			<p className='medium  items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
+				Polkadot is the all-in-one DeFi hub of Polkadot. {showGallery && showGov2Links && <></>}
+				<br />
+				<span className={'m-0 cursor-pointer p-0 text-xs font-semibold text-pink_primary'}>Know More</span>
+				<div className='hidden  lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
+				{!showGallery && showGov2Links && <></>}
 			</p>
-			<span className={'m-0 cursor-pointer p-0 text-xs font-semibold text-pink_primary'}>Know More</span>
+
+			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
 
 			{showGallery && (
 				<div>
 					{showGov2Links && (
-						<div className=' flex flex-wrap justify-between gap-3 overflow-x-auto pb-2 md:mt-10 md:flex-nowrap xl:w-[90%]'>
+						<div className='mt-5 flex flex-wrap justify-between gap-3 overflow-x-auto pb-2 md:mt-10 md:flex-nowrap xl:w-[90%]'>
 							{gov2Link({
 								bgImage: '/assets/gavin-keynote.png',
 								className: 'mr-12 lg:mr-9',
@@ -217,7 +217,7 @@ const AboutNetwork = ({ className, networkSocialsData, showGov2Links }: { classN
 	);
 };
 
-export default styled(AboutNetwork)`
+export default styled(AboutActivity)`
 	.anticon:hover {
 		path {
 			fill: var(--pink_primary) !important;

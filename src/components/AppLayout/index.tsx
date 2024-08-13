@@ -15,7 +15,6 @@ import { useApiContext, usePeopleChainApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
-	CalendarIcon,
 	DemocracyProposalsIcon,
 	DiscussionsIcon,
 	FellowshipGroupIcon,
@@ -24,7 +23,6 @@ import {
 	MotionsIcon,
 	NewsIcon,
 	OverviewIcon,
-	LeaderboardOverviewIcon,
 	ParachainsIcon,
 	PreimagesIcon,
 	ReferendaIcon,
@@ -67,8 +65,6 @@ import { useDispatch } from 'react-redux';
 import { logout, userDetailsActions } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import ToggleButton from '~src/ui-components/ToggleButton';
-import BigToggleButton from '~src/ui-components/ToggleButton/BigToggleButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -433,10 +429,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				  )
 				: null,
 			getSiderMenuItem('Overview', '/', <OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 			// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 		],
 		democracyItems: chainProperties[network]?.subsquidUrl
 			? [
@@ -629,31 +623,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
-	if (['polkadot'].includes(network)) {
-		gov1Items['overviewItems'].splice(
-			3,
-			0,
-			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
-					<span>Leaderboard</span>
-					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
-				</div>,
-				'/leaderboard',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					<div
-						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						BETA
-					</div>
-				</div>
-			)
-		);
-	}
 
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
@@ -836,14 +805,37 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (network && networkTrackInfo[network]) {
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
-				<div className='flex items-center justify-between'>
+				<div className='flex justify-between'>
 					All
-					<span className={`text-[10px] ${totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''} rounded-lg px-2 py-1`}>
-						{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
-					</span>
+					{!sidebarCollapsed && (
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
+							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
+						</span>
+					)}
 				</div>,
 				'/all-posts',
-				<OverviewIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+				<div className={`relative`}>
+					<OverviewIcon className='scale-90 pt-3 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={'absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidebarCollapsed ? 1 : 0
+						}}
+					>
+						<span
+							className={`text-[10px] ${
+								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
+							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+						>
+							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
+						</span>
+					</div>
+				</div>
 			)
 		);
 		for (const trackName of Object.keys(networkTrackInfo[network])) {
@@ -897,13 +889,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						getSiderMenuItem(
 							<div className='flex justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
-								<span
-									className={`text-[10px] ${
-										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
-								>
-									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
-								</span>{' '}
+								{!sidebarCollapsed && (
+									<span
+										className={`text-[10px] ${
+											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+									>
+										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+									</span>
+								)}
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
@@ -915,34 +909,53 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				default: {
 					const icon =
 						trackName === 'all' ? (
-							<RootIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<RootIcon className='scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.ROOT ? (
-							<RootIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<RootIcon className='scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
-							<WishForChangeIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<WishForChangeIcon className='mt-[1px] scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
-							<AuctionAdminIcon className='mt-[1px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<AuctionAdminIcon className='mt-[1px] scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
-							<StakingAdminIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<StakingAdminIcon className='scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						);
 
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
-								<span
-									className={`text-[10px] ${
-										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
-								>
-									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
-								</span>
+								{!sidebarCollapsed && (
+									<span
+										className={`text-[10px] ${
+											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+									>
+										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+									</span>
+								)}
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
 								.join('-')
 								.toLowerCase()}`,
-							icon
+							<div className={`relative`}>
+								{icon}
+								<div
+									className={'absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6'}
+									style={{
+										transition: 'opacity 0.3s ease-in-out',
+										opacity: sidedrawer ? 0 : 1
+									}}
+								>
+									<span
+										className={`text-[10px] ${
+											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
+										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+									>
+										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+									</span>
+								</div>
+							</div>
 						)
 					);
 				}
@@ -1003,44 +1016,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 		getSiderMenuItem('Overview', '/opengov', <OverviewIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Calendar', '/calendar', <CalendarIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		// getSiderMenuItem('News', '/news', <NewsIcon className='text-lightBlue font-medium  dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-2.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 	];
 
-	if (['kusama', 'polkadot'].includes(network)) {
-		gov2OverviewItems.splice(
-			3,
-			0,
-			getSiderMenuItem('Delegation', '/delegation', <DelegatedIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-		);
-	}
-	if (['polkadot'].includes(network)) {
-		gov2OverviewItems.splice(
-			3,
-			0,
-			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
-					<span>Leaderboard</span>
-					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
-				</div>,
-				'/leaderboard',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					<div
-						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						BETA
-					</div>
-				</div>
-			)
-		);
-	}
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
@@ -1189,6 +1168,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if (AllNetworks.WESTEND.includes(network)) {
 			gov2Items = [
 				...gov2Items,
+				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 					getSiderMenuItem(
 						'Treasury',
@@ -1201,6 +1181,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		} else {
 			gov2Items = [
 				...gov2Items,
+				getSiderMenuItem('Parachains', '/parachains', <ParachainsIcon className='mt-3 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
 				getSiderMenuItem('Archived', 'archived', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
@@ -1276,7 +1257,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										items={gov2Items.slice(0, 1)}
 										className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 									/>
-									{!sidebarCollapsed && (
+									{!sidebarCollapsed ? (
 										<>
 											<div className=' flex justify-center gap-2'>
 												<div className='group relative '>
@@ -1325,9 +1306,58 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												</div>
 											</div>
 										</>
+									) : (
+										<>
+											<div className=' ml-5 flex flex-col justify-center gap-2'>
+												<div className='group relative '>
+													<img
+														src='/assets/head1.svg'
+														alt='Head 1'
+														className='h-10 w-10 cursor-pointer'
+													/>
+													<div className='absolute -bottom-16 left-5 z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														On-chain identity
+														<div className='absolute left-6 top-[-3px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative '>
+													<img
+														src='/assets/head2.svg'
+														alt='Head 2'
+														className='h-10 w-10 cursor-pointer'
+													/>
+													<div className='absolute bottom-full left-5 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														Leaderboard
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative '>
+													<img
+														src='/assets/head3.svg'
+														alt='Head 3'
+														className='h-10 w-10 cursor-pointer'
+													/>
+													<div className='absolute bottom-full left-5 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														Delegation
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative '>
+													<img
+														src='/assets/head4.svg'
+														alt='Head 4'
+														className='h-10 w-10 cursor-pointer'
+													/>
+													<div className='absolute bottom-full left-5 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														Calendar
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+											</div>
+										</>
 									)}
 								</div>
-								<div className={`hide-scrollbar ${!sidebarCollapsed && 'h-[650px] overflow-y-auto pb-2'} `}>
+								<div className={`hide-scrollbar ${!sidebarCollapsed ? 'h-[650px] overflow-y-auto pb-2' : 'mt-4 h-[345px]  overflow-y-auto pb-2'} `}>
 									<Menu
 										theme={theme as any}
 										mode='inline'
@@ -1337,7 +1367,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 									/>
 								</div>
-								{!sidebarCollapsed && (
+								{!sidebarCollapsed ? (
 									<>
 										<div className='fixed bottom-0 left-0 w-full py-3'>
 											<div className='mt-10 flex items-center justify-center gap-2'>
@@ -1383,6 +1413,57 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 													<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
 														Staking
 														<div className='absolute left-14  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</>
+								) : (
+									<>
+										<div className='fixed bottom-0  left-0 w-full py-3'>
+											<div className='mt-10 flex flex-col items-center justify-center gap-2'>
+												<div className='group relative'>
+													<img
+														src='/assets/foot1.svg'
+														alt='Foot1'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														Townhall
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot2.svg'
+														alt='Foot2'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+														Polkasafe
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot3.svg'
+														alt='Foot3'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
+														Fellowship
+														<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+													</div>
+												</div>
+												<div className='group relative'>
+													<img
+														src='/assets/foot4.svg'
+														alt='Foot4'
+														className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2'
+													/>
+													<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
+														Staking
+														<div className='absolute left-1/2  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 													</div>
 												</div>
 											</div>

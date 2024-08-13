@@ -93,6 +93,7 @@
     "react-dom": "18.2.0",
     "react-ga4": "^2.1.0",
     "react-helmet": "^6.1.0",
+    "react-icons": "^5.3.0",
     "react-json-view": "^1.21.3",
     "react-jwt": "^1.1.7",
     "react-markdown": "^8.0.4",

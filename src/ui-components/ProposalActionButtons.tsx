@@ -14,6 +14,9 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
+import { MdOutlineAutorenew } from 'react-icons/md';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const OpenGovTreasuryProposal = dynamic(() => import('~src/components/OpenGovTreasuryProposal'), {
 	loading: () => (
@@ -37,6 +40,9 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
+	const pathname = usePathname();
+	console.log('pathname', pathname);
+
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [isDropdownActive, setIsDropdownActive] = useState(false);
@@ -59,6 +65,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			setOpenLoginPrompt(true);
 		}
 	};
+	const buttonText = pathname === '/activityfeed' ? 'Overview' : pathname === '/opengov' ? 'Active Feed' : '';
 
 	const items: MenuProps['items'] = [
 		{
@@ -121,6 +128,17 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
+			<Link
+				href={pathname === '/activityfeed' ? '/opengov' : '/activityfeed'}
+				className=' '
+			>
+				<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] p-1 px-3 font-poppins text-[#243A57]'>
+					Switch to <span className='font-semibold'>{buttonText}</span>
+					<span>
+						<MdOutlineAutorenew className='mt-1 text-lg text-[#90A0B7]' />
+					</span>
+				</button>
+			</Link>
 			{isUsedInHomePage && (
 				<div className='flex items-center justify-between space-x-2 sm:space-x-4'>
 					<CustomButton

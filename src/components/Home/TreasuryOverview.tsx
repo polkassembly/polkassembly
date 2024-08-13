@@ -329,56 +329,101 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		<div
 			className={`${className} grid ${
 				!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
-			} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:flex-col xl:gap-4`}
+			} grid-flow-col grid-cols-1 xs:gap-6 sm:gap-8 xl:flex  xl:gap-4`}
 		>
 			{/* Available */}
 			<div className=' w-full flex-1 flex-col rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 				<div className='w-full flex-col gap-x-0 lg:flex'>
-					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/AvailableDark.svg'
-								alt='available dark icon'
-								imgClassName='lg:hidden'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/available.svg'
-								alt='available icon'
-								imgClassName='lg:hidden'
-							/>
-						)}
-					</div>
+					<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'></div>
 					{!available.isLoading ? (
 						<>
 							<div className='mb-4'>
-								<div className='my-1 flex items-center'>
-									<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Available</span>
-									<HelperTooltip
-										text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-										className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-									/>
-								</div>
-								<div className='flex justify-between font-medium'>
-									{available.value ? (
-										<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
-											{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-										</span>
-									) : (
-										<span>N/A</span>
-									)}
+								<div className='flex items-center justify-between font-medium'>
+									<div className='flex items-center gap-2'>
+										<div>
+											<div className='ju my-1 flex items-center gap-3'>
+												<span className='mr-2 p-0 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<HelperTooltip
+													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+												/>
+												<p className='mt-2 w-full rounded-lg bg-[#F4F5F6] p-1 text-[11px] font-medium text-[#485F7D]'>Monthly</p>
+											</div>
+											<div className='flex items-center gap-1'>
+												<div>
+													{available.value ? (
+														<span className='text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+															{available.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+														</span>
+													) : (
+														<span>N/A</span>
+													)}
+												</div>
+												<div>
+													{!['polymesh', 'polymesh-test'].includes(network) && (
+														<>
+															<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
+																<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
+																	{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
+																</span>
+															</div>
+														</>
+													)}
+												</div>
+											</div>
+										</div>
+									</div>
+									<div>
+										{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
+											<div className='1 flex w-full    dark:bg-section-dark-overlay sm:my-0'>
+												<div className='w-full flex-col gap-x-0 lg:flex'>
+													{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
+														<>
+															<div className=''>
+																<div className='flex items-center gap-1'>
+																	<span className='mr-2 hidden text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'>
+																		{chainProperties[network]?.tokenSymbol} Price
+																	</span>
+																	<div className='text-lg font-medium'>
+																		{currentTokenPrice.value === 'N/A' ? (
+																			<span>N/A</span>
+																		) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+																			<>
+																				<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
+																				<span className='text-bodyBlue dark:text-blue-dark-high'>{currentTokenPrice.value}</span>
+																			</>
+																		) : null}
+																	</div>
+																	<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
+																		{priceWeeklyChange.value === 'N/A' ? (
+																			'N/A'
+																		) : priceWeeklyChange.value ? (
+																			<>
+																				<div className='flex items-center'>
+																					<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
+																					{Number(priceWeeklyChange.value) < 0 ? (
+																						<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
+																					) : (
+																						<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
+																					)}
+																				</div>
+																			</>
+																		) : null}
+																	</div>
+																</div>
+															</div>
+														</>
+													) : (
+														<div className='flex min-h-[89px] w-full items-center justify-center'>
+															<LoadingOutlined />
+														</div>
+													)}
+												</div>
+											</div>
+										)}
+									</div>
 								</div>
 							</div>
-							{!['polymesh', 'polymesh-test'].includes(network) && (
-								<>
-									<div className='flex flex-col justify-center gap-y-3 font-medium text-bodyBlue dark:text-blue-dark-high'>
-										<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-										<span className='flex flex-col justify-center text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
-											{available.valueUSD ? `~ $${available.valueUSD}` : 'N/A'}
-										</span>
-									</div>
-								</>
-							)}
 						</>
 					) : (
 						<div className='flex min-h-[89px] w-full items-center justify-center'>
@@ -386,174 +431,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						</div>
 					)}
 				</div>
-				<div>
-					{theme === 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/AvailableDark.svg'
-							alt='available dark icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					) : (
-						// <Available className='xs:hidden lg:block' />
-						<ImageIcon
-							src='/assets/icons/available.svg'
-							alt='available icon'
-							imgClassName='xs:hidden lg:block w-full'
-						/>
-					)}
-				</div>
 			</div>
 
-			{/* CurrentPrice */}
-			{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
-				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-					<div className='w-full flex-col gap-x-0 lg:flex'>
-						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							{theme === 'dark' ? (
-								<ImageIcon
-									src='/assets/icons/CurrentPriceDark.svg'
-									alt='current price dark icon'
-									imgClassName='lg:hidden'
-								/>
-							) : (
-								<ImageIcon
-									src='/assets/icons/currentprice.svg'
-									alt='current price icon'
-									imgClassName='lg:hidden'
-								/>
-							)}
-						</div>
-						{!(currentTokenPrice.isLoading || priceWeeklyChange.isLoading) ? (
-							<>
-								<div className='mb-4'>
-									<div className='my-1 flex items-center'>
-										<span className='mr-2 hidden text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium md:flex'>
-											Current Price of {chainProperties[network]?.tokenSymbol}
-										</span>
-										<span className='flex text-xs font-medium text-lightBlue dark:text-blue-dark-medium md:hidden'>Price {chainProperties[network]?.tokenSymbol}</span>
-									</div>
-									<div className='text-lg font-medium'>
-										{currentTokenPrice.value === 'N/A' ? (
-											<span>N/A</span>
-										) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
-											<>
-												<span className='text-lightBlue dark:text-blue-dark-high'>$ </span>
-												<span className='text-bodyBlue dark:text-blue-dark-high'>{currentTokenPrice.value}</span>
-											</>
-										) : null}
-									</div>
-								</div>
-								<div className='flex flex-col justify-center gap-y-3 overflow-hidden font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-									<div className='flex items-center text-xs text-lightBlue dark:text-blue-dark-high md:whitespace-pre'>
-										{priceWeeklyChange.value === 'N/A' ? (
-											'N/A'
-										) : priceWeeklyChange.value ? (
-											<>
-												<span className='mr-1 sm:mr-2'>Weekly Change</span>
-												<div className='flex items-center'>
-													<span className='font-semibold'>{Math.abs(Number(priceWeeklyChange.value))}%</span>
-													{Number(priceWeeklyChange.value) < 0 ? (
-														<CaretDownOutlined style={{ color: 'red', marginLeft: '1.5px' }} />
-													) : (
-														<CaretUpOutlined style={{ color: '#52C41A', marginLeft: '1.5px' }} />
-													)}
-												</div>
-											</>
-										) : null}
-									</div>
-								</div>
-							</>
-						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-						)}
-					</div>
-					<div>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/CurrentPriceDark.svg'
-								alt='current price dark icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/currentprice.svg'
-								alt='current price icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						)}
-					</div>
-				</div>
-			)}
-
-			{/* Next Burn */}
-			{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
-				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
-					<div className='w-full flex-col gap-x-0 lg:flex'>
-						<div className='mb-1.5 flex w-full items-center justify-center lg:hidden'>
-							{theme === 'dark' ? (
-								<ImageIcon
-									src='/assets/icons/NextBurnDark.svg'
-									alt='next burn dark icon'
-									imgClassName='lg:hidden'
-								/>
-							) : (
-								<ImageIcon
-									src='/assets/icons/nextburn.svg'
-									alt='next burn icon'
-									imgClassName='lg:hidden'
-								/>
-							)}
-						</div>
-						{!nextBurn.isLoading ? (
-							<>
-								<div className='mb-4'>
-									<div className='my-1 flex items-center text-xs text-lightBlue dark:text-blue-dark-medium'>
-										<span className='mr-2 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'>Next Burn</span>
-
-										<HelperTooltip text='If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds.' />
-									</div>
-
-									<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
-										{nextBurn.value ? (
-											<span>
-												{nextBurn.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
-											</span>
-										) : null}
-									</div>
-								</div>
-								<div className='flex flex-col justify-center gap-y-3 font-medium text-sidebarBlue'>
-									<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-									<span className='mr-2 w-full text-xs font-medium text-lightBlue dark:text-blue-dark-high'>{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}</span>
-								</div>
-							</>
-						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
-								<LoadingOutlined />
-							</div>
-						)}
-					</div>
-					<div>
-						{theme === 'dark' ? (
-							<ImageIcon
-								src='/assets/icons/NextBurnDark.svg'
-								alt='next burn dark icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						) : (
-							<ImageIcon
-								src='/assets/icons/nextburn.svg'
-								alt='next burn icon'
-								imgClassName='xs:hidden lg:block w-full'
-							/>
-						)}
-					</div>
-				</div>
-			)}
-
-			{/* Spend Period */}
 			{!['polymesh', 'polymesh-test'].includes(network) && (
 				<>
 					{!inTreasuryProposals && (
@@ -578,7 +457,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									<>
 										<div className='mb-5 sm:mb-4'>
 											<div className='my-1 flex items-center'>
-												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period</span>
+												<span className='mr-2 mt-1 text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium lg:mt-0'>Spend Period Remaining</span>
 
 												<HelperTooltip
 													text='Funds requested from the treasury are periodically distributed at the end of the spend period.'
@@ -613,8 +492,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 											</div>
 										</div>
 										{
-											<div className='flex flex-col justify-center gap-y-3 font-medium'>
-												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
+											<div className='flex w-full flex-col justify-center gap-y-3 font-medium'>
 												<span className='flex items-center'>
 													<ProgressBar
 														className='m-0 flex items-center p-0'
@@ -624,28 +502,53 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 														size='small'
 													/>
 												</span>
+												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
 											</div>
 										}
+										{!['moonbeam', 'kilt', 'moonbase', 'moonriver', 'polymesh', 'polimec', 'rolimec'].includes(network) && (
+											<div className='flex w-full flex-1  pt-5'>
+												<div className='w-full flex-col gap-x-0 lg:flex'>
+													<div className=' w-full items-center justify-center lg:hidden'></div>
+													{!nextBurn.isLoading ? (
+														<>
+															<div className='flex gap-5'>
+																<div>
+																	<p className='text-[13px] text-[#485F7D]'>Next Burn</p>
+																	<div className='flex items-center gap-2'>
+																		<div className='flex justify-between text-lg font-medium text-bodyBlue dark:text-blue-dark-high'>
+																			{nextBurn.value ? (
+																				<span className='flex items-center gap-1'>
+																					{nextBurn.value} <span className='text-sm text-lightBlue dark:text-blue-dark-high'>{chainProperties[network]?.tokenSymbol}</span>
+																				</span>
+																			) : null}
+																		</div>
+																		<div className='font-medium text-sidebarBlue'>
+																			<span className='flex w-auto flex-row whitespace-nowrap text-xs font-medium text-lightBlue dark:text-blue-dark-high'>
+																				{nextBurn.valueUSD ? `~ $${nextBurn.valueUSD}` : 'N/A'}
+																			</span>
+																		</div>
+																	</div>
+																</div>
+																<div>
+																	<p className='w-full rounded-lg bg-[#F4F5F6] p-3 text-[11px] font-medium text-[#333843]'>
+																		If the Treasury ends a spend period without spending all of its funds, it suffers a burn of a percentage of its funds
+																	</p>
+																</div>
+															</div>
+														</>
+													) : (
+														<div className='flex min-h-[89px] w-full items-center justify-center'>
+															<LoadingOutlined />
+														</div>
+													)}
+												</div>
+											</div>
+										)}
 									</>
 								) : (
 									<div className='flex min-h-[89px] w-full items-center justify-center'>
 										<LoadingOutlined />
 									</div>
-								)}
-							</div>
-							<div>
-								{theme === 'dark' ? (
-									<ImageIcon
-										src='/assets/icons/SpendPeriodDark.svg'
-										alt='spend period dark icon'
-										imgClassName='mt-2 xs:hidden lg:block w-full'
-									/>
-								) : (
-									<ImageIcon
-										src='/assets/icons/spendperiod.svg'
-										alt='spend period icon'
-										imgClassName='mt-2 xs:hidden lg:block w-full'
-									/>
 								)}
 							</div>
 						</div>

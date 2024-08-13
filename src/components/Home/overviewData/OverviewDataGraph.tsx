@@ -63,7 +63,7 @@ const OverviewDataGraph = ({ graphData }: { graphData: IMonthlyTreasuryTally[] }
 	}
 
 	return (
-		<div style={{ height: '180px' }}>
+		<div style={{ height: '80px' }}>
 			<ResponsiveLine
 				data={formattedData}
 				margin={{ bottom: 36, left: 0, right: 0, top: 15 }}

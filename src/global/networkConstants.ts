@@ -260,7 +260,11 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rpc-polkadot.luckyfriday.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		]
 	},
 	[network.KUSAMA]: {
 		preImageBaseDeposit: '1330000000000',
@@ -312,7 +316,7 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.USDT]
+		supportedAssets: [{ ...treasuryAssets.USDT, genralIndex: '1984' }]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -1887,7 +1891,11 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rococo-rpc.polkadot.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		]
 	},
 	[network.XX]: {
 		blockTime: 6000,

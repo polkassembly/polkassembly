@@ -107,6 +107,7 @@ export interface IAssets {
 	name: string;
 	img: string;
 	symbol: EAssets;
+	genralIndex: string;
 }
 
 export interface ChainProps {

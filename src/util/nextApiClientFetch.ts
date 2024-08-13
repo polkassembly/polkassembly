@@ -10,11 +10,20 @@ import reAuthClient from './reAuthClient';
 
 async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
+	let token = '';
 
-	const currentURL = new URL(window.location.href);
-	const token = currentURL.searchParams.get('token') || (await reAuthClient()) || getLocalStorageToken();
+	// Check if we are in a client (browser) environment
+	if (typeof window !== 'undefined') {
+		const currentURL = new URL(window.location.href);
+		token = currentURL.searchParams.get('token') ?? (await reAuthClient()) ?? getLocalStorageToken() ?? '';
+	} else {
+		// Handle token retrieval for server-side (e.g., from cookies, headers, etc.)
+		token = ''; // Adjust this based on how you manage tokens server-side
+	}
 
-	const response = await fetch(`${window.location.origin}/${url}`, {
+	const baseUrl = typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+
+	const response = await fetch(`${baseUrl}/${url}`, {
 		body: JSON.stringify(data),
 		credentials: 'include',
 		headers: {

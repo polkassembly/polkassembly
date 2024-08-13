@@ -110,6 +110,29 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [profileDetails?.addresses, api, apiReady, peopleChainApi, peopleChainApiReady, network]);
 
+	const updatebadges = async () => {
+		try {
+			const response = await fetch('http://localhost:3000/api/v1/achivementbadges/update-badges', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ network: 'polkadot' })
+			})
+				.then((response) => response.json())
+				.then((data) => console.log(data))
+				.catch((error) => console.error('Error:', error));
+
+			console.log('Success:', response);
+		} catch (error) {
+			console.error('Error fetching user profile:', error);
+		}
+	};
+
+	useEffect(() => {
+		updatebadges();
+	}, [network]);
+
 	useEffect(() => {
 		const { email, twitter, riot, web } = onChainIdentity;
 

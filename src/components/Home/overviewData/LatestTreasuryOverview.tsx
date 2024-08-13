@@ -134,12 +134,12 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 			}
 
 			// const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', {
-			// 	network,
-			// 	isDaily: true
+			//network,
+			// isDaily: true
 			// });
 
 			// if (dailyError) {
-			// 	console.error('Error fetching daily data:', dailyError);
+			// console.error('Error fetching daily data:', dailyError);
 			// }
 			// if (dailyData) {
 			// }

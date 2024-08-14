@@ -24,7 +24,7 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	return (
-		<div>
+		<>
 			{!['moonbase', 'polimec', 'rolimec', 'westend'].includes(network) && (
 				<div className='flex w-full flex-1 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-3'>
 					<div className='w-full flex-col gap-x-0 lg:flex'>
@@ -107,7 +107,7 @@ const CurrentPrice = ({ currentTokenPrice, priceWeeklyChange }: Props) => {
 					</div>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

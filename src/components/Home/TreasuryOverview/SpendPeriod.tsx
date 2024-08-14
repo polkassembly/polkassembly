@@ -29,7 +29,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const trailColor = theme === 'dark' ? '#1E262D' : '#E5E5E5';
 	return (
-		<div>
+		<>
 			{!['polymesh', 'polymesh-test'].includes(network) && (
 				<>
 					{!inTreasuryProposals && (
@@ -128,7 +128,7 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 					)}
 				</>
 			)}
-		</div>
+		</>
 	);
 };
 

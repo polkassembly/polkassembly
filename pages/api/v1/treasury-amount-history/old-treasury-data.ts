@@ -95,7 +95,6 @@ const isDataPresentForCurrentMonth = async (network: string): Promise<boolean> =
 		const data = networkDoc.data();
 		const currentMonth = dayjs().format('MMMM').toLowerCase();
 
-		// Use Object.prototype.hasOwnProperty.call to avoid the error
 		return Object.prototype.hasOwnProperty.call(data?.monthly_treasury_tally, currentMonth);
 	}
 

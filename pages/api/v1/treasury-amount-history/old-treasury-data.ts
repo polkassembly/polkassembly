@@ -27,34 +27,32 @@ function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const startDate = targetDate.startOf('day');
 	const endDate = targetDate.endOf('day');
 
-	const start = startDate.format('YYYY-MM-DD');
-	const end = endDate.format('YYYY-MM-DD');
-	return { start, end };
+	return {
+		start: startDate.format('YYYY-MM-DD'),
+		end: endDate.format('YYYY-MM-DD')
+	};
 }
 
-const getMonthName = (date: dayjs.Dayjs): string => {
-	return date.format('MMMM').toLowerCase();
-};
+const getMonthName = (date: dayjs.Dayjs): string => date.format('MMMM').toLowerCase();
 
 export const aggregateBalances = (data1: ITreasuryResponseData[], data2: ITreasuryResponseData[]): { [key: string]: number } => {
 	const getLatestBalance = (history: IHistoryItem[]): number => {
 		const sortedHistory = history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-		return parseFloat(sortedHistory[0].balance) || 0;
+		return parseFloat(sortedHistory[0]?.balance) || 0;
 	};
 
 	const combinedData: { [key: string]: number } = {};
 
 	const processTreasuryData = (data: ITreasuryResponseData[]) => {
-		data
-			.filter(({ history }) => history && getLatestBalance(history) > 0)
-			.forEach(({ history }) => {
+		data?.forEach(({ history }) => {
+			const balanceValue = getLatestBalance(history ?? []);
+			if (balanceValue > 0) {
 				history?.forEach(({ date }) => {
 					const key = getMonthName(dayjs(date));
-					const balanceValue = getLatestBalance(history);
-
-					combinedData[key] = (combinedData[key] || 0) + balanceValue;
+					combinedData[key] = (combinedData[key] ?? 0) + balanceValue;
 				});
-			});
+			}
+		});
 	};
 
 	processTreasuryData(data1);
@@ -64,24 +62,14 @@ export const aggregateBalances = (data1: ITreasuryResponseData[], data2: ITreasu
 };
 
 const isDataPresentForCurrentMonth = async (network: string): Promise<boolean> => {
-	const networkRef = firestore_db.collection('networks').doc(network);
-	const networkDoc = await networkRef.get();
+	const networkDoc = await firestore_db.collection('networks').doc(network).get();
+	const currentMonth = dayjs().format('MMMM').toLowerCase();
 
-	if (networkDoc.exists) {
-		const data = networkDoc.data();
-		const currentMonth = dayjs().format('MMMM').toLowerCase();
-
-		return currentMonth in (data?.monthly_treasury_tally || {});
-	}
-
-	return false;
+	return !!networkDoc.exists && currentMonth in (networkDoc.data()?.monthly_treasury_tally ?? {});
 };
 
 export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
-	const returnResponse: IReturnResponse = {
-		data: null,
-		error: null
-	};
+	const returnResponse: IReturnResponse = {};
 
 	if (!network) {
 		returnResponse.error = messages.INVALID_NETWORK;
@@ -94,14 +82,8 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 		for (let monthsAgo = 0; monthsAgo <= lastNMonths; monthsAgo++) {
 			const { start, end } = getMonthRange(monthsAgo);
 
-			const requestBody = {
-				address,
-				end,
-				start
-			};
-
 			const response = await fetch(apiUrl, {
-				body: JSON.stringify(requestBody),
+				body: JSON.stringify({ address, start, end }),
 				headers: subscanApiHeaders,
 				method: 'POST'
 			});
@@ -111,10 +93,10 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 			}
 
 			const data = await response.json();
+			const responseData: ITreasuryResponseData = data?.data as ITreasuryResponseData;
 
 			if (data?.message === 'Success') {
-				const responseData: ITreasuryResponseData = data?.data as ITreasuryResponseData;
-				if (responseData.history === null) {
+				if (!responseData.history) {
 					responseData.history = [{ date: start, balance: '0' }];
 				}
 				dataPoints.push(responseData);
@@ -134,9 +116,7 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 
 const saveToFirestore = async (network: string, data: { [key: string]: number }) => {
 	try {
-		const networkRef = firestore_db.collection('networks').doc(network);
-
-		await networkRef.set(
+		await firestore_db.collection('networks').doc(network).set(
 			{
 				monthly_treasury_tally: data
 			},
@@ -161,11 +141,10 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 
 		const assetHubAddress = chainProperties[network]?.assetHubTreasuryAddress;
 		const assetHubExternalLinks = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
-
-		const networktreasuryAddress = chainProperties[network]?.treasuryAddress;
+		const networkTreasuryAddress = chainProperties[network]?.treasuryAddress;
 		const subscanLink = `${chainProperties[network]?.externalLinks}/api/scan/account/balance_history`;
 
-		if (!assetHubAddress || !assetHubExternalLinks || !networktreasuryAddress || !subscanLink) {
+		if (!assetHubAddress || !assetHubExternalLinks || !networkTreasuryAddress || !subscanLink) {
 			return {
 				data: null,
 				error: 'Missing address or API URL for the given network'
@@ -174,20 +153,20 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 
 		const [assetHubResult, networkResult] = await Promise.allSettled([
 			getAssetHubAndNetworkBalance(network, assetHubAddress, assetHubExternalLinks),
-			getAssetHubAndNetworkBalance(network, networktreasuryAddress, subscanLink)
+			getAssetHubAndNetworkBalance(network, networkTreasuryAddress, subscanLink)
 		]);
 
-		const assetHubResponse = assetHubResult.status === 'fulfilled' ? assetHubResult.value : { data: null, error: assetHubResult.reason };
-		const networkResponse = networkResult.status === 'fulfilled' ? networkResult.value : { data: null, error: networkResult.reason };
+		const assetHubResponse = assetHubResult.status === 'fulfilled' ? assetHubResult.value : { data: null, error: (assetHubResult as PromiseRejectedResult).reason };
+		const networkResponse = networkResult.status === 'fulfilled' ? networkResult.value : { data: null, error: (networkResult as PromiseRejectedResult).reason };
 
-		const combinedData = aggregateBalances(assetHubResponse.data || [], networkResponse.data || []);
+		const combinedData = aggregateBalances(assetHubResponse.data ?? [], networkResponse.data ?? []);
 		const combinedError = assetHubResponse.error || networkResponse.error;
 
 		await saveToFirestore(network, combinedData);
 
 		return {
 			data: combinedData ? [{ history: null, status: 'Success' }] : null,
-			error: combinedError
+			error: combinedError ?? null
 		};
 	} catch (error) {
 		return {
@@ -202,18 +181,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse
 
 	const network = req.headers['x-network'] as string;
 
-	if (!network || !isValidNetwork(network)) {
+	if (!isValidNetwork(network)) {
 		return res.status(400).json({ error: 'Missing or invalid network in request headers' });
 	}
 
 	const response = await getCombinedBalances(network);
-	if (response.error) {
-		res.status(500).json(response);
-		return;
-	} else {
-		res.status(200).json(response);
-		return;
-	}
+	res.status(response.error ? 500 : 200).json(response);
 };
 
 export default withErrorHandling(handler);

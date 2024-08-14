@@ -1,105 +1,151 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { firestore_db } from '~src/services/firebaseInit';
-import { Badge, ProfileDetailsResponse, BadgeCriterion, BadgeCheckContext, MessageType, BadgeName } from '~src/auth/types';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { Badge, ProfileDetailsResponse, BadgeCheckContext } from '~src/auth/types';
 import BN from 'bn.js';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { w3fDelegatesKusama, w3fDelegatesPolkadot } from '../delegations/delegates';
 import { getOnChainUserPosts } from '../listing/get-on-chain-user-post';
 import { getUserPostCount } from '../posts/user-total-post-counts';
-import { IDelegationStats } from '../delegations/get-delegation-stats';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
 import { firestore } from 'firebase-admin';
+import getW3fDelegateCheck from '../delegations/getW3fDelegateCheck';
+import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT, getDelegationStats, getTotalSupply } from './constant';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { getWSProvider } from '~src/global/achievementbadges';
 
-const BATCH_SIZE = 1000;
-const MAX_CONCURRENT_BATCHES = 5;
-
-const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String!], $startDate: DateTime!) {
-        flattenedConvictionVotes(
-            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true, createdAt_gte: $startDate }
-        ) {
-            balance {
-                ... on StandardVoteBalance {
-                    value
-                }
-                ... on SplitVoteBalance {
-                    aye
-                    nay
-                    abstain
-                }
-            }
-            lockPeriod
-            proposalIndex
-            createdAt
-        }
-    }`;
-
-const GET_POPULAR_DELEGATE = `query PopularDelegateQuery($delegateAddresses: [String!]) {
-			votingDelegations(where: { to_in: $delegateAddresses}) {
-				to
-				type
-				balance
-			}
-		}`;
-
-const hasMatchingAddress = (addresses: string[], delegates: { address: string }[]): boolean => {
-	return addresses.some((userAddress) => delegates.some((delegate) => delegate.address === userAddress));
-};
-
-const badgeCriteria: BadgeCriterion[] = [
-	{
-		check: async (user: ProfileDetailsResponse) => {
-			return hasMatchingAddress(user.addresses, w3fDelegatesPolkadot);
-		},
-		name: BadgeName.DecentralisedVoice_polkodot
-	},
-	{
-		check: async (user: ProfileDetailsResponse) => {
-			return hasMatchingAddress(user.addresses, w3fDelegatesKusama);
-		},
-		name: BadgeName.DecentralisedVoice_kusama
-	},
-	{
-		check: async (user: ProfileDetailsResponse) => {
-			const rank = await calculateRank(user);
-			return rank >= 1;
-		},
-		name: BadgeName.Fellow
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.isGov1Chain ?? false,
-		name: BadgeName.Council
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => {
-			if (!context?.proposals) return false;
-			const userVotes = context.proposals.filter((proposal: any) => proposal.voters.includes(user.addresses[0]));
-			return userVotes.length / context.proposals.length >= 0.15 && context.proposals.length >= 5;
-		},
-		name: BadgeName.ActiveVoter
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) =>
-			context?.votingPower !== undefined && context?.totalSupply !== undefined && context.votingPower >= context.totalSupply * 0.0005,
-		name: BadgeName.Whale
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.commentsCount !== undefined && context.commentsCount > 50,
-		name: BadgeName.SteadfastCommentor
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => context?.votesCount !== undefined && context.votesCount > 50,
-		name: BadgeName.GMVoter
-	},
-	{
-		check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) =>
-			context?.delegatedTokens !== undefined && context?.totalSupply !== undefined && context.delegatedTokens >= context.totalSupply * 0.0001,
-		name: BadgeName.PopularDelegate
+// Badge1: Check if the user is a Decentralised Voice delegate
+async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	try {
+		const result = await getW3fDelegateCheck(network, user.addresses);
+		return result.data?.isW3fDelegate ?? false;
+	} catch (err) {
+		console.error(`Unexpected error while checking W3F delegate status for ${user.username}:`, err);
+		return false;
 	}
-];
+}
 
+// Badge2: Check if the user qualifies for the Fellow badge based on rank
+async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
+	const rank = await calculateRank(user);
+	return rank >= 1;
+}
+
+// Badge3: Check if the user is on a governance chain (Gov1)
+async function checkCouncil(user: ProfileDetailsResponse, context?: BadgeCheckContext, network?: string): Promise<boolean> {
+	const wsProviderUrl = getWSProvider(network);
+
+	if (!wsProviderUrl) {
+		console.error(`WebSocket provider URL not found for network: ${network}`);
+		return false;
+	}
+
+	const wsProvider = new WsProvider(wsProviderUrl);
+	const api = await ApiPromise.create({ provider: wsProvider });
+
+	if (isOpenGovSupported(context?.network || '')) {
+		await api.disconnect();
+		return false;
+	}
+
+	try {
+		const members = await api.query.council?.members();
+		return members.some((member) => user.addresses.includes(member.toString()));
+	} catch (error) {
+		console.error('Error checking council members:', error);
+		return false;
+	} finally {
+		await api.disconnect();
+	}
+}
+
+// Badge 4: Check if the user is an Active Voter, participating in more than 15% of proposals
+async function checkActiveVoter(user: ProfileDetailsResponse, context?: BadgeCheckContext): Promise<boolean> {
+	const thirtyDaysAgo = new Date();
+	thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+	const formattedDate = thirtyDaysAgo.toISOString();
+
+	try {
+		const proposalCountRes = await fetchSubsquid({
+			network: context?.network,
+			query: GET_PROPOSAL_COUNT,
+			variables: { startDate: formattedDate }
+		});
+
+		const totalProposals = proposalCountRes?.data?.proposalsConnection?.totalCount || 0;
+		if (totalProposals < 5) return false;
+
+		const activeVoterRes = await fetchSubsquid({
+			network: context?.network,
+			query: GET_ACTIVE_VOTER,
+			variables: { voterAddresses: user.addresses, startDate: formattedDate }
+		});
+
+		const userVotes = activeVoterRes?.data?.flattenedConvictionVotes || [];
+		return userVotes.length / totalProposals >= 0.15;
+	} catch (error) {
+		console.error('Error checking Active Voter status:', error);
+		return false;
+	}
+}
+
+// Badge 5: Check if the user qualifies for the Whale badge, holding more than 0.05% of the total supply
+async function checkWhale(user: ProfileDetailsResponse, context?: BadgeCheckContext, network: string): Promise<boolean> {
+	if (!context?.votingPower) return false;
+
+	try {
+		const totalSupply = await getTotalSupply(network);
+		if (totalSupply.isZero()) return false;
+
+		return new BN(context.votingPower).gte(totalSupply.mul(new BN(5)).div(new BN(10000)));
+	} catch (error) {
+		console.error('Failed to fetch or calculate total supply:', error);
+		return false;
+	}
+}
+
+// Badge 6: Check if the user qualifies as a Steadfast Commentor with more than 50 comments
+function checkSteadfastCommentor(user: ProfileDetailsResponse, context?: BadgeCheckContext): boolean {
+	return context?.commentsCount !== undefined && context.commentsCount > 50;
+}
+
+// Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
+function checkGMVoter(user: ProfileDetailsResponse, context?: BadgeCheckContext): boolean {
+	return context?.votesCount !== undefined && context.votesCount > 50;
+}
+
+// Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
+async function checkPopularDelegate(user: ProfileDetailsResponse, context?: BadgeCheckContext, network: string): Promise<boolean> {
+	try {
+		const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
+			network: context?.network,
+			query: GET_POPULAR_DELEGATE
+		});
+
+		if (delegationsError || !delegationsData) {
+			console.error('Failed to fetch voting delegations:', delegationsError);
+			return false;
+		}
+
+		const delegations = delegationsData?.votingDelegations || [];
+		const userDelegations = delegations.filter((delegation) => user.addresses.includes(delegation.to));
+
+		const totalDelegatedTokens = userDelegations.reduce((acc, delegation) => {
+			return acc.add(new BN(delegation.balance));
+		}, new BN(0));
+
+		const totalSupply = await getTotalSupply(network);
+		if (totalSupply.isZero()) return false;
+
+		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
+	} catch (error) {
+		console.error('Failed to calculate Popular Delegate status:', error);
+		return false;
+	}
+}
+
+// Helper function to calculate the rank of a user based on their profile score
 async function calculateRank(user: ProfileDetailsResponse): Promise<number> {
 	const profileScore = Number(user.profile_score);
 
@@ -111,6 +157,7 @@ async function calculateRank(user: ProfileDetailsResponse): Promise<number> {
 	return querySnapshot.size + 1;
 }
 
+// Main function to evaluate badges for a user
 async function evaluateBadges(username: string, network: string): Promise<Badge[]> {
 	const { data: user, error } = await getUserProfileWithUsername(username);
 
@@ -122,13 +169,8 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	const userId = user.user_id;
 	const addresses = user.addresses;
 
-	if (!userId) {
-		console.error('Invalid user data: missing user_id');
-		return [];
-	}
-
-	if (!addresses || addresses.length === 0) {
-		console.warn(`User ${username} is missing addresses. Skipping badge evaluation.`);
+	if (!userId || !addresses || addresses.length === 0) {
+		console.warn(`Invalid user data for ${username}. Skipping badge evaluation.`);
 		return [];
 	}
 
@@ -142,76 +184,56 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 		return [];
 	}
 
-	const thirtyDaysAgo = new Date();
-	thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-	const formattedDate = thirtyDaysAgo.toISOString();
-	const queryVariables = {
-		voterAddresses: addresses,
-		startDate: formattedDate
-	};
-
-	const activeVoterRes = await fetchSubsquid({
-		network,
-		query: GET_ACTIVE_VOTER,
-		variables: queryVariables
-	});
-
-	const activeVotes = activeVoterRes?.data?.flattenedConvictionVotes || [];
-	const userVotesCount = activeVotes.length;
-
-	const popularDelegateRes = await fetchSubsquid({
-		network,
-		query: GET_POPULAR_DELEGATE,
-		variables: { delegateAddresses: addresses }
-	});
-
-	const delegatedVotes = popularDelegateRes?.data?.votingDelegations || [];
-	const totalDelegatedTokens = delegatedVotes.reduce((acc: BN, delegation: { balance: string | null }) => {
-		if (delegation.balance) {
-			return acc.add(new BN(delegation.balance));
-		}
-		return acc;
-	}, new BN(0));
-
-	const isGov1Chain = (onChainUserPosts?.gov1_total ?? 0) > 0;
-	const commentsSnapshot = await firestore_db
-		.collection('useractivities')
-		.where('comment_author_id', '==', userId)
-		.where('type', '==', 'COMMENTED')
-		.where('is_deleted', '==', false)
-		.get();
-
-	const commentsCount = commentsSnapshot.size;
-
 	const context: BadgeCheckContext = {
-		commentsCount,
-		delegatedTokens: Number(totalDelegatedTokens.toString()),
-		isGov1Chain,
-		proposals: activeVotes,
+		commentsCount: (
+			await firestore_db.collection('useractivities').where('comment_author_id', '==', userId).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
+		).size,
+		delegatedTokens: Number(delegationStats.totalDelegatedBalance),
+		isGov1Chain: (onChainUserPosts?.gov1_total ?? 0) > 0,
+		proposals:
+			(
+				await fetchSubsquid({
+					network,
+					query: GET_ACTIVE_VOTER,
+					variables: { voterAddresses: addresses, startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString() }
+				})
+			)?.data?.flattenedConvictionVotes || [],
 		rank,
-		totalSupply: totalDelegatedTokens.toString(),
-		votesCount: userVotesCount,
-		votingPower: Number(delegationStats.totalDelegatedBalance)
+		totalSupply: delegationStats.totalDelegatedBalance.toString(),
+		votesCount: (
+			await fetchSubsquid({
+				network,
+				query: GET_ACTIVE_VOTER,
+				variables: { voterAddresses: addresses, startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString() }
+			})
+		)?.data?.flattenedConvictionVotes.length,
+		votingPower: Number(delegationStats.totalDelegatedBalance),
+		network: network
 	};
 
-	const badgeChecks = badgeCriteria.map(async (badge) => {
-		const checkResult = await badge.check(user, context);
-		if (!checkResult) {
-			console.log(`Badge ${badge.name} not awarded to user ${user.username}. Reason: Criteria not met.`);
-		} else {
-			console.log(`Badge ${badge.name} is awarded to user ${user.username}.`);
-		}
-		return checkResult
-			? {
-					check: true,
-					name: badge.name,
-					unlockedAt: new Date().toISOString()
-			  }
-			: null;
-	});
+	const badgeChecks = await Promise.all([
+		checkDecentralisedVoice(user, network),
+		checkFellow(user),
+		checkCouncil(user, context, network),
+		checkActiveVoter(user, context),
+		checkWhale(user, context, network),
+		checkSteadfastCommentor(user, context),
+		checkGMVoter(user, context),
+		checkPopularDelegate(user, context, network)
+	]);
 
-	const badges = (await Promise.all(badgeChecks)).filter((badge) => badge !== null) as Badge[];
+	const badges = badgeChecks
+		.map((checkResult, index) => {
+			if (checkResult) {
+				return {
+					check: true,
+					name: badgeNames[index],
+					unlockedAt: new Date().toISOString()
+				};
+			}
+			return null;
+		})
+		.filter((badge) => badge !== null) as Badge[];
 
 	if (userId) {
 		await updateUserAchievementBadges(userId.toString(), badges);
@@ -222,27 +244,16 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	return badges;
 }
 
-async function getDelegationStats(network: string): Promise<{ data: IDelegationStats }> {
-	const { data, error } = await nextApiClientFetch<IDelegationStats | MessageType>(`/api/v1/delegations/get-delegation-stats?network=${network}`);
-	if (error) {
-		throw new Error(error);
-	}
-	return { data: data as IDelegationStats };
-}
-
+// Function to update the user's badges in Firestore
 async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 	const userDocRef = firestore_db.collection('users').doc(userId);
 	const userDoc = await userDocRef.get();
 	const profile = userDoc.data()?.profile || {};
 	const existingBadges = profile.achievement_badges || [];
 
-	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge: Badge) => existingBadge.name === newBadge.name));
+	const updatedBadges = existingBadges.filter((existingBadge: Badge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
+	const mergedBadges = [...updatedBadges, ...newBadges];
 
-	if (filteredNewBadges.length === 0) {
-		console.log(`No new badges to add for User ID: ${userId}`);
-		return;
-	}
-	const mergedBadges = [...existingBadges, ...filteredNewBadges];
 	profile.achievement_badges = mergedBadges;
 
 	const updateData: any = {
@@ -261,87 +272,62 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 	}
 }
 
-function chunkArray(array: any[], size: number) {
-	const result = [];
-	for (let i = 0; i < array.length; i += size) {
-		result.push(array.slice(i, i + size));
-	}
-	return result;
-}
+// Function to update badges for users
+async function updateUserBadges(username: string, network: string) {
+	const { data: user, error } = await getUserProfileWithUsername(username);
 
-async function updateAllUsersBadges(network: string) {
-	const usersSnapshot = await firestore_db.collection('users').get();
-	const users = usersSnapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }));
-	const chunks = chunkArray(users, BATCH_SIZE);
-
-	const batchPromises: Promise<void>[] = [];
-	const processedUserIds = new Set<string>();
-
-	for (const chunk of chunks) {
-		if (batchPromises.length >= MAX_CONCURRENT_BATCHES) {
-			await Promise.all(batchPromises);
-			batchPromises.length = 0;
-		}
-
-		const batch = firestore_db.batch();
-
-		for (const user of chunk) {
-			const userId = user.id;
-
-			if (processedUserIds.has(userId)) {
-				console.log(`Skipping already processed user ID: ${userId}`);
-				continue;
-			}
-
-			const userDocRef = firestore_db.collection('users').doc(userId);
-			const profile = user.data.profile || {};
-
-			const newBadges = await evaluateBadges(user.data.username, network);
-			const existingBadges = profile.achievement_badges || [];
-			const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge: Badge) => existingBadge.name === newBadge.name));
-
-			profile.achievement_badges = [...existingBadges, ...filteredNewBadges];
-
-			batch.update(userDocRef, { profile });
-
-			if (user.data.achievement_badges) {
-				batch.update(userDocRef, { achievement_badges: firestore.FieldValue.delete() });
-			}
-
-			processedUserIds.add(userId);
-		}
-
-		const batchPromise = batch
-			.commit()
-			.then(() => {
-				console.log('Batch committed successfully');
-			})
-			.catch((error) => {
-				console.error('Failed to commit batch', error);
-			});
-
-		batchPromises.push(batchPromise);
+	if (error || !user) {
+		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);
+		return;
 	}
 
-	if (batchPromises.length > 0) {
-		await Promise.all(batchPromises);
+	const userId = user.user_id;
+	const userDocRef = firestore_db.collection('users').doc(userId.toString());
+
+	const newBadges = await evaluateBadges(username, network);
+	const existingBadges = user.achievement_badges || [];
+
+	// Determine which existing badges are still valid
+	const validExistingBadges = existingBadges.filter((existingBadge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
+
+	// Identify new badges that need to be added
+	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge) => existingBadge.name === newBadge.name));
+
+	// Merge valid existing badges with newly awarded badges
+	const updatedBadges = [...validExistingBadges, ...filteredNewBadges];
+
+	// Prepare the update data
+	const updateData: any = {
+		achievement_badges: updatedBadges.length > 0 ? updatedBadges : []
+	};
+
+	try {
+		await userDocRef.update(updateData);
+		console.log(`User ID: ${userId}, badges updated successfully.`);
+	} catch (error) {
+		console.error(`Failed to update badges for User ID: ${userId}`, error);
 	}
 }
 
+// Main API handler for processing badge updates
 const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
-		const { network } = req.body;
+		const { network, username } = req.body;
 
 		if (!network || !isValidNetwork(network)) {
 			return res.status(400).json({ message: 'Invalid network.' });
 		}
 
+		if (!username) {
+			return res.status(400).json({ message: 'Username is required.' });
+		}
+
 		try {
-			await updateAllUsersBadges(network);
-			res.status(200).json({ message: 'All users updated successfully.' });
+			await updateUserBadges(username, network);
+			res.status(200).json({ message: `Badges updated successfully for user: ${username}.` });
 		} catch (error) {
-			console.error('Error updating users:', error);
-			res.status(500).json({ message: 'Failed to update users.' });
+			console.error(`Error updating badges for user: ${username}`, error);
+			res.status(500).json({ message: 'Failed to update user badges.' });
 		}
 	} else {
 		res.status(405).json({ message: 'Method not allowed.' });

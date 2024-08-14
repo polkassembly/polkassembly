@@ -290,6 +290,7 @@ export interface BadgeCheckContext {
 	totalSupply?: any;
 	votesCount?: number;
 	votingPower?: number;
+	network?: string;
 }
 
 export interface BadgeCriterion {

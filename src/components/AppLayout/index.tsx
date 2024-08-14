@@ -589,6 +589,12 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		);
 	}
 
+	gov1Items['overviewItems'].splice(
+		3,
+		0,
+		getSiderMenuItem('Gov Analytics', '/gov-level-analytics', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+	);
+
 	let items: MenuProps['items'] = isOpenGovSupported(network) ? [] : [...gov1Items.overviewItems];
 
 	if (chainProperties[network]?.subsquidUrl && network !== AllNetworks.POLYMESH) {

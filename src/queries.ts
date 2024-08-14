@@ -2523,6 +2523,37 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
 }
 `;
 
+export const GET_TOTAL_APPROVED_PROPOSALS = `
+query MyQuery {
+  proposalsConnection(where: {status_in:[Confirmed,Executed,Approved], type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
+export const GET_STATUS_WISE_REF_OUTCOME = `
+query MyQuery ($trackNo: Int){
+  timeout:proposalsConnection(where: {status_in:[TimedOut], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+  ongoing:proposalsConnection(where: {status_in:[DecisionDepositPlaced,Deciding,ConfirmAborted,ConfirmStarted, Submitted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+   approved:proposalsConnection(where: {status_in:[Executed,Approved, Confirmed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+   rejected:proposalsConnection(where: {status_in:[Rejected,Killed,ExecutionFailed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+  cancelled:proposalsConnection(where: {status_in:[Cancelled, ConfirmAborted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+}
+`;
+
 export const GET_ACTIVE_BOUNTIES_WITH_REWARDS = `
   query Rewards {
     proposals(where: {type_eq: Bounty, status_in: [Proposed, Active, CuratorUnassigned, Extended]}) {

@@ -12,32 +12,17 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { firestore_db } from '~src/services/firebaseInit';
-import { IHistoryItem } from '~src/types';
-
-interface IResponseData {
-	history: IHistoryItem[] | null;
-	status: string;
-}
+import { IHistoryItem, ITreasuryResponseData } from '~src/types';
 
 interface IReturnResponse {
-	data?: IResponseData[] | null;
+	data?: ITreasuryResponseData[] | null;
 	error?: null | string;
 }
 
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
-	const today = dayjs();
-	const startDate = today.subtract(monthsAgo, 'month').set('date', 3); // Set start date to 3nd of the month
-	const endDate = startDate.add(1, 'month').subtract(1, 'day');
-
-	const start = startDate.format('YYYY-MM-DD');
-	const end = endDate.format('YYYY-MM-DD');
-	return { start, end };
-}
-
-function getTodayRange(): { start: string; end: string } {
-	const today = dayjs();
-	const startDate = today.startOf('day');
-	const endDate = today.endOf('day');
+	const targetDate = dayjs().subtract(monthsAgo, 'month').set('date', 3);
+	const startDate = targetDate.startOf('day');
+	const endDate = targetDate.endOf('day');
 
 	const start = startDate.format('YYYY-MM-DD');
 	const end = endDate.format('YYYY-MM-DD');
@@ -48,7 +33,7 @@ const getMonthName = (date: dayjs.Dayjs): string => {
 	return date.format('MMMM').toLowerCase();
 };
 
-const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): { [key: string]: number } => {
+export const aggregateBalances = (data1: ITreasuryResponseData[], data2: ITreasuryResponseData[]): { [key: string]: number } => {
 	const getLatestBalance = (history: IHistoryItem[]): number => {
 		const sortedHistory = history.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 		return parseFloat(sortedHistory[0].balance) || 0;
@@ -56,7 +41,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): { [k
 
 	const combinedData: { [key: string]: number } = {};
 
-	const filterNonZeroBalances = (data: IResponseData[]) => {
+	const filterNonZeroBalances = (data: ITreasuryResponseData[]) => {
 		return data.filter(({ history }) => {
 			if (history) {
 				const balanceValue = getLatestBalance(history);
@@ -102,9 +87,7 @@ const aggregateBalances = (data1: IResponseData[], data2: IResponseData[]): { [k
 	return combinedData;
 };
 
-export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string, isDaily: boolean = false): Promise<IReturnResponse> => {
-	const { start, end } = isDaily ? getTodayRange() : getMonthRange(0);
-
+export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
 	const returnResponse: IReturnResponse = {
 		data: null,
 		error: null
@@ -116,34 +99,42 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	}
 
 	try {
-		const requestBody = {
-			address,
-			end,
-			start
-		};
+		const dataPoints: ITreasuryResponseData[] = [];
 
-		const response = await fetch(apiUrl, {
-			body: JSON.stringify(requestBody),
-			headers: subscanApiHeaders,
-			method: 'POST'
-		});
+		for (let monthsAgo = 0; monthsAgo <= 6; monthsAgo++) {
+			const { start, end } = getMonthRange(monthsAgo);
 
-		if (!response.ok) {
-			throw new Error(messages.API_FETCH_ERROR);
-		}
+			const requestBody = {
+				address,
+				end,
+				start
+			};
 
-		const data = await response.json();
+			const response = await fetch(apiUrl, {
+				body: JSON.stringify(requestBody),
+				headers: subscanApiHeaders,
+				method: 'POST'
+			});
 
-		if (data?.message === 'Success') {
-			const responseData: IResponseData = data?.data as IResponseData;
-			if (responseData.history === null) {
-				responseData.history = [{ date: start, balance: '0' }];
+			if (!response.ok) {
+				throw new Error(messages.API_FETCH_ERROR);
 			}
-			returnResponse.data = [responseData];
-		} else {
-			returnResponse.error = messages.API_FETCH_ERROR;
+
+			const data = await response.json();
+
+			if (data?.message === 'Success') {
+				const responseData: ITreasuryResponseData = data?.data as ITreasuryResponseData;
+				if (responseData.history === null) {
+					responseData.history = [{ date: start, balance: '0' }];
+				}
+				dataPoints.push(responseData);
+			} else {
+				returnResponse.error = messages.API_FETCH_ERROR;
+				return returnResponse;
+			}
 		}
 
+		returnResponse.data = dataPoints;
 		return returnResponse;
 	} catch (error) {
 		returnResponse.error = error instanceof Error ? error.message : 'Data Not Available';
@@ -151,40 +142,22 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	}
 };
 
-const saveToFirestore = async (network: string, data: { [key: string]: number }, isDaily: boolean = false) => {
+const saveToFirestore = async (network: string, data: { [key: string]: number }) => {
 	try {
 		const networkRef = firestore_db.collection('networks').doc(network);
 
-		if (isDaily) {
-			const today = dayjs().format('YYYY-MM-DD');
-			const balance = Object.values(data).reduce((sum, val) => sum + val, 0); // Sum all balances
-			const dailyRef = networkRef.collection('daily_treasury_tally').doc(today);
-
-			const doc = await dailyRef.get();
-
-			if (doc.exists) {
-				console.log('Data for today already exists, skipping update.');
-				return;
-			} else {
-				await dailyRef.set({
-					created_at: new Date(),
-					balance
-				});
-			}
-		} else {
-			await networkRef.set(
-				{
-					monthly_treasury_tally: data
-				},
-				{ merge: true }
-			);
-		}
+		await networkRef.set(
+			{
+				monthly_treasury_tally: data
+			},
+			{ merge: true }
+		);
 	} catch (error) {
 		console.error('Error writing data to Firestore:', error);
 	}
 };
 
-export const getCombinedBalances = async (network: string, isDaily: boolean = false): Promise<IReturnResponse> => {
+export const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
 	try {
 		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
 		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
@@ -199,13 +172,13 @@ export const getCombinedBalances = async (network: string, isDaily: boolean = fa
 			};
 		}
 
-		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1, isDaily);
-		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2, isDaily);
+		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1);
+		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2);
 
 		const combinedData = aggregateBalances(response1.data || [], response2.data || []);
 		const combinedError = response1.error || response2.error;
 
-		await saveToFirestore(network, combinedData, isDaily);
+		await saveToFirestore(network, combinedData);
 
 		return {
 			data: combinedData ? [{ history: null, status: 'Success' }] : null,
@@ -222,7 +195,7 @@ export const getCombinedBalances = async (network: string, isDaily: boolean = fa
 const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {
 	storeApiKeyUsage(req);
 
-	const { network, isDaily } = req.body;
+	const { network } = req.body;
 
 	if (typeof network !== 'string') {
 		res.status(400).json({
@@ -232,7 +205,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse
 		return;
 	}
 
-	const response = await getCombinedBalances(network, isDaily);
+	const response = await getCombinedBalances(network);
 	if (response.error) {
 		res.status(500).json(response);
 	} else {

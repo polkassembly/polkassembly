@@ -892,3 +892,8 @@ export interface IOverviewProps {
 		valueUSD: string;
 	};
 }
+
+export interface ITreasuryResponseData {
+	history: IHistoryItem[] | null;
+	status: string;
+}

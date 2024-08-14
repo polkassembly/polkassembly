@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Card } from 'antd';
+import { Card, Spin } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -111,81 +111,83 @@ const AnalyticsReferendumCount = () => {
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Referendum count by Category</h2>
-			<div
-				className='flex justify-start'
-				style={{ height: '300px', width: '100%' }}
-			>
-				<ResponsivePie
-					data={data}
-					margin={{
-						bottom: 8,
-						left: 10,
-						right: 260,
-						top: 20
-					}}
-					colors={{ datum: 'data.color' }}
-					innerRadius={0.8}
-					padAngle={0.7}
-					cornerRadius={15}
-					activeOuterRadiusOffset={8}
-					borderWidth={1}
-					borderColor={{
-						from: 'color',
-						modifiers: [['darker', 0.2]]
-					}}
-					enableArcLinkLabels={false}
-					arcLinkLabelsSkipAngle={10}
-					arcLinkLabelsTextColor='#333333'
-					arcLinkLabelsThickness={2}
-					arcLinkLabelsColor='#c93b3b'
-					enableArcLabels={false}
-					arcLabelsRadiusOffset={0.55}
-					arcLabelsSkipAngle={10}
-					arcLabelsTextColor={{
-						from: 'color',
-						modifiers: [['darker', 2]]
-					}}
-					defs={[
-						{
-							background: 'inherit',
-							color: 'rgba(255, 255, 255, 0.3)',
-							id: 'dots',
-							padding: 1,
-							size: 4,
-							stagger: true,
-							type: 'patternDots'
-						},
-						{
-							background: 'inherit',
-							color: 'rgba(255, 255, 255, 0.3)',
-							id: 'lines',
-							lineWidth: 6,
-							rotation: -45,
-							spacing: 10,
-							type: 'patternLines'
-						}
-					]}
-					legends={[
-						{
-							anchor: 'right',
-							data: data.map((item) => ({
-								color: item.color,
-								id: item.id,
-								label: `${item.label} - ${item.value}`
-							})),
-							direction: 'column',
-							itemDirection: 'left-to-right',
-							itemHeight: 52,
-							itemWidth: -60,
-							itemsSpacing: 1,
-							justify: false,
-							symbolSize: 16,
-							translateX: 40,
-							translateY: 0
-						}
-					]}
-				/>
-			</div>
+			<Spin spinning={loading}>
+				<div
+					className='flex justify-start'
+					style={{ height: '300px', width: '100%' }}
+				>
+					<ResponsivePie
+						data={data}
+						margin={{
+							bottom: 8,
+							left: 10,
+							right: 260,
+							top: 20
+						}}
+						colors={{ datum: 'data.color' }}
+						innerRadius={0.8}
+						padAngle={0.7}
+						cornerRadius={15}
+						activeOuterRadiusOffset={8}
+						borderWidth={1}
+						borderColor={{
+							from: 'color',
+							modifiers: [['darker', 0.2]]
+						}}
+						enableArcLinkLabels={false}
+						arcLinkLabelsSkipAngle={10}
+						arcLinkLabelsTextColor='#333333'
+						arcLinkLabelsThickness={2}
+						arcLinkLabelsColor='#c93b3b'
+						enableArcLabels={false}
+						arcLabelsRadiusOffset={0.55}
+						arcLabelsSkipAngle={10}
+						arcLabelsTextColor={{
+							from: 'color',
+							modifiers: [['darker', 2]]
+						}}
+						defs={[
+							{
+								background: 'inherit',
+								color: 'rgba(255, 255, 255, 0.3)',
+								id: 'dots',
+								padding: 1,
+								size: 4,
+								stagger: true,
+								type: 'patternDots'
+							},
+							{
+								background: 'inherit',
+								color: 'rgba(255, 255, 255, 0.3)',
+								id: 'lines',
+								lineWidth: 6,
+								rotation: -45,
+								spacing: 10,
+								type: 'patternLines'
+							}
+						]}
+						legends={[
+							{
+								anchor: 'right',
+								data: data.map((item) => ({
+									color: item.color,
+									id: item.id,
+									label: `${item.label} - ${item.value}`
+								})),
+								direction: 'column',
+								itemDirection: 'left-to-right',
+								itemHeight: 52,
+								itemWidth: -60,
+								itemsSpacing: 1,
+								justify: false,
+								symbolSize: 16,
+								translateX: 40,
+								translateY: 0
+							}
+						]}
+					/>
+				</div>
+			</Spin>
 		</StyledCard>
 	);
 };

@@ -31,7 +31,6 @@ function getPreviousDayRange(): { start: string; end: string } {
 
 const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
 	const { start, end } = getPreviousDayRange();
-	console.log('start, end ', { start, end });
 
 	const returnResponse: IReturnResponse = {
 		data: null,
@@ -95,7 +94,6 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 				const createdAtDate = dayjs(createdAt.toDate());
 
 				if (createdAtDate.isAfter(previousDay)) {
-					console.log('Data is less than 1 day old, skipping update.');
 					return;
 				}
 			}
@@ -120,6 +118,28 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 
 const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
 	try {
+		const networkRef = firestore_db.collection('networks').doc(network);
+
+		// Checking if the existing data is more than one day old
+		const doc = await networkRef.get();
+		if (doc.exists) {
+			const docData = doc.data();
+			const createdAt = docData?.daily_treasury_tally?.created_at;
+
+			if (createdAt) {
+				const createdAtDate = dayjs(createdAt.toDate());
+				const oneDayAgo = dayjs().subtract(1, 'day');
+
+				if (createdAtDate.isAfter(oneDayAgo)) {
+					return {
+						data: [{ history: null, status: 'Data is up to date' }],
+						error: null
+					};
+				}
+			}
+		}
+
+		// Calling API  if data is more than 1 day old or does not exist
 		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
 		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
 

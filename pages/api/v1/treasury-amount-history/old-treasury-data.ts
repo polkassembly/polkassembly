@@ -87,6 +87,20 @@ export const aggregateBalances = (data1: ITreasuryResponseData[], data2: ITreasu
 	return combinedData;
 };
 
+const isDataPresentForCurrentMonth = async (network: string): Promise<boolean> => {
+	const networkRef = firestore_db.collection('networks').doc(network);
+	const networkDoc = await networkRef.get();
+
+	if (networkDoc.exists) {
+		const data = networkDoc.data();
+		const currentMonth = dayjs().format('MMMM').toLowerCase();
+
+		return data?.monthly_treasury_tally?.hasOwnProperty(currentMonth);
+	}
+
+	return false;
+};
+
 export const getAssetHubAndNetworkBalance = async (network: string, address: string, apiUrl: string): Promise<IReturnResponse> => {
 	const returnResponse: IReturnResponse = {
 		data: null,
@@ -159,6 +173,16 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 
 export const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
 	try {
+		const isCurrentMonthDataPresent = await isDataPresentForCurrentMonth(network);
+		const isThirdDayOfMonth = dayjs().date() === 3;
+
+		if (isCurrentMonthDataPresent || !isThirdDayOfMonth) {
+			return {
+				data: null,
+				error: 'Data for the current month is already present'
+			};
+		}
+
 		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
 		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
 

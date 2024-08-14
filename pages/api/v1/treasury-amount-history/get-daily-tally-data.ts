@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
+/* eslint-disable sort-keys */
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -45,7 +47,7 @@ export async function getDailyTreasuryTally(params: IGetTreasuryHistoryParams): 
 		}
 
 		const treasuryData: IDailyTreasuryTally = {
-			created_at: dailyTreasuryTally.created_at.toDate().toISOString(), // Convert Firestore timestamp to ISO string
+			created_at: dailyTreasuryTally.created_at.toDate().toISOString(),
 			balance: dailyTreasuryTally.balance.toString()
 		};
 

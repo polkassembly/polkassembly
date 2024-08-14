@@ -21,7 +21,7 @@ import { isWeb3Injected } from '@polkadot/extension-dapp';
 import { Injected, InjectedWindow } from '@polkadot/extension-inject/types';
 import { APPNAME } from '~src/global/appName';
 import queueNotification from '~src/ui-components/QueueNotification';
-import { EASSETS, IBeneficiary, NotificationStatus } from '~src/types';
+import { IBeneficiary, NotificationStatus } from '~src/types';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { blake2AsHex, decodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
@@ -39,7 +39,7 @@ import { IPreimageData } from 'pages/api/v1/preimages/latest';
 import _ from 'lodash';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useTreasuryProposalSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { trackEvent } from 'analytics';
 import Link from 'next/link';
@@ -51,6 +51,8 @@ import Alert from '~src/basic-components/Alert';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import { getFormatedBalanceFromAsset } from './utils/getFormatedBalanceFromAsset';
 
 const BalanceInput = dynamic(() => import('~src/ui-components/BalanceInput'), {
 	ssr: false
@@ -83,8 +85,8 @@ interface Props {
 	availableBalance: BN;
 	setAvailableBalance: (pre: BN) => void;
 	isUpdatedAvailableBalance: boolean;
-	setGenralIndex: (pre: string | null) => void;
-	genralIndex: string | null;
+	setGeneralIndex: (pre: string | null) => void;
+	generalIndex: string | null;
 	setInputAmountValue: (pre: string) => void;
 	inputAmountValue: string;
 }
@@ -117,8 +119,8 @@ const CreatePreimage = ({
 	setAvailableBalance,
 	isUpdatedAvailableBalance,
 	form,
-	genralIndex,
-	setGenralIndex,
+	generalIndex,
+	setGeneralIndex,
 	inputAmountValue,
 	setInputAmountValue
 }: Props) => {
@@ -137,7 +139,7 @@ const CreatePreimage = ({
 	const [txFee, setTxFee] = useState(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
-
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
 	const [loading, setLoading] = useState<boolean>(false);
 	const currentBlock = useCurrentBlock();
 
@@ -173,7 +175,6 @@ const CreatePreimage = ({
 		const txSelectedTrack = selectedTrackVal || selectedTrack;
 		const txFundingAmount = fundingAmountVal || fundingAmount;
 		latestBenefeciaries = latestBenefeciaries || beneficiaryAddresses;
-
 		//validate beneficiaryAddresses
 		if (
 			!latestBenefeciaries.length ||
@@ -311,7 +312,7 @@ const CreatePreimage = ({
 	}, [network]);
 
 	useEffect(() => {
-		if (![EASSETS.USDC, EASSETS.USDT].includes(genralIndex as any)) return;
+		if (!generalIndex) return;
 		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
 			payload: {
@@ -325,10 +326,10 @@ const CreatePreimage = ({
 		handleFundingAmountChange(new BN(beneficiaryAddresses?.[0].amount || 0));
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [genralIndex]);
+	}, [generalIndex]);
 
 	const onChangeLocalStorageSet = (changedKeyValueObj: any, isPreimage: boolean, preimageCreated?: boolean, preimageLinked?: boolean, isPreimageStateChange?: boolean) => {
-		setTxFee(ZERO_BN);
+		// setTxFee(ZERO_BN);
 		let data: any = localStorage.getItem('treasuryProposalData');
 		if (data) {
 			data = JSON.parse(data);
@@ -428,12 +429,12 @@ const CreatePreimage = ({
 		const txArr: any[] = [];
 
 		//mutibeneficiary not suppported    >>
-		if (genralIndex && beneficiaryAddresses.length === 1) {
+		if (generalIndex && beneficiaryAddresses.length === 1) {
 			const beneficiary = beneficiaryAddresses?.[0];
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
-			//USDT or USDT denominated 10^6   >>
-			balance = balance.mul(new BN('1000000')).div(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+			//asset associated balance;
+			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex, network }) || ZERO_BN;
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -446,7 +447,7 @@ const CreatePreimage = ({
 												PalletInstance: chainProperties?.[network]?.palletInstance
 											},
 											{
-												GeneralIndex: genralIndex
+												GeneralIndex: generalIndex
 											}
 										]
 									}
@@ -487,17 +488,26 @@ const CreatePreimage = ({
 			setSteps({ percent: 100, step: 2 });
 		};
 
-		const onFailed = () => {
+		const onFailed = (error: string) => {
 			queueNotification({
 				header: 'failed!',
-				message: 'Transaction failed!',
+				message: error || 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading(false);
 		};
 
 		setLoading(true);
-		await executeTx({ address: proposerAddress, api, apiReady, errorMessageFallback: 'failed.', network, onFailed, onSuccess, tx: preimage.notePreimageTx });
+		await executeTx({
+			address: proposerAddress,
+			api,
+			apiReady,
+			errorMessageFallback: 'failed.',
+			network,
+			onFailed: (error: string) => onFailed(error),
+			onSuccess,
+			tx: preimage.notePreimageTx
+		});
 	};
 
 	const handleSubmit = async () => {
@@ -671,7 +681,7 @@ const CreatePreimage = ({
 					if (args?.assetKind?.assetId?.value?.interior) {
 						const call = args?.assetKind?.assetId?.value?.interior?.value;
 						const assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
-						setGenralIndex(assetId);
+						setGeneralIndex(assetId);
 
 						const beneficiaryAddress =
 							typeof args?.beneficiary === 'string'
@@ -681,7 +691,7 @@ const CreatePreimage = ({
 								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '';
 
 						newBeneficiaryAddress.address = beneficiaryAddress;
-						balance = balance.div(new BN('1000000')).mul(new BN(String(10 ** chainProperties[network]?.tokenDecimals)));
+						balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex || '', network }) || ZERO_BN;
 					}
 					dispatchBeneficiaryAddresses({
 						payload: {
@@ -780,6 +790,8 @@ const CreatePreimage = ({
 				})
 			)
 		);
+
+		getPreimageTxFee(Boolean(isPreimage));
 
 		setPreimageCreated(false);
 		setPreimageLinked(false);
@@ -880,7 +892,6 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
 		return fundingAmt;
 	};
-
 	return (
 		<Spin
 			spinning={loading}
@@ -1059,14 +1070,14 @@ const CreatePreimage = ({
 												setInputValue={(input: string) => handleInputValueChange(input, index)}
 												onChange={handleFundingAmountChange}
 												theme={theme}
-												onAssetConfirm={setGenralIndex}
+												onAssetConfirm={setGeneralIndex}
 											/>
 										</div>
 									</div>
 								);
 							})}
 
-							{!genralIndex && (
+							{!generalIndex && (
 								<div className='flex items-center justify-between'>
 									<Button
 										type='text'
@@ -1161,11 +1172,18 @@ const CreatePreimage = ({
 									</label>
 									<span className='text-xs text-bodyBlue dark:text-blue-dark-medium'>
 										Current Value:{' '}
-										{!genralIndex ? (
-											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0)} USD</span>
+										{!generalIndex ? (
+											<span className='text-pink_primary'>{Math.floor(Number(inputAmountValue) * Number(currentTokenPrice) || 0) || 0} USD</span>
 										) : (
 											<span className='text-pink_primary'>
-												{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+												{getUsdValueFromAsset({
+													currentTokenPrice: currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex,
+													inputAmountValue: inputAmountValue || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network].tokenSymbol}
 											</span>
 										)}
 									</span>
@@ -1177,7 +1195,7 @@ const CreatePreimage = ({
 									theme={theme}
 									balance={fundingAmtToBN()}
 									disabled={true}
-									deafultAsset={genralIndex}
+									deafultAsset={generalIndex}
 								/>
 							</div>
 							<div className='mt-6'>
@@ -1340,7 +1358,7 @@ const CreatePreimage = ({
 						<Button
 							onClick={() => {
 								setSteps({ percent: 100, step: 0 });
-								setGenralIndex(null);
+								setGeneralIndex(null);
 							}}
 							className='h-10 w-[155px] rounded-[4px] border-pink_primary text-sm font-medium tracking-[0.05em] text-pink_primary dark:bg-transparent'
 						>

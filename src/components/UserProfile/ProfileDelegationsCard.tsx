@@ -8,22 +8,19 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext } from '~src/context';
-import { ETrackDelegationStatus, IDelegate, IDelegation } from '~src/types';
+import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import styled from 'styled-components';
-import VoterIcon from '~assets/icons/vote-small-icon.svg';
-import CapitalIcon from '~assets/icons/capital-small-icom.svg';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import classNames from 'classnames';
-import { DownArrowIcon, EditIcon, ExpandIcon } from '~src/ui-components/CustomIcons';
+import { CapitalIcon, ConvictionIcon, DownArrowIcon, EditIcon, ExpandIcon, VoterIcon } from '~src/ui-components/CustomIcons';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
-import ConvictionIcon from '~assets/icons/conviction-small-icon.svg';
 import dynamic from 'next/dynamic';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import Markdown from '~src/ui-components/Markdown';
@@ -219,12 +216,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 	const handleDelegationMandate = async () => {
 		setDelegationMandate('');
 		if (!checkedAddress.length) return;
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: checkedAddress });
-		if (data?.length) {
-			if (data?.[0]?.bio && data?.[0]?.dataSource?.includes('polkassembly')) {
-				setDelegationMandate(data?.[0]?.bio || '');
-			}
-		} else {
+		const { data, error } = await nextApiClientFetch<{ delegationMandate: string }>('api/v1/delegations/getPADelegationMandates', { address: checkedAddress });
+		if (data) {
+			setDelegationMandate(data?.delegationMandate);
+		} else if (error) {
 			console.log(error);
 		}
 	};
@@ -445,7 +440,7 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																	</div>
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<VoterIcon /> Voting Power
+																			<VoterIcon className='text-lightBlue dark:text-icon-dark-inactive' /> Voting Power
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)
@@ -465,14 +460,14 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 																	{getIsSingleDelegation(value?.delegations) && (
 																		<div className='flex justify-between'>
 																			<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																				<ConvictionIcon /> Conviction
+																				<ConvictionIcon className='text-lightBlue dark:text-blue-dark-medium' /> Conviction
 																			</span>
 																			<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>{value?.lockedPeriod || 0.1}x</span>
 																		</div>
 																	)}
 																	<div className='flex justify-between'>
 																		<span className='flex items-center gap-1 text-xs font-normal text-[#576D8B] dark:text-icon-dark-inactive'>
-																			<CapitalIcon /> Capital
+																			<CapitalIcon className='text-lightBlue dark:text-blue-dark-medium' /> Capital
 																		</span>
 																		<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>
 																			{value?.delegations?.length === 1 || getIsSingleDelegation(value?.delegations)

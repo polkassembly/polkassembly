@@ -22,6 +22,7 @@ import getIdentityLearnMoreRedirection from './utils/getIdentityLearnMoreRedirec
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { ApiPromise } from '@polkadot/api';
 import classNames from 'classnames';
+import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
 
 const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, setStartLoading, changeStep }: IAmountBreakDown) => {
 	const { network } = useNetworkSelector();
@@ -36,7 +37,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (['kusama', 'polkadot'].includes(network)) {
+		if (isPeopleChainSupportedNetwork(network)) {
 			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
 		} else {
 			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });

@@ -28,7 +28,6 @@ export default function blockToTime(blocks: BN | number, network: string, blockt
 	if (typeof blocks !== 'number') {
 		blocks = Number(blocks);
 	}
-
 	const time = secondsToDhm(blocks * blocktime);
 
 	return { seconds: blocks * blocktime, time };

@@ -59,6 +59,7 @@ import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
 
 import * as types from '../types';
+import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 
 export const network = {
 	POLKADOT: 'polkadot',
@@ -182,6 +183,22 @@ export const tokenSymbol = {
 	CGT: 'CGT'
 };
 
+export const treasuryAssets = {
+	DED: { name: 'dot-is-ded', img: '/assets/icons/ded-asset.png', tokenDecimal: 10, symbol: EAssets.DED },
+	USDT: {
+		name: 'usdt',
+		img: '/assets/icons/usdt.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDT
+	},
+	USDC: {
+		name: 'usdc',
+		img: '/assets/icons/usdc.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDC
+	}
+};
+
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
@@ -189,6 +206,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		parachain: '1000',
+		peopleChainParachain: '1004',
 		peopleChainRpcEndpoint: 'wss://polkadot-people-rpc.polkadot.io',
 		logo: polkadotLogo,
 		palletInstance: '50',
@@ -235,6 +253,11 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-polkadot.luckyfriday.io'
 			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
 		]
 	},
 	[network.KUSAMA]: {
@@ -244,6 +267,7 @@ export const chainProperties: types.ChainPropType = {
 		chainId: 0,
 		parachain: '1000',
 		peopleChainRpcEndpoint: 'wss://kusama-people-rpc.polkadot.io',
+		peopleChainParachain: '1004',
 		logo: kusamaLogo,
 		palletInstance: '50',
 		rpcEndpoint: 'wss://kusama-rpc.polkadot.io',
@@ -285,7 +309,8 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
-		]
+		],
+		supportedAssets: [{ ...treasuryAssets.USDT, genralIndex: '1984' }]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -1859,6 +1884,11 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via Parity',
 				key: 'wss://rococo-rpc.polkadot.io'
 			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
 		]
 	},
 	[network.XX]: {

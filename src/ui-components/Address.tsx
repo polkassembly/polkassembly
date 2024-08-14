@@ -15,7 +15,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import { EAddressOtherTextType, IDelegate } from '~src/types';
+import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
@@ -33,6 +33,7 @@ import { poppins } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { usePeopleChainApiContext } from '~src/context';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -142,11 +143,11 @@ const Address = (props: Props) => {
 
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			address: address
+		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
+			addresses: [address]
 		});
 		if (data) {
-			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+			setIsW3FDelegate(data?.isW3fDelegate || false);
 		} else {
 			console.log(error);
 			setIsW3FDelegate(false);
@@ -162,7 +163,7 @@ const Address = (props: Props) => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
-		} else if (['kusama', 'polkadot'].includes(network)) {
+		} else if (isPeopleChainSupportedNetwork(network)) {
 			setApi(peopleChainApi || null);
 			setApiReady(peopleChainApiReady);
 		} else {

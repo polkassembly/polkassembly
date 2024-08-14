@@ -13,6 +13,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import dayjs from 'dayjs';
 import { chainProperties } from '~src/global/networkConstants';
 import messages from '~src/auth/utils/messages';
+import { isValidNetwork } from '~src/api-utils';
 
 interface IReturnResponse {
 	data?: ITreasuryResponseData[] | null;
@@ -176,21 +177,19 @@ const getCombinedBalances = async (network: string): Promise<IReturnResponse> =>
 const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {
 	storeApiKeyUsage(req);
 
-	const { network } = req.body;
+	const network = req.headers['x-network'] as string;
 
-	if (typeof network !== 'string') {
-		res.status(400).json({
-			data: null,
-			error: 'Invalid network'
-		});
-		return;
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ error: 'Missing or invalid network in request headers' });
 	}
 
 	const response = await getCombinedBalances(network);
 	if (response.error) {
 		res.status(500).json(response);
+		return;
 	} else {
 		res.status(200).json(response);
+		return;
 	}
 };
 

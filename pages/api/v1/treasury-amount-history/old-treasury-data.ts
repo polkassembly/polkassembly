@@ -13,11 +13,14 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { firestore_db } from '~src/services/firebaseInit';
 import { IHistoryItem, ITreasuryResponseData } from '~src/types';
+import { isValidNetwork } from '~src/api-utils';
 
 interface IReturnResponse {
 	data?: ITreasuryResponseData[] | null;
 	error?: null | string;
 }
+
+const lastNMonths = 6;
 
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const targetDate = dayjs().subtract(monthsAgo, 'month').set('date', 3);
@@ -41,48 +44,21 @@ export const aggregateBalances = (data1: ITreasuryResponseData[], data2: ITreasu
 
 	const combinedData: { [key: string]: number } = {};
 
-	const filterNonZeroBalances = (data: ITreasuryResponseData[]) => {
-		return data.filter(({ history }) => {
-			if (history) {
-				const balanceValue = getLatestBalance(history);
-				return balanceValue > 0;
-			}
-			return false;
-		});
+	const processTreasuryData = (data: ITreasuryResponseData[]) => {
+		data
+			.filter(({ history }) => history && getLatestBalance(history) > 0)
+			.forEach(({ history }) => {
+				history?.forEach(({ date }) => {
+					const key = getMonthName(dayjs(date));
+					const balanceValue = getLatestBalance(history);
+
+					combinedData[key] = (combinedData[key] || 0) + balanceValue;
+				});
+			});
 	};
 
-	const networkTreasuryData = filterNonZeroBalances(data1);
-	const assethubTreasuryData = filterNonZeroBalances(data2);
-
-	networkTreasuryData.forEach(({ history }) => {
-		if (history) {
-			history.forEach(({ date }) => {
-				const key = getMonthName(dayjs(date));
-				const balanceValue = getLatestBalance(history);
-
-				if (combinedData[key]) {
-					combinedData[key] += balanceValue;
-				} else {
-					combinedData[key] = balanceValue;
-				}
-			});
-		}
-	});
-
-	assethubTreasuryData.forEach(({ history }) => {
-		if (history) {
-			history.forEach(({ date }) => {
-				const key = getMonthName(dayjs(date));
-				const balanceValue = getLatestBalance(history);
-
-				if (combinedData[key]) {
-					combinedData[key] += balanceValue;
-				} else {
-					combinedData[key] = balanceValue;
-				}
-			});
-		}
-	});
+	processTreasuryData(data1);
+	processTreasuryData(data2);
 
 	return combinedData;
 };
@@ -115,7 +91,7 @@ export const getAssetHubAndNetworkBalance = async (network: string, address: str
 	try {
 		const dataPoints: ITreasuryResponseData[] = [];
 
-		for (let monthsAgo = 0; monthsAgo <= 6; monthsAgo++) {
+		for (let monthsAgo = 0; monthsAgo <= lastNMonths; monthsAgo++) {
 			const { start, end } = getMonthRange(monthsAgo);
 
 			const requestBody = {
@@ -219,21 +195,19 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 const handler = async (req: NextApiRequest, res: NextApiResponse<IReturnResponse>): Promise<void> => {
 	storeApiKeyUsage(req);
 
-	const { network } = req.body;
+	const network = req.headers['x-network'] as string;
 
-	if (typeof network !== 'string') {
-		res.status(400).json({
-			data: null,
-			error: 'Invalid network'
-		});
-		return;
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ error: 'Missing or invalid network in request headers' });
 	}
 
 	const response = await getCombinedBalances(network);
 	if (response.error) {
 		res.status(500).json(response);
+		return;
 	} else {
 		res.status(200).json(response);
+		return;
 	}
 };
 

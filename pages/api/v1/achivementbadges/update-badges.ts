@@ -39,7 +39,7 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 
 // Badge3: Check if the user is on a governance chain (Gov1)
 async function checkCouncil(user: ProfileDetailsResponse, context?: BadgeCheckContext, network?: string): Promise<boolean> {
-	const wsProviderUrl = getWSProvider(network);
+	const wsProviderUrl = getWSProvider(network || '');
 
 	if (!wsProviderUrl) {
 		console.error(`WebSocket provider URL not found for network: ${network}`);
@@ -121,7 +121,7 @@ function checkGMVoter(user: ProfileDetailsResponse, context?: BadgeCheckContext)
 }
 
 // Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
-async function checkPopularDelegate(user: ProfileDetailsResponse, context?: BadgeCheckContext, network: string): Promise<boolean> {
+async function checkPopularDelegate(user: ProfileDetailsResponse, context?: BadgeCheckContext, network?: string): Promise<boolean> {
 	try {
 		const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
 			network: context?.network,
@@ -134,13 +134,13 @@ async function checkPopularDelegate(user: ProfileDetailsResponse, context?: Badg
 		}
 
 		const delegations = delegationsData?.votingDelegations || [];
-		const userDelegations = delegations.filter((delegation) => user.addresses.includes(delegation.to));
+		const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
 
-		const totalDelegatedTokens = userDelegations.reduce((acc, delegation) => {
+		const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
 			return acc.add(new BN(delegation.balance));
 		}, new BN(0));
 
-		const totalSupply = await getTotalSupply(network);
+		const totalSupply = await getTotalSupply(network || '');
 		if (totalSupply.isZero()) return false;
 
 		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));

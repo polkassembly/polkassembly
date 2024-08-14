@@ -11,14 +11,13 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import w3fDelegatesKusama from './w3f-delegates-kusama.json';
 import w3fDelegatesPolkadot from './w3f-delegates-polkadot.json';
 
-export const getW3fDelegateCheck = async (network: string, address: number) => {
+export const getW3fDelegateCheck = async (network: string, addresses: string[]) => {
 	try {
-		const encodedAddr = getEncodedAddress(address, network) || address;
+		const encodedAddresses = addresses?.map((addr) => getEncodedAddress(addr, network) || addr);
 
 		const w3fDelegates = network === 'polkadot' ? w3fDelegatesPolkadot : w3fDelegatesKusama;
 
-		const delegate = w3fDelegates?.filter((delegate) => getEncodedAddress(delegate.address, network) == encodedAddr);
-
+		const delegate = w3fDelegates?.filter((delegate) => encodedAddresses.includes(getEncodedAddress(delegate?.address, network) || delegate.address));
 		return { data: { isW3fDelegate: !!delegate.length } || false, error: null };
 	} catch (err) {
 		return { data: null, error: err || messages.API_FETCH_ERROR };
@@ -28,14 +27,14 @@ export const getW3fDelegateCheck = async (network: string, address: number) => {
 async function handler(req: NextApiRequest, res: NextApiResponse<{ isW3fDelegate: boolean } | MessageType>) {
 	storeApiKeyUsage(req);
 
-	const { address } = req.body;
+	const { addresses } = req.body;
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!address) return res.status(500).json({ message: messages.INVALID_PARAMS });
+	if (!addresses?.length) return res.status(500).json({ message: messages.INVALID_PARAMS });
 
-	const { data, error } = await getW3fDelegateCheck(network, address);
+	const { data, error } = await getW3fDelegateCheck(network, addresses);
 	if (data) {
 		return res.status(200).json(data);
 	}

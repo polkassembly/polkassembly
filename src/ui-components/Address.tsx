@@ -144,7 +144,7 @@ const Address = (props: Props) => {
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
 		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
-			address: address
+			addresses: [address]
 		});
 		if (data) {
 			setIsW3FDelegate(data?.isW3fDelegate || false);

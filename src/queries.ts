@@ -2531,6 +2531,14 @@ query MyQuery {
 }
 `;
 
+export const GET_TOTAL_CATEGORY_PROPOSALS = `
+query MyQuery ($Indexes: [Int!]){
+  count:proposalsConnection(where: {trackNumber_in:$Indexes, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
 export const GET_STATUS_WISE_REF_OUTCOME = `
 query MyQuery ($trackNo: Int){
   timeout:proposalsConnection(where: {status_in:[TimedOut], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){

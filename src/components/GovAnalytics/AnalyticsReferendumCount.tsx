@@ -1,10 +1,27 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Card } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
+import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { useNetworkSelector } from '~src/redux/selectors';
+import { MessageType } from '~src/auth/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+
+interface TrackInfo {
+	trackId: number;
+	group: string;
+}
+
+interface NetworkTrackInfo {
+	[key: string]: TrackInfo;
+}
+
+interface GroupedTrackIds {
+	[key: string]: number[];
+}
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -33,38 +50,64 @@ const StyledCard = styled(Card)`
 `;
 
 const AnalyticsReferendumCount = () => {
-	const data = [
-		{
-			color: '#da6087',
-			id: 'java',
-			label: 'java',
-			value: 234
-		},
-		{
-			color: '#dcc359',
-			id: 'css',
-			label: 'css',
-			value: 368
-		},
-		{
-			color: '#384d6c',
-			id: 'stylus',
-			label: 'stylus',
-			value: 490
-		},
-		{
-			color: '#e18d57',
-			id: 'c',
-			label: 'c',
-			value: 20
-		},
-		{
-			color: '#a59482',
-			id: 'ruby',
-			label: 'ruby',
-			value: 420
+	const { network } = useNetworkSelector();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [loading, setLoading] = useState<boolean>(false);
+	const [categoryInfo, setCategoryInfo] = useState({
+		governance: 0,
+		main: 0,
+		treasury: 0,
+		whiteList: 0
+	});
+
+	const groupedTrackIds: GroupedTrackIds = {};
+	for (const key in networkTrackInfo[network] as NetworkTrackInfo) {
+		if (networkTrackInfo[network]) {
+			const group = networkTrackInfo[network][key].group;
+			const trackId = networkTrackInfo[network][key].trackId;
+			if (group) {
+				// Check if group is defined
+				if (group in groupedTrackIds) {
+					groupedTrackIds[group].push(trackId);
+				} else {
+					groupedTrackIds[group] = [trackId];
+				}
+			}
 		}
-	];
+	}
+
+	const getData = async () => {
+		setLoading(true);
+		try {
+			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/categoryWiseTotalProposalCount', {
+				categoryIds: groupedTrackIds
+			});
+			if (data) {
+				console.log(data);
+				setCategoryInfo(data?.categoryCounts);
+				setLoading(false);
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const colors = ['#dcc359', '#384d6c', '#da6087', '#e18d57'];
+
+	// Generate the pie chart data dynamically from categoryInfo
+	const data = Object.keys(categoryInfo).map((category) => ({
+		color: colors[Object.keys(categoryInfo).indexOf(category as keyof typeof categoryInfo)],
+		id: category,
+		label: category,
+		value: categoryInfo[category as keyof typeof categoryInfo]
+	}));
+
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Referendum count by Category</h2>
@@ -76,7 +119,7 @@ const AnalyticsReferendumCount = () => {
 					data={data}
 					margin={{
 						bottom: 8,
-						left: 0,
+						left: 10,
 						right: 260,
 						top: 20
 					}}
@@ -125,13 +168,18 @@ const AnalyticsReferendumCount = () => {
 					legends={[
 						{
 							anchor: 'right',
+							data: data.map((item) => ({
+								color: item.color,
+								id: item.id,
+								label: `${item.label} - ${item.value}`
+							})),
 							direction: 'column',
 							itemDirection: 'left-to-right',
-							itemHeight: 34,
-							itemWidth: -40,
+							itemHeight: 52,
+							itemWidth: -60,
 							itemsSpacing: 1,
 							justify: false,
-							symbolSize: 12,
+							symbolSize: 16,
 							translateX: 40,
 							translateY: 0
 						}

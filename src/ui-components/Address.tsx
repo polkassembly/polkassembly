@@ -15,7 +15,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import { EAddressOtherTextType, IDelegate } from '~src/types';
+import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
@@ -143,11 +143,11 @@ const Address = (props: Props) => {
 
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			address: address
+		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
+			addresses: [address]
 		});
 		if (data) {
-			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+			setIsW3FDelegate(data?.isW3fDelegate || false);
 		} else {
 			console.log(error);
 			setIsW3FDelegate(false);

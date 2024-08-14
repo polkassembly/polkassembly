@@ -13,16 +13,12 @@ interface IGetTreasuryHistoryParams {
 	network: string;
 }
 
-export interface IMonthlyTreasuryTally {
-	[key: string]: string;
-}
-
-interface IHistoryItem {
-	month: string;
+interface IDailyTreasuryTally {
+	created_at: string;
 	balance: string;
 }
 
-export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams): Promise<IApiResponse<IHistoryItem[]>> {
+export async function getDailyTreasuryTally(params: IGetTreasuryHistoryParams): Promise<IApiResponse<IDailyTreasuryTally>> {
 	try {
 		const { network } = params;
 
@@ -38,23 +34,23 @@ export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams
 		}
 
 		const data = doc.data();
-		const treasuryData = data ? (data['monthly_treasury_tally'] as IMonthlyTreasuryTally) : null;
+		const dailyTreasuryTally = data ? data['daily_treasury_tally'] : null;
 
-		if (!treasuryData) {
+		if (!dailyTreasuryTally) {
 			return {
 				data: null,
-				error: `No treasury history found in monthly_treasury_tally for network: ${network}`,
+				error: `No treasury history found in daily_treasury_tally for network: ${network}`,
 				status: 404
 			};
 		}
 
-		const treasuryAmountHistory: IHistoryItem[] = Object.entries(treasuryData).map(([month, balance]) => ({
-			balance: balance.toString(),
-			month
-		}));
+		const treasuryData: IDailyTreasuryTally = {
+			created_at: dailyTreasuryTally.created_at.toDate().toISOString(), // Convert Firestore timestamp to ISO string
+			balance: dailyTreasuryTally.balance.toString()
+		};
 
 		return {
-			data: treasuryAmountHistory,
+			data: treasuryData,
 			error: null,
 			status: 200
 		};
@@ -67,7 +63,7 @@ export async function getTreasuryAmountHistory(params: IGetTreasuryHistoryParams
 	}
 }
 
-const handler: NextApiHandler<IHistoryItem[] | { error: string }> = async (req, res) => {
+const handler: NextApiHandler<IDailyTreasuryTally | { error: string }> = async (req, res) => {
 	storeApiKeyUsage(req);
 
 	const network = req.headers['x-network'] as string;
@@ -77,7 +73,7 @@ const handler: NextApiHandler<IHistoryItem[] | { error: string }> = async (req, 
 	}
 
 	try {
-		const { data, error, status } = await getTreasuryAmountHistory({ network });
+		const { data, error, status } = await getDailyTreasuryTally({ network });
 
 		if (error || !data) {
 			return res.status(status).json({ error: error || messages.API_FETCH_ERROR });

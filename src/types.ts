@@ -897,3 +897,8 @@ export interface ITreasuryResponseData {
 	history: IHistoryItem[] | null;
 	status: string;
 }
+
+export interface IDailyTreasuryTallyData {
+	created_at: string;
+	balance: string;
+}

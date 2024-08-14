@@ -66,14 +66,14 @@ const OverviewDataGraph = ({ graphData }: { graphData: IMonthlyTreasuryTally[] }
 		<div style={{ height: '80px' }}>
 			<ResponsiveLine
 				data={formattedData}
-				margin={{ bottom: 36, left: 0, right: 0, top: 15 }}
+				margin={{ bottom: 40, left: 0, right: 0, top: 15 }}
 				xScale={{ type: 'point' }}
 				yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 				axisTop={null}
 				axisRight={null}
 				axisBottom={{
 					tickSize: 3,
-					tickPadding: 20,
+					tickPadding: 25,
 					tickRotation: 0,
 					format: (value) => {
 						if (value === firstMonth.charAt(0).toUpperCase() + firstMonth.slice(1) || value === lastMonth.charAt(0).toUpperCase() + lastMonth.slice(1)) {

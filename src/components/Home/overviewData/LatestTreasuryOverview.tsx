@@ -131,7 +131,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const fetchDataFromApi = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data', { network });
+			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
 
 			if (error) {
 				console.error('Error fetching data:', error);
@@ -140,9 +140,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				return;
 			}
 
-			const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally', {
-				network
-			});
+			const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally');
 
 			if (dailyError) {
 				console.error('Error fetching daily data:', dailyError);

@@ -71,7 +71,7 @@ const isDataPresentForCurrentMonth = async (network: string): Promise<boolean> =
 		const data = networkDoc.data();
 		const currentMonth = dayjs().format('MMMM').toLowerCase();
 
-		return Object.prototype.hasOwnProperty.call(data?.monthly_treasury_tally, currentMonth);
+		return currentMonth in (data?.monthly_treasury_tally || {});
 	}
 
 	return false;
@@ -159,24 +159,29 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 			};
 		}
 
-		const address1 = chainProperties[network]?.assetHubTreasuryAddress;
-		const apiUrl1 = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
+		const assetHubAddress = chainProperties[network]?.assetHubTreasuryAddress;
+		const assetHubExternalLinks = `${chainProperties[network]?.assethubExternalLinks}/api/scan/account/balance_history`;
 
-		const address2 = chainProperties[network]?.treasuryAddress;
-		const apiUrl2 = `${chainProperties[network]?.externalLinks}/api/scan/account/balance_history`;
+		const networktreasuryAddress = chainProperties[network]?.treasuryAddress;
+		const subscanLink = `${chainProperties[network]?.externalLinks}/api/scan/account/balance_history`;
 
-		if (!address1 || !apiUrl1 || !address2 || !apiUrl2) {
+		if (!assetHubAddress || !assetHubExternalLinks || !networktreasuryAddress || !subscanLink) {
 			return {
 				data: null,
 				error: 'Missing address or API URL for the given network'
 			};
 		}
 
-		const response1 = await getAssetHubAndNetworkBalance(network, address1, apiUrl1);
-		const response2 = await getAssetHubAndNetworkBalance(network, address2, apiUrl2);
+		const [assetHubResult, networkResult] = await Promise.allSettled([
+			getAssetHubAndNetworkBalance(network, assetHubAddress, assetHubExternalLinks),
+			getAssetHubAndNetworkBalance(network, networktreasuryAddress, subscanLink)
+		]);
 
-		const combinedData = aggregateBalances(response1.data || [], response2.data || []);
-		const combinedError = response1.error || response2.error;
+		const assetHubResponse = assetHubResult.status === 'fulfilled' ? assetHubResult.value : { data: null, error: assetHubResult.reason };
+		const networkResponse = networkResult.status === 'fulfilled' ? networkResult.value : { data: null, error: networkResult.reason };
+
+		const combinedData = aggregateBalances(assetHubResponse.data || [], networkResponse.data || []);
+		const combinedError = assetHubResponse.error || networkResponse.error;
 
 		await saveToFirestore(network, combinedData);
 

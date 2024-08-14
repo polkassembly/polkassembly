@@ -1,3 +1,7 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { firestore_db } from '~src/services/firebaseInit';
 import { Badge, ProfileDetailsResponse, BadgeCheckContext } from '~src/auth/types';
@@ -10,7 +14,8 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
 import { firestore } from 'firebase-admin';
 import getW3fDelegateCheck from '../delegations/getW3fDelegateCheck';
-import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT, getDelegationStats, getTotalSupply } from './constant';
+import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT } from './constant';
+import { getDelegationStats, getTotalSupply } from './utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getWSProvider } from '~src/global/achievementbadges';

@@ -398,14 +398,16 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													type='vertical'
 												/>
 												<div className=''>
-													{Number(assetValueUSDC) / 100}m<span className='ml-[3px] font-normal'>USDC</span>
+													{assetValueUSDC}
+													<span className='ml-[3px] font-normal'>USDC</span>
 												</div>
 												<Divider
 													className='mx-[1px] bg-section-light-container p-0 dark:bg-separatorDark'
 													type='vertical'
 												/>
 												<div className=''>
-													{Number(assetValueUSDT) / 100}m<span className='ml-[3px] font-normal'>USDT</span>
+													{assetValueUSDT}
+													<span className='ml-[3px] font-normal'>USDT</span>
 												</div>
 											</div>
 										</div>

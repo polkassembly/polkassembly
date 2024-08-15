@@ -474,6 +474,22 @@ export interface IDelegate {
 	user_id?: number;
 }
 
+export interface IDelegateDetails {
+	address: string;
+	bio: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+	image: string;
+	dataSource: string[];
+	delegatedBalance: string;
+}
+
+export enum EDelegationFilters {
+	RECEIVED_DELEGATION = 'receivedDeleagtion',
+	DELEGATED_VOTES = 'delegatedVotes',
+	VOTES_IN_LAST_MONTH = 'votesInLastMonth'
+}
+
 export enum EVoteDecisionType {
 	AYE = 'aye',
 	NAY = 'nay',

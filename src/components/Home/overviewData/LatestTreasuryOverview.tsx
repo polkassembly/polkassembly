@@ -45,9 +45,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
 	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
 
-	const totalTreasuryValue = formatUSDWithUnits(
-		String(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000)
-	);
+	// const totalTreasuryValue = formatUSDWithUnits(
+	// String(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000)
+	// );
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
 			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000) *
@@ -69,7 +69,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				network
 			)
 		);
-	const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
+	// const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
 
 	const sortedGraphData = graphData
 		.filter((item) => parseFloat(item.balance) !== 0)
@@ -247,21 +247,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 										{formatedBalanceDifference && (
 											<div className='flex items-baseline'>
-												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalTreasuryValue}</span>
-												{totalAmountUsd && (
-													<span className={`${poppins.className} ${poppins.variable} ml-[6px] text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-														~ ${totalTreasuryValueUSD}
-													</span>
-												)}
-												<span className='ml-1 text-lg'>
-													{Number(graphBalanceDifference) < 0 ? <CaretDownOutlined style={{ color: 'red' }} /> : <CaretUpOutlined style={{ color: '#52C41A' }} />}
+												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
+													~${totalTreasuryValueUSD}
 												</span>
-												<div className=''>
-													<HelperTooltip
-														text='Current Month Price Change'
-														className='mx-[4px] text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-													/>
-												</div>
 											</div>
 										)}
 									</div>

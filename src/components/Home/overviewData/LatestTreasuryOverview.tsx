@@ -23,7 +23,7 @@ import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
 const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
-const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn }: IOverviewProps) => {
+const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const { resolvedTheme: theme } = useTheme();
@@ -42,8 +42,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
-	const assetValueUSDC = formatBnBalance(assethubValues.usdcValue, { numberAfterComma: 0, withUnit: false }, network);
-	const assetValueUSDT = formatBnBalance(assethubValues.usdtValue, { numberAfterComma: 0, withUnit: false }, network);
+	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
+	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
+
+	const totalTreasuryValue = formatUSDWithUnits(
+		String(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000)
+	);
+	const totalTreasuryValueUSD = formatUSDWithUnits(
+		String(
+			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000) *
+				parseFloat(currentTokenPrice.value)
+		)
+	);
+
 	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
 	const formatedBalanceDifference =
 		graphBalanceDifference &&
@@ -58,20 +69,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				network
 			)
 		);
-	const totalAmountUsd =
-		graphBalanceDifference &&
-		currentTokenPrice.value &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				String(graphBalanceDifference * parseFloat(currentTokenPrice.value)),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: false
-				},
-				network
-			)
-		);
+	const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
 
 	const sortedGraphData = graphData
 		.filter((item) => parseFloat(item.balance) !== 0)
@@ -249,12 +247,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 										</div>
 										{formatedBalanceDifference && (
 											<div className='flex items-baseline'>
-												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
-													{formatedBalanceDifference}
-												</span>
+												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalTreasuryValue}</span>
 												{totalAmountUsd && (
 													<span className={`${poppins.className} ${poppins.variable} ml-[6px] text-sm font-normal text-blue-light-medium dark:text-blue-dark-medium`}>
-														~ ${totalAmountUsd}
+														~ ${totalTreasuryValueUSD}
 													</span>
 												)}
 												<span className='ml-1 text-lg'>
@@ -338,7 +334,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 															type='vertical'
 														/>
 														<div className='text-xs'>
-															{Number(assetValueUSDC) / 100}M<span className='ml-[3px] font-normal'>USDC</span>
+															{assetValueUSDC}
+															<span className='ml-[3px] font-normal'>USDC</span>
 														</div>
 													</>
 												)}
@@ -349,7 +346,8 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 															type='vertical'
 														/>
 														<div className='text-xs'>
-															{Number(assetValueUSDT) / 100}M<span className='ml-[3px] font-normal'>USDT</span>
+															{assetValueUSDT}
+															<span className='ml-[3px] font-normal'>USDT</span>
 														</div>
 													</>
 												)}
@@ -367,7 +365,10 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				</div>
 				{/* graph */}
 				<div>
-					<OverviewDataGraph graphData={graphData} />
+					<OverviewDataGraph
+						graphData={graphData}
+						currentTokenPrice={currentTokenPrice}
+					/>
 				</div>
 			</div>
 			<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>

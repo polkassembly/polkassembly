@@ -73,6 +73,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 		}
 	});
 
+	const [tokenValue, setTokenValue] = useState<number>(0);
+
 	useEffect(() => {
 		if (!api || !apiReady) {
 			return;
@@ -232,6 +234,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 									network
 								)
 							);
+							setTokenValue(availableValueUSD);
+
 							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
 								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
 							}
@@ -338,6 +342,7 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 						priceWeeklyChange={priceWeeklyChange}
 						spendPeriod={spendPeriod}
 						nextBurn={nextBurn}
+						tokenValue={tokenValue}
 					/>
 				</>
 			) : (

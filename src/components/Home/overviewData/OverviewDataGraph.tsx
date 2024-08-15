@@ -23,7 +23,15 @@ const CustomTooltip = ({ point }: any) => {
 	);
 };
 
-const OverviewDataGraph = ({ graphData }: { graphData: IMonthlyTreasuryTally[] }) => {
+const OverviewDataGraph = ({
+	graphData
+}: {
+	graphData: IMonthlyTreasuryTally[];
+	currentTokenPrice: {
+		isLoading: boolean;
+		value: string;
+	};
+}) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 

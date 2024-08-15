@@ -891,6 +891,7 @@ export interface IOverviewProps {
 		value: string;
 		valueUSD: string;
 	};
+	tokenValue: number;
 }
 
 export interface ITreasuryResponseData {

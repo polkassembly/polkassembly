@@ -65,12 +65,14 @@ const TrendingDelegates = () => {
 
 	useEffect(() => {
 		getData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, sortOption, network]);
 
 	useEffect(() => {
 		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
 		setCheckedList(allDataSource);
 		setCheckAll(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [delegatesData]);
 
 	useEffect(() => {

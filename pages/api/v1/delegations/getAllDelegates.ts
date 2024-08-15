@@ -192,10 +192,13 @@ export const getDelegatesData = async (network: string, filterBy: string, addres
 async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateAddressDetails[] | { error: string }>) {
 	storeApiKeyUsage(req);
 
-	const { address, filterBy } = req.body;
-	if (address && !(getEncodedAddress(String(address), 'polkadot') || isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Missing network name in request headers' });
 
-	const result = await getDelegatesData('polkadot', filterBy, address ? String(address) : undefined);
+	const { address, filterBy } = req.body;
+	if (address && !(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
+
+	const result = await getDelegatesData(network, filterBy, address ? String(address) : undefined);
 	return res.status(200).json(result as IDelegateAddressDetails[]);
 }
 

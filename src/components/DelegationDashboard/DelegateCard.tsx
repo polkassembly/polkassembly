@@ -7,27 +7,22 @@ import Address from '~src/ui-components/Address';
 import DelegatesProfileIcon from '~assets/icons/delegate-profile.svg';
 import { Button, Divider, Modal, Spin } from 'antd';
 import DelegateModal from '../Listing/Tracks/DelegateModal';
-import { IDelegate } from '~src/types';
 import { chainProperties } from '~src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import styled from 'styled-components';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Markdown from '~src/ui-components/Markdown';
-import { IDelegateBalance } from '../UserProfile/TotalProfileBalances';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import SocialsHandle from '~src/ui-components/SocialsHandle';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
 import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
-import userProfileBalances from '~src/util/userProfileBalances';
-import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 
 interface Props {
 	delegate: any;
@@ -42,7 +37,6 @@ enum EDelegateSource {
 	W3F = 'w3f',
 	NOVA = 'nova'
 }
-const ZERO_BN = new BN(0);
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const { api, apiReady } = useApiContext();
@@ -54,9 +48,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	const [address, setAddress] = useState<string>('');
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [openReadMore, setOpenReadMore] = useState<boolean>(false);
-	const [votingPower, setVotingPower] = useState<BN>(ZERO_BN);
 	const [identity, setIdentity] = useState<DeriveAccountRegistration>();
-	const [freeBalance, setFreeBalance] = useState<BN>(ZERO_BN);
 
 	const handleIdentityInfo = async () => {
 		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;

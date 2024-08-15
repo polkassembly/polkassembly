@@ -50,8 +50,9 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	// );
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
-			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000) *
-				parseFloat(currentTokenPrice.value)
+			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
+				Number(assethubValues.usdcValue) / 1000000 +
+				Number(assethubValues.usdtValue) / 1000000
 		)
 	);
 

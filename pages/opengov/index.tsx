@@ -29,7 +29,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

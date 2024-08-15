@@ -39,28 +39,39 @@ interface TrackInfo {
 const ReferendumCount = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [trackInfo, setTrackInfo] = useState<TrackInfo>();
+    const [totalPosts, setTotalPosts] = useState(0);
+    const [totalTracks, setTotalTracks] = useState(0);
     const { network } = useNetworkSelector();
 
     const getData = async () => {
-		setLoading(true);
-		try {
-			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/ReferendumCount');
-			if (data) {
+        setLoading(true);
+        try {
+            const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/ReferendumCount');
+            if (data) {
+                setTotalPosts(data.trackDataMap.total);
+                setTotalTracks(data.trackDataMap.totalTracks);
+    
+                const trackDataMap = { ...data.trackDataMap };
+                delete trackDataMap.total;
+                delete trackDataMap.totalTracks;
+    
                 const updatedTrackInfo: TrackInfo = {};
-				Object?.entries(data.trackDataMap).forEach(([key, value]) => {
-					const trackName = getTrackNameFromId(network, parseInt(key));
-					updatedTrackInfo[trackName] = value as number;
-				});
-
-				setTrackInfo(updatedTrackInfo);
+                Object.entries(trackDataMap).forEach(([key, value]) => {
+                    const trackName = getTrackNameFromId(network, parseInt(key));
+                    updatedTrackInfo[trackName] = value as number;
+                });
+    
+                console.log(updatedTrackInfo);
+                setTrackInfo(updatedTrackInfo);
                 console.log('total items --> ', updatedTrackInfo);
-				setLoading(false);
-			}
-		} catch (error) {
-			console.log(error);
-			setLoading(false);
-		}
-	};
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    };
+    
 
 	useEffect(() => {
 		getData();
@@ -133,37 +144,24 @@ const ReferendumCount = () => {
                             }
                         ]}
                         legends={[
-                            {
-                                anchor: 'right',
-                                direction: 'column',
-                                justify: false,
-                                translateX: 0,
-                                translateY: 0,
-                                itemsSpacing: 1,
-                                itemWidth: 100, // Adjust width based on your needs
-                                itemHeight: 20,
-                                itemDirection: 'left-to-right',
-                                symbolSize: 16,
-                                itemTextColor: '#999',
-                                effects: [
-                                    {
-                                        on: 'hover',
-                                        style: {
-                                            itemTextColor: '#000'
-                                        }
-                                    }
-                                ],
-                                // Custom logic to create 3 columns
-                                data: data.map((item, index) => ({
-                                    ...item,
-                                    color: item.color,
-                                    id: item.id,
-                                    label: `${item.label} - ${item.value}`,
-                                    x: (index % 3) * 120, // Adjust spacing between columns
-                                    y: Math.floor(index / 3) * 30 // Adjust spacing between rows
-                                })),
-                            }
-                        ]}
+							{
+								anchor: 'right',
+								data: data.map((item) => ({
+									color: item.color,
+									id: item.id,
+									label: `${(item.label).split('_').join(' ')} - ${((item.value/totalPosts)*100).toFixed(2)}% [${item.value}]`
+								})),
+								direction: 'column',
+								itemDirection: 'left-to-right',
+								itemHeight: 16,
+								itemWidth: -60,
+								itemsSpacing: 1,
+								justify: false,
+								symbolSize: 8,
+								translateX: -40,
+								translateY: 0
+							}
+						]}
                     />
                 </div>
             </Spin>

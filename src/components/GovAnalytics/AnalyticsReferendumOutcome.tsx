@@ -95,7 +95,7 @@ const AnalyticsReferendumOutcome = () => {
 		},
 		...trackIds.map((trackId, index) => ({
 			key: `${index + 1}`,
-			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>{getTrackNameFromId(network, trackId).split('_').join(' ')}</p>,
+			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>{getTrackNameFromId(network, trackId)?.split('_').join(' ')}</p>,
 			onClick: handleMenuClick
 		}))
 	];

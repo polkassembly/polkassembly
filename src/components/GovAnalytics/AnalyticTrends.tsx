@@ -11,6 +11,7 @@ import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
 import dynamic from 'next/dynamic';
 import AnalyticsReferendumOutcome from './AnalyticsReferendumOutcome';
 import AnalyticsReferendumCount from './AnalyticsReferendumCount';
+import ReferendumCount from './ReferendumCount';
 const AnalyticTurnOutPercentage = dynamic(() => import('./AnalyticTurnOutPercentage'), { ssr: false });
 
 const { Panel } = Collapse;
@@ -58,6 +59,7 @@ const AnalyticsTrends = () => {
 							<AnalyticTurnOutPercentage />
 							<AnalyticTurnOutPercentage />
 						</div>
+						<ReferendumCount />
 					</>
 				)}
 			</Panel>

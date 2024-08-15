@@ -7,37 +7,17 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { networkDocRef } from '~src/api-utils/firestore_refs';
-import { redisGet, redisSetex } from '~src/auth/redis';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
-import { IAnalyticsVoteTrends } from '~src/components/TrackLevelAnalytics/types';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { ProposalType } from '~src/global/proposalType';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { generateKey } from '~src/util/getRedisKeys';
 
 const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) => {
-	const TTL_DURATION = 3600 * 23; // 23 Hours or 82800 seconds
-
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
 		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
-		const votes: IAnalyticsVoteTrends[] = [];
-		const averageSupportPercentages: Record<string, number> = {}; // Object to store the average support percentages
-
-		if (process.env.IS_CACHING_ALLOWED == '1') {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allTrackVotesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 });
-			const redisData = await redisGet(redisKey);
-
-			if (redisData) {
-				return {
-					data: { votes: JSON.parse(redisData) },
-					error: null,
-					status: 200
-				};
-			}
-		}
+		const averageSupportPercentages: Record<string, number> = {};
 
 		const dataPromise = trackNumbers.map(async (trackNumber) => {
 			let totalSupportedVoted = 0;
@@ -47,32 +27,16 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 
 			trackSnapshot.docs.map((doc) => {
 				const data = doc.data();
-				console.log(data);
 				const supportPercentage = data.voteAmount.supportData.percentage;
 				const roundedNumber = Number(supportPercentage).toFixed(2);
 				totalSupportedVoted += parseFloat(roundedNumber);
-				totalVotes += 1; // Increment the total number of votes for this track
-				votes.push(data as IAnalyticsVoteTrends);
+				totalVotes += 1;
 			});
 
-			// Calculate the average support percentage for the track and store it in the object
 			averageSupportPercentages[trackNumber] = totalVotes ? totalSupportedVoted / totalVotes : 0;
-			console.log('total supported votes --> ', totalSupportedVoted);
-			console.log('average support percentage for track', trackNumber, ' --> ', averageSupportPercentages[trackNumber]);
 		});
 
 		await Promise.allSettled(dataPromise);
-
-		if (process.env.IS_CACHING_ALLOWED == '1') {
-			await redisSetex(
-				generateKey({ govType: 'OpenGov', keyType: 'allTrackVotesAnalytics', network, proposalType: ProposalType.REFERENDUM_V2 }),
-				TTL_DURATION,
-				JSON.stringify(votes)
-			);
-		}
-
-		console.log('average support percentage --> ', averageSupportPercentages);
-
 		return { data: { averageSupportPercentages }, error: null, status: 200 };
 	} catch (err) {
 		return { data: null, error: err || messages.API_FETCH_ERROR, status: err.name };

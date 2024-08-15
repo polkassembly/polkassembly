@@ -918,3 +918,19 @@ export interface IDailyTreasuryTallyData {
 	created_at: string;
 	balance: string;
 }
+
+export interface IDelegateAddressDetails {
+	address: string;
+	bio: string;
+	dataSource: string[];
+	delegatedBalance: string;
+	image: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+}
+
+export enum EDelegationAddressFilters {
+	DELEGATED_VOTES = 'delegatedBalance',
+	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
+	VOTED_PROPOSALS = 'votedProposalsCount'
+}

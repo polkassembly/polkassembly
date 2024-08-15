@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { IDelegate } from '~src/types';
+import { EDelegationAddressFilters, IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -25,8 +25,8 @@ const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
-	const [filteredDelegates, setFilteredDelegates] = useState<IDelegate[]>([]);
+	const [delegatesData, setDelegatesData] = useState<IDelegateAddressDetails[]>([]);
+	const [filteredDelegates, setFilteredDelegates] = useState<IDelegateAddressDetails[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
@@ -47,6 +47,26 @@ const TrendingDelegates = () => {
 		}, 5000);
 	}, [network, address]);
 
+	const getData = async () => {
+		if (!getEncodedAddress(address, network) && address.length > 0) return;
+		setLoading(true);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
+			address: address,
+			filterBy: sortOption
+		});
+		if (data && data.data) {
+			setDelegatesData(data.data);
+			setLoading(false);
+		} else {
+			console.log(error);
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getData();
+	}, [address, sortOption, network]);
+
 	useEffect(() => {
 		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
 		setCheckedList(allDataSource);
@@ -57,38 +77,17 @@ const TrendingDelegates = () => {
 		let updatedDelegates = [...delegatesData];
 
 		if (!checkAll) {
-			updatedDelegates = delegatesData.filter((delegate) => delegate.dataSource.some((dataSource) => checkedList.includes(dataSource)));
+			updatedDelegates = delegatesData.filter((delegate) => delegate.dataSource && delegate.dataSource.some((dataSource) => checkedList.includes(dataSource)));
 		}
 
-		if (sortOption === 'receivedDelegations') {
-			updatedDelegates.sort((a, b) => b.active_delegation_count - a.active_delegation_count);
-		} else if (sortOption === 'votedProposals') {
-			updatedDelegates.sort((a, b) => b.voted_proposals_count - a.voted_proposals_count);
+		if (sortOption === EDelegationAddressFilters.RECEIVED_DELEGATIONS) {
+			updatedDelegates.sort((a, b) => Number(b.delegatedBalance) - Number(a.delegatedBalance));
+		} else if (sortOption === EDelegationAddressFilters.VOTED_PROPOSALS) {
+			updatedDelegates.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
 		}
 
 		setFilteredDelegates(updatedDelegates);
 	}, [delegatesData, checkedList, checkAll, sortOption]);
-
-	const getData = async () => {
-		if (!getEncodedAddress(address, network) && address.length > 0) return;
-		setLoading(true);
-
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			address: address
-		});
-		if (data) {
-			setDelegatesData(data);
-			setLoading(false);
-		} else {
-			console.log(error);
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		getData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, delegationDashboardAddress, network]);
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
@@ -159,7 +158,7 @@ const TrendingDelegates = () => {
 							value={source}
 							onChange={onCheckAllChange}
 						/>
-						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+						<span className='mt-[3px] text-xs'>{source ? source.charAt(0).toUpperCase() + source.slice(1) : 'N/A'}</span>
 					</div>
 				))}
 			</Checkbox.Group>
@@ -173,19 +172,19 @@ const TrendingDelegates = () => {
 				onChange={(e) => setSortOption(e.target.value)}
 			>
 				<Radio
-					value='receivedDelegations'
+					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
 					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
 				<Radio
-					value='votedProposals'
+					value={EDelegationAddressFilters.VOTED_PROPOSALS}
 					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
-					value='votingPower'
+					value={EDelegationAddressFilters.DELEGATED_VOTES}
 					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
@@ -319,7 +318,7 @@ const TrendingDelegates = () => {
 									...filteredDelegates.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
 									...filteredDelegates
 										.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address)))
-										.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
+										.sort((a, b) => Number(b.delegatedBalance) - Number(a.delegatedBalance))
 								]
 									.slice(startIndex, endIndex)
 									.map((delegate, index) => (

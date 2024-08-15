@@ -283,17 +283,17 @@ export interface Badge {
 
 export interface BadgeCheckContext {
 	commentsCount?: number;
-	delegatedTokens?: number;
-	isGov1Chain?: boolean;
-	proposals?: any;
-	rank?: number;
-	totalSupply?: any;
 	votesCount?: number;
-	votingPower?: number;
 	network?: string;
 }
 
 export interface BadgeCriterion {
 	check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => Promise<boolean> | boolean;
 	name: BadgeName;
+}
+
+export interface IFellow {
+	address: string;
+	rank: number;
+	salary?: string;
 }

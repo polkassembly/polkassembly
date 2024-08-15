@@ -19,6 +19,29 @@ export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String
             lockPeriod
             proposalIndex
             createdAt
+            parentVote {
+                extrinsicIndex
+                selfVotingPower
+                type
+                voter
+                lockPeriod
+                delegatedVotingPower
+                delegatedVotes(where: {removedAtBlock_isNull: true}) {
+                    voter
+                    balance {
+                    ... on StandardVoteBalance {
+                        value
+                    }
+                    ... on SplitVoteBalance {
+                        aye
+                        nay
+                        abstain
+                    }
+                    }
+                    lockPeriod
+                    votingPower
+                }
+            }
         }
     }`;
 

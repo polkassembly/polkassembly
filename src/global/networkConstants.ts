@@ -266,6 +266,9 @@ export const chainProperties: types.ChainPropType = {
 	},
 	[network.KUSAMA]: {
 		preImageBaseDeposit: '1330000000000',
+		assetHubRpcEndpoint: 'wss://kusama-asset-hub-rpc.polkadot.io',
+		assetHubTreasuryAddress: 'F3opxRbN5ZbjJNU511Kj2TLuzFcDq9BGduA9TgiECafpg29',
+		assethubExternalLinks: 'https://assethub-kusama.api.subscan.io',
 		blockTime: 6000,
 		category: 'kusama',
 		chainId: 0,
@@ -279,6 +282,7 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/kusama-polkassembly/graphql',
 		tokenDecimals: 12,
 		tokenSymbol: tokenSymbol.KSM,
+		treasuryAddress: 'F3opxRbN5ZbjJNU511Kj2TLuzFcDq9BGduA9TgiECafpg29',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '0.6666',
 		treasuryProposalMaxBond: '33.3333',

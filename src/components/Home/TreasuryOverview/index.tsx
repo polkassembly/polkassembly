@@ -35,7 +35,7 @@ interface ITreasuryOverviewProps {
 	theme?: string;
 }
 
-export const isAssetHubNetwork = [AllNetworks.POLKADOT];
+export const isAssetHubNetwork = [AllNetworks.POLKADOT, AllNetworks.KUSAMA];
 
 const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 	const { className, inTreasuryProposals } = props;

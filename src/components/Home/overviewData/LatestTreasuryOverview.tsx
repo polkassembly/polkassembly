@@ -4,6 +4,7 @@
 import { Divider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CaretDownOutlined, CaretUpOutlined, LoadingOutlined } from '@ant-design/icons';
+import Image from 'next/image';
 import { poppins } from 'pages/_app';
 import AssethubIcon from '~assets/icons/asset-hub-icon.svg';
 import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
@@ -17,6 +18,7 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
+import kusamaLogo from '~assets/kusama-logo.gif';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
@@ -309,9 +311,19 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 									<div className='flex items-baseline justify-start font-medium xl:justify-between'>
 										{available.value ? (
 											<div className='flex items-center'>
-												<PolkadotIcon />
+												{network == 'polkadot' ? (
+													<PolkadotIcon />
+												) : (
+													<Image
+														src={kusamaLogo}
+														className='rounded-full'
+														height={16}
+														width={16}
+														alt={'Kusama Logo'}
+													/>
+												)}
 												<div className='ml-1 flex items-baseline gap-1 whitespace-nowrap text-xs font-medium'>
-													<span className='text-blue-light-medium dark:text-blue-dark-medium'>Polkadot</span>
+													<span className='text-blue-light-medium dark:text-blue-dark-medium'>{network.charAt(0).toUpperCase() + network.slice(1).toLowerCase()}</span>
 													<span className='ml-1 text-xs text-bodyBlue dark:text-blue-dark-high'>{available.value}</span>
 													<span className='text-[11px] text-blue-light-medium dark:text-blue-dark-medium'>{chainProperties[network]?.tokenSymbol}</span>
 												</div>

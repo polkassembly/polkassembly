@@ -8,7 +8,7 @@ import { ITrackDelegation } from 'pages/api/v1/delegations';
 import React, { useEffect, useState } from 'react';
 import { IDelegationProfileType, ProfileDetailsResponse } from '~src/auth/types';
 import { useApiContext } from '~src/context';
-import { ETrackDelegationStatus, IDelegate, IDelegation } from '~src/types';
+import { ETrackDelegationStatus, IDelegation } from '~src/types';
 import Address from '~src/ui-components/Address';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -216,12 +216,10 @@ const ProfileDelegationsCard = ({ className, userProfile, addressWithIdentity, o
 	const handleDelegationMandate = async () => {
 		setDelegationMandate('');
 		if (!checkedAddress.length) return;
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address: checkedAddress });
-		if (data?.length) {
-			if (data?.[0]?.bio && data?.[0]?.dataSource?.includes('polkassembly')) {
-				setDelegationMandate(data?.[0]?.bio || '');
-			}
-		} else {
+		const { data, error } = await nextApiClientFetch<{ delegationMandate: string }>('api/v1/delegations/getPADelegationMandates', { address: checkedAddress });
+		if (data) {
+			setDelegationMandate(data?.delegationMandate);
+		} else if (error) {
 			console.log(error);
 		}
 	};

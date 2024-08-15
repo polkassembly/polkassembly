@@ -59,6 +59,7 @@ import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
 
 import * as types from '../types';
+import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
 
 export const network = {
 	POLKADOT: 'polkadot',
@@ -182,9 +183,27 @@ export const tokenSymbol = {
 	CGT: 'CGT'
 };
 
+export const treasuryAssets = {
+	DED: { name: 'dot-is-ded', img: '/assets/icons/ded-asset.png', tokenDecimal: 10, symbol: EAssets.DED },
+	USDT: {
+		name: 'usdt',
+		img: '/assets/icons/usdt.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDT
+	},
+	USDC: {
+		name: 'usdc',
+		img: '/assets/icons/usdc.svg',
+		tokenDecimal: 6,
+		symbol: EAssets.USDC
+	}
+};
+
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
+		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
+		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -198,10 +217,12 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
+		treasuryAddress: '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://polkadot.api.subscan.io',
+		assethubExternalLinks: 'https://assethub-polkadot.api.subscan.io',
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{
@@ -236,6 +257,11 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-polkadot.luckyfriday.io'
 			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
 		]
 	},
 	[network.KUSAMA]: {
@@ -287,7 +313,8 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via LuckyFriday',
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
-		]
+		],
+		supportedAssets: [{ ...treasuryAssets.USDT, genralIndex: '1984' }]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -1861,6 +1888,11 @@ export const chainProperties: types.ChainPropType = {
 				label: 'via Parity',
 				key: 'wss://rococo-rpc.polkadot.io'
 			}
+		],
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
 		]
 	},
 	[network.XX]: {

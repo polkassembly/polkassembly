@@ -187,7 +187,6 @@ const PeopleChainTeleport = ({ className, defaultAmount, defaultBeneficiaryAddre
 						/>
 						<CustomButton
 							onClick={() => getPeopleChainTeleportTx()}
-							// loading={loading}
 							disabled={!(availableBalance && availableBalance.gt(amount)) || loading.isLoading}
 							className={classNames('rounded-[4px] text-xs tracking-wide', !(availableBalance && availableBalance.gt(amount)) || loading.isLoading ? 'opacity-50' : '')}
 							text='Confirm'

@@ -9,6 +9,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { useTheme } from 'next-themes';
 
 interface TrackInfo {
 	trackId: number;
@@ -51,7 +52,7 @@ const StyledCard = styled(Card)`
 
 const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [categoryInfo, setCategoryInfo] = useState({
 		governance: 0,
@@ -66,7 +67,6 @@ const AnalyticsReferendumCount = () => {
 			const group = networkTrackInfo[network][key].group;
 			const trackId = networkTrackInfo[network][key].trackId;
 			if (group) {
-				// Check if group is defined
 				if (group in groupedTrackIds) {
 					groupedTrackIds[group].push(trackId);
 				} else {
@@ -165,6 +165,26 @@ const AnalyticsReferendumCount = () => {
 								type: 'patternLines'
 							}
 						]}
+						theme={{
+							axis: {
+								ticks: {
+									text: {
+										fill: theme === 'dark' ? '#fff' : '#333' // Set axis text color based on theme
+									}
+								}
+							},
+							legends: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#333'
+								}
+							},
+							tooltip: {
+								container: {
+									background: theme === 'dark' ? '#1E2126' : '#fff',
+									color: theme === 'dark' ? '#fff' : '#333'
+								}
+							}
+						}}
 						legends={[
 							{
 								anchor: 'right',

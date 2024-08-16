@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { ResponsivePie } from '@nivo/pie';
 import { Card, Spin } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MessageType } from '~src/auth/types';
@@ -42,6 +43,7 @@ interface TrackInfo {
 const ReferendumCount = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [trackInfo, setTrackInfo] = useState<TrackInfo>();
+	const { resolvedTheme: theme } = useTheme();
 	const [totalPosts, setTotalPosts] = useState(0);
 	const { network } = useNetworkSelector();
 
@@ -161,6 +163,49 @@ const ReferendumCount = () => {
 								type: 'patternLines'
 							}
 						]}
+						theme={{
+							axis: {
+								domain: {
+									line: {
+										stroke: 'transparent',
+										strokeWidth: 1
+									}
+								},
+								ticks: {
+									line: {
+										stroke: 'transparent'
+									},
+									text: {
+										fill: theme === 'dark' ? '#fff' : '#576D8B',
+										fontSize: 11,
+										outlineColor: 'transparent',
+										outlineWidth: 0
+									}
+								}
+							},
+							grid: {
+								line: {
+									stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+									strokeDasharray: '2 2',
+									strokeWidth: 1
+								}
+							},
+							legends: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 12,
+									textTransform: 'capitalize'
+								}
+							},
+							tooltip: {
+								container: {
+									background: theme === 'dark' ? '#1E2126' : '#fff',
+									color: theme === 'dark' ? '#fff' : '#576D8B',
+									fontSize: 11,
+									textTransform: 'capitalize'
+								}
+							}
+						}}
 						legends={[
 							{
 								anchor: 'right',

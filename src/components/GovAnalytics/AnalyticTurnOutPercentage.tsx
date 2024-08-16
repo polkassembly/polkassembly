@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { ResponsiveLine } from '@nivo/line';
 import { Card, Spin } from 'antd';
+import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -43,6 +44,7 @@ const AnalyticTurnOutPercentage = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [trackInfo, setTrackInfo] = useState<TrackInfo>();
 	const { network } = useNetworkSelector();
+	const { resolvedTheme: theme } = useTheme();
 
 	const getVoteData = async () => {
 		setIsLoading(true);
@@ -142,6 +144,23 @@ const AnalyticTurnOutPercentage = () => {
 						legends={[]}
 						useMesh={true}
 						debugMesh={false}
+						theme={{
+							axis: {
+								ticks: {
+									line: {
+										stroke: theme === 'dark' ? '#fff' : '#333'
+									},
+									text: {
+										fill: theme === 'dark' ? '#fff' : '#333'
+									}
+								}
+							},
+							legends: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#333'
+								}
+							}
+						}}
 					/>
 				</div>
 			</Spin>

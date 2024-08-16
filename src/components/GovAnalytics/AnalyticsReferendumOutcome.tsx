@@ -12,6 +12,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import { useTheme } from 'next-themes';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -40,8 +41,9 @@ const StyledCard = styled(Card)`
 `;
 
 const AnalyticsReferendumOutcome = () => {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [loading, setLoading] = useState<boolean>(false);
+	const { resolvedTheme: theme } = useTheme();
+
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
 	const [statusInfo, setStatusInfo] = useState({
@@ -200,6 +202,26 @@ const AnalyticsReferendumOutcome = () => {
 								type: 'patternLines'
 							}
 						]}
+						theme={{
+							axis: {
+								ticks: {
+									text: {
+										fill: theme === 'dark' ? '#fff' : '#333'
+									}
+								}
+							},
+							legends: {
+								text: {
+									fill: theme === 'dark' ? '#fff' : '#333'
+								}
+							},
+							tooltip: {
+								container: {
+									background: theme === 'dark' ? '#1E2126' : '#fff',
+									color: theme === 'dark' ? '#fff' : '#333'
+								}
+							}
+						}}
 						legends={[
 							{
 								anchor: 'right',

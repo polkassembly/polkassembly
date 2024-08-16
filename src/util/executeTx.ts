@@ -42,8 +42,13 @@ const executeTx = async ({
 
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
 
+	const signerOptions = {
+		...params,
+		withSignedTransaction: true
+	};
+
 	extrinsic
-		.signAndSend(proxyAddress || address, params, async ({ status, events, txHash }: any) => {
+		.signAndSend(proxyAddress || address, signerOptions, async ({ status, events, txHash }: any) => {
 			if (status.isInvalid) {
 				console.log('Transaction invalid');
 				setStatus?.('Transaction invalid');
@@ -90,7 +95,7 @@ const executeTx = async ({
 				console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 				console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
 				setIsTxFinalized?.(txHash);
-				if (isSuccess) {
+				if (isSuccess && waitTillFinalizedHash) {
 					await onSuccess(txHash);
 				}
 			}

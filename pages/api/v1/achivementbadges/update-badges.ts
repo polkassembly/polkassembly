@@ -10,7 +10,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
-import { firestore } from 'firebase-admin';
 import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT } from './constant';
 import { getTotalSupply } from './utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
@@ -18,6 +17,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getWSProvider } from '~src/global/achievementbadges';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { getUserPostCount } from '../posts/user-total-post-counts';
 
 // Badge1: Check if the user is a Decentralised Voice delegate
 async function checkDecentralisedVoice(user: ProfileDetailsResponse): Promise<boolean> {
@@ -25,6 +25,7 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse): Promise<bo
 		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
 			addresses: user.addresses || []
 		});
+
 		if (data) {
 			return data?.isW3fDelegate ?? false;
 		} else {
@@ -38,21 +39,36 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse): Promise<bo
 }
 
 // Badge2: Check if the user qualifies for the Fellow badge based on rank
-async function checkFellow(user: ProfileDetailsResponse, api: ApiPromise): Promise<boolean> {
+async function checkFellow(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	const wsProviderUrl = getWSProvider(network || 'polkodot');
+
+	if (!wsProviderUrl) {
+		console.error(`WebSocket provider URL not found for network: ${network}`);
+		return false;
+	}
+
+	const wsProvider = new WsProvider(wsProviderUrl);
+	const api = await ApiPromise.create({ provider: wsProvider });
+
 	const addresses = user.addresses;
 	try {
+		if (!api?.query?.fellowshipCollective?.members?.entries) {
+			console.warn('fellowshipCollective or members query is not available on this network.');
+			return false;
+		}
+
 		for (const address of addresses) {
 			const userSubstrateAddress = getSubstrateAddress(address);
 			if (!userSubstrateAddress) {
 				console.error(`Invalid address: ${address}`);
 				continue;
 			}
+
 			const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
 			for (const [key, optInfo] of entries) {
 				const memberAccountId = key.args[0].toString();
 				if (memberAccountId === userSubstrateAddress) {
-					const memberInfo = optInfo;
-					const userRank = memberInfo?.rank || 0;
+					const userRank = optInfo?.rank || 0;
 					if (userRank >= 1) {
 						return true;
 					}
@@ -160,7 +176,6 @@ async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<bo
 		const commentCount = (
 			await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
 		).size;
-
 		return commentCount > 50;
 	} catch (error) {
 		console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
@@ -171,17 +186,8 @@ async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<bo
 // Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
 async function checkGMVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
 	try {
-		const votesResponse = await fetchSubsquid({
-			network,
-			query: GET_ACTIVE_VOTER,
-			variables: {
-				voterAddresses: user.addresses,
-				startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString()
-			}
-		});
-
-		const voteCount = votesResponse?.data?.flattenedConvictionVotes?.length || 0;
-
+		const data = await getUserPostCount({ network, userId: user.user_id });
+		const voteCount = data.data.votes || 0;
 		return voteCount > 50;
 	} catch (error) {
 		console.error(`Error checking GM Voter for user: ${user.username}`, error);
@@ -208,7 +214,6 @@ async function checkPopularDelegate(user: ProfileDetailsResponse, network?: stri
 
 		const totalSupply = await getTotalSupply(network || 'polkodot');
 		if (totalSupply.isZero()) return false;
-
 		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
 	} catch (error) {
 		console.error('Failed to calculate Popular Delegate status:', error);
@@ -242,7 +247,7 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 
 	const badgeChecks = await Promise.all([
 		checkDecentralisedVoice(user),
-		checkFellow(user, api),
+		checkFellow(user, network),
 		checkCouncil(user, network),
 		checkActiveVoter(user, network),
 		checkWhale(user, network),
@@ -303,7 +308,7 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 }
 
 // Function to update badges for users
-async function updateUserBadges(username: string, network: string) {
+export async function updateUserBadges(username: string, network: string) {
 	const { data: user, error } = await getUserProfileWithUsername(username);
 	if (error || !user) {
 		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);

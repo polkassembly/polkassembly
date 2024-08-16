@@ -1,33 +1,59 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
+import { Card } from 'antd';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
-import React, { useEffect, useState } from 'react';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { chainProperties } from 'src/global/networkConstants';
 import blockToDays from 'src/util/blockToDays';
 import blockToTime from 'src/util/blockToTime';
 import formatBnBalance from 'src/util/formatBnBalance';
 import formatUSDWithUnits from 'src/util/formatUSDWithUnits';
-import styled from 'styled-components';
 import { useApiContext } from '~src/context';
 import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
-import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
+// import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
 import { network as AllNetworks } from '~src/global/networkConstants';
+import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
-
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
-const TreasuryOverview = () => {
+const StyledCard = styled(Card)`
+	g[transform='translate(0,0)'] g:nth-child(even) {
+		display: none !important;
+	}
+	div[style*='pointer-events: none;'] {
+		visibility: hidden;
+		animation: fadeIn 0.5s forwards;
+	}
+
+	@keyframes fadeIn {
+		0% {
+			visibility: hidden;
+			opacity: 0;
+		}
+		100% {
+			visibility: visible;
+			opacity: 1;
+		}
+	}
+	@media (max-width: 640px) {
+		.ant-card-body {
+			padding: 12px !important;
+		}
+	}
+`;
+
+const MonthlySpend = () => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
@@ -320,9 +346,9 @@ const TreasuryOverview = () => {
 			cancel = true;
 		};
 	}, [currentTokenPrice, network]);
-
 	return (
-		<section>
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+			<h2 className='text-base font-semibold sm:text-xl'>Monthly DOT Spent</h2>
 			{isAssetHubNetwork.includes(network) && (
 				<>
 					<LatestTreasuryOverview
@@ -332,20 +358,12 @@ const TreasuryOverview = () => {
 						spendPeriod={spendPeriod}
 						nextBurn={nextBurn}
 						tokenValue={tokenValue}
+						isUsedInGovAnalytics={true}
 					/>
 				</>
 			)}
-		</section>
+		</StyledCard>
 	);
 };
 
-export default styled(TreasuryOverview)`
-	.ant-progress-text {
-		color: ${(props: any) => (props.theme === 'dark' ? '#fff' : '#1E262D')} !important;
-		font-size: 12px !important;
-	}
-	.ant-progress-outer {
-		display: flex !important;
-		align-items: center !important;
-	}
-`;
+export default MonthlySpend;

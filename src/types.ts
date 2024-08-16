@@ -867,6 +867,7 @@ export interface IOverviewProps {
 		isLoading: boolean;
 		value: string;
 	};
+	isUsedInGovAnalytics?: boolean;
 	currentTokenPrice: {
 		isLoading: boolean;
 		value: string;

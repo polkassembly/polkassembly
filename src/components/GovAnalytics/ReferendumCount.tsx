@@ -85,6 +85,24 @@ const ReferendumCount = () => {
         color: `hsl(${index * 30}, 70%, 50%)`
     })) : [];
 
+    const filteredLegends = data.slice(0, 5).map((item) => ({
+        color: item.color,
+        id: item.id,
+        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+    }));
+
+    const middleFilteredLegends = data.slice(5, 10).map((item) => ({
+        color: item.color,
+        id: item.id,
+        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+    }));
+
+    const lastFilteredLegends = data.slice(10).map((item) => ({
+        color: item.color,
+        id: item.id,
+        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+    }));
+
     return (
         <StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
             <h2 className='text-base font-semibold sm:text-xl'>Referendum Count</h2>
@@ -146,19 +164,41 @@ const ReferendumCount = () => {
                         legends={[
 							{
 								anchor: 'right',
-								data: data.map((item) => ({
-									color: item.color,
-									id: item.id,
-									label: `${(item.label).split('_').join(' ')} - ${((item.value/totalPosts)*100).toFixed(2)}% [${item.value}]`
-								})),
+								data: filteredLegends,
 								direction: 'column',
 								itemDirection: 'left-to-right',
-								itemHeight: 16,
+								itemHeight: 40,
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
 								symbolSize: 8,
-								translateX: -40,
+								translateX: -450,
+								translateY: 0
+							},
+                            {
+								anchor: 'right',
+								data: middleFilteredLegends,
+								direction: 'column',
+								itemDirection: 'left-to-right',
+								itemHeight: 40,
+								itemWidth: -60,
+								itemsSpacing: 1,
+								justify: false,
+								symbolSize: 8,
+								translateX: -250,
+								translateY: 0
+							},
+                            {
+								anchor: 'right',
+								data: lastFilteredLegends,
+								direction: 'column',
+								itemDirection: 'left-to-right',
+								itemHeight: 40,
+								itemWidth: -60,
+								itemsSpacing: 1,
+								justify: false,
+								symbolSize: 8,
+								translateX: -20,
 								translateY: 0
 							}
 						]}

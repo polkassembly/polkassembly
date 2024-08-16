@@ -6,7 +6,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
 import BN from 'bn.js';
 import { dayjs } from 'dayjs-init';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { subscanApiHeaders } from 'src/global/apiHeaders';
 import { chainProperties } from 'src/global/networkConstants';
 import blockToDays from 'src/util/blockToDays';
@@ -21,13 +21,24 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { useDispatch } from 'react-redux';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
 import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
+import AvailableTreasuryBalance from './AvailableTreasuryBalance';
+import CurrentPrice from './CurrentPrice';
+import NextBurn from './NextBurn';
+import SpendPeriod from './SpendPeriod';
 import { network as AllNetworks } from '~src/global/networkConstants';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 
+interface ITreasuryOverviewProps {
+	inTreasuryProposals?: boolean;
+	className?: string;
+	theme?: string;
+}
+
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
-const TreasuryOverview = () => {
+const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
+	const { className, inTreasuryProposals } = props;
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
@@ -323,7 +334,7 @@ const TreasuryOverview = () => {
 
 	return (
 		<section>
-			{isAssetHubNetwork.includes(network) && (
+			{isAssetHubNetwork.includes(network) ? (
 				<>
 					<LatestTreasuryOverview
 						currentTokenPrice={currentTokenPrice}
@@ -334,6 +345,26 @@ const TreasuryOverview = () => {
 						tokenValue={tokenValue}
 					/>
 				</>
+			) : (
+				<div
+					className={`${className} grid ${
+						!['polymesh', 'polymesh-test', 'polimec', 'rolimec'].includes(network) && 'grid-rows-2'
+					} grid-flow-col grid-cols-2 xs:gap-6 sm:gap-8 xl:flex xl:gap-4`}
+				>
+					<AvailableTreasuryBalance available={available} />
+
+					<CurrentPrice
+						currentTokenPrice={currentTokenPrice}
+						priceWeeklyChange={priceWeeklyChange}
+					/>
+
+					<NextBurn nextBurn={nextBurn} />
+
+					<SpendPeriod
+						inTreasuryProposals={inTreasuryProposals}
+						spendPeriod={spendPeriod}
+					/>
+				</div>
 			)}
 		</section>
 	);

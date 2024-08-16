@@ -83,7 +83,6 @@ const AnalyticsReferendumCount = () => {
 				categoryIds: groupedTrackIds
 			});
 			if (data) {
-				console.log(data);
 				setCategoryInfo(data?.categoryCounts);
 				setLoading(false);
 			}

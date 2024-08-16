@@ -1,6 +1,9 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { ResponsivePie } from '@nivo/pie';
 import { Card, Spin } from 'antd';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MessageType } from '~src/auth/types';
 import { useNetworkSelector } from '~src/redux/selectors';
@@ -37,131 +40,128 @@ interface TrackInfo {
 }
 
 const ReferendumCount = () => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [trackInfo, setTrackInfo] = useState<TrackInfo>();
-    const [totalPosts, setTotalPosts] = useState(0);
-    const [totalTracks, setTotalTracks] = useState(0);
-    const { network } = useNetworkSelector();
+	const [loading, setLoading] = useState<boolean>(false);
+	const [trackInfo, setTrackInfo] = useState<TrackInfo>();
+	const [totalPosts, setTotalPosts] = useState(0);
+	const { network } = useNetworkSelector();
 
-    const getData = async () => {
-        setLoading(true);
-        try {
-            const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/ReferendumCount');
-            if (data) {
-                setTotalPosts(data.trackDataMap.total);
-                setTotalTracks(data.trackDataMap.totalTracks);
-    
-                const trackDataMap = { ...data.trackDataMap };
-                delete trackDataMap.total;
-                delete trackDataMap.totalTracks;
-    
-                const updatedTrackInfo: TrackInfo = {};
-                Object.entries(trackDataMap).forEach(([key, value]) => {
-                    const trackName = getTrackNameFromId(network, parseInt(key));
-                    updatedTrackInfo[trackName] = value as number;
-                });
-    
-                console.log(updatedTrackInfo);
-                setTrackInfo(updatedTrackInfo);
-                console.log('total items --> ', updatedTrackInfo);
-                setLoading(false);
-            }
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    };
-    
+	const getData = async () => {
+		setLoading(true);
+		try {
+			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/ReferendumCount');
+			if (data) {
+				setTotalPosts(data.trackDataMap.total);
+
+				const trackDataMap = { ...data.trackDataMap };
+				delete trackDataMap.total;
+				delete trackDataMap.totalTracks;
+
+				const updatedTrackInfo: TrackInfo = {};
+				Object.entries(trackDataMap).forEach(([key, value]) => {
+					const trackName = getTrackNameFromId(network, parseInt(key));
+					updatedTrackInfo[trackName] = value as number;
+				});
+
+				setTrackInfo(updatedTrackInfo);
+				setLoading(false);
+			}
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-    const data = trackInfo ? Object?.entries(trackInfo).map(([key, value], index) => ({
-        id: key,
-        label: key,
-        value: value,
-        color: `hsl(${index * 30}, 70%, 50%)`
-    })) : [];
+	const data = trackInfo
+		? Object?.entries(trackInfo).map(([key, value], index) => ({
+				color: `hsl(${index * 30}, 70%, 50%)`,
+				id: key,
+				label: key,
+				value: value
+		  }))
+		: [];
 
-    const filteredLegends = data.slice(0, 5).map((item) => ({
-        color: item.color,
-        id: item.id,
-        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
-    }));
+	const filteredLegends = data.slice(0, 5).map((item) => ({
+		color: item.color,
+		id: item.id,
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+	}));
 
-    const middleFilteredLegends = data.slice(5, 10).map((item) => ({
-        color: item.color,
-        id: item.id,
-        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
-    }));
+	const middleFilteredLegends = data.slice(5, 10).map((item) => ({
+		color: item.color,
+		id: item.id,
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+	}));
 
-    const lastFilteredLegends = data.slice(10).map((item) => ({
-        color: item.color,
-        id: item.id,
-        label: `${(item.label).split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
-    }));
+	const lastFilteredLegends = data.slice(10).map((item) => ({
+		color: item.color,
+		id: item.id,
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+	}));
 
-    return (
-        <StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-            <h2 className='text-base font-semibold sm:text-xl'>Referendum Count</h2>
-            <Spin spinning={loading}>
-                <div
-                    className='flex justify-start'
-                    style={{ height: '300px', width: '100%' }}
-                >
-                    <ResponsivePie
-                        data={data}
-                        margin={{
-                            bottom: 8,
-                            left: -520,
-                            right: 260,
-                            top: 20
-                        }}
-                        colors={{ datum: 'data.color' }}
-                        innerRadius={0.8}
-                        padAngle={0.7}
-                        cornerRadius={15}
-                        activeOuterRadiusOffset={8}
-                        borderWidth={1}
-                        borderColor={{
-                            from: 'color',
-                            modifiers: [['darker', 0.2]]
-                        }}
-                        enableArcLinkLabels={false}
-                        arcLinkLabelsSkipAngle={10}
-                        arcLinkLabelsTextColor='#333333'
-                        arcLinkLabelsThickness={2}
-                        arcLinkLabelsColor='#c93b3b'
-                        enableArcLabels={false}
-                        arcLabelsRadiusOffset={0.55}
-                        arcLabelsSkipAngle={10}
-                        arcLabelsTextColor={{
-                            from: 'color',
-                            modifiers: [['darker', 2]]
-                        }}
-                        defs={[
-                            {
-                                background: 'inherit',
-                                color: 'rgba(255, 255, 255, 0.3)',
-                                id: 'dots',
-                                padding: 1,
-                                size: 4,
-                                stagger: true,
-                                type: 'patternDots'
-                            },
-                            {
-                                background: 'inherit',
-                                color: 'rgba(255, 255, 255, 0.3)',
-                                id: 'lines',
-                                lineWidth: 6,
-                                rotation: -45,
-                                spacing: 10,
-                                type: 'patternLines'
-                            }
-                        ]}
-                        legends={[
+	return (
+		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+			<h2 className='text-base font-semibold sm:text-xl'>Referendum Count</h2>
+			<Spin spinning={loading}>
+				<div
+					className='flex justify-start'
+					style={{ height: '300px', width: '100%' }}
+				>
+					<ResponsivePie
+						data={data}
+						margin={{
+							bottom: 8,
+							left: -520,
+							right: 260,
+							top: 20
+						}}
+						colors={{ datum: 'data.color' }}
+						innerRadius={0.8}
+						padAngle={0.7}
+						cornerRadius={15}
+						activeOuterRadiusOffset={8}
+						borderWidth={1}
+						borderColor={{
+							from: 'color',
+							modifiers: [['darker', 0.2]]
+						}}
+						enableArcLinkLabels={false}
+						arcLinkLabelsSkipAngle={10}
+						arcLinkLabelsTextColor='#333333'
+						arcLinkLabelsThickness={2}
+						arcLinkLabelsColor='#c93b3b'
+						enableArcLabels={false}
+						arcLabelsRadiusOffset={0.55}
+						arcLabelsSkipAngle={10}
+						arcLabelsTextColor={{
+							from: 'color',
+							modifiers: [['darker', 2]]
+						}}
+						defs={[
+							{
+								background: 'inherit',
+								color: 'rgba(255, 255, 255, 0.3)',
+								id: 'dots',
+								padding: 1,
+								size: 4,
+								stagger: true,
+								type: 'patternDots'
+							},
+							{
+								background: 'inherit',
+								color: 'rgba(255, 255, 255, 0.3)',
+								id: 'lines',
+								lineWidth: 6,
+								rotation: -45,
+								spacing: 10,
+								type: 'patternLines'
+							}
+						]}
+						legends={[
 							{
 								anchor: 'right',
 								data: filteredLegends,
@@ -175,7 +175,7 @@ const ReferendumCount = () => {
 								translateX: -450,
 								translateY: 0
 							},
-                            {
+							{
 								anchor: 'right',
 								data: middleFilteredLegends,
 								direction: 'column',
@@ -188,7 +188,7 @@ const ReferendumCount = () => {
 								translateX: -250,
 								translateY: 0
 							},
-                            {
+							{
 								anchor: 'right',
 								data: lastFilteredLegends,
 								direction: 'column',
@@ -202,11 +202,11 @@ const ReferendumCount = () => {
 								translateY: 0
 							}
 						]}
-                    />
-                </div>
-            </Spin>
-        </StyledCard>
-    )
-}
+					/>
+				</div>
+			</Spin>
+		</StyledCard>
+	);
+};
 
-export default ReferendumCount
+export default ReferendumCount;

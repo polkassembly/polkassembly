@@ -13,37 +13,36 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 const getAllTrackLevelProposalsAnalytics = async ({ network }: { network: string }) => {
-    try {
-        if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
+	try {
+		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
-        const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
-        const trackDataMap: Record<string, number> = {};
-        let totalProposals = 0;
+		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
+		const trackDataMap: Record<string, number> = {};
+		let totalProposals = 0;
 
-        const dataPromise = trackNumbers.map(async (trackId) => {
-            if (trackId) {
-                const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackId)).get();
-                let totalProposalCount = 0;
-    
-                if (trackSnapshot.exists) {
-                    const data = trackSnapshot.data();
-                    totalProposalCount = data?.totalProposalCount || 0;
-                    trackDataMap[trackId] = totalProposalCount;
-                    totalProposals += totalProposalCount;
-                }
-            }
-        });
+		const dataPromise = trackNumbers.map(async (trackId) => {
+			if (trackId) {
+				const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackId)).get();
+				let totalProposalCount = 0;
 
-        await Promise.allSettled(dataPromise);
+				if (trackSnapshot.exists) {
+					const data = trackSnapshot.data();
+					totalProposalCount = data?.totalProposalCount || 0;
+					trackDataMap[trackId] = totalProposalCount;
+					totalProposals += totalProposalCount;
+				}
+			}
+		});
 
-        trackDataMap['totalTracks'] = trackNumbers.length;
-        trackDataMap['total'] = totalProposals;
-        return { data: { trackDataMap }, error: null, status: 200 };
-    } catch (err) {
-        return { data: null, error: err || messages.API_FETCH_ERROR, status: err.name };
-    }
+		await Promise.allSettled(dataPromise);
+
+		trackDataMap['totalTracks'] = trackNumbers.length;
+		trackDataMap['total'] = totalProposals;
+		return { data: { trackDataMap }, error: null, status: 200 };
+	} catch (err) {
+		return { data: null, error: err || messages.API_FETCH_ERROR, status: err.name };
+	}
 };
-
 
 async function handler(req: NextApiRequest, res: NextApiResponse<any | MessageType>) {
 	storeApiKeyUsage(req);

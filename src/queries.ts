@@ -2506,6 +2506,7 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
     to
     balance
     lockPeriod
+    track
   }
 }
 `;

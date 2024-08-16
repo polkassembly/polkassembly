@@ -57,6 +57,7 @@ const AnalyticsTrends = () => {
 						</div>
 						<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
 							<AnalyticTurnOutPercentage />
+							{/* <LatestTreasuryOverview /> */}
 							<AnalyticTurnOutPercentage />
 						</div>
 						<ReferendumCount />

@@ -2,9 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import AnalyticsVotingTrends from '../TrackLevelAnalytics/AnalyticsVotingTrends';
 import AnalyticsStats from './AnalyticsStats';
 import AnalyticsTrends from './AnalyticTrends';
+import AnalyticsDelegationTrends from './AnalyticsDelegationTrends';
 
 const GovAnalytics = () => {
 	return (
@@ -12,7 +12,7 @@ const GovAnalytics = () => {
 			<div className='flex w-full flex-col gap-y-4'>
 				<AnalyticsStats />
 				<AnalyticsTrends />
-				<AnalyticsVotingTrends isUsedInAnalytics={true} />
+				<AnalyticsDelegationTrends />
 			</div>
 		</section>
 	);

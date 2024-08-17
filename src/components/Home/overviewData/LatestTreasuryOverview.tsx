@@ -18,10 +18,9 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
-import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
+import { IOverviewProps } from '~src/types';
 
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+// const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -39,7 +38,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdcValue: '',
 		usdtValue: ''
 	});
-	const [graphData, setGraphData] = useState<IMonthlyTreasuryTally[]>([]);
+	const [graphData, setGraphData] = useState<any>([]);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
@@ -55,26 +54,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				Number(assethubValues.usdtValue) / 1000000
 		)
 	);
-
-	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
-	const formatedBalanceDifference =
-		graphBalanceDifference &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				graphBalanceDifference.toString(),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: true
-				},
-				network
-			)
-		);
-	// const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
-
-	const sortedGraphData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
 
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
@@ -152,7 +131,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const getGraphData = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch<IMonthlyTreasuryTally[]>('/api/v1/treasury-amount-history');
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/treasury-amount-history/fetchMonthlyDataInUsd');
 
 			if (error) {
 				console.error('Error fetching data:', error);
@@ -165,28 +144,28 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		}
 	};
 
-	const getDifferenceData = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IDailyTreasuryTallyData>('/api/v1/treasury-amount-history/get-daily-tally-data');
+	// const getDifferenceData = async () => {
+	// try {
+	// const { data, error } = await nextApiClientFetch<IDailyTreasuryTallyData>('/api/v1/treasury-amount-history/get-daily-tally-data');
 
-			if (error) {
-				console.error('Error fetching daily tally data:', error);
-			}
+	// if (error) {
+	// console.error('Error fetching daily tally data:', error);
+	// }
 
-			if (data) {
-				if (sortedGraphData.length > 0) {
-					const lastGraphBalance = parseFloat(sortedGraphData[sortedGraphData.length - 1]?.balance);
+	//if (data) {
+	//if (graphData.length > 0) {
+	//const lastGraphBalance = parseFloat(sortedGraphData[sortedGraphData.length - 1]?.balance);
 
-					const apiBalance = parseFloat(data.balance);
-					const difference = apiBalance - lastGraphBalance;
+	//const apiBalance = parseFloat(data.balance);
+	//const difference = apiBalance - lastGraphBalance;
 
-					setGraphBalanceDifference(difference);
-				}
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
+	//setGraphBalanceDifference(difference);
+	//}
+	//}
+	//} catch (error) {
+	//console.error('Unexpected error:', error);
+	// }
+	// };
 
 	useEffect(() => {
 		(async () => {
@@ -218,7 +197,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, [network]);
 
 	useEffect(() => {
-		getDifferenceData();
+		// getDifferenceData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, graphData.length]);
 
@@ -246,7 +225,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 											/>
 										</div>
-										{formatedBalanceDifference && (
+										{totalTreasuryValueUSD && (
 											<div className='flex items-baseline'>
 												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 													~${totalTreasuryValueUSD}
@@ -354,10 +333,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				</div>
 				{/* graph */}
 				<div>
-					<OverviewDataGraph
-						graphData={graphData}
-						currentTokenPrice={currentTokenPrice}
-					/>
+					<OverviewDataGraph graphData={graphData} />
 				</div>
 			</div>
 			<div className='flex w-full flex-1 flex-col gap-5 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>

@@ -14,7 +14,7 @@ interface IGetTreasuryHistoryParams {
 }
 
 export interface IMonthlyTreasuryTally {
-	[key: string]: string;
+	[key: string]: number;
 }
 
 interface IHistoryItem {

@@ -10,42 +10,49 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
-import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
 
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const monthOrder = ['september', 'october', 'november', 'december', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
 		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
 			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{point.data.x}</div>
-			<div className='text-xl font-medium dark:text-blue-dark-high'>{Number(point.data.y).toFixed(2)}M DOT </div>
+			<div className='text-xl font-medium dark:text-blue-dark-high'>${Number(point.data.y).toFixed(2)}M </div>
 		</div>
 	);
 };
 
-const OverviewDataGraph = ({
-	graphData
-}: {
-	graphData: IMonthlyTreasuryTally[];
-	currentTokenPrice: {
-		isLoading: boolean;
-		value: string;
-	};
-}) => {
+const adjustMonthOrder = (data: { [key: string]: number }, monthOrder: string[], currentMonth: string) => {
+	const currentMonthIndex = monthOrder.indexOf(currentMonth.toLowerCase());
+
+	const adjustedOrder = [...monthOrder.slice(currentMonthIndex + 1), ...monthOrder.slice(0, currentMonthIndex + 1)];
+
+	const formattedGraphData = Object.entries(data)
+		.map(([month, balance]) => ({
+			month: month.toLowerCase(),
+			balance: balance.toString()
+		}))
+		.filter((item) => parseFloat(item.balance) !== 0)
+		.sort((a, b) => adjustedOrder.indexOf(a.month) - adjustedOrder.indexOf(b.month));
+
+	return formattedGraphData;
+};
+
+const OverviewDataGraph = ({ graphData }: { graphData: { [key: string]: number } }) => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
-	const filteredData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
+	const currentMonth = new Date().toLocaleString('default', { month: 'long' }).toLowerCase();
 
-	const firstMonth = filteredData[0]?.month;
-	const lastMonth = filteredData[filteredData.length - 1]?.month;
+	const formattedGraphData = adjustMonthOrder(graphData, monthOrder, currentMonth);
+
+	const firstMonth = formattedGraphData[0]?.month;
+	const lastMonth = formattedGraphData[formattedGraphData.length - 1]?.month;
 
 	const formattedData = [
 		{
 			id: 'balance',
-			data: filteredData.map((item) => ({
+			data: formattedGraphData.map((item) => ({
 				x: item.month.charAt(0).toUpperCase() + item.month.slice(1),
 				y: formatUSDWithUnits(
 					formatBnBalance(
@@ -62,7 +69,7 @@ const OverviewDataGraph = ({
 		}
 	];
 
-	if (filteredData.length === 0) {
+	if (formattedGraphData.length === 0) {
 		return (
 			<div className='mt-3 flex h-full w-full items-center justify-center'>
 				<LoadingOutlined />

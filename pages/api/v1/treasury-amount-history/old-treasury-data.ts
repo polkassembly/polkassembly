@@ -20,7 +20,7 @@ interface IReturnResponse {
 	error?: null | string;
 }
 
-const lastNMonths = 6;
+const lastNMonths = 12;
 
 function getMonthRange(monthsAgo: number): { start: string; end: string } {
 	const targetDate = dayjs().subtract(monthsAgo, 'month').set('date', 3);
@@ -127,6 +127,45 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 	}
 };
 
+const storeMonthlyTreasuryTallyUSD = async (network: string, monthlyData: { [key: string]: number }) => {
+	const dotValuesByMonth = [
+		{ month: 'august', usdValue: 5.343944203573159 },
+		{ month: 'july', usdValue: 6.336374552862423 },
+		{ month: 'june', usdValue: 7.058331218859057 },
+		{ month: 'may', usdValue: 6.855796299781072 },
+		{ month: 'april', usdValue: 9.171289667788763 },
+		{ month: 'march', usdValue: 8.64115820751773 },
+		{ month: 'february', usdValue: 6.788948383733377 },
+		{ month: 'january', usdValue: 8.596377532718092 },
+		{ month: 'december', usdValue: 5.477308052301386 },
+		{ month: 'november', usdValue: 4.72682887737193 },
+		{ month: 'october', usdValue: 4.262694645878126 },
+		{ month: 'september', usdValue: 4.217157156635496 }
+	];
+
+	// Prepare the new document data
+	const usdTally: { [key: string]: number } = {};
+
+	Object.keys(monthlyData).forEach((month) => {
+		const usdValue = dotValuesByMonth.find((item) => item.month === month)?.usdValue;
+		if (usdValue) {
+			usdTally[month] = monthlyData[month] * usdValue;
+		}
+	});
+
+	try {
+		await firestore_db.collection('networks').doc(network).set(
+			{
+				monthly_treasury_tally_USD: usdTally
+			},
+			{ merge: true }
+		);
+	} catch (error) {
+		console.error('Error writing USD data to Firestore:', error);
+	}
+};
+
+// Usage in your existing function
 export const getCombinedBalances = async (network: string): Promise<IReturnResponse> => {
 	try {
 		const isCurrentMonthDataPresent = await isDataPresentForCurrentMonth(network);
@@ -163,6 +202,8 @@ export const getCombinedBalances = async (network: string): Promise<IReturnRespo
 		const combinedError = assetHubResponse.error || networkResponse.error;
 
 		await saveToFirestore(network, combinedData);
+		// Store in USD
+		await storeMonthlyTreasuryTallyUSD(network, combinedData);
 
 		return {
 			data: combinedData ? [{ history: null, status: 'Success' }] : null,

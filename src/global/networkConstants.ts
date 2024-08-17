@@ -204,6 +204,8 @@ export const chainProperties: types.ChainPropType = {
 		preImageBaseDeposit: '400000000000',
 		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
 		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
+		assethubExternalLinks: 'https://assethub-polkadot.api.subscan.io',
+		assetHubBlockTime: 12000,
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -222,7 +224,6 @@ export const chainProperties: types.ChainPropType = {
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://polkadot.api.subscan.io',
-		assethubExternalLinks: 'https://assethub-polkadot.api.subscan.io',
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{

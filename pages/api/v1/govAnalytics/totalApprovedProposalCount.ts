@@ -10,10 +10,7 @@ import { GET_TOTAL_APPROVED_PROPOSALS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import messages from '~src/auth/utils/messages';
-
-export interface IGetTotalApprovedProposalCount {
-	totalCount: number;
-}
+import { IGetTotalApprovedProposalCount } from '~src/components/GovAnalytics/types';
 
 const handler: NextApiHandler<IGetTotalApprovedProposalCount | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);

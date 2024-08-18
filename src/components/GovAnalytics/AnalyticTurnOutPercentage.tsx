@@ -48,9 +48,8 @@ const AnalyticTurnOutPercentage = () => {
 
 	const getVoteData = async () => {
 		setIsLoading(true);
-		const url = '/api/v1/govAnalytics/allTracksAnalytics';
 		try {
-			const { data } = await nextApiClientFetch<any>(url);
+			const { data } = await nextApiClientFetch<{ averageSupportPercentages: Record<string, number> }>('/api/v1/govAnalytics/allTracksAnalytics');
 			if (data) {
 				const updatedTrackInfo: TrackInfo = {};
 

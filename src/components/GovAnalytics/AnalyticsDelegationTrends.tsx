@@ -18,29 +18,49 @@ import DelegationCapitalDetails from './DelegationCapitalDetails';
 
 const { Panel } = Collapse;
 
+interface IDelegationAnalytics {
+	totalCapital: string;
+	totalDelegates: number;
+	totalDelegators: number;
+	totalVotesBalance: string;
+}
+
+interface IDelegationInfo {
+	[key: string]: IDelegationAnalytics;
+}
+
 const AnalyticsDelegationTrends = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [delegationInfo, setDelegationInfo] = useState();
+	const [delegationInfo, setDelegationInfo] = useState<IDelegationInfo | null>(null);
 	const { network } = useNetworkSelector();
 
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/trackDelegationAnalytics');
-			if (data) {
-				Object.keys(data).forEach((key) => {
-					delete data[key].delegateesData;
-					delete data[key].delegatorsData;
-				});
-				const updatedTrackInfo: any = {};
+			const response = await nextApiClientFetch<IDelegationInfo | MessageType>('/api/v1/govAnalytics/trackDelegationAnalytics');
+			const data = response.data;
+
+			// Check if the data is of type IDelegationInfo and process it
+			if (data && !('message' in data)) {
+				const updatedTrackInfo: IDelegationInfo = {};
+
 				Object.entries(data).forEach(([key, value]) => {
+					const { totalCapital, totalDelegates, totalDelegators, totalVotesBalance } = value;
 					const trackName = getTrackNameFromId(network, parseInt(key)).split('_').join(' ');
-					updatedTrackInfo[trackName] = value as number;
+
+					updatedTrackInfo[trackName] = {
+						totalCapital,
+						totalDelegates,
+						totalDelegators,
+						totalVotesBalance
+					};
 				});
+
 				setDelegationInfo(updatedTrackInfo);
-				setLoading(false);
 			}
+
+			setLoading(false);
 		} catch (error) {
 			console.log(error);
 			setLoading(false);

@@ -6,7 +6,6 @@ import { Card, Spin } from 'antd';
 import { useTheme } from 'next-themes';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { MessageType } from '~src/auth/types';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
@@ -50,7 +49,7 @@ const ReferendumCount = () => {
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/ReferendumCount');
+			const { data } = await nextApiClientFetch<{ trackDataMap: Record<string, number> }>('/api/v1/govAnalytics/referendumCount');
 			if (data) {
 				setTotalPosts(data.trackDataMap.total);
 

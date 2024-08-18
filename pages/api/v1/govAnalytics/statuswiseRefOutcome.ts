@@ -10,12 +10,9 @@ import { GET_STATUS_WISE_REF_OUTCOME } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import messages from '~src/auth/utils/messages';
+import { IGetStatusWiseRefOutcome } from '~src/components/GovAnalytics/types';
 
-export interface IGetStatusWiseProposalCount {
-	statusCounts: Record<string, number>;
-}
-
-const handler: NextApiHandler<IGetStatusWiseProposalCount | MessageType> = async (req, res) => {
+const handler: NextApiHandler<IGetStatusWiseRefOutcome | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 	try {
 		const network = String(req.headers['x-network']);

@@ -7,9 +7,9 @@ import { Card, Spin } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { MessageType } from '~src/auth/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
+import { IGetStatusWiseProposalCount } from './types';
 
 interface TrackInfo {
 	trackId: number;
@@ -54,7 +54,7 @@ const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [categoryInfo, setCategoryInfo] = useState({
+	const [categoryInfo, setCategoryInfo] = useState<Record<string, number>>({
 		governance: 0,
 		main: 0,
 		treasury: 0,
@@ -79,7 +79,7 @@ const AnalyticsReferendumCount = () => {
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/categoryWiseTotalProposalCount', {
+			const { data } = await nextApiClientFetch<IGetStatusWiseProposalCount>('/api/v1/govAnalytics/categoryWiseTotalProposalCount', {
 				categoryIds: groupedTrackIds
 			});
 			if (data) {

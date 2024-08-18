@@ -6,13 +6,13 @@ import styled from 'styled-components';
 import { Card, MenuProps, Space, Spin } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { MessageType } from '~src/auth/types';
 import { Dropdown } from '~src/ui-components/Dropdown';
 import { DownOutlined } from '@ant-design/icons';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useTheme } from 'next-themes';
+import { IGetStatusWiseRefOutcome } from './types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -46,7 +46,7 @@ const AnalyticsReferendumOutcome = () => {
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
-	const [statusInfo, setStatusInfo] = useState({
+	const [statusInfo, setStatusInfo] = useState<Record<string, number>>({
 		approved: 0,
 		cancelled: 0,
 		ongoing: 0,
@@ -62,7 +62,7 @@ const AnalyticsReferendumOutcome = () => {
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data } = await nextApiClientFetch<any | MessageType>('/api/v1/govAnalytics/statuswiseRefOutcome', {
+			const { data } = await nextApiClientFetch<IGetStatusWiseRefOutcome>('/api/v1/govAnalytics/statuswiseRefOutcome', {
 				trackId: selectedTrack === null ? null : trackIds[selectedTrack]
 			});
 			if (data) {

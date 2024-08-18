@@ -43,7 +43,7 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 	}
 };
 
-async function handler(req: NextApiRequest, res: NextApiResponse<any | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<{ averageSupportPercentages: Record<string, number> } | MessageType>) {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

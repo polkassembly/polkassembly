@@ -6,11 +6,9 @@ import { Divider, Spin } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { MessageType } from '~src/auth/types';
-// import { useDispatch } from 'react-redux';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-// import { IGetTotalApprovedProposalCount } from 'pages/api/v1/govAnalytics/totalApprovedProposalCount';
+import { IGetTotalApprovedProposalCount } from './types';
 
 interface IProps {
 	className?: string;
@@ -28,7 +26,7 @@ const AnalyticsStats: FC<IProps> = (props) => {
 		setLoading(true);
 		const url = '/api/v1/govAnalytics/totalApprovedProposalCount';
 		try {
-			const { data } = await nextApiClientFetch<any | MessageType>(url);
+			const { data } = await nextApiClientFetch<IGetTotalApprovedProposalCount>(url);
 			if (data) {
 				setTotalApprovedProposalCount(data?.totalCount);
 				setLoading(false);

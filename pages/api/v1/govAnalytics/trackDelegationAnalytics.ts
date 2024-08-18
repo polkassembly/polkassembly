@@ -81,7 +81,6 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 			});
 		}
 
-		// Convert BN values to strings and return the results
 		const formattedTrackStats = Object.keys(trackStats).reduce(
 			(acc, track) => {
 				acc[track] = {
@@ -111,7 +110,7 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 	}
 };
 
-async function handler(req: NextApiRequest, res: NextApiResponse<any | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<Record<string, IDelegationAnalytics> | MessageType>) {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

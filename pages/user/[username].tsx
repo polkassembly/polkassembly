@@ -73,6 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	});
 
 	const achievement_badges = await updateUserBadges(username.toString(), network);
+	console.log('achievement_badges', achievement_badges);
 
 	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	let activitiesCounts;

@@ -10,11 +10,10 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
-import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT } from './constant';
+import { badgeNames, GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from './constant';
 import { getTotalSupply } from './utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { getUserPostCount } from '../posts/user-total-post-counts';
 import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import getEncodedAddress from '~src/util/getEncodedAddress';
@@ -144,7 +143,7 @@ async function checkActiveVoter(user: ProfileDetailsResponse, network: string): 
 		const activeVoterRes = await fetchSubsquid({
 			network: network || 'polkodot',
 			query: GET_ACTIVE_VOTER,
-			variables: { voterAddresses: user.addresses, startDate: formattedDate }
+			variables: { startDate: formattedDate, voterAddresses: user.addresses }
 		});
 
 		const userVotes = activeVoterRes?.data?.flattenedConvictionVotes || [];
@@ -170,7 +169,7 @@ async function checkWhale(user: ProfileDetailsResponse, network: string): Promis
 		const { data: voterData } = await fetchSubsquid({
 			network: network || 'polkodot',
 			query: GET_ACTIVE_VOTER,
-			variables: { voterAddresses: addresses, startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString() }
+			variables: { startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(), voterAddresses: addresses }
 		});
 
 		if (!voterData?.flattenedConvictionVotes) return false;
@@ -192,65 +191,58 @@ async function checkWhale(user: ProfileDetailsResponse, network: string): Promis
 
 // Badge 6: Check if the user qualifies as a Steadfast Commentor with more than 50 comments
 // async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<boolean> {
-// 	try {
-// 		const commentCount = (
-// 			await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
-// 		).size;
-// 		return commentCount > 50;
-// 	} catch (error) {
-// 		console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
-// 		return false;
-// 	}
+//   try {
+//     const commentCount = (
+//       await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
+//     ).size;
+//     return commentCount > 50;
+//   } catch (error) {
+//     console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
+//     return false;
+//   }
 // }
 
-// // Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
+// Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
 // async function checkGMVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-// 	try {
-// 		const data = await getUserPostCount({ network, userId: user.user_id });
-// 		const voteCount = data.data.votes || 0;
-// 		return voteCount > 50;
-// 	} catch (error) {
-// 		console.error(`Error checking GM Voter for user: ${user.username}`, error);
-// 		return false;
-// 	}
+//   try {
+//     const data = await getUserPostCount({ network, userId: user.user_id });
+//     const voteCount = data.data.votes || 0;
+//     return voteCount > 50;
+//   } catch (error) {
+//     console.error(`Error checking GM Voter for user: ${user.username}`, error);
+//     return false;
+//   }
 // }
 
-// // Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
+// Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
 // async function checkPopularDelegate(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
-// 	try {
-// 		const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
-// 			network: network || 'polkodot',
-// 			query: GET_POPULAR_DELEGATE
-// 		});
-// 		if (delegationsError || !delegationsData) {
-// 			console.error('Failed to fetch voting delegations:', delegationsError);
-// 			return false;
-// 		}
-// 		const delegations = delegationsData?.votingDelegations || [];
-// 		const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
-// 		const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
-// 			return acc.add(new BN(delegation.balance));
-// 		}, new BN(0));
+//   try {
+//     const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
+//       network: network || 'polkadot',
+//       query: GET_POPULAR_DELEGATE
+//     });
+//     if (delegationsError || !delegationsData) {
+//       console.error('Failed to fetch voting delegations:', delegationsError);
+//       return false;
+//     }
+//     const delegations = delegationsData?.votingDelegations || [];
+//     const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
+//     const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
+//       return acc.add(new BN(delegation.balance));
+//     }, new BN(0));
 
-// 		const totalSupply = await getTotalSupply(network || 'polkodot');
-// 		if (totalSupply.isZero()) return false;
-// 		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
-// 	} catch (error) {
-// 		console.error('Failed to calculate Popular Delegate status:', error);
-// 		return false;
-// 	}
+//     const totalSupply = await getTotalSupply(network || 'polkadot');
+//     if (totalSupply.isZero()) return false;
+//     return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
+//   } catch (error) {
+//     console.error('Failed to calculate Popular Delegate status:', error);
+//     return false;
+//   }
 // }
 
-// Main function to evaluate badges for a user
+//Main function to evaluate badges for a user
 async function evaluateBadges(username: string, network: string): Promise<Badge[]> {
 	const { data: user, error } = await getUserProfileWithUsername(username);
-	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
-	if (!wsProviderUrl) {
-		console.error(`WebSocket provider URL not found for network: ${network}`);
-		return [];
-	}
-	const wsProvider = new WsProvider(wsProviderUrl);
-	const api = await ApiPromise.create({ provider: wsProvider });
 
 	if (error || !user) {
 		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);

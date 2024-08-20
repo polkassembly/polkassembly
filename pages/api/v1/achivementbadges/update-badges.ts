@@ -361,7 +361,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 		const refinedname = username.replace(/[^a-zA-Z0-9]/g, '');
 		try {
 			await updateUserBadges(refinedname, network);
-			res.status(200).json({ message: `Badges updated successfully for user.` });
+			res.status(200).json({ message: `Badges updated successfully for user: ${refinedname}.` });
 		} catch (error) {
 			console.error(`Error updating badges for user: ${encodeURIComponent(username)}`, error);
 			res.status(500).json({ message: 'Failed to update user badges.' });

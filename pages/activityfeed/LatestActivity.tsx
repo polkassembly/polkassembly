@@ -86,7 +86,7 @@ const Container = styled.div`
 	}
 `;
 const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any; theme?: string }) => {
-	const [currentTab, setCurrentTab] = useState('all');
+	const [currentTab, setCurrentTab] = useState<CategoryKeys | null>(null);
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const tabItems = [
@@ -147,31 +147,78 @@ const Gov2LatestActivity = ({ className, gov2LatestPosts }: { className?: string
 			});
 		}
 	}
+	type CategoryKeys = 'Tracks' | 'Admin' | 'Governance' | 'Treasury' | 'Whitelist';
+	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
+
+	const tabCategories: Record<string, string[]> = {
+		All: ['all'],
+		Root: ['root'],
+		Discussion: ['discussions'],
+		Admin: ['staking-admin', 'auction-admin'],
+		Governance: ['lease-admin', 'general-admin', 'referendum-canceller', 'referendum-killer'],
+		Treasury: ['big-spender', 'medium-spender', 'small-spender', 'big-tipper', 'small-tipper', 'treasurer', 'on-chain-bounties', 'child-bounties'],
+		Whitelist: ['members', 'whitelisted-caller', 'fellowship-admin']
+	};
+
+	// Handle category click for dropdown toggle
+	const handleCategoryClick = (category: string) => {
+		setCurrentCategory(currentCategory === category ? null : category);
+	};
 
 	return (
-		<Container
-			className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
-			theme={theme as any}
-		>
-			<div className='flex items-center justify-between pl-1 pr-4'>
-				<h2 className='mx-3.5 mb-6 mt-6 text-xl font-medium leading-8 text-bodyBlue dark:text-blue-dark-high lg:mx-0 lg:mt-0'>Latest Activity</h2>
-				{currentTab !== 'all' && (
-					<Link
-						className='rounded-lg px-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high'
-						href={`/${currentTab}`}
-					>
-						View all
-					</Link>
-				)}
+		<div>
+			<div>
+				<div className='hide-scrollbar mb-10 flex w-full overflow-scroll rounded-lg bg-white p-2'>
+					{/* Render categories */}
+					{Object.keys(tabCategories).map((category) => (
+						<div
+							key={category}
+							className='w-full'
+						>
+							<p
+								className={`font-medium text-bodyBlue dark:text-blue-dark-high md:px-3 ${currentCategory === category ? 'text-blue-dark' : ''}`}
+								onClick={() => handleCategoryClick(category)}
+							>
+								{category}
+							</p>
+
+							{/* Dropdown content */}
+							{currentCategory === category && (
+								<div className='ml-4'>
+									{tabCategories[category].map((tabKey) => {
+										const tabItem = tabItems.find((item) => item.key === tabKey);
+										return (
+											tabItem && (
+												<p
+													key={tabItem.key}
+													className='font-medium text-bodyBlue dark:text-blue-dark-high md:px-3'
+													onClick={() => setCurrentTab(tabItem.key)}
+												>
+													{tabItem.key}
+												</p>
+											)
+										);
+									})}
+								</div>
+							)}
+						</div>
+					))}
+				</div>
 			</div>
-			<Tabs
-				type='card'
-				items={tabItems}
-				className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
-				onChange={(key: any) => setCurrentTab(key)}
-				theme={theme}
-			/>
-		</Container>
+
+			<Container
+				className={`${className} rounded-xxl bg-white p-0 drop-shadow-md dark:bg-section-dark-overlay lg:p-6`}
+				theme={theme as any}
+			>
+				<Tabs
+					type='card'
+					items={tabItems}
+					className='ant-tabs-tab-bg-white text-sm font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high md:px-2'
+					onChange={(key: any) => setCurrentTab(key)}
+					theme={theme}
+				/>
+			</Container>
+		</div>
 	);
 };
 

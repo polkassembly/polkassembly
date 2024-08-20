@@ -8,8 +8,8 @@ import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-post
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
-import React, { useEffect } from 'react';
-import Gov2LatestActivity from 'src/components/Gov2Home/Gov2LatestActivity';
+import React, { useEffect, useState } from 'react';
+import Gov2LatestActivity from './LatestActivity';
 import { FaAngleRight } from 'react-icons/fa6';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -27,6 +27,10 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import AboutActivity from './AboutActivity';
+import ScoreTag from '~src/ui-components/ScoreTag';
+import profileWithAddress, { getProfileWithAddress, IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import { use } from 'chai';
+import axios from 'axios';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
 	loading: () => <Skeleton active />,
@@ -119,6 +123,53 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const { resolvedTheme: theme } = useTheme();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
+	const [proposaldata, setProposalData] = useState({ discussions: 0, proposals: 0, votes: 0 });
+	const [loading, setLoading] = useState(true);
+	const [proposalerror, setProposalError] = useState<string | null>(null);
+
+	useEffect(() => {
+		async function getProposalData() {
+			try {
+				const response = await axios.post('/api/v1/posts/user-total-post-counts', {
+					addresses: ['5GFE6fdDkd4wXyDvQayrs9DL7K8Fx9mBFRFwioCmE4yB2GCU'],
+					userId: 22518
+				});
+				setProposalData(response.data);
+			} catch (err) {
+				setProposalError('Failed to fetch data');
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		getProposalData();
+	}, []);
+	console.log('proposaldata', proposaldata);
+
+	// const address = localStorage.getItem('loginAddress');
+	// useEffect(() => {
+	// 	async function getuserData() {
+	// 		const { data, error } = await profileWithAddress({ address: address });
+	// 		const profileScore = data?.profile?.score;
+	// 	}
+
+	// 	getuserData();
+	// }, [address]);
+
+	useEffect(() => {
+		if (!network) return;
+		const address = localStorage.getItem('loginAddress') || '';
+		async function getuserData() {
+			// const { data, error } = await getProfileWithAddress({
+			// 	address
+			// });
+			// const profileScore = data?.profile;
+			// console.log('profileScore', profileScore);
+		}
+		getuserData();
+	}, [network]);
+
+	console.log('networkSocialsData', networkSocialsData);
 	useEffect(() => {
 		dispatch(setNetwork(network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,13 +184,59 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
-			<div className='mt-3 flex items-center justify-between'>
-				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
-				<div className='mr-[6px] flex justify-between'>
-					<ProposalActionButtons isUsedInHomePage={true} />
+			<div className='mx-2 w-full max-w-[1300px] '>
+				<div className='mt-3 flex w-full items-center justify-between'>
+					<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
+					<div className='mr-[6px] flex justify-between'>
+						<ProposalActionButtons isUsedInHomePage={true} />
+					</div>
+				</div>
+
+				<div className='flex flex-col justify-between gap-5 xl:flex-row  '>
+					<div className=''>
+						{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+							<div className='mx-1 mt-8'>
+								<BatchVotingBadge />
+							</div>
+						)}
+					</div>
+					<div className='mx-1 mt-8 max-w-[940px]'>
+						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+					</div>
+					<div className='w-[450px]   '>
+						<div className='mx-1 mt-2 md:mt-6'>
+							{networkSocialsData && (
+								<AboutActivity
+									networkSocialsData={networkSocialsData?.data}
+									showGov2Links
+								/>
+							)}
+						</div>
+						<div>
+							<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+								<div className='flex items-center justify-between gap-2'>
+									<div className='flex gap-1'>
+										<p className='font-semibold'>Voted Proposals</p>
+										<FaAngleRight />
+									</div>
+									<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
+								</div>
+							</div>
+						</div>
+						<div>
+							{/* {!isNaN(profileScore) && (
+								<ScoreTag
+									score={profileScore}
+									className='ml-1 px-1 pr-3'
+									scale={1.1}
+									iconWrapperClassName='ml-1.5 mt-[5.5px]'
+								/>
+							)} */}
+						</div>
+					</div>
 				</div>
 			</div>
-			<div className='flex flex-col px-3 xl:flex-row'>
+			{/* <div className='flex flex-col px-3 xl:flex-row'>
 				<div className='flex-1'>
 					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
 						<div className='mx-1 mt-8'>
@@ -147,7 +244,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						</div>
 					)}
 
-					<div className='mx-1 mt-8 max-w-[1050px]'>
+					<div className='mx-1 mt-8 '>
 						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
 					</div>
 				</div>
@@ -172,7 +269,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</>
 	);
 };

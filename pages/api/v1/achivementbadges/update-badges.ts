@@ -71,7 +71,7 @@ async function checkFellow(user: ProfileDetailsResponse, network: string): Promi
 			return false;
 		}
 		// Fetch fellowship members
-		const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
+		const entries: [any, IFellow][] = await api?.query?.fellowshipCollective.members.entries();
 		// Map over addresses and check their ranks
 		const ranks = addresses?.map((address) => {
 			const encodedAddress = getEncodedAddress(address, network);
@@ -112,7 +112,7 @@ async function checkCouncil(user: ProfileDetailsResponse, network: string): Prom
 	const wsProvider = new WsProvider(wsProviderUrl);
 	const api = await ApiPromise.create({ provider: wsProvider });
 	try {
-		const members = await api.query.council?.members();
+		const members = await api?.query.council?.members();
 		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
 		return members.some((member) => encodedAddresses.includes(member.toString()));
 	} catch (error) {

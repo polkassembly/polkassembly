@@ -277,7 +277,7 @@ export enum BadgeName {
 
 export interface Badge {
 	name: BadgeName;
-	check: Boolean;
+	check: boolean;
 	unlockedAt: string;
 }
 

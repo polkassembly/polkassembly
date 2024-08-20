@@ -32,7 +32,7 @@ export async function getTotalSupply(network: string): Promise<BN> {
 		const inactiveIssuance = await api.query.balances.inactiveIssuance();
 		return new BN(totalIssuance.toString()).sub(new BN(inactiveIssuance.toString()));
 	} catch (error) {
-		console.error('Failed to fetch total supply:', error);
+		console.error(`Failed to fetch total supply for network ${network}:`, error);
 		throw error;
 	} finally {
 		await api.disconnect();

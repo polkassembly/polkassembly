@@ -59,7 +59,10 @@ async function checkFellow(user: ProfileDetailsResponse, network: string): Promi
 	}
 
 	const wsProvider = new WsProvider(wsProviderUrl);
-	const api = await ApiPromise.create({ provider: wsProvider });
+	const api = await ApiPromise.create({ provider: wsProvider }).catch((err) => {
+		console.error('API creation failed:', err);
+		return null;
+	});
 	const addresses = user.addresses;
 	try {
 		// Ensure the API query is available for the network
@@ -360,7 +363,7 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 			await updateUserBadges(refinedname, network);
 			res.status(200).json({ message: `Badges updated successfully for user.` });
 		} catch (error) {
-			console.error(`Error updating badges for user: ${refinedname}`, error);
+			console.error(`Error updating badges for user: ${encodeURIComponent(username)}`, error);
 			res.status(500).json({ message: 'Failed to update user badges.' });
 		}
 	} else {

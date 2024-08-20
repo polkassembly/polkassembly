@@ -8,6 +8,8 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
+import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { usePostDataContext } from '~src/context';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -20,6 +22,10 @@ interface Props {
 }
 
 const ProgressReportTab = ({ className }: Props) => {
+	const { post_report_added } = useProgressReportSelector();
+	const currentUser = useUserDetailsSelector();
+	const { postData } = usePostDataContext();
+
 	return (
 		<div className={`${className}`}>
 			<Collapse
@@ -44,7 +50,9 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					<UploadModalContent />
+					{/* remove ! sign check */}
+					{/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */}
+					{!(postData.proposer === currentUser?.loginAddress) && postData?.status === 'Executed' && !post_report_added && <UploadModalContent />}
 				</Panel>
 			</Collapse>
 		</div>

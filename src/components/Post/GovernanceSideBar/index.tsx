@@ -62,7 +62,7 @@ import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
@@ -79,6 +79,7 @@ import _ from 'lodash';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ClaimAssetPayoutInfo from '~src/ui-components/ClaimAssetPayoutInfo';
 import isMultiassetSupportedNetwork from '~src/util/isMultiassetSupportedNetwork';
+import Alert from '~src/basic-components/Alert';
 
 interface IGovernanceSidebarProps {
 	canEdit?: boolean | '' | undefined;
@@ -148,6 +149,8 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const { report_uploaded } = useProgressReportSelector();
+	const { postData } = usePostDataContext();
 
 	const [address, setAddress] = useState<string>('');
 	const [accounts, setAccounts] = useState<InjectedTypeWithCouncilBoolean[]>([]);
@@ -999,6 +1002,16 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 								isReferendaPage
 								referendumIndex={postIndex as number}
 								className='mb-6'
+							/>
+						)}
+
+						{/* in place of report_uploaded, use key from BE and use that without ! */}
+						{!report_uploaded && loginAddress !== postData?.proposer && (
+							<Alert
+								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
+								showIcon
+								type='info'
+								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer</span>}
 							/>
 						)}
 						<RHSCardSlides

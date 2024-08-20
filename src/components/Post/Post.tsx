@@ -32,7 +32,7 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -43,6 +43,7 @@ import VoteDataBottomDrawer from './GovernanceSideBar/Modal/VoteData/VoteDataBot
 import isAnalyticsSupportedNetwork from './Tabs/PostStats/util/constants';
 import Skeleton from '~src/basic-components/Skeleton';
 import { EAllowedCommentor } from '~src/types';
+import PostProgressReport from '../ProgressReport/PostProgressReport';
 
 const PostDescription = dynamic(() => import('./Tabs/PostDescription'), {
 	loading: () => <Skeleton active />,
@@ -110,6 +111,7 @@ const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
+	const { report_uploaded } = useProgressReportSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -469,15 +471,19 @@ const Post: FC<IPostProps> = (props) => {
 	const tabItems: any[] = [
 		{
 			children: (
-				<PostDescription
-					id={id}
-					isEditing={isEditing}
-					canEdit={canEdit}
-					toggleEdit={toggleEdit}
-					isOnchainPost={isOnchainPost}
-					TrackerButtonComp={TrackerButtonComp}
-					Sidebar={() => <Sidebar />}
-				/>
+				<>
+					{/* remove ! sign and in place of report_uploaded use post api field */}
+					{!report_uploaded && <PostProgressReport />}
+					<PostDescription
+						id={id}
+						isEditing={isEditing}
+						canEdit={canEdit}
+						toggleEdit={toggleEdit}
+						isOnchainPost={isOnchainPost}
+						TrackerButtonComp={TrackerButtonComp}
+						Sidebar={() => <Sidebar />}
+					/>
+				</>
 			),
 			key: 'description',
 			label: 'Description'

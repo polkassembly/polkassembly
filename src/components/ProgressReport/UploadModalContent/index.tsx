@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -12,12 +12,17 @@ import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import ContentForm from '~src/components/ContentForm';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
+import SuccessModal from './SuccessModal';
+import { CloseIcon } from '~src/ui-components/CustomIcons';
+import CustomButton from '~src/basic-components/buttons/CustomButton';
 
 const { Dragger } = Upload;
 
 const UploadModalContent = () => {
 	const dispatch = useDispatch();
-	const { post_report_added, report_uploaded, add_summary_cta_clicked } = useProgressReportSelector();
+	const { post_report_added, report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
 
 	const props: UploadProps = {
 		action: window.location.href,
@@ -95,6 +100,26 @@ const UploadModalContent = () => {
 					</div>
 				</div>
 			</Dragger>
+			<Modal
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
+				open={open_success_modal}
+				maskClosable={false}
+				footer={
+					<CustomButton
+						variant='primary'
+						className='w-full'
+						text='close'
+						onClick={() => {
+							dispatch(progressReportActions.setOpenSuccessModal(false));
+						}}
+					/>
+				}
+				closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+				onCancel={() => {}}
+			>
+				<SuccessModal />
+			</Modal>
 		</article>
 	);
 };

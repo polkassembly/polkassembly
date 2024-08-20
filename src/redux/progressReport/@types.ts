@@ -7,4 +7,5 @@ export interface IProgressReportStore {
 	post_report_added: boolean;
 	add_summary_cta_clicked: boolean;
 	summary_content: string;
+	open_success_modal: boolean;
 }

@@ -24,6 +24,7 @@ import DelegatedProfileIcon from '~assets/icons/delegate-profile.svg';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import dayjs from 'dayjs';
 interface Props {
 	className?: string;
 	posts: any[];
@@ -74,6 +75,7 @@ export const handleTrack = (track: string) => {
 };
 
 const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const {
@@ -91,7 +93,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 	const [openDelegateModal, setOpenDelegateModal] = useState<boolean>(false);
 	const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 	const [openSignupModal, setOpenSignupModal] = useState<boolean>(false);
-	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (!window) return;
@@ -105,6 +106,25 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
+
+	const handleUndelegationDisable = (item: any) => {
+		if (!item?.length || !item?.[0]?.delegatedOn || !item?.[0]?.lockPeriod) return { delegationDisable: false, timeLeftInUndelegation: { percentage: 0, time: null } };
+
+		const lockedDays = item?.[0]?.lockPeriod ? 7 * 2 ** (item?.[0]?.lockPeriod - 1) : 0;
+		const daysComplete = dayjs().diff(dayjs(item?.[0]?.delegatedOn), 'days');
+
+		let daysLeft = lockedDays - daysComplete;
+
+		if (daysComplete >= lockedDays) {
+			daysLeft = 0;
+		}
+		let percentageTimeLeft = 0;
+		if (daysLeft) {
+			percentageTimeLeft = Math.floor((daysLeft * 100) / lockedDays);
+		}
+		const undelegationEnableOn = dayjs().add(daysLeft, 'days').format('DD MMM YYYY').toString();
+		return { delegationDisable: !!daysLeft, timeLeftInUndelegation: { percentage: percentageTimeLeft, time: daysLeft ? undelegationEnableOn : null } };
+	};
 
 	const getData = async () => {
 		if (!address?.length) return;
@@ -204,7 +224,26 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 										<Table
 											className='column'
 											theme={theme}
-											columns={GetTracksColumns(item, setOpenUndelegateModal, network)}
+											key={item}
+											columns={GetTracksColumns(
+												item,
+												setOpenUndelegateModal,
+												network,
+												handleUndelegationDisable(
+													rowData
+														.filter((row) => (item === ETrackDelegationStatus?.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+														?.map((item, index) => {
+															return { ...item, index: index + 1 };
+														})
+												)?.delegationDisable,
+												handleUndelegationDisable(
+													rowData
+														.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
+														?.map((item, index) => {
+															return { ...item, index: index + 1 };
+														})
+												)?.timeLeftInUndelegation
+											)}
 											dataSource={rowData
 												.filter((row) => (item === ETrackDelegationStatus.RECEIVED_DELEGATION ? row?.delegatedTo === address : row?.delegatedTo !== address))
 												?.map((item, index) => {

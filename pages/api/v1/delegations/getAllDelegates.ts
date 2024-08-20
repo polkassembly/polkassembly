@@ -15,7 +15,6 @@ import * as admin from 'firebase-admin';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import w3fDelegatesKusama from './w3f-delegates-kusama.json';
 import w3fDelegatesPolkadot from './w3f-delegates-polkadot.json';
-import console_pretty from '~src/api-utils/console_pretty';
 import BN from 'bn.js';
 
 const firestore_db = admin.firestore();
@@ -188,8 +187,6 @@ export const getDelegatesData = async (network: string, filterBy: string, addres
 	if (filterBy) {
 		combinedDelegates = getResultsDataAccordingToFilter(filterBy as EDelegationAddressFilters, combinedDelegates);
 	}
-
-	console_pretty(combinedDelegates.slice(0, 5));
 
 	return {
 		data: combinedDelegates,

@@ -144,7 +144,7 @@ const TrendingDelegates = () => {
 			{Object.values(EDelegationSourceFilters).map((source, index) => (
 				<div
 					key={index}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
 				>
 					<Checkbox
 						checked={selectedSources.includes(source)}
@@ -166,25 +166,25 @@ const TrendingDelegates = () => {
 			>
 				<Radio
 					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.ALL}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					All
 				</Radio>

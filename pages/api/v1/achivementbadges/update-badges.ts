@@ -18,14 +18,19 @@ import { getWSProvider } from '~src/global/achievementbadges';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getUserPostCount } from '../posts/user-total-post-counts';
+import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
+import { chainProperties } from '~src/global/networkConstants';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import dayjs from 'dayjs';
 
 // Badge1: Check if the user is a Decentralised Voice delegate
-async function checkDecentralisedVoice(user: ProfileDetailsResponse): Promise<boolean> {
+async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+		console.warn(`No addresses found for user: ${user.username}`);
+		return false;
+	}
 	try {
-		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
-			addresses: user.addresses || []
-		});
-
+		const { data, error } = await getW3fDelegateCheck(network, user?.addresses || []);
 		if (data) {
 			return data?.isW3fDelegate ?? false;
 		} else {
@@ -40,7 +45,17 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse): Promise<bo
 
 // Badge2: Check if the user qualifies for the Fellow badge based on rank
 async function checkFellow(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-	const wsProviderUrl = getWSProvider(network || 'polkodot');
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+		console.warn(`No addresses found for user: ${user.username}`);
+		return false;
+	}
+
+	// Only run for collectives or westend-collectives networks
+	if (network !== 'collectives' && network !== 'westend-collectives') {
+		return false;
+	}
+
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 
 	if (!wsProviderUrl) {
 		console.error(`WebSocket provider URL not found for network: ${network}`);
@@ -49,33 +64,32 @@ async function checkFellow(user: ProfileDetailsResponse, network: string): Promi
 
 	const wsProvider = new WsProvider(wsProviderUrl);
 	const api = await ApiPromise.create({ provider: wsProvider });
-
 	const addresses = user.addresses;
 	try {
+		// Ensure the API query is available for the network
 		if (!api?.query?.fellowshipCollective?.members?.entries) {
 			console.warn('fellowshipCollective or members query is not available on this network.');
 			return false;
 		}
-
-		for (const address of addresses) {
-			const userSubstrateAddress = getSubstrateAddress(address);
-			if (!userSubstrateAddress) {
-				console.error(`Invalid address: ${address}`);
-				continue;
-			}
-
-			const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
-			for (const [key, optInfo] of entries) {
-				const memberAccountId = key.args[0].toString();
-				if (memberAccountId === userSubstrateAddress) {
-					const userRank = optInfo?.rank || 0;
-					if (userRank >= 1) {
-						return true;
-					}
+		// Fetch fellowship members
+		const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
+		// Map over addresses and check their ranks
+		const ranks = addresses?.map((address) => {
+			const encodedAddress = getEncodedAddress(address, network);
+			// Check each entry for a matching address
+			for (const [key, value] of entries) {
+				const memberAccountIds = key.args.map((arg: any) => arg.toString());
+				// If the user's address matches, return the rank
+				if (memberAccountIds.includes(encodedAddress)) {
+					const userRank = value?.rank || 0;
+					return userRank;
 				}
 			}
-		}
-		return false;
+			// Return 0 if no match is found
+			return 0;
+		});
+		// Return true if any rank is greater than or equal to 1
+		return ranks.some((rank) => rank >= 1);
 	} catch (error) {
 		console.error('Failed to check fellow status:', error);
 		return false;
@@ -83,25 +97,25 @@ async function checkFellow(user: ProfileDetailsResponse, network: string): Promi
 }
 
 // Badge3: Check if the user is on a governance chain (Gov1)
-async function checkCouncil(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
-	const wsProviderUrl = getWSProvider(network || 'polkodot');
+async function checkCouncil(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+		console.warn(`No addresses found for user: ${user.username}`);
+		return false;
+	}
 
+	if (isOpenGovSupported(network || 'polkodot') || !network) return false;
+
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 	if (!wsProviderUrl) {
 		console.error(`WebSocket provider URL not found for network: ${network}`);
 		return false;
 	}
-
 	const wsProvider = new WsProvider(wsProviderUrl);
 	const api = await ApiPromise.create({ provider: wsProvider });
-
-	if (isOpenGovSupported(network || 'polkodot')) {
-		await api.disconnect();
-		return false;
-	}
-
 	try {
 		const members = await api.query.council?.members();
-		return members.some((member) => user.addresses.includes(member.toString()));
+		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
+		return members.some((member) => encodedAddresses.includes(member.toString()));
 	} catch (error) {
 		console.error('Error checking council members:', error);
 		return false;
@@ -111,10 +125,14 @@ async function checkCouncil(user: ProfileDetailsResponse, network?: string): Pro
 }
 
 // Badge 4: Check if the user is an Active Voter, participating in more than 15% of proposals
-async function checkActiveVoter(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
-	const thirtyDaysAgo = new Date();
-	thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-	const formattedDate = thirtyDaysAgo.toISOString();
+async function checkActiveVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+		console.warn(`No addresses found for user: ${user.username}`);
+		return false;
+	}
+
+	const thirtyDaysAgo = dayjs().subtract(30, 'days').toISOString();
+	const formattedDate = thirtyDaysAgo;
 
 	try {
 		const proposalCountRes = await fetchSubsquid({
@@ -141,7 +159,12 @@ async function checkActiveVoter(user: ProfileDetailsResponse, network?: string):
 }
 
 // Badge 5: Check if the user qualifies for the Whale badge, holding more than 0.05% of the total supply
-async function checkWhale(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
+async function checkWhale(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+		console.warn(`No addresses found for user: ${user.username}`);
+		return false;
+	}
+
 	const addresses = user.addresses;
 	try {
 		const totalSupply = await getTotalSupply(network || 'polkodot');
@@ -171,60 +194,60 @@ async function checkWhale(user: ProfileDetailsResponse, network?: string): Promi
 }
 
 // Badge 6: Check if the user qualifies as a Steadfast Commentor with more than 50 comments
-async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<boolean> {
-	try {
-		const commentCount = (
-			await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
-		).size;
-		return commentCount > 50;
-	} catch (error) {
-		console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
-		return false;
-	}
-}
+// async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<boolean> {
+// 	try {
+// 		const commentCount = (
+// 			await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
+// 		).size;
+// 		return commentCount > 50;
+// 	} catch (error) {
+// 		console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
+// 		return false;
+// 	}
+// }
 
-// Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
-async function checkGMVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-	try {
-		const data = await getUserPostCount({ network, userId: user.user_id });
-		const voteCount = data.data.votes || 0;
-		return voteCount > 50;
-	} catch (error) {
-		console.error(`Error checking GM Voter for user: ${user.username}`, error);
-		return false;
-	}
-}
+// // Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
+// async function checkGMVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+// 	try {
+// 		const data = await getUserPostCount({ network, userId: user.user_id });
+// 		const voteCount = data.data.votes || 0;
+// 		return voteCount > 50;
+// 	} catch (error) {
+// 		console.error(`Error checking GM Voter for user: ${user.username}`, error);
+// 		return false;
+// 	}
+// }
 
-// Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
-async function checkPopularDelegate(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
-	try {
-		const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
-			network: network || 'polkodot',
-			query: GET_POPULAR_DELEGATE
-		});
-		if (delegationsError || !delegationsData) {
-			console.error('Failed to fetch voting delegations:', delegationsError);
-			return false;
-		}
-		const delegations = delegationsData?.votingDelegations || [];
-		const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
-		const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
-			return acc.add(new BN(delegation.balance));
-		}, new BN(0));
+// // Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
+// async function checkPopularDelegate(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
+// 	try {
+// 		const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
+// 			network: network || 'polkodot',
+// 			query: GET_POPULAR_DELEGATE
+// 		});
+// 		if (delegationsError || !delegationsData) {
+// 			console.error('Failed to fetch voting delegations:', delegationsError);
+// 			return false;
+// 		}
+// 		const delegations = delegationsData?.votingDelegations || [];
+// 		const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
+// 		const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
+// 			return acc.add(new BN(delegation.balance));
+// 		}, new BN(0));
 
-		const totalSupply = await getTotalSupply(network || 'polkodot');
-		if (totalSupply.isZero()) return false;
-		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
-	} catch (error) {
-		console.error('Failed to calculate Popular Delegate status:', error);
-		return false;
-	}
-}
+// 		const totalSupply = await getTotalSupply(network || 'polkodot');
+// 		if (totalSupply.isZero()) return false;
+// 		return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
+// 	} catch (error) {
+// 		console.error('Failed to calculate Popular Delegate status:', error);
+// 		return false;
+// 	}
+// }
 
 // Main function to evaluate badges for a user
 async function evaluateBadges(username: string, network: string): Promise<Badge[]> {
 	const { data: user, error } = await getUserProfileWithUsername(username);
-	const wsProviderUrl = getWSProvider(network || 'polkodot');
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 	if (!wsProviderUrl) {
 		console.error(`WebSocket provider URL not found for network: ${network}`);
 		return [];
@@ -246,14 +269,14 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	}
 
 	const badgeChecks = await Promise.all([
-		checkDecentralisedVoice(user),
+		checkDecentralisedVoice(user, network),
 		checkFellow(user, network),
 		checkCouncil(user, network),
 		checkActiveVoter(user, network),
-		checkWhale(user, network),
-		checkSteadfastCommentor(user),
-		checkGMVoter(user, network),
-		checkPopularDelegate(user, network)
+		checkWhale(user, network)
+		// checkSteadfastCommentor(user),
+		// checkGMVoter(user, network),
+		// checkPopularDelegate(user, network)
 	]);
 
 	const badges = badgeChecks

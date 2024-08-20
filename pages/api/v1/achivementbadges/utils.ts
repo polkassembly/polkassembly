@@ -8,6 +8,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
 import { getWSProvider } from '~src/global/achievementbadges';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { chainProperties } from '~src/global/networkConstants';
 
 export async function getDelegationStats(network: string): Promise<{ data: IDelegationStats }> {
 	const { data, error } = await nextApiClientFetch<IDelegationStats | MessageType>(`/api/v1/delegations/get-delegation-stats?network=${network}`);
@@ -18,7 +19,7 @@ export async function getDelegationStats(network: string): Promise<{ data: IDele
 }
 
 export async function getTotalSupply(network: string): Promise<BN> {
-	const wsProviderUrl = getWSProvider(network);
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 
 	if (!wsProviderUrl) {
 		throw new Error(`WebSocket provider URL not found for network: ${network}`);

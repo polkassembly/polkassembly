@@ -362,9 +362,9 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 		const encodedName = encodeURIComponent(refinedName);
 		try {
 			await updateUserBadges(encodedName, network);
-			res.status(200).json({ message: `Badges updated successfully for user: ${encodedName}.` });
+			res.status(200).json({ message: 'Badges updated successfully for user.' });
 		} catch (error) {
-			console.error(`Error updating badges for user: ${encodedName}`, error);
+			console.error('Error updating badges for user:', encodedName, error);
 			res.status(500).json({ message: 'Failed to update user badges.' });
 		}
 	} else {

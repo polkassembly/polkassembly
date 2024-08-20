@@ -66,14 +66,22 @@ const getAllCombineDelegatesData = (
 
 const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 	switch (filterBy) {
-		case EDelegationAddressFilters.DELEGATED_VOTES:
-			return data.sort((a, b) => new BN(b.delegatedBalance).sub(new BN(a.delegatedBalance)).toNumber());
-		case EDelegationAddressFilters.RECEIVED_DELEGATIONS:
+		case EDelegationAddressFilters.DELEGATED_VOTES: {
+			const sortedData = data.sort((a, b) => new BN(b.delegatedBalance).cmp(new BN(a.delegatedBalance)));
+			return sortedData;
+		}
+		case EDelegationAddressFilters.RECEIVED_DELEGATIONS: {
 			return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
-		case EDelegationAddressFilters.VOTED_PROPOSALS:
+		}
+		case EDelegationAddressFilters.VOTED_PROPOSALS: {
 			return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
-		default:
+		}
+		case EDelegationAddressFilters.ALL: {
 			return data;
+		}
+		default: {
+			return data;
+		}
 	}
 };
 

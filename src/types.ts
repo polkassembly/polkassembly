@@ -933,5 +933,14 @@ export interface IDelegateAddressDetails {
 export enum EDelegationAddressFilters {
 	DELEGATED_VOTES = 'delegatedBalance',
 	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
-	VOTED_PROPOSALS = 'votedProposalsCount'
+	VOTED_PROPOSALS = 'votedProposalsCount',
+	ALL = 'all'
+}
+
+export enum EDelegationSourceFilters {
+	W3F = 'w3f',
+	PARITY = 'parity',
+	POLKASSEMBLY = 'polkassembly',
+	NA = 'N/A',
+	NOVA = 'nova'
 }

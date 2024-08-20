@@ -295,5 +295,4 @@ export interface BadgeCriterion {
 export interface IFellow {
 	address: string;
 	rank: number;
-	salary?: string;
 }

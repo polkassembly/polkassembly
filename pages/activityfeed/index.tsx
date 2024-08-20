@@ -4,12 +4,13 @@
 
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import type { Balance } from '@polkadot/types/interfaces';
 import { getLatestActivityAllPosts } from 'pages/api/v1/latest-activity/all-posts';
 import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off-chain-posts';
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect, useState } from 'react';
-import Gov2LatestActivity from './LatestActivity';
+import LatestActivityExplore from './LatestActivityExplore';
 import { FaAngleRight } from 'react-icons/fa6';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -28,14 +29,35 @@ import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import AboutActivity from './AboutActivity';
 import ScoreTag from '~src/ui-components/ScoreTag';
-import profileWithAddress, { getProfileWithAddress, IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
-import { use } from 'chai';
-import axios from 'axios';
+import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
+import { subscanApiHeaders } from '~src/global/apiHeaders';
+import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+import { chainProperties } from '~src/global/networkConstants';
+import dayjs from 'dayjs';
+import { GetCurrentTokenPrice } from '~src/util/getCurrentTokenPrice';
+import { useApiContext } from '~src/context';
+import blockToDays from '~src/util/blockToDays';
+import { BN_MILLION, BN_ZERO, u8aConcat, u8aToHex } from '@polkadot/util';
+import blockToTime from '~src/util/blockToTime';
+import getDaysTimeObj from '~src/util/getDaysTimeObj';
+import { BN } from 'bn.js';
+import formatBnBalance from '~src/util/formatBnBalance';
+import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
+import FeaturesSection from './FeaturesSection';
+import { useUserDetailsSelector } from '~src/redux/selectors';
+import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
+import user from 'pages/api/v1/auth/data/user';
+import { use } from 'chai';
+import LatestActivityFollowing from './LatestActivityFollowing';
+
+const ActivityTreasury = dynamic(() => import('./ActivityTreasury'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
+
 const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivity/BatchVotingBadge'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -47,6 +69,8 @@ interface Props {
 	network: string;
 	error: string;
 }
+
+export const isAssetHubNetwork = [AllNetworks.POLKADOT];
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	const LATEST_POSTS_LIMIT = 8;
@@ -120,61 +144,348 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
-	const { resolvedTheme: theme } = useTheme();
+	const currentUser = useUserDetailsSelector();
+	const { username, id, loginAddress } = currentUser;
+
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [proposaldata, setProposalData] = useState({ discussions: 0, proposals: 0, votes: 0 });
 	const [loading, setLoading] = useState(true);
 	const [proposalerror, setProposalError] = useState<string | null>(null);
+	const { api, apiReady } = useApiContext();
+
+	const blockTime: number = chainProperties?.[network]?.blockTime;
+	const [available, setAvailable] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [nextBurn, setNextBurn] = useState({
+		isLoading: true,
+		value: '',
+		valueUSD: ''
+	});
+	const [currentTokenPrice, setCurrentTokenPrice] = useState({
+		isLoading: true,
+		value: ''
+	});
+	const [priceWeeklyChange, setPriceWeeklyChange] = useState({
+		isLoading: true,
+		value: ''
+	});
+	const [spendPeriod, setSpendPeriod] = useState({
+		isLoading: true,
+		percentage: 0,
+		value: {
+			days: 0,
+			hours: 0,
+			minutes: 0,
+			total: 0
+		}
+	});
+
+	const [tokenValue, setTokenValue] = useState<number>(0);
 
 	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		setSpendPeriod({
+			isLoading: true,
+			percentage: 0,
+			value: {
+				days: 0,
+				hours: 0,
+				minutes: 0,
+				total: 0
+			}
+		});
+		api.derive.chain
+			.bestNumber((currentBlock) => {
+				const spendPeriodConst = api.consts.treasury ? api.consts.treasury.spendPeriod : BN_ZERO;
+				if (spendPeriodConst) {
+					const spendPeriod = spendPeriodConst.toNumber();
+					const totalSpendPeriod: number = blockToDays(spendPeriod, network, blockTime);
+					const goneBlocks = currentBlock.toNumber() % spendPeriod;
+					const { time } = blockToTime(spendPeriod - goneBlocks, network, blockTime);
+					const { d, h, m } = getDaysTimeObj(time);
+					const percentage = ((goneBlocks / spendPeriod) * 100).toFixed(0);
+					setSpendPeriod({
+						isLoading: false,
+						percentage: parseFloat(percentage),
+						value: {
+							days: d,
+							hours: h,
+							minutes: m,
+							total: totalSpendPeriod
+						}
+					});
+				}
+			})
+			.catch(() => {
+				setSpendPeriod({
+					isLoading: false,
+					percentage: 0,
+					value: {
+						days: 0,
+						hours: 0,
+						minutes: 0,
+						total: 0
+					}
+				});
+			});
+	}, [api, apiReady, blockTime, network]);
+
+	useEffect(() => {
+		if (!api || !apiReady) {
+			return;
+		}
+
+		setAvailable({
+			isLoading: true,
+			value: '',
+			valueUSD: ''
+		});
+
+		setNextBurn({
+			isLoading: true,
+			value: '',
+			valueUSD: ''
+		});
+		const EMPTY_U8A_32 = new Uint8Array(32);
+
+		const treasuryAccount = u8aConcat(
+			'modl',
+			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
+			EMPTY_U8A_32
+		);
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+			api.query.system
+				.account(treasuryAccount)
+				.then((res) => {
+					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
+					treasuryBalance.freeBalance = freeBalance as Balance;
+				})
+				.catch((e) => {
+					console.error(e);
+					setAvailable({
+						isLoading: false,
+						value: '',
+						valueUSD: ''
+					});
+				})
+				.finally(() => {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+					let valueUSD = '';
+					let value = '';
+					{
+						try {
+							const burn =
+								treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
+
+							if (burn) {
+								// replace spaces returned in string by format function
+								const nextBurnValueUSD = parseFloat(
+									formatBnBalance(
+										burn.toString(),
+										{
+											numberAfterComma: 2,
+											withThousandDelimitor: false,
+											withUnit: false
+										},
+										network
+									)
+								);
+								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
+									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+								}
+								value = formatUSDWithUnits(
+									formatBnBalance(
+										burn.toString(),
+										{
+											numberAfterComma: 0,
+											withThousandDelimitor: false,
+											withUnit: false
+										},
+										network
+									)
+								);
+							}
+						} catch (error) {
+							console.log(error);
+						}
+						setNextBurn({
+							isLoading: false,
+							value,
+							valueUSD
+						});
+					}
+					{
+						const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
+
+						let valueUSD = '';
+						let value = '';
+
+						if (freeBalance) {
+							const availableValueUSD = parseFloat(
+								formatBnBalance(
+									freeBalance.toString(),
+									{
+										numberAfterComma: 2,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								)
+							);
+							setTokenValue(availableValueUSD);
+
+							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
+								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+							}
+							value = formatUSDWithUnits(
+								formatBnBalance(
+									freeBalance.toString(),
+									{
+										numberAfterComma: 0,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								)
+							);
+						}
+
+						setAvailable({
+							isLoading: false,
+							value,
+							valueUSD
+						});
+					}
+				});
+		});
+		if (currentTokenPrice.value !== 'N/A') {
+			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
+		}
+	}, [api, apiReady, currentTokenPrice, network]);
+
+	useEffect(() => {
+		if (!network) return;
+		GetCurrentTokenPrice(network, setCurrentTokenPrice);
+	}, [network]);
+
+	useEffect(() => {
+		let cancel = false;
+		if (cancel || !currentTokenPrice.value || currentTokenPrice.isLoading || !network) return;
+
+		setPriceWeeklyChange({
+			isLoading: true,
+			value: ''
+		});
+		async function fetchWeekAgoTokenPrice() {
+			if (cancel) return;
+			const weekAgoDate = dayjs().subtract(7, 'd').format('YYYY-MM-DD');
+			try {
+				const response = await fetch(`${chainProperties[network].externalLinks}/api/scan/price/history`, {
+					body: JSON.stringify({
+						end: weekAgoDate,
+						start: weekAgoDate
+					}),
+					headers: subscanApiHeaders,
+					method: 'POST'
+				});
+				const responseJSON = await response.json();
+				if (responseJSON['message'] == 'Success') {
+					const weekAgoPrice = responseJSON['data']['ema7_average'];
+					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
+					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
+					if (weekAgoPriceNum == 0) {
+						setPriceWeeklyChange({
+							isLoading: false,
+							value: 'N/A'
+						});
+						return;
+					}
+					const percentChange = ((currentTokenPriceNum - weekAgoPriceNum) / weekAgoPriceNum) * 100;
+					setPriceWeeklyChange({
+						isLoading: false,
+						value: percentChange.toFixed(2)
+					});
+					return;
+				}
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: 'N/A'
+				});
+			} catch (err) {
+				setPriceWeeklyChange({
+					isLoading: false,
+					value: 'N/A'
+				});
+			}
+		}
+
+		fetchWeekAgoTokenPrice();
+		return () => {
+			cancel = true;
+		};
+	}, [currentTokenPrice, network]);
+	const [profilescore, setProfileScore] = useState(0);
+	const [userid, setUserId] = useState(0);
+	const [addresses, setAddresses] = useState<string>();
+	const [profileimg, setProfileImg] = useState<string>();
+	useEffect(() => {
+		const getUserProfile = async (username: string) => {
+			const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+			if (!data || error) {
+				console.log(error);
+			}
+			if (data) {
+				setProfileScore(data?.profile_score);
+				setUserId(data?.userId);
+				setAddresses(data?.addresses);
+				setProfileImg(data?.image);
+			}
+		};
+
+		if (username) {
+			getUserProfile(username.toString());
+		} else {
+			console.error('Username is not available');
+		}
+
 		async function getProposalData() {
 			try {
-				const response = await axios.post('/api/v1/posts/user-total-post-counts', {
-					addresses: ['5GFE6fdDkd4wXyDvQayrs9DL7K8Fx9mBFRFwioCmE4yB2GCU'],
-					userId: 22518
-				});
-				setProposalData(response.data);
+				setLoading(true);
+
+				const payload = {
+					addresses: addresses,
+					userId: userid
+				};
+				const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
+				if (error) {
+					throw new Error(error);
+				}
+
+				setProposalData(data);
 			} catch (err) {
 				setProposalError('Failed to fetch data');
 			} finally {
 				setLoading(false);
 			}
 		}
-
 		getProposalData();
-	}, []);
-	console.log('proposaldata', proposaldata);
+	}, [username]);
 
-	// const address = localStorage.getItem('loginAddress');
-	// useEffect(() => {
-	// 	async function getuserData() {
-	// 		const { data, error } = await profileWithAddress({ address: address });
-	// 		const profileScore = data?.profile?.score;
-	// 	}
-
-	// 	getuserData();
-	// }, [address]);
-
-	useEffect(() => {
-		if (!network) return;
-		const address = localStorage.getItem('loginAddress') || '';
-		async function getuserData() {
-			// const { data, error } = await getProfileWithAddress({
-			// 	address
-			// });
-			// const profileScore = data?.profile;
-			// console.log('profileScore', profileScore);
-		}
-		getuserData();
-	}, [network]);
-
-	console.log('networkSocialsData', networkSocialsData);
 	useEffect(() => {
 		dispatch(setNetwork(network));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);
-
+	const [activeTab, setActiveTab] = useState('explore');
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
@@ -184,9 +495,25 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
-			<div className='mx-2 w-full max-w-[1300px] '>
+			<div className=' w-full  '>
 				<div className='mt-3 flex w-full items-center justify-between'>
-					<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
+					<div className='flex h-12 gap-5'>
+						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
+						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px]'>
+							<p
+								onClick={() => setActiveTab('following')}
+								className={`cursor-pointer rounded-lg p-1 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+							>
+								Following
+							</p>
+							<p
+								onClick={() => setActiveTab('explore')}
+								className={`cursor-pointer rounded-lg p-1 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+							>
+								Explore
+							</p>
+						</div>
+					</div>
 					<div className='mr-[6px] flex justify-between'>
 						<ProposalActionButtons isUsedInHomePage={true} />
 					</div>
@@ -201,7 +528,9 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						)}
 					</div>
 					<div className='mx-1 mt-8 max-w-[940px]'>
-						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+						<div className='mx-1 mt-8 max-w-[940px]'>
+							{activeTab === 'explore' ? <LatestActivityExplore gov2LatestPosts={gov2LatestPosts} /> : <LatestActivityFollowing gov2LatestPosts={gov2LatestPosts} />}
+						</div>
 					</div>
 					<div className='w-[450px]   '>
 						<div className='mx-1 mt-2 md:mt-6'>
@@ -221,55 +550,70 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 									</div>
 									<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
 								</div>
+								<div>
+									<p className='text-[#485F7D]'>
+										<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
+										<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
+									</p>
+								</div>
 							</div>
 						</div>
 						<div>
-							{/* {!isNaN(profileScore) && (
-								<ScoreTag
-									score={profileScore}
-									className='ml-1 px-1 pr-3'
-									scale={1.1}
-									iconWrapperClassName='ml-1.5 mt-[5.5px]'
-								/>
-							)} */}
+							<div className='relative mt-5 rounded-xxl  text-[13px] drop-shadow-md dark:bg-section-dark-overlay '>
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank 49</p>
+
+								<div className='relative h-full w-full'>
+									<img
+										src='/rankcard1.svg'
+										className='h-full w-full'
+										alt='rankcard1'
+									/>
+
+									<div className='absolute bottom-[0.3px] left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]'>
+										<img
+											src='/rankcard2.svg'
+											className='max-h-[100px] w-full '
+											alt='rankcard2'
+										/>
+
+										<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
+											<div className='flex items-center gap-2'>
+												<img
+													src={profileimg ? profileimg : '/rankcard3.svg'}
+													className='h-10 w-10 rounded-full '
+													alt='rankcard3'
+												/>
+												<p className='mt-2 font-semibold text-black'>{username}</p>
+											</div>
+											<div className='flex items-center gap-4'>
+												<ScoreTag score={profilescore} />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div>
+							<FeaturesSection />
+						</div>
+						<div>
+							{isAssetHubNetwork.includes(network) && (
+								<>
+									<ActivityTreasury
+										currentTokenPrice={currentTokenPrice}
+										available={available}
+										priceWeeklyChange={priceWeeklyChange}
+										spendPeriod={spendPeriod}
+										nextBurn={nextBurn}
+										tokenValue={tokenValue}
+									/>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
 			</div>
-			{/* <div className='flex flex-col px-3 xl:flex-row'>
-				<div className='flex-1'>
-					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
-						<div className='mx-1 mt-8'>
-							<BatchVotingBadge />
-						</div>
-					)}
-
-					<div className='mx-1 mt-8 '>
-						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
-					</div>
-				</div>
-				<div className='w-full xl:w-[300px] xl:pl-6'>
-					<div className='mx-1 mt-2 md:mt-6'>
-						{networkSocialsData && (
-							<AboutActivity
-								networkSocialsData={networkSocialsData?.data}
-								showGov2Links
-							/>
-						)}
-					</div>
-					<div>
-						<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
-							<div className='flex items-center justify-between gap-2'>
-								<div className='flex gap-1'>
-									<p className='font-semibold'>Voted Proposals</p>
-									<FaAngleRight />
-								</div>
-								<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div> */}
 		</>
 	);
 };

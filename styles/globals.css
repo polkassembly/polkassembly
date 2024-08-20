@@ -899,3 +899,21 @@ z-index: 105 !important;
   -ms-overflow-style: none;  
   scrollbar-width: none;  
 }
+
+.bg-dark {
+  background-color: #000; 
+}
+
+.bg-light {
+  background-color: #ccc; 
+}
+
+.activityborder{
+  border: 1px solid #D2D8E0;
+  border-radius: 4px;
+}
+
+.castvoteborder{
+  border: 1px solid #E5007A;
+  border-radius: 4px;
+}

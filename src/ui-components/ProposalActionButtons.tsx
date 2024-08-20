@@ -41,8 +41,6 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	const currentUser = useUserDetailsSelector();
 	const { id } = currentUser;
 	const pathname = usePathname();
-	console.log('pathname', pathname);
-
 	const [openAddressLinkedModal, setOpenAddressLinkedModal] = useState<boolean>(false);
 	const [referendaModal, setReferendaModal] = useState<number>(0);
 	const [isDropdownActive, setIsDropdownActive] = useState(false);

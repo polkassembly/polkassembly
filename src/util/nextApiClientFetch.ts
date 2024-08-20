@@ -10,8 +10,10 @@ import reAuthClient from './reAuthClient';
 
 async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
+
 	const currentURL = new URL(window.location.href);
 	const token = currentURL.searchParams.get('token') || (await reAuthClient()) || getLocalStorageToken();
+
 	const response = await fetch(`${window.location.origin}/${url}`, {
 		body: JSON.stringify(data),
 		credentials: 'include',

@@ -32,7 +32,7 @@ const TrendingDelegates = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>([]);
-	const [sortOption, setSortOption] = useState(EDelegationAddressFilters.ALL);
+	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(EDelegationAddressFilters.ALL);
 
 	useEffect(() => {
 		if (!address) return;
@@ -49,7 +49,7 @@ const TrendingDelegates = () => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
 			address: address,
-			filterBy: sortOption
+			filterBy: sortOption || EDelegationAddressFilters.ALL
 		});
 		if (data && data.data) {
 			setDelegatesData(data.data);
@@ -108,6 +108,11 @@ const TrendingDelegates = () => {
 		});
 	};
 
+	const handleRadioChange = (e: any) => {
+		const selectedOption = e.target.value;
+		setSortOption((prevOption) => (prevOption === selectedOption ? null : selectedOption));
+	};
+
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
 	const startIndex = (currentPage - 1) * itemsPerPage;
@@ -161,14 +166,14 @@ const TrendingDelegates = () => {
 		<div className='flex flex-col'>
 			<Radio.Group
 				className='flex flex-col overflow-y-auto'
-				onChange={(e) => setSortOption(e.target.value)}
-				value={sortOption}
+				onChange={handleRadioChange}
+				value={sortOption || null}
 			>
 				<Radio
-					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
+					value={EDelegationAddressFilters.DELEGATED_VOTES}
 					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
-					Received Delegation(s)
+					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
@@ -177,21 +182,14 @@ const TrendingDelegates = () => {
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
-					value={EDelegationAddressFilters.DELEGATED_VOTES}
+					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
 					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
-					Voting Power
-				</Radio>
-				<Radio
-					value={EDelegationAddressFilters.ALL}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
-				>
-					All
+					Received Delegation(s)
 				</Radio>
 			</Radio.Group>
 		</div>
 	);
-
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex items-center justify-between'>

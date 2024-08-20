@@ -8,6 +8,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import type { UploadProps } from 'antd';
 import { message, Upload } from 'antd';
 import { PlusCircleOutlined, ExportOutlined } from '@ant-design/icons';
+// import { PlusCircleOutlined, ExportOutlined, StarFilled } from '@ant-design/icons';
 import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
@@ -17,6 +18,7 @@ import { poppins } from 'pages/_app';
 import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+// import RatingModal from '../RatingModal';
 
 const { Dragger } = Upload;
 
@@ -120,6 +122,49 @@ const UploadModalContent = () => {
 			>
 				<SuccessModal />
 			</Modal>
+			{/* <Modal
+				wrapClassName='dark:bg-modalOverlayDark'
+				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+				open={open_rating_modal}
+				footer={
+					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
+						<CustomButton
+							variant='default'
+							text='Cancel'
+							buttonsize='sm'
+							disabled={!report_uploaded}
+							onClick={() => {
+								dispatch(progressReportActions.setOpenRatingModal(false));
+							}}
+						/>
+						<CustomButton
+							variant='primary'
+							text='Rate'
+							buttonsize='sm'
+							disabled={!report_uploaded}
+							onClick={() => {
+								// dispatch(progressReportActions.setPostReportAdded(true));
+								dispatch(progressReportActions.setOpenRatingModal(true));
+								dispatch(progressReportActions.setOpenRatingSuccessModal(true));
+								// dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+							}}
+						/>
+					</div>
+				}
+				maskClosable={false}
+				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
+				onCancel={() => {
+					// dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+				}}
+				title={
+					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+						<StarFilled className='mr-2' />
+						Rate Delivery of Progress Report
+					</div>
+				}
+			>
+				<RatingModal />
+			</Modal> */}
 		</article>
 	);
 };

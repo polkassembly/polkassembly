@@ -9,6 +9,8 @@ import { HYDRATE } from 'next-redux-wrapper';
 const initialState: IProgressReportStore = {
 	add_progress_report_modal_open: false,
 	add_summary_cta_clicked: false,
+	open_rating_modal: false,
+	open_rating_success_modal: false,
 	open_success_modal: false,
 	post_report_added: false,
 	report_uploaded: false,
@@ -33,6 +35,8 @@ export const progressReportStore = createSlice({
 			state = {
 				add_progress_report_modal_open: false,
 				add_summary_cta_clicked: false,
+				open_rating_modal: false,
+				open_rating_success_modal: false,
 				open_success_modal: false,
 				post_report_added: false,
 				report_uploaded: false,
@@ -44,6 +48,12 @@ export const progressReportStore = createSlice({
 		},
 		setAddSummaryCTAClicked: (state, action: PayloadAction<boolean>) => {
 			state.add_summary_cta_clicked = action.payload;
+		},
+		setOpenRatingModal: (state, action: PayloadAction<boolean>) => {
+			state.open_rating_modal = action.payload;
+		},
+		setOpenRatingSuccessModal: (state, action: PayloadAction<boolean>) => {
+			state.open_rating_success_modal = action.payload;
 		},
 		setOpenSuccessModal: (state, action: PayloadAction<boolean>) => {
 			state.open_success_modal = action.payload;

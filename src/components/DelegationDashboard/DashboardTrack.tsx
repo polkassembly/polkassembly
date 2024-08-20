@@ -74,6 +74,8 @@ export const handleTrack = (track: string) => {
 	return trackName.trim();
 };
 
+const CONVICTION_VOTES_LOCKED_DAYS = 7;
+
 const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
@@ -110,7 +112,7 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 	const handleUndelegationDisable = (item: any) => {
 		if (!item?.length || !item?.[0]?.delegatedOn || !item?.[0]?.lockPeriod) return { delegationDisable: false, timeLeftInUndelegation: { percentage: 0, time: null } };
 
-		const lockedDays = item?.[0]?.lockPeriod ? 7 * 2 ** (item?.[0]?.lockPeriod - 1) : 0;
+		const lockedDays = item?.[0]?.lockPeriod ? CONVICTION_VOTES_LOCKED_DAYS * 2 ** (item?.[0]?.lockPeriod - 1 || 0) : 0;
 		const daysComplete = dayjs().diff(dayjs(item?.[0]?.delegatedOn), 'days');
 
 		let daysLeft = lockedDays - daysComplete;

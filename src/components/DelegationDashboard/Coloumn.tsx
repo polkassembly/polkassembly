@@ -481,10 +481,9 @@ const GetTracksColumns = (
 				key: 1,
 				render: (date) => (
 					<div className='ml-1 flex items-center gap-2 text-start text-sm font-normal text-bodyBlue dark:text-white'>
-						<span>{dayjs(date).format('DD MMM YYYY')}</span>
-						{!!timeLeftInUndelegation?.time && !!timeLeftInUndelegation.percentage && undelegationButtonDisable && (
+						{Boolean(date) && <span>{dayjs(date).format('DD MMM YYYY')}</span>}
+						{Boolean(timeLeftInUndelegation?.time) && Boolean(timeLeftInUndelegation?.percentage) && undelegationButtonDisable && (
 							<Tooltip
-								color='#E5007A'
 								title={<div className={classNames(poppins.className, poppins.variable, 'text-[13px]')}>You can undelegate votes on {timeLeftInUndelegation?.time}</div>}
 								className={classNames(poppins.className, poppins.variable, 'text-xs')}
 								overlayClassName='px-1 max-w-[300px]'

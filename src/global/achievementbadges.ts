@@ -77,28 +77,3 @@ export const badgeDetails: BadgeDetails[] = [
 		requirements: 'Must have received delegated tokens equal to or greater than 0.01% of the total supply.'
 	}
 ];
-
-export const getWSProvider = (network: string) => {
-	switch (network) {
-		case 'kusama':
-			return 'wss://kusama-rpc.polkadot.io';
-		case 'polkadot':
-			return 'wss://rpc.polkadot.io';
-		case 'vara':
-			return 'wss://rpc.vara.network';
-		case 'rococo':
-			return 'wss://rococo-rpc.polkadot.io';
-		case 'moonbeam':
-			return 'wss://wss.api.moonbeam.network';
-		case 'moonriver':
-			return 'wss://wss.moonriver.moonbeam.network';
-		case 'moonbase':
-			return 'wss://wss.api.moonbase.moonbeam.network';
-		case 'picasso':
-			return 'wss://picasso-rpc.composable.finance';
-		case 'westend':
-			return 'wss://westend-rpc.dwellir.com';
-		default:
-			return null;
-	}
-};

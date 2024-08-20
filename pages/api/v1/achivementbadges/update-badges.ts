@@ -14,7 +14,6 @@ import { badgeNames, GET_ACTIVE_VOTER, GET_POPULAR_DELEGATE, GET_PROPOSAL_COUNT 
 import { getTotalSupply } from './utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { getWSProvider } from '~src/global/achievementbadges';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getUserPostCount } from '../posts/user-total-post-counts';

@@ -435,10 +435,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			cancel = true;
 		};
 	}, [currentTokenPrice, network]);
-	const [profilescore, setProfileScore] = useState(0);
-	const [userid, setUserId] = useState(0);
-	const [addresses, setAddresses] = useState<string>();
-	const [profileimg, setProfileImg] = useState<string>();
+	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
 			const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
@@ -446,10 +443,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				console.log(error);
 			}
 			if (data) {
-				setProfileScore(data?.profile_score);
-				setUserId(data?.userId);
-				setAddresses(data?.addresses);
-				setProfileImg(data?.image);
+				setCurrentUserdata(data);
 			}
 		};
 
@@ -464,8 +458,8 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				setLoading(true);
 
 				const payload = {
-					addresses: addresses,
-					userId: userid
+					addresses: currentUserdata?.addresses,
+					userId: currentUserdata?.userid
 				};
 				const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
 				if (error) {
@@ -502,13 +496,13 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px]'>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`cursor-pointer rounded-lg p-1 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-lg p-1 px-2 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
 							>
 								Following
 							</p>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`cursor-pointer rounded-lg p-1 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-lg p-1 px-2 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
 							>
 								Explore
 							</p>
@@ -529,7 +523,14 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					</div>
 					<div className='mx-1 mt-8 max-w-[940px]'>
 						<div className='mx-1 mt-8 max-w-[940px]'>
-							{activeTab === 'explore' ? <LatestActivityExplore gov2LatestPosts={gov2LatestPosts} /> : <LatestActivityFollowing gov2LatestPosts={gov2LatestPosts} />}
+							{activeTab === 'explore' ? (
+								<LatestActivityExplore
+									gov2LatestPosts={gov2LatestPosts}
+									currentUserdata={currentUserdata}
+								/>
+							) : (
+								<LatestActivityFollowing gov2LatestPosts={gov2LatestPosts} />
+							)}
 						</div>
 					</div>
 					<div className='w-[450px]   '>
@@ -579,14 +580,14 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 										<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
 											<div className='flex items-center gap-2'>
 												<img
-													src={profileimg ? profileimg : '/rankcard3.svg'}
+													src={currentUserdata?.image ? currentUserdata?.image : '/rankcard3.svg'}
 													className='h-10 w-10 rounded-full '
 													alt='rankcard3'
 												/>
 												<p className='mt-2 font-semibold text-black'>{username}</p>
 											</div>
 											<div className='flex items-center gap-4'>
-												<ScoreTag score={profilescore} />
+												<ScoreTag score={currentUserdata?.profile_score} />
 											</div>
 										</div>
 									</div>

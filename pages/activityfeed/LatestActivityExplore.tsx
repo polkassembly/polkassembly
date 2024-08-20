@@ -10,7 +10,6 @@ import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
-import { Divider } from 'antd';
 import moment from 'moment';
 import { LoadingOutlined } from '@ant-design/icons';
 import { IoMdTime } from 'react-icons/io';
@@ -18,19 +17,16 @@ import { GrLike } from 'react-icons/gr';
 import { GrDislike } from 'react-icons/gr';
 import { FaShareAlt } from 'react-icons/fa';
 import { LiaCommentsSolid } from 'react-icons/lia';
-import { GetServerSideProps } from 'next';
-import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
-import { getOnChainPost, IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
+import Markdown from '~src/ui-components/Markdown';
 
-const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any }) => {
+const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: { className?: string; gov2LatestPosts: any; currentUserdata?: any }) => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const [postData, setPostData] = useState<any[]>([]);
-	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [expandedPosts, setExpandedPosts] = useState<number[]>([]);
 	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
 
 	const tabItems = [
@@ -90,10 +86,10 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 	const fetchVoterProfileImage = async (username: string) => {
 		try {
 			const { data, error } = await nextApiClientFetch<any>(`/api/v1/auth/data/userProfileWithUsername?username=${username}`);
-			if (error || !data || !data.profile?.image) {
+			if (error || !data || !data?.image) {
 				return null;
 			}
-			return data.profile.image;
+			return data.image;
 		} catch (error) {
 			console.error('Error fetching voter profile image:', error);
 			return null;
@@ -122,63 +118,71 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 
 				const pascalCaseTab = toPascalCase(currentTab || 'all');
 				const posts = gov2LatestPosts[pascalCaseTab]?.data?.posts || [];
+				const proposalType = getProposalType(currentTab || 'all');
 
 				const detailedPosts = await Promise.all(
 					posts.map(async (post: any) => {
-						// Ensure we use the correct post ID from the original post
+						try {
+							const postId = post?.post_id ? post.post_id.toString() : '';
 
-						console.log('post for generation post:', post?.post_id);
-						const postId = post?.post_id ? post.post_id.toString() : '';
+							let { data: postDetails, error: postError } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
 
-						const { data: postDetails, error: postError } = await nextApiClientFetch<IPostResponse>(`api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
+							if (!postDetails?.post_id || postError) {
+								console.warn(`Off-chain fetch failed for post ID ${postId}. Trying on-chain fetch...`);
 
-						console.log('postDetails:', postDetails);
-						// Validate that the post_id matches the original post
-						if (postError || (postDetails && postDetails.post_id !== post.post_id)) {
-							console.error(`Error fetching details for post ID ${post.id} or mismatched post ID in details`, postError);
+								const response = await fetch(`/api/v1/posts/activityposts?postId=${postId}&network=${network}&proposalType=${proposalType}`);
+								const onChainPostDetails = await response.json();
+
+								postDetails = onChainPostDetails.data;
+								postError = onChainPostDetails.error;
+
+								if (postError || !postDetails?.post_id) {
+									console.error(`Error fetching details for post ID ${postId} from both endpoints`, postError);
+									return { ...post, error: true };
+								}
+							}
+
+							const proposerAddress = post.proposer;
+							let userProfile = null;
+
+							try {
+								const { data: userData } = await nextApiClientFetch<IGetProfileWithAddressResponse>(
+									`/api/v1/auth/data/profileWithAddress?address=${proposerAddress}`,
+									undefined,
+									'GET'
+								);
+								if (userData) {
+									userProfile = {
+										username: userData.username,
+										user_id: userData.user_id,
+										profileimg: userData.profile.image || '/rankcard3.svg'
+									};
+								}
+							} catch (error) {
+								console.error(`User profile fetch failed for proposer ${proposerAddress}:`, error);
+							}
+
+							let firstVoterProfileImg = null;
+							if (postDetails?.post_reactions?.['👍']?.usernames?.[0]) {
+								const username = postDetails.post_reactions['👍'].usernames[0];
+								firstVoterProfileImg = await fetchVoterProfileImage(username);
+							}
+
+							return {
+								...post,
+								details: postDetails,
+								proposerProfile: userProfile,
+								firstVoterProfileImg
+							};
+						} catch (error) {
+							console.error(`Error processing post ID ${post.post_id}:`, error);
 							return { ...post, error: true };
 						}
-
-						// Fetch proposer profile
-						const proposerAddress = post.proposer;
-						let userProfile = null;
-
-						try {
-							const { data: userData } = await nextApiClientFetch<IGetProfileWithAddressResponse>(
-								`/api/v1/auth/data/profileWithAddress?address=${proposerAddress}`,
-								undefined,
-								'GET'
-							);
-							if (userData) {
-								userProfile = {
-									username: userData.username,
-									user_id: userData.user_id,
-									profileimg: userData.profile.image
-								};
-							}
-						} catch (error) {
-							console.error(`User profile fetch failed for proposer ${proposerAddress}:`, error);
-						}
-
-						// Fetch first voter's profile image if available
-						let firstVoterProfileImg = null;
-						if (postDetails?.post_reactions?.['👍']?.usernames?.[0]) {
-							firstVoterProfileImg = await fetchVoterProfileImage(postDetails.post_reactions['👍'].usernames[0]);
-						}
-
-						// Return the post with details, ensuring post_id is consistent
-						return {
-							...post, // Original post data
-							details: postDetails, // Post-specific details
-							proposerProfile: userProfile, // Proposer profile specific to this post
-							firstVoterProfileImg // First voter's profile image
-						};
 					})
 				);
 
-				console.log('detailedPosts:', detailedPosts);
-
-				setPostData(detailedPosts); // Set the complete detailed posts
+				const validPosts = detailedPosts.filter((post) => !post.error);
+				setPostData(validPosts);
 			} catch (err) {
 				console.error('Error fetching data:', err);
 			} finally {
@@ -323,7 +327,6 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 					) : (
 						postData.map((post: any, index: number) => {
 							const postreaction = post?.details?.post_reactions || {};
-							const likeCount = postreaction['👍'] ? postreaction['👍'].count : 0;
 							const dislikeCount = postreaction['👎'] ? postreaction['👎'].count : 0;
 							let bgColor = 'bg-gray-500';
 							let statusLabel = post.status || 'Active';
@@ -340,13 +343,10 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 								bgColor = 'bg-[#2ED47A]';
 								statusLabel = 'Active';
 							}
-
 							const isExpanded = expandedPostId === post.post_id;
 							const fullContent = post?.details?.content || 'No content available for this post.';
-							const truncatedContent = truncateContent(fullContent, 25);
-
+							const truncatedContent = truncateContent(fullContent, 50);
 							const shouldShowReadMore = fullContent.length > truncatedContent.length;
-
 							const postContent = isExpanded ? fullContent : truncatedContent;
 
 							return (
@@ -365,17 +365,16 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 											</div>
 										</div>
 										<div>
-											<div className='castvoteborder m-0 flex items-center gap-1 p-0 px-3 text-[#E5007A]'>
+											<div className='castvoteborder  m-0 flex cursor-pointer items-center gap-1 p-0 px-3 text-[#E5007A]'>
 												<img
 													src='/Vote.svg'
 													alt=''
 													className='m-0 h-6 w-6 p-0'
 												/>
-												<p className='pt-3 font-medium'>Cast Vote</p>
+												<p className='cursor-pointerfont-medium  pt-3'>Cast Vote</p>
 											</div>
 										</div>
 									</div>
-
 									<div className='flex items-center gap-2 pt-2'>
 										<img
 											src={post.proposerProfile?.profileimg || '/rankcard3.svg'}
@@ -391,11 +390,14 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 											<p className=' pt-3 text-sm text-gray-500'>{formatDate(post.created_at)}</p>
 										</div>
 									</div>
-
 									<p className='pt-2 font-medium text-[#243A57]'>
 										#{post.title || '#45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
 									</p>
-									<p className='text-[#243A57]'>{postContent}</p>
+									<Markdown
+										className='text-[#243A57]'
+										md={postContent || 'No content available for this post.'}
+										isPreview={!isExpanded}
+									/>{' '}
 									{shouldShowReadMore && (
 										<p
 											className='cursor-pointer font-medium text-[#1B61FF]'
@@ -404,27 +406,27 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 											{isExpanded ? 'Show Less' : 'Read More'}
 										</p>
 									)}
-
 									<div className=' flex items-center justify-between text-sm text-gray-500'>
-										{postreaction['👍']?.usernames?.length > 0 && (
-											<div className='flex items-center'>
-												<img
-													src={post.firstVoterProfileImg || '/rankcard3.svg'}
-													alt='Voter Profile'
-													className='h-5 w-5 rounded-full'
-												/>
-												<p className='ml-2 pt-3'>
-													{postreaction['👍'].usernames[0]} & {postreaction['👍'].count - 1} others liked this post
-												</p>
-											</div>
-										)}
-
+										<div>
+											{postreaction['👍']?.usernames?.length > 0 && (
+												<div className='flex items-center'>
+													<img
+														src={post.firstVoterProfileImg || '/rankcard3.svg'}
+														alt='Voter Profile'
+														className='h-5 w-5 rounded-full'
+													/>
+													<p className='ml-2 pt-3'>
+														{postreaction['👍'].count === 1
+															? `${postreaction['👍'].usernames[0]} has liked this post`
+															: `${postreaction['👍'].usernames[0]} & ${postreaction['👍'].count - 1} others liked this post`}
+													</p>
+												</div>
+											)}
+										</div>
 										<div className='flex gap-3'>
 											<p className=' text-sm text-gray-600'>{dislikeCount} dislikes</p>
 											<p className='  text-[#485F7D]'>|</p>
 											<p className=' text-sm text-gray-600'>{post?.details?.comments_count || 0} Comments</p>
-											<p className=' text-[#485F7D]'>|</p>
-											<p className=' text-sm text-gray-600'>0 Shares</p>
 										</div>
 									</div>
 									<hr />
@@ -449,6 +451,19 @@ const LatestActivityExplore = ({ className, gov2LatestPosts }: { className?: str
 
 											<p className=' cursor-pointer pt-3 text-[#E5007A]'>Comment</p>
 										</div>
+									</div>
+									<div className='mt-3 flex'>
+										<img
+											src={`${currentUserdata?.image ? currentUserdata?.image : '/rankcard3.svg'}`}
+											alt=''
+											className='h-10 w-10 rounded-full'
+										/>
+										<input
+											type='text'
+											placeholder='Type your comment here'
+											className='activityborder2 ml-7 h-10 w-full rounded-l-lg p-2 outline-none'
+										/>
+										<button className='activityborder2 w-28 cursor-pointer rounded-r-lg bg-[#485F7D] bg-opacity-[5%] p-2 text-[#243A57] '>Post</button>
 									</div>
 								</div>
 							);

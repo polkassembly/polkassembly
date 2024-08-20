@@ -53,7 +53,6 @@ const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 
 	if (error) return <ErrorState errorMessage={error} />;
 
-	console.log('post', post);
 	if (post) {
 		let trackName = '';
 		for (const key of Object.keys(networkTrackInfo[props.network])) {

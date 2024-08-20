@@ -912,6 +912,9 @@ z-index: 105 !important;
   border: 1px solid #D2D8E0;
   border-radius: 4px;
 }
+.activityborder2{
+  border: 1px solid #D2D8E0;
+}
 
 .castvoteborder{
   border: 1px solid #E5007A;

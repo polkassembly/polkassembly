@@ -11,12 +11,15 @@ import PostEditOrLinkCTA from './Post/GovernanceSideBar/PostEditOrLinkCTA';
 import dynamic from 'next/dynamic';
 import { checkIsOnChainPost } from '~src/global/proposalType';
 import { gov2ReferendumStatus } from '~src/global/statuses';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import executeTx from '~src/util/executeTx';
 import Link from 'next/link';
 import { trackEvent } from 'analytics';
+import { useDispatch } from 'react-redux';
+import { progressReportActions } from '~src/redux/progressReport';
+import UploadReport from './ProgressReport/UploadReport';
 
 const DecisionDepositCard = dynamic(() => import('~src/components/OpenGovTreasuryProposal/DecisionDepositCard'), {
 	ssr: false
@@ -30,14 +33,19 @@ enum cardTags {
 	DECISION_DEPOSIT = 'pay',
 	ADD_DESCRIPTION = 'add',
 	ADD_TAGS = 'add',
-	REFUND_DEPOSIT = 'refund'
+	REFUND_DEPOSIT = 'refund',
+	ADD_PROGRESS_REPORT = 'add'
 }
 
-type props = { canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
-const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: props) => {
+type props = { status: string; canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
+const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, status }: props) => {
+	console.log('current status --> ', status);
 	const { api, apiReady } = useApiContext();
+	const { postData } = usePostDataContext();
+	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress, id, username } = useUserDetailsSelector();
+	const { post_report_added } = useProgressReportSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
@@ -133,7 +141,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 	}, [api, apiReady, postIndex, statusHistory]);
 
 	useEffect(() => {
-		if (showRefundDeposit?.show) {
+		if (showRefundDeposit?.show && status !== 'Executed') {
 			trackEvent('refund_card_clicked', 'clicked_refund_card', {
 				loginAddress: loginAddress || '',
 				userId: id || '',
@@ -152,7 +160,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 				return newCards;
 			});
 		}
-		if (showDecisionDeposit) {
+		if (showDecisionDeposit && status !== 'Executed') {
 			trackEvent('decision_deposit_card_clicked', 'clicked_decision_deposit_card', {
 				loginAddress: loginAddress || '',
 				userId: id || '',
@@ -166,6 +174,28 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					icon: '/assets/icons/rhs-card-icons/Crystal.png',
 					tag: cardTags.DECISION_DEPOSIT,
 					title: 'Decision Deposit'
+				});
+
+				return newCards;
+			});
+		}
+
+		// remove both !'s (not) check
+		{
+			/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */
+		}
+
+		if (!(postData?.proposer === loginAddress) && status === 'Executed' && !post_report_added) {
+			setRHSCards((prevCards) => {
+				const newCards = [...prevCards];
+				newCards.push({
+					clickHandler: () => {
+						dispatch(progressReportActions.setAddProgressReportModalOpen(true));
+					},
+					description: 'Your proposal is past the deadline, pls add a progress report.',
+					icon: '/assets/icons/progressReport.svg',
+					tag: cardTags.ADD_PROGRESS_REPORT,
+					title: 'Add Progress Report'
 				});
 
 				return newCards;
@@ -351,6 +381,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit }: 
 					</div>
 				</div>
 			</div>
+			{status === 'Executed' && <UploadReport />}
 		</>
 	);
 };

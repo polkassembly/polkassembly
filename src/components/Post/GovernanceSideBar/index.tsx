@@ -1004,6 +1004,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 						<RHSCardSlides
 							showDecisionDeposit={showDecisionDeposit}
 							canEdit={canEdit}
+							status={status || ''}
 							trackName={String(trackName)}
 							toggleEdit={toggleEdit}
 						/>

@@ -4,11 +4,12 @@
 import React, { FC, useEffect } from 'react';
 import AuditTab from './AuditTab';
 import { useTheme } from 'next-themes';
-import { useUserDetailsSelector } from '~src/redux/selectors';
+import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { trackEvent } from 'analytics';
 import UserInfoTab from './UserInfoTab';
 import { usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
+import ProgressReportTab from './ProgressReportTab';
 
 interface Props {
 	auditData?: any;
@@ -18,6 +19,8 @@ interface Props {
 const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const currentUser = useUserDetailsSelector();
+	const { post_report_added } = useProgressReportSelector();
+	const { postData } = usePostDataContext();
 	useEffect(() => {
 		trackEvent('evaluationTab_clicked', 'clicked_evaluation_tab', {
 			isWeb3Login: currentUser?.web3signup,
@@ -46,6 +49,10 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 					theme={theme}
 				/>
 			)}
+
+			{/* remove ! sign check */}
+			{/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */}
+			{!(postData.proposer === currentUser?.loginAddress) && postData?.status === 'Executed' && !post_report_added && <ProgressReportTab className='my-4' />}
 		</div>
 	);
 };

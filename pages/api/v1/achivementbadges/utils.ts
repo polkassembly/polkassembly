@@ -6,7 +6,6 @@ import { MessageType } from '~src/auth/types';
 import { IDelegationStats } from '../delegations/get-delegation-stats';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
-import { getWSProvider } from '~src/global/achievementbadges';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { chainProperties } from '~src/global/networkConstants';
 

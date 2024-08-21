@@ -23,9 +23,10 @@ import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import { IDelegateAddressDetails } from '~src/types';
 
 interface Props {
-	delegate: any;
+	delegate: IDelegateAddressDetails;
 	className?: string;
 	trackNum?: number;
 	disabled?: boolean;

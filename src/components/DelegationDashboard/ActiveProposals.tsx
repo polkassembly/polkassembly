@@ -31,7 +31,7 @@ const ActiveProposalCard = dynamic(() => import('./ActiveProposalCard'), {
 });
 
 const ActiveProposals = ({ className, posts, trackDetails, status, delegatedTo, totalCount }: Props) => {
-	const [expandProposals, setExpandProposals] = useState<boolean>(totalCount > 0 ? true : false);
+	const [expandProposals, setExpandProposals] = useState<boolean>(totalCount > 0);
 	const router = useRouter();
 	const { resolvedTheme: theme } = useTheme();
 	const [page, setPage] = useState<number>(1);

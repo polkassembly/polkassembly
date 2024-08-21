@@ -66,7 +66,6 @@ const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, da
 			return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
 		case EDelegationAddressFilters.VOTED_PROPOSALS:
 			return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
-		case EDelegationAddressFilters.ALL:
 		default:
 			return data;
 	}

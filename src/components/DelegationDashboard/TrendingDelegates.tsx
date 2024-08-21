@@ -57,7 +57,7 @@ const TrendingDelegates = () => {
 			filterBy: sortOption || EDelegationAddressFilters.ALL,
 			sources: selectedSources
 		});
-		if (data && data.data) {
+		if (data && data?.data) {
 			setDelegatesData(data.data);
 			setLoading(false);
 		} else {
@@ -74,16 +74,10 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		const updatedDelegates = [...delegatesData];
 
-		// if (selectedSources.length > 0) {
-		// updatedDelegates = updatedDelegates.filter((delegate) => {
-		// return delegate.dataSource && selectedSources.some((source) => delegate.dataSource.includes(source));
-		// });
-		// }
-
 		if (sortOption === EDelegationAddressFilters.ALL) {
 			updatedDelegates.sort((a, b) => {
 				const addressess = [
-					getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t'),
+					getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC'),
 					getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
 					getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
 					getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
@@ -162,7 +156,7 @@ const TrendingDelegates = () => {
 		}
 	};
 
-	const fitlerContent = (
+	const filterContent = (
 		<div className='flex flex-col'>
 			{Object.values(EDelegationSourceFilters).map((source, index) => {
 				return (
@@ -278,7 +272,7 @@ const TrendingDelegates = () => {
 				</div>
 
 				<Popover
-					content={fitlerContent}
+					content={filterContent}
 					placement='bottomRight'
 					zIndex={1056}
 				>

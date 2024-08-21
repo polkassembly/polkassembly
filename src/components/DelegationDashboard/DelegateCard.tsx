@@ -97,7 +97,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 								: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
 						} `}
 					>
-						{delegate?.dataSource && delegate?.dataSource.includes(EDelegateSource.POLKASSEMBLY) && (
+						{delegate?.dataSource && delegate?.dataSource?.includes(EDelegateSource.POLKASSEMBLY) && (
 							<div className='flex items-center space-x-3'>
 								<div className='flex items-center space-x-1'>
 									<PolkadotIcon />

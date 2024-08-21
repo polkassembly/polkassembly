@@ -14,9 +14,9 @@ const PaLogo: FC<IPaLogoProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	return sidedrawer ? (
 		<svg
-			width='149'
+			width='130'
 			height='40'
-			viewBox='0 0 149 40'
+			viewBox='0 0 130 40'
 			fill='none'
 			xmlns='http://www.w3.org/2000/svg'
 		>

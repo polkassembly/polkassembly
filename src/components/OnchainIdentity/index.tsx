@@ -61,13 +61,13 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	const getTxFee = async () => {
-		if (!api || !apiReady || !network) return;
-		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
+		if (!(api && peopleChainApi) || !apiReady || !network) return;
+		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
-		const registerars: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
+		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
 		const registerarIndex = getIdentityRegistrarIndex({ network });
 		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
-		const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
+		const minDeposite = (peopleChainApi ?? api)?.consts?.identity?.basicDeposit || ZERO_BN;
 		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 		setPerSocialBondFee(bondFee as any);
 		setLoading({ ...loading, isLoading: false });
@@ -78,7 +78,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		try {
 			const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
 
-			const identityHash = await api?.query?.identity
+			const identityHash = await (peopleChainApi ?? api)?.query?.identity
 				?.identityOf(encoded_addr)
 				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
@@ -89,6 +89,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			console.log(err);
 		}
 	};
+
 	const handleCancel = () => {
 		if (step === ESetIdentitySteps.SOCIAL_VERIFICATION) {
 			setOpen(false);
@@ -165,7 +166,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
 
 		form.setFieldValue('address', identityAddress || loginAddress);
 		getTxFee();

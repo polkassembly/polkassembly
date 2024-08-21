@@ -75,10 +75,10 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const getGasFee = async (addr: string) => {
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
 
 		setLoading({ ...loading, isLoading: true });
-		const tx = api.tx.identity.clearIdentity();
+		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
 		const paymentInfo = await tx.paymentInfo(addr);
 		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
 		setGasFee(bnGasFee);
@@ -86,12 +86,12 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const getBondFee = () => {
-		const bondFee = api?.consts?.identity?.basicDeposit || ZERO_BN;
+		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.basicDeposit || ZERO_BN;
 		setBondFee(bondFee);
 	};
 
 	const handleRemoveIdentity = () => {
-		if (!api || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
+		if (!(api && peopleChainApiReady) || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {
@@ -118,11 +118,11 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			dispatch(setOpenRemoveIdentityModal(false));
 			router.reload();
 		};
-		const tx = api.tx.identity.clearIdentity();
+		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
 
 		executeTx({
 			address: address || loginAddress,
-			api,
+			api: peopleChainApi ?? api,
 			apiReady,
 			errorMessageFallback: 'Error in removing Identity!',
 			network,
@@ -134,16 +134,14 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
+		checkIsIdentityAvailable(address || loginAddress);
+
 		getGasFee(address || loginAddress);
 		getBondFee();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginAddress, api, apiReady, address]);
 
-	useEffect(() => {
-		checkIsIdentityAvailable(address || loginAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, loginAddress, api, apiReady, peopleChainApi, peopleChainApiReady]);
+	}, [loginAddress, api, apiReady, address, peopleChainApi, peopleChainApiReady]);
 
 	return (
 		<div className={className}>

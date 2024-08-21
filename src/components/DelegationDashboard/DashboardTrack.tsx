@@ -32,10 +32,6 @@ interface Props {
 	theme: string;
 }
 
-const Delegate = dynamic(() => import('./Delegate'), {
-	loading: () => <Skeleton active />,
-	ssr: false
-});
 const ActiveProposals = dynamic(() => import('./ActiveProposals'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -253,17 +249,6 @@ const DashboardTrackListing = ({ className, posts, trackDetails, totalCount }: P
 				</div>
 			) : (
 				<Skeleton className='mt-6 h-20' />
-			)}
-
-			{status ? (
-				<div>
-					<Delegate
-						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
-						trackDetails={trackDetails}
-					/>
-				</div>
-			) : (
-				<Skeleton />
 			)}
 
 			{!openLoginModal && !openSignupModal && !loginWallet && (

@@ -10,7 +10,7 @@ import { GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA, GET_VOTES_COUNT_FOR_TIME
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { isAddress } from 'ethers';
-import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
+import { IDelegateAddressDetails } from '~src/types';
 import * as admin from 'firebase-admin';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import w3fDelegatesKusama from './w3f-delegates-kusama.json';
@@ -58,34 +58,7 @@ const getAllCombineDelegatesData = (
 	}));
 };
 
-const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
-	switch (filterBy) {
-		case EDelegationAddressFilters.DELEGATED_VOTES:
-			return data.sort((a, b) => new BN(b.delegatedBalance).cmp(new BN(a.delegatedBalance)));
-		case EDelegationAddressFilters.RECEIVED_DELEGATIONS:
-			return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
-		case EDelegationAddressFilters.VOTED_PROPOSALS:
-			return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
-		default:
-			return data;
-	}
-};
-
-const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSources: string[]): IDelegateAddressDetails[] => {
-	return data.filter((delegate) => {
-		if (selectedSources.length === 1 && selectedSources[0] === EDelegationSourceFilters.NA) {
-			return !delegate.dataSource || delegate.dataSource.length === 0;
-		}
-
-		if (selectedSources.includes(EDelegationSourceFilters.NA)) {
-			return !delegate.dataSource || delegate.dataSource.length === 0 || selectedSources.some((source) => delegate.dataSource?.includes(source));
-		}
-
-		return selectedSources.some((source) => delegate.dataSource?.includes(source));
-	});
-};
-
-export const getDelegatesData = async (network: string, filterBy: string, address?: string, selectedSources: string[] = []) => {
+export const getDelegatesData = async (network: string, address?: string | null) => {
 	if (!network || !isOpenGovSupported(network)) return [];
 
 	const encodedAddr = address ? getEncodedAddress(String(address), network) : address;
@@ -197,17 +170,10 @@ export const getDelegatesData = async (network: string, filterBy: string, addres
 		}))
 	]);
 
-	let combinedDelegates = getAllCombineDelegatesData(delegatesDetails, allDelegatesResults);
-	if (selectedSources.length > 0) {
-		combinedDelegates = filterDelegatesBySources(combinedDelegates, selectedSources);
-	}
-
-	if (filterBy) {
-		combinedDelegates = getResultsDataAccordingToFilter(filterBy as EDelegationAddressFilters, combinedDelegates);
-	}
+	const combinedDelegates = getAllCombineDelegatesData(delegatesDetails, allDelegatesResults).sort((a, b) => b?.receivedDelegationsCount - a?.receivedDelegationsCount);
 
 	return {
-		data: combinedDelegates,
+		data: combinedDelegates || [],
 		error: null
 	};
 };
@@ -218,10 +184,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IDelegateAddres
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ error: 'Missing network name in request headers' });
 
-	const { address, filterBy, sources } = req.body;
+	const { address } = req.body;
 	if (address && !(getEncodedAddress(String(address), network) || isAddress(String(address)))) return res.status(400).json({ error: 'Invalid address' });
 
-	const result = await getDelegatesData(network, filterBy, address ? String(address) : undefined, sources);
+	const result = await getDelegatesData(network, address ? String(address) : null);
 	return res.status(200).json(result as IDelegateAddressDetails[]);
 }
 

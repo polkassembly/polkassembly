@@ -933,8 +933,7 @@ export interface IDelegateAddressDetails {
 export enum EDelegationAddressFilters {
 	DELEGATED_VOTES = 'delegatedBalance',
 	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
-	VOTED_PROPOSALS = 'votedProposalsCount',
-	ALL = 'all'
+	VOTED_PROPOSALS = 'votedProposalsCount'
 }
 
 export enum EDelegationSourceFilters {

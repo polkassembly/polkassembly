@@ -24,6 +24,7 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { IDelegateAddressDetails } from '~src/types';
+import { UserOutlined } from '@ant-design/icons';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -174,6 +175,14 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
 								<PolkadotIcon />
 								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
+							</div>
+						)}
+						{!delegate?.dataSource && (
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-1 rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-section-dark-background'>
+								<span className='flex h-6 w-6 items-center justify-center rounded-full border-[1px] border-solid border-bodyBlue dark:border-white'>
+									<UserOutlined className='text-xs' />
+								</span>
+								<span className='ml-1 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Individual Delegate</span>
 							</div>
 						)}
 					</>

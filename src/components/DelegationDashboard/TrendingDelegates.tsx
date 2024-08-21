@@ -23,6 +23,34 @@ import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
 import W3FIcon from '~assets/profile/w3f.svg';
 import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
 import NovaIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import BN from 'bn.js';
+
+const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
+	switch (filterBy) {
+		case EDelegationAddressFilters.DELEGATED_VOTES:
+			return data.sort((a, b) => new BN(b.delegatedBalance).cmp(new BN(a.delegatedBalance)));
+		case EDelegationAddressFilters.RECEIVED_DELEGATIONS:
+			return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
+		case EDelegationAddressFilters.VOTED_PROPOSALS:
+			return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
+		default:
+			return data;
+	}
+};
+
+const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSources: string[]): IDelegateAddressDetails[] => {
+	return data.filter((delegate) => {
+		if (selectedSources.length === 1 && selectedSources[0] === EDelegationSourceFilters.NA) {
+			return !delegate.dataSource || delegate.dataSource.length === 0;
+		}
+
+		if (selectedSources.includes(EDelegationSourceFilters.NA)) {
+			return !delegate.dataSource || delegate.dataSource.length === 0 || selectedSources.some((source) => delegate.dataSource?.includes(source));
+		}
+
+		return selectedSources.some((source) => delegate.dataSource?.includes(source));
+	});
+};
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
@@ -37,8 +65,7 @@ const TrendingDelegates = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
-	const [sortOption, setSortOption] = useState<EDelegationAddressFilters>(EDelegationAddressFilters.ALL);
-	const [isCallingFirstTime, setIsCallingFirstTime] = useState<boolean>(true);
+	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 
 	useEffect(() => {
 		if (!address) return;
@@ -50,38 +77,31 @@ const TrendingDelegates = () => {
 		}, 5000);
 	}, [network, address]);
 
-	const getData = async (isFirstCall: boolean = false, filter?: EDelegationAddressFilters, source?: EDelegationSourceFilters[]) => {
-		if (!getEncodedAddress(address, network) && address.length > 0) return;
+	const getData = async () => {
+		if (!getEncodedAddress(address, network) && !!address.length) return;
 		setLoading(true);
 
-		const filtersToUse = isFirstCall ? EDelegationAddressFilters.ALL : filter || sortOption;
-		const sourcesToUse = isFirstCall ? Object.values(EDelegationSourceFilters) : source || selectedSources;
-
 		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
-			address: address,
-			filterBy: filtersToUse,
-			sources: sourcesToUse
+			address: address
 		});
 
-		if (data && data?.data) {
-			const updatedDelegates = data.data;
+		if (data?.data) {
+			//putting polkassembly Delegate first;
+			const updatedDelegates = data?.data || [];
 
-			if (isFirstCall && sortOption === EDelegationAddressFilters.ALL) {
-				updatedDelegates.sort((a: any, b: any) => {
-					const addressess = [getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC')];
-					const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
-					const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+			updatedDelegates.sort((a: any, b: any) => {
+				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
+				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
+				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
 
-					if (aIndex !== -1 && bIndex !== -1) {
-						return aIndex - bIndex;
-					}
+				if (aIndex !== -1 && bIndex !== -1) {
+					return aIndex - bIndex;
+				}
 
-					if (aIndex !== -1) return -1;
-					if (bIndex !== -1) return 1;
-					return 0;
-				});
-			}
-
+				if (aIndex !== -1) return -1;
+				if (bIndex !== -1) return 1;
+				return 0;
+			});
 			setDelegatesData(updatedDelegates);
 			setFilteredDelegates(updatedDelegates);
 			setLoading(false);
@@ -89,32 +109,29 @@ const TrendingDelegates = () => {
 			console.log(error);
 			setLoading(false);
 		}
-
-		if (isFirstCall) {
-			setIsCallingFirstTime(false);
-		}
 	};
 
 	useEffect(() => {
-		if (isCallingFirstTime) getData(true);
+		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);
 
-	const handleCheckboxChange = (source: EDelegationSourceFilters, checked: boolean) => {
-		setSelectedSources((prevSources) => {
-			const updatedSources = checked ? [...prevSources, source] : prevSources.filter((item) => item !== source);
-			return updatedSources;
-		});
-		setIsCallingFirstTime(false);
-		getData(false, sortOption, selectedSources);
+	const handleCheckboxChange = (sources: EDelegationSourceFilters[]) => {
+		setLoading(true);
+		setSelectedSources(sources);
+		const data = filterDelegatesBySources(delegatesData, sources);
+		setFilteredDelegates(data || []);
+		setLoading(false);
 	};
 
 	const handleRadioChange = (e: any) => {
+		setLoading(true);
 		const selectedOption = e.target.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
-		setIsCallingFirstTime(false);
-		getData(false, updatedSortOption, selectedSources);
+		const data = getResultsDataAccordingToFilter(selectedOption, delegatesData);
+		setFilteredDelegates(data || []);
+		setLoading(false);
 	};
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
@@ -165,22 +182,29 @@ const TrendingDelegates = () => {
 
 	const filterContent = (
 		<div className='flex flex-col'>
-			{Object.values(EDelegationSourceFilters).map((source, index) => {
-				return (
-					<div
-						key={index}
-						className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-					>
-						<Checkbox
-							checked={selectedSources.includes(source)}
-							onChange={(e) => handleCheckboxChange(source, e.target.checked)}
-							className='cursor-pointer text-pink_primary'
-						/>
-						{renderSourceIcon(source)}
-						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
-					</div>
-				);
-			})}
+			<Checkbox.Group
+				onChange={(checked) => handleCheckboxChange(checked as any)}
+				value={selectedSources}
+				className='flex flex-col'
+				disabled={loading}
+			>
+				{Object.values(EDelegationSourceFilters).map((source, index) => {
+					return (
+						<div
+							key={index}
+							className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						>
+							<Checkbox
+								checked={selectedSources.includes(source)}
+								className='cursor-pointer text-pink_primary'
+								value={source}
+							/>
+							{renderSourceIcon(source)}
+							<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+						</div>
+					);
+				})}
+			</Checkbox.Group>
 		</div>
 	);
 	const sortContent = (
@@ -189,6 +213,7 @@ const TrendingDelegates = () => {
 				className='flex flex-col overflow-y-auto'
 				onChange={handleRadioChange}
 				value={sortOption || null}
+				disabled={loading}
 			>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}

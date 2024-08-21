@@ -39,6 +39,7 @@ const TrendingDelegates = () => {
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters>(EDelegationAddressFilters.ALL);
 	const [isCallingFirstTime, setIsCallingFirstTime] = useState<boolean>(true);
+	console.log('isCallingFirstTime', isCallingFirstTime);
 
 	useEffect(() => {
 		if (!address) return;
@@ -64,7 +65,7 @@ const TrendingDelegates = () => {
 		});
 
 		if (data && data?.data) {
-			let updatedDelegates = data.data;
+			const updatedDelegates = data.data;
 
 			if (isFirstCall && sortOption === EDelegationAddressFilters.ALL) {
 				updatedDelegates.sort((a: any, b: any) => {
@@ -96,7 +97,7 @@ const TrendingDelegates = () => {
 	};
 
 	useEffect(() => {
-		getData(true);
+		if (isCallingFirstTime) getData(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);
 
@@ -105,6 +106,7 @@ const TrendingDelegates = () => {
 			const updatedSources = checked ? [...prevSources, source] : prevSources.filter((item) => item !== source);
 			return updatedSources;
 		});
+		setIsCallingFirstTime(false);
 		getData(false, sortOption, selectedSources);
 	};
 
@@ -112,6 +114,7 @@ const TrendingDelegates = () => {
 		const selectedOption = e.target.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
+		setIsCallingFirstTime(false);
 		getData(false, updatedSortOption, selectedSources);
 	};
 

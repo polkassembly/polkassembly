@@ -85,7 +85,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	return (
 		<Spin spinning={loading}>
 			<div
-				className={`rounded-sm border-[1px] border-solid border-section-light-container hover:border-pink_primary  dark:border-[#3B444F] 
+				className={`rounded-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary  dark:border-[#3B444F] 
 					dark:border-separatorDark
 			${className}`}
 			>

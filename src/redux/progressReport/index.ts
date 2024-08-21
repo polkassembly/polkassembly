@@ -12,7 +12,7 @@ const initialState: IProgressReportStore = {
 	open_rating_modal: false,
 	open_rating_success_modal: false,
 	open_success_modal: false,
-	post_report_added: false,
+	progress_report_link: '',
 	report_uploaded: false,
 	summary_content: ''
 };
@@ -38,7 +38,7 @@ export const progressReportStore = createSlice({
 				open_rating_modal: false,
 				open_rating_success_modal: false,
 				open_success_modal: false,
-				post_report_added: false,
+				progress_report_link: '',
 				report_uploaded: false,
 				summary_content: ''
 			};
@@ -58,8 +58,8 @@ export const progressReportStore = createSlice({
 		setOpenSuccessModal: (state, action: PayloadAction<boolean>) => {
 			state.open_success_modal = action.payload;
 		},
-		setPostReportAdded: (state, action: PayloadAction<boolean>) => {
-			state.post_report_added = action.payload;
+		setProgressReportLink: (state, action: PayloadAction<string>) => {
+			state.progress_report_link = action.payload;
 		},
 		setReportUploaded: (state, action: PayloadAction<boolean>) => {
 			state.report_uploaded = action.payload;

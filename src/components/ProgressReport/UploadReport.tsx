@@ -44,7 +44,6 @@ const UploadReport = () => {
 						buttonsize='sm'
 						disabled={!report_uploaded}
 						onClick={() => {
-							// dispatch(progressReportActions.setPostReportAdded(true));
 							dispatch(progressReportActions.setOpenSuccessModal(true));
 							dispatch(progressReportActions.setAddProgressReportModalOpen(false));
 						}}

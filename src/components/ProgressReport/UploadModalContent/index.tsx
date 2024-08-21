@@ -25,72 +25,74 @@ const { Dragger } = Upload;
 
 const UploadModalContent = () => {
 	const dispatch = useDispatch();
-	const { post_report_added, report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
+	const { report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
 
 	const handleUpload = async (file: File) => {
+		console.log('Handling file upload:', file);
 		if (!file) return '';
+		let sharableLink = '';
 
-		const formData = new FormData();
-		console.log(file);
-		formData.append('media', file);
-		console.log('form_data --> ', formData);
 		try {
-			console.log('form_data --> ', formData);
-			const { data } = await nextApiClientFetch<any>('/api/v1/upload/upload', {
-				data: formData
-			});
-
-			console.log(data, data.json());
-			const sharableLink = data.displayUrl;
-
-			// // Update the state with the uploaded file's sharable link if necessary
-			// // You can dispatch an action or update a state variable with this link
-			// console.log('File uploaded successfully:', sharableLink);
-			// message.success(`${file.name} file uploaded successfully.`);
-
-			return sharableLink;
-		} catch (error) {
-			message.error(`${file.name} file upload failed.`);
-			console.error('Error uploading file:', error);
-			return null;
+			const formData = new FormData();
+			formData.append('media', file);
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/upload/upload', formData);
+			if (data) {
+				console.log('Upload successful:', data);
+				sharableLink = data.displayUrl;
+			} else {
+				console.error('Upload error:', error);
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err);
 		}
+		return sharableLink;
 	};
 
 	const props: UploadProps = {
+		action: window.location.href,
 		customRequest: async ({ file, onSuccess, onError }) => {
-			const sharableLink = await handleUpload(file as File);
-			console.log(sharableLink);
-			// if (sharableLink) {
-			// dispatch(progressReportActions.setReportUploaded(true));
-			// onSuccess(sharableLink, file);
-			// } else {
-			// dispatch(progressReportActions.setReportUploaded(false));
-			// onError(new Error('File upload failed'));
-			// }
+			try {
+				console.log('Starting file upload:', file);
+				const sharableLink = await handleUpload(file as File);
+				if (sharableLink) {
+					dispatch(progressReportActions.setReportUploaded(true));
+					dispatch(progressReportActions.setProgressReportLink(sharableLink));
+					console.log('Upload success:', sharableLink);
+					onSuccess?.({}, file as any);
+				} else {
+					console.error('Upload failed');
+					dispatch(progressReportActions.setReportUploaded(false));
+					onError?.(new Error('Upload failed'));
+				}
+			} catch (error) {
+				console.error('Custom request error:', error);
+				onError?.(error);
+			}
 		},
-		multiple: true,
+		multiple: false,
 		name: 'file',
 		onChange(info) {
+			console.log('File upload change:', info);
 			const { status } = info.file;
-			if (status !== 'uploading') {
-				console.log(info.file, info.fileList);
+			if (status === 'uploading') {
+				console.log('Uploading:', info.file, info.fileList);
 			}
 			if (status === 'done') {
-				dispatch(progressReportActions.setReportUploaded(true));
+				console.log('Upload done:', info.file.name);
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
-				dispatch(progressReportActions.setReportUploaded(false));
+				console.log('Upload error:', info.file.name);
 				message.error(`${info.file.name} file upload failed.`);
 			}
 		},
 		onDrop(e) {
-			console.log('Dropped files', e.dataTransfer.files);
+			console.log('Dropped files:', e.dataTransfer.files);
 		}
 	};
 	return (
 		<article className='mt-2 flex flex-col gap-y-1'>
-			{/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */}
-			{!post_report_added && (
+			{/* NOTE: Push this progress report field in backend and use that field check in place of report_uploaded */}
+			{!report_uploaded && (
 				<Alert
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 					showIcon
@@ -183,7 +185,6 @@ const UploadModalContent = () => {
 							buttonsize='sm'
 							disabled={!report_uploaded}
 							onClick={() => {
-								// dispatch(progressReportActions.setPostReportAdded(true));
 								dispatch(progressReportActions.setOpenRatingModal(true));
 								dispatch(progressReportActions.setOpenRatingSuccessModal(true));
 								// dispatch(progressReportActions.setAddProgressReportModalOpen(false));

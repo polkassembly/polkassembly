@@ -4,10 +4,10 @@
 export interface IProgressReportStore {
 	add_progress_report_modal_open: boolean;
 	report_uploaded: boolean;
-	post_report_added: boolean;
 	add_summary_cta_clicked: boolean;
 	summary_content: string;
 	open_rating_success_modal: boolean;
 	open_success_modal: boolean;
 	open_rating_modal: boolean;
+	progress_report_link: string;
 }

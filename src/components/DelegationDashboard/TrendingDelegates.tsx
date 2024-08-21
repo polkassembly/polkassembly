@@ -39,7 +39,6 @@ const TrendingDelegates = () => {
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters>(EDelegationAddressFilters.ALL);
 	const [isCallingFirstTime, setIsCallingFirstTime] = useState<boolean>(true);
-	console.log('isCallingFirstTime', isCallingFirstTime);
 
 	useEffect(() => {
 		if (!address) return;

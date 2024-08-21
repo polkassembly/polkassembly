@@ -8,21 +8,26 @@ import getNetwork from './getNetwork';
 import messages from './messages';
 import reAuthClient from './reAuthClient';
 
-async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any }, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknown } | FormData, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);
 	const token = currentURL.searchParams.get('token') || (await reAuthClient()) || getLocalStorageToken();
 
+	const headers: Record<string, string> = {
+		Authorization: `Bearer ${token}`,
+		'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY || '',
+		'x-network': network
+	};
+
+	if (!(data instanceof FormData)) {
+		headers['Content-Type'] = 'application/json';
+	}
+
 	const response = await fetch(`${window.location.origin}/${url}`, {
-		body: JSON.stringify(data),
+		body: data instanceof FormData ? data : JSON.stringify(data),
 		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-			'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY || '',
-			'x-network': network
-		},
+		headers,
 		method: method || 'POST'
 	});
 

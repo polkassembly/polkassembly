@@ -18,6 +18,7 @@ import { poppins } from 'pages/_app';
 import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 // import RatingModal from '../RatingModal';
 
 const { Dragger } = Upload;
@@ -26,8 +27,47 @@ const UploadModalContent = () => {
 	const dispatch = useDispatch();
 	const { post_report_added, report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
 
+	const handleUpload = async (file: File) => {
+		if (!file) return '';
+
+		const formData = new FormData();
+		console.log(file);
+		formData.append('media', file);
+		console.log('form_data --> ', formData);
+		try {
+			console.log('form_data --> ', formData);
+			const { data } = await nextApiClientFetch<any>('/api/v1/upload/upload', {
+				data: formData
+			});
+
+			console.log(data, data.json());
+			const sharableLink = data.displayUrl;
+
+			// // Update the state with the uploaded file's sharable link if necessary
+			// // You can dispatch an action or update a state variable with this link
+			// console.log('File uploaded successfully:', sharableLink);
+			// message.success(`${file.name} file uploaded successfully.`);
+
+			return sharableLink;
+		} catch (error) {
+			message.error(`${file.name} file upload failed.`);
+			console.error('Error uploading file:', error);
+			return null;
+		}
+	};
+
 	const props: UploadProps = {
-		action: window.location.href,
+		customRequest: async ({ file, onSuccess, onError }) => {
+			const sharableLink = await handleUpload(file as File);
+			console.log(sharableLink);
+			// if (sharableLink) {
+			// dispatch(progressReportActions.setReportUploaded(true));
+			// onSuccess(sharableLink, file);
+			// } else {
+			// dispatch(progressReportActions.setReportUploaded(false));
+			// onError(new Error('File upload failed'));
+			// }
+		},
 		multiple: true,
 		name: 'file',
 		onChange(info) {

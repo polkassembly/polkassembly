@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
+import { UserOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
@@ -18,6 +19,10 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
+import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
+import W3FIcon from '~assets/profile/w3f.svg';
+import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
+import NovaIcon from '~assets/delegation-tracks/nova-wallet.svg';
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
@@ -142,24 +147,41 @@ const TrendingDelegates = () => {
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
 
+	const renderSourceIcon = (source: any) => {
+		switch (source) {
+			case 'parity':
+				return <ParityTechIcon />;
+			case 'polkassembly':
+				return <PolkadotIcon />;
+			case 'w3f':
+				return <W3FIcon />;
+			case 'nova':
+				return <NovaIcon />;
+			default:
+				return <UserOutlined className='ml-1' />;
+		}
+	};
+
 	const fitlerContent = (
 		<div className='flex flex-col'>
-			{Object.values(EDelegationSourceFilters).map((source, index) => (
-				<div
-					key={index}
-					className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-				>
-					<Checkbox
-						checked={selectedSources.includes(source)}
-						onChange={(e) => handleCheckboxChange(source, e.target.checked)}
-						className='cursor-pointer text-pink_primary'
-					/>
-					<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
-				</div>
-			))}
+			{Object.values(EDelegationSourceFilters).map((source, index) => {
+				return (
+					<div
+						key={index}
+						className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+					>
+						<Checkbox
+							checked={selectedSources.includes(source)}
+							onChange={(e) => handleCheckboxChange(source, e.target.checked)}
+							className='cursor-pointer text-pink_primary'
+						/>
+						{renderSourceIcon(source)}
+						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+					</div>
+				);
+			})}
 		</div>
 	);
-
 	const sortContent = (
 		<div className='flex flex-col'>
 			<Radio.Group

@@ -178,7 +178,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							</div>
 						)}
 						{!delegate?.dataSource && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-1 rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-section-dark-background'>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-1 rounded-t-[6px] border-[1px] border-solid bg-[#FCE5F2] px-5 dark:bg-section-dark-background'>
 								<span className='flex h-6 w-6 items-center justify-center rounded-full border-[1px] border-solid border-bodyBlue dark:border-white'>
 									<UserOutlined className='text-xs' />
 								</span>

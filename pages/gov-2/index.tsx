@@ -27,7 +27,7 @@ import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedire
 import { useTheme } from 'next-themes';
 import Skeleton from '~src/basic-components/Skeleton';
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

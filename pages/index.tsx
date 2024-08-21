@@ -211,7 +211,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 	return { props };
 };
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

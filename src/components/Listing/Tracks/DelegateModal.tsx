@@ -224,7 +224,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 			status: NotificationStatus.ERROR
 		});
 		setLoading(false);
-		setOpen ? setOpen?.(false) : setDefaultOpen(false);
 	};
 
 	const handleSubmit = async () => {

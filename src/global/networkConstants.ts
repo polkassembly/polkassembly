@@ -202,6 +202,8 @@ export const treasuryAssets = {
 export const chainProperties: types.ChainPropType = {
 	[network.POLKADOT]: {
 		preImageBaseDeposit: '400000000000',
+		assetHubRpcEndpoint: 'wss://dot-rpc.stakeworld.io/assethub',
+		assetHubTreasuryAddress: '14xmwinmCEz6oRrFdczHKqHgWNMiCysE2KrA4jXXAAM1Eogk',
 		blockTime: 6000,
 		category: 'polkadot',
 		chainId: 0,
@@ -215,10 +217,12 @@ export const chainProperties: types.ChainPropType = {
 		subsquidUrl: 'https://squid.subsquid.io/polkadot-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.DOT,
+		treasuryAddress: '5EYCAe5ijiYfyeZ2JJCGq56LmPyNRAKzpG4QkoQkkQNB5e6Z',
 		treasuryProposalBondPercent: '5.00%',
 		treasuryProposalMinBond: '100',
 		treasuryProposalMaxBond: '500',
 		externalLinks: 'https://polkadot.api.subscan.io',
+		assethubExternalLinks: 'https://assethub-polkadot.api.subscan.io',
 		gTag: 'G-JMMMFDX405',
 		rpcEndpoints: [
 			{
@@ -254,7 +258,11 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rpc-polkadot.luckyfriday.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		]
 	},
 	[network.KUSAMA]: {
 		preImageBaseDeposit: '1330000000000',
@@ -306,7 +314,7 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rpc-kusama.luckyfriday.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.USDT]
+		supportedAssets: [{ ...treasuryAssets.USDT, genralIndex: '1984' }]
 	},
 	[network.ACALA]: {
 		blockTime: 12000,
@@ -1881,7 +1889,11 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://rococo-rpc.polkadot.io'
 			}
 		],
-		supportedAssets: [treasuryAssets.DED, treasuryAssets.USDC, treasuryAssets.USDT]
+		supportedAssets: [
+			{ ...treasuryAssets.DED, genralIndex: '30' },
+			{ ...treasuryAssets.USDT, genralIndex: '1984' },
+			{ ...treasuryAssets.USDC, genralIndex: '1337' }
+		]
 	},
 	[network.XX]: {
 		blockTime: 6000,

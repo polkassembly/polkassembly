@@ -3,42 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { EAssets } from '../types';
-import { network as AllNetworks } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 
 interface Args {
 	network: string;
 	asset: EAssets;
 }
 export const getGeneralIndexFromAsset = ({ asset, network }: Args) => {
-	switch (network) {
-		case AllNetworks.POLKADOT:
-			switch (asset) {
-				case EAssets.DED:
-					return '30';
-				case EAssets.USDC:
-					return '1337';
-				case EAssets.USDT:
-					return '1984';
-				default:
-					return null;
-			}
-		case AllNetworks.ROCOCO:
-			switch (asset) {
-				case EAssets.DED:
-					return '30';
-				case EAssets.USDC:
-					return '1337';
-				case EAssets.USDT:
-					return '1984';
-				default:
-					return null;
-			}
-		case AllNetworks.KUSAMA:
-			switch (asset) {
-				case EAssets.USDT:
-					return '1984';
-				default:
-					return null;
-			}
-	}
+	if (!network) return null;
+	return chainProperties?.[network]?.supportedAssets?.find(({ symbol }) => symbol === asset)?.genralIndex || null;
 };

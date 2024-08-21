@@ -107,6 +107,7 @@ export interface IAssets {
 	name: string;
 	img: string;
 	symbol: EAssets;
+	genralIndex: string;
 }
 
 export interface ChainProps {
@@ -124,13 +125,17 @@ export interface ChainProps {
 	rpcEndpoint: string;
 	category: string;
 	subsquidUrl: string;
+	treasuryAddress?: string;
 	treasuryProposalBondPercent: string | null;
 	treasuryProposalMinBond: string | null;
 	treasuryProposalMaxBond: string | null;
 	externalLinks: string;
+	assethubExternalLinks?: string;
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	assetHubRpcEndpoint?: string;
+	assetHubTreasuryAddress?: string;
 	supportedAssets?: IAssets[];
 }
 
@@ -850,4 +855,51 @@ export interface IPayout {
 	payoutIndex: number;
 	generalIndex: string;
 	status: 'Pending';
+}
+
+export interface IHistoryItem {
+	date: string;
+	balance: string;
+}
+
+export interface IOverviewProps {
+	priceWeeklyChange: {
+		isLoading: boolean;
+		value: string;
+	};
+	currentTokenPrice: {
+		isLoading: boolean;
+		value: string;
+	};
+	available: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
+	spendPeriod: {
+		isLoading: boolean;
+		percentage: number;
+		value: {
+			days: number;
+			hours: number;
+			minutes: number;
+			total: number;
+		};
+	};
+	nextBurn: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
+	tokenValue: number;
+}
+
+export interface ITreasuryResponseData {
+	history: IHistoryItem[] | null;
+	status: string;
+}
+
+export interface IDailyTreasuryTallyData {
+	created_at: string;
+	balance: string;
 }

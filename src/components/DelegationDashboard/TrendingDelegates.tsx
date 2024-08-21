@@ -31,7 +31,7 @@ const TrendingDelegates = () => {
 	const [open, setOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
-	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>([]);
+	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(EDelegationAddressFilters.ALL);
 
 	useEffect(() => {
@@ -49,7 +49,8 @@ const TrendingDelegates = () => {
 		setLoading(true);
 		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
 			address: address,
-			filterBy: sortOption || EDelegationAddressFilters.ALL
+			filterBy: sortOption || EDelegationAddressFilters.ALL,
+			sources: selectedSources
 		});
 		if (data && data.data) {
 			setDelegatesData(data.data);
@@ -63,16 +64,16 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, sortOption, network]);
+	}, [address, sortOption, network, selectedSources]);
 
 	useEffect(() => {
-		let updatedDelegates = [...delegatesData];
+		const updatedDelegates = [...delegatesData];
 
-		if (selectedSources.length > 0) {
-			updatedDelegates = updatedDelegates.filter((delegate) => {
-				return delegate.dataSource && selectedSources.some((source) => delegate.dataSource.includes(source));
-			});
-		}
+		// if (selectedSources.length > 0) {
+		// updatedDelegates = updatedDelegates.filter((delegate) => {
+		// return delegate.dataSource && selectedSources.some((source) => delegate.dataSource.includes(source));
+		// });
+		// }
 
 		if (sortOption === EDelegationAddressFilters.ALL) {
 			updatedDelegates.sort((a, b) => {
@@ -100,11 +101,8 @@ const TrendingDelegates = () => {
 
 	const handleCheckboxChange = (source: EDelegationSourceFilters, checked: boolean) => {
 		setSelectedSources((prevSources) => {
-			if (checked) {
-				return [...prevSources, source];
-			} else {
-				return prevSources.filter((item) => item !== source);
-			}
+			const updatedSources = checked ? [...prevSources, source] : prevSources.filter((item) => item !== source);
+			return updatedSources;
 		});
 	};
 

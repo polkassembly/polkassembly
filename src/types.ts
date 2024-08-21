@@ -938,9 +938,9 @@ export enum EDelegationAddressFilters {
 }
 
 export enum EDelegationSourceFilters {
-	POLKASSEMBLY = 'Polkassembly',
-	PARITY = 'Parity',
-	NOVA = 'Nova',
-	W3F = 'W3f',
-	NA = 'Individual'
+	POLKASSEMBLY = 'polkassembly',
+	PARITY = 'parity',
+	NOVA = 'nova',
+	W3F = 'w3f',
+	NA = 'individual'
 }

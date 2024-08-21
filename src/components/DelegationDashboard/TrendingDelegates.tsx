@@ -37,7 +37,8 @@ const TrendingDelegates = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
-	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(EDelegationAddressFilters.ALL);
+	const [sortOption, setSortOption] = useState<EDelegationAddressFilters>(EDelegationAddressFilters.ALL);
+	const [isCallingFirstTime, setIsCallingFirstTime] = useState<boolean>(true);
 
 	useEffect(() => {
 		if (!address) return;
@@ -49,13 +50,17 @@ const TrendingDelegates = () => {
 		}, 5000);
 	}, [network, address]);
 
-	const getData = async () => {
+	const getData = async (isFirstCall: boolean = false, filter?: EDelegationAddressFilters, source?: EDelegationSourceFilters[]) => {
 		if (!getEncodedAddress(address, network) && address.length > 0) return;
 		setLoading(true);
+
+		const filtersToUse = isFirstCall ? EDelegationAddressFilters.ALL : filter || sortOption;
+		const sourcesToUse = isFirstCall ? Object.values(EDelegationSourceFilters) : source || selectedSources;
+
 		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
 			address: address,
-			filterBy: sortOption || EDelegationAddressFilters.ALL,
-			sources: selectedSources
+			filterBy: filtersToUse,
+			sources: sourcesToUse
 		});
 		if (data && data?.data) {
 			setDelegatesData(data.data);
@@ -64,24 +69,30 @@ const TrendingDelegates = () => {
 			console.log(error);
 			setLoading(false);
 		}
+
+		if (isFirstCall) {
+			setIsCallingFirstTime(false);
+		}
 	};
 
 	useEffect(() => {
-		getData();
+		getData(true);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, sortOption, network, selectedSources]);
+	}, [address, network]);
+
+	useEffect(() => {
+		if (!isCallingFirstTime) {
+			getData(false, sortOption, selectedSources);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sortOption, selectedSources]);
 
 	useEffect(() => {
 		const updatedDelegates = [...delegatesData];
 
 		if (sortOption === EDelegationAddressFilters.ALL) {
 			updatedDelegates.sort((a, b) => {
-				const addressess = [
-					getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC'),
-					getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
-					getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
-					getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
-				];
+				const addressess = [getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC')];
 				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
 				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
 

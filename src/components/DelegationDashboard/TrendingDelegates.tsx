@@ -62,8 +62,28 @@ const TrendingDelegates = () => {
 			filterBy: filtersToUse,
 			sources: sourcesToUse
 		});
+
 		if (data && data?.data) {
-			setDelegatesData(data.data);
+			let updatedDelegates = data.data;
+
+			if (isFirstCall && sortOption === EDelegationAddressFilters.ALL) {
+				updatedDelegates.sort((a: any, b: any) => {
+					const addressess = [getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC')];
+					const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
+					const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+
+					if (aIndex !== -1 && bIndex !== -1) {
+						return aIndex - bIndex;
+					}
+
+					if (aIndex !== -1) return -1;
+					if (bIndex !== -1) return 1;
+					return 0;
+				});
+			}
+
+			setDelegatesData(updatedDelegates);
+			setFilteredDelegates(updatedDelegates);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -80,45 +100,19 @@ const TrendingDelegates = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, network]);
 
-	useEffect(() => {
-		if (!isCallingFirstTime) {
-			getData(false, sortOption, selectedSources);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [sortOption, selectedSources]);
-
-	useEffect(() => {
-		const updatedDelegates = [...delegatesData];
-
-		if (sortOption === EDelegationAddressFilters.ALL) {
-			updatedDelegates.sort((a, b) => {
-				const addressess = [getSubstrateAddress('13SceNt2ELz3ti4rnQbY1snpYH4XE4fLFsW8ph9rpwJd6HFC')];
-				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
-				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
-
-				if (aIndex !== -1 && bIndex !== -1) {
-					return aIndex - bIndex;
-				}
-
-				if (aIndex !== -1) return -1;
-				if (bIndex !== -1) return 1;
-				return 0;
-			});
-		}
-
-		setFilteredDelegates(updatedDelegates);
-	}, [delegatesData, selectedSources, sortOption]);
-
 	const handleCheckboxChange = (source: EDelegationSourceFilters, checked: boolean) => {
 		setSelectedSources((prevSources) => {
 			const updatedSources = checked ? [...prevSources, source] : prevSources.filter((item) => item !== source);
 			return updatedSources;
 		});
+		getData(false, sortOption, selectedSources);
 	};
 
 	const handleRadioChange = (e: any) => {
 		const selectedOption = e.target.value;
-		setSortOption((prevOption) => (prevOption === selectedOption ? null : selectedOption));
+		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
+		setSortOption(updatedSortOption);
+		getData(false, updatedSortOption, selectedSources);
 	};
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;

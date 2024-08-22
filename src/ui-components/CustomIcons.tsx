@@ -177,6 +177,19 @@ import CapitalIconSVG from '~assets/icons/capital-small-icom.svg';
 import EmailIconSVG from '~assets/icons/email_icon.svg';
 import CuratorSVG from '~assets/bounty-icons/curator-icon.svg';
 import BountyCriteriaSVG from '~assets/bounty-icons/bounty-criteria.svg';
+import SelectedAllIcon from '~assets/selected-icons/All.svg';
+import SelectedArchivedIcon from '~assets/selected-icons/Archived.svg';
+import SelectedAuctionAdminIcon from '~assets/selected-icons/Auction Admin.svg';
+import SelectedDiscussionsIcon from '~assets/selected-icons/Discussions.svg';
+import SelectedGovernanceIcon from '~assets/selected-icons/Governance.svg';
+import SelectedOverviewIcon from '~assets/selected-icons/Overview.svg';
+import SelectedPreimagesIcon from '~assets/selected-icons/Preimages.svg';
+import SelectedRootIcon from '~assets/selected-icons/Root.svg';
+import SelectedStakingAdminIcon from '~assets/selected-icons/Staking Admin.svg';
+import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
+import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
+import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
+import AllpostIcon from '~assets/allpost.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
@@ -1321,6 +1334,97 @@ export const CuratorIcon = (props: Partial<CustomIconComponentProps>) => (
 export const BountyCriteriaIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={BountyCriteriaSVG}
+		{...props}
+	/>
+);
+
+export const SelectedAll = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedAllIcon}
+		{...props}
+	/>
+);
+
+export const SelectedArchived = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedArchivedIcon}
+		{...props}
+	/>
+);
+
+export const SelectedAuctionAdmin = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedAuctionAdminIcon}
+		{...props}
+	/>
+);
+
+export const SelectedDiscussions = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedDiscussionsIcon}
+		{...props}
+	/>
+);
+
+export const SelectedGovernance = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedGovernanceIcon}
+		{...props}
+	/>
+);
+
+export const SelectedOverview = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedOverviewIcon}
+		{...props}
+	/>
+);
+
+export const SelectedPreimages = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedPreimagesIcon}
+		{...props}
+	/>
+);
+
+export const SelectedRoot = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedRootIcon}
+		{...props}
+	/>
+);
+
+export const SelectedStakingAdmin = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedStakingAdminIcon}
+		{...props}
+	/>
+);
+
+export const SelectedTreasury = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedTreasuryIcon}
+		{...props}
+	/>
+);
+
+export const SelectedWhitelist = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedWhitelistIcon}
+		{...props}
+	/>
+);
+
+export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedWishForChangeIcon}
+		{...props}
+	/>
+);
+
+export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={AllpostIcon}
 		{...props}
 	/>
 );

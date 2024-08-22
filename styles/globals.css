@@ -904,3 +904,14 @@ z-index: 105 !important;
   border: 1px solid;
   border-radius: 4px;
 }
+
+
+.activeborder{
+  border: 1px solid #E5007A;
+  border-radius: 10px;
+}
+.activeborderhover:hover{
+  border: 1px solid #E5007A;
+  border-radius: 10px;
+}
+

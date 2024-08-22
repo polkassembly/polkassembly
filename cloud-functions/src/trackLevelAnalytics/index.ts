@@ -121,9 +121,9 @@ const getDelegationSplit = (data: IDataType, type: EVoteType) => {
 	case EVoteType.ACCOUNTS:
 		return accountsData;
 	case EVoteType.CONVICTIONVOTES:
-		return { ...convictionData, delegated: convictionData.delegated.toString(), solo: convictionData.solo.toString() };
+		return { ...convictionData, delegated: convictionData?.delegated?.toString(), solo: convictionData?.solo?.toString() };
 	case EVoteType.VOTEAMOUNT:
-		return { ...voteAmountData, delegated: voteAmountData.delegated.toString(), solo: voteAmountData.solo.toString() };
+		return { ...voteAmountData, delegated: voteAmountData?.delegated?.toString(), solo: voteAmountData?.solo?.toString() };
 	}
 };
 
@@ -153,9 +153,9 @@ const getVotesSplit = (data: IDataType, type: EVoteType) => {
 	case EVoteType.ACCOUNTS:
 		return accountsData;
 	case EVoteType.CONVICTIONVOTES:
-		return { ...convictionData, abstain: convictionData.abstain.toString(), aye: convictionData.aye.toString(), nay: convictionData.nay.toString() };
+		return { ...convictionData, abstain: convictionData?.abstain?.toString(), aye: convictionData?.aye?.toString(), nay: convictionData?.nay?.toString() };
 	case EVoteType.VOTEAMOUNT:
-		return { ...voteAmountData, abstain: voteAmountData.abstain.toString(), aye: voteAmountData.aye.toString(), nay: voteAmountData.nay.toString() };
+		return { ...voteAmountData, abstain: voteAmountData?.abstain?.toString(), aye: voteAmountData?.aye?.toString(), nay: voteAmountData?.nay?.toString() };
 	}
 };
 
@@ -196,6 +196,8 @@ const getSupportData = async (data: IDataType, network: string, api: any) => {
 
 const trackLevelAnalytics = async () => {
 	const analyticsData: any = [];
+	const trackDetails: { network: string; trackNumber:number, count: number}[] = [];
+
 	const analyticsDataPromise = AllNetworks.map(async (network) => {
 		const wsProvider = new WsProvider(getWSProvider(network) as string);
 		const api = await ApiPromise.create({ provider: wsProvider });
@@ -213,6 +215,7 @@ const trackLevelAnalytics = async () => {
 			});
 
 			const proposals = subsquidRes?.['data']?.proposals || [];
+			trackDetails.push({ network, trackNumber, count: proposals?.length || 0 });
 
 			const proposalsPromise = proposals.map(async (proposal: any) => {
 				const query = GET_TOTAL_VOTES_FOR_PROPOSAL;
@@ -276,11 +279,23 @@ const trackLevelAnalytics = async () => {
 			});
 			await Promise.allSettled(proposalsPromise);
 		});
+
 		await Promise.allSettled(trackNumbersPromise);
 	});
+
 	await Promise.allSettled(analyticsDataPromise);
 
-	logger.log(analyticsData, 'analyticsData');
+	if (trackDetails.length) {
+		const batch = firestoreDB.batch();
+		trackDetails.map((item) => {
+			const snapshot = firestoreDB.collection('networks').doc(item?.network).collection('track_level_analytics').doc(String(item.trackNumber));
+			batch.set(snapshot, { totalProposalsCount: item?.count || 0 });
+		});
+
+		await batch.commit();
+	}
+
+	logger.log(trackDetails, 'analyticsData', analyticsData);
 	function chunkArray(array: IResponse[], chunkSize: number) {
 		const chunks = [];
 		for (let i = 0; i < array.length; i += chunkSize) {

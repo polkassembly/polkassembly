@@ -2,13 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { IDelegate } from '~src/types';
+import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
+import { UserOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
-import { Alert, Button, Checkbox, Spin } from 'antd';
+import { Alert, Button, Radio, Spin, Checkbox } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
@@ -18,23 +19,53 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
-import { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
+import W3FIcon from '~assets/profile/w3f.svg';
+import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
+import NovaIcon from '~assets/delegation-tracks/nova-wallet.svg';
+import BN from 'bn.js';
+
+const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
+	switch (filterBy) {
+		case EDelegationAddressFilters.DELEGATED_VOTES:
+			return data.sort((a, b) => new BN(b.delegatedBalance).cmp(new BN(a.delegatedBalance)));
+		case EDelegationAddressFilters.RECEIVED_DELEGATIONS:
+			return data.sort((a, b) => b.receivedDelegationsCount - a.receivedDelegationsCount);
+		case EDelegationAddressFilters.VOTED_PROPOSALS:
+			return data.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
+		default:
+			return data;
+	}
+};
+
+const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSources: string[]): IDelegateAddressDetails[] => {
+	return data.filter((delegate) => {
+		if (selectedSources.length === 1 && selectedSources[0] === EDelegationSourceFilters.NA) {
+			return !delegate.dataSource || delegate.dataSource.length === 0;
+		}
+
+		if (selectedSources.includes(EDelegationSourceFilters.NA)) {
+			return !delegate.dataSource || delegate.dataSource.length === 0 || selectedSources.some((source) => delegate.dataSource?.includes(source));
+		}
+
+		return selectedSources.some((source) => delegate.dataSource?.includes(source));
+	});
+};
 
 const TrendingDelegates = () => {
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [delegatesData, setDelegatesData] = useState<IDelegate[]>([]);
-	const [filteredDelegates, setFilteredDelegates] = useState<IDelegate[]>([]);
+	const [delegatesData, setDelegatesData] = useState<IDelegateAddressDetails[]>([]);
+	const [filteredDelegates, setFilteredDelegates] = useState<IDelegateAddressDetails[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
 	const [address, setAddress] = useState<string>('');
-	const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
-	const [checkAll, setCheckAll] = useState(true);
+	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
+	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 
 	useEffect(() => {
 		if (!address) return;
@@ -46,32 +77,33 @@ const TrendingDelegates = () => {
 		}, 5000);
 	}, [network, address]);
 
-	useEffect(() => {
-		// Modify to set checkedList based on allDataSource after fetching data
-		const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
-		setCheckedList(allDataSource);
-		setCheckAll(true); // Ensure check all is always true initially
-	}, [delegatesData]);
-
-	useEffect(() => {
-		// Adjusted to consider checkAll state
-		if (checkAll) {
-			setFilteredDelegates(delegatesData);
-		} else {
-			const filtered = delegatesData?.filter((delegate) => delegate?.dataSource?.some((dataSource) => checkedList.includes(dataSource)));
-			setFilteredDelegates(filtered);
-		}
-	}, [delegatesData, checkedList, checkAll]);
-
 	const getData = async () => {
-		if (!getEncodedAddress(address, network) && address.length > 0) return;
+		if (!getEncodedAddress(address, network) && !!address.length) return;
 		setLoading(true);
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
+		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
 			address: address
 		});
-		if (data) {
-			setDelegatesData(data);
+
+		if (data?.data) {
+			//putting polkassembly Delegate first;
+			const updatedDelegates = data?.data || [];
+
+			updatedDelegates.sort((a: any, b: any) => {
+				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
+				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
+				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+
+				if (aIndex !== -1 && bIndex !== -1) {
+					return aIndex - bIndex;
+				}
+
+				if (aIndex !== -1) return -1;
+				if (bIndex !== -1) return 1;
+				return 0;
+			});
+			setDelegatesData(updatedDelegates);
+			setFilteredDelegates(updatedDelegates);
 			setLoading(false);
 		} else {
 			console.log(error);
@@ -82,7 +114,25 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, delegationDashboardAddress, network]);
+	}, [address, network]);
+
+	const handleCheckboxChange = (sources: EDelegationSourceFilters[]) => {
+		setLoading(true);
+		setSelectedSources(sources);
+		const data = filterDelegatesBySources(delegatesData, sources);
+		setFilteredDelegates(data || []);
+		setLoading(false);
+	};
+
+	const handleRadioChange = (e: any) => {
+		setLoading(true);
+		const selectedOption = e.target.value;
+		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
+		setSortOption(updatedSortOption);
+		const data = getResultsDataAccordingToFilter(selectedOption, delegatesData);
+		setFilteredDelegates(data || []);
+		setLoading(false);
+	};
 
 	const itemsPerPage = showMore ? filteredDelegates.length : 6;
 	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
@@ -115,51 +165,77 @@ const TrendingDelegates = () => {
 		}
 	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
 
-	const addressess = [
-		getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t'),
-		getSubstrateAddress('1wpTXaBGoyLNTDF9bosbJS3zh8V8D2ta7JKacveCkuCm7s6'),
-		getSubstrateAddress('F1wAMxpzvjWCpsnbUMamgKfqFM7LRvNdkcQ44STkeVbemEZ'),
-		getSubstrateAddress('5CJX6PHkedu3LMdYqkHtGvLrbwGJustZ78zpuEAaxhoW9KbB')
-	];
-
-	const allDataSource = [...new Set(delegatesData?.map((data) => data?.dataSource).flat())];
-
-	const onChange = (list: CheckboxValueType[]) => {
-		setCheckedList(list);
-		setCheckAll(list.length === allDataSource.length);
-		setCurrentPage(1);
+	const renderSourceIcon = (source: any) => {
+		switch (source) {
+			case 'parity':
+				return <ParityTechIcon />;
+			case 'polkassembly':
+				return <PolkadotIcon />;
+			case 'w3f':
+				return <W3FIcon />;
+			case 'nova':
+				return <NovaIcon />;
+			default:
+				return <UserOutlined className='ml-1' />;
+		}
 	};
 
-	const onCheckAllChange = (e: CheckboxChangeEvent) => {
-		const list = e.target.checked ? allDataSource.map((source) => source) : [];
-		setCheckedList(list);
-		setCheckAll(e.target.checked);
-	};
-
-	const content = (
+	const filterContent = (
 		<div className='flex flex-col'>
 			<Checkbox.Group
-				className='flex max-h-[200px] flex-col overflow-y-auto'
-				onChange={onChange}
-				value={checkedList}
+				onChange={(checked) => handleCheckboxChange(checked as any)}
+				value={selectedSources}
+				className='flex flex-col'
+				disabled={loading}
 			>
-				{allDataSource?.map((source, index) => (
-					<div
-						className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-						key={index}
-					>
-						<Checkbox
-							className='cursor-pointer text-pink_primary'
-							value={source}
-							onChange={onCheckAllChange}
-						/>
-						<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
-					</div>
-				))}
+				{Object.values(EDelegationSourceFilters).map((source, index) => {
+					return (
+						<div
+							key={index}
+							className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+						>
+							<Checkbox
+								checked={selectedSources.includes(source)}
+								className='cursor-pointer text-pink_primary'
+								value={source}
+							/>
+							{renderSourceIcon(source)}
+							<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+						</div>
+					);
+				})}
 			</Checkbox.Group>
 		</div>
 	);
-
+	const sortContent = (
+		<div className='flex flex-col'>
+			<Radio.Group
+				className='flex flex-col overflow-y-auto'
+				onChange={handleRadioChange}
+				value={sortOption || null}
+				disabled={loading}
+			>
+				<Radio
+					value={EDelegationAddressFilters.DELEGATED_VOTES}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Voting Power
+				</Radio>
+				<Radio
+					value={EDelegationAddressFilters.VOTED_PROPOSALS}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Voted proposals (past 30 days)
+				</Radio>
+				<Radio
+					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+				>
+					Received Delegation(s)
+				</Radio>
+			</Radio.Group>
+		</div>
+	);
 	return (
 		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
 			<div className='flex items-center justify-between'>
@@ -200,11 +276,10 @@ const TrendingDelegates = () => {
 
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
-			<div className='flex items-center gap-2'>
+			<div className='flex items-center gap-3'>
 				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-section-light-container text-sm font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
 					{/* Input Component */}
 					<Input
-						// disabled={disabled}
 						placeholder='Enter address to Delegate vote'
 						onChange={(e) => setAddress(e.target.value)}
 						value={address}
@@ -227,8 +302,9 @@ const TrendingDelegates = () => {
 						<span className='text-sm font-medium text-white'>Delegate</span>
 					</CustomButton>
 				</div>
+
 				<Popover
-					content={content}
+					content={filterContent}
 					placement='bottomRight'
 					zIndex={1056}
 				>
@@ -236,6 +312,19 @@ const TrendingDelegates = () => {
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
+						/>
+					</Button>
+				</Popover>
+
+				<Popover
+					content={sortContent}
+					placement='topRight'
+					zIndex={1056}
+				>
+					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+						<ImageIcon
+							src='/assets/icons/sort-icon-delegates.svg'
+							alt='sort icon'
 						/>
 					</Button>
 				</Popover>
@@ -266,21 +355,14 @@ const TrendingDelegates = () => {
 						/>
 					) : (
 						<>
-							<div className='mt-6 grid grid-cols-2 gap-6 max-lg:grid-cols-1'>
-								{[
-									...filteredDelegates.filter((item) => addressess.includes(getSubstrateAddress(item?.address))),
-									...filteredDelegates
-										.filter((item) => ![...addressess].includes(getSubstrateAddress(item?.address)))
-										.sort((a, b) => b.active_delegation_count - a.active_delegation_count)
-								]
-									.slice(startIndex, endIndex)
-									.map((delegate, index) => (
-										<DelegateCard
-											key={index}
-											delegate={delegate}
-											disabled={!delegationDashboardAddress}
-										/>
-									))}
+							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
+								{filteredDelegates.slice(startIndex, endIndex).map((delegate, index) => (
+									<DelegateCard
+										key={index}
+										delegate={delegate}
+										disabled={!delegationDashboardAddress}
+									/>
+								))}
 							</div>
 							{!showMore && delegatesData.length > 6 && (
 								<div className='mt-6 flex justify-end'>

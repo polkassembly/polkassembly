@@ -9,7 +9,6 @@ import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-compon
 import { onchainIdentitySupportedNetwork } from '.';
 import IdentityCaution from '~assets/icons/identity-caution.svg';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { getSpanStyle } from '~src/ui-components/TopicTag';
 
 type MenuItem = Required<MenuProps>['items'][number];
 

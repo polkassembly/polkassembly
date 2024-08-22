@@ -47,6 +47,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import ToggleButton from '~src/ui-components/ToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -206,6 +207,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		});
 	}
+	menudropDownItems.push({
+		className: 'logo-class',
+		key: 'Theme',
+		label: <ToggleButton />
+	});
 
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -336,7 +342,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1060]' : 'z-[101]'
+				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1000]' : 'z-[101]'
 			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<div

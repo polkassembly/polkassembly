@@ -178,7 +178,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							isIdentitySet={isIdentitySet}
 							isIdentityUnverified={isIdentityUnverified}
 						/>
-						<div className={`fixed ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
+						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
 								<div
 									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
@@ -227,6 +227,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</div>
 				</Layout>
+
 				{onchainIdentitySupportedNetwork.includes(network) && (
 					<OnchainIdentity
 						open={open}
@@ -458,7 +459,7 @@ export default styled(AppLayout)`
 	.ant-menu-vertical > .ant-menu-item > li:first-child {
 		height: 40px !important;
 	}
-	.ant-menu-root > li:first-child {
-		height: 60px !important;
-	}
+	// .ant-menu-root > li:first-child {
+	// 	height: 60px !important;
+	// }
 `;

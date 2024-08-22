@@ -62,7 +62,7 @@ import BigNumber from 'bignumber.js';
 import VotersList from './Referenda/VotersList';
 import RefV2ThresholdData from './Referenda/RefV2ThresholdData';
 import { isSupportedNestedVoteNetwork } from '../utils/isSupportedNestedVotes';
-import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import queueNotification from '~src/ui-components/QueueNotification';
 import executeTx from '~src/util/executeTx';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
@@ -142,14 +142,13 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 
-	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses } = useUserDetailsSelector();
+	const { loginAddress, defaultAddress, walletConnectProvider, loginWallet, addresses, id } = useUserDetailsSelector();
 	const {
 		postData: { created_at, track_number, statusHistory, postIndex, postType }
 	} = usePostDataContext();
 	const metaMaskError = useHandleMetaMask();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
-	const { report_uploaded } = useProgressReportSelector();
 	const { postData } = usePostDataContext();
 
 	const [address, setAddress] = useState<string>('');
@@ -1005,13 +1004,12 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 							/>
 						)}
 
-						{/* in place of report_uploaded, use key from BE and use that without ! */}
-						{!report_uploaded && loginAddress !== postData?.proposer && (
+						{!postData?.progress_report?.progress_file && id !== postData?.userId && (
 							<Alert
 								className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
 								showIcon
 								type='info'
-								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer</span>}
+								message={<span className='dark:text-blue-dark-high'>Progress Report not added by Proposer.</span>}
 							/>
 						)}
 						<RHSCardSlides

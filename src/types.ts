@@ -385,6 +385,7 @@ export interface Post {
 	inductee_address?: string;
 	typeOfReferendum?: EReferendumType;
 	allowedCommentors?: EAllowedCommentor[];
+	progress_report?: any;
 }
 
 export interface IPostTag {

@@ -45,6 +45,7 @@ interface IReferendaPostProps {
 const ReferendaPost: FC<IReferendaPostProps> = (props) => {
 	const { post, error, network } = props;
 	const dispatch = useDispatch();
+	console.log(post);
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));

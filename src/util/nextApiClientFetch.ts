@@ -8,7 +8,7 @@ import getNetwork from './getNetwork';
 import messages from './messages';
 import reAuthClient from './reAuthClient';
 
-async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknown } | FormData, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
+async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknown } | FormData | any, method?: 'GET' | 'POST'): Promise<{ data?: T; error?: string }> {
 	const network = getNetwork();
 
 	const currentURL = new URL(window.location.href);

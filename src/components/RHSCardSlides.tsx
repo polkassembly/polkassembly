@@ -39,13 +39,12 @@ enum cardTags {
 
 type props = { status: string; canEdit: any; showDecisionDeposit: any; trackName: string; toggleEdit: (() => void) | null };
 const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, status }: props) => {
-	console.log('current status --> ', status);
 	const { api, apiReady } = useApiContext();
 	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { loginAddress, id, username } = useUserDetailsSelector();
-	const { post_report_added } = useProgressReportSelector();
+	const { show_nudge } = useProgressReportSelector();
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [RHSCards, setRHSCards] = useState<card[]>([]);
 	const [openDecisionDeposit, setOpenDecisionDeposit] = useState(false);
@@ -180,12 +179,8 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 			});
 		}
 
-		// remove both !'s (not) check
-		{
-			/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */
-		}
-
-		if (!(postData?.proposer === loginAddress) && status === 'Executed' && !post_report_added) {
+		// remove !(not) check from (postData?.userId === id)
+		if (!(postData?.userId === id) && status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge) {
 			setRHSCards((prevCards) => {
 				const newCards = [...prevCards];
 				newCards.push({

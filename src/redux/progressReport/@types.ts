@@ -10,4 +10,7 @@ export interface IProgressReportStore {
 	open_success_modal: boolean;
 	open_rating_modal: boolean;
 	progress_report_link: string;
+	show_nudge: boolean;
+	file_name: string;
+	report_rating: number;
 }

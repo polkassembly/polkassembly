@@ -28,6 +28,7 @@ const UploadModalContent = () => {
 	const { report_uploaded, add_summary_cta_clicked, open_success_modal } = useProgressReportSelector();
 
 	const handleUpload = async (file: File) => {
+		dispatch(progressReportActions.setFileName(file.name));
 		console.log('Handling file upload:', file);
 		if (!file) return '';
 		let sharableLink = '';
@@ -55,7 +56,6 @@ const UploadModalContent = () => {
 				console.log('Starting file upload:', file);
 				const sharableLink = await handleUpload(file as File);
 				if (sharableLink) {
-					dispatch(progressReportActions.setReportUploaded(true));
 					dispatch(progressReportActions.setProgressReportLink(sharableLink));
 					console.log('Upload success:', sharableLink);
 					onSuccess?.({}, file as any);
@@ -72,13 +72,10 @@ const UploadModalContent = () => {
 		multiple: false,
 		name: 'file',
 		onChange(info) {
-			console.log('File upload change:', info);
 			const { status } = info.file;
-			if (status === 'uploading') {
-				console.log('Uploading:', info.file, info.fileList);
-			}
 			if (status === 'done') {
 				console.log('Upload done:', info.file.name);
+				dispatch(progressReportActions.setReportUploaded(true));
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
 				console.log('Upload error:', info.file.name);
@@ -164,48 +161,6 @@ const UploadModalContent = () => {
 			>
 				<SuccessModal />
 			</Modal>
-			{/* <Modal
-				wrapClassName='dark:bg-modalOverlayDark'
-				className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
-				open={open_rating_modal}
-				footer={
-					<div className='-mx-6 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
-						<CustomButton
-							variant='default'
-							text='Cancel'
-							buttonsize='sm'
-							disabled={!report_uploaded}
-							onClick={() => {
-								dispatch(progressReportActions.setOpenRatingModal(false));
-							}}
-						/>
-						<CustomButton
-							variant='primary'
-							text='Rate'
-							buttonsize='sm'
-							disabled={!report_uploaded}
-							onClick={() => {
-								dispatch(progressReportActions.setOpenRatingModal(true));
-								dispatch(progressReportActions.setOpenRatingSuccessModal(true));
-								// dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-							}}
-						/>
-					</div>
-				}
-				maskClosable={false}
-				closeIcon={<CloseIcon className='mt-2 text-lightBlue dark:text-icon-dark-inactive' />}
-				onCancel={() => {
-					// dispatch(progressReportActions.setAddProgressReportModalOpen(false));
-				}}
-				title={
-					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-						<StarFilled className='mr-2' />
-						Rate Delivery of Progress Report
-					</div>
-				}
-			>
-				<RatingModal />
-			</Modal> */}
 		</article>
 	);
 };

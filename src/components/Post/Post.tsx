@@ -32,7 +32,7 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import ScrollToTopButton from '~src/ui-components/ScrollToTop';
 import CommentsDataContextProvider from '~src/context/CommentDataContext';
 import TrackListingAllTabContent from '../Listing/Tracks/TrackListingAllTabContent';
-import { useNetworkSelector, useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { useTheme } from 'next-themes';
 import { Tabs } from '~src/ui-components/Tabs';
 import { getTrackData } from '../Listing/Tracks/AboutTrackCard';
@@ -111,7 +111,6 @@ const Post: FC<IPostProps> = (props) => {
 	const { className, post, trackName, proposalType } = props;
 	const { resolvedTheme: theme } = useTheme();
 	const { id, addresses, loginAddress } = useUserDetailsSelector();
-	const { report_uploaded } = useProgressReportSelector();
 	const [isEditing, setIsEditing] = useState(false);
 	const toggleEdit = () => setIsEditing(!isEditing);
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
@@ -472,8 +471,7 @@ const Post: FC<IPostProps> = (props) => {
 		{
 			children: (
 				<>
-					{/* remove ! sign and in place of report_uploaded use post api field */}
-					{!report_uploaded && <PostProgressReport />}
+					{post?.progress_report?.progress_file && <PostProgressReport />}
 					<PostDescription
 						id={id}
 						isEditing={isEditing}
@@ -515,6 +513,7 @@ const Post: FC<IPostProps> = (props) => {
 					post_link: post?.post_link,
 					post_reactions: post?.post_reactions,
 					preimageHash: post?.preimageHash || '',
+					progress_report: post?.progress_report,
 					proposalHashBlock: post?.proposalHashBlok || null,
 					proposer: post?.proposer || '',
 					requested: post?.requested,

@@ -9,11 +9,14 @@ import { HYDRATE } from 'next-redux-wrapper';
 const initialState: IProgressReportStore = {
 	add_progress_report_modal_open: false,
 	add_summary_cta_clicked: false,
+	file_name: '',
 	open_rating_modal: false,
 	open_rating_success_modal: false,
 	open_success_modal: false,
 	progress_report_link: '',
+	report_rating: 0,
 	report_uploaded: false,
+	show_nudge: true,
 	summary_content: ''
 };
 
@@ -35,11 +38,14 @@ export const progressReportStore = createSlice({
 			state = {
 				add_progress_report_modal_open: false,
 				add_summary_cta_clicked: false,
+				file_name: '',
 				open_rating_modal: false,
 				open_rating_success_modal: false,
 				open_success_modal: false,
 				progress_report_link: '',
+				report_rating: 0,
 				report_uploaded: false,
+				show_nudge: true,
 				summary_content: ''
 			};
 		},
@@ -48,6 +54,9 @@ export const progressReportStore = createSlice({
 		},
 		setAddSummaryCTAClicked: (state, action: PayloadAction<boolean>) => {
 			state.add_summary_cta_clicked = action.payload;
+		},
+		setFileName: (state, action: PayloadAction<string>) => {
+			state.file_name = action.payload;
 		},
 		setOpenRatingModal: (state, action: PayloadAction<boolean>) => {
 			state.open_rating_modal = action.payload;
@@ -61,8 +70,14 @@ export const progressReportStore = createSlice({
 		setProgressReportLink: (state, action: PayloadAction<string>) => {
 			state.progress_report_link = action.payload;
 		},
+		setReportRating: (state, action: PayloadAction<number>) => {
+			state.report_rating = action.payload;
+		},
 		setReportUploaded: (state, action: PayloadAction<boolean>) => {
 			state.report_uploaded = action.payload;
+		},
+		setShowNudge: (state, action: PayloadAction<boolean>) => {
+			state.show_nudge = action.payload;
 		},
 		setSummaryContent: (state, action: PayloadAction<string>) => {
 			state.summary_content = action.payload;

@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { usePostDataContext } from '~src/context';
+import ProgressReportInfo from '~src/components/ProgressReport/ProgressReportInfo';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -22,9 +23,9 @@ interface Props {
 }
 
 const ProgressReportTab = ({ className }: Props) => {
-	const { post_report_added } = useProgressReportSelector();
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
+	const { show_nudge } = useProgressReportSelector();
 
 	return (
 		<div className={`${className}`}>
@@ -50,9 +51,9 @@ const ProgressReportTab = ({ className }: Props) => {
 					}
 					key='1'
 				>
-					{/* remove ! sign check */}
-					{/* NOTE: Push this progress report field in backend and use that field check in place of post_report_added */}
-					{!(postData.proposer === currentUser?.loginAddress) && postData?.status === 'Executed' && !post_report_added && <UploadModalContent />}
+					{/* remove ! sign check from !(postData.userId === currentUser?.id) */}
+					{postData.userId === currentUser?.id && postData?.status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge && <UploadModalContent />}
+					{postData?.status === 'Executed' && postData?.progress_report?.progress_file && <ProgressReportInfo />}
 				</Panel>
 			</Collapse>
 		</div>

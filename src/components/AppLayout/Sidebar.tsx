@@ -68,7 +68,7 @@ const Menu = styled(AntdMenu)`
 		.ant-menu-item-icon > span {
 			color: #e5007a !important;
 		}
-		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#FFF2F9')} !important;
+		background: ${(props: any) => (props.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
 	}
 `;
 
@@ -487,7 +487,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
 				<div className='flex items-center justify-between py-1'>
-					<span>All</span>
+					<span className='pt-1'>All</span>
+
 					{!sidebarCollapsed && (
 						<span
 							className={`text-[10px] ${
@@ -596,15 +597,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<WishForChangeIcon className='mt-[1px] scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
-							<AuctionAdminIcon className='mt-[1px] scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<AuctionAdminIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						) : (
-							<StakingAdminIcon className='scale-90 pt-2 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<StakingAdminIcon className='scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						);
 
 					gov2TrackItems.mainItems.push(
 						getSiderMenuItem(
 							<div className='flex justify-between'>
-								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='pt-1'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								{!sidebarCollapsed && (
 									<span
 										className={`text-[10px] ${
@@ -655,7 +656,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
 					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-4 md:-top-1'}
 						style={{
 							transition: 'opacity 0.3s ease-in-out',
 							opacity: sidedrawer ? 0 : 1
@@ -682,7 +683,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				}}
 				className='flex items-center'
 			>
-				<span className={`ml-2 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Tracks</span>
+				<span className={`-ml-1 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Tracks</span>
 			</div>,
 			'tracksHeading',
 			null
@@ -728,6 +729,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const [activeGovernance, setActiveGovernance] = useState(false);
 	const [activeTreasury, setActiveTreasury] = useState(false);
 	const [activeWhitelist, setActiveWhitelist] = useState(false);
+	const [activeParachain, setActiveParachain] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
@@ -757,14 +759,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const isActive = gov2TrackItems.governanceItems.some((item) => item?.key === currentPath);
 		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
 		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
-
+		const isParachainActive = currentPath.includes('parachains');
 		console.log('Active governance state:', isActive);
 		console.log('Active treasury state:', isTreasuryActive);
 		console.log('Active whitelist state:', isWhitelistActive);
+		console.log('Active parachain state:', isParachainActive);
 
 		setActiveGovernance(isActive);
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
+		setActiveParachain(isParachainActive);
 	}, [router.pathname]);
 
 	let gov2CollapsedItems: MenuProps['items'] = [
@@ -773,7 +777,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 		getSiderMenuItem(
 			<div onClick={handleGovernanceClick}>
 				<GovernanceGroupIcon
-					className={`scale-90 font-medium ${activeGovernance ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} dark:text-icon-dark-inactive`}
+					className={`-ml-8 w-20 scale-90  font-medium ${
+						activeGovernance ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+					} dark:text-icon-dark-inactive`}
 				/>
 			</div>,
 			'gov2_governance_group',
@@ -784,7 +790,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 		getSiderMenuItem(
 			<div onClick={handleWhitelistClick}>
 				<FellowshipGroupIcon
-					className={`scale-90 font-medium ${activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} dark:text-icon-dark-inactive`}
+					className={`-ml-8 w-20  scale-90 pt-2 text-xl font-medium ${
+						activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+					} dark:text-icon-dark-inactive`}
 				/>
 			</div>,
 			'gov2_fellowship_group',
@@ -800,8 +808,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 				}}
 			>
 				<Link href='/parachains'>
-					<div className='ml-8 flex w-20 cursor-pointer items-center justify-center rounded-lg pt-3  hover:bg-[#000000] hover:bg-opacity-[4%]'>
-						<ParachainsIcon className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<div
+						className={`ml-14 flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-3  hover:bg-[#000000] hover:bg-opacity-[4%] ${
+							activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+						}`}
+					>
+						<ParachainsIcon className=' scale-90 text-xl font-medium ' />
 					</div>{' '}
 				</Link>
 			</div>,
@@ -881,7 +893,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			0,
 			getSiderMenuItem(
 				<div onClick={handleTreasuryClick}>
-					<TreasuryGroupIcon className={`scale-90 pt-1 text-xl font-medium ${activeTreasury ? 'text-pink-500' : 'text-lightBlue'} dark:text-icon-dark-inactive`} />
+					<TreasuryGroupIcon className={`-ml-8 w-20 scale-90 pt-1 text-xl font-medium ${activeTreasury ? 'text-pink-500' : 'text-lightBlue'} dark:text-icon-dark-inactive`} />
 				</div>,
 				'gov2_treasury_group',
 				null,
@@ -1058,7 +1070,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && governanceDropdownOpen && (
 						<div
 							ref={dropdownRef}
-							className=' absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg'
+							className=' absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
@@ -1067,11 +1079,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={index}
-											className=' rounded-lg px-2 py-2 hover:bg-gray-100'
+											className=' rounded-lg  px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full'
+												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1084,7 +1096,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && whitelistDropdownOpen && (
 						<div
 							ref={whitelistDropdownRef}
-							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg'
+							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
@@ -1093,11 +1105,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={index}
-											className=' rounded-lg px-2 py-2 hover:bg-gray-100'
+											className=' rounded-lg px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full'
+												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1110,7 +1122,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && treasuryDropdownOpen && (
 						<div
 							ref={treasuryDropdownRef}
-							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg'
+							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
@@ -1119,11 +1131,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={index}
-											className=' rounded-lg px-2 py-2 hover:bg-gray-100'
+											className=' rounded-lg px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full'
+												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1139,14 +1151,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 						mode='inline'
 						selectedKeys={[router.pathname]}
 						items={gov2Items.slice(0, 1)}
-						className={`${username ? 'auth-sider-menu' : ''}  dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''}   dark:bg-section-dark-overlay`}
 					/>
 					{!isMobile && (
 						<>
 							<div
 								className={` ${
 									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block -mt-[39px] flex h-[70px] items-center justify-center bg-transparent`}
+								} svgLogo logo-container logo-display-block -mt-[41px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<div className={`${sidedrawer ? 'ml-20' : 'ml-0'} h-full`}>
@@ -1305,14 +1317,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar ${!sidebarCollapsed ? 'h-[650px] overflow-y-auto pb-2' : 'mt-4 h-[420px] overflow-y-auto  pb-2 lg:h-[345px]'} `}>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? 'mt-2  h-[650px] overflow-y-auto pb-2' : 'mt-2 h-[420px] overflow-y-auto  pb-2 lg:h-[345px]'} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center px-3 '} py-1  dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (
@@ -1324,7 +1336,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot1.svg'
 											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
 											Townhall
@@ -1337,7 +1349,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot2.svg'
 											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
 											Polkasafe
@@ -1350,7 +1362,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot3.svg'
 											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
 											Fellowship
@@ -1363,7 +1375,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot4.svg'
 											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
 											Staking
@@ -1383,7 +1395,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot1.svg'
 											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
 											Townhall
@@ -1396,7 +1408,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot2.svg'
 											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
 											Polkasafe
@@ -1409,7 +1421,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot3.svg'
 											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
 											Fellowship
@@ -1422,7 +1434,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										<img
 											src='/assets/foot4.svg'
 											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200'
+											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
 										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
 											Staking

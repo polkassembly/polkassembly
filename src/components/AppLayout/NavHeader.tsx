@@ -420,18 +420,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div
-							className='mr-2 lg:mr-0'
-							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
-									userId: id || '',
-									userName: username || ''
-								});
-							}}
-						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
+						<div className='mr-2 lg:mr-0'>
+							<ToggleButton />
 						</div>
 					</Space>
 					{open ? (

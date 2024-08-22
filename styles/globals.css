@@ -899,3 +899,8 @@ z-index: 105 !important;
   -ms-overflow-style: none;  
   scrollbar-width: none;  
 }
+
+.toggleborder{
+  border: 1px solid;
+  border-radius: 4px;
+}

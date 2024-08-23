@@ -91,7 +91,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
 					<TotalDelegationData />
-					<TrendingDelegates />
+					<TrendingDelegates theme={theme} />
 				</>
 			),
 			key: '1',

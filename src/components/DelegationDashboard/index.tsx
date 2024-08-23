@@ -110,7 +110,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData />
-					<TrendingDelegates />
+					<TrendingDelegates theme={theme} />
 				</>
 			)}
 

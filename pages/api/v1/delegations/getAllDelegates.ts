@@ -54,12 +54,12 @@ const getAllCombineDelegatesData = (
 ) => {
 	return delegatesStats.map((stats) => ({
 		address: stats.address,
-		bio: delegatesDetails[stats.address]?.bio,
-		dataSource: delegatesDetails[stats.address]?.dataSource,
-		delegatedBalance: stats.delegatedBalance,
-		image: delegatesDetails[stats.address]?.image,
-		receivedDelegationsCount: stats.receivedDelegationsCount,
-		votedProposalsCount: stats.votedProposalCount
+		bio: delegatesDetails[stats?.address]?.bio,
+		dataSource: delegatesDetails[stats?.address]?.dataSource,
+		delegatedBalance: stats?.delegatedBalance,
+		image: delegatesDetails[stats?.address]?.image,
+		receivedDelegationsCount: stats?.receivedDelegationsCount,
+		votedProposalsCount: stats?.votedProposalCount
 	}));
 };
 
@@ -163,30 +163,34 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		const paDelegates = paDelegatesSnapshot.docs.map((delegate) => delegate?.data());
 
 		const delegatesDetails = getDelegatesDataSourceAndDetails([
-			...novaWalletDelegates.map((item: any) => ({
+			...(novaWalletDelegates?.map((item: any) => ({
 				address: getEncodedAddress(item.address, network),
-				bio: item?.longDescription,
+				bio: item?.shortDescription,
 				dataSource: ['nova'],
-				image: item.image || ''
-			})),
-			...W3fDelegates.map((item: any) => ({
+				image: item.image || '',
+				username: item?.username || ''
+			})) || []),
+			...(W3fDelegates?.map((item: any) => ({
 				address: getEncodedAddress(item.address, network),
-				bio: item?.longDescription || '',
+				bio: item?.shortDescription || '',
 				dataSource: ['w3f'],
-				image: ''
-			})),
-			...parityDelegates.map((item: any) => ({
+				image: '',
+				username: item?.username || ''
+			})) || []),
+			...(parityDelegates?.map((item: any) => ({
 				address: getEncodedAddress(item.address, network),
 				bio: item?.manifesto || '',
 				dataSource: ['parity'],
-				image: item?.image || ''
-			})),
-			...paDelegates.map((item: any) => ({
+				image: item?.image || '',
+				username: item?.username || ''
+			})) || []),
+			...(paDelegates?.map((item: any) => ({
 				address: getEncodedAddress(item.address, network),
 				bio: item?.bio || '',
 				dataSource: ['polkassembly'],
-				image: item?.image || ''
-			}))
+				image: item?.image || '',
+				username: item?.username || ''
+			})) || [])
 		]);
 
 		const combinedDelegates = getAllCombineDelegatesData(delegatesDetails, allDelegatesResults);

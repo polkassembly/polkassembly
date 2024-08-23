@@ -929,6 +929,7 @@ export interface IDelegateAddressDetails {
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
 	username?: string;
+	identityInfo?: any | null;
 }
 
 export enum EDelegationAddressFilters {

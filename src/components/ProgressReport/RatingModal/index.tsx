@@ -6,11 +6,13 @@ import { Divider, Rate } from 'antd';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
+import { usePostDataContext } from '~src/context';
 
 const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
 const RatingModal = () => {
 	const dispatch = useDispatch();
+	const { postData } = usePostDataContext();
 	const { report_rating } = useProgressReportSelector();
 
 	return (
@@ -33,7 +35,11 @@ const RatingModal = () => {
 							value={report_rating}
 							className='-mt-3 scale-[3]'
 						/>
-						<p className='mt-4 text-xs text-sidebarBlue dark:text-section-light-overlay'>24 users have already rated the progress report.</p>
+						{postData?.progress_report?.ratings.length > 0 && (
+							<p className='mt-4 text-xs text-sidebarBlue dark:text-section-light-overlay'>
+								{postData?.progress_report?.ratings.length} users have already rated the progress report.
+							</p>
+						)}
 					</>
 				</div>
 			</section>

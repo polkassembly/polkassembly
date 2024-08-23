@@ -31,11 +31,13 @@ const UploadReport = () => {
 	} = usePostDataContext();
 
 	const addProgressReport = async () => {
+		console.log('link --> ', progress_report_link);
 		const progress_report = {
 			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
 			progress_name: `${Date.now()}-${file_name}`,
-			progress_summary: summary_content
+			progress_summary: summary_content,
+			ratings: []
 		};
 
 		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addProgressReport', {

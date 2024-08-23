@@ -4,12 +4,11 @@
 import React from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { ExportOutlined } from '@ant-design/icons';
-import { useRouter } from 'next/router';
-import { usePostDataContext } from '~src/context';
+import { useDispatch } from 'react-redux';
+import { progressReportActions } from '~src/redux/progressReport';
 
 const SuccessModal = () => {
-	const router = useRouter();
-	const { postData } = usePostDataContext();
+	const dispatch = useDispatch();
 	return (
 		<section className='h-[150px] p-6'>
 			<ImageIcon
@@ -22,7 +21,7 @@ const SuccessModal = () => {
 				<p
 					className='m-0 mt-1 p-0 text-sm font-normal text-pink_primary'
 					onClick={() => {
-						router.push(`/referenda/${postData.cid}`);
+						dispatch(progressReportActions.setOpenSuccessModal(false));
 					}}
 				>
 					View on Proposal Page <ExportOutlined className='m-0 p-0' />

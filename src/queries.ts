@@ -2713,3 +2713,11 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
     from
 }
 }`;
+
+export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExists ($proposalIndex: Int, $type_eq: ProposalType){
+  proposals(orderBy: id_ASC, where:{index_eq: $proposalIndex, type_eq: $type_eq}){
+    proposer
+    index
+  }
+}`;
+

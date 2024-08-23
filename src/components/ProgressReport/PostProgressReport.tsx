@@ -65,6 +65,7 @@ const PostProgressReport = ({ className }: Props) => {
 								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
 							</div>
 						</div>
+						<p className='m-0 mt-4 p-0 text-xs text-pink_primary'>visit evaluation tab for more info</p>
 					</section>
 				</Panel>
 			</Collapse>

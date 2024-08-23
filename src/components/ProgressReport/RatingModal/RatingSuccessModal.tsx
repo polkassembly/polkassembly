@@ -5,9 +5,13 @@ import React from 'react';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { StarFilled } from '@ant-design/icons';
 import { useProgressReportSelector } from '~src/redux/selectors';
+import { usePostDataContext } from '~src/context';
 
 const RatingSuccessModal = () => {
 	const { report_rating } = useProgressReportSelector();
+	const { postData } = usePostDataContext();
+	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0);
+	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
 
 	return (
 		<section className='h-[200px] p-6'>
@@ -26,6 +30,9 @@ const RatingSuccessModal = () => {
 						/>
 					))}{' '}
 				</div>
+				<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
+					{postData?.progress_report?.ratings.length} user(s) rated and the Average Delivery rating is {averageRating}/5
+				</p>
 			</div>
 		</section>
 	);

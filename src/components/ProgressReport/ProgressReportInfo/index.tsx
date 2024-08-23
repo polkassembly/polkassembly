@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button, Divider, Modal } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { usePostDataContext } from '~src/context';
 import { ClockCircleOutlined, StarFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -13,14 +13,59 @@ import { poppins } from 'pages/_app';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import RatingModal from '../RatingModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import { useProgressReportSelector } from '~src/redux/selectors';
+import { useProgressReportSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import RatingSuccessModal from '../RatingModal/RatingSuccessModal';
+import queueNotification from '~src/ui-components/QueueNotification';
+import { NotificationStatus } from '~src/types';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ProgressReportInfo = () => {
-	const { postData } = usePostDataContext();
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState<boolean>(false);
+	const { id } = useUserDetailsSelector();
+	const { postData, setPostData } = usePostDataContext();
+	const { report_rating } = useProgressReportSelector();
+
+	const addUserRating = async () => {
+		setLoading(true);
+		const { data, error: editError } = await nextApiClientFetch<any>('api/v1/auth/actions/addReportRating', {
+			postId: postData?.postIndex,
+			proposalType: postData?.postType,
+			rating: report_rating,
+			user_id: id
+		});
+		if (editError || !data) {
+			setLoading(false);
+			console.error('Error saving rating', editError);
+			queueNotification({
+				header: 'Error!',
+				message: 'Error in saving your rating.',
+				status: NotificationStatus.ERROR
+			});
+		}
+
+		if (data) {
+			setLoading(false);
+			dispatch(progressReportActions.setOpenRatingSuccessModal(true));
+			queueNotification({
+				header: 'Success!',
+				message: 'Your rating is now added',
+				status: NotificationStatus.SUCCESS
+			});
+			dispatch(progressReportActions.setOpenRatingModal(false));
+
+			const { progress_report } = data;
+			setPostData((prev) => ({
+				...prev,
+				progress_report
+			}));
+		} else {
+			console.log('failed to save rating');
+		}
+	};
+
 	const { open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
 	return (
 		<>
@@ -86,7 +131,7 @@ const ProgressReportInfo = () => {
 							variant='default'
 							text='Cancel'
 							buttonsize='sm'
-							// disabled={!report_uploaded}
+							disabled={loading}
 							onClick={() => {
 								dispatch(progressReportActions.setOpenRatingModal(false));
 							}}
@@ -95,11 +140,9 @@ const ProgressReportInfo = () => {
 							variant='primary'
 							text='Rate'
 							buttonsize='sm'
-							// disabled={!report_uploaded}
+							disabled={loading}
 							onClick={() => {
-								dispatch(progressReportActions.setOpenRatingModal(false));
-								dispatch(progressReportActions.setOpenRatingSuccessModal(true));
-								// dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+								addUserRating();
 							}}
 						/>
 					</div>
@@ -122,6 +165,7 @@ const ProgressReportInfo = () => {
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
 				open={open_rating_success_modal}
+				// open={true}
 				maskClosable={false}
 				footer={
 					<CustomButton

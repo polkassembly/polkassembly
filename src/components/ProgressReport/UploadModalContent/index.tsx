@@ -8,7 +8,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import type { UploadProps } from 'antd';
 import { message, Upload } from 'antd';
 import { PlusCircleOutlined, ExportOutlined } from '@ant-design/icons';
-// import { PlusCircleOutlined, ExportOutlined, StarFilled } from '@ant-design/icons';
 import { progressReportActions } from '~src/redux/progressReport';
 import Alert from '~src/basic-components/Alert';
 import { useProgressReportSelector } from '~src/redux/selectors';
@@ -19,7 +18,6 @@ import SuccessModal from './SuccessModal';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-// import RatingModal from '../RatingModal';
 
 const { Dragger } = Upload;
 
@@ -152,6 +150,7 @@ const UploadModalContent = () => {
 						className='w-full'
 						text='close'
 						onClick={() => {
+							dispatch(progressReportActions.setShowNudge(false));
 							dispatch(progressReportActions.setOpenSuccessModal(false));
 						}}
 					/>

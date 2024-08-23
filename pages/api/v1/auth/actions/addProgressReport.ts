@@ -11,6 +11,8 @@ import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import { CHECK_IF_OPENGOV_PROPOSAL_EXISTS } from '~src/queries';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -28,18 +30,30 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!postId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Invalid token' });
+	// const token = getTokenFromReq(req);
+	// if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	// const user = await authServiceInstance.GetUser(token);
+	// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 	const postDoc = await postDocRef.get();
 
+	const TreasuryRes = await fetchSubsquid({
+		network: network,
+		query: CHECK_IF_OPENGOV_PROPOSAL_EXISTS,
+		variables: {
+			proposalIndex: Number(postId),
+			type_eq: proposalType
+		}
+	});
+
+	console.log('inside api call ', TreasuryRes)
+
 	if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
 
 	//uncomment above part
+	// const isAuthor = TreasuryRes?.proposer === user.id;
 
 	// const isAuthor = post?.user_id === user.id;
 	// if (!isAuthor) return res.status(403).json({ message: messages.UNAUTHORISED });

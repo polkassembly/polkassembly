@@ -67,6 +67,9 @@ const ProgressReportInfo = () => {
 	};
 
 	const { open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
+	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0);
+	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
+
 	return (
 		<>
 			<section className='flex flex-col gap-y-2'>
@@ -89,6 +92,11 @@ const ProgressReportInfo = () => {
 						<div className='flex flex-col gap-y-2'>
 							<p className='text-sm text-bodyBlue dark:text-white'>{postData?.progress_report?.progress_summary}</p>
 						</div>
+					)}
+					{postData?.progress_report?.ratings.length > 0 && (
+						<p className='m-0 mb-4 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
+							Average Rating({postData?.progress_report?.ratings.length}): {averageRating}
+						</p>
 					)}
 					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
 						<iframe

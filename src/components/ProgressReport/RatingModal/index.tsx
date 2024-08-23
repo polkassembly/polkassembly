@@ -28,7 +28,7 @@ const RatingModal = () => {
 					<>
 						<Rate
 							tooltips={desc}
-							onChange={(e) => {
+							onChange={(e: any) => {
 								console.log(e);
 								dispatch(progressReportActions.setReportRating(e));
 							}}

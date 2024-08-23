@@ -14,56 +14,50 @@ import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { Post } from '~src/types';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
-    storeApiKeyUsage(req);
+	storeApiKeyUsage(req);
 
-    if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
+	if (req.method !== 'POST') return res.status(405).json({ message: 'Invalid request method, POST required.' });
 
-    const network = String(req.headers['x-network']);
-    if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
+	const network = String(req.headers['x-network']);
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
-    const { postId, proposalType, user_id, rating } = req.body;
+	const { postId, proposalType, user_id, rating } = req.body;
 
-    if (!postId || !proposalType || !user_id || rating === undefined) {
-        return res.status(400).json({ message: 'Missing parameters in request body' });
-    }
+	if (!postId || !proposalType || !user_id || rating === undefined) {
+		return res.status(400).json({ message: 'Missing parameters in request body' });
+	}
 
-    const token = getTokenFromReq(req);
-    if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-    const user = await authServiceInstance.GetUser(token);
-    if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const user = await authServiceInstance.GetUser(token);
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
-    const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
-    const postDoc = await postDocRef.get();
+	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
+	const postDoc = await postDocRef.get();
 
-    if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
+	if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
 
-    const postData = postDoc.data() as Post;
-    const progressReport = postData.progress_report || {};
+	const postData = postDoc.data() as Post;
+	const progressReport = postData.progress_report || {};
 
-    // Ensure ratings array exists
-    let ratings = progressReport.ratings || [];
+	const ratings = progressReport.ratings || [];
 
-    // Check if the user already has a rating
-    const existingRatingIndex = ratings.findIndex((r: { user_id: string; rating: number }) => r.user_id === user_id);
+	const existingRatingIndex = ratings.findIndex((r: { user_id: string; rating: number }) => r.user_id === user_id);
 
-    if (existingRatingIndex > -1) {
-        // Update the existing rating
-        ratings[existingRatingIndex].rating = rating;
-    } else {
-        // Add a new rating object
-        ratings.push({ user_id, rating });
-    }
+	if (existingRatingIndex > -1) {
+		ratings[existingRatingIndex].rating = rating;
+	} else {
+		ratings.push({ rating, user_id });
+	}
 
-    // Update the progress_report with the new or updated ratings array
-    progressReport.ratings = ratings;
+	progressReport.ratings = ratings;
 
-    // Update the post with the modified progress_report
-    await postDocRef.update({
-        progress_report: progressReport
-    });
+	await postDocRef.update({
+		progress_report: progressReport
+	});
 
-    return res.status(200).json({ message: 'Progress report updated successfully.' });
+	return res.status(200).json({ message: 'Progress report updated successfully.' });
 };
 
 export default withErrorHandling(handler);

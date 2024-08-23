@@ -30,11 +30,11 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 
 	if (!postId || !proposalType) return res.status(400).json({ message: 'Missing parameters in request body' });
 
-	// const token = getTokenFromReq(req);
-	// if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
 
-	// const user = await authServiceInstance.GetUser(token);
-	// if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
+	const user = await authServiceInstance.GetUser(token);
+	if (!user) return res.status(403).json({ message: messages.UNAUTHORISED });
 
 	const postDocRef = postsByTypeRef(network, proposalType).doc(String(postId));
 	const postDoc = await postDocRef.get();
@@ -48,7 +48,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		}
 	});
 
-	console.log('inside api call ', TreasuryRes)
+	console.log('inside api call ', TreasuryRes, user);
 
 	if (!postDoc.exists) return res.status(404).json({ message: 'Post not found.' });
 

@@ -14,10 +14,8 @@ import { ITimelineData } from '~src/context/PostDataContext';
 import { ESentiments } from '~src/types';
 import { getSubSquareComments } from './subsquare-comments';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
-import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 
 export interface ITimelineComments {
-	aiSummary: string | null;
 	comments: {
 		[index: string]: Array<IComment>;
 	};
@@ -102,16 +100,9 @@ export const getCommentsByTimeline = async ({ network, postTimeline }: { network
 				}
 			}
 		}
-		let summary = null;
-		try {
-			const allComments = Object.values(allTimelineComments).flat() as IComment[];
-			const commentContents = allComments.map((comment: IComment) => comment.content).join('\n');
-			summary = await fetchContentSummary(commentContents as string, '', 'Summarize the following user comments on the proposed governance changes in approximately 150 words:');
-		} catch (e) {
-			console.log('error in fetching summary', e);
-		}
+
 		return {
-			data: { aiSummary: summary, comments: allTimelineComments, overallSentiments: sentiments } as ITimelineComments,
+			data: { comments: allTimelineComments, overallSentiments: sentiments } as ITimelineComments,
 			error: null,
 			status: 200
 		};

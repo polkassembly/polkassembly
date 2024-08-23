@@ -28,8 +28,8 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 	}
 };
 
-export const fetchContentSummary = async (content: string, type?: string, _prompt?: string) => {
-	const prompt = _prompt || (type && process.env.AI_PROMPT?.replace('{type}', type));
+export const fetchContentSummary = async (content: string, type: string, _prompt?: string) => {
+	const prompt = _prompt || process.env.AI_PROMPT?.replace('{type}', type);
 	const res = await fetch('https://api.openai.com/v1/chat/completions', {
 		body: JSON.stringify({
 			frequency_penalty: 0.0,

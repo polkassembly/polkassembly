@@ -5,7 +5,6 @@ import { Anchor, Empty } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { ProposalType } from '~src/global/proposalType';
 import { AiStarIcon } from '~src/ui-components/CustomIcons';
@@ -23,6 +22,8 @@ import SlightlyAgainstIcon from '~assets/overall-sentiment/pink-slightly-against
 import NeutralIcon from '~assets/overall-sentiment/pink-neutral.svg';
 import SlightlyForIcon from '~assets/overall-sentiment/pink-slightly-for.svg';
 import ForIcon from '~assets/overall-sentiment/pink-for.svg';
+import GreenTickIcon from '~assets/icons/green-tick.svg';
+import MinusSignIcon from '~assets/icons/minus-sign.svg';
 import UnfilterDarkSentiment1 from '~assets/overall-sentiment/dark/dark(1).svg';
 import UnfilterDarkSentiment2 from '~assets/overall-sentiment/dark/dark(2).svg';
 import UnfilterDarkSentiment3 from '~assets/overall-sentiment/dark/dark(3).svg';
@@ -33,7 +34,7 @@ import DarkSentiment2 from '~assets/overall-sentiment/dark/dizzy(2).svg';
 import DarkSentiment3 from '~assets/overall-sentiment/dark/dizzy(3).svg';
 import DarkSentiment4 from '~assets/overall-sentiment/dark/dizzy(4).svg';
 import DarkSentiment5 from '~assets/overall-sentiment/dark/dizzy(5).svg';
-import { ESentiments } from '~src/types';
+import { ESentiments, ICommentsSummary } from '~src/types';
 import { IComment } from './Comment';
 import Loader from '~src/ui-components/Loader';
 import { useRouter } from 'next/router';
@@ -47,6 +48,7 @@ import getCommentDisabledMessage from './utils/getCommentDisabledMessage';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import Skeleton from '~src/basic-components/Skeleton';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const { Link: AnchorLink } = Anchor;
 
@@ -104,7 +106,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { className, id } = props;
 	const { loginAddress, isUserOnchainVerified } = useUserDetailsSelector();
 	const {
-		postData: { postType, timeline, created_at, allowedCommentors, userId }
+		postData: { postType, timeline, created_at, allowedCommentors, userId, postIndex }
 	} = usePostDataContext();
 	const targetOffset = 10;
 	const { comments, setComments, setTimelines, timelines, overallSentiments, setOverallSentiments } = useCommentDataContext();
@@ -120,7 +122,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const [reasonForNoComment, setReasonForNoComment] = useState<String | null>(null);
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
-	const [aiContentSummary, setAiContentSummary] = useState<String | null>(null);
+	const [aiContentSummary, setAiContentSummary] = useState<ICommentsSummary | null>(null);
 	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
 
 	if (filterSentiments) {
@@ -167,7 +169,30 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		return filterSentiments === sentiment;
 	};
 
+	const getSummary = async () => {
+		setFetchingAISummary(true);
+		try {
+			const { data, error } = await nextApiClientFetch<ICommentsSummary | null>('api/v1/ai-summary/fetchCommentsSummary', {
+				postId: postIndex,
+				postType
+			});
+
+			if (error || !data) {
+				console.log('Error While fetching AI summary data', error);
+				setFetchingAISummary(false);
+			}
+
+			if (data) {
+				setAiContentSummary(data);
+				setFetchingAISummary(false);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
+		getSummary();
 		getOverallSentimentPercentage();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
@@ -194,14 +219,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			});
 			setTimelines(timelines);
 		}
-		setFetchingAISummary(true);
 		const commentResponse = await getAllCommentsByTimeline(timeline, network);
 
 		if (!commentResponse || Object.keys(commentResponse).length == 0) {
 			setComments(comments);
 		} else {
-			setAiContentSummary(commentResponse?.aiSummary);
-			setFetchingAISummary(false);
 			setComments(getSortedComments(commentResponse.comments));
 			setOverallSentiments(commentResponse.overallSentiments);
 		}
@@ -327,19 +349,34 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 			)}
 			{fetchingAISummary ? (
 				<Skeleton />
-			) : allComments?.length > 0 ? (
+			) : aiContentSummary ? (
 				<div className='mb-6 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
 					<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
 						<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
 						<span
-							className={`${poppins.variable} ${poppins.className} ml-auto rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+							className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
 						>
 							<span className='mr-1 '>Based on</span>
 							{allComments.length || 0}
 							<span className='ml-1'>Comments</span>
 						</span>
 					</div>
-					<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>{aiContentSummary}</p>
+					<div className='mt-2 flex items-start gap-4'>
+						<span className='mt-2'>
+							<GreenTickIcon />
+						</span>
+						<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+							{aiContentSummary?.summary_positive}
+						</p>
+					</div>
+					<div className='flex items-start gap-4'>
+						<span className='mt-2'>
+							<MinusSignIcon />
+						</span>
+						<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+							{aiContentSummary?.summary_negative}
+						</p>
+					</div>
 					<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
 						<AiStarIcon className='text-base' /> AI-generated from comments
 					</h2>

@@ -17,6 +17,7 @@ import { firestore_db } from '~src/services/firebaseInit';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
+import { getCommentsAISummaryByPost } from '../../ai-summary';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -80,6 +81,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 		await postRef.update({
 			last_comment_at
 		});
+		await getCommentsAISummaryByPost({ network, postId, postType });
 		res.status(200).json({ message: 'Comment saved.' });
 	} catch (error) {
 		// The document probably doesn't exist.

@@ -11,8 +11,8 @@ import {
 	BountiesIcon,
 	DemocracyProposalsIcon,
 	DiscussionsIcon,
-	FellowshipGroupIcon,
-	GovernanceGroupIcon,
+	FellowshipIconNew,
+	GovernanceIconNew,
 	MembersIcon,
 	MotionsIcon,
 	NewsIcon,
@@ -22,7 +22,7 @@ import {
 	ReferendaIcon,
 	StakingAdminIcon,
 	TipsIcon,
-	TreasuryGroupIcon,
+	TreasuryIconNew,
 	TreasuryProposalsIcon,
 	ChildBountiesIcon,
 	TechComProposalIcon,
@@ -122,140 +122,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const dispatch = useDispatch();
 
 	const gov1Items: { [x: string]: ItemType[] } = {
-		overviewItems: [
-			!isMobile ? getSiderMenuItem('', '', null) : null,
-			getSiderMenuItem(
-				'Overview',
-				'/',
-				<>
-					{' '}
-					{router.pathname === '/' || router.pathname === '/opengov' ? (
-						<SelectedOverview className='  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					) : (
-						<OverviewIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					)}
-				</>
-			),
-			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-		],
-		democracyItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Proposals
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.democracyProposalsCount ? getSpanStyle('Democracy', totalActiveProposalsCount['democracyProposalsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.democracyProposalsCount ? `${totalActiveProposalsCount['democracyProposalsCount']}` : ''}
-							</span>
-						</div>,
-						'/proposals',
-						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Referenda
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.referendumsCount ? getSpanStyle('Referendum', totalActiveProposalsCount['referendumsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.referendumsCount ? `${totalActiveProposalsCount['referendumsCount']}` : ''}
-							</span>
-						</div>,
-						'/referenda',
-						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					)
-			  ]
-			: [],
-		councilItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Motions
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
-							</span>
-						</div>,
-						'/motions',
-						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
-			: [],
-		treasuryItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Proposals
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.treasuryProposalsCount ? getSpanStyle('Treasury', totalActiveProposalsCount['treasuryProposalsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.treasuryProposalsCount ? `${totalActiveProposalsCount['treasuryProposalsCount']}` : ''}
-							</span>
-						</div>,
-						'/treasury-proposals',
-						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Tips
-							<span className={`text-[10px] ${totalActiveProposalsCount?.tips ? getSpanStyle('Tips', totalActiveProposalsCount['tips']) : ''} rounded-lg px-2 py-1`}>
-								{totalActiveProposalsCount?.tips ? `${totalActiveProposalsCount['tips']}` : ''}
-							</span>
-						</div>,
-						'/tips',
-						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					)
-			  ]
-			: [],
-		techCommItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Proposals
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.techCommetteeProposalsCount ? getSpanStyle('Technical', totalActiveProposalsCount['techCommetteeProposalsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `${totalActiveProposalsCount['techCommetteeProposalsCount']}` : ''}
-							</span>
-						</div>,
-						'/tech-comm-proposals',
-						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					)
-			  ]
-			: [],
-		allianceItems: chainProperties[network]?.subsquidUrl
-			? [
-					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem(
-						<div className='flex items-center justify-between'>
-							Motions
-							<span
-								className={`text-[10px] ${
-									totalActiveProposalsCount?.allianceMotionsCount ? getSpanStyle('Motions', totalActiveProposalsCount['allianceMotionsCount']) : ''
-								} rounded-lg px-2 py-1`}
-							>
-								{totalActiveProposalsCount?.allianceMotionsCount ? `${totalActiveProposalsCount['allianceMotionsCount']}` : ''}
-							</span>
-						</div>,
-						'/alliance/motions',
-						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					),
-					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-			  ]
-			: [],
+		AdvisoryCommittee:
+			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
+				? [
+						getSiderMenuItem(
+							<div className='flex items-center justify-between'>
+								Motions
+								<span
+									className={`text-[10px] ${
+										totalActiveProposalsCount?.advisoryCommitteeMotionsCount
+											? getSpanStyle('AdvisoryCommitteeMotions', totalActiveProposalsCount['advisoryCommitteeMotionsCount'])
+											: ''
+									} rounded-lg px-2 py-1`}
+								>
+									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}` : ''}
+								</span>
+							</div>,
+							'/advisory-committee/motions',
+							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						),
+						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+				  ]
+				: [],
 		PIPsItems:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.POLYMESH
 				? [
@@ -309,28 +197,144 @@ const Sidebar: React.FC<SidebarProps> = ({
 						)
 				  ]
 				: [],
-		AdvisoryCommittee:
-			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
-				? [
-						getSiderMenuItem(
-							<div className='flex items-center justify-between'>
-								Motions
-								<span
-									className={`text-[10px] ${
-										totalActiveProposalsCount?.advisoryCommitteeMotionsCount
-											? getSpanStyle('AdvisoryCommitteeMotions', totalActiveProposalsCount['advisoryCommitteeMotionsCount'])
-											: ''
-									} rounded-lg px-2 py-1`}
-								>
-									{totalActiveProposalsCount?.advisoryCommitteeMotionsCount ? `${totalActiveProposalsCount['advisoryCommitteeMotionsCount']}` : ''}
-								</span>
-							</div>,
-							'/advisory-committee/motions',
-							<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-						),
-						getSiderMenuItem('Members', '/advisory-committee/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
-				  ]
-				: []
+		allianceItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem('Announcements', '/alliance/announcements', <NewsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Motions
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.allianceMotionsCount ? getSpanStyle('Motions', totalActiveProposalsCount['allianceMotionsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.allianceMotionsCount ? `${totalActiveProposalsCount['allianceMotionsCount']}` : ''}
+							</span>
+						</div>,
+						'/alliance/motions',
+						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem('Unscrupulous', '/alliance/unscrupulous', <ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+					getSiderMenuItem('Members', '/alliance/members', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			  ]
+			: [],
+		councilItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Motions
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.councilMotionsCount ? getSpanStyle('Council', totalActiveProposalsCount['councilMotionsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.councilMotionsCount ? `${totalActiveProposalsCount['councilMotionsCount']}` : ''}
+							</span>
+						</div>,
+						'/motions',
+						<MotionsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem('Members', '/council', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			  ]
+			: [],
+
+		democracyItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Proposals
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.democracyProposalsCount ? getSpanStyle('Democracy', totalActiveProposalsCount['democracyProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.democracyProposalsCount ? `${totalActiveProposalsCount['democracyProposalsCount']}` : ''}
+							</span>
+						</div>,
+						'/proposals',
+						<DemocracyProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Referenda
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.referendumsCount ? getSpanStyle('Referendum', totalActiveProposalsCount['referendumsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.referendumsCount ? `${totalActiveProposalsCount['referendumsCount']}` : ''}
+							</span>
+						</div>,
+						'/referenda',
+						<ReferendaIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
+			  ]
+			: [],
+
+		overviewItems: [
+			!isMobile ? getSiderMenuItem('', '', null) : null,
+			getSiderMenuItem(
+				'Overview',
+				'/',
+				<>
+					{' '}
+					{router.pathname === '/' || router.pathname === '/opengov' ? (
+						<SelectedOverview className='  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					) : (
+						<OverviewIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					)}
+				</>
+			),
+			getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+		],
+
+		techCommItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Proposals
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.techCommetteeProposalsCount ? getSpanStyle('Technical', totalActiveProposalsCount['techCommetteeProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.techCommetteeProposalsCount ? `${totalActiveProposalsCount['techCommetteeProposalsCount']}` : ''}
+							</span>
+						</div>,
+						'/tech-comm-proposals',
+						<TechComProposalIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
+			  ]
+			: [],
+
+		treasuryItems: chainProperties[network]?.subsquidUrl
+			? [
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Proposals
+							<span
+								className={`text-[10px] ${
+									totalActiveProposalsCount?.treasuryProposalsCount ? getSpanStyle('Treasury', totalActiveProposalsCount['treasuryProposalsCount']) : ''
+								} rounded-lg px-2 py-1`}
+							>
+								{totalActiveProposalsCount?.treasuryProposalsCount ? `${totalActiveProposalsCount['treasuryProposalsCount']}` : ''}
+							</span>
+						</div>,
+						'/treasury-proposals',
+						<TreasuryProposalsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					),
+					getSiderMenuItem(
+						<div className='flex items-center justify-between'>
+							Tips
+							<span className={`text-[10px] ${totalActiveProposalsCount?.tips ? getSpanStyle('Tips', totalActiveProposalsCount['tips']) : ''} rounded-lg px-2 py-1`}>
+								{totalActiveProposalsCount?.tips ? `${totalActiveProposalsCount['tips']}` : ''}
+							</span>
+						</div>,
+						'/tips',
+						<TipsIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					)
+			  ]
+			: []
 	};
 	if (isGrantsSupported(network)) {
 		gov1Items['overviewItems'].splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
@@ -489,7 +493,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (network === AllNetworks.COLLECTIVES) {
 		const fellowshipItems = [
 			getSiderMenuItem('Members', '/fellowship', <MembersIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			getSiderMenuItem('Member Referenda', '/member-referenda', <FellowshipIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
 		];
 		items = [
 			...gov1Items.overviewItems,
@@ -503,10 +507,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}
 
 	const gov2TrackItems: { [x: string]: ItemType[] } = {
-		mainItems: [],
+		fellowshipItems: [getSiderMenuItem('Members', '/members')],
 		governanceItems: [],
-		treasuryItems: [],
-		fellowshipItems: [getSiderMenuItem('Members', '/members')]
+		mainItems: [],
+		treasuryItems: []
 	};
 
 	if (isFellowshipSupported(network)) {
@@ -541,8 +545,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 							router.pathname.includes('/all-posts') ? 'mt-4' : 'mt-7'
 						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6`}
 						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidebarCollapsed ? 1 : 0
+							opacity: sidebarCollapsed ? 1 : 0,
+							transition: 'opacity 0.3s ease-in-out'
 						}}
 					>
 						<span
@@ -698,8 +702,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div
 									className={`absolute -right-2 -top-2 z-50 ${isActive ? 'mt-6' : 'mt-7'} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6`}
 									style={{
-										transition: 'opacity 0.3s ease-in-out',
-										opacity: sidedrawer ? 0 : 1
+										opacity: sidedrawer ? 0 : 1,
+										transition: 'opacity 0.3s ease-in-out'
 									}}
 								>
 									<span
@@ -731,8 +735,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div
 						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-4 md:-top-1'}
 						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
+							opacity: sidedrawer ? 0 : 1,
+							transition: 'opacity 0.3s ease-in-out'
 						}}
 					>
 						NEW
@@ -780,10 +784,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceIconNew className='-ml-1 scale-90 text-xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems
 		]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipIconNew className=' scale-90 text-5xl font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.fellowshipItems
 		])
 	];
@@ -862,10 +866,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{activeGovernance ? (
 					<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceGroupIcon
-						className={`-ml-8 w-20 scale-90  font-medium ${
+					<GovernanceIconNew
+						className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
 							activeGovernance ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-						} dark:text-icon-dark-inactive`}
+						}  text-2xl dark:text-icon-dark-inactive`}
 					/>
 				)}
 			</div>,
@@ -879,10 +883,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{activeWhitelist ? (
 					<SelectedWhitelist className=' -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipGroupIcon
-						className={`-ml-8 w-20 scale-90  font-medium ${
+					<FellowshipIconNew
+						className={`-ml-8 mt-1 w-20 scale-90  font-medium ${
 							activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-						} dark:text-icon-dark-inactive`}
+						} text-2xl dark:text-icon-dark-inactive`}
 					/>
 				)}
 			</div>,
@@ -917,7 +921,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 				...gov2TrackItems.fellowshipItems
 			])
 		);
@@ -964,7 +968,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2Items.splice(
 			-1,
 			0,
-			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryIconNew className='-ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 		);
 	}
 
@@ -972,7 +976,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 				...gov2TrackItems.fellowshipItems
 			])
 		);
@@ -988,10 +992,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{activeTreasury ? (
 						<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryGroupIcon
-							className={`-ml-8 w-20 scale-90  font-medium ${
+						<TreasuryIconNew
+							className={`-ml-8 mt-1 w-20 scale-90  font-medium ${
 								activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							} dark:text-icon-dark-inactive`}
+							} text-2xl dark:text-icon-dark-inactive`}
 						/>
 					)}
 				</div>,
@@ -1036,16 +1040,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 	};
 
 	const userDropdown = getUserDropDown({
+		className: `${className} ${poppins.className} ${poppins.variable}`,
 		handleLogout: handleLogout,
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
+		identityUsername: mainDisplay,
+		img: picture,
 		isGood: isGood,
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
-		className: `${className} ${poppins.className} ${poppins.variable}`,
-		identityUsername: mainDisplay,
-		img: picture,
 		username: username || ''
 	});
 
@@ -1064,7 +1068,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		),
 		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='scale-90' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='scale-90' />),
-		getSiderMenuItem('Treasury', '/treasury', <TreasuryGroupIcon className='scale-90' />)
+		getSiderMenuItem('Treasury', '/treasury', <TreasuryIconNew className='scale-90' />)
 	];
 
 	if (network === 'polkadot') {
@@ -1089,24 +1093,24 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{router.pathname.includes('lease-admin') ? (
 						<SelectedGovernance className='-ml-2 -mt-2 h-10 w-10 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<GovernanceGroupIcon
-							className={`-ml-8 w-20 scale-90  font-medium ${
-								activeGovernance ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							} dark:text-icon-dark-inactive`}
+						<GovernanceIconNew
+							className={`-ml-7 w-20 scale-90  font-medium ${
+								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+							} text-2xl dark:text-icon-dark-inactive`}
 						/>
 					)}
 				</>
 			),
-			getSiderMenuItem('Fellowship', '/fellowship', <FellowshipGroupIcon className='scale-90' />)
+			getSiderMenuItem('Fellowship', '/fellowship', <FellowshipIconNew className='scale-90' />)
 		);
 	}
 	if ([AllNetworks.MOONBEAM, AllNetworks.PICASSO].includes(network)) {
 		gov2Items = gov2Items.concat(
-			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryGroupIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+			getSiderMenuItem('Treasury', 'gov1_treasury_group', <TreasuryIconNew className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
 		);
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
-			getSiderMenuItem('Treasury', 'treasury_group', <TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
+			getSiderMenuItem('Treasury', 'treasury_group', <TreasuryIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, gov1Items.treasuryItems)
 		];
 	}
 
@@ -1132,7 +1136,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					getSiderMenuItem(
 						'Treasury',
 						'treasury_group',
-						<TreasuryGroupIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						<TreasuryIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
 						gov1Items.treasuryItems.slice(0, 1)
 					)
 				])

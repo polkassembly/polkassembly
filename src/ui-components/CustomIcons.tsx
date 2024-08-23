@@ -190,7 +190,9 @@ import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
 import AllpostIcon from '~assets/allpost.svg';
-
+import GovernanceIcon from '~assets/governance.svg';
+import FellowshipIconnew from '~assets/members.svg';
+import TreasuryIcon from '~assets/treasury.svg';
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkasafeWhiteIconSVG}
@@ -1425,6 +1427,27 @@ export const SelectedWishForChange = (props: Partial<CustomIconComponentProps>) 
 export const AllPostIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={AllpostIcon}
+		{...props}
+	/>
+);
+
+export const GovernanceIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={GovernanceIcon}
+		{...props}
+	/>
+);
+
+export const FellowshipIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={FellowshipIconnew}
+		{...props}
+	/>
+);
+
+export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={TreasuryIcon}
 		{...props}
 	/>
 );

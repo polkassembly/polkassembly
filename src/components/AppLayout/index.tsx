@@ -4,6 +4,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 import { Layout, Menu as AntdMenu, Modal } from 'antd';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
@@ -187,14 +188,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 						<div className='w-full'>
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-								<Layout className={`min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background`}>
+								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
 									<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
 										<Component {...pageProps} />
 									</Content>
 								</Layout>
 							) : (
-								<Layout className={`min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background`}>
+								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[250px] pr-[35px]'}`}>
 										<Component {...pageProps} />
 									</Content>

@@ -4,8 +4,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable sort-keys */
-import { VerticalRightOutlined, VerticalLeftOutlined } from '@ant-design/icons';
-import { Layout, Menu as AntdMenu, MenuProps, Modal } from 'antd';
+import { Layout, Menu as AntdMenu, Modal } from 'antd';
 import { NextComponentType, NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -35,27 +34,6 @@ const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'),
 });
 
 const { Content } = Layout;
-
-const Menu = styled(AntdMenu)`
-	.ant-menu-sub.ant-menu-inline {
-		background: ${(props: any) => {
-			return props.theme === 'dark' ? '#0D0D0D' : '#fff';
-		}} !important;
-	}
-
-	.ant-menu-item-selected {
-		.ant-menu-title-content > span {
-			color: var(--pink_primary) !important;
-		}
-		.ant-menu-item-icon {
-			color: var(--pink_primary) !important;
-		}
-		.ant-menu-item-icon > span {
-			color: var(--pink_primary) !important;
-		}
-		background: ${(props: any) => (props.theme === 'dark' ? 'none' : '#fff')} !important;
-	}
-`;
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 
@@ -184,7 +162,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
 									className='dark:bg-black dark:text-white'
 								>
-									<VerticalLeftOutlined
+									<img
+										src='/assets/closenav.svg'
 										onClick={() => {
 											setSidebarCollapsed(false);
 											setSidedrawer(true);
@@ -196,7 +175,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
 									className='dark:bg-black dark:text-white'
 								>
-									<VerticalRightOutlined
+									<img
+										src='/assets/opennav.svg'
 										onClick={() => {
 											setSidebarCollapsed(true);
 											setSidedrawer(false);
@@ -459,7 +439,4 @@ export default styled(AppLayout)`
 	.ant-menu-vertical > .ant-menu-item > li:first-child {
 		height: 40px !important;
 	}
-	// .ant-menu-root > li:first-child {
-	// 	height: 60px !important;
-	// }
 `;

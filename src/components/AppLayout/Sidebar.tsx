@@ -1,3 +1,6 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { Layout, Menu as AntdMenu, MenuProps } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Link from 'next/link';
@@ -527,7 +530,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					)}
 				</div>,
 				'/all-posts',
-				<div className={`relative`}>
+				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
 						<SelectedAll className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
@@ -656,7 +659,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<>
 								{' '}
 								{router.pathname.includes('/auction-admin') ? (
-									<SelectedAuctionAdmin className={`-ml-1   scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedAuctionAdmin className='-ml-1   scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
 									<AuctionAdminIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
@@ -665,7 +668,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<>
 								{' '}
 								{router.pathname.includes('/staking-admin') ? (
-									<SelectedStakingAdmin className={`-ml-1 -mt-1 scale-90   text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedStakingAdmin className='-ml-1 -mt-1 scale-90   text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
 									<StakingAdminIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
@@ -690,7 +693,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								.split(/(?=[A-Z])/)
 								.join('-')
 								.toLowerCase()}`,
-							<div className={`relative`}>
+							<div className='relative'>
 								{icon}
 								<div
 									className={`absolute -right-2 -top-2 z-50 ${isActive ? 'mt-6' : 'mt-7'} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6`}
@@ -763,7 +766,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				}}
 				className='flex items-center'
 			>
-				<span className={`-ml-1 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Tracks</span>
+				<span className='-ml-1 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive'>Tracks</span>
 			</div>,
 			'tracksHeading',
 			null
@@ -857,7 +860,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		getSiderMenuItem(
 			<div onClick={handleGovernanceClick}>
 				{activeGovernance ? (
-					<SelectedGovernance className={` -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive`} />
+					<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
 					<GovernanceGroupIcon
 						className={`-ml-8 w-20 scale-90  font-medium ${
@@ -874,7 +877,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		getSiderMenuItem(
 			<div onClick={handleWhitelistClick}>
 				{activeWhitelist ? (
-					<SelectedWhitelist className={` -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive`} />
+					<SelectedWhitelist className=' -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
 					<FellowshipGroupIcon
 						className={`-ml-8 w-20 scale-90  font-medium ${
@@ -983,7 +986,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div onClick={handleTreasuryClick}>
 					{' '}
 					{activeTreasury ? (
-						<SelectedTreasury className={` -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive`} />
+						<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<TreasuryGroupIcon
 							className={`-ml-8 w-20 scale-90  font-medium ${
@@ -1279,7 +1282,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div
 								className={` ${
 									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block -mt-[39px] flex h-[70px] items-center justify-center bg-transparent`}
+								} svgLogo logo-container logo-display-block -mt-[41px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<div className={`${sidedrawer ? 'ml-20' : 'ml-0'} h-full`}>
@@ -1300,7 +1303,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{!sidebarCollapsed ? (
 						<>
 							<div className=' mt-2 flex justify-center gap-2'>
-								<div className={`activeborderhover group relative `}>
+								<div className='activeborderhover group relative'>
 									<Link
 										href='/'
 										onClick={(e) => {

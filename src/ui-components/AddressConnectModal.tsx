@@ -316,7 +316,7 @@ const AddressConnectModal = ({
 	};
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
@@ -324,7 +324,7 @@ const AddressConnectModal = ({
 		setWallet(wallet);
 		(async () => {
 			setLoading(true);
-			const accountData = await getAccountsFromWallet({ api, apiReady, chosenWallet: wallet, loginAddress, network });
+			const accountData = await getAccountsFromWallet({ api: usedInIdentityFlow ? peopleChainApi ?? api : api, apiReady, chosenWallet: wallet, loginAddress, network });
 			setAccounts(accountData?.accounts || []);
 			setAddress(accountData?.account || '');
 			setLoading(false);
@@ -350,11 +350,11 @@ const AddressConnectModal = ({
 		const wallet = localStorage.getItem('loginWallet') || '';
 		const address = localStorage.getItem('loginAddress');
 		setWallet((loginWallet || wallet) as Wallet);
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
 		(async () => {
 			setLoading(true);
 			const accountData = await getAccountsFromWallet({
-				api,
+				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
 				apiReady,
 				chosenAddress: (loginAddress || address) as string,
 				chosenWallet: (loginWallet || wallet) as Wallet,
@@ -366,7 +366,7 @@ const AddressConnectModal = ({
 			setLoading(false);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loginWallet, loginAddress, api, apiReady]);
+	}, [loginWallet, loginAddress, api, apiReady, peopleChainApi, peopleChainApiReady]);
 
 	const handleInitiatorBalance = useCallback(
 		async () => {

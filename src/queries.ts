@@ -2720,4 +2720,3 @@ export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExi
     index
   }
 }`;
-

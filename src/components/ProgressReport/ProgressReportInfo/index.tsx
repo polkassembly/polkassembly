@@ -22,11 +22,11 @@ import { NotificationStatus } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 const ProgressReportInfo = () => {
-	const dispatch = useDispatch();
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id } = useUserDetailsSelector();
 	const { postData, setPostData } = usePostDataContext();
-	const { report_rating } = useProgressReportSelector();
+	const dispatch = useDispatch();
+	const { report_rating, open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
 
 	const addUserRating = async () => {
 		setLoading(true);
@@ -66,7 +66,6 @@ const ProgressReportInfo = () => {
 		}
 	};
 
-	const { open_rating_modal, open_rating_success_modal } = useProgressReportSelector();
 	const totalRatings = postData?.progress_report?.ratings.reduce((sum: number, current: any) => sum + current.rating, 0);
 	const averageRating = totalRatings / postData?.progress_report?.ratings?.length;
 

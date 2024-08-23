@@ -7,6 +7,7 @@ import ExpandIcon from '~assets/icons/expand.svg';
 import CollapseIcon from '~assets/icons/collapse.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { usePostDataContext } from '~src/context';
+import { useRouter } from 'next/router';
 const { Panel } = Collapse;
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
+	const router = useRouter();
 	console.log(postData?.progress_report);
 	return (
 		<div className={`${className} mt-2`}>
@@ -65,7 +67,12 @@ const PostProgressReport = ({ className }: Props) => {
 								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
 							</div>
 						</div>
-						<p className='m-0 mt-4 p-0 text-xs text-pink_primary'>visit evaluation tab for more info</p>
+						<p
+							className='m-0 mt-4 p-0 text-xs text-pink_primary'
+							onClick={() => router.push(`referenda/${postData?.postIndex}?tab=evaluation`)}
+						>
+							show more
+						</p>
 					</section>
 				</Panel>
 			</Collapse>

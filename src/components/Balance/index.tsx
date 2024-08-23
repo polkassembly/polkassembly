@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable no-tabs */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { poppins } from 'pages/_app';
 import { useApiContext, usePeopleChainApiContext, usePostDataContext } from 'src/context';

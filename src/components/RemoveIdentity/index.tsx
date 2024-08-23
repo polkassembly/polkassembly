@@ -97,7 +97,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 		const onFailed = (message: string) => {
 			queueNotification({
 				header: 'failed!',
-				message: 'Transaction failed!',
+				message: message || 'Transaction failed!',
 				status: NotificationStatus.ERROR
 			});
 			setLoading({ isLoading: false, message: message });

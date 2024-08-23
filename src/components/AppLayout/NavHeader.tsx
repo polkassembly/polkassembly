@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -321,18 +321,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			trigger={['click']}
 			overlayClassName='navbar-dropdowns'
 			className='cursor-pointer'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
 			theme={theme}
 		>
 			{children}

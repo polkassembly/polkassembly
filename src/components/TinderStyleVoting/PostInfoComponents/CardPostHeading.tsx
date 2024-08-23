@@ -157,7 +157,7 @@ const CardPostHeading: FC<ICardPostHeadingProps> = (props) => {
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
 
-		const didKeys = await api.query.identity.didKeys.keys(identityId);
+		const didKeys = (await api.query?.identity?.didKeys?.keys(identityId)) || [];
 		if (didKeys?.length > 0) {
 			const didKey = didKeys[0];
 			const key = didKey.args[1].toJSON();

@@ -16,7 +16,7 @@ import ReplyIconDark from '~assets/icons/reply-dark.svg';
 import { Caution } from '~src/ui-components/CustomIcons';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
 
@@ -59,6 +59,8 @@ const newReplyKey = (commentId: string) => `reply:${commentId}:${global.window.l
 const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, className, commentId, content, replyId, userName, reply, proposer, is_custom_username }: Props) => {
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+
 	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const { comments, setComments } = useCommentDataContext();
@@ -92,11 +94,11 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 
 	useEffect(() => {
 		(async () => {
-			if (!api || !apiReady || !proposer) return;
-			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
+			if ((!api && !peopleChainApi) || !proposer) return;
+			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();
-	}, [api, apiReady, network, proposer]);
+	}, [api, apiReady, network, proposer, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		let usernameContent = '';

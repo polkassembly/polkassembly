@@ -928,6 +928,7 @@ export interface IDelegateAddressDetails {
 	image: string;
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
+	username?: string;
 }
 
 export enum EDelegationAddressFilters {

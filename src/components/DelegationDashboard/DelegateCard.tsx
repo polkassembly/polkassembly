@@ -24,7 +24,10 @@ import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/par
 import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { IDelegateAddressDetails } from '~src/types';
-import { UserOutlined } from '@ant-design/icons';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { poppins } from 'pages/_app';
+import classNames from 'classnames';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -41,6 +44,7 @@ enum EDelegateSource {
 }
 
 const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
+	const { resolvedTheme: theme } = useTheme();
 	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { network } = useNetworkSelector();
@@ -84,6 +88,18 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		setAddress(address);
 	};
 
+	const handleDelegationContent = (content: string) => {
+		const array = content.split('\n');
+		let data = '';
+
+		array?.map((item) => {
+			if (item?.length > 0) {
+				data = item;
+			}
+		});
+		return data;
+	};
+
 	return (
 		<Spin spinning={loading}>
 			<div
@@ -93,7 +109,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 			>
 				{delegate?.dataSource && delegate?.dataSource.length > 1 ? (
 					<div
-						className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-3 rounded-t-[6px] border-[1px] border-solid px-5 ${
+						className={`ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center space-x-3 rounded-t-md border-[1px] border-solid px-5 ${
 							delegate?.dataSource.length > 1
 								? 'border-[#485F7D] bg-[#EDEFF3] dark:border-[#9E9E9E] dark:bg-[#3D3F41]'
 								: 'border-[#F89118] bg-[#FFF7EF] dark:border-[#F89118] dark:bg-[#422A0D]'
@@ -151,13 +167,13 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				) : (
 					<>
 						{delegate?.dataSource && delegate?.dataSource.includes(EDelegateSource.W3F) && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] bg-[#272525] px-5'>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center gap-1 rounded-t-md bg-[#272525] px-5'>
 								<W3FIcon />
 								<span className='text-xs font-normal text-white dark:text-blue-dark-high '>W3F Delegate</span>
 							</div>
 						)}
 						{delegate?.dataSource && delegate?.dataSource.includes(EDelegateSource.NOVA) && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center gap-1 rounded-t-md border-[1px] border-solid border-[#3C74E1] bg-[#e2eafb] px-5 dark:bg-[#141C2D]'>
 								<ImageIcon
 									src='/assets/delegation-tracks/nova-wallet.svg'
 									alt='nova wallet icon'
@@ -166,23 +182,27 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							</div>
 						)}
 						{delegate?.dataSource && delegate?.dataSource.includes(EDelegateSource.PARITY) && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[6px] rounded-t-[6px] border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center space-x-[6px] rounded-t-md border-[1px] border-solid border-[#7A67DF] bg-[#E4E1F9] px-5 dark:bg-[#25203D]'>
 								<ParityTechIcon />
 								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkadot Delegate</span>
 							</div>
 						)}
 						{delegate?.dataSource && delegate?.dataSource.includes(EDelegateSource.POLKASSEMBLY) && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center space-x-[2px] rounded-t-[6px] border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center gap-1 rounded-t-md border-[1px] border-solid border-pink_primary bg-[#FCE5F2] px-5 dark:bg-[#33071E]'>
 								<PolkadotIcon />
 								<span className='text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Polkassembly Delegate</span>
 							</div>
 						)}
 						{!delegate?.dataSource && (
-							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-[36px] items-center gap-1 rounded-t-[6px] border-[1px] border-solid bg-[#FCE5F2] px-5 dark:bg-section-dark-background'>
-								<span className='flex h-6 w-6 items-center justify-center rounded-full border-[1px] border-solid border-bodyBlue dark:border-white'>
-									<UserOutlined className='text-xs' />
-								</span>
-								<span className='ml-1 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>Individual Delegate</span>
+							<div className='ml-[-0.6px] mr-[-0.6px] mt-[-1px] flex h-9 items-center gap-1 rounded-t-md border-[1px] border-solid bg-[#FCE5F2] px-5 dark:bg-section-dark-background'>
+								<Image
+									src={'/assets/icons/individual-filled.svg'}
+									height={20}
+									width={20}
+									alt=''
+									className={theme == 'dark' ? 'dark-icons' : ''}
+								/>
+								<span className='text-xs font-normal tracking-wide text-bodyBlue dark:text-blue-dark-high'>Individual</span>
 							</div>
 						)}
 					</>
@@ -198,7 +218,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 							isTruncateUsername={false}
 							className='flex items-center'
 						/>
-
 						<div className='mr-2 flex items-center gap-2'>
 							<SocialsHandle
 								address={address}
@@ -219,8 +238,19 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					</Button>
 				</div>
 
-				<div className={'mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm font-normal tracking-[0.015em] text-[#243A57] dark:text-blue-dark-high'}>
-					<p className='bio w-[80%]'>{delegate?.bio ? delegate?.bio : 'No Bio'}</p>
+				<div className={'mb-[16px] mt-2 flex min-h-[56px] gap-1 pl-[56px] text-sm font-normal tracking-[0.015em] text-bodyBlue dark:text-blue-dark-high'}>
+					<p className='bio w-[80%]'>
+						{delegate?.bio ? (
+							<Markdown
+								className='post-content'
+								md={`${handleDelegationContent(delegate?.bio || '').slice(0, 54)}...`}
+								isPreview={true}
+								imgHidden
+							/>
+						) : (
+							'No Bio'
+						)}
+					</p>
 					{delegate?.bio?.length > 100 && (
 						<span
 							onClick={() => setOpenReadMore(true)}
@@ -259,7 +289,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				<Modal
 					open={openReadMore}
 					onCancel={() => setOpenReadMore(false)}
-					className={'modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay'}
+					className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
 					footer={false}
 					wrapClassName={`${className} dark:bg-modalOverlayDark`}
 					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}

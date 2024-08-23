@@ -5,13 +5,11 @@ import React, { useEffect, useState } from 'react';
 import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
-import { UserOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
 import { useTheme } from 'next-themes';
 import { Alert, Button, Radio, Spin, Checkbox } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
@@ -19,11 +17,14 @@ import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors
 import DelegateModal from '../Listing/Tracks/DelegateModal';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
-import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
-import W3FIcon from '~assets/profile/w3f.svg';
-import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
-import NovaIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import BN from 'bn.js';
+import Image from 'next/image';
+import classNames from 'classnames';
+import Input from '~src/basic-components/Input';
+// import InputClearIcon from '~assets/icons/close-tags.svg';
+// import { SearchOutlined } from '@ant-design/icons';
+
+const DELEGATION_LISTING = 10;
 
 const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 	switch (filterBy) {
@@ -52,14 +53,13 @@ const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSourc
 	});
 };
 
-const TrendingDelegates = () => {
+const TrendingDelegates = ({ className }: { className?: string }) => {
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [delegatesData, setDelegatesData] = useState<IDelegateAddressDetails[]>([]);
 	const [filteredDelegates, setFilteredDelegates] = useState<IDelegateAddressDetails[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [showMore, setShowMore] = useState<boolean>(false);
 	const [addressAlert, setAddressAlert] = useState<boolean>(false);
 	const [open, setOpen] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
@@ -81,27 +81,29 @@ const TrendingDelegates = () => {
 		if (!getEncodedAddress(address, network) && !!address.length) return;
 		setLoading(true);
 
-		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
+		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates', {
 			address: address
 		});
 
-		if (data?.data) {
+		if (data) {
 			//putting polkassembly Delegate first;
-			const updatedDelegates = data?.data || [];
+			const updatedDelegates = data || [];
+			if (!address.length) {
+				updatedDelegates.sort((a: any, b: any) => {
+					const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
+					const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
+					const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
 
-			updatedDelegates.sort((a: any, b: any) => {
-				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
-				const aIndex = addressess.indexOf(getSubstrateAddress(a.address));
-				const bIndex = addressess.indexOf(getSubstrateAddress(b.address));
+					if (aIndex !== -1 && bIndex !== -1) {
+						return aIndex - bIndex;
+					}
 
-				if (aIndex !== -1 && bIndex !== -1) {
-					return aIndex - bIndex;
-				}
+					if (aIndex !== -1) return -1;
+					if (bIndex !== -1) return 1;
+					return 0;
+				});
+			}
 
-				if (aIndex !== -1) return -1;
-				if (bIndex !== -1) return 1;
-				return 0;
-			});
 			setDelegatesData(updatedDelegates);
 			setFilteredDelegates(updatedDelegates);
 			setLoading(false);
@@ -134,76 +136,70 @@ const TrendingDelegates = () => {
 		setLoading(false);
 	};
 
-	const itemsPerPage = showMore ? filteredDelegates.length : 6;
-	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
-
-	const prevPage = () => {
-		setCurrentPage((oldPage) => {
-			let prevPage = oldPage - 1;
-			if (prevPage < 1) {
-				prevPage = totalPages;
-			}
-			return prevPage;
-		});
-	};
-
-	const nextPage = () => {
-		setCurrentPage((oldPage) => {
-			let nextPage = oldPage + 1;
-			if (nextPage > totalPages) {
-				nextPage = 1;
-			}
-			return nextPage;
-		});
-	};
-
-	useEffect(() => {
-		if (showMore && currentPage > totalPages) {
-			setCurrentPage(totalPages);
-		}
-	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
-
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return <ParityTechIcon />;
+				return '/assets/icons/polkadot-logo.svg';
 			case 'polkassembly':
-				return <PolkadotIcon />;
+				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
 			case 'w3f':
-				return <W3FIcon />;
+				return '/assets/profile/w3f.svg';
 			case 'nova':
-				return <NovaIcon />;
+				return '/assets/delegation-tracks/nova-wallet.svg';
 			default:
-				return <UserOutlined className='ml-1' />;
+				return '/assets/icons/individual-filled.svg';
 		}
 	};
 
 	const filterContent = (
 		<div className='flex flex-col'>
+			<span
+				className={classNames(
+					'-mx-3 flex cursor-pointer justify-end border-0 border-b-[1px] border-solid border-x-section-light-container px-3 pb-0.5 pt-1 text-xs text-pink_primary dark:border-separatorDark',
+					poppins.className,
+					poppins.variable
+				)}
+				onClick={() => {
+					setSelectedSources([]);
+					handleCheckboxChange([]);
+				}}
+			>
+				Clear All
+			</span>
 			<Checkbox.Group
 				onChange={(checked) => handleCheckboxChange(checked as any)}
 				value={selectedSources}
-				className='flex flex-col'
+				className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
 				disabled={loading}
 			>
-				{Object.values(EDelegationSourceFilters).map((source, index) => {
-					return (
-						<div
-							key={index}
-							className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-						>
-							<Checkbox
-								checked={selectedSources.includes(source)}
-								className='cursor-pointer text-pink_primary'
-								value={source}
-							/>
-							{renderSourceIcon(source)}
-							<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
-						</div>
-					);
-				})}
+				<div className='flex flex-col gap-1'>
+					{Object.values(EDelegationSourceFilters).map((source, index) => {
+						return (
+							<div
+								key={index}
+								className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+							>
+								<Checkbox
+									checked={selectedSources.includes(source)}
+									className='cursor-pointer text-pink_primary'
+									value={source}
+								/>
+								<div className='flex items-center '>
+									<span className='w-[25px]'>
+										<Image
+											src={renderSourceIcon(source)}
+											height={20}
+											width={20}
+											alt=''
+											className={source == EDelegationSourceFilters.NA ? (theme == 'dark' ? 'dark-icons' : '') : ''}
+										/>
+									</span>
+									<span className='text-xs tracking-wide'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 			</Checkbox.Group>
 		</div>
 	);
@@ -217,19 +213,19 @@ const TrendingDelegates = () => {
 			>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
@@ -237,58 +233,31 @@ const TrendingDelegates = () => {
 		</div>
 	);
 	return (
-		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
-			<div className='flex items-center justify-between'>
-				<div className='flex items-center space-x-3'>
-					<ImageIcon
-						src='/assets/delegation-tracks/trending-icon.svg'
-						alt='trending icon'
-						imgClassName='h-6 w-6 mt-[2.5px]'
-					/>
-					<span className='text-xl font-semibold'>Trending Delegates</span>
-					<div className='flex space-x-[6px]'>
-						<div
-							onClick={prevPage}
-							style={{ transform: 'rotateY(180deg)' }}
-						>
-							<ImageIcon
-								src='/assets/delegation-tracks/chevron-right.svg'
-								alt='chevron left icon'
-								className='cursor-pointer'
-							/>
-						</div>
-						<div onClick={nextPage}>
-							<ImageIcon
-								src='/assets/delegation-tracks/chevron-right.svg'
-								alt='chevron right icon'
-								className='cursor-pointer'
-							/>
-						</div>
-					</div>
-				</div>
-				<span
-					onClick={() => setShowMore(!showMore)}
-					className='mr-[3px] cursor-pointer text-xs font-medium text-pink_primary'
-				>
-					{showMore ? 'Show Less' : 'Show All'}
-				</span>
+		<div className={classNames(className, 'mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6')}>
+			<div className='flex items-center space-x-3'>
+				<ImageIcon
+					src='/assets/delegation-tracks/trending-icon.svg'
+					alt='trending icon'
+					imgClassName='h-6 w-6 mt-[2.5px]'
+				/>
+				<span className='text-xl font-semibold'>Trending Delegates</span>
 			</div>
 
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
 			<div className='flex items-center gap-3'>
-				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-section-light-container text-sm font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
+				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white'>
 					{/* Input Component */}
 					<Input
 						placeholder='Enter address to Delegate vote'
 						onChange={(e) => setAddress(e.target.value)}
 						value={address}
-						className='h-[44px] border-none dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+						className='h-10 border-section-light-container dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 
 					<CustomButton
 						variant='primary'
-						className={'ml-1 mr-1 justify-around gap-2 px-4 py-1'}
+						className={'ml-1 mr-1 h-10 justify-around gap-2 px-4 py-1'}
 						height={40}
 						onClick={() => {
 							setOpen(true);
@@ -308,7 +277,7 @@ const TrendingDelegates = () => {
 					placement='bottomRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
@@ -321,7 +290,7 @@ const TrendingDelegates = () => {
 					placement='topRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
 						<ImageIcon
 							src='/assets/icons/sort-icon-delegates.svg'
 							alt='sort icon'
@@ -346,7 +315,7 @@ const TrendingDelegates = () => {
 
 			<Spin spinning={loading}>
 				<div className='min-h-[200px]'>
-					{filteredDelegates.length < 1 && !loading ? (
+					{filteredDelegates?.length < 1 && !loading ? (
 						//empty state
 						<ImageIcon
 							src='/assets/icons/empty-state-image.svg'
@@ -356,7 +325,7 @@ const TrendingDelegates = () => {
 					) : (
 						<>
 							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
-								{filteredDelegates.slice(startIndex, endIndex).map((delegate, index) => (
+								{filteredDelegates.slice((currentPage - 1) * DELEGATION_LISTING, (currentPage - 1) * DELEGATION_LISTING + DELEGATION_LISTING).map((delegate, index) => (
 									<DelegateCard
 										key={index}
 										delegate={delegate}
@@ -364,7 +333,7 @@ const TrendingDelegates = () => {
 									/>
 								))}
 							</div>
-							{!showMore && delegatesData.length > 6 && (
+							{delegatesData?.length > DELEGATION_LISTING && (
 								<div className='mt-6 flex justify-end'>
 									<Pagination
 										theme={theme}
@@ -376,7 +345,7 @@ const TrendingDelegates = () => {
 										}}
 										total={filteredDelegates.length}
 										showSizeChanger={false}
-										pageSize={itemsPerPage}
+										pageSize={DELEGATION_LISTING}
 										responsive={true}
 										hideOnSinglePage={true}
 									/>

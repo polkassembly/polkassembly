@@ -45,9 +45,12 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				payoutsData?.map((payout: IPayout) => {
 					usersPayouts.push(payout);
 				});
+				console.log({ payoutsData })
+
 
 				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!usersPayouts?.length, payouts: usersPayouts }));
 			})();
+
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, loginAddress, currentBlock]);

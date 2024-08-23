@@ -136,7 +136,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 	return (
 		<div className={classNames(className, 'mt-8 rounded-[18px]')}>
 			<Tabs
-				defaultActiveKey='1'
+				defaultActiveKey='2'
 				theme={theme}
 				type='card'
 				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-transparent dark:text-blue-dark-high'

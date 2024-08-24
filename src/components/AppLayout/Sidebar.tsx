@@ -169,6 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 		.ant-menu-item {
 			${sidebarCollapsed && 'width: 50%;'};
+			padding: 0px 20px;
 		}
 
 		.ant-menu-item-selected {
@@ -629,8 +630,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					)}
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
-							router.pathname.includes('/all-posts') ? 'mt-4' : 'mt-7'
-						} rounded-[9px] px-[2px]  text-[10px] font-semibold text-white md:-right-2 md:-top-6`}
+							router.pathname.includes('/all-posts') ? 'mt-5' : 'mt-7'
+						} rounded-[9px] px-[2px]  text-[10px] font-semibold text-white md:-right-[6px] md:-top-6`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
 							transition: 'opacity 0.3s ease-in-out'

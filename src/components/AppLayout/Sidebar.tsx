@@ -597,7 +597,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				case 'Treasury':
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
-							<div className='flex justify-between'>
+							<div className='flex  justify-between'>
 								{trackName.split(/(?=[A-Z])/).join(' ')}
 								<span
 									className={`text-[10px] ${
@@ -960,14 +960,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 		if (isOpenGovSupported(network)) {
 			items = items.concat(
 				getSiderMenuItem(
-					<div className='flex items-center justify-between'>
-						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
+					<div className='flex items-center  justify-between'>
+						{network === 'polkadot' ? 'On-chainBounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
 									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
 									: ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-2  py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 						</span>
@@ -1227,7 +1227,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && governanceDropdownOpen && (
 						<div
 							ref={dropdownRef}
-							className=' absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
+							className=' absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-5  shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
@@ -1240,7 +1240,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
+												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1266,7 +1266,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
+												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1279,7 +1279,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && treasuryDropdownOpen && (
 						<div
 							ref={treasuryDropdownRef}
-							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
+							className=' absolute left-20 top-[380px] z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
@@ -1292,7 +1292,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-[#243A57] dark:text-[#FFFFFF]'
+												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>

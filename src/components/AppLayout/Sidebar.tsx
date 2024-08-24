@@ -551,7 +551,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
 							router.pathname.includes('/all-posts') ? 'mt-4' : 'mt-7'
-						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-5`}
+						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-6`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
 							transition: 'opacity 0.3s ease-in-out'
@@ -705,7 +705,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='relative'>
 								{icon}
 								<div
-									className={`absolute -right-2 -top-2 z-50 ${isActive ? 'mt-6' : 'mt-7'} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-7`}
+									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-7'
 									style={{
 										opacity: sidedrawer ? 0 : 1,
 										transition: 'opacity 0.3s ease-in-out'
@@ -1316,10 +1316,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div
 								className={` ${
 									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block -mt-[42px] flex h-[70px] items-center justify-center bg-transparent`}
+								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<div className={`${sidedrawer ? 'ml-20' : 'ml-0'} h-full`}>
+									<div className={`${sidedrawer ? 'ml-20' : 'ml-5'} h-full`}>
 										{sidedrawer ? (
 											<img
 												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}
@@ -1336,7 +1336,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					)}
 					{!sidebarCollapsed ? (
 						<>
-							<div className=' mt-2 flex justify-center gap-2'>
+							<div className=' mt-7 flex justify-center gap-2'>
 								<div className='activeborderhover group relative'>
 									<Link
 										href='/'
@@ -1407,7 +1407,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					) : (
 						<>
-							<div className=' ml-5 mt-2 flex flex-col justify-center gap-2'>
+							<div className=' ml-5 mt-7 flex flex-col justify-center gap-2'>
 								<div className='activeborderhover group relative w-10 '>
 									<Link
 										href={''}

@@ -160,7 +160,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
 								<div
-									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
+									style={{
+										border: '1px solid #D2D8E0',
+										cursor: 'pointer',
+										borderRadius: '0.375rem',
+										backgroundColor: '#FFFFFF',
+										padding: '0.3rem',
+										fontSize: '16px',
+										color: '#485F7D'
+									}}
 									className='dark:bg-black dark:text-white'
 								>
 									<img
@@ -173,7 +181,15 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								</div>
 							) : (
 								<div
-									style={{ border: '1px solid #D2D8E0', borderRadius: '0.375rem', backgroundColor: '#FFFFFF', padding: '0.3rem', fontSize: '16px', color: '#485F7D' }}
+									style={{
+										border: '1px solid #D2D8E0',
+										cursor: 'pointer',
+										borderRadius: '0.375rem',
+										backgroundColor: '#FFFFFF',
+										padding: '0.3rem',
+										fontSize: '16px',
+										color: '#485F7D'
+									}}
 									className='dark:bg-black dark:text-white'
 								>
 									<img

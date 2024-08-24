@@ -763,7 +763,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
-					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedOverview className='-ml-3 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
 					<OverviewIcon className='-ml-2  mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -1482,7 +1482,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center   '}   dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center    '}  ml-2 pr-2 dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (

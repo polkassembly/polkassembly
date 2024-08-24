@@ -41,7 +41,10 @@ import {
 	SelectedStakingAdmin,
 	SelectedGovernance,
 	SelectedWhitelist,
-	SelectedTreasury
+	SelectedTreasury,
+	SelectedDiscussions,
+	SelectedPreimages,
+	SelectedBountiesIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -59,31 +62,10 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
-import getUserDropDown, { getSiderMenuItem } from './menuUtils';
+import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
 
 const { Sider } = Layout;
-
-const Menu = styled(AntdMenu)`
-	.ant-menu-sub.ant-menu-inline {
-		background: ${(props: any) => {
-			return props.theme === 'dark' ? '#0D0D0D' : '#fff';
-		}} !important;
-	}
-
-	.ant-menu-item-selected {
-		.ant-menu-title-content > span {
-			color: #e5007a !important;
-		}
-		.ant-menu-item-icon {
-			color: #e5007a !important;
-		}
-		.ant-menu-item-icon > span {
-			color: #e5007a !important;
-		}
-		background: ${(props: any) => (props.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
-	}
-`;
 
 interface SidebarProps {
 	sidebarCollapsed: boolean;
@@ -120,6 +102,31 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
+		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  dark:text-icon-dark-inactive`}>{label}</span>;
+		return {
+			children,
+			icon,
+			key,
+			label,
+			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
+		} as MenuItem;
+	}
+	const Menu = styled(AntdMenu)`
+		.ant-menu-sub.ant-menu-inline {
+			background: ${(props: any) => {
+				return props.theme === 'dark' ? '#0D0D0D' : '#fff';
+			}} !important;
+		}
+		.ant-menu-item {
+			${sidebarCollapsed && 'width: 2%'};
+			height: 100%;
+		}
+
+		.ant-menu-item-selected {
+			background: ${(props: any) => (props.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
+		}
+	`;
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		AdvisoryCommittee:
@@ -536,23 +543,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/all-posts',
 				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
-						<SelectedAll className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedAll className='-ml-[10px] scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<AllPostIcon className='mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<AllPostIcon className='-ml-3 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
 							router.pathname.includes('/all-posts') ? 'mt-4' : 'mt-7'
-						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6`}
+						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-5`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
 							transition: 'opacity 0.3s ease-in-out'
 						}}
 					>
 						<span
-							className={`text-[10px] ${
+							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							} rounded-lg px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
 						</span>
@@ -635,46 +642,43 @@ const Sidebar: React.FC<SidebarProps> = ({
 						trackName === 'all' ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<img
-										src='/assets/selected-icons/Root.svg'
-										className='-ml-1 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive'
-									/>
+									<SelectedRoot className='-ml-1 mt-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className=' mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : trackName === PostOrigin.ROOT ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className='-ml-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<RootIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<>
 								{router.pathname.includes('/wish-for-change') ? (
-									<SelectedWishForChange className={`-ml-1 ${sidebarCollapsed ? 'mt-1' : ''}  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedWishForChange className={`-ml-[10px] ${sidebarCollapsed ? 'mt-1' : ''}  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<WishForChangeIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<WishForChangeIcon className='-ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<>
 								{' '}
 								{router.pathname.includes('/auction-admin') ? (
-									<SelectedAuctionAdmin className='-ml-1   scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<AuctionAdminIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : (
 							<>
 								{' '}
 								{router.pathname.includes('/staking-admin') ? (
-									<SelectedStakingAdmin className='-ml-1 -mt-1 scale-90   text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<StakingAdminIcon className='mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<StakingAdminIcon className='-ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						);
@@ -687,7 +691,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<span
 										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
 										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
 									</span>
@@ -700,16 +704,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='relative'>
 								{icon}
 								<div
-									className={`absolute -right-2 -top-2 z-50 ${isActive ? 'mt-6' : 'mt-7'} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-3 md:-top-6`}
+									className={`absolute -right-2 -top-2 z-50 ${isActive ? 'mt-6' : 'mt-7'} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-7`}
 									style={{
 										opacity: sidedrawer ? 0 : 1,
 										transition: 'opacity 0.3s ease-in-out'
 									}}
 								>
 									<span
-										className={`text-[10px] ${
+										className={`text-[9px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} rounded-md px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
 										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
 									</span>
@@ -725,15 +729,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (['polkadot'].includes(network)) {
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
-				<div className='ml-[2px] flex items-center gap-1.5'>
+				<div className=' flex items-center '>
 					Bounties
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/bounty',
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					{router.pathname.includes('/bounty') ? (
+						<SelectedBountiesIcon className='-ml-[10px] scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					) : (
+						<RoundedDollarIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					)}
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-4 md:-top-1'}
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-[4px]'}
 						style={{
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
@@ -754,14 +762,34 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
-					<SelectedOverview className='-ml-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<OverviewIcon className='-ml-2  mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='mt-1.5 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
-		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />),
+		getSiderMenuItem(
+			'Discussions',
+			'/discussions',
+			<>
+				{router.pathname === '/discussions' ? (
+					<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</>
+		),
+		getSiderMenuItem(
+			'Preimages',
+			'/preimages',
+			<>
+				{router.pathname === '/preimages' ? (
+					<SelectedPreimages className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<PreimagesIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</>
+		),
 		getSiderMenuItem(
 			<div
 				style={{
@@ -784,10 +812,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceIconNew className='-ml-1 scale-90 text-xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />, [
+		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceIconNew className='-ml-[8px] scale-90 text-xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems
 		]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipIconNew className=' scale-90 text-5xl font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
+		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipIconNew className='-ml-2 scale-90 text-5xl font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.fellowshipItems
 		])
 	];
@@ -868,7 +896,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				) : (
 					<GovernanceIconNew
 						className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
-							activeGovernance ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+							activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 						}  text-2xl dark:text-icon-dark-inactive`}
 					/>
 				)}
@@ -885,7 +913,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				) : (
 					<FellowshipIconNew
 						className={`-ml-8 mt-1 w-20 scale-90  font-medium ${
-							activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+							activeWhitelist ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 						} text-2xl dark:text-icon-dark-inactive`}
 					/>
 				)}
@@ -968,7 +996,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2Items.splice(
 			-1,
 			0,
-			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryIconNew className='-ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+				...items
+			])
 		);
 	}
 
@@ -976,7 +1006,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
+			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
 				...gov2TrackItems.fellowshipItems
 			])
 		);
@@ -992,11 +1022,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{activeTreasury ? (
 						<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew
-							className={`-ml-8 mt-1 w-20 scale-90  font-medium ${
-								activeWhitelist ? '-pl-12 -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							} text-2xl dark:text-icon-dark-inactive`}
-						/>
+						<TreasuryIconNew className='-ml-8 mt-1 w-20 scale-90  text-2xl font-medium dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				'gov2_treasury_group',
@@ -1062,11 +1088,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<OverviewIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
-		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='scale-90' />),
+		getSiderMenuItem('Discussions', '/discussions', <DiscussionsIcon className='-ml-2 scale-90' />),
 		getSiderMenuItem('Preimages', '/preimages', <PreimagesIcon className='scale-90' />),
 		getSiderMenuItem('Treasury', '/treasury', <TreasuryIconNew className='scale-90' />)
 	];
@@ -1136,7 +1162,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					getSiderMenuItem(
 						'Treasury',
 						'treasury_group',
-						<TreasuryIconNew className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+						<TreasuryIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
 						gov1Items.treasuryItems.slice(0, 1)
 					)
 				])
@@ -1153,7 +1179,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						}}
 					>
 						<Link href='/parachains'>
-							<div className='flex cursor-pointer items-center rounded-lg pl-3 hover:bg-[#000000] hover:bg-opacity-[4%]'>
+							<div className='flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%]'>
 								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='ml-2 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive'>Parachains</span>
 							</div>{' '}
@@ -1162,10 +1188,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 					'tracksHeading',
 					null
 				),
-				getSiderMenuItem('Archived', '', <ArchivedIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
+				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
-		gov2CollapsedItems = [...gov2CollapsedItems, getSiderMenuItem('Archived', '', <ArchivedIcon className='font-medium text-lightBlue  dark:text-icon-dark-inactive' />)];
+		gov2CollapsedItems = [
+			...gov2CollapsedItems,
+			getSiderMenuItem('Archived', '/archived', <ArchivedIcon className='-ml-2 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+		];
 	}
 
 	let sidebarItems = !sidedrawer ? collapsedItems : items;
@@ -1286,7 +1315,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div
 								className={` ${
 									sidedrawer ? '-ml-20 mt-2 w-[300px]' : 'mt-0'
-								} svgLogo logo-container logo-display-block -mt-[41px] flex h-[70px] items-center justify-center bg-transparent`}
+								} svgLogo logo-container logo-display-block -mt-[42px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
 									<div className={`${sidedrawer ? 'ml-20' : 'ml-0'} h-full`}>
@@ -1452,7 +1481,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center px-3 '} py-1  dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center   '}   dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (

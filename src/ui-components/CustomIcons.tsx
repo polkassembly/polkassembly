@@ -193,6 +193,8 @@ import AllpostIcon from '~assets/allpost.svg';
 import GovernanceIcon from '~assets/governance.svg';
 import FellowshipIconnew from '~assets/members.svg';
 import TreasuryIcon from '~assets/treasury.svg';
+import SelectedBounties from '~assets/selected-icons/Bounties.svg';
+
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={PolkasafeWhiteIconSVG}
@@ -1448,6 +1450,13 @@ export const FellowshipIconNew = (props: Partial<CustomIconComponentProps>) => (
 export const TreasuryIconNew = (props: Partial<CustomIconComponentProps>) => (
 	<Icon
 		component={TreasuryIcon}
+		{...props}
+	/>
+);
+
+export const SelectedBountiesIcon = (props: Partial<CustomIconComponentProps>) => (
+	<Icon
+		component={SelectedBounties}
 		{...props}
 	/>
 );

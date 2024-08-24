@@ -120,8 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}} !important;
 		}
 		.ant-menu-item {
-			${sidebarCollapsed && 'width: 2%'};
-			padding: -5px 20px;
+			${sidebarCollapsed && 'width: 50%;'};
 		}
 
 		.ant-menu-item-selected {

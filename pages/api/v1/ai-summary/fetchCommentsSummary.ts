@@ -25,6 +25,12 @@ interface FetchCommentsSummaryFromPostResponse {
 }
 
 export const fetchCommentsSummaryFromPost = async ({ network, postId, postType }: FetchCommentsSummaryFromPostParams): Promise<FetchCommentsSummaryFromPostResponse> => {
+	if (network !== 'rococo')
+		return {
+			data: null,
+			error: 'Comments summary not found',
+			status: 404
+		};
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(String(postId));
 		const postDoc = await postRef.get();
@@ -63,6 +69,8 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
+
+	if (network !== 'rococo') return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { postId, postType } = req.body;
 

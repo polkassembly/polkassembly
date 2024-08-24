@@ -347,39 +347,43 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-			{fetchingAISummary ? (
-				<Skeleton />
-			) : aiContentSummary ? (
-				<div className='mb-6 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
-					<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
-						<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
-						<span
-							className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
-						>
-							<span className='mr-1 '>Based on</span>
-							{allComments.length || 0}
-							<span className='ml-1'>Comments</span>
-						</span>
-					</div>
-					<div className='mt-2 flex items-start gap-4'>
-						<span className='mt-2'>
-							<GreenTickIcon />
-						</span>
-						<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-							{aiContentSummary?.summary_positive}
-						</p>
-					</div>
-					<div className='flex items-start gap-4'>
-						<span className='mt-2'>
-							<MinusSignIcon />
-						</span>
-						<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-							{aiContentSummary?.summary_negative}
-						</p>
-					</div>
-					<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
-						<AiStarIcon className='text-base' /> AI-generated from comments
-					</h2>
+			{network === 'rococo' ? (
+				<div>
+					{fetchingAISummary ? (
+						<Skeleton />
+					) : aiContentSummary ? (
+						<div className='mb-6 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
+								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
+								<span
+									className={`${poppins.variable} ${poppins.className} ml-auto mt-2 rounded-lg bg-[#F6F6F6] px-2 py-1 text-xs text-blue-light-medium dark:bg-section-dark-background dark:text-blue-dark-medium sm:mt-0`}
+								>
+									<span className='mr-1 '>Based on</span>
+									{allComments.length || 0}
+									<span className='ml-1'>Comments</span>
+								</span>
+							</div>
+							<div className='mt-2 flex items-start gap-4'>
+								<span className='mt-2'>
+									<GreenTickIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{aiContentSummary?.summary_positive}
+								</p>
+							</div>
+							<div className='flex items-start gap-4'>
+								<span className='mt-2'>
+									<MinusSignIcon />
+								</span>
+								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+									{aiContentSummary?.summary_negative}
+								</p>
+							</div>
+							<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>
+								<AiStarIcon className='text-base' /> AI-generated from comments
+							</h2>
+						</div>
+					) : null}
 				</div>
 			) : null}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (

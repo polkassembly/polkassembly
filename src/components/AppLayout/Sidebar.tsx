@@ -814,11 +814,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div className={`${poppins.className} ${poppins.variable} ml-2 rounded-[9px] bg-[#407bfe]  px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/bounty',
-				<div className={`relative w-full ${!sidedrawer && 'mt-2'}`}>
+				// <RoundedDollarIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				<div className={`relative  ${!sidedrawer && 'mt-2'}`}>
 					{router.pathname.includes('/bounty') ? (
 						<SelectedBountiesIcon className='-ml-[10px] scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<RoundedDollarIcon className='-ml-3  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<RoundedDollarIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 					<div
 						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-[4px]'}
@@ -899,7 +900,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{activeGovernance ? (
 					<SelectedGovernance className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceIconNew className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<GovernanceIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
 			[...gov2TrackItems.governanceItems]
@@ -1362,7 +1363,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								} svgLogo logo-container logo-display-block fixed mt-[2px] flex h-[70px] items-center justify-center bg-transparent`}
 							>
 								<div>
-									<div className={`${sidedrawer ? 'ml-20' : 'ml-5'} h-full`}>
+									<div className={`${sidedrawer ? 'ml-28' : 'ml-5'} h-full`}>
 										{sidedrawer ? (
 											<img
 												src={theme === 'dark' ? '/assets/PALogoDark.svg' : '/assets/pa-logo-black.svg'}

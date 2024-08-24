@@ -121,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 		.ant-menu-item {
 			${sidebarCollapsed && 'width: 2%'};
-			height: 100%;
+			padding: -5px 20px;
 		}
 
 		.ant-menu-item-selected {
@@ -551,7 +551,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
 							router.pathname.includes('/all-posts') ? 'mt-4' : 'mt-7'
-						} rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-6`}
+						} rounded-[9px] px-[2px]  text-[10px] font-semibold text-white md:-right-2 md:-top-6`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
 							transition: 'opacity 0.3s ease-in-out'
@@ -560,7 +560,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<span
 							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							} rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							}  rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
 						</span>
@@ -704,7 +704,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='relative'>
 								{icon}
 								<div
-									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[3px] py-1 text-[10px] font-semibold text-white md:-right-2 md:-top-7'
+									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-7'
 									style={{
 										opacity: sidedrawer ? 0 : 1,
 										transition: 'opacity 0.3s ease-in-out'
@@ -815,9 +815,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceIconNew className='-ml-[8px] scale-90 text-xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />, [
 			...gov2TrackItems.governanceItems
 		]),
-		getSiderMenuItem('Whitelist', 'gov2_fellowship_group', <FellowshipIconNew className='-ml-2 scale-90 text-5xl font-medium text-lightBlue dark:text-icon-dark-inactive' />, [
-			...gov2TrackItems.fellowshipItems
-		])
+		getSiderMenuItem(
+			'Whitelist',
+			'gov2_fellowship_group',
+			<div>
+				{' '}
+				<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+			</div>,
+			[...gov2TrackItems.fellowshipItems]
+		)
 	];
 	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
 	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
@@ -890,7 +896,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 		getSiderMenuItem(
-			<div onClick={handleGovernanceClick}>
+			<div
+				className='relative cursor-pointer'
+				style={{ padding: '10%' }}
+				onClick={handleGovernanceClick}
+			>
 				{activeGovernance ? (
 					<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
@@ -907,13 +917,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 		),
 
 		getSiderMenuItem(
-			<div onClick={handleWhitelistClick}>
+			<div
+				onClick={handleWhitelistClick}
+				className='relative cursor-pointer'
+				style={{ padding: '10%' }}
+			>
 				{activeWhitelist ? (
-					<SelectedWhitelist className=' -ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+					<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 				) : (
 					<FellowshipIconNew
-						className={`-ml-8 mt-1 w-20 scale-90  font-medium ${
-							activeWhitelist ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+						className={`-ml-8 mt-1 w-20 scale-90 font-medium ${
+							activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 						} text-2xl dark:text-icon-dark-inactive`}
 					/>
 				)}
@@ -996,9 +1010,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2Items.splice(
 			-1,
 			0,
-			getSiderMenuItem('Treasury', 'gov2_treasury_group', <TreasuryIconNew className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-				...items
-			])
+			getSiderMenuItem(
+				'Treasury',
+				'gov2_treasury_group',
+				<div>
+					{activeTreasury ? (
+						<SelectedTreasury className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					) : (
+						<TreasuryIconNew className='-ml-2 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+					)}
+				</div>,
+				[...items]
+			)
 		);
 	}
 
@@ -1006,9 +1029,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2CollapsedItems.splice(
 			gov2CollapsedItems.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-				...gov2TrackItems.fellowshipItems
-			])
+			getSiderMenuItem(
+				'Fellowship',
+				'gov2_fellowship_group',
+				<div>
+					{' '}
+					<FellowshipIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+				</div>,
+				[...gov2TrackItems.fellowshipItems]
+			)
 		);
 	}
 
@@ -1017,7 +1046,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			-1,
 			0,
 			getSiderMenuItem(
-				<div onClick={handleTreasuryClick}>
+				<div
+					className='relative cursor-pointer'
+					style={{ padding: '10%' }}
+					onClick={handleTreasuryClick}
+				>
 					{' '}
 					{activeTreasury ? (
 						<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />

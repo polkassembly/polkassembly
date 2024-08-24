@@ -165,8 +165,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										cursor: 'pointer',
 										borderRadius: '0.375rem',
 										backgroundColor: '#FFFFFF',
-										padding: '0.3rem',
-										fontSize: '16px',
+										padding: '5px 6px',
+										fontSize: '18px',
 										color: '#485F7D'
 									}}
 									className='dark:bg-black dark:text-white'
@@ -186,7 +186,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 										cursor: 'pointer',
 										borderRadius: '0.375rem',
 										backgroundColor: '#FFFFFF',
-										padding: '0.3rem',
+										padding: '5px 6px',
 										fontSize: '16px',
 										color: '#485F7D'
 									}}

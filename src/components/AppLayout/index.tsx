@@ -26,7 +26,6 @@ import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
 import Sidebar from './Sidebar';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {

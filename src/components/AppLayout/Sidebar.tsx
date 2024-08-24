@@ -731,7 +731,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				<div className=' flex items-center '>
 					Bounties
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+					<div className={`${poppins.className} ${poppins.variable} ml-2 rounded-[9px] bg-[#407bfe]  px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/bounty',
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>

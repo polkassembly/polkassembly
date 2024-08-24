@@ -102,6 +102,54 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
+	const [activeGovernance, setActiveGovernance] = useState(false);
+	const [activeTreasury, setActiveTreasury] = useState(false);
+	const [activeWhitelist, setActiveWhitelist] = useState(false);
+	const [activeParachain, setActiveParachain] = useState(false);
+	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
+	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
+	const [whitelistDropdownOpen, setWhitelistDropdownOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
+	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				(dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) ||
+				(treasuryDropdownRef.current && !treasuryDropdownRef.current.contains(event.target as Node)) ||
+				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node))
+			) {
+				setGovernanceDropdownOpen(false);
+				setTreasuryDropdownOpen(false);
+				setWhitelistDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen]);
+
+	useEffect(() => {
+		const currentPath = router.pathname;
+		const isActive = gov2TrackItems.governanceItems.some((item) => item?.key === currentPath);
+		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
+		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
+		const isParachainActive = currentPath.includes('parachains');
+		console.log('Active governance state:', isActive);
+		console.log('Active treasury state:', isTreasuryActive);
+		console.log('Active whitelist state:', isWhitelistActive);
+		console.log('Active parachain state:', isParachainActive);
+
+		setActiveGovernance(isActive);
+		setActiveTreasury(isTreasuryActive);
+		setActiveWhitelist(isWhitelistActive);
+		setActiveParachain(isParachainActive);
+	}, [router.pathname]);
+
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
 		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  dark:text-icon-dark-inactive`}>{label}</span>;
 		return {
@@ -128,6 +176,38 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 	`;
 
+	const handleMenuClick = (menuItem: any) => {
+		if (['userMenu'].includes(menuItem.key)) return;
+		router.push(menuItem.key);
+	};
+
+	const handleLogout = async (username: string) => {
+		dispatch(logout());
+		if (!router.query?.username) return;
+		if (router.query?.username.includes(username)) {
+			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
+		}
+	};
+	const handleRemoveIdentity = () => {
+		if (loginAddress) {
+			dispatch(setOpenRemoveIdentityModal(true));
+		} else {
+			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
+		}
+	};
+
+	const handleIdentityButtonClick = () => {
+		const address = localStorage.getItem('identityAddress');
+		if (isMobile) {
+			setIdentityMobileModal(true);
+		} else {
+			if (address?.length) {
+				setOpen(!open);
+			} else {
+				setOpenAddressLinkedModal(true);
+			}
+		}
+	};
 	const gov1Items: { [x: string]: ItemType[] } = {
 		AdvisoryCommittee:
 			chainProperties[network]?.subsquidUrl && network === AllNetworks.ZEITGEIST
@@ -811,22 +891,31 @@ const Sidebar: React.FC<SidebarProps> = ({
 	let gov2Items: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
-		getSiderMenuItem('Governance', 'gov2_governance_group', <GovernanceIconNew className='-ml-[8px] scale-90 text-xl font-medium  text-lightBlue dark:text-icon-dark-inactive' />, [
-			...gov2TrackItems.governanceItems
-		]),
+		getSiderMenuItem(
+			'Governance',
+			'gov2_governance_group',
+			<>
+				{activeGovernance ? (
+					<SelectedGovernance className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<GovernanceIconNew className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
+			</>,
+			[...gov2TrackItems.governanceItems]
+		),
 		getSiderMenuItem(
 			'Whitelist',
 			'gov2_fellowship_group',
 			<div>
-				{' '}
-				<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				{activeWhitelist ? (
+					<SelectedWhitelist className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				) : (
+					<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
 		)
 	];
-	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
-	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
-	const [whitelistDropdownOpen, setWhitelistDropdownOpen] = useState(false);
 
 	const handleGovernanceClick = () => {
 		setGovernanceDropdownOpen(!governanceDropdownOpen);
@@ -845,51 +934,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		setGovernanceDropdownOpen(false);
 		setTreasuryDropdownOpen(false);
 	};
-
-	const [activeGovernance, setActiveGovernance] = useState(false);
-	const [activeTreasury, setActiveTreasury] = useState(false);
-	const [activeWhitelist, setActiveWhitelist] = useState(false);
-	const [activeParachain, setActiveParachain] = useState(false);
-	const dropdownRef = useRef<HTMLDivElement>(null);
-	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
-	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				(dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) ||
-				(treasuryDropdownRef.current && !treasuryDropdownRef.current.contains(event.target as Node)) ||
-				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node))
-			) {
-				setGovernanceDropdownOpen(false);
-				setTreasuryDropdownOpen(false);
-				setWhitelistDropdownOpen(false);
-			}
-		};
-
-		document.addEventListener('mousedown', handleClickOutside);
-
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen]);
-
-	useEffect(() => {
-		const currentPath = router.pathname;
-		const isActive = gov2TrackItems.governanceItems.some((item) => item?.key === currentPath);
-		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
-		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
-		const isParachainActive = currentPath.includes('parachains');
-		console.log('Active governance state:', isActive);
-		console.log('Active treasury state:', isTreasuryActive);
-		console.log('Active whitelist state:', isWhitelistActive);
-		console.log('Active parachain state:', isParachainActive);
-
-		setActiveGovernance(isActive);
-		setActiveTreasury(isTreasuryActive);
-		setActiveWhitelist(isWhitelistActive);
-		setActiveParachain(isParachainActive);
-	}, [router.pathname]);
 
 	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
@@ -1063,39 +1107,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
-
-	const handleMenuClick = (menuItem: any) => {
-		if (['userMenu'].includes(menuItem.key)) return;
-		router.push(menuItem.key);
-	};
-
-	const handleLogout = async (username: string) => {
-		dispatch(logout());
-		if (!router.query?.username) return;
-		if (router.query?.username.includes(username)) {
-			router.push(isOpenGovSupported(network) ? '/opengov' : '/');
-		}
-	};
-	const handleRemoveIdentity = () => {
-		if (loginAddress) {
-			dispatch(setOpenRemoveIdentityModal(true));
-		} else {
-			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
-		}
-	};
-
-	const handleIdentityButtonClick = () => {
-		const address = localStorage.getItem('identityAddress');
-		if (isMobile) {
-			setIdentityMobileModal(true);
-		} else {
-			if (address?.length) {
-				setOpen(!open);
-			} else {
-				setOpenAddressLinkedModal(true);
-			}
-		}
-	};
 
 	const userDropdown = getUserDropDown({
 		className: `${className} ${poppins.className} ${poppins.variable}`,

@@ -1492,7 +1492,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
-											src='/assets/foot1.svg'
+											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1505,7 +1505,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://polkasafe.xyz/'>
 										<img
-											src='/assets/foot2.svg'
+											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1518,7 +1518,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://collectives.polkassembly.io/'>
 										<img
-											src='/assets/foot3.svg'
+											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1531,7 +1531,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://staking.polkadot.cloud/#/overview'>
 										<img
-											src='/assets/foot4.svg'
+											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1551,7 +1551,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
-											src='/assets/foot1.svg'
+											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1564,7 +1564,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://polkasafe.xyz/'>
 										<img
-											src='/assets/foot2.svg'
+											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1577,7 +1577,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://collectives.polkassembly.io/'>
 										<img
-											src='/assets/foot3.svg'
+											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1590,7 +1590,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://staking.polkadot.cloud/#/overview'>
 										<img
-											src='/assets/foot4.svg'
+											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>

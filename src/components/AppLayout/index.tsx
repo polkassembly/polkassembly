@@ -27,7 +27,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import Sidebar from './Sidebar';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
@@ -46,9 +45,8 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -75,14 +73,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -112,12 +102,11 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!api && !peopleChainApi) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
@@ -127,7 +116,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsIdentityUnverified(!isVerified);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
 	return (
 		<div>

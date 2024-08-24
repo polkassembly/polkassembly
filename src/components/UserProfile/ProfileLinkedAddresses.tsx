@@ -22,7 +22,6 @@ import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -94,14 +93,12 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-		if (!apiPromise || !apiPromiseReady) return;
+		if (!api && !peopleChainApi) return;
 
 		let promiseArr: any[] = [];
 		for (const address of addresses) {
 			if (!address) continue;
-			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network: network })];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: peopleChainApi ?? api, network: network })];
 		}
 		try {
 			const resolve = await Promise.all(promiseArr);

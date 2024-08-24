@@ -17,6 +17,7 @@ import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { useDispatch } from 'react-redux';
 import { progressReportActions } from '~src/redux/progressReport';
+import { useTheme } from 'next-themes';
 const UploadModalContent = dynamic(() => import('~src/components/ProgressReport/UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -31,6 +32,7 @@ interface Props {
 const ProgressReportTab = ({ className }: Props) => {
 	const currentUser = useUserDetailsSelector();
 	const { postData } = usePostDataContext();
+	const { resolvedTheme: theme } = useTheme();
 	const { show_nudge } = useProgressReportSelector();
 	const { report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
@@ -104,12 +106,21 @@ const ProgressReportTab = ({ className }: Props) => {
 							<h3 className='mb-0 ml-1 mt-[2px] text-[16px] font-semibold leading-[21px] tracking-wide text-blue-light-high dark:text-blue-dark-high md:text-[18px]'>
 								Progress Reports
 							</h3>
+							{!postData?.progress_report?.progress_file && (
+								<div className='ml-auto flex items-center justify-end gap-x-1'>
+									<ImageIcon
+										src='/assets/delegation-tracks/info-icon-blue.svg'
+										alt='info-icon'
+										imgClassName='scale-90'
+									/>
+									<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-section-dark-overlay'>Progress Report not added</p>
+								</div>
+							)}
 						</div>
 					}
 					key='1'
 				>
-					{/* remove ! sign check from !(postData.userId === currentUser?.id) */}
-					{postData.userId === currentUser?.id && postData?.status === 'Executed' && !postData?.progress_report?.progress_file && show_nudge && (
+					{postData.userId === currentUser?.id && !postData?.progress_report?.progress_file && show_nudge && (
 						<>
 							<UploadModalContent />
 							<div className='mt-4 flex justify-end'>
@@ -125,7 +136,18 @@ const ProgressReportTab = ({ className }: Props) => {
 							</div>
 						</>
 					)}
-					{!(postData.userId === currentUser?.id) && postData?.status === 'Executed' && postData?.progress_report?.progress_file && <ProgressReportInfo />}
+					{!(postData.userId === currentUser?.id) && postData?.progress_report?.progress_file ? (
+						<ProgressReportInfo />
+					) : (
+						<div className='my-[60px] flex flex-col items-center gap-6'>
+							<ImageIcon
+								src={theme == 'light' ? '/assets/EmptyStateLight.svg' : '/assets/EmptyStateDark.svg '}
+								alt='Empty Icon'
+								imgClassName='w-[225px] h-[225px]'
+							/>
+							<h3 className='text-blue-light-high dark:text-blue-dark-high'>No Progress Report Added</h3>
+						</div>
+					)}
 				</Panel>
 			</Collapse>
 		</div>

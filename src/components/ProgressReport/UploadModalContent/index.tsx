@@ -86,7 +86,6 @@ const UploadModalContent = () => {
 	};
 	return (
 		<article className='mt-2 flex flex-col gap-y-1'>
-			{/* NOTE: Push this progress report field in backend and use that field check in place of report_uploaded */}
 			{!report_uploaded && (
 				<Alert
 					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'

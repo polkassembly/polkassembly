@@ -18,6 +18,8 @@ interface Props {
 
 const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 	const { resolvedTheme: theme } = useTheme();
+	const { postData } = usePostDataContext();
+
 	const currentUser = useUserDetailsSelector();
 	useEffect(() => {
 		trackEvent('evaluationTab_clicked', 'clicked_evaluation_tab', {
@@ -48,7 +50,7 @@ const IndexComponent: FC<Props> = ({ auditData, videoData }) => {
 				/>
 			)}
 
-			<ProgressReportTab className='my-4' />
+			{postData?.status === 'Executed' && <ProgressReportTab className='my-4' />}
 		</div>
 	);
 };

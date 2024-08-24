@@ -589,7 +589,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 					.join('-')
 					.toLowerCase()}`
 			);
-			const isActive = router.pathname.includes(trackName);
 
 			switch (networkTrackInfo[network][trackName].group) {
 				case 'Governance':

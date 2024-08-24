@@ -112,10 +112,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
-	const Menu = styled(AntdMenu)`
+	const Menu = styled(AntdMenu)<MenuProps>`
 		.ant-menu-sub.ant-menu-inline {
 			background: ${(props: any) => {
-				return props.theme === 'dark' ? '#0D0D0D' : '#fff';
+				/* eslint-disable react/prop-types */
+				return props?.theme === 'dark' ? '#0D0D0D' : '#fff';
 			}} !important;
 		}
 		.ant-menu-item {
@@ -124,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 
 		.ant-menu-item-selected {
-			background: ${(props: any) => (props.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
 		}
 	`;
 

@@ -99,9 +99,7 @@ const ProgressReportInfo = () => {
 					)}
 					<div className='flex flex-col gap-y-3 rounded-md border border-solid border-[#D2D8E0] p-4'>
 						<iframe
-							src={`https://docs.google.com/viewer?url=${encodeURIComponent(
-								'https://firebasestorage.googleapis.com/v0/b/polkassembly-backend-test.appspot.com/o/user-uploads%2F6490%2FResume.pdf?alt=media&token=913bba54-5446-45ec-9576-984ae2d8bf70'
-							)}&embedded=true`}
+							src={`https://docs.google.com/viewer?url=${encodeURIComponent(postData?.progress_report?.progress_file)}&embedded=true`}
 							width='100%'
 							height='180px'
 							title='PDF Preview'

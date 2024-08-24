@@ -160,7 +160,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									className='dark:bg-black dark:text-white'
 								>
 									<img
-										src='/assets/closenav.svg'
+										src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 										onClick={() => {
 											setSidebarCollapsed(false);
 											setSidedrawer(true);
@@ -181,7 +181,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									className='dark:bg-black dark:text-white'
 								>
 									<img
-										src='/assets/opennav.svg'
+										src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 										onClick={() => {
 											setSidebarCollapsed(true);
 											setSidedrawer(false);

@@ -169,7 +169,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 		.ant-menu-item {
 			${sidebarCollapsed && 'width: 50%;'};
-			padding: 0px 20px;
+			padding: 1px 22px 1px 18px;
 		}
 
 		.ant-menu-item-selected {
@@ -367,7 +367,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<>
 					{' '}
 					{router.pathname === '/' || router.pathname === '/opengov' ? (
-						<SelectedOverview className='  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedOverview className='ml-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
 						<OverviewIcon className='mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
@@ -843,7 +843,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/opengov',
 			<>
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
-					<SelectedOverview className='-ml-3 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
 					<OverviewIcon className='-ml-2  mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -1272,33 +1272,33 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && governanceDropdownOpen && (
 						<div
 							ref={dropdownRef}
-							className=' absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-5  shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
 						>
-							<ul className='text-center'>
+							<div className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
 
 									return (
 										<p
 											key={index}
-											className=' rounded-lg  px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
+												className='m-0 inline-block w-full p-0 text-left text-[#243A57] dark:text-[#FFFFFF]'
 											>
 												<span>{formattedLabel}</span>
 											</Link>
 										</p>
 									);
 								})}
-							</ul>
+							</div>
 						</div>
 					)}
 					{sidebarCollapsed && whitelistDropdownOpen && (
 						<div
 							ref={whitelistDropdownRef}
-							className=' absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
@@ -1307,7 +1307,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={index}
-											className=' rounded-lg px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}
@@ -1321,10 +1321,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</ul>
 						</div>
 					)}
+
 					{sidebarCollapsed && treasuryDropdownOpen && (
 						<div
 							ref={treasuryDropdownRef}
-							className=' absolute left-20 top-[380px] z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute left-20 top-[380px] z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
@@ -1333,7 +1334,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									return (
 										<p
 											key={index}
-											className=' rounded-lg px-2 py-2 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
 										>
 											<Link
 												href={item?.key as string}

@@ -27,8 +27,11 @@ interface Args {
 }
 const ZERO_BN = new BN(0);
 
-// TODO - Remove this later
-const assetsArray = ['30', '1337', '1984'];
+// TODO will remove this later
+const getAssetsArray = (network: string) => {
+	const supportedAssets = chainProperties[network]?.supportedAssets || [];
+	return supportedAssets.map((asset) => asset.genralIndex);
+};
 
 const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: string, usdvalue: string | null = '0', isProposalClosed: Boolean, dedTokenUsdPrice: string) => {
 	if (isNaN(Number(currentTokenPrice))) return '0';
@@ -95,6 +98,9 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const assetsArray = getAssetsArray(network);
+	console.log('assetsArray', assetsArray);
+
 	return (
 		<div className={className}>
 			{requestedAmt ? (
@@ -108,7 +114,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 							overlayClassName='w-96 mb-5'
 							text={
 								<Spin spinning={loading}>
-									{assetsArray.includes(assetId) ? (
+									{assetsArray.includes(assetId) && assetId !== '0' ? (
 										<div className='flex flex-col gap-1 text-xs'>
 											<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 												<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
@@ -159,7 +165,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 							overlayClassName='mb-10'
 							text={
 								<Spin spinning={loading}>
-									{assetsArray.includes(assetId || '') ? (
+									{assetsArray.includes(assetId || '') && assetId !== '0' ? (
 										<div className='flex flex-col gap-1 text-xs'>
 											<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 												<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>

@@ -49,23 +49,5 @@ export const badgeDetails: BadgeDetails[] = [
 		img: '/assets/badges/whale.svg',
 		name: BadgeName.WHALE,
 		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.'
-	},
-	{
-		description: 'Regularly contributes comments.',
-		img: '',
-		name: BadgeName.STEADFAST_COMMENTOR,
-		requirements: 'Must have more than 50 comments.'
-	},
-	{
-		description: 'Regularly votes on proposals.',
-		img: '',
-		name: BadgeName.GM_VOTER,
-		requirements: 'Must have voted on more than 50 proposals.'
-	},
-	{
-		description: 'Received significant delegated tokens.',
-		img: '',
-		name: BadgeName.POPULAR_DELEGATE,
-		requirements: 'Must have received delegated tokens equal to or greater than 0.01% of the total supply.'
 	}
 ];

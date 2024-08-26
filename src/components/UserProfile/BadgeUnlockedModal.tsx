@@ -11,6 +11,7 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Link from 'next/link';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { Badge } from '~src/auth/types';
+import { badgeDetails } from '~src/global/achievementbadges';
 
 interface Props {
 	className?: string;
@@ -27,7 +28,11 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 
 	if (!badge) return <></>;
 
-	const isUnlocked = badges?.some((badge) => badge.name === badge.name);
+	const matchingBadge = badgeDetails.find((detail) => detail.name === badge.name);
+
+	const isUnlocked = badges?.some((unlockedBadge) => unlockedBadge.name === badge.name);
+
+	const badgeImage = matchingBadge?.img || '/assets/badges/active_voter_locked.svg';
 
 	return (
 		<Modal
@@ -64,8 +69,8 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 		>
 			<div className='-mt-[100px] flex flex-col items-center justify-center'>
 				<Image
-					src={badge?.img}
-					alt=''
+					src={badgeImage}
+					alt={badge.name}
 					className={isUnlocked ? '' : 'grayscale'}
 					width={218}
 					height={136}

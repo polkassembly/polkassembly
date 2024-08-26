@@ -6,10 +6,12 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import { Badge, BadgeName, ProfileDetailsResponse } from '~src/auth/types';
 import styled from 'styled-components';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import { Tooltip } from 'antd';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import BadgeUnlockedModal from './BadgeUnlockedModal';
 import { badgeDetails } from '~src/global/achievementbadges';
+import getNetwork from '~src/util/getNetwork';
 
 interface Props {
 	className?: string;
@@ -20,10 +22,48 @@ interface Props {
 	selectedAddresses: string[];
 }
 
+const defaultLockedBadges = [
+	{ img: '/assets/badges/active_voter_locked.svg', name: BadgeName.ACTIVE_VOTER },
+	{ img: '/assets/badges/council_locked.svg', name: BadgeName.COUNCIL },
+	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_POLKADOT },
+	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE_KUSAMA },
+	{ img: '/assets/badges/fellow_locked.svg', name: BadgeName.FELLOW }
+];
+
 const ProfileBadges = ({ className, theme, badges }: Props) => {
 	const [showMore, setShowMore] = useState<boolean>(false);
 	const [openModal, setOpenModal] = useState<boolean>(false);
-	const [selectedBadge, setSelectedBadge] = useState<any>(null);
+	const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
+	const network = getNetwork();
+
+	const filteredBadgeDetails = badgeDetails.filter((badge) => {
+		if (badge.name === BadgeName.DECENTRALISED_VOICE_POLKADOT && network !== AllNetworks.POLKADOT) {
+			return false;
+		}
+		if (badge.name === BadgeName.DECENTRALISED_VOICE_KUSAMA && network !== AllNetworks.KUSAMA) {
+			return false;
+		}
+		return true;
+	});
+
+	const badgesToShow = filteredBadgeDetails.map((badgeDetail) => {
+		const unlockedBadge = badges?.find((unlocked) => unlocked.name === badgeDetail.name && unlocked.check);
+
+		if (unlockedBadge) {
+			return {
+				...badgeDetail,
+				isUnlocked: true,
+				unlockedAt: unlockedBadge.unlockedAt
+			};
+		} else {
+			const lockedBadge = defaultLockedBadges.find((locked) => locked.name === badgeDetail.name);
+			return {
+				...badgeDetail,
+				img: lockedBadge ? lockedBadge.img : badgeDetail.img,
+				isUnlocked: false
+			};
+		}
+	});
 
 	return (
 		<div
@@ -55,44 +95,59 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 			</div>
 
 			<div className='grid grid-cols-2 gap-4'>
-				{badgeDetails
-					.filter((item) => item.active)
-					.slice(0, showMore ? 6 : 4)
-					.map((item) => (
+				{badgesToShow.slice(0, showMore ? 6 : 4).map((item) => (
+					<Tooltip
+						key={item.name}
+						color='#363636'
+						title={
+							item.isUnlocked && 'unlockedAt' in item ? (
+								<span className='flex items-center gap-1 break-all text-xs'>
+									<ImageIcon
+										src='/assets/icons/hourglass_light.svg'
+										alt='hourglass'
+									/>
+									{`Unlocked on ${item.unlockedAt}`}
+								</span>
+							) : (
+								<span className='flex items-center gap-1 break-all text-xs'>
+									<ImageIcon
+										src='/assets/icons/lock.svg'
+										alt='locked'
+									/>
+									Locked
+								</span>
+							)
+						}
+					>
 						<div
-							key={item.id}
 							onClick={() => {
-								setOpenModal(true);
-								setSelectedBadge(item);
-							}}
-							className='col-span-1 flex flex-col items-center rounded-lg bg-[#F6F7F9] py-8 dark:bg-[#161616]'
-						>
-							<Tooltip
-								color='#363636'
-								title={
-									<span className='flex items-center gap-1 break-all text-xs'>
-										<ImageIcon
-											src='/assets/icons/hourglass_light.svg'
-											alt='hourglass'
-										/>{' '}
-										Unlocked on 17th Sept
-									</span>
+								if (item.isUnlocked) {
+									setOpenModal(true);
+									setSelectedBadge({
+										check: true,
+										name: item.name,
+										unlockedAt: 'unlockedAt' in item ? item.unlockedAt : ''
+									});
 								}
-							>
-								<Image
-									src={item.img}
-									alt=''
-									className={badges?.some((badge) => badge.name === item.name) ? '' : 'grayscale'}
-									width={132}
-									height={82}
-								/>
-							</Tooltip>
+							}}
+							className='col-span-1 flex cursor-pointer flex-col items-center rounded-lg bg-[#F6F7F9] py-8 dark:bg-[#161616]'
+						>
+							<Image
+								src={item.img}
+								alt={item.name}
+								className={item.isUnlocked ? '' : 'grayscale'}
+								width={132}
+								height={82}
+							/>
 							<span className='mt-2 text-base font-semibold dark:text-blue-dark-high'>
-								{item.name === BadgeName.DecentralisedVoice_polkodot || item.name === BadgeName.DecentralisedVoice_kusama ? 'Decentralised Voice' : item.name}
+								{item.name === BadgeName.DECENTRALISED_VOICE_POLKADOT || item.name === BadgeName.DECENTRALISED_VOICE_KUSAMA ? 'Decentralised Voice' : item.name}
 							</span>
 						</div>
-					))}
+					</Tooltip>
+				))}
 			</div>
+
+			{/* Badge Unlocked Modal */}
 			<BadgeUnlockedModal
 				open={openModal}
 				setOpen={setOpenModal}
@@ -102,6 +157,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 		</div>
 	);
 };
+
 export default styled(ProfileBadges)`
 	.dark .darkmode-icons {
 		filter: brightness(100%) saturate(0%) contrast(4) invert(100%) !important;

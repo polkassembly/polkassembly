@@ -344,16 +344,12 @@ export async function updateUserBadges(username: string, network: string): Promi
 		console.error(`Failed to evaluate badges for username: ${username}. Error: ${error}`);
 		throw new Error('Badge evaluation failed.');
 	}
-
-	const existingBadges: Badge[] = user.achievement_badges || [];
+	const existingBadges: Badge[] = user?.achievement_badges || [];
 	const validExistingBadges = existingBadges.filter((existingBadge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
-
 	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge) => existingBadge.name === newBadge.name));
-
 	const updatedBadges = [...validExistingBadges, ...filteredNewBadges];
-
-	const updateData: Partial<ProfileDetails> = {
-		achievement_badges: updatedBadges.length > 0 ? updatedBadges : []
+	const updateData = {
+		'profile.achievement_badges': updatedBadges.length > 0 ? updatedBadges : []
 	};
 
 	try {

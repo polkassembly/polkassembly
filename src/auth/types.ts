@@ -269,10 +269,10 @@ export enum BadgeName {
 	FELLOW = 'Fellow',
 	COUNCIL = 'Council',
 	ACTIVE_VOTER = 'Active Voter',
-	WHALE = 'Whale',
-	STEADFAST_COMMENTOR = 'Steadfast Commentor',
-	GM_VOTER = 'GM Voter',
-	POPULAR_DELEGATE = 'Popular Delegate'
+	WHALE = 'Whale'
+	// STEADFAST_COMMENTOR = 'Steadfast Commentor',
+	// GM_VOTER = 'GM Voter',
+	// POPULAR_DELEGATE = 'Popular Delegate'
 }
 
 export interface Badge {

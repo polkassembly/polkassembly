@@ -23,6 +23,9 @@ import InputClearIcon from '~assets/icons/close-tags.svg';
 import { SearchOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { useTheme } from 'next-themes';
+import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import DelegateModal from '../Listing/Tracks/DelegateModal';
 
 const DELEGATION_LISTING = 10;
 
@@ -66,6 +69,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const { resolvedTheme } = useTheme();
+	const [open, setOpen] = useState<boolean>(false);
 
 	const handleIdentity = async (delegates: IDelegateAddressDetails[]) => {
 		if (!(api && peopleChainApi)) return;
@@ -76,7 +80,6 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 				const info = await getIdentityInformation({
 					address: delegate?.address,
 					api: peopleChainApi ?? api,
-					apiReady: peopleChainApiReady ?? apiReady,
 					network: network
 				});
 
@@ -152,7 +155,12 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 		setLoading(true);
 		setCurrentPage(1);
 		setSelectedSources(sources);
-		const data = filterDelegatesBySources(delegatesData?.current, sources);
+		const searchOutput = searchInput?.length
+			? delegatesData.current.filter((delegate) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			: null;
+
+		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
+		const data = filterDelegatesBySources(fromFilterContent, sources);
 		setFilteredDelegates(data || []);
 		setLoading(false);
 	};
@@ -163,7 +171,12 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 		const selectedOption = e.target.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
-		const data = getResultsDataAccordingToFilter(selectedOption, delegatesData?.current);
+		const searchOutput = searchInput?.length
+			? delegatesData.current.filter((delegate) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			: null;
+
+		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
+		const data = getResultsDataAccordingToFilter(selectedOption, fromFilterContent);
 		setFilteredDelegates(data || []);
 		setLoading(false);
 	};
@@ -314,7 +327,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					placement='bottomRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
@@ -327,7 +340,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 					placement='topRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/sort-icon-delegates.svg'
 							alt='sort icon'
@@ -337,14 +350,34 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 			</div>
 
 			<Spin spinning={loading}>
-				<div className='min-h-[200px]'>
-					{filteredDelegates?.length < 1 && !loading ? (
+				<div className='min-h-[250px]'>
+					{!filteredDelegates?.length && !loading ? (
 						//empty state
-						<ImageIcon
-							src='/assets/icons/empty-state-image.svg'
-							alt='empty icon'
-							imgWrapperClassName='h-40 w-40 mx-auto mt-[60px]'
-						/>
+						<div className='mt-14 flex flex-col items-center justify-center gap-4'>
+							<DelegateDelegationIcon className='text-[200px]' />
+							<div className='flex items-center gap-1'>
+								<span className='text-lightBlue dark:text-blue-dark-high '>No results found</span>
+								{searchInput.length > 10 && !!getEncodedAddress(searchInput, network) && !!delegationDashboardAddress?.length && (
+									<span className='flex gap-1 text-lightBlue dark:text-blue-dark-high'>
+										<div
+											className={`flex cursor-pointer items-center gap-1 border-none text-pink_primary ${!api || (!apiReady && 'opacity-50')}`}
+											onClick={() => {
+												setOpen(true);
+											}}
+										>
+											<Image
+												src={'assets/icons/delegate-profile.svg'}
+												width={16}
+												height={16}
+												alt=''
+											/>
+											<span>Delegate</span>
+										</div>
+										to this address
+									</span>
+								)}
+							</div>
+						</div>
 					) : (
 						<>
 							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
@@ -377,6 +410,11 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 							)}
 						</>
 					)}
+					<DelegateModal
+						defaultTarget={searchInput}
+						open={open}
+						setOpen={setOpen}
+					/>
 				</div>
 			</Spin>
 		</div>

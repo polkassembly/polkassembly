@@ -737,7 +737,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		setLastVote(null);
 		setLoading(false);
 		setOnChainLastVote(null);
-		setUpdateTally(true);
+		setUpdateTally(!updateTally);
 	};
 	const onFailed = (message: string) => {
 		queueNotification({
@@ -1211,7 +1211,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 															tally={tally}
 															updateTally={updateTally}
-															setUpdatetally={setUpdateTally}
 														/>
 														<RefV2ThresholdData
 															canVote={canVote}

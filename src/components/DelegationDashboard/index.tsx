@@ -20,7 +20,6 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -54,21 +53,17 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [isMobile, userDetails]);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-		if (!apiPromise || !apiPromiseReady) return;
+		if (!api && !peopleChainApi) return;
 
 		const info = await getIdentityInformation({
 			address: userDetails.delegationDashboardAddress || '',
-			api: apiPromise,
-			apiReady: apiPromiseReady,
+			api: peopleChainApi ?? api,
 			network: network
 		});
 		setIdentity(info);
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api, apiReady, network, peopleChainApi, peopleChainApiReady]);

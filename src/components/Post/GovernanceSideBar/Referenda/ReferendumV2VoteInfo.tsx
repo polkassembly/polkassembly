@@ -29,13 +29,12 @@ interface IReferendumV2VoteInfoProps {
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
-	setUpdatetally?: (pre: boolean) => void;
 	updateTally?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, updateTally }) => {
 	const { network } = useNetworkSelector();
 	const {
 		postData: { status, postIndex, postType }
@@ -82,7 +81,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
+		const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
 			setTallyData({
@@ -126,7 +125,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		handleTallyData(tally);
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady, network]);
+	}, [status, api, apiReady, network, updateTally]);
 
 	useEffect(() => {
 		handleAyeNayCount();
@@ -152,7 +151,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		} else if (error) {
 			console.log(error);
 		}
-		setUpdatetally?.(false);
 		setIsLoading(false);
 	};
 

@@ -387,7 +387,9 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 
 	try {
 		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-		await updateUserBadges(encodedName, network);
+		const result = await updateUserBadges(encodedName, network);
+		console.log('Badges updated successfully for user:', encodedName, result);
+
 		return res.status(200).json({ message: 'Badges updated successfully for user.' });
 	} catch (error) {
 		console.error('Error updating badges for user:', encodedName, error);

@@ -99,7 +99,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	}, []);
 
 	const assetsArray = getAssetsArray(network);
-	console.log('assetsArray', assetsArray);
 
 	return (
 		<div className={className}>
@@ -165,36 +164,32 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 							overlayClassName='mb-10'
 							text={
 								<Spin spinning={loading}>
-									{assetsArray.includes(assetId || '') && assetId !== '0' ? (
-										<div className='flex flex-col gap-1 text-xs'>
-											<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-												<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
-												<span>
-													{parseBalance(
-														requestedAmountFormatted
-															?.mul(
-																!isProposalClosed
-																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-																	: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
-																	? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
-																	: bnUsdValueOnClosed
-															)
-															?.toString() || '0',
-														0,
-														false,
-														network
-													)}{' '}
-													USD{' '}
-												</span>
-											</div>
-											<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-												<span>Value on day of creation:</span>
-												<span>{parseBalance(requestedAmountFormatted?.mul(bnUsdValueOnCreation)?.toString() || '0', 0, false, network)} USD </span>
-											</div>
+									<div className='flex flex-col gap-1 text-xs'>
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
+											<span>
+												{parseBalance(
+													requestedAmountFormatted
+														?.mul(
+															!isProposalClosed
+																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																: bnUsdValueOnClosed
+														)
+														?.toString() || '0',
+													0,
+													false,
+													network
+												)}{' '}
+												USD{' '}
+											</span>
 										</div>
-									) : (
-										<div className='text-sm text-blue-light-high dark:text-blue-dark-high'>Something wrong with assetId</div>
-									)}
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<span>Value on day of creation:</span>
+											<span>{parseBalance(requestedAmountFormatted?.mul(bnUsdValueOnCreation)?.toString() || '0', 0, false, network)} USD </span>
+										</div>
+									</div>
 								</Spin>
 							}
 						/>

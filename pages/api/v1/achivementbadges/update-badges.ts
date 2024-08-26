@@ -10,7 +10,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
-import { badgeNames, GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from './constant';
+import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '../../../../cloud-functions/src/queries';
 import { getTotalSupply } from './utils';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -18,6 +18,8 @@ import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
 import { chainProperties } from '~src/global/networkConstants';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import dayjs from 'dayjs';
+import { badgeNames } from '~src/global/achievementbadges';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 
 // Badge1: Check if the user is a Decentralised Voice delegate
 async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: string): Promise<boolean> {
@@ -323,53 +325,71 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 }
 
 // Function to update badges for users
-export async function updateUserBadges(username: string, network: string) {
+export async function updateUserBadges(username: string, network: string): Promise<void> {
 	const { data: user, error } = await getUserProfileWithUsername(username);
+
 	if (error || !user) {
 		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);
-		return;
+		throw new Error('User profile fetch failed.');
 	}
+
 	const userId = user.user_id;
 	const userDocRef = firestore_db.collection('users').doc(userId.toString());
-	const newBadges = await evaluateBadges(username, network);
-	const existingBadges = user.achievement_badges || [];
+
+	let newBadges;
+	try {
+		newBadges = await evaluateBadges(username, network);
+	} catch (error) {
+		console.error(`Failed to evaluate badges for username: ${username}. Error: ${error}`);
+		throw new Error('Badge evaluation failed.');
+	}
+
+	const existingBadges: Badge[] = user.achievement_badges || [];
 	const validExistingBadges = existingBadges.filter((existingBadge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
+
 	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge) => existingBadge.name === newBadge.name));
+
 	const updatedBadges = [...validExistingBadges, ...filteredNewBadges];
-	const updateData: any = {
+
+	const updateData: Partial<ProfileDetails> = {
 		achievement_badges: updatedBadges.length > 0 ? updatedBadges : []
 	};
+
 	try {
 		await userDocRef.update(updateData);
 		console.log(`User ID: ${userId}, badges updated successfully.`);
 	} catch (error) {
 		console.error(`Failed to update badges for User ID: ${userId}`, error);
+		throw new Error('Badge update failed.');
 	}
 }
 
 // Main API handler for processing badge updates
 const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method === 'POST') {
-		const { network, username } = req.body;
+	if (req.method !== 'POST') {
+		return res.status(405).json({ message: 'Method not allowed.' });
+	}
+	storeApiKeyUsage(req);
 
-		if (!network || !isValidNetwork(network)) {
-			return res.status(400).json({ message: 'Invalid network.' });
-		}
-		if (!username) {
-			return res.status(400).json({ message: 'Username is required.' });
-		}
-		const refinedName = username.replace(/[^a-zA-Z0-9_-]/g, '');
-		const encodedName = encodeURIComponent(refinedName);
-		try {
-			await updateUserBadges(encodedName, network);
-			res.status(200).json({ message: 'Badges updated successfully for user.' });
-		} catch (error) {
-			console.error('Error updating badges for user:', encodedName, error);
-			res.status(500).json({ message: 'Failed to update user badges.' });
-		}
-	} else {
-		res.status(405).json({ message: 'Method not allowed.' });
+	const { network, username } = req.body;
+
+	if (!network || !isValidNetwork(network)) {
+		return res.status(400).json({ message: 'Invalid network.' });
+	}
+
+	if (!username) {
+		return res.status(400).json({ message: 'Username is required.' });
+	}
+
+	const refinedName = username.replace(/[^a-zA-Z0-9_-]/g, '');
+	const encodedName = encodeURIComponent(refinedName);
+
+	try {
+		const result = await updateUserBadges(encodedName, network);
+		return res.status(200).json({ message: 'Badges updated successfully for user.' });
+	} catch (error) {
+		console.error('Error updating badges for user:', encodedName, error);
+		return res.status(500).json({ message: 'Failed to update user badges.' });
 	}
 };
-
 export default withErrorHandling(handler);

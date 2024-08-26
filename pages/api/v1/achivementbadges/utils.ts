@@ -2,20 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { MessageType } from '~src/auth/types';
-import { IDelegationStats } from '../delegations/get-delegation-stats';
-import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import BN from 'bn.js';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { chainProperties } from '~src/global/networkConstants';
-
-export async function getDelegationStats(network: string): Promise<{ data: IDelegationStats }> {
-	const { data, error } = await nextApiClientFetch<IDelegationStats | MessageType>(`/api/v1/delegations/get-delegation-stats?network=${network}`);
-	if (error) {
-		throw new Error(error);
-	}
-	return { data: data as IDelegationStats };
-}
 
 export async function getTotalSupply(network: string): Promise<BN> {
 	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;

@@ -162,7 +162,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const handleDebounceAyeNayCount = useCallback(_.debounce(handleAyeNayCount, 10000), [updateTally]);
 
 	useEffect(() => {
-		if (!updateTally) return;
 		setIsLoading(true);
 		handleDebounceTallyData();
 		handleDebounceAyeNayCount();

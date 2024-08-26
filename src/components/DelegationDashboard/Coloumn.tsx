@@ -31,6 +31,10 @@ import {
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
+import Image from 'next/image';
+import { Tooltip } from 'antd';
+import classNames from 'classnames';
+import { poppins } from 'pages/_app';
 
 export const handleTracksIcon = (index: string, size: number) => {
 	switch (index) {
@@ -417,7 +421,25 @@ const GetColumns = (status: ETrackDelegationStatus) => {
 		return ReceivedDelegationColumns;
 	}
 };
-const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean) => void, network: string) => {
+const GetTracksColumns = (
+	status: ETrackDelegationStatus,
+	setOpen: (pre: boolean) => void,
+	network: string,
+	undelegationButtonDisable?: boolean,
+	timeLeftInUndelegation?: { time: string | null; percentage: number }
+) => {
+	const getIconForUndelegationTimeLeft = (percentage: number) => {
+		if (percentage >= 75) {
+			return '/assets/icons/whole-time-left-clock.svg';
+		} else if (percentage < 75 && percentage >= 50) {
+			return '/assets/icons/three-forth-time-left-clock.svg';
+		} else if (percentage < 50 && percentage >= 25) {
+			return '/assets/icons/half-time-left-clock.svg';
+		} else {
+			return '/assets/icons/one-third-time-left-clock.svg';
+		}
+	};
+
 	if (!network) return;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 
@@ -457,7 +479,27 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 			{
 				dataIndex: 'delegatedOn',
 				key: 1,
-				render: (date) => <div className='ml-1 text-start text-sm font-normal text-bodyBlue dark:text-white'>{dayjs(date).format('DD MMM YYYY')}</div>,
+				render: (date) => (
+					<div className='ml-1 flex items-center gap-2 text-start text-sm font-normal text-bodyBlue dark:text-white'>
+						{Boolean(date) && <span>{dayjs(date).format('DD MMM YYYY')}</span>}
+						{Boolean(timeLeftInUndelegation?.time) && Boolean(timeLeftInUndelegation?.percentage) && undelegationButtonDisable && (
+							<Tooltip
+								title={<div className={classNames(poppins.className, poppins.variable, 'text-[13px]')}>You can undelegate votes on {timeLeftInUndelegation?.time}</div>}
+								className={classNames(poppins.className, poppins.variable, 'text-xs')}
+								overlayClassName='px-1 max-w-[300px]'
+							>
+								<span>
+									<Image
+										src={getIconForUndelegationTimeLeft(timeLeftInUndelegation?.percentage || 0)}
+										alt=''
+										width={20}
+										height={20}
+									/>
+								</span>
+							</Tooltip>
+						)}
+					</div>
+				),
 				title: 'Delegated on',
 				width: '20%'
 			},
@@ -467,10 +509,16 @@ const GetTracksColumns = (status: ETrackDelegationStatus, setOpen: (pre: boolean
 				render: (action) => (
 					<div className='flex items-start justify-center'>
 						<CustomButton
-							onClick={() => setOpen(true)}
+							onClick={() => {
+								setOpen(true);
+							}}
+							disabled={undelegationButtonDisable || false}
 							height={40}
 							variant='default'
-							className='gap-2 px-2 max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none'
+							className={classNames(
+								'gap-2 px-2 max-md:h-auto max-md:flex-col max-md:gap-0 max-md:border-none max-md:p-2 max-md:shadow-none',
+								undelegationButtonDisable ? 'opacity-50' : ''
+							)}
 						>
 							<UndelegatedProfileIcon />
 							<span className='text-sm font-medium tracking-wide text-pink_primary '>{action}</span>

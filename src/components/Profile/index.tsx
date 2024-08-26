@@ -36,7 +36,6 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { Tabs } from '~src/ui-components/Tabs';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 interface Props {
 	className?: string;
@@ -101,21 +100,14 @@ const Profile = ({ className, profileDetails }: Props): JSX.Element => {
 	}, [address, network]);
 
 	useEffect(() => {
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-		if (!apiPromise) {
-			return;
-		}
-
-		if (!apiPromiseReady || !address) {
+		if ((!api && !peopleChainApi) || !address) {
 			return;
 		}
 
 		(async () => {
 			const info = await getIdentityInformation({
 				address: address as string,
-				api: apiPromise,
-				apiReady: apiPromiseReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 			setIdentity(info);

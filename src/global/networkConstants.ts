@@ -57,7 +57,6 @@ import ZeitgeistLogo from '~assets/parachain-logos/zeitgeist-logo.png';
 import polimecLogo from '~assets/parachain-logos/polimec-logo.png';
 import phykenLogo from '~assets/parachain-logos/phyken-logo.png';
 import mandalaLogo from '~assets/parachain-logos/mandala-logo.png';
-import ajunaLogo from '~assets/parachain-logos/ajuna-logo.png';
 
 import * as types from '../types';
 import { EAssets } from '~src/components/OpenGovTreasuryProposal/types';
@@ -123,8 +122,7 @@ export const network = {
 	XX: 'xx',
 	ZEITGEIST: 'zeitgeist',
 	MANDALA: 'mandala',
-	CURIO: 'curio',
-	AJUNA: 'ajuna'
+	CURIO: 'curio'
 };
 
 export const tokenSymbol = {
@@ -182,8 +180,7 @@ export const tokenSymbol = {
 	XX: 'XX',
 	ZTG: 'ZTG',
 	KPGT: 'KPGT',
-	CGT: 'CGT',
-	AJUN: 'AJUN'
+	CGT: 'CGT'
 };
 
 export const treasuryAssets = {
@@ -1944,32 +1941,6 @@ export const chainProperties: types.ChainPropType = {
 				key: 'wss://main.rpc.zeitgeist.pm/ws'
 			}
 		]
-	},
-	[network.AJUNA]: {
-		blockTime: 6000,
-		category: 'polkadot',
-		subsquidUrl: '',
-		gTag: '',
-		chainId: 0,
-		logo: ajunaLogo,
-		rpcEndpoint: 'wss://ajuna.api.onfinality.io/public-ws',
-		ss58Format: 56,
-		tokenDecimals: 12,
-		tokenSymbol: tokenSymbol.AJUN,
-		treasuryProposalBondPercent: null,
-		treasuryProposalMinBond: null,
-		treasuryProposalMaxBond: null,
-		externalLinks: 'https://ajuna.subscan.io',
-		rpcEndpoints: [
-			{
-				label: 'via On Finality',
-				key: 'wss://ajuna.api.onfinality.io/public-ws'
-			},
-			{
-				label: 'via RadiumBlock',
-				key: 'wss://ajuna.public.curie.radiumblock.co/ws'
-			}
-		]
 	}
 };
 
@@ -2009,6 +1980,5 @@ export const addressPrefix: Record<string, number> = {
 	moonriver: 1285,
 	moonbase: 1287,
 	polkadot: 0,
-	curio: 777,
-	ajuna: 1328
+	curio: 777
 };

@@ -635,7 +635,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	useEffect(() => {
 		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	return (
 		<>

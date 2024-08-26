@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 export default async function fetchTokenValueHistory(tokenId = 'polkadot') {
 	try {
 		const currentDate = new Date();
@@ -14,13 +13,18 @@ export default async function fetchTokenValueHistory(tokenId = 'polkadot') {
 				.padStart(2, '0')}-${secondDayOfMonth.getFullYear()}`;
 
 			const response = await fetch(`https://api.coingecko.com/api/v3/coins/${tokenId}/history?date=${formattedDate}`);
-			const responseJSON = await response.json();
-			console.log(responseJSON);
 
-			const usdValue = responseJSON?.market_data?.current_price?.usd || 'Data not available';
+			if (!response.ok) {
+				console.error(`Error fetching data for date ${formattedDate}: ${response.statusText}`);
+				usdValues.push({ date: formattedDate, usdValue: null });
+				continue;
+			}
+
+			const responseJSON = await response.json();
+
+			const usdValue = responseJSON?.market_data?.current_price?.usd || null;
 			usdValues.push({ date: formattedDate, usdValue });
 		}
-		console.log('usdValues', usdValues);
 
 		return usdValues;
 	} catch (error) {

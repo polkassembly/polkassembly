@@ -3,12 +3,23 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { NextApiRequest, NextApiResponse } from 'next';
+import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
+import messages from '~src/auth/utils/messages';
 import { firestore_db } from '~src/services/firebaseInit';
 
 const getDocumentData = async (network: string, documentName: string) => {
-	const doc = await firestore_db.collection('networks').doc(network).get();
-	return doc.exists ? doc.data()?.[documentName] : null;
+	try {
+		const doc = await firestore_db.collection('networks').doc(network).get();
+		if (doc.exists) {
+			return doc.data()?.[documentName];
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.error(`Error fetching document for network ${network}:`, error);
+		return null;
+	}
 };
 
 const sumMonthlyData = (monthlyDataUSD: { [key: string]: number }, totalAssetsData: { [key: string]: number }) => {
@@ -22,10 +33,11 @@ const sumMonthlyData = (monthlyDataUSD: { [key: string]: number }, totalAssetsDa
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+	storeApiKeyUsage(req);
 	const network = req.headers['x-network'] as string;
 
 	if (!network) {
-		return res.status(400).json({ error: 'Missing or invalid network in request headers' });
+		return res.status(400).json({ error: messages.INVALID_NETWORK });
 	}
 
 	try {
@@ -33,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 		const totalAssetsData = await getDocumentData(network, 'total_assets_data');
 
 		if (!monthlyDataUSD || !totalAssetsData) {
-			return res.status(404).json({ error: 'Data not found' });
+			return res.status(404).json({ error: messages.API_FETCH_ERROR });
 		}
 
 		const summedData = sumMonthlyData(monthlyDataUSD, totalAssetsData);

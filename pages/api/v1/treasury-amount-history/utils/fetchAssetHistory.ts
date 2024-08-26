@@ -7,7 +7,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
-import { chainProperties } from '~src/global/networkConstants';
+import { chainProperties, network } from '~src/global/networkConstants';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 import messages from '~src/auth/utils/messages';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -57,19 +57,32 @@ const getBlockHashByBlockNumber = async (apiURL: string, blockNum: number): Prom
 	}
 };
 
-const fetchAssetBalance = async (api: ApiPromise, assetId: string, accountId: string, networkBlockTime: number, apiURL: string): Promise<{ [month: string]: any }> => {
+const fetchAssetBalance = async (api: ApiPromise, assetId: string, network: string): Promise<{ [month: string]: any }> => {
+	const networkProperties = chainProperties?.[network];
+
+	const accountId = chainProperties[network]?.assetHubTreasuryAddress;
+
+	if (!networkProperties) {
+		throw new Error(`Network properties for ${network} are undefined`);
+	}
+
+	const networkBlockTime = networkProperties.assetHubBlockTime ? networkProperties.assetHubBlockTime / 1000 : null;
+
+	if (!networkBlockTime) return {};
+
+	const apiURL = `${chainProperties[network]?.assethubExternalLinks}/api/scan/block`;
 	const daysInPreviousMonths = getDaysInPreviousMonths(12);
 
-	const blocksPerDay = Math.floor(86400 / networkBlockTime); // 86400 seconds in a day
+	const blocksPerDay = Math.floor((60 * 60 * 24) / networkBlockTime); // 86400 seconds in a day
 
-	const secondDayOfMonthBlockNumber = 6810000;
+	const assetHubStartBlock = 6810000;
 
 	const blockNumbers = [];
 	let cumulativeDays = 0;
 
 	for (let i = 0; i < daysInPreviousMonths.length; i++) {
 		cumulativeDays += daysInPreviousMonths[i].days;
-		const blockNumber = secondDayOfMonthBlockNumber - cumulativeDays * blocksPerDay;
+		const blockNumber = assetHubStartBlock - cumulativeDays * blocksPerDay;
 		blockNumbers.push(blockNumber);
 	}
 
@@ -91,7 +104,7 @@ const fetchAssetBalance = async (api: ApiPromise, assetId: string, accountId: st
 		const month = daysInPreviousMonths[i].month;
 		const blockHash = blockHashArr[i];
 		try {
-			const balance: Option<PalletAssetsAssetAccount> = await api.query.assets.account.at(blockHash, assetId, accountId);
+			const balance: Option<PalletAssetsAssetAccount> = await api?.query?.assets?.account?.at(blockHash, assetId, accountId);
 			balances[month] = balance;
 		} catch (error) {
 			console.error(`Failed to fetch balance for block hash ${blockHash}:`, error);
@@ -114,20 +127,13 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 		console.error('Error writing data to Firestore:', error);
 	}
 };
+
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
 	try {
 		storeApiKeyUsage(req);
 		const network = 'polkadot';
 
-		const accountId = chainProperties[network]?.assetHubTreasuryAddress;
-
-		if (!accountId) {
-			return res.status(400).json({ error: 'Missing accountId' });
-		}
-
 		const rpcEndpoint = chainProperties?.[network]?.assetHubRpcEndpoint;
-		const networkBlockTime = chainProperties?.[network]?.assetHubBlockTime && chainProperties?.[network]?.assetHubBlockTime / 1000;
-		const apiURL = `${chainProperties[network]?.assethubExternalLinks}/api/scan/block`;
 
 		if (!rpcEndpoint) {
 			return res.status(400).json({ error: 'Missing Rpc please check' });
@@ -135,13 +141,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
 
 		const api = await createPolkadotApi(rpcEndpoint);
 
+		if (!api) return res.status(400).json({ error: 'Error in Assethub API' });
+
 		// Fetch balance for USDT
 		const usdtAssetId = chainProperties[network]?.supportedAssets?.[1].genralIndex;
-		const usdtBalances = await fetchAssetBalance(api, usdtAssetId as string, accountId as string, networkBlockTime as number, apiURL as string);
+		const usdtBalances = await fetchAssetBalance(api, usdtAssetId as string, network as string);
 
 		// Fetch balance for USDC
 		const usdcAssetId = chainProperties[network]?.supportedAssets?.[2].genralIndex;
-		const usdcBalances = await fetchAssetBalance(api, usdcAssetId as string, accountId as string, networkBlockTime as number, apiURL as string);
+		const usdcBalances = await fetchAssetBalance(api, usdcAssetId as string, network as string);
 
 		const combinedBalances: { [month: string]: string } = {};
 

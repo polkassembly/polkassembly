@@ -671,6 +671,15 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+
+export enum EProfileBadges {
+	ACTIVE_VOTER = 'Active Voter',
+	COUNCIL = 'Council',
+	DECENTRALISED_VOICE = 'Decentralised Voice',
+	FELLOW = 'Fellow',
+	WHALE = 'Whale'
+}
+
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
 	allProposals: { diff: number; total: number };

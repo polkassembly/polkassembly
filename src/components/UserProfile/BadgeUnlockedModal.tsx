@@ -3,13 +3,10 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React from 'react';
-import { Divider, Modal } from 'antd';
+import { Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import Image from 'next/image';
-import CustomButton from '~src/basic-components/buttons/CustomButton';
-import Link from 'next/link';
-import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { Badge } from '~src/auth/types';
 import { badgeDetails } from '~src/global/achievementbadges';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -23,10 +20,6 @@ interface Props {
 }
 
 const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) => {
-	const { network } = useNetworkSelector();
-	const currentUser = useUserDetailsSelector();
-	const { username } = currentUser;
-
 	if (!badge) return <></>;
 
 	const matchingBadge = badgeDetails.find((detail) => detail.name === badge.name);

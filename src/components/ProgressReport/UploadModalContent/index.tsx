@@ -27,7 +27,6 @@ const UploadModalContent = () => {
 
 	const handleUpload = async (file: File) => {
 		dispatch(progressReportActions.setFileName(file.name));
-		console.log('Handling file upload:', file);
 		if (!file) return '';
 		let sharableLink = '';
 
@@ -36,7 +35,6 @@ const UploadModalContent = () => {
 			formData.append('media', file);
 			const { data, error } = await nextApiClientFetch<any>('/api/v1/upload/upload', formData);
 			if (data) {
-				console.log('Upload successful:', data);
 				sharableLink = data.displayUrl;
 			} else {
 				console.error('Upload error:', error);
@@ -51,11 +49,9 @@ const UploadModalContent = () => {
 		action: window.location.href,
 		customRequest: async ({ file, onSuccess, onError }) => {
 			try {
-				console.log('Starting file upload:', file);
 				const sharableLink = await handleUpload(file as File);
 				if (sharableLink) {
 					dispatch(progressReportActions.setProgressReportLink(sharableLink));
-					console.log('Upload success:', sharableLink);
 					onSuccess?.({}, file as any);
 				} else {
 					console.error('Upload failed');
@@ -72,11 +68,9 @@ const UploadModalContent = () => {
 		onChange(info) {
 			const { status } = info.file;
 			if (status === 'done') {
-				console.log('Upload done:', info.file.name);
 				dispatch(progressReportActions.setReportUploaded(true));
 				message.success(`${info.file.name} file uploaded successfully.`);
 			} else if (status === 'error') {
-				console.log('Upload error:', info.file.name);
 				message.error(`${info.file.name} file upload failed.`);
 			}
 		},
@@ -118,7 +112,6 @@ const UploadModalContent = () => {
 			{add_summary_cta_clicked && (
 				<ContentForm
 					onChange={(content: any) => {
-						console.log(content);
 						dispatch(progressReportActions.setSummaryContent(content));
 					}}
 					height={200}

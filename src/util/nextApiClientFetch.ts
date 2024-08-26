@@ -24,8 +24,6 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: unknow
 		headers['Content-Type'] = 'application/json';
 	}
 
-	console.log('inside next --> ', data);
-
 	const response = await fetch(`${window.location.origin}/${url}`, {
 		body: data instanceof FormData ? data : JSON.stringify(data),
 		credentials: 'include',

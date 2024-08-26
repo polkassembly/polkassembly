@@ -31,7 +31,6 @@ const UploadReport = () => {
 	} = usePostDataContext();
 
 	const addProgressReport = async () => {
-		console.log('link --> ', progress_report_link);
 		const progress_report = {
 			progress_addedOn: new Date(),
 			progress_file: progress_report_link,
@@ -72,7 +71,7 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
 		} else {
-			console.log('failed to save report');
+			console.error('failed to save report');
 		}
 	};
 

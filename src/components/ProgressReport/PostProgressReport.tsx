@@ -17,7 +17,6 @@ interface Props {
 const PostProgressReport = ({ className }: Props) => {
 	const { postData } = usePostDataContext();
 	const router = useRouter();
-	console.log(postData?.progress_report);
 	return (
 		<div className={`${className} mt-2`}>
 			<Collapse

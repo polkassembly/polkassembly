@@ -17,7 +17,7 @@ const getDocumentData = async (network: string, documentName: string) => {
 			return null;
 		}
 	} catch (error) {
-		console.error(`Error fetching document for network ${network}:`, error);
+		console.error('Error fetching document ', error);
 		return null;
 	}
 };

@@ -20,55 +20,55 @@ export const badgeDetails: BadgeDetails[] = [
 	{
 		description: 'Awarded to Polkadot delegates who have significant influence.',
 		img: '/assets/badges/decentralised_voice_polkadot.png',
-		name: BadgeName.DecentralisedVoice_polkodot,
+		name: BadgeName.DECENTRALISED_VOICE_POLKADOT,
 		requirements: 'Must be a delegate on the Polkadot network.'
 	},
 	{
 		description: 'Awarded to Kusama delegates who have significant influence.',
 		img: '',
-		name: BadgeName.DecentralisedVoice_kusama,
+		name: BadgeName.DECENTRALISED_VOICE_KUSAMA,
 		requirements: 'Must be a delegate on the Kusama network.'
 	},
 	{
 		description: 'Rank 1 and above Fellow.',
 		img: '',
-		name: BadgeName.Fellow,
+		name: BadgeName.FELLOW,
 		requirements: 'Must achieve a rank of 1 or higher.'
 	},
 	{
 		description: 'Member of the governance council.',
 		img: '',
-		name: BadgeName.Council,
+		name: BadgeName.COUNCIL,
 		requirements: 'Must be a member of the governance council.'
 	},
 	{
 		description: 'Actively participates in voting on proposals.',
 		img: '',
-		name: BadgeName.ActiveVoter,
+		name: BadgeName.ACTIVE_VOTER,
 		requirements: 'Must vote on at least 15% of proposals with a minimum of 5 proposals.'
 	},
 	{
 		description: 'Holds a significant amount of voting power.',
 		img: '',
-		name: BadgeName.Whale,
+		name: BadgeName.WHALE,
 		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.'
 	},
 	{
 		description: 'Regularly contributes comments.',
 		img: '',
-		name: BadgeName.SteadfastCommentor,
+		name: BadgeName.STEADFAST_COMMENTOR,
 		requirements: 'Must have more than 50 comments.'
 	},
 	{
 		description: 'Regularly votes on proposals.',
 		img: '',
-		name: BadgeName.GMVoter,
+		name: BadgeName.GM_VOTER,
 		requirements: 'Must have voted on more than 50 proposals.'
 	},
 	{
 		description: 'Received significant delegated tokens.',
 		img: '',
-		name: BadgeName.PopularDelegate,
+		name: BadgeName.POPULAR_DELEGATE,
 		requirements: 'Must have received delegated tokens equal to or greater than 0.01% of the total supply.'
 	}
 ];

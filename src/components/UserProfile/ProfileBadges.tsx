@@ -106,7 +106,7 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 										src='/assets/icons/hourglass_light.svg'
 										alt='hourglass'
 									/>
-									{`Unlocked on ${item.unlockedAt}`}
+									{`Unlocked on ${item.unlockedAt.split('T')[0]}`}
 								</span>
 							) : (
 								<span className='flex items-center gap-1 break-all text-xs'>

@@ -123,7 +123,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		(async () => {
-			if ((!api && !peopleChainApi) || !proposer) return;
+			if ((!api && !peopleChainApi) || !proposer || !(apiReady && peopleChainApiReady)) return;
 			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();

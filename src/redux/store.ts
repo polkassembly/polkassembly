@@ -152,7 +152,6 @@ export const makeStore = () => {
 				'currentTokenPrice',
 				'tipping',
 				'gov1TreasuryProposal',
-				'inAppNotifications',
 				'addAmbassador',
 				'ambassadorRemoval',
 				'ambassadorReplacement',

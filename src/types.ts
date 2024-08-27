@@ -928,6 +928,8 @@ export interface IDelegateAddressDetails {
 	image: string;
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
+	username?: string;
+	identityInfo?: { display: string; leagal: string } | null;
 }
 
 export enum EDelegationAddressFilters {

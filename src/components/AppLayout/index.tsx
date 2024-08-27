@@ -364,7 +364,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		if (!api && !peopleChainApi) return;
+		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
@@ -1222,7 +1222,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'

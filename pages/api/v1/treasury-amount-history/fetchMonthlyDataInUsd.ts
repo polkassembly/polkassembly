@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import BN from 'bn.js';
 import { NextApiRequest, NextApiResponse } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -22,11 +23,13 @@ const getDocumentData = async (network: string, documentName: string) => {
 	}
 };
 
-const sumMonthlyData = (monthlyDataUSD: { [key: string]: number }, totalAssetsData: { [key: string]: number }) => {
-	const summedData: { [key: string]: number } = {};
+const sumMonthlyData = (monthlyDataUSD: { [key: string]: string }, totalAssetsData: { [key: string]: string }) => {
+	const summedData: { [key: string]: string } = {};
 
 	Object.keys(monthlyDataUSD).forEach((month) => {
-		summedData[month] = (monthlyDataUSD[month] || 0) + (totalAssetsData[month] || 0);
+		const monthlyValue = new BN(monthlyDataUSD[month] || '0');
+		const assetsValue = new BN(totalAssetsData[month] || '0');
+		summedData[month] = monthlyValue.add(assetsValue).toString();
 	});
 
 	return summedData;

@@ -1,31 +1,35 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+
 export default async function fetchTokenValueHistory(tokenId = 'polkadot') {
 	try {
 		const currentDate = new Date();
-		const usdValues = [];
 
-		for (let i = 0; i < 12; i++) {
+		const fetchPromises = Array.from({ length: 12 }).map((_, i) => {
 			const secondDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 2);
 			const formattedDate = `${secondDayOfMonth.getDate().toString().padStart(2, '0')}-${(secondDayOfMonth.getMonth() + 1)
 				.toString()
 				.padStart(2, '0')}-${secondDayOfMonth.getFullYear()}`;
 
-			const response = await fetch(`https://api.coingecko.com/api/v3/coins/${tokenId}/history?date=${formattedDate}`);
+			return fetch(`https://api.coingecko.com/api/v3/coins/${tokenId}/history?date=${formattedDate}`)
+				.then((response) => {
+					if (!response.ok) {
+						console.error(`Error fetching data for date ${formattedDate}: ${response.statusText}`);
+						return { date: formattedDate, usdValue: null };
+					}
+					return response.json().then((responseJSON) => {
+						const usdValue = responseJSON?.market_data?.current_price?.usd || null;
+						return { date: formattedDate, usdValue };
+					});
+				})
+				.catch((error) => {
+					console.error(`Error fetching data for date ${formattedDate}:`, error);
+					return { date: formattedDate, usdValue: null };
+				});
+		});
 
-			if (!response.ok) {
-				console.error(`Error fetching data for date ${formattedDate}: ${response.statusText}`);
-				usdValues.push({ date: formattedDate, usdValue: null });
-				continue;
-			}
-
-			const responseJSON = await response.json();
-
-			const usdValue = responseJSON?.market_data?.current_price?.usd || null;
-			usdValues.push({ date: formattedDate, usdValue });
-		}
-
+		const usdValues = await Promise.all(fetchPromises);
 		return usdValues;
 	} catch (error) {
 		console.error('Error fetching data:', error);

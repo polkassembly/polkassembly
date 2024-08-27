@@ -7,7 +7,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
-import { chainProperties, network } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 import messages from '~src/auth/utils/messages';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';

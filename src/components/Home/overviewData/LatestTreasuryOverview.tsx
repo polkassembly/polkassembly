@@ -37,7 +37,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		usdtValue: ''
 	});
 	const [graphData, setGraphData] = useState<any>([]);
-	console.log('graphData', graphData);
 
 	const assetValue = formatBnBalance(assethubValues.dotValue, { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network);
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));

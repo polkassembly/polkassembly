@@ -129,18 +129,18 @@ const saveToFirestore = async (network: string, data: { [key: string]: number })
 
 const storeMonthlyTreasuryTallyUSD = async (network: string, monthlyData: { [key: string]: number }) => {
 	const dotValuesByMonth = [
-		{ month: 'august', usdValue: 5.343944203573159 },
-		{ month: 'july', usdValue: 6.336374552862423 },
-		{ month: 'june', usdValue: 7.058331218859057 },
-		{ month: 'may', usdValue: 6.855796299781072 },
-		{ month: 'april', usdValue: 9.171289667788763 },
-		{ month: 'march', usdValue: 8.64115820751773 },
-		{ month: 'february', usdValue: 6.788948383733377 },
-		{ month: 'january', usdValue: 8.596377532718092 },
-		{ month: 'december', usdValue: 5.477308052301386 },
-		{ month: 'november', usdValue: 4.72682887737193 },
-		{ month: 'october', usdValue: 4.262694645878126 },
-		{ month: 'september', usdValue: 4.217157156635496 }
+		{ month: 'august', usdValue: 5.3439 },
+		{ month: 'july', usdValue: 6.3363 },
+		{ month: 'june', usdValue: 7.0583 },
+		{ month: 'may', usdValue: 6.8557 },
+		{ month: 'april', usdValue: 9.1712 },
+		{ month: 'march', usdValue: 8.6411 },
+		{ month: 'february', usdValue: 6.7889 },
+		{ month: 'january', usdValue: 8.5963 },
+		{ month: 'december', usdValue: 5.4773 },
+		{ month: 'november', usdValue: 4.7268 },
+		{ month: 'october', usdValue: 4.2626 },
+		{ month: 'september', usdValue: 4.2171 }
 	];
 
 	// Prepare the new document data

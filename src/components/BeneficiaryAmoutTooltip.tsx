@@ -8,8 +8,6 @@ import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetwork
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
-import { CustomStatus } from './Listing/Tracks/TrackListingCard';
-import { getStatusesFromCustomStatus } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
@@ -44,15 +42,16 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
-		const closedStatuses = getStatusesFromCustomStatus(CustomStatus.Closed);
+		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;
 		timeline?.[0]?.statuses.map((status: any) => {
-			if (closedStatuses.includes(status.status)) {
+			if (passedProposalStatuses.includes(status.status)) {
 				proposalClosedStatusDetails = status;
 			}
 			setIsProposalClosed(!!proposalClosedStatusDetails);
 		});
+		if (!proposalClosedStatusDetails) return;
 
 		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
 			closedStatus: proposalClosedStatusDetails || null,

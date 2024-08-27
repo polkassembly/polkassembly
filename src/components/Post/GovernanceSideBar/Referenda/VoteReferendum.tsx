@@ -76,6 +76,7 @@ interface Props {
 	theme?: string;
 	trackNumber?: number;
 	setUpdateTally?: (pre: boolean) => void;
+	updateTally: boolean;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -127,7 +128,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally, updateTally }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -576,7 +577,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				message: `Vote on referendum #${referendumId} successful.`,
 				status: NotificationStatus.SUCCESS
 			});
-			setUpdateTally?.(true);
+			setUpdateTally?.(!updateTally);
 			setLastVote({
 				balance: totalVoteValue,
 				conviction: conviction,

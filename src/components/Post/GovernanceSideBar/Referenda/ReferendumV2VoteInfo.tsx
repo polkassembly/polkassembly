@@ -110,6 +110,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
+		handleTallyData(tally);
 		(async () => {
 			if (network === 'picasso') {
 				const totalIssuance = await api.query.openGovBalances.totalIssuance();
@@ -122,10 +123,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		})();
 
-		handleTallyData(tally);
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady, network, updateTally]);
+	}, [status, api, apiReady, network, tally]);
 
 	useEffect(() => {
 		handleAyeNayCount();

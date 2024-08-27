@@ -72,7 +72,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 	const handleTallyData = async (tally: any) => {
 		if (!api || !apiReady) return;
-		console.log({ tally });
 		if (['confirmed', 'executed', 'timedout', 'cancelled', 'rejected', 'executionfailed'].includes(status.toLowerCase())) {
 			setTallyData({
 				ayes: String(tally?.ayes).startsWith('0x') ? new BN(tally?.ayes || 0, 'hex') : new BN(tally?.ayes || 0),
@@ -82,9 +81,13 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
+		console.log({ here: 'hereee' });
+
 		const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
+			console.log({ here: 'hereee 2' });
+
 			setTallyData({
 				ayes:
 					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
@@ -166,6 +169,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		handleDebounceAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [updateTally]);
+
+	console.log({ tally });
 
 	return (
 		<>

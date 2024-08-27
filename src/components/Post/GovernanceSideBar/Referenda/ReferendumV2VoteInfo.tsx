@@ -125,7 +125,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady, network, updateTally, tally]);
+	}, [status, api, apiReady, network, tally]);
 
 	useEffect(() => {
 		handleAyeNayCount();

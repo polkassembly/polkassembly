@@ -22,7 +22,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSetex } from '~src/auth/redis';
 
 const firestore_db = admin.firestore();
-const TTL_DURATION = 3600 * 23; // 23 Hours or 82800 seconds
+const TTL_DURATION = 3600 * 24; // 23 Hours or 82800 seconds
 
 const getDelegatesDataSourceAndDetails = (data: { address: string; bio: string; image: string; dataSource: string[] }[]) => {
 	const res: Record<string, { address: string; bio: string; image: string; dataSource: string[] }> = {};
@@ -195,13 +195,15 @@ export const getDelegatesData = async (network: string, address?: string | null)
 
 		const combinedDelegates = getAllCombineDelegatesData(delegatesDetails, allDelegatesResults);
 
-		if (process.env.IS_CACHING_ALLOWED == '1') {
+		const filteredCombinedDelegates = combinedDelegates.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
+
+		if (process.env.IS_CACHING_ALLOWED == '1' && !address?.length) {
 			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'delegates', network });
-			await redisSetex(redisKey, TTL_DURATION, JSON.stringify(redisKey));
+			await redisSetex(redisKey, TTL_DURATION, JSON.stringify(filteredCombinedDelegates));
 		}
 
 		return {
-			data: combinedDelegates.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount) || [],
+			data: filteredCombinedDelegates || [],
 			error: null
 		};
 	} catch (err) {

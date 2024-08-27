@@ -10,7 +10,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
-import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '../../../../cloud-functions/src/queries';
+import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '~src/queries';
 import { getTotalSupply } from '../utils/achievementbages';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';

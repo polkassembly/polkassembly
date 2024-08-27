@@ -146,7 +146,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								isIdentitySet={isIdentitySet}
 								isIdentityUnverified={isIdentityUnverified}
 							/>
-						)}{' '}
+						)}
+						{isMobile && sidedrawer && (
+							<Sidebar
+								className={`absolute left-0 top-0 z-[110] w-full ${className}`}
+								sidebarCollapsed={true}
+								setSidebarCollapsed={setSidebarCollapsed}
+								sidedrawer={sidedrawer}
+								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+								setIdentityMobileModal={setIdentityMobileModal}
+								totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
+								isGood={isGood}
+								mainDisplay={mainDisplay}
+								isIdentitySet={isIdentitySet}
+								isIdentityUnverified={isIdentityUnverified}
+							/>
+						)}
 						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
 								<div
@@ -201,7 +216,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<Component {...pageProps} />
 										</Content>
 									) : (
-										<Content className={`mx-auto my-6  w-full  px-3  `}>
+										<Content className={`mx-auto my-6 ${sidedrawer && 'pl-[100px]'}  w-full  px-3  `}>
 											<Component {...pageProps} />
 										</Content>
 									)}
@@ -213,7 +228,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<Component {...pageProps} />
 										</Content>
 									) : (
-										<Content className={`mx-auto my-6 w-full  px-3  `}>
+										<Content className={`mx-auto my-6 ${sidedrawer && 'pl-[100px]'}  w-full  px-3  `}>
 											<Component {...pageProps} />
 										</Content>
 									)}
@@ -236,6 +251,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					/>
 				)}
 			</Layout>
+
 			<Modal
 				zIndex={100}
 				open={identityMobileModal}

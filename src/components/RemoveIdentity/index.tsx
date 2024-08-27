@@ -75,7 +75,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const getGasFee = async (addr: string) => {
-		if (!(api && peopleChainApi) || !apiReady) return;
+		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
 
 		setLoading({ ...loading, isLoading: true });
 		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
@@ -91,7 +91,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const handleRemoveIdentity = () => {
-		if (!(api && peopleChainApiReady) || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
+		if (!(api && peopleChainApiReady) || !(apiReady && peopleChainApiReady) || !(address || loginAddress) || !isIdentityAvailable) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {
@@ -118,7 +118,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			dispatch(setOpenRemoveIdentityModal(false));
 			router.reload();
 		};
-		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
+		const tx = (peopleChainApi ?? api)?.tx?.identity?.clearIdentity();
 
 		executeTx({
 			address: address || loginAddress,

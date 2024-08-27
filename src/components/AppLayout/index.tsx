@@ -364,7 +364,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		if (!api && !peopleChainApi) return;
+		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,

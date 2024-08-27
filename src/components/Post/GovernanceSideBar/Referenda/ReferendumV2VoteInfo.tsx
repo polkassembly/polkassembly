@@ -86,6 +86,8 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
 		if (parsedReferendumInfo?.ongoing?.tally) {
+			console.log({ here: 'hereee 2' });
+
 			setTallyData({
 				ayes:
 					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'

@@ -2500,8 +2500,8 @@ query DelegationStats ($track_num:Int!){
   }
 }`;
 
-export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationStats{
-  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov}) {
+export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationStats($address: String){
+  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov, to_eq: $address}) {
     from
     to
     balance
@@ -2714,9 +2714,15 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
 }
 }`;
 
-export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExists ($proposalIndex: Int, $type_eq: ProposalType){
+export const CHECK_IF_OPENGOV_PROPOSAL_EXISTS = `query CheckIfOpenGovProposalExists ($proposalIndex: Int!=1108, $type_eq: ProposalType!= ReferendumV2){
   proposals(orderBy: id_ASC, where:{index_eq: $proposalIndex, type_eq: $type_eq}){
     proposer
     index
+  }
+}`;
+
+export const GET_VOTES_COUNT_FOR_TIMESPAN = `query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
+  convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
+    totalCount
   }
 }`;

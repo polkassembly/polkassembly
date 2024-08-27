@@ -34,7 +34,6 @@ import IdentityFormActionButtons from './IdentityFormActionButtons';
 import allowSetIdentity from './utils/allowSetIdentity';
 import { network as AllNetworks, chainProperties } from 'src/global/networkConstants';
 import { useApiContext, usePeopleChainApiContext } from '~src/context';
-import { ApiPromise } from '@polkadot/api';
 import { onchainIdentitySupportedNetwork } from '../AppLayout';
 import userProfileBalances from '~src/util/userProfileBalances';
 import isPeopleChainSupportedNetwork from './utils/getPeopleChainSupportedNetwork';
@@ -62,9 +61,8 @@ const IdentityForm = ({
 	const dispach = useDispatch();
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { displayName, identityAddress, legalName, socials, identityInfo, wallet } = useOnchainIdentitySelector();
 	const { resolvedTheme: theme } = useTheme();
 	const { email, twitter } = socials;
@@ -83,26 +81,18 @@ const IdentityForm = ({
 	const [isBalanceUpdated, setIsBalanceUpdated] = useState<boolean>(false);
 	const [isBalanceUpdatedLoading, setIsBalanceUpdatedLoading] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
-
 	const getDefaultChainBalance = async () => {
-		if (!defaultApi || !defaultApiReady) return;
+		if (!api || !apiReady) return;
 
-		const { transferableBalance } = await userProfileBalances({ address: identityAddress || currentUser?.loginAddress, api: defaultApi, apiReady: defaultApiReady, network });
+		const { transferableBalance } = await userProfileBalances({ address: identityAddress || currentUser?.loginAddress, api: api, apiReady: apiReady, network });
 		setDefaultChainUserBalance(transferableBalance);
 	};
 
 	useEffect(() => {
-		if (!defaultApi || !defaultApiReady || !isPeopleChainSupportedNetwork(network)) return;
+		if (!api || !apiReady || !isPeopleChainSupportedNetwork(network)) return;
 		getDefaultChainBalance();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [defaultApi, defaultApiReady]);
+	}, [api, apiReady]);
 
 	const getProxies = async (address: any) => {
 		const proxies: any = (await api?.query?.proxy?.proxies(address))?.toJSON();
@@ -125,7 +115,7 @@ const IdentityForm = ({
 
 	const handleSetIdentity = async (requestJudgement: boolean) => {
 		const onSuccess = async () => {
-			const identityHash = await api?.query?.identity
+			const identityHash = await (peopleChainApi ?? api)?.query?.identity
 				?.identityOf(identityAddress)
 				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info?.hash?.toHex());
 			if (!identityHash) {
@@ -154,16 +144,16 @@ const IdentityForm = ({
 		}
 		const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
-		if (!api || !apiReady || !okAll || registrarIndex === null) return;
+		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !okAll || registrarIndex === null) return;
 		if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
 
 		let tx;
 		if (requestJudgement) {
-			tx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			tx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 		} else {
-			const requestedJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
-			const identityTx = api.tx?.identity?.setIdentity(info);
-			tx = api.tx.utility.batchAll([identityTx, requestedJudgementTx]);
+			const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			const identityTx = (peopleChainApi ?? api).tx?.identity?.setIdentity(info);
+			tx = (peopleChainApi ?? api).tx.utility.batchAll([identityTx, requestedJudgementTx]);
 		}
 
 		setStartLoading({ isLoading: true, message: 'Awaiting confirmation' });
@@ -180,7 +170,7 @@ const IdentityForm = ({
 
 		let payload: any = {
 			address: identityAddress,
-			api,
+			api: peopleChainApi ?? api,
 			apiReady,
 			errorMessageFallback: 'failed.',
 			network,
@@ -217,23 +207,30 @@ const IdentityForm = ({
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
-		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !identityAddress) {
+		if (
+			!(api && peopleChainApi) ||
+			!(apiReady && peopleChainApiReady) ||
+			(!okAll && !initialLoading) ||
+			!form.getFieldValue('displayName') ||
+			!form.getFieldValue('email') ||
+			!identityAddress
+		) {
 			setTxFee({ ...txFeeVal, gasFee: ZERO_BN });
 			return;
 		}
 
-		let setIdentityTx = api.tx.identity.setIdentity(info);
+		let setIdentityTx = (peopleChainApi ?? api).tx.identity.setIdentity(info);
 		let requestJudgementTx;
 		let signingAddress = identityAddress;
 		setLoading(true);
 		if (selectedProxyAddress?.length && showProxyDropdown) {
-			setIdentityTx = api?.tx?.proxy.proxy(identityAddress, null, api.tx.identity.setIdentity(info));
+			setIdentityTx = (peopleChainApi ?? api)?.tx?.proxy.proxy(identityAddress, null, (peopleChainApi ?? api).tx.identity.setIdentity(info));
 			signingAddress = selectedProxyAddress;
 		}
 
 		const registrarIndex = getIdentityRegistrarIndex({ network: network });
 		if (registrarIndex) {
-			requestJudgementTx = api.tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
+			requestJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());
 		}
 
 		if (identityInfo.isIdentitySet) {
@@ -241,11 +238,11 @@ const IdentityForm = ({
 				const paymentInfo = await requestJudgementTx.paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			} else {
-				const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+				const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
 				setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 			}
 		} else {
-			const paymentInfo = await api.tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
+			const paymentInfo = await (peopleChainApi ?? api).tx.utility.batch([setIdentityTx, requestJudgementTx as any]).paymentInfo(signingAddress);
 			setTxFee({ ...txFeeVal, gasFee: paymentInfo.partialFee });
 		}
 
@@ -307,6 +304,10 @@ const IdentityForm = ({
 
 	useEffect(() => {
 		handleInfo(true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [identityAddress, api, peopleChainApi, peopleChainApiReady, apiReady]);
+
+	useEffect(() => {
 		getProxies(identityAddress);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [identityAddress]);
@@ -322,7 +323,7 @@ const IdentityForm = ({
 						className='mb-4 flex h-8 w-full items-center justify-start rounded-[4px] px-2'
 						style={{ background: 'linear-gradient(to right, #FF35A1, #5837AA, #050B93)' }}
 					>
-						<span className='font-semibold text-white'>People Chain is now LIVE for {network.charAt(0).toUpperCase() + network.slice(1)} network</span>
+						<span className='font-semibold capitalize text-white'>People Chain is now LIVE for {network} network</span>
 					</div>
 				)}
 

@@ -45,7 +45,6 @@ const InAppNotification = ({ className }: { className?: string }) => {
 				payoutsData?.map((payout: IPayout) => {
 					usersPayouts.push(payout);
 				});
-
 				dispatch(claimPayoutActions.setPayoutDetails({ claimPayoutAvailable: !!usersPayouts?.length, payouts: usersPayouts }));
 			})();
 		}

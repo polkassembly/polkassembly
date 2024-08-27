@@ -3,18 +3,18 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
-import { chainProperties, treasuryAssets } from '~src/global/networkConstants';
+import { chainProperties } from '~src/global/networkConstants';
 import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
-import { CustomStatus } from './Listing/Tracks/TrackListingCard';
-import { getStatusesFromCustomStatus } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
+import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
 
 interface Args {
 	className?: string;
@@ -26,20 +26,6 @@ interface Args {
 	usedInPostPage?: boolean;
 }
 const ZERO_BN = new BN(0);
-
-const getBalanceFromGeneralIndex = (generalIndex: string, currentTokenPrice: string, usdvalue: string | null = '0', isProposalClosed: Boolean, dedTokenUsdPrice: string) => {
-	if (isNaN(Number(currentTokenPrice))) return '0';
-	switch (generalIndex) {
-		case '30':
-			return String((((Number(currentTokenPrice || 1) || 1) * 10 ** treasuryAssets?.DED?.tokenDecimal || 0) / (Number(dedTokenUsdPrice) || 1)).toFixed(0)) || '0';
-		case '1337':
-			return String(10 ** treasuryAssets.USDC.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
-		case '1984':
-			return String(10 ** treasuryAssets.USDT.tokenDecimal * Number((isProposalClosed ? usdvalue || 0 : currentTokenPrice || 1) || 1));
-		default:
-			return '0';
-	}
-};
 
 const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCreatedAt, timeline, postId, usedInPostPage }: Args) => {
 	const { network } = useNetworkSelector();
@@ -56,15 +42,16 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
-		const closedStatuses = getStatusesFromCustomStatus(CustomStatus.Closed);
+		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;
 		timeline?.[0]?.statuses.map((status: any) => {
-			if (closedStatuses.includes(status.status)) {
+			if (passedProposalStatuses.includes(status.status)) {
 				proposalClosedStatusDetails = status;
 			}
 			setIsProposalClosed(!!proposalClosedStatusDetails);
 		});
+		if (!proposalClosedStatusDetails) return;
 
 		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
 			closedStatus: proposalClosedStatusDetails || null,
@@ -75,7 +62,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 		if (data) {
 			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : currentTokenPrice, network, false);
 			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
-
 			setUsdValueOnCreation(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : null);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
@@ -109,30 +95,32 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
 											<span>
-												{parseBalance(
-													new BN(requestedAmt)
-														?.div(new BN(getBalanceFromGeneralIndex(assetId, currentTokenPrice, usdValueOnClosed, isProposalClosed, dedTokenUsdPrice) || '1'))
-														?.mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals || 0))))
-														?.toString() || '0',
-													0,
-													false,
+												{getUsdValueFromAsset({
+													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
 													network
-												)}{' '}
+												}) || 0}{' '}
 												{chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>
 										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 											<span className='flex'>Value on day of creation:</span>
 											<span>
-												{parseBalance(
-													new BN(requestedAmt)
-														?.div(new BN(String(getBalanceFromGeneralIndex(assetId, currentTokenPrice, usdValueOnCreation, isProposalClosed, dedTokenUsdPrice))))
-														?.mul(new BN(10).pow(new BN(String(chainProperties[network]?.tokenDecimals || 0))))
-														?.toString() || '0',
-													0,
-													false,
+												{getUsdValueFromAsset({
+													currentTokenPrice: usdValueOnCreation || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
 													network
-												)}{' '}
+												}) || 0}{' '}
 												{chainProperties[network]?.tokenSymbol}
 											</span>
 										</div>

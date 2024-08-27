@@ -514,7 +514,7 @@ const NewSearch = ({ className, openModal, setOpenModal, isSuperSearch, setIsSup
 			<div className={`${className} ${isSuperSearch && !loading && 'pb-2'}`}>
 				<Input
 					ref={inputRef}
-					className='placeholderColor mt-2 h-[40px] rounded-[4px] border-pink_primary text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
+					className='placeholderColor mt-2 h-10 rounded-[4px] border-pink_primary text-bodyBlue dark:border-separatorDark dark:bg-section-dark-overlay dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					type='search'
 					value={searchInput}
 					onChange={(e) => handleSearchOnChange(e.target.value)}

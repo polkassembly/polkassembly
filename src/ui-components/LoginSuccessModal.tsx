@@ -224,7 +224,7 @@ const LoginSuccessModal = ({ setLoginOpen, setSignupOpen }: Props) => {
 									setSkipUsername(true);
 									handleOptionalDetails(true);
 								}}
-								variant='primary'
+								variant='default'
 								buttonsize='sm'
 								className='tracking-wide'
 								text='Skip'

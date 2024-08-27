@@ -22,7 +22,7 @@ import { generateKey } from '~src/util/getRedisKeys';
 import { redisGet, redisSetex } from '~src/auth/redis';
 
 const firestore_db = admin.firestore();
-const TTL_DURATION = 3600 * 24; // 23 Hours or 82800 seconds
+const TTL_DURATION = 60; // 23 Hours or 82800 seconds
 
 const getDelegatesDataSourceAndDetails = (data: { address: string; bio: string; image: string; dataSource: string[] }[]) => {
 	const res: Record<string, { address: string; bio: string; image: string; dataSource: string[] }> = {};
@@ -71,12 +71,12 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		if (address && !(encodedAddr || isAddress(String(address)))) return { data: [], error: messages.INVALID_PARAMS };
 
 		if (process.env.IS_CACHING_ALLOWED == '1' && !address?.length) {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'delegates', network });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allDelegates', network });
 			const redisData = await redisGet(redisKey);
 
 			if (redisData) {
 				return {
-					data: { votes: JSON.parse(redisData) },
+					data: JSON.parse(redisData) || [],
 					error: null,
 					status: 200
 				};
@@ -198,7 +198,7 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		const filteredCombinedDelegates = combinedDelegates.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
 
 		if (process.env.IS_CACHING_ALLOWED == '1' && !address?.length) {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'delegates', network });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allDelegates', network });
 			await redisSetex(redisKey, TTL_DURATION, JSON.stringify(filteredCombinedDelegates));
 		}
 

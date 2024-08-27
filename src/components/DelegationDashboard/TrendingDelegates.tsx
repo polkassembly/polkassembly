@@ -117,7 +117,6 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
-
 		if (data) {
 			//putting polkassembly Delegate first;
 			const updatedDelegates = data || [];

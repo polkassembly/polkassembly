@@ -103,6 +103,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 						: new BN(parsedReferendumInfo.ongoing.tally.support)
 			});
 		} else {
+			console.log('hereeee3');
 			setTallyData({
 				ayes: new BN(tally?.ayes || 0, 'hex'),
 				nays: new BN(tally?.nays || 0, 'hex'),
@@ -170,7 +171,7 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [updateTally]);
 
-	console.log({ tallyData });
+	console.log({ data: { ...tallyData, ayes: tallyData?.ayes.toString(), nays: tallyData?.nays.toString() } });
 
 	return (
 		<>

@@ -61,7 +61,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-
+	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const getTotalActiveProposalsCount = async () => {
 		if (!network) return;
 
@@ -132,19 +132,21 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				/>
 				<Layout hasSider>
 					<div className='flex w-full gap-2'>
-						<Sidebar
-							className={className}
-							sidebarCollapsed={sidebarCollapsed}
-							setSidebarCollapsed={setSidebarCollapsed}
-							sidedrawer={sidedrawer}
-							setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-							setIdentityMobileModal={setIdentityMobileModal}
-							totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
-							isGood={isGood}
-							mainDisplay={mainDisplay}
-							isIdentitySet={isIdentitySet}
-							isIdentityUnverified={isIdentityUnverified}
-						/>
+						{!isMobile && (
+							<Sidebar
+								className={className}
+								sidebarCollapsed={sidebarCollapsed}
+								setSidebarCollapsed={setSidebarCollapsed}
+								sidedrawer={sidedrawer}
+								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+								setIdentityMobileModal={setIdentityMobileModal}
+								totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
+								isGood={isGood}
+								mainDisplay={mainDisplay}
+								isIdentitySet={isIdentitySet}
+								isIdentityUnverified={isIdentityUnverified}
+							/>
+						)}{' '}
 						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
 								<div
@@ -194,15 +196,27 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
-									<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
-										<Component {...pageProps} />
-									</Content>
+									{!isMobile ? (
+										<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+											<Component {...pageProps} />
+										</Content>
+									) : (
+										<Content className={`mx-auto my-6  w-full  px-3  `}>
+											<Component {...pageProps} />
+										</Content>
+									)}
 								</Layout>
 							) : (
 								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
-									<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[250px] pr-[35px]'}`}>
-										<Component {...pageProps} />
-									</Content>
+									{!isMobile ? (
+										<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+											<Component {...pageProps} />
+										</Content>
+									) : (
+										<Content className={`mx-auto my-6 w-full  px-3  `}>
+											<Component {...pageProps} />
+										</Content>
+									)}
 								</Layout>
 							)}
 							<Footer

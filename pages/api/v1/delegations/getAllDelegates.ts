@@ -71,12 +71,12 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		if (address && !(encodedAddr || isAddress(String(address)))) return { data: [], error: messages.INVALID_PARAMS };
 
 		if (process.env.IS_CACHING_ALLOWED == '1' && !address?.length) {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'delegates', network });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allDelegates', network });
 			const redisData = await redisGet(redisKey);
 
 			if (redisData) {
 				return {
-					data: { votes: JSON.parse(redisData) },
+					data: JSON.parse(redisData) || [],
 					error: null,
 					status: 200
 				};
@@ -198,7 +198,7 @@ export const getDelegatesData = async (network: string, address?: string | null)
 		const filteredCombinedDelegates = combinedDelegates.sort((a, b) => b.votedProposalsCount - a.votedProposalsCount);
 
 		if (process.env.IS_CACHING_ALLOWED == '1' && !address?.length) {
-			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'delegates', network });
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'allDelegates', network });
 			await redisSetex(redisKey, TTL_DURATION, JSON.stringify(filteredCombinedDelegates));
 		}
 

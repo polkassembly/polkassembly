@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Layout, Menu as AntdMenu, MenuProps } from 'antd';
+import { Layout, Menu as AntdMenu, MenuProps, Tooltip } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -151,7 +151,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  dark:text-icon-dark-inactive`}>{label}</span>;
+		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  `}>{label}</span>;
 		return {
 			children,
 			icon,
@@ -954,65 +954,82 @@ const Sidebar: React.FC<SidebarProps> = ({
 	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
+
 		getSiderMenuItem(
-			<div
-				className='relative cursor-pointer'
-				style={{ padding: '10%' }}
-				onClick={handleGovernanceClick}
+			<Tooltip
+				title='Governance'
+				placement='left'
 			>
-				{activeGovernance ? (
-					<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-				) : (
-					<GovernanceIconNew
-						className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
-							activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-						}  text-2xl dark:text-icon-dark-inactive`}
-					/>
-				)}
-			</div>,
+				<div
+					className='relative cursor-pointer'
+					style={{ padding: '10%', marginRight: '-13px' }}
+					onClick={handleGovernanceClick}
+				>
+					{activeGovernance ? (
+						<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+					) : (
+						<GovernanceIconNew
+							className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
+								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+							}  text-2xl dark:text-icon-dark-inactive`}
+						/>
+					)}
+				</div>
+			</Tooltip>,
 			'gov2_governance_group',
 			null,
 			[...gov2TrackItems.governanceItems]
 		),
 
 		getSiderMenuItem(
-			<div
-				onClick={handleWhitelistClick}
-				className='relative cursor-pointer'
-				style={{ padding: '10%' }}
+			<Tooltip
+				title='Whitelist'
+				placement='left'
 			>
-				{activeWhitelist ? (
-					<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-				) : (
-					<FellowshipIconNew
-						className={`-ml-8 mt-1 w-20 scale-90 font-medium ${
-							activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-						} text-2xl dark:text-icon-dark-inactive`}
-					/>
-				)}
-			</div>,
+				<div
+					onClick={handleWhitelistClick}
+					className='relative cursor-pointer'
+					style={{ padding: '10%', marginRight: '-13px' }}
+				>
+					{activeWhitelist ? (
+						<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+					) : (
+						<FellowshipIconNew
+							className={`-ml-8 mt-1 w-20 scale-90 font-medium ${
+								activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+							} text-2xl dark:text-icon-dark-inactive`}
+						/>
+					)}
+				</div>
+			</Tooltip>,
 			'gov2_fellowship_group',
 			null,
 			[...gov2TrackItems.fellowshipItems]
 		),
+
 		getSiderMenuItem(
-			<div
-				className='-mb-[14px] -ml-10  w-[110px] '
-				style={{
-					borderTop: '2px dotted #ccc',
-					paddingTop: '12px'
-				}}
+			<Tooltip
+				title='Parachains'
+				placement='left'
 			>
-				<Link href='/parachains'>
-					<div
-						className={`ml-14 flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-3  hover:bg-[#000000] hover:bg-opacity-[4%] ${
-							activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
-						}`}
-					>
-						<ParachainsIcon className=' scale-90 text-xl font-medium ' />
-					</div>{' '}
-				</Link>
-			</div>,
+				<div
+					className='-mb-[14px] -ml-10  w-[110px] '
+					style={{
+						borderTop: '2px dotted #ccc',
+						paddingTop: '12px'
+					}}
+				>
+					<Link href='/parachains'>
+						<div
+							className={`ml-14 flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-3  hover:bg-[#000000] hover:bg-opacity-[4%] ${
+								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+							}`}
+						>
+							<ParachainsIcon className=' scale-90 text-xl font-medium ' />
+						</div>
+					</Link>
+				</div>
+			</Tooltip>,
 			'tracksHeading',
 			<p className='m-0 p-0'></p>
 		)
@@ -1105,18 +1122,22 @@ const Sidebar: React.FC<SidebarProps> = ({
 			-1,
 			0,
 			getSiderMenuItem(
-				<div
-					className='relative cursor-pointer'
-					style={{ padding: '10%' }}
-					onClick={handleTreasuryClick}
+				<Tooltip
+					title='Treasury'
+					placement='left'
 				>
-					{' '}
-					{activeTreasury ? (
-						<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-					) : (
-						<TreasuryIconNew className='-ml-8 mt-1 w-20 scale-90  text-2xl font-medium dark:text-icon-dark-inactive' />
-					)}
-				</div>,
+					<div
+						className='relative cursor-pointer'
+						style={{ padding: '10%', marginRight: '-13px' }}
+						onClick={handleTreasuryClick}
+					>
+						{activeTreasury ? (
+							<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						) : (
+							<TreasuryIconNew className='-ml-8 mt-1 w-20 scale-90  text-2xl font-medium dark:text-icon-dark-inactive' />
+						)}
+					</div>
+				</Tooltip>,
 				'gov2_treasury_group',
 				null,
 				[...gov2TrackItems.treasuryItems]
@@ -1175,7 +1196,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'Governance',
 				'/governance',
 				<>
-					{router.pathname.includes('lease-admin') ? (
+					{activeGovernance ? (
 						<SelectedGovernance className='-ml-2 -mt-2 h-10 w-10 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
 						<GovernanceIconNew
@@ -1421,7 +1442,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute   bottom-10 left-12 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute   bottom-10 left-12 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
 											<div className='absolute left-4 top-7 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1435,7 +1456,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Leaderboard
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1449,7 +1470,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Delegation
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1463,7 +1484,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -left-4 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute -left-4 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Calendar
 											<div className='absolute left-16 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1492,9 +1513,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -bottom-5 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[12px] font-semibold text-white group-hover:block'>
+										<div className='absolute -bottom-5 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute right-11 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute  right-11 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1505,7 +1526,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Leaderboard
 											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1518,7 +1539,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Delegation
 											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1531,7 +1552,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[95px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[95px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Calendar
 											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1553,8 +1574,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>
 				{!sidebarCollapsed ? (
 					<>
-						<div className='fixed bottom-0 left-0 w-full py-3'>
-							<div className='mt-10 flex items-center justify-center gap-2'>
+						<div className='fixed bottom-0 left-0 w-full bg-white py-3 dark:bg-section-dark-overlay'>
+							<div className='mt-5 flex items-center justify-center gap-2'>
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
@@ -1562,7 +1583,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Townhall
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1575,7 +1596,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Polkasafe
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1588,7 +1609,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Fellowship
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1601,7 +1622,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-[13px] font-semibold text-white group-hover:block'>
+										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Staking
 											<div className='absolute left-14  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1612,8 +1633,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</>
 				) : (
 					<>
-						<div className='fixed bottom-0  left-0 w-full py-3'>
-							<div className='mt-10 flex flex-col items-center justify-center gap-2'>
+						<div className='fixed bottom-0 left-0 z-[1000]  w-full bg-white py-3 dark:bg-section-dark-overlay'>
+							<div className='mt-5 flex flex-col items-center justify-center gap-2'>
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
@@ -1621,7 +1642,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Townhall
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1634,7 +1655,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[11px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Polkasafe
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1647,7 +1668,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Fellowship
 											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1660,7 +1681,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-[10px] font-semibold text-white group-hover:block'>
+										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Staking
 											<div className='absolute left-1/2  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>

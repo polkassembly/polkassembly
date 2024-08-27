@@ -83,34 +83,43 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		}
 		console.log({ here: 'hereee' });
 
-		const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
-		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-		if (parsedReferendumInfo?.ongoing?.tally) {
-			console.log({ here: 'hereee 2' });
+		try {
+			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
+			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				console.log({ here: 'hereee 2' });
 
-			setTallyData({
-				ayes:
-					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.ayes),
-				nays:
-					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.nays),
-				support:
-					typeof parsedReferendumInfo.ongoing.tally.support === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.support)
-			});
-		} else {
-			console.log('hereeee3');
+				setTallyData({
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.nays),
+					support:
+						typeof parsedReferendumInfo.ongoing.tally.support === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.support)
+				});
+				setIsLoading(false);
+			} else {
+				setTallyData({
+					ayes: new BN(tally?.ayes || 0, 'hex'),
+					nays: new BN(tally?.nays || 0, 'hex'),
+					support: new BN(tally?.support || 0, 'hex')
+				});
+				setIsLoading(false);
+			}
+		} catch (err) {
 			setTallyData({
 				ayes: new BN(tally?.ayes || 0, 'hex'),
 				nays: new BN(tally?.nays || 0, 'hex'),
 				support: new BN(tally?.support || 0, 'hex')
 			});
+			setIsLoading(false);
 		}
-		setIsLoading(false);
 	};
 
 	useEffect(() => {

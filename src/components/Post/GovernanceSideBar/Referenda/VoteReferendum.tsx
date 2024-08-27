@@ -76,7 +76,7 @@ interface Props {
 	theme?: string;
 	trackNumber?: number;
 	setUpdateTally?: (pre: boolean) => void;
-	updateTally: boolean;
+	updateTally?: boolean;
 }
 export interface INetworkWalletErr {
 	message: string;

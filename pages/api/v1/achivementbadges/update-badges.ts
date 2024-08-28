@@ -47,7 +47,7 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 		console.warn(`No addresses found for user: ${user.username}`);
 		return false;
 	}
-	const networksToCheck = ['collectives', 'westend-collectives'];
+	const networksToCheck = ['collectives'];
 	for (const network of networksToCheck) {
 		const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 		if (!wsProviderUrl) {

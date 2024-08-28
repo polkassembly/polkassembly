@@ -95,24 +95,44 @@ export const getDelegatesData = async (network: string, address?: string | null)
 			parityDelegates = await fetch('https://paritytech.github.io/governance-ui/data/kusama/delegates.json').then((res) => res.json());
 			W3fDelegates = w3fDelegatesKusama;
 		}
-		let data;
+
+		let subsquidRes = [];
 
 		if (encodedAddr) {
-			data = await fetchSubsquid({
+			const data = await fetchSubsquid({
 				network,
 				query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA,
 				variables: { address: encodedAddr }
 			});
+
+			subsquidRes = data?.['data']?.votingDelegations || [];
 		} else {
-			data = await fetchSubsquid({
-				network,
-				query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA
-			});
+			if (process.env.IS_CACHING_ALLOWED == '1') {
+				const redisKey = generateKey({ govType: 'OpenGov', keyType: 'trackDelegationData', network });
+				const redisData = await redisGet(redisKey);
+
+				if (redisData) {
+					subsquidRes = JSON.parse(redisData);
+				}
+			}
+
+			if (!subsquidRes?.length) {
+				const data = await fetchSubsquid({
+					network,
+					query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA
+				});
+
+				subsquidRes = data?.['data']?.votingDelegations || [];
+				if (process.env.IS_CACHING_ALLOWED == '1') {
+					const redisKey = generateKey({ govType: 'OpenGov', keyType: 'trackDelegationData', network });
+					await redisSetex(redisKey, TTL_DURATION, JSON.stringify(subsquidRes));
+				}
+			}
 		}
 
 		const totalDelegatorsObj: Record<string, { receivedDelegationsCount: Record<string, number>; delegatedBalance: BN; address: string; votedProposalCount?: number }> = {};
 
-		data['data']?.votingDelegations.forEach((delegation: { to: string; balance: string; from: string; lockPeriod: number }) => {
+		subsquidRes.forEach((delegation: { to: string; balance: string; from: string; lockPeriod: number }) => {
 			if (!totalDelegatorsObj[delegation.to]) {
 				const balance = delegation.lockPeriod ? new BN(delegation.balance).mul(new BN(delegation.lockPeriod)) : new BN(delegation.balance).div(new BN('10'));
 				totalDelegatorsObj[delegation.to] = {

@@ -6,14 +6,16 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { isValidNetwork } from '~src/api-utils';
 import { MessageType } from '~src/auth/types';
 import fetchSubsquid from '~src/util/fetchSubsquid';
-import { GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA } from '~src/queries';
-import BN from 'bn.js';
+import { GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA } from '~src/queries';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { IDelegationAnalytics, IDelegatorsAndDelegatees } from '~src/redux/trackLevelAnalytics/@types';
+import { IDelegationAnalytics } from '~src/redux/trackLevelAnalytics/@types';
+import { generateKey } from '~src/util/getRedisKeys';
+import { redisGet, redisSetex } from '~src/auth/redis';
+import getUpdateDelegationData, { ISubsquidRes } from '~src/components/TrackLevelAnalytics/utils/getUpdateDelegationData';
 
-const ZERO_BN = new BN(0);
+const TTL_DURATION = 3600 * 24; // 23 Hours or 82800 seconds
 
 export const getTrackDelegationAnalyticsStats = async ({ network, trackId }: { network: string; trackId: number }) => {
 	try {
@@ -21,70 +23,33 @@ export const getTrackDelegationAnalyticsStats = async ({ network, trackId }: { n
 
 		if (typeof trackId !== 'number') throw apiErrorWithStatusCode(messages.INVALID_PARAMS, 400);
 
-		const data = await fetchSubsquid({
-			network,
-			query: GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA,
-			variables: {
-				track_num: Number(trackId)
+		let subsquidRes = [];
+
+		if (process.env.IS_CACHING_ALLOWED == '1') {
+			const redisKey = generateKey({ govType: 'OpenGov', keyType: 'trackDelegationData', network });
+			const redisData = await redisGet(redisKey);
+
+			if (redisData) {
+				subsquidRes = JSON.parse(redisData);
 			}
-		});
-
-		let totalCapital = ZERO_BN;
-		let totalVotesBalance = ZERO_BN;
-		const totalDelegatorsObj: IDelegatorsAndDelegatees = {};
-		const totalDelegateesObj: IDelegatorsAndDelegatees = {};
-
-		if (data['data']?.votingDelegations?.length) {
-			data['data']?.votingDelegations.map((delegation: { lockPeriod: number; balance: string; from: string; to: string }) => {
-				const bnBalance = new BN(delegation?.balance);
-				const bnConviction = new BN(delegation?.lockPeriod || 1);
-				const vote = delegation?.lockPeriod ? bnBalance.mul(bnConviction) : bnBalance.div(new BN('10'));
-
-				totalVotesBalance = totalVotesBalance.add(vote);
-
-				totalCapital = totalCapital.add(bnBalance);
-
-				if (totalDelegateesObj[delegation?.to] === undefined) {
-					totalDelegateesObj[delegation?.to] = {
-						count: 1,
-						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
-					};
-				} else {
-					totalDelegateesObj[delegation?.to] = {
-						count: totalDelegateesObj[delegation?.to]?.count + 1,
-						data: [
-							...(totalDelegateesObj[delegation?.to]?.data || []),
-							{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }
-						]
-					};
-				}
-				if (totalDelegatorsObj[delegation?.from] === undefined) {
-					totalDelegatorsObj[delegation?.from] = {
-						count: 1,
-						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
-					};
-				} else {
-					totalDelegatorsObj[delegation?.from] = {
-						count: totalDelegatorsObj[delegation?.to]?.count + 1,
-						data: [
-							...(totalDelegatorsObj[delegation?.to]?.data || []),
-							{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation.to, votingPower: vote.toString() }
-						]
-					};
-				}
-			});
 		}
 
-		const delegationStats: IDelegationAnalytics = {
-			delegateesData: totalDelegateesObj,
-			delegatorsData: totalDelegatorsObj,
-			totalCapital: totalCapital.toString(),
-			totalDelegates: Object.keys(totalDelegateesObj)?.length,
-			totalDelegators: Object.keys(totalDelegatorsObj)?.length,
-			totalVotesBalance: totalVotesBalance.toString()
-		};
+		if (!subsquidRes?.length) {
+			const data = await fetchSubsquid({
+				network,
+				query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA
+			});
+
+			subsquidRes = data?.['data']?.votingDelegations || [];
+			if (process.env.IS_CACHING_ALLOWED == '1') {
+				const redisKey = generateKey({ govType: 'OpenGov', keyType: 'trackDelegationData', network });
+				await redisSetex(redisKey, TTL_DURATION, JSON.stringify(subsquidRes));
+			}
+		}
+
+		const results = getUpdateDelegationData(subsquidRes.filter((item: ISubsquidRes) => item?.track == trackId));
 		return {
-			data: delegationStats,
+			data: results,
 			error: null,
 			status: 200
 		};

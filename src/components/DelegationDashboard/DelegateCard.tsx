@@ -60,7 +60,15 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 	};
 
 	const handleDelegationContent = (content: string) => {
-		return content.split('\n').find((item: string) => item.length > 0) || '';
+		const array = content.split('\n');
+		let data = '';
+
+		array?.map((item) => {
+			if (item?.length > 0 && data?.length < 20) {
+				data = item;
+			}
+		});
+		return data;
 	};
 
 	return (

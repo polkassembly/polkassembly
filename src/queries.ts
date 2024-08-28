@@ -2306,15 +2306,9 @@ export const TOTAL_PROPOSALS_AND_VOTES_COUNT_BY_ADDRESSES = `query MyQuery($addr
 }
 `;
 
-export const TOTAL_DELEGATATION_STATS = `query DelegationStats ($type_eq:DelegationType!=OpenGov){
+export const TOTAL_DELEGATATION_STATS = `query DelegationStats{
  totalDelegatedVotes: convictionDelegatedVotesConnection(orderBy: id_ASC, where: {removedAtBlock_isNull: true}) {
     totalCount
-  }
-  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:$type_eq}) {
-    from
-    to
-    balance
-    track
   }
 }
 `;
@@ -2490,22 +2484,13 @@ diffActiveProposals: proposalsConnection(where: { status_not_in: [Cancelled, Tim
 }
 }`;
 
-export const GET_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `
-query DelegationStats ($track_num:Int!){
-  votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov, track_eq: $track_num}) {
-    from
-    to
-    balance
-    lockPeriod
-  }
-}`;
-
 export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationStats($address: String){
   votingDelegations(where: {endedAtBlock_isNull: true, type_eq:OpenGov, to_eq: $address}) {
     from
     to
     balance
     lockPeriod
+    track
   }
 }
 `;

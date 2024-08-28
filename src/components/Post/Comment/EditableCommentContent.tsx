@@ -17,7 +17,7 @@ import copyToClipboard from 'src/util/copyToClipboard';
 import styled from 'styled-components';
 
 import { MessageType } from '~src/auth/types';
-import { useApiContext, useCommentDataContext, usePostDataContext } from '~src/context';
+import { useApiContext, useCommentDataContext, usePeopleChainApiContext, usePostDataContext } from '~src/context';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
@@ -90,6 +90,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	const { network } = useNetworkSelector();
 	const { id, username, picture, loginAddress, addresses, allowed_roles, isUserOnchainVerified } = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { resolvedTheme: theme } = useTheme();
 	const [replyForm] = Form.useForm();
 	const [form] = Form.useForm();
@@ -122,11 +123,11 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		(async () => {
-			if (!api || !apiReady || !proposer) return;
-			const onChainUsername = await getOnChainUsername(api, proposer, network === 'kilt');
+			if ((!api && !peopleChainApi) || !proposer || !(apiReady && peopleChainApiReady)) return;
+			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();
-	}, [api, apiReady, network, proposer]);
+	}, [api, apiReady, network, proposer, peopleChainApi, peopleChainApiReady]);
 
 	const toggleReply = async () => {
 		let usernameContent = '';
@@ -634,7 +635,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	useEffect(() => {
 		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	return (
 		<>

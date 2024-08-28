@@ -259,7 +259,7 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	}, [loginAddress, window, beneficiaries, api, apiReady]);
 
 	const handleIdentityInfo = async () => {
-		if ((!api && !peopleChainApi) || !proposerAddress || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !proposerAddress || !apiReady) return;
 
 		const { isGood } = await getIdentityInformation({
 			address: proposerAddress,

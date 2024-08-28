@@ -72,7 +72,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 	const [open, setOpen] = useState<boolean>(false);
 
 	const handleIdentity = async (delegates: IDelegateAddressDetails[]) => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		const identityInfo: { [key: string]: any | null } = {};
 		const identityInfoPromises = delegates?.map(async (delegate: IDelegateAddressDetails) => {

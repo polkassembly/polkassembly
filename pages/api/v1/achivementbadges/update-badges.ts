@@ -12,7 +12,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
 import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '~src/queries';
 import { getTotalSupply } from '../utils/achievementbages';
-import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import { isOpenGovSupported, openGovNetworks } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
 import { chainProperties } from '~src/global/networkConstants';
@@ -85,31 +85,40 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 }
 
 // Badge3: Check if the user is on a governance chain (Gov1)
-async function checkCouncil(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+async function checkCouncil(user: ProfileDetailsResponse): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0) {
 		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 
-	if (isOpenGovSupported(network || 'polkodot') || !network) return false;
+	for (const network of openGovNetworks) {
+		const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
+		if (!wsProviderUrl) {
+			console.error(`${messages.INVALID_NETWORK}: ${network}`);
+			return false;
+		}
 
-	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
-	if (!wsProviderUrl) {
-		console.error(messages.INVALID_NETWORK);
-		return false;
+		const wsProvider = new WsProvider(wsProviderUrl);
+		const api = await ApiPromise.create({ provider: wsProvider });
+		if (!api) {
+			console.error(messages.ERROR_IN_EVALUATING_BADGES);
+			return false;
+		}
+		try {
+			const members = await api?.query.council?.members();
+			const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
+			if (members.some((member) => encodedAddresses.includes(member.toString()))) {
+				await api.disconnect();
+				return true;
+			}
+		} catch (error) {
+			console.error(`${messages.ERROR_IN_EVALUATING_BADGES} on network ${network}`, error);
+		} finally {
+			await api.disconnect();
+		}
 	}
-	const wsProvider = new WsProvider(wsProviderUrl);
-	const api = await ApiPromise.create({ provider: wsProvider });
-	try {
-		const members = await api?.query.council?.members();
-		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
-		return members.some((member) => encodedAddresses.includes(member.toString()));
-	} catch (error) {
-		console.error(messages.ERROR_IN_EVALUATING_BADGES);
-		return false;
-	} finally {
-		await api.disconnect();
-	}
+
+	return false;
 }
 
 // Badge 4: Check if the user is an Active Voter, participating in more than 15% of proposals
@@ -250,7 +259,7 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	const badgeChecks = await Promise.all([
 		checkDecentralisedVoice(user, network),
 		checkFellow(user),
-		checkCouncil(user, network),
+		checkCouncil(user),
 		checkActiveVoter(user, network),
 		checkWhale(user, network)
 		// checkSteadfastCommentor(user),

@@ -42,59 +42,51 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: st
 }
 
 // Badge2: Check if the user qualifies for the Fellow badge based on rank
-async function checkFellow(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
+async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0) {
 		console.warn(`No addresses found for user: ${user.username}`);
 		return false;
 	}
-
-	// Only run for collectives or westend-collectives networks
-	if (network !== 'collectives' && network !== 'westend-collectives') {
-		return false;
-	}
-
-	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
-
-	if (!wsProviderUrl) {
-		console.error(`WebSocket provider URL not found for network: ${network}`);
-		return false;
-	}
-
-	const wsProvider = new WsProvider(wsProviderUrl);
-	const api = await ApiPromise.create({ provider: wsProvider }).catch((err) => {
-		console.error('API creation failed:', err);
-		return null;
-	});
-	const addresses = user.addresses;
-	try {
-		// Ensure the API query is available for the network
-		if (!api?.query?.fellowshipCollective?.members?.entries) {
-			console.warn('fellowshipCollective or members query is not available on this network.');
-			return false;
+	const networksToCheck = ['collectives', 'westend-collectives'];
+	for (const network of networksToCheck) {
+		const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
+		if (!wsProviderUrl) {
+			console.error(`WebSocket provider URL not found for network: ${network}`);
+			continue;
 		}
-		// Fetch fellowship members
-		const entries: [any, IFellow][] = await api?.query?.fellowshipCollective.members.entries();
-		// Map over addresses and check their ranks
-		const ranks = addresses?.map((address) => {
-			const encodedAddress = getEncodedAddress(address, network);
-			// Check each entry for a matching address
-			for (const [key, value] of entries) {
-				const memberAccountIds = key.args.map((arg: any) => arg.toString());
-				// If the user's address matches, return the rank
-				if (memberAccountIds.includes(encodedAddress)) {
-					const userRank = value?.rank || 0;
-					return userRank;
-				}
-			}
-			// Return 0 if no match is found
-			return 0;
+		const wsProvider = new WsProvider(wsProviderUrl);
+		const api = await ApiPromise.create({ provider: wsProvider }).catch((err) => {
+			console.error('API creation failed:', err);
+			return null;
 		});
-		// Return true if any rank is greater than or equal to 1
-		return ranks.some((rank) => rank >= 1);
-	} catch (error) {
-		console.error('Failed to check fellow status:', error);
-		return false;
+		if (!api) continue;
+		try {
+			if (!api?.query?.fellowshipCollective?.members?.entries) {
+				console.warn(`fellowshipCollective or members query is not available on network: ${network}`);
+				continue;
+			}
+			const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
+			const ranks = user.addresses.map((address) => {
+				const encodedAddress = getEncodedAddress(address, network);
+				for (const [key, value] of entries) {
+					const memberAccountIds = key.args.map((arg: any) => arg.toString());
+					if (memberAccountIds.includes(encodedAddress)) {
+						const userRank = value?.rank || 0;
+						return userRank;
+					}
+				}
+				return 0;
+			});
+			if (ranks.some((rank) => rank >= 1)) {
+				return true;
+			}
+		} catch (error) {
+			console.error(`Failed to check fellow status on network ${network}:`, error);
+		} finally {
+			api?.disconnect();
+		}
 	}
+	return false;
 }
 
 // Badge3: Check if the user is on a governance chain (Gov1)
@@ -264,7 +256,7 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 
 	const badgeChecks = await Promise.all([
 		checkDecentralisedVoice(user, network),
-		checkFellow(user, network),
+		checkFellow(user),
 		checkCouncil(user, network),
 		checkActiveVoter(user, network),
 		checkWhale(user, network)

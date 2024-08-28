@@ -41,7 +41,6 @@ interface Props {
 	address: string;
 	theme?: string;
 	trackNumber?: number;
-	setUpdateTally?: (pre: boolean) => void;
 	forSpecificPost?: boolean;
 	postEdit?: any;
 }
@@ -95,7 +94,6 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-// const VoteReferendumCard = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
 const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecificPost }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useAppDispatch();

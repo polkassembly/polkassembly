@@ -123,7 +123,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		(async () => {
-			if ((!api && !peopleChainApi) || !proposer) return;
+			if (!api || !proposer || !apiReady) return;
 			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();
@@ -635,7 +635,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 	useEffect(() => {
 		setCommentAllowed(id === proposerId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	return (
 		<>

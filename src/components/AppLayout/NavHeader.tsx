@@ -366,7 +366,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
+				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
 					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>

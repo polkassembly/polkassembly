@@ -677,6 +677,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 		const handleVisibilityChange = () => {
 			if (document.visibilityState === 'visible') {
 				setCurvesLoading(true);
+				setUpdateTally(!updateTally);
 				handleDebounceCurveData();
 			} else {
 				setCurvesLoading(false);
@@ -1130,6 +1131,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															proposalType={proposalType}
 															trackNumber={trackNumber as any}
 															setUpdateTally={setUpdateTally}
+															updateTally={updateTally}
 														/>
 														{RenderLastVote}
 													</div>
@@ -1193,6 +1195,7 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 																proposalType={proposalType}
 																trackNumber={trackNumber as any}
 																setUpdateTally={setUpdateTally}
+																updateTally={updateTally}
 															/>
 														)}
 														{RenderLastVote}
@@ -1211,7 +1214,6 @@ const GovernanceSideBar: FC<IGovernanceSidebarProps> = (props) => {
 															setAyeNayAbstainCounts={setAyeNayAbstainCounts}
 															tally={tally}
 															updateTally={updateTally}
-															setUpdatetally={setUpdateTally}
 														/>
 														<RefV2ThresholdData
 															canVote={canVote}

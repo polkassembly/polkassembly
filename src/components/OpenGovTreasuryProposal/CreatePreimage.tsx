@@ -291,27 +291,6 @@ const CreatePreimage = ({
 	};
 
 	useEffect(() => {
-		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
-		let data: any = localStorage.getItem('treasuryProposalData');
-		data = JSON.parse(data);
-		if (data && data?.createPreimageForm) {
-			const isPreimage = data?.isPreimage;
-			setIsPreimage(isPreimage);
-			setSteps({ percent: 20, step: 1 });
-			const createPreimageForm = data?.createPreimageForm?.[!isPreimage ? 'withoutPreimageForm' : 'withPreimageForm'];
-			handleStateChange(createPreimageForm);
-			if (data.preimageCreated) setPreimageCreated(data.preimageCreated);
-			if (data.preimageLinked) setPreimageLinked(data.preimageLinked);
-		}
-		if (!network) return;
-		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
-			unit: chainProperties[network].tokenSymbol
-		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
-
-	useEffect(() => {
 		if (!generalIndex) return;
 		if (beneficiaryAddresses.length == 1) return;
 		dispatchBeneficiaryAddresses({
@@ -434,7 +413,7 @@ const CreatePreimage = ({
 			let [balance] = inputToBn(`${beneficiary.amount}`, network, false);
 
 			//asset associated balance;
-			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex, network }) || ZERO_BN;
+			balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex, network, usingInTx: true }) || ZERO_BN;
 			txArr.push(
 				api?.tx?.treasury?.spend(
 					{
@@ -658,6 +637,7 @@ const CreatePreimage = ({
 		form.setFieldValue('preimage_length', 0);
 		if (!api || !apiReady || !isHex(preimageHash, 256) || preimageHash?.length < 0) return;
 		setLoading(true);
+
 		const { data, error } = await nextApiClientFetch<IPreimageData>(`api/v1/preimages/latest?hash=${preimageHash}`);
 
 		if (data && !data?.message) {
@@ -671,28 +651,29 @@ const CreatePreimage = ({
 
 					let balance = new BN(data?.proposedCall?.args?.amount || '0') || ZERO_BN;
 
-					const args = convertAnyHexToASCII(data?.proposedCall?.args, network);
-
+					const args = data?.proposedCall?.args;
 					const newBeneficiaryAddress = {
 						address: args?.beneficiary,
 						amount: balance.toString()
 					};
 
-					if (args?.assetKind?.assetId?.value?.interior) {
+					if (args?.assetKind?.assetId) {
 						const call = args?.assetKind?.assetId?.value?.interior?.value;
 						const assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 						setGeneralIndex(assetId);
-
-						const beneficiaryAddress =
+						const beneficiaryAddress = convertAnyHexToASCII(
 							typeof args?.beneficiary === 'string'
 								? args?.beneficiary
 								: (args?.beneficiary as any)?.value?.length
 								? (args?.beneficiary as any)?.value
-								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '';
+								: ((args?.beneficiary as any)?.value?.interior?.value?.id as string) || '',
+							network
+						);
 
 						newBeneficiaryAddress.address = beneficiaryAddress;
-						balance = getFormatedBalanceFromAsset({ balance: balance || ZERO_BN, generalIndex: generalIndex || '', network }) || ZERO_BN;
+						balance = getFormatedBalanceFromAsset({ balance: balance, generalIndex: assetId || generalIndex, network });
 					}
+					setFundingAmount(balance);
 					dispatchBeneficiaryAddresses({
 						payload: {
 							address: newBeneficiaryAddress.address,
@@ -703,8 +684,6 @@ const CreatePreimage = ({
 					});
 
 					dispatch(setBeneficiaries([newBeneficiaryAddress.address]));
-
-					setFundingAmount(balance);
 					setPreimageLength(data.length);
 					form.setFieldValue('preimage_length', data.length);
 					onChangeLocalStorageSet(
@@ -733,8 +712,30 @@ const CreatePreimage = ({
 		setLoading(false);
 	};
 
+	useEffect(() => {
+		form.setFieldValue('at_block', currentBlock?.add(BN_THOUSAND) || BN_ONE);
+		let data: any = localStorage.getItem('treasuryProposalData');
+		data = JSON.parse(data);
+		if (data && data?.createPreimageForm) {
+			const isPreimage = data?.isPreimage;
+			setIsPreimage(isPreimage);
+			setSteps({ percent: 20, step: 1 });
+			const createPreimageForm = data?.createPreimageForm?.[!isPreimage ? 'withoutPreimageForm' : 'withPreimageForm'];
+			existPreimageData(createPreimageForm?.preimageHash, createPreimageForm?.isPreimage);
+			handleStateChange(createPreimageForm);
+			if (data.preimageCreated) setPreimageCreated(data.preimageCreated);
+			if (data.preimageLinked) setPreimageLinked(data.preimageLinked);
+		}
+		if (!network) return;
+		formatBalance.setDefaults({
+			decimals: chainProperties[network].tokenDecimals,
+			unit: chainProperties[network].tokenSymbol
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
+
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 2000), []);
+	const debounceExistPreimageFn = useCallback(_.debounce(existPreimageData, 1000), []);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const debounceGetPreimageTxFee = useCallback(_.debounce(getPreimageTxFee, 500), []);
 
@@ -892,6 +893,7 @@ const CreatePreimage = ({
 		const [fundingAmt] = inputToBn(inputAmountValue || '0', network, false);
 		return fundingAmt;
 	};
+
 	return (
 		<Spin
 			spinning={loading}

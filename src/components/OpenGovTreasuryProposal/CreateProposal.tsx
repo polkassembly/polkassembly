@@ -34,6 +34,8 @@ import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 const ZERO_BN = new BN(0);
 
@@ -53,7 +55,6 @@ interface Props {
 	content: string;
 	tags: string[];
 	setPostId: (pre: number) => void;
-	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
 	generalIndex?: string | null;
@@ -81,7 +82,6 @@ const CreateProposal = ({
 	content,
 	tags,
 	setPostId,
-	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
 	generalIndex = null,
@@ -102,6 +102,7 @@ const CreateProposal = ({
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -120,9 +121,15 @@ const CreateProposal = ({
 			decimals: chainProperties[network].tokenDecimals,
 			unit
 		});
+		if (!api || !apiReady) return;
+
+		(async () => {
+			const balances = await userProfileBalances({ address: getEncodedAddress(proposerAddress, network) || proposerAddress, api, apiReady, network });
+			setAvailableBalance(balances?.lockedBalance || ZERO_BN);
+		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, api, apiReady]);
 
 	useEffect(() => {
 		setShowAlert(false);

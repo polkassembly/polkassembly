@@ -503,7 +503,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							inputAmountValue={inputAmountValue}
 							generalIndex={generalIndex}
 							discussionLink={discussionLink}
-							availableBalance={availableBalance}
 							title={title}
 							content={content}
 							tags={tags}

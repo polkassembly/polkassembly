@@ -12,7 +12,7 @@ import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
 import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '~src/queries';
 import { getTotalSupply } from '../utils/achievementbages';
-import { isOpenGovSupported, openGovNetworks } from '~src/global/openGovNetworks';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getW3fDelegateCheck } from '../delegations/getW3fDelegateCheck';
 import { chainProperties } from '~src/global/networkConstants';
@@ -85,40 +85,31 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 }
 
 // Badge3: Check if the user is on a governance chain (Gov1)
-async function checkCouncil(user: ProfileDetailsResponse): Promise<boolean> {
-	if (!user?.addresses || user.addresses.length === 0) {
+async function checkCouncil(user: ProfileDetailsResponse, network: string): Promise<boolean> {
+	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
 		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 
-	for (const network of openGovNetworks) {
-		const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
-		if (!wsProviderUrl) {
-			console.error(`${messages.INVALID_NETWORK}: ${network}`);
-			return false;
-		}
+	if (isOpenGovSupported(network || 'polkodot') || !network) return false;
 
-		const wsProvider = new WsProvider(wsProviderUrl);
-		const api = await ApiPromise.create({ provider: wsProvider });
-		if (!api) {
-			console.error(messages.ERROR_IN_EVALUATING_BADGES);
-			return false;
-		}
-		try {
-			const members = await api?.query.council?.members();
-			const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
-			if (members.some((member) => encodedAddresses.includes(member.toString()))) {
-				await api.disconnect();
-				return true;
-			}
-		} catch (error) {
-			console.error(`${messages.ERROR_IN_EVALUATING_BADGES} on network ${network}`, error);
-		} finally {
-			await api.disconnect();
-		}
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
+	if (!wsProviderUrl) {
+		console.error(messages.INVALID_NETWORK);
+		return false;
 	}
-
-	return false;
+	const wsProvider = new WsProvider(wsProviderUrl);
+	const api = await ApiPromise.create({ provider: wsProvider });
+	try {
+		const members = await api?.query.council?.members();
+		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
+		return members.some((member) => encodedAddresses.includes(member.toString()));
+	} catch (error) {
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
+		return false;
+	} finally {
+		await api.disconnect();
+	}
 }
 
 // Badge 4: Check if the user is an Active Voter, participating in more than 15% of proposals
@@ -259,7 +250,7 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	const badgeChecks = await Promise.all([
 		checkDecentralisedVoice(user, network),
 		checkFellow(user),
-		checkCouncil(user),
+		checkCouncil(user, network),
 		checkActiveVoter(user, network),
 		checkWhale(user, network)
 		// checkSteadfastCommentor(user),
@@ -294,7 +285,7 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 	const userDocRef = firestore_db.collection('users').doc(userId);
 
 	const userDoc = await userDocRef.get();
-	if (!userDoc.exists) {
+	if (!userDoc.exists || !userDoc.data()?.profile) {
 		console.error(messages.USER_NOT_FOUND);
 		return;
 	}
@@ -326,7 +317,6 @@ export async function updateUserBadges(username: string, network: string): Promi
 		console.error(messages.API_FETCH_ERROR, error);
 		return;
 	}
-
 	const userId = user?.user_id;
 	const userDocRef = firestore_db.collection('users').doc(userId?.toString() || '');
 	let newBadges: Badge[] = [];
@@ -340,14 +330,12 @@ export async function updateUserBadges(username: string, network: string): Promi
 	const validExistingBadges = existingBadges.filter((existingBadge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
 	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge) => existingBadge.name === newBadge.name));
 	const updatedBadges = [...validExistingBadges, ...filteredNewBadges];
+	const updateData = {
+		'profile.achievement_badges': updatedBadges.length > 0 ? updatedBadges : []
+	};
 
 	try {
-		await userDocRef.update({
-			profile: {
-				...(user?.achievement_badges || {}),
-				achievement_badges: updatedBadges
-			}
-		});
+		await userDocRef.update(updateData);
 		console.log(messages.SUCCESS);
 	} catch (error) {
 		console.error(messages.ERROR_IN_UPDATING_BADGES, error);

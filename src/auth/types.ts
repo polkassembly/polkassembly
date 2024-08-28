@@ -266,7 +266,7 @@ export interface SubscanAPIResponseType {
 export enum BadgeName {
 	DECENTRALISED_VOICE = 'Decentralised Voice',
 	FELLOW = 'Fellow',
-	COUNCIL = 'Council',
+	COUNCIL = 'Council Member',
 	ACTIVE_VOTER = 'Active Voter',
 	WHALE = 'Whale'
 	// STEADFAST_COMMENTOR = 'Steadfast Commentor',

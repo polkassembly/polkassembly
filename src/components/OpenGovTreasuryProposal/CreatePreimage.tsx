@@ -975,6 +975,27 @@ const CreatePreimage = ({
 									/>
 								</Form.Item>
 							</div>
+							<div className='mt-6'>
+								<label className='text-sm text-lightBlue dark:text-blue-dark-medium'>
+									Select Track{' '}
+									<span>
+										<HelperTooltip
+											text='Track selection is done based on the amount requested.'
+											className='ml-1'
+										/>
+									</span>
+								</label>
+								<SelectTracks
+									tracksArr={trackArr}
+									onTrackChange={(track) => {
+										setSelectedTrack(track);
+										onChangeLocalStorageSet({ selectedTrack: track }, isPreimage);
+										getPreimageTxFee();
+										setSteps({ percent: 100, step: 1 });
+									}}
+									selectedTrack={selectedTrack}
+								/>
+							</div>
 						</>
 					)}
 					{isPreimage === false && (

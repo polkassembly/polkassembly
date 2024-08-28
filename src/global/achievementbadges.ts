@@ -15,15 +15,9 @@ export const badgeNames = ['Decentralised Voice', 'Fellow', 'Council Member', 'A
 
 export const badgeDetails: BadgeDetails[] = [
 	{
-		description: 'Receive delegation of 1,000,000 DOT at 6x conviction from Web3 Foundation to unlock this badge',
+		description: 'Receive delegation of 1,000,000 at 6x conviction from Web3 Foundation to unlock this badge.',
 		img: '/assets/badges/decentralised_voice.svg',
-		name: BadgeName.DECENTRALISED_VOICE_POLKADOT,
-		requirements: 'Must be a delegate on the Polkadot network.'
-	},
-	{
-		description: 'Receive delegation of 1,000,000 KSM at 6x conviction from Web3 Foundation to unlock this badge.',
-		img: '/assets/badges/decentralised_voice.svg',
-		name: BadgeName.DECENTRALISED_VOICE_KUSAMA,
+		name: BadgeName.DECENTRALISED_VOICE,
 		requirements: 'Must be a delegate on the Kusama network.'
 	},
 	{

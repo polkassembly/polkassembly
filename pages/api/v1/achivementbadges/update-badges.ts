@@ -4,7 +4,7 @@
 
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { firestore_db } from '~src/services/firebaseInit';
-import { Badge, ProfileDetailsResponse, IFellow, ProfileDetails } from '~src/auth/types';
+import { Badge, ProfileDetailsResponse, ProfileDetails } from '~src/auth/types';
 import BN from 'bn.js';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
@@ -20,6 +20,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import dayjs from 'dayjs';
 import { badgeNames } from '~src/global/achievementbadges';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
+import messages from '~src/auth/utils/messages';
 
 // Badge1: Check if the user is a Decentralised Voice delegate
 async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: string): Promise<boolean> {
@@ -32,11 +33,11 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: st
 		if (data) {
 			return data?.isW3fDelegate ?? false;
 		} else {
-			console.log(error);
+			console.log(messages.ERROR_IN_EVALUATING_BADGES, error);
 			return false;
 		}
 	} catch (err) {
-		console.error(`Unexpected error while checking W3F delegate status for ${user.username}:`, err);
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	}
 }
@@ -44,13 +45,13 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: st
 // Badge2: Check if the user qualifies for the Fellow badge based on rank
 async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 	if (!user?.addresses?.length) {
-		console.warn(`No addresses found for user: ${user.username}`);
+		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 	const network = 'collectives';
 	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 	if (!wsProviderUrl) {
-		console.error(`WebSocket provider URL not found for network: ${network}`);
+		console.error(messages.INVALID_ADDRESS);
 		return false;
 	}
 	let api: ApiPromise | null = null;
@@ -58,19 +59,15 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 		const wsProvider = new WsProvider(wsProviderUrl);
 		api = await ApiPromise.create({ provider: wsProvider });
 		if (!api.query?.fellowshipCollective?.members?.entries) {
-			console.warn(`fellowshipCollective or members query is not available on network: ${network}`);
+			console.warn(messages.INVALID_ADDRESS);
 			return false;
 		}
 		const entries = await api.query.fellowshipCollective.members.entries();
 		const hasFellowRank = user.addresses.some((address) => {
 			const encodedAddress = getEncodedAddress(address, network);
-
 			for (const [key, value] of entries) {
-				const memberAccountIds = key.args.map((arg: any) => arg.toString());
-
-				if (memberAccountIds.includes(encodedAddress)) {
-					const fellowData = value as unknown as IFellow;
-					const userRank = fellowData.rank || 0;
+				if ((key?.toHuman() as string[])?.includes(encodedAddress || '')) {
+					const userRank = (value?.toHuman() as { rank?: number })?.rank || 0;
 					return userRank >= 1;
 				}
 			}
@@ -78,7 +75,7 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 		});
 		return hasFellowRank;
 	} catch (error) {
-		console.error(`Failed to check fellow status on network ${network}:`, error);
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	} finally {
 		if (api) {
@@ -90,7 +87,7 @@ async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
 // Badge3: Check if the user is on a governance chain (Gov1)
 async function checkCouncil(user: ProfileDetailsResponse, network: string): Promise<boolean> {
 	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
-		console.warn(`No addresses found for user: ${user.username}`);
+		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 
@@ -98,7 +95,7 @@ async function checkCouncil(user: ProfileDetailsResponse, network: string): Prom
 
 	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
 	if (!wsProviderUrl) {
-		console.error(`WebSocket provider URL not found for network: ${network}`);
+		console.error(messages.INVALID_NETWORK);
 		return false;
 	}
 	const wsProvider = new WsProvider(wsProviderUrl);
@@ -108,7 +105,7 @@ async function checkCouncil(user: ProfileDetailsResponse, network: string): Prom
 		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
 		return members.some((member) => encodedAddresses.includes(member.toString()));
 	} catch (error) {
-		console.error('Error checking council members:', error);
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	} finally {
 		await api.disconnect();
@@ -118,7 +115,7 @@ async function checkCouncil(user: ProfileDetailsResponse, network: string): Prom
 // Badge 4: Check if the user is an Active Voter, participating in more than 15% of proposals
 async function checkActiveVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
 	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
-		console.warn(`No addresses found for user: ${user.username}`);
+		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 
@@ -131,20 +128,18 @@ async function checkActiveVoter(user: ProfileDetailsResponse, network: string): 
 			query: GET_PROPOSAL_COUNT,
 			variables: { startDate: formattedDate }
 		});
-
 		const totalProposals = proposalCountRes?.data?.proposalsConnection?.totalCount || 0;
 		if (totalProposals < 5) return false;
-
+		const encodedAddresses = user.addresses.map((addr) => getEncodedAddress(addr, network) || addr);
 		const activeVoterRes = await fetchSubsquid({
 			network: network || 'polkodot',
 			query: GET_ACTIVE_VOTER,
-			variables: { startDate: formattedDate, voterAddresses: user.addresses }
+			variables: { startDate: formattedDate, voterAddresses: encodedAddresses || [] }
 		});
-
 		const userVotes = activeVoterRes?.data?.flattenedConvictionVotes || [];
 		return userVotes.length / totalProposals >= 0.15;
 	} catch (error) {
-		console.error('Error checking Active Voter status:', error);
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	}
 }
@@ -152,7 +147,7 @@ async function checkActiveVoter(user: ProfileDetailsResponse, network: string): 
 // Badge 5: Check if the user qualifies for the Whale badge, holding more than 0.05% of the total supply
 async function checkWhale(user: ProfileDetailsResponse, network: string): Promise<boolean> {
 	if (!user?.addresses || user.addresses.length === 0 || !isValidNetwork(network)) {
-		console.warn(`No addresses found for user: ${user.username}`);
+		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
 
@@ -179,7 +174,7 @@ async function checkWhale(user: ProfileDetailsResponse, network: string): Promis
 		const whaleThreshold = totalSupply.mul(new BN(5)).div(new BN(10000)); // 0.05% of total supply
 		return totalVotingPower.gte(whaleThreshold);
 	} catch (error) {
-		console.error('Failed to calculate Whale status:', error);
+		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	}
 }
@@ -240,15 +235,15 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	const { data: user, error } = await getUserProfileWithUsername(username);
 
 	if (error || !user) {
-		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);
+		console.error(messages.API_FETCH_ERROR, error);
 		return [];
 	}
 
-	const userId = user.user_id;
+	const userId = user?.user_id;
 	const addresses = user.addresses;
 
 	if (!userId || !addresses || addresses.length === 0) {
-		console.warn(`Invalid user data for ${username}. Skipping badge evaluation.`);
+		console.warn(messages.USER_NOT_FOUND);
 		return [];
 	}
 
@@ -279,7 +274,7 @@ async function evaluateBadges(username: string, network: string): Promise<Badge[
 	if (userId) {
 		await updateUserAchievementBadges(userId.toString(), badges);
 	} else {
-		console.error('Skipping user with missing user_id:', user.username);
+		console.error(messages.USER_NOT_FOUND);
 	}
 
 	return badges;
@@ -291,7 +286,7 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 
 	const userDoc = await userDocRef.get();
 	if (!userDoc.exists) {
-		console.error(`User document with ID ${userId} does not exist.`);
+		console.error(messages.USER_NOT_FOUND);
 		return;
 	}
 	const profile: ProfileDetails = userDoc.data()?.profile || {};
@@ -308,9 +303,9 @@ async function updateUserAchievementBadges(userId: string, newBadges: Badge[]) {
 
 	try {
 		await userDocRef.update(updateData);
-		console.log(`User ID: ${userId}, badges updated successfully.`);
+		console.log(messages.SUCCESS);
 	} catch (error) {
-		console.error(`Failed to update badges for User ID: ${userId}`, error);
+		console.error(messages.ERROR_IN_UPDATING_BADGES, error);
 	}
 }
 
@@ -319,53 +314,52 @@ export async function updateUserBadges(username: string, network: string): Promi
 	const { data: user, error } = await getUserProfileWithUsername(username);
 
 	if (error || !user) {
-		console.error(`Failed to fetch user profile for username: ${username}. Error: ${error}`);
-		throw new Error('User profile fetch failed.');
+		console.error(messages.API_FETCH_ERROR, error);
+		return;
 	}
 
-	const userId = user.user_id;
-	const userDocRef = firestore_db.collection('users').doc(userId.toString());
-
+	const userId = user?.user_id;
+	const userDocRef = firestore_db.collection('users').doc(userId?.toString() || '');
 	let newBadges: Badge[] = [];
-
 	try {
 		newBadges = await evaluateBadges(username, network);
 	} catch (error) {
-		console.error(`Failed to evaluate badges for username: ${username}. Error: ${error}`);
-		throw new Error('Badge evaluation failed.');
+		console.error(messages.ERROR_IN_EVALUATING_BADGES, error);
+		return;
 	}
 	const existingBadges: Badge[] = user?.achievement_badges || [];
 	const validExistingBadges = existingBadges.filter((existingBadge) => newBadges.some((newBadge) => newBadge.name === existingBadge.name));
 	const filteredNewBadges = newBadges.filter((newBadge) => !existingBadges.some((existingBadge) => existingBadge.name === newBadge.name));
 	const updatedBadges = [...validExistingBadges, ...filteredNewBadges];
-	const updateData = {
-		'profile.achievement_badges': updatedBadges.length > 0 ? updatedBadges : []
-	};
 
 	try {
-		await userDocRef.update(updateData);
-		console.log(`User ID: ${userId}, badges updated successfully.`);
+		await userDocRef.update({
+			profile: {
+				...(user?.achievement_badges || {}),
+				achievement_badges: updatedBadges
+			}
+		});
+		console.log(messages.SUCCESS);
 	} catch (error) {
-		console.error(`Failed to update badges for User ID: ${userId}`, error);
-		throw new Error('Badge update failed.');
+		console.error(messages.ERROR_IN_UPDATING_BADGES, error);
 	}
 }
 
 // Main API handler for processing badge updates
 const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== 'POST') {
-		return res.status(405).json({ message: 'Method not allowed.' });
+		return res.status(405).json({ message: messages.METHOD_NOT_ALLOWED });
 	}
 	storeApiKeyUsage(req);
 
 	const { network, username } = req.body;
 
 	if (!network || !isValidNetwork(network)) {
-		return res.status(400).json({ message: 'Invalid network.' });
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
 	}
 
 	if (!username) {
-		return res.status(400).json({ message: 'Username is required.' });
+		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
 	const refinedName = username.replace(/[^a-zA-Z0-9_-]/g, '');
@@ -374,11 +368,11 @@ const handler: NextApiHandler = async (req: NextApiRequest, res: NextApiResponse
 	try {
 		/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 		const result = await updateUserBadges(encodedName, network);
-		console.log('Badges updated successfully for user:', encodedName, result);
+		console.log(messages.SUCCESS);
 
-		return res.status(200).json({ message: 'Badges updated successfully for user.' });
+		return res.status(200).json({ message: messages.SUCCESS });
 	} catch (error) {
-		console.error('Error updating badges for user:', encodedName, error);
+		console.error(messages.ERROR_IN_UPDATING_BADGES, error);
 		return res.status(500).json({ message: 'Failed to update user badges.' });
 	}
 };

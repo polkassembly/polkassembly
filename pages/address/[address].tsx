@@ -19,6 +19,7 @@ import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
+import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
 
 interface IUserProfileProps {
 	activitiesCounts: {
@@ -54,6 +55,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 	const { data, error } = await getUserIdWithAddress(address.toString());
 
 	const userProfile = data || !error ? await getUserProfileWithUserId(Number(data)) : null;
+
 	const userPosts = !userProfile
 		? await getOnChainUserPosts({
 				addresses: [address] || [],
@@ -64,6 +66,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				network,
 				userId: userProfile?.data?.user_id
 		  });
+
+	await updateUserBadges(userProfile?.data?.username || '', network);
 
 	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	let activitiesCounts;

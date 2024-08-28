@@ -304,7 +304,7 @@ const AddressConnectModal = ({
 	};
 
 	const handleWalletClick = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, wallet: Wallet) => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 		localStorage.setItem('selectedWallet', wallet);
 		setAccounts([]);
 		setAddress('');
@@ -358,7 +358,7 @@ const AddressConnectModal = ({
 
 	const handleInitiatorBalance = useCallback(
 		async () => {
-			if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) {
+			if (!api || !apiReady) {
 				return;
 			}
 			try {

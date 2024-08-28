@@ -81,14 +81,11 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
-		console.log({ here: 'hereee' });
 
 		try {
 			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
 			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
 			if (parsedReferendumInfo?.ongoing?.tally) {
-				console.log({ here: 'hereee 2' });
-
 				setTallyData({
 					ayes:
 						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
@@ -179,8 +176,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		handleDebounceAyeNayCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [updateTally]);
-
-	console.log({ data: { ...tallyData, ayes: tallyData?.ayes.toString(), nays: tallyData?.nays.toString() } });
 
 	return (
 		<>

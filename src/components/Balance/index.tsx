@@ -47,7 +47,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	}, [network]);
 
 	useEffect(() => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !address) return;
+		if (!api || !apiReady || !address) return;
 		setLoading(true);
 		if (['genshiro'].includes(network)) {
 			api.query.eqBalances

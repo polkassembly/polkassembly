@@ -97,7 +97,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkBeneficiaryIdentity = async (address: string) => {
-		if ((!api && !peopleChainApi) || !address || !(apiReady && peopleChainApiReady)) {
+		if (!api || !address || !apiReady) {
 			setShowIdentityInfoCardForBeneficiary(false);
 			return;
 		}
@@ -188,7 +188,7 @@ const CreateProposal = ({ className, setOpenAddressLinkedModal, setOpen, setOpen
 	};
 
 	const checkProposerIdentity = async (address: string) => {
-		if ((!api && !peopleChainApi) || !address || !(apiReady && peopleChainApiReady)) {
+		if (!api || !address || !apiReady) {
 			setShowIdentityInfoCardForProposer(false);
 			return;
 		}

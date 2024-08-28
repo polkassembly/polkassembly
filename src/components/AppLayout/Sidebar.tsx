@@ -640,7 +640,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{router.pathname.includes('/all-posts') ? (
 						<SelectedAll className='-ml-[10px] scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<AllPostIcon className='-ml-3 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<AllPostIcon className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-3' />
 					)}
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
@@ -746,7 +746,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/root') ? (
 									<SelectedRoot className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<RootIcon className='-ml-3 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+									<RootIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
@@ -754,7 +754,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/wish-for-change') ? (
 									<SelectedWishForChange className={`-ml-[10px] ${sidebarCollapsed ? 'mt-1' : ''}  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<WishForChangeIcon className='-ml-3 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+									<WishForChangeIcon className='-ml-2 mt-[1px] scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive  ' />
 								)}
 							</>
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
@@ -763,7 +763,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/auction-admin') ? (
 									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<AuctionAdminIcon className='-ml-3 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive lg:-ml-1' />
+									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : (
@@ -772,7 +772,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/staking-admin') ? (
 									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<StakingAdminIcon className='-ml-3 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+									<StakingAdminIcon className=' -ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						);
@@ -832,7 +832,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{router.pathname.includes('/bounty') ? (
 						<SelectedBountiesIcon className='-ml-[10px] scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<RoundedDollarIcon className='-ml-3 scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+						<RoundedDollarIcon className=' -ml-2 scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 					<div
 						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-[4px]'}
@@ -1265,9 +1265,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 						}}
 					>
 						<Link href='/parachains'>
-							<div className='-ml-3 flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] lg:ml-0'>
+							<div className='flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] '>
 								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='ml-2 hidden text-xs font-medium uppercase text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
+								<span className='ml-2  text-xs font-medium uppercase text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,
@@ -1306,7 +1306,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				setSidebarCollapsed(collapsed);
 			}}
 			style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
-			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'}  bg-white dark:bg-section-dark-overlay`}
+			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
+				sidedrawer && isMobile ? ' min-w-full' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
+			} bg-white dark:bg-section-dark-overlay`}
 		>
 			<div className='flex h-full flex-col'>
 				<div className='flex flex-col'>
@@ -1422,7 +1424,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					)}
 					{!sidebarCollapsed ? (
 						<>
-							<div className=' flex justify-center gap-2 md:mt-7'>
+							<div className={`flex ${sidedrawer ? 'justify-center ' : 'justify-center'}  gap-2 md:mt-7`}>
 								<div className='activeborderhover group relative'>
 									<Link
 										href='/'

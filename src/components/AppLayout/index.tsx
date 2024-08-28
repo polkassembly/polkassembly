@@ -74,18 +74,20 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	useEffect(() => {
-		const handleRouteChange = () => {
-			if (router.asPath.split('/')[1] !== 'discussions' && router.asPath.split('/')[1] !== 'post') {
-				setPreviousRoute(router.asPath);
+		const handleRouteChange = (url: string) => {
+			setSidedrawer(false);
+
+			if (url.split('/')[1] !== 'discussions' && url.split('/')[1] !== 'post') {
+				setPreviousRoute(url);
 			}
 		};
-		router.events.on('routeChangeStart', handleRouteChange);
 
+		router.events.on('routeChangeStart', handleRouteChange);
+		window.addEventListener('beforeunload', () => setSidedrawer(false));
 		return () => {
 			router.events.off('routeChangeStart', handleRouteChange);
+			window.removeEventListener('beforeunload', () => setSidedrawer(false));
 		};
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [router]);
 
 	useEffect(() => {
@@ -150,7 +152,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						{isMobile && sidedrawer && (
 							<Sidebar
 								className={`absolute left-0 top-0 z-[110] w-full ${className}`}
-								sidebarCollapsed={true}
+								sidebarCollapsed={false}
 								setSidebarCollapsed={setSidebarCollapsed}
 								sidedrawer={sidedrawer}
 								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
@@ -216,7 +218,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<Component {...pageProps} />
 										</Content>
 									) : (
-										<Content className={`mx-auto my-6 ${sidedrawer && 'pl-[100px]'}  w-full  px-3  `}>
+										<Content className={`mx-auto my-6   w-full  px-3  `}>
 											<Component {...pageProps} />
 										</Content>
 									)}
@@ -228,7 +230,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											<Component {...pageProps} />
 										</Content>
 									) : (
-										<Content className={`mx-auto my-6 ${sidedrawer && 'pl-[100px]'}  w-full  px-3  `}>
+										<Content className={`mx-auto my-6  w-full  px-3  `}>
 											<Component {...pageProps} />
 										</Content>
 									)}

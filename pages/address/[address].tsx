@@ -67,8 +67,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				userId: userProfile?.data?.user_id
 		  });
 
-	await updateUserBadges(userProfile?.data?.username || '', network);
-
+	try {
+		await updateUserBadges(userProfile?.data?.username || '', network);
+	} catch (error) {
+		console.error(error);
+	}
 	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	let activitiesCounts;
 	if (activitiesCountsResult.error) {

@@ -129,13 +129,13 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 
 	const getGraphData = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch<any>('/api/v1/treasury-amount-history/fetchMonthlyDataInUsd');
+			const { data, error } = await nextApiClientFetch<any>('/api/v1/treasury-amount-history/getTotalUSDdata');
 
 			if (error) {
 				console.error('Error fetching data:', error);
 			}
-			if (data) {
-				setGraphData(data);
+			if (data && data?.data) {
+				setGraphData(data?.data);
 			}
 		} catch (error) {
 			console.error('Unexpected error:', error);

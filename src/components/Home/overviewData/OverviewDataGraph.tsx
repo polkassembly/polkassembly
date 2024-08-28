@@ -11,7 +11,7 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { LoadingOutlined } from '@ant-design/icons';
 
-const monthOrder = ['september', 'october', 'november', 'december', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august'];
+const monthOrder = ['sept', 'oct', 'nov', 'dec', 'jan', 'feb', 'march', 'april', 'may', 'june', 'july', 'aug'];
 
 const CustomTooltip = ({ point }: any) => {
 	return (
@@ -22,6 +22,25 @@ const CustomTooltip = ({ point }: any) => {
 	);
 };
 
+const convertMonthName = (month: string): string => {
+	const monthConversion: Record<string, string> = {
+		september: 'sept',
+		october: 'oct',
+		november: 'nov',
+		december: 'dec',
+		january: 'jan',
+		february: 'feb',
+		march: 'march',
+		april: 'april',
+		may: 'may',
+		june: 'june',
+		july: 'july',
+		august: 'aug'
+	};
+
+	return monthConversion[month.toLowerCase()] || month;
+};
+
 const adjustMonthOrder = (data: { [key: string]: number }, monthOrder: string[], currentMonth: string) => {
 	const currentMonthIndex = monthOrder.indexOf(currentMonth.toLowerCase());
 
@@ -29,7 +48,7 @@ const adjustMonthOrder = (data: { [key: string]: number }, monthOrder: string[],
 
 	const formattedGraphData = Object.entries(data)
 		.map(([month, balance]) => ({
-			month: month.toLowerCase(),
+			month: convertMonthName(month.toLowerCase()),
 			balance: balance.toString()
 		}))
 		.filter((item) => parseFloat(item.balance) !== 0)

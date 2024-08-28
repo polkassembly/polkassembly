@@ -43,50 +43,48 @@ async function checkDecentralisedVoice(user: ProfileDetailsResponse, network: st
 
 // Badge2: Check if the user qualifies for the Fellow badge based on rank
 async function checkFellow(user: ProfileDetailsResponse): Promise<boolean> {
-	if (!user?.addresses || user.addresses.length === 0) {
+	if (!user?.addresses?.length) {
 		console.warn(`No addresses found for user: ${user.username}`);
 		return false;
 	}
-	const networksToCheck = ['collectives'];
-	for (const network of networksToCheck) {
-		const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
-		if (!wsProviderUrl) {
-			console.error(`WebSocket provider URL not found for network: ${network}`);
-			continue;
-		}
+	const network = 'collectives';
+	const wsProviderUrl = chainProperties[network]?.rpcEndpoint;
+	if (!wsProviderUrl) {
+		console.error(`WebSocket provider URL not found for network: ${network}`);
+		return false;
+	}
+	let api: ApiPromise | null = null;
+	try {
 		const wsProvider = new WsProvider(wsProviderUrl);
-		const api = await ApiPromise.create({ provider: wsProvider }).catch((err) => {
-			console.error('API creation failed:', err);
-			return null;
-		});
-		if (!api) continue;
-		try {
-			if (!api?.query?.fellowshipCollective?.members?.entries) {
-				console.warn(`fellowshipCollective or members query is not available on network: ${network}`);
-				continue;
-			}
-			const entries: [any, IFellow][] = await api.query.fellowshipCollective.members.entries();
-			const ranks = user.addresses.map((address) => {
-				const encodedAddress = getEncodedAddress(address, network);
-				for (const [key, value] of entries) {
-					const memberAccountIds = key.args.map((arg: any) => arg.toString());
-					if (memberAccountIds.includes(encodedAddress)) {
-						const userRank = value?.rank || 0;
-						return userRank;
-					}
+		api = await ApiPromise.create({ provider: wsProvider });
+		if (!api.query?.fellowshipCollective?.members?.entries) {
+			console.warn(`fellowshipCollective or members query is not available on network: ${network}`);
+			return false;
+		}
+		const entries = await api.query.fellowshipCollective.members.entries();
+		const hasFellowRank = user.addresses.some((address) => {
+			const encodedAddress = getEncodedAddress(address, network);
+
+			for (const [key, value] of entries) {
+				const memberAccountIds = key.args.map((arg: any) => arg.toString());
+
+				if (memberAccountIds.includes(encodedAddress)) {
+					const fellowData = value as unknown as IFellow;
+					const userRank = fellowData.rank || 0;
+					return userRank >= 1;
 				}
-				return 0;
-			});
-			if (ranks.some((rank) => rank >= 1)) {
-				return true;
 			}
-		} catch (error) {
-			console.error(`Failed to check fellow status on network ${network}:`, error);
-		} finally {
-			api?.disconnect();
+			return false;
+		});
+		return hasFellowRank;
+	} catch (error) {
+		console.error(`Failed to check fellow status on network ${network}:`, error);
+		return false;
+	} finally {
+		if (api) {
+			await api.disconnect();
 		}
 	}
-	return false;
 }
 
 // Badge3: Check if the user is on a governance chain (Gov1)

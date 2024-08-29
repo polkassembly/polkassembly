@@ -98,7 +98,7 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = currentUser;
+	const { id: userId, loginAddress } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
@@ -118,14 +118,19 @@ const CreateProposal = ({
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
+			decimals: chainProperties[network]?.tokenDecimals,
 			unit
 		});
 		if (!api || !apiReady) return;
 
 		(async () => {
-			const balances = await userProfileBalances({ address: getEncodedAddress(proposerAddress, network) || proposerAddress, api, apiReady, network });
-			setAvailableBalance(balances?.lockedBalance || ZERO_BN);
+			const balances = await userProfileBalances({
+				address: getEncodedAddress('1njGozmydXftj6KYFPGLPN7Qq3kgmFqxsRdF5hWJAschp1S' || loginAddress, network) || proposerAddress || loginAddress,
+				api,
+				apiReady,
+				network
+			});
+			setAvailableBalance(balances?.transferableBalance || ZERO_BN);
 		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps

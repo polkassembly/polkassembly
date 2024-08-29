@@ -12,7 +12,7 @@ const ToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 
 	return (
-		<div className='  '>
+		<div>
 			<button
 				onClick={(e) => {
 					e.preventDefault();

@@ -20,6 +20,8 @@ import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import { userDetailsActions } from '~src/redux/userDetails';
 import { useDispatch } from 'react-redux';
+import BecomeDelegateSmall from './smallScreenComponents/BecomeDelegateSmall';
+import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 
 interface Props {
 	className?: string;
@@ -81,7 +83,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	return (
 		<div className={`${className} delegation-dashboard`}>
 			{isLoggedOut ? (
-				<div className='wallet-info-board mt-[-25px] flex h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20'>
+				<div className='wallet-info-board mt-[-25px] hidden h-[60px] w-full items-center space-x-3 rounded-b-3xl pl-[70px] max-lg:absolute max-lg:left-0 max-lg:top-20 sm:flex'>
 					<span className='text-sm font-medium text-white'>To get started with delegation on polkadot</span>
 					<Button
 						onClick={() => {
@@ -97,14 +99,18 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					<ProfileBalances />
 				</div>
 			)}
+
+			<BecomeDelegateSmall />
+
 			{(isLoggedOut || !userDetails.loginAddress) && (
-				<h2 className='mb-6 mt-5 text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] md:mb-5'>Delegation </h2>
+				<h2 className='mb-6 mt-5 hidden text-2xl font-semibold text-bodyBlue dark:text-blue-dark-high max-lg:pt-[60px] sm:block md:mb-5'>Delegation </h2>
 			)}
 
 			{(isLoggedOut || !userDetails.loginAddress) && (
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
-					<TotalDelegationData />
+					<TotalDelegationData className='hidden sm:block' />
+					<TotalDelegationDataSmall className='sm:hidden' />
 					<TrendingDelegates theme={theme} />
 				</>
 			)}

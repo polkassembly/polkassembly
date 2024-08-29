@@ -192,10 +192,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	};
 
 	useEffect(() => {
-		getSummary();
 		getOverallSentimentPercentage();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);
+
+	useEffect(() => {
+		if (!allComments.length) return;
+		getSummary();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allComments.length]);
 
 	const addCommentDataToTimeline = async () => {
 		if (!timeline) {
@@ -347,12 +352,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-			{network === 'rococo' ? (
+			{
 				<div>
 					{fetchingAISummary ? (
-						<Skeleton />
+						<Skeleton className='mt-4' />
 					) : aiContentSummary ? (
-						<div className='mb-6 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
+						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
 							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
 								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
 								<span
@@ -385,7 +390,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</div>
 					) : null}
 				</div>
-			) : null}
+			}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'

@@ -25,28 +25,39 @@ interface FetchCommentsSummaryFromPostResponse {
 }
 
 export const fetchCommentsSummaryFromPost = async ({ network, postId, postType }: FetchCommentsSummaryFromPostParams): Promise<FetchCommentsSummaryFromPostResponse> => {
-	if (network !== 'rococo')
-		return {
-			data: null,
-			error: 'Comments summary not found',
-			status: 404
-		};
 	try {
 		const postRef = postsByTypeRef(network, postType).doc(String(postId));
 		const postDoc = await postRef.get();
 
 		if (!postDoc.exists) {
-			await getCommentsAISummaryByPost({ network, postId, postType });
-		}
-
-		const commentsSummary = postDoc.data()?.comments_summary as ICommentsSummary | undefined;
-
-		if (!commentsSummary) {
 			return {
 				data: null,
 				error: 'Comments summary not found',
 				status: 404
 			};
+		}
+
+		const commentsSummary = postDoc.data()?.comments_summary as ICommentsSummary | undefined;
+
+		if (!commentsSummary) {
+			await getCommentsAISummaryByPost({ network, postId, postType });
+
+			const updatedPostDoc = await postRef.get();
+			const updatedCommentsSummary = updatedPostDoc.data()?.comments_summary as ICommentsSummary | undefined;
+
+			if (updatedCommentsSummary) {
+				return {
+					data: updatedCommentsSummary,
+					error: null,
+					status: 200
+				};
+			} else {
+				return {
+					data: null,
+					error: 'Comments summary generation failed',
+					status: 500
+				};
+			}
 		}
 
 		return {
@@ -69,8 +80,6 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
-
-	if (network !== 'rococo') return res.status(400).json({ message: 'Missing network name in request headers' });
 
 	const { postId, postType } = req.body;
 

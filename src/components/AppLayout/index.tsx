@@ -524,4 +524,12 @@ export default styled(AppLayout)`
 		font-size: 16px;
 		color: #485f7d;
 	}
+	.sidebar-toggle-button-header {
+		border: 1px solid #d2d8e0;
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		font-size: 16px;
+		color: #485f7d;
+	}
 `;

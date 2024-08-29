@@ -339,12 +339,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				}}
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				{sidedrawer ? (
-					<div className='sidebar-toggle-button  h-7 px-1  dark:bg-black dark:text-white'>
+				{!sidedrawer ? (
+					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
 						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
 					</div>
 				) : (
-					<div className='sidebar-toggle-button  h-7  px-1 dark:bg-black dark:text-white'>
+					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
 						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
 					</div>
 				)}
@@ -686,14 +686,5 @@ export default styled(NavHeader)`
 		.dashboard-container {
 			margin-left: -15px !important;
 		}
-	}
-	.sidebar-toggle-button {
-		border: 1px solid #d2d8e0;
-		cursor: pointer;
-		border-radius: 0.375rem;
-		background-color: #ffffff;
-		padding: 0px;
-		font-size: 16px;
-		color: #485f7d;
 	}
 `;

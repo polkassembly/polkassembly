@@ -83,11 +83,14 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				}
 			};
 
+			const handleBeforeUnload = () => setSidedrawer(false);
+
 			router.events.on('routeChangeStart', handleRouteChange);
-			window.addEventListener('beforeunload', () => setSidedrawer(false));
+			window.addEventListener('beforeunload', handleBeforeUnload);
+
 			return () => {
 				router.events.off('routeChangeStart', handleRouteChange);
-				window.removeEventListener('beforeunload', () => setSidedrawer(false));
+				window.removeEventListener('beforeunload', handleBeforeUnload);
 			};
 		}
 	}, [router, isMobile]);
@@ -168,45 +171,27 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						)}
 						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
 							{sidebarCollapsed ? (
-								<div
-									style={{
-										border: '1px solid #D2D8E0',
-										cursor: 'pointer',
-										borderRadius: '0.375rem',
-										backgroundColor: '#FFFFFF',
-										padding: '5px 6px',
-										fontSize: '18px',
-										color: '#485F7D'
-									}}
-									className='dark:bg-black dark:text-white'
-								>
+								<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
 									<img
-										src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
+										src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
 										onClick={() => {
-											setSidebarCollapsed(false);
-											setSidedrawer(true);
+											if (sidebarCollapsed) {
+												setSidebarCollapsed(false);
+												setSidedrawer(true);
+											}
 										}}
 										alt='close nav'
 									/>
 								</div>
 							) : (
-								<div
-									style={{
-										border: '1px solid #D2D8E0',
-										cursor: 'pointer',
-										borderRadius: '0.375rem',
-										backgroundColor: '#FFFFFF',
-										padding: '5px 6px',
-										fontSize: '16px',
-										color: '#485F7D'
-									}}
-									className='dark:bg-black dark:text-white'
-								>
+								<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
 									<img
-										src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
+										src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
 										onClick={() => {
-											setSidebarCollapsed(true);
-											setSidedrawer(false);
+											if (!sidebarCollapsed) {
+												setSidebarCollapsed(true);
+												setSidedrawer(false);
+											}
 										}}
 										alt='open nav'
 									/>
@@ -529,5 +514,23 @@ export default styled(AppLayout)`
 	}
 	.ant-menu-vertical > .ant-menu-item > li:first-child {
 		height: 40px !important;
+	}
+	.sidebar-toggle-button {
+		border: 1px solid #d2d8e0;
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		padding: 5px 6px;
+		font-size: 18px;
+		color: #485f7d;
+	}
+	.sidebar-toggle-button {
+		border: 1px solid #d2d8e0;
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		padding: 5px 6px;
+		font-size: 16px;
+		color: #485f7d;
 	}
 `;

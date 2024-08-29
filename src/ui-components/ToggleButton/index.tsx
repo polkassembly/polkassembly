@@ -13,7 +13,7 @@ const ToggleButton = () => {
 
 	return (
 		<div className='  '>
-			<p
+			<button
 				onClick={(e) => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -24,7 +24,7 @@ const ToggleButton = () => {
 				})}
 			>
 				<span>{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}</span>
-			</p>
+			</button>
 		</div>
 	);
 };

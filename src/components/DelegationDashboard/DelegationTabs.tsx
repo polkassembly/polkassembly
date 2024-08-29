@@ -90,7 +90,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						setUserBio={setUserBio}
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
-					<TotalDelegationData />
+					<TotalDelegationData className='' />
 					<TrendingDelegates theme={theme} />
 				</>
 			),

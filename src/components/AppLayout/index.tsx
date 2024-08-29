@@ -215,39 +215,36 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 								<Layout className='min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
-									<div className={`relative w-full`}>
+									<div className='relative w-full'>
 										{!isMobile ? (
-											<div className={`relative mx-auto my-6 w-full ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
-												<Content>
-													<Component {...pageProps} />
-												</Content>
-												{sidedrawer && (
-													<div
-														className='pointer-events-auto absolute inset-0 z-[999] bg-black bg-opacity-30'
-														style={{
-															pointerEvents: 'auto',
-															marginLeft: sidebarCollapsed ? '100px' : '240px',
-															top: 0,
-															right: 0,
-															bottom: 0
-														}}
-													></div>
-												)}
+											<div>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'} `}>
+													<Content>
+														<Component {...pageProps} />
+													</Content>
+												</div>
+												<Footer
+													className={` ${!sidebarCollapsed && 'pl-[210px] pr-20'} `}
+													theme={theme as any}
+												/>
 											</div>
 										) : (
-											<div className={`relative mx-auto my-6 w-full px-3`}>
-												<Content>
-													<Component {...pageProps} />
-												</Content>
+											<div className={`relative mx-auto  w-full `}>
+												<div>
+													<div className='my-6 px-3'>
+														<Content>
+															<Component {...pageProps} />
+														</Content>
+													</div>
+													<Footer theme={theme as any} />
+												</div>
 												{sidedrawer && (
 													<div
-														className='pointer-events-auto absolute inset-0 z-[999] bg-black bg-opacity-30'
+														className='pointer-events-auto absolute inset-0 -top-5 z-[1999] bg-black bg-opacity-30'
 														style={{
-															pointerEvents: 'auto',
-															top: 0,
+															marginLeft: '250px',
 															right: 0,
-															bottom: 0,
-															left: 0
+															bottom: 0
 														}}
 													></div>
 												)}
@@ -257,23 +254,33 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								</Layout>
 							) : (
 								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
-									<div className={`relative w-full`}>
+									<div className='relative w-full'>
 										{!isMobile ? (
-											<div className={`relative mx-auto my-6 w-full ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
-												<Content>
-													<Component {...pageProps} />
-												</Content>
+											<div>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'} `}>
+													<Content>
+														<Component {...pageProps} />
+													</Content>
+												</div>
+												<Footer
+													className={` ${!sidebarCollapsed && 'pl-[210px] pr-20'} `}
+													theme={theme as any}
+												/>
 											</div>
 										) : (
-											<div className={`relative mx-auto my-6 w-full px-3`}>
-												<Content>
-													<Component {...pageProps} />
-												</Content>
+											<div className={`relative mx-auto  w-full `}>
+												<div>
+													<div className='my-6 px-3'>
+														<Content>
+															<Component {...pageProps} />
+														</Content>
+													</div>
+													<Footer theme={theme as any} />
+												</div>
 												{sidedrawer && (
 													<div
 														className='pointer-events-auto absolute inset-0 -top-5 z-[1999] bg-black bg-opacity-30'
 														style={{
-															// pointerEvents: 'auto',
 															marginLeft: '250px',
 															right: 0,
 															bottom: 0
@@ -285,10 +292,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									</div>
 								</Layout>
 							)}
-							<Footer
-								className={` ${sidebarCollapsed ? '' : 'pl-[210px] pr-20'} `}
-								theme={theme as any}
-							/>
 						</div>
 					</div>
 				</Layout>

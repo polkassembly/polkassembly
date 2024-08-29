@@ -958,6 +958,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			<Tooltip
 				title='Governance'
 				placement='left'
+				className='text-xs'
 			>
 				<div
 					className='relative cursor-pointer'
@@ -984,6 +985,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			<Tooltip
 				title='Whitelist'
 				placement='left'
+				className='text-xs'
 			>
 				<div
 					onClick={handleWhitelistClick}
@@ -1010,6 +1012,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			<Tooltip
 				title='Parachains'
 				placement='left'
+				className='text-xs'
 			>
 				<div
 					className='-mb-[14px] -ml-10  w-[110px] '
@@ -1124,6 +1127,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<Tooltip
 					title='Treasury'
 					placement='left'
+					className='text-xs'
 				>
 					<div
 						className='relative cursor-pointer'
@@ -1563,7 +1567,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-2 xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-2 lg:h-[345px]'} `}>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-20 lg:h-[345px]'} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'

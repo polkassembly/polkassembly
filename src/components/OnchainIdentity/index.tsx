@@ -61,7 +61,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	const getTxFee = async () => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !network) return;
+		if (!api || !apiReady || !network) return;
 		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
 		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
@@ -104,7 +104,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	const getIdentityInfo = async () => {
-		if ((!api && !peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		try {
 			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({

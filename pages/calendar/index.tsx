@@ -589,8 +589,10 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 	];
 
 	return (
-		<>
-			<div className={`${className} rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay`}>
+		<div className='w-full overflow-auto'>
+			<div
+				className={`${className} ${categoriesLoading ? 'w-auto' : 'w-max'} rounded-xl bg-white p-3 drop-shadow-md dark:border-separatorDark dark:bg-section-dark-overlay md:w-auto`}
+			>
 				{error && <ErrorAlert errorMsg={error} />}
 
 				{accessible && (
@@ -860,7 +862,7 @@ const CalendarView: FC<ICalendarViewProps> = ({ className, small = false, emitCa
 					id={id}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 

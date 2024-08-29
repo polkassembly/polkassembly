@@ -80,7 +80,7 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 					<ImageComponent
 						src={image}
 						alt='User Picture'
-						className='flex h-[105px] w-[105px] items-center justify-center bg-transparent '
+						className='flex h-[55px] w-[55px] items-center justify-center bg-transparent md:h-[105px] md:w-[105px] '
 						iconClassName='flex items-center justify-center text-[#FCE5F2] text-5xl w-full h-full rounded-full'
 					/>
 				</div>
@@ -130,7 +130,7 @@ const SearchProfile = ({ username, address, isSearch, className }: Props) => {
 							const link = social_links && Array.isArray(social_links) ? social_links?.find((s) => s.type === social)?.link || '' : '';
 							return (
 								<SocialLink
-									className={`flex h-[39px] w-[40px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[10px] text-2xl hover:text-[#576D8B] dark:bg-inactiveIconDark ${
+									className={`flex h-[30px] w-[30px] items-center justify-center rounded-[20px] bg-[#edeff3] p-[6px] text-2xl hover:text-[#576D8B] dark:bg-inactiveIconDark md:h-[39px] md:w-[40px] md:p-[10px] ${
 										isSearch ? 'mt-2' : 'mt-4'
 									}`}
 									key={index}

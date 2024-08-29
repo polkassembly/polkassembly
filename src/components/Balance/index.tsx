@@ -47,7 +47,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	}, [network]);
 
 	useEffect(() => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !address) return;
+		if (!api || !apiReady || !address) return;
 		setLoading(true);
 		if (['genshiro'].includes(network)) {
 			api.query.eqBalances
@@ -116,7 +116,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	}, [address, api, apiReady, isReferendum, isBalanceUpdated, peopleChainApi, peopleChainApiReady, usedInIdentityFlow]);
 
 	return (
-		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium ${classname}`}>
+		<div className={`${poppins.className} ${poppins.variable} mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium msm:ml-auto ${classname}`}>
 			<span>Free Balance</span>
 			<HelperTooltip
 				className='mx-1'

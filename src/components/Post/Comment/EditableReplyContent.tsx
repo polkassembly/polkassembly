@@ -94,7 +94,7 @@ const EditableReplyContent = ({ isSubsquareUser, isReactionOnReply, userId, clas
 
 	useEffect(() => {
 		(async () => {
-			if ((!api && !peopleChainApi) || !proposer || !(apiReady && peopleChainApiReady)) return;
+			if (!api || !proposer || !apiReady) return;
 			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();

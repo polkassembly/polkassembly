@@ -75,7 +75,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const getGasFee = async (addr: string) => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		setLoading({ ...loading, isLoading: true });
 		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
@@ -91,7 +91,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	const handleRemoveIdentity = () => {
-		if (!(api && peopleChainApiReady) || !(apiReady && peopleChainApiReady) || !(address || loginAddress) || !isIdentityAvailable) return;
+		if (!api || !apiReady || !(address || loginAddress) || !isIdentityAvailable) return;
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 
 		const onFailed = (message: string) => {

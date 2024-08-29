@@ -429,7 +429,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						</div>
 					) : (
 						<>
-							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
+							<div className='mt-3 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1 sm:mt-6'>
 								{filteredDelegates?.slice((currentPage - 1) * DELEGATION_LISTING, (currentPage - 1) * DELEGATION_LISTING + DELEGATION_LISTING)?.map((delegate, index) => (
 									<DelegateCard
 										key={index}

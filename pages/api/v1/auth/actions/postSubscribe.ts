@@ -23,6 +23,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Invalid network in request header' });
 
+	// get user
+	const token = getTokenFromReq(req);
+	if (!token) return res.status(400).json({ message: 'Invalid token' });
+	const user = await authServiceInstance.GetUser(token);
+	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+
 	const { post_id = null, proposalType } = req.body;
 
 	const strProposalType = proposalType && String(proposalType);
@@ -30,12 +36,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 		return res.status(400).json({ message: `The proposal type "${proposalType}" is invalid.` });
 	}
 	if (post_id === null) return res.status(400).json({ message: 'Missing parameters in request body' });
-
-	// get user
-	const token = getTokenFromReq(req);
-	if (!token) return res.status(400).json({ message: 'Invalid token' });
-	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	// get post author
 	const postRef = networkDocRef(network).collection('post_types').doc(strProposalType).collection('posts').doc(String(post_id));

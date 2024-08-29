@@ -125,7 +125,7 @@ const CreateProposal = ({
 
 		(async () => {
 			const balances = await userProfileBalances({
-				address: getEncodedAddress('1njGozmydXftj6KYFPGLPN7Qq3kgmFqxsRdF5hWJAschp1S' || loginAddress, network) || proposerAddress || loginAddress,
+				address: getEncodedAddress(proposerAddress || loginAddress, network) || proposerAddress || loginAddress,
 				api,
 				apiReady,
 				network

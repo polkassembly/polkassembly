@@ -316,11 +316,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const getDisplayText = (text: string, showFull: boolean) => {
 		if (!text) return '';
-		return showFull ? text : text.split(' ').slice(0, 150).join(' ') + '...';
+		return showFull ? text : text.split(' ').slice(0, 100).join(' ') + '...';
 	};
 
 	const shouldShowToggleButton = (text: string) => {
-		return text.split(' ').length > 150;
+		return text.split(' ').length > 100;
 	};
 
 	return (

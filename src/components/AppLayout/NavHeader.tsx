@@ -330,7 +330,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1000]' : 'z-[101]'
+				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1050]' : 'z-[101]'
 			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<div
@@ -340,31 +340,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
 				{sidedrawer ? (
-					<div
-						style={{
-							backgroundColor: '#FFFFFF',
-							border: '1px solid #D2D8E0',
-							borderRadius: '0.375rem',
-							color: '#485F7D',
-							cursor: 'pointer',
-							fontSize: '18px'
-						}}
-						className='h-7  px-1  dark:bg-black dark:text-white'
-					>
+					<div className='sidebar-toggle-button  h-7 px-1  dark:bg-black dark:text-white'>
 						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
 					</div>
 				) : (
-					<div
-						style={{
-							backgroundColor: '#FFFFFF',
-							border: '1px solid #D2D8E0',
-							borderRadius: '0.375rem',
-							color: '#485F7D',
-							cursor: 'pointer',
-							fontSize: '16px'
-						}}
-						className='h-7  px-1  dark:bg-black dark:text-white'
-					>
+					<div className='sidebar-toggle-button  h-7  px-1 dark:bg-black dark:text-white'>
 						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
 					</div>
 				)}
@@ -706,5 +686,14 @@ export default styled(NavHeader)`
 		.dashboard-container {
 			margin-left: -15px !important;
 		}
+	}
+	.sidebar-toggle-button {
+		border: 1px solid #d2d8e0;
+		cursor: pointer;
+		border-radius: 0.375rem;
+		background-color: #ffffff;
+		padding: 0px;
+		font-size: 16px;
+		color: #485f7d;
 	}
 `;

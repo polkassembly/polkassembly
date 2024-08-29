@@ -521,15 +521,6 @@ export default styled(AppLayout)`
 		border-radius: 0.375rem;
 		background-color: #ffffff;
 		padding: 5px 6px;
-		font-size: 18px;
-		color: #485f7d;
-	}
-	.sidebar-toggle-button {
-		border: 1px solid #d2d8e0;
-		cursor: pointer;
-		border-radius: 0.375rem;
-		background-color: #ffffff;
-		padding: 5px 6px;
 		font-size: 16px;
 		color: #485f7d;
 	}

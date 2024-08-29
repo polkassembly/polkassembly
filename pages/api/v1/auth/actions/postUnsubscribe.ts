@@ -66,11 +66,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 				type: EUserActivityType.SUBSCRIBED,
 				userId: user.id
 			});
-			return;
+			return res.status(200).json({ message: messages.SUCCESS });
 		}
 	} catch (err) {
-		console.log(err);
-		return;
+		return res.status(500).json({ message: err || messages.API_FETCH_ERROR });
 	}
 }
 

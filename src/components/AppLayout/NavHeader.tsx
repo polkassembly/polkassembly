@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -342,12 +342,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				{sidedrawer ? (
 					<div
 						style={{
-							border: '1px solid #D2D8E0',
-							cursor: 'pointer',
-							borderRadius: '0.375rem',
 							backgroundColor: '#FFFFFF',
-							fontSize: '18px',
-							color: '#485F7D'
+							border: '1px solid #D2D8E0',
+							borderRadius: '0.375rem',
+							color: '#485F7D',
+							cursor: 'pointer',
+							fontSize: '18px'
 						}}
 						className='h-7  px-1  dark:bg-black dark:text-white'
 					>
@@ -356,12 +356,12 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				) : (
 					<div
 						style={{
-							border: '1px solid #D2D8E0',
-							cursor: 'pointer',
-							borderRadius: '0.375rem',
 							backgroundColor: '#FFFFFF',
-							fontSize: '16px',
-							color: '#485F7D'
+							border: '1px solid #D2D8E0',
+							borderRadius: '0.375rem',
+							color: '#485F7D',
+							cursor: 'pointer',
+							fontSize: '16px'
 						}}
 						className='h-7  px-1  dark:bg-black dark:text-white'
 					>

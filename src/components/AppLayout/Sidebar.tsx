@@ -962,7 +962,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			>
 				<div
 					className='relative cursor-pointer'
-					style={{ padding: '10%', marginRight: '-13px' }}
+					style={{ marginRight: '-13px', padding: '10%' }}
 					onClick={handleGovernanceClick}
 				>
 					{activeGovernance ? (
@@ -990,7 +990,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div
 					onClick={handleWhitelistClick}
 					className='relative cursor-pointer'
-					style={{ padding: '10%', marginRight: '-13px' }}
+					style={{ marginRight: '-13px', padding: '10%' }}
 				>
 					{activeWhitelist ? (
 						<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
@@ -1131,7 +1131,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				>
 					<div
 						className='relative cursor-pointer'
-						style={{ padding: '10%', marginRight: '-13px' }}
+						style={{ marginRight: '-13px', padding: '10%' }}
 						onClick={handleTreasuryClick}
 					>
 						{activeTreasury ? (

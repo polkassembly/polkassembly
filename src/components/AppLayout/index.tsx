@@ -90,7 +90,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				window.removeEventListener('beforeunload', () => setSidedrawer(false));
 			};
 		}
-	}, [router]);
+	}, [router, isMobile]);
 
 	useEffect(() => {
 		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
@@ -186,6 +186,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											setSidebarCollapsed(false);
 											setSidedrawer(true);
 										}}
+										alt='close nav'
 									/>
 								</div>
 							) : (
@@ -207,6 +208,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 											setSidebarCollapsed(true);
 											setSidedrawer(false);
 										}}
+										alt='open nav'
 									/>
 								</div>
 							)}
@@ -229,7 +231,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												/>
 											</div>
 										) : (
-											<div className={`relative mx-auto  w-full `}>
+											<div className='relative mx-auto  w-full'>
 												<div>
 													<div className='my-6 px-3'>
 														<Content>
@@ -268,7 +270,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 												/>
 											</div>
 										) : (
-											<div className={`relative mx-auto  w-full `}>
+											<div className='relative mx-auto w-full'>
 												<div>
 													<div className='my-6 px-3'>
 														<Content>

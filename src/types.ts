@@ -687,6 +687,7 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
 	allProposals: { diff: number; total: number };

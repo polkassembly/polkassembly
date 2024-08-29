@@ -424,7 +424,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 							theme={theme}
 							modalOpen={openLoginModal}
 							setModalOpen={setOpenLoginModal}
-							image='/assets/post-comment.png'
+							image='/assets/Gifs/login-discussion.gif'
 							title='Join Polkassembly to Comment on this proposal.'
 							subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 						/>

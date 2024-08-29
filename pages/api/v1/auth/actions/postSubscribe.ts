@@ -65,9 +65,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 				type: EUserActivityType.SUBSCRIBED,
 				userId: user.id
 			});
+			return res.status(200).json({ message: messages.SUCCESS });
 		}
 	} catch (err) {
 		console.log(err);
+		return res.status(200).json({ message: err || messages.SUBSCRIPTION_SUCCESSFUL });
 	}
 	return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
 }

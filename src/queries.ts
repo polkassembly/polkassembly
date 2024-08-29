@@ -2714,6 +2714,80 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
 }
 }`;
 
+export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String!], $startDate: DateTime!) {
+        flattenedConvictionVotes(
+            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true, createdAt_gte: $startDate }
+        ) {
+            balance {
+                ... on StandardVoteBalance {
+                    value
+                }
+                ... on SplitVoteBalance {
+                    aye
+                    nay
+                    abstain
+                }
+            }
+            lockPeriod
+            proposalIndex
+            createdAt
+            parentVote {
+                extrinsicIndex
+                selfVotingPower
+                type
+                voter
+                lockPeriod
+                delegatedVotingPower
+                delegatedVotes(where: {removedAtBlock_isNull: true}) {
+                    voter
+                    balance {
+                    ... on StandardVoteBalance {
+                        value
+                    }
+                    ... on SplitVoteBalance {
+                        aye
+                        nay
+                        abstain
+                    }
+                    }
+                    lockPeriod
+                    votingPower
+                }
+            }
+        }
+    }`;
+
+export const GET_WHALE = `query ActiveVoterQuery($voterAddresses: [String!]) {
+        flattenedConvictionVotes(
+            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true }
+        ) {
+            balance {
+                ... on StandardVoteBalance {
+                    value
+                }
+                ... on SplitVoteBalance {
+                    aye
+                    nay
+                    abstain
+                }
+            }
+            lockPeriod
+  }}`;
+
+export const GET_POPULAR_DELEGATE = `query PopularDelegateQuery($delegateAddresses: [String!]) {
+        votingDelegations(where: { to_in: $delegateAddresses}) {
+            to
+            type
+            balance
+        }
+    }`;
+
+export const GET_PROPOSAL_COUNT = `query ProposalCountQuery($startDate: DateTime!) {
+    proposalsConnection(where: { createdAt_gte: $startDate, type_in: [ReferendumV2, Referendum] }, orderBy: id_DESC) {
+        totalCount
+    }
+}`;
+
 export const GET_VOTES_COUNT_FOR_TIMESPAN = `query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {
   convictionVotesConnection(orderBy: id_ASC, where: {voter_eq: $address, proposal: {type_eq: ReferendumV2, createdAt_gte: $createdAt_gte}}) {
     totalCount

@@ -15,7 +15,6 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 const getAllTrackLevelProposalsAnalytics = async ({ network }: { network: string }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-
 		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
 		const trackDataMap: Record<string, number> = {};
 		let totalProposals = 0;
@@ -27,7 +26,7 @@ const getAllTrackLevelProposalsAnalytics = async ({ network }: { network: string
 
 				if (trackSnapshot.exists) {
 					const data = trackSnapshot.data();
-					totalProposalCount = data?.totalProposalCount || 0;
+					totalProposalCount = data?.totalProposalsCount || 0;
 					trackDataMap[trackId] = totalProposalCount;
 					totalProposals += totalProposalCount;
 				}

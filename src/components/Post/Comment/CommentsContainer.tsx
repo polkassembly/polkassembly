@@ -124,6 +124,8 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [isCommentAllowed, setCommentAllowed] = useState<boolean>(false);
 	const [aiContentSummary, setAiContentSummary] = useState<ICommentsSummary | null>(null);
 	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
+	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
+	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -304,6 +306,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allowedCommentors, loginAddress]);
 
+	const toggleSummary = (type: 'positive' | 'negative') => {
+		if (type === 'positive') {
+			setShowPositiveSummary(!showPositiveSummary);
+		} else {
+			setShowNegativeSummary(!showNegativeSummary);
+		}
+	};
+
+	const getDisplayText = (text: string, showFull: boolean) => {
+		if (!text) return '';
+		return showFull ? text : text.split(' ').slice(0, 150).join(' ') + '...';
+	};
+
+	const shouldShowToggleButton = (text: string) => {
+		return text.split(' ').length > 150;
+	};
+
 	return (
 		<div className={className}>
 			{id ? (
@@ -353,7 +372,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				</div>
 			)}
 			{
-				<div>
+				<div className='mt-4'>
 					{fetchingAISummary ? (
 						<Skeleton className='mt-4' />
 					) : aiContentSummary ? (
@@ -373,7 +392,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									<GreenTickIcon />
 								</span>
 								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-									{aiContentSummary?.summary_positive}
+									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
+										<button
+											onClick={() => toggleSummary('positive')}
+											className='ml-2 text-blue-500 underline'
+										>
+											{showPositiveSummary ? 'See Less' : 'See More'}
+										</button>
+									)}
 								</p>
 							</div>
 							<div className='flex items-start gap-4'>
@@ -381,7 +408,15 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 									<MinusSignIcon />
 								</span>
 								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
-									{aiContentSummary?.summary_negative}
+									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
+									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
+										<button
+											onClick={() => toggleSummary('negative')}
+											className='ml-2 text-blue-500 underline'
+										>
+											{showNegativeSummary ? 'See Less' : 'See More'}
+										</button>
+									)}
 								</p>
 							</div>
 							<h2 className={`${poppins.variable} ${poppins.className} mt-2 text-xs text-[#485F7DCC] dark:text-blue-dark-medium`}>

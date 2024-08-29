@@ -1307,7 +1307,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			}}
 			style={{ transform: 'translateX(0px)', transitionDuration: '0.3s' }}
 			className={`sidebar fixed bottom-0 left-0 z-[101] h-screen pt-20 lg:pt-0 ${
-				sidedrawer && isMobile ? ' min-w-full' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
+				sidedrawer && isMobile ? ' min-w-[250px]' : sidebarCollapsed ? 'min-w-[80px]' : 'min-w-[230px]'
 			} bg-white dark:bg-section-dark-overlay`}
 		>
 			<div className='flex h-full flex-col'>
@@ -1563,7 +1563,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? 'mt-2  h-[650px] overflow-y-auto pb-2' : 'mt-2 h-[420px] overflow-y-auto  pb-2 lg:h-[345px]'} `}>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-2 xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-2 lg:h-[345px]'} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'

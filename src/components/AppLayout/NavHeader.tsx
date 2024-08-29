@@ -339,7 +339,35 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				}}
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='text-2xl' />
+				{sidedrawer ? (
+					<div
+						style={{
+							border: '1px solid #D2D8E0',
+							cursor: 'pointer',
+							borderRadius: '0.375rem',
+							backgroundColor: '#FFFFFF',
+							fontSize: '18px',
+							color: '#485F7D'
+						}}
+						className='h-7  px-1  dark:bg-black dark:text-white'
+					>
+						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
+					</div>
+				) : (
+					<div
+						style={{
+							border: '1px solid #D2D8E0',
+							cursor: 'pointer',
+							borderRadius: '0.375rem',
+							backgroundColor: '#FFFFFF',
+							fontSize: '16px',
+							color: '#485F7D'
+						}}
+						className='h-7  px-1  dark:bg-black dark:text-white'
+					>
+						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
+					</div>
+				)}
 			</div>
 			<div className='ml-[84px] hidden lg:block'></div>
 			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>

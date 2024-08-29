@@ -74,20 +74,22 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	};
 
 	useEffect(() => {
-		const handleRouteChange = (url: string) => {
-			setSidedrawer(false);
+		if (isMobile) {
+			const handleRouteChange = (url: string) => {
+				setSidedrawer(false);
 
-			if (url.split('/')[1] !== 'discussions' && url.split('/')[1] !== 'post') {
-				setPreviousRoute(url);
-			}
-		};
+				if (url.split('/')[1] !== 'discussions' && url.split('/')[1] !== 'post') {
+					setPreviousRoute(url);
+				}
+			};
 
-		router.events.on('routeChangeStart', handleRouteChange);
-		window.addEventListener('beforeunload', () => setSidedrawer(false));
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-			window.removeEventListener('beforeunload', () => setSidedrawer(false));
-		};
+			router.events.on('routeChangeStart', handleRouteChange);
+			window.addEventListener('beforeunload', () => setSidedrawer(false));
+			return () => {
+				router.events.off('routeChangeStart', handleRouteChange);
+				window.removeEventListener('beforeunload', () => setSidedrawer(false));
+			};
+		}
 	}, [router]);
 
 	useEffect(() => {
@@ -121,7 +123,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 
 	return (
 		<div>
-			<Layout className={`${className} `}>
+			<Layout className={`${className} relative`}>
 				<NavHeader
 					theme={theme as any}
 					sidedrawer={sidedrawer}
@@ -133,7 +135,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 					isIdentityExists={isIdentitySet}
 				/>
 				<Layout hasSider>
-					<div className='flex w-full gap-2'>
+					<div className='relative flex w-full gap-2'>
 						{!isMobile && (
 							<Sidebar
 								className={className}
@@ -209,31 +211,78 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								</div>
 							)}
 						</div>
-						<div className='w-full'>
+						<div className={`relative w-full ${sidedrawer ? 'overflow-hidden' : 'overflow-auto'}`}>
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
-								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
+								<Layout className='min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
 									<OpenGovHeaderBanner network={network} />
-									{!isMobile ? (
-										<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
-											<Component {...pageProps} />
-										</Content>
-									) : (
-										<Content className={`mx-auto my-6   w-full  px-3  `}>
-											<Component {...pageProps} />
-										</Content>
-									)}
+									<div className={`relative w-full`}>
+										{!isMobile ? (
+											<div className={`relative mx-auto my-6 w-full ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+												<Content>
+													<Component {...pageProps} />
+												</Content>
+												{sidedrawer && (
+													<div
+														className='pointer-events-auto absolute inset-0 z-[999] bg-black bg-opacity-30'
+														style={{
+															pointerEvents: 'auto',
+															marginLeft: sidebarCollapsed ? '100px' : '240px',
+															top: 0,
+															right: 0,
+															bottom: 0
+														}}
+													></div>
+												)}
+											</div>
+										) : (
+											<div className={`relative mx-auto my-6 w-full px-3`}>
+												<Content>
+													<Component {...pageProps} />
+												</Content>
+												{sidedrawer && (
+													<div
+														className='pointer-events-auto absolute inset-0 z-[999] bg-black bg-opacity-30'
+														style={{
+															pointerEvents: 'auto',
+															top: 0,
+															right: 0,
+															bottom: 0,
+															left: 0
+														}}
+													></div>
+												)}
+											</div>
+										)}
+									</div>
 								</Layout>
 							) : (
-								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row  bg-[#F5F6F8] dark:bg-section-dark-background'>
-									{!isMobile ? (
-										<Content className={`mx-auto my-6  w-full  ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
-											<Component {...pageProps} />
-										</Content>
-									) : (
-										<Content className={`mx-auto my-6  w-full  px-3  `}>
-											<Component {...pageProps} />
-										</Content>
-									)}
+								<Layout className='min-h-[calc(100vh - 10rem)] flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>
+									<div className={`relative w-full`}>
+										{!isMobile ? (
+											<div className={`relative mx-auto my-6 w-full ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'}`}>
+												<Content>
+													<Component {...pageProps} />
+												</Content>
+											</div>
+										) : (
+											<div className={`relative mx-auto my-6 w-full px-3`}>
+												<Content>
+													<Component {...pageProps} />
+												</Content>
+												{sidedrawer && (
+													<div
+														className='pointer-events-auto absolute inset-0 -top-5 z-[1999] bg-black bg-opacity-30'
+														style={{
+															// pointerEvents: 'auto',
+															marginLeft: '250px',
+															right: 0,
+															bottom: 0
+														}}
+													></div>
+												)}
+											</div>
+										)}
+									</div>
 								</Layout>
 							)}
 							<Footer

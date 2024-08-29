@@ -293,7 +293,7 @@ const CreateProposal = ({
 			indicator={<LoadingOutlined />}
 		>
 			<div className={`create-proposal ${className}`}>
-				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
+				{submitionDeposite.gt(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
 						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
@@ -470,9 +470,9 @@ const CreateProposal = ({
 						variant='primary'
 						height={40}
 						width={155}
-						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
+						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lt(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
+						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lt(submitionDeposite)) && 'opacity-50'}`}
 					/>
 				</div>
 			</div>

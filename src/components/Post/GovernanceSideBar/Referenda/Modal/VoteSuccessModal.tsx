@@ -8,13 +8,9 @@ import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
 import { useCommentDataContext } from '~src/context';
-import Address from '~src/ui-components/Address';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
-import AbstainGray from '~assets/icons/abstainGray.svg';
 import { EVoteDecisionType } from '~src/types';
-import { DislikeFilled, LikeFilled } from '@ant-design/icons';
-import SplitYellow from '~assets/icons/split-yellow-icon.svg';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { ReactElement } from 'react-markdown/lib/react-markdown';
 import PostCommentForm from '~src/components/Post/PostCommentForm';
@@ -48,23 +44,7 @@ interface Props {
 	delegatedVotingPower?: BN;
 }
 
-const VoteInitiatedModal = ({
-	className,
-	open,
-	setOpen,
-	address,
-	multisig,
-	balance,
-	conviction,
-	title,
-	vote,
-	votedAt,
-	ayeVoteValue,
-	nayVoteValue,
-	abstainVoteValue,
-	delegatedVotingPower = ZERO_BN,
-	icon
-}: Props) => {
+const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vote, ayeVoteValue, nayVoteValue, abstainVoteValue, delegatedVotingPower = ZERO_BN, icon }: Props) => {
 	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -90,8 +70,6 @@ const VoteInitiatedModal = ({
 		setTimelines(timelinePayload);
 	};
 
-	title = 'Voted Successfully';
-
 	return (
 		<Modal
 			open={open}
@@ -107,7 +85,17 @@ const VoteInitiatedModal = ({
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}
-				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>{title}</h2>
+				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>
+					Voted{' '}
+					<span
+						className={`${
+							vote === EVoteDecisionType.AYE ? 'text-[green]' : `${vote === EVoteDecisionType.NAY ? 'text-[red]' : 'text-bodyBlue dark:text-blue-dark-high'}`
+						} capitalize`}
+					>
+						{vote}
+					</span>{' '}
+					successfully
+				</h2>
 				<div className='flex flex-col items-center justify-center gap-[14px]'>
 					<div className='text-[24px] font-semibold text-pink_primary'>
 						{conviction
@@ -161,91 +149,6 @@ const VoteInitiatedModal = ({
 							</span>
 						</div>
 					)}
-
-					<div className='flex flex-col items-start justify-center gap-[10px]'>
-						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>With address:</span>
-							<span className='font-medium'>
-								<Address
-									isTruncateUsername={false}
-									address={address}
-									className='address'
-									displayInline
-								/>{' '}
-							</span>
-						</div>
-
-						{multisig && (
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>With Multisig:</span>
-								<span className='font-medium'>
-									<Address
-										isTruncateUsername={false}
-										address={multisig}
-										className='address'
-										displayInline
-									/>{' '}
-								</span>
-							</div>
-						)}
-
-						{
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Vote Amount:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									{formatedBalance(balance.toString(), unit)} {unit}
-								</span>
-							</div>
-						}
-						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Vote :</span>
-							{vote === EVoteDecisionType.AYE ? (
-								<p>
-									<LikeFilled className='text-[green]' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : vote === EVoteDecisionType.NAY ? (
-								<div>
-									<DislikeFilled className='text-[red]' /> <span className='mb-[5px] font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</div>
-							) : vote === EVoteDecisionType.SPLIT ? (
-								<p>
-									<SplitYellow /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : vote === EVoteDecisionType.ABSTAIN ? (
-								<p className='flex align-middle'>
-									<AbstainGray className='mr-1' /> <span className='font-medium capitalize text-bodyBlue dark:text-blue-dark-high'>{vote}</span>
-								</p>
-							) : null}
-						</div>
-						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Conviction:</span>
-							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x</span>
-						</div>
-						{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
-							<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Delegated Power:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
-							</div>
-						)}
-						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='min-w-[120px]'>Time of Vote :</span> <span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{votedAt}</span>
-						</div>
-						{multisig && (
-							<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
-								<span className='min-w-[120px]'>Vote Link:</span>
-								<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-									<a
-										className='text-pink_primary'
-										href='https://app.polkasafe.xyz/transactions'
-										target='_blank'
-										rel='noreferrer'
-									>
-										Polkasafe
-									</a>
-								</span>
-							</div>
-						)}
-					</div>
 				</div>
 			</div>
 			<div className='relative mt-3 w-full'>
@@ -274,6 +177,7 @@ const VoteInitiatedModal = ({
 					<RightQuote />
 				</span>
 			</div>
+			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-section-dark-container'>Share your vote on:</p>
 		</Modal>
 	);
 };

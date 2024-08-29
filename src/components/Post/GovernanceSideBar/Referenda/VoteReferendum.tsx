@@ -1138,6 +1138,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					title={multisig ? 'Voting with Polkasafe Multisig initiated' : 'Voted Successfully'}
 					vote={vote}
 					balance={voteValues.totalVoteValue}
+					// open={true}
 					open={successModal}
 					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
@@ -1158,10 +1159,11 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 							/>
 						) : (
 							<Image
-								src='/assets/delegation-tracks/success-delegate.svg'
+								src='/assets/Gifs/voted.gif'
 								alt='success delegate icon'
-								width={220}
-								height={220}
+								width={363}
+								height={307}
+								className='-mt-[100px]'
 							/>
 						)
 					}

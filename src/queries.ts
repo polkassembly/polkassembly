@@ -2757,6 +2757,23 @@ export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String
         }
     }`;
 
+export const GET_WHALE = `query ActiveVoterQuery($voterAddresses: [String!]) {
+        flattenedConvictionVotes(
+            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true }
+        ) {
+            balance {
+                ... on StandardVoteBalance {
+                    value
+                }
+                ... on SplitVoteBalance {
+                    aye
+                    nay
+                    abstain
+                }
+            }
+            lockPeriod
+  }}`;
+
 export const GET_POPULAR_DELEGATE = `query PopularDelegateQuery($delegateAddresses: [String!]) {
         votingDelegations(where: { to_in: $delegateAddresses}) {
             to

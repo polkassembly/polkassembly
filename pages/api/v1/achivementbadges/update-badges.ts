@@ -10,7 +10,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import { isValidNetwork } from '~src/api-utils';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { getUserProfileWithUsername } from '../auth/data/userProfileWithUsername';
-import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT } from '~src/queries';
+import { GET_ACTIVE_VOTER, GET_PROPOSAL_COUNT, GET_WHALE } from '~src/queries';
 import { getTotalSupply } from '../utils/achievementbages';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -150,85 +150,27 @@ async function checkWhale(user: ProfileDetailsResponse, network: string): Promis
 		console.warn(messages.INVALID_ADDRESS);
 		return false;
 	}
-
 	const addresses = user.addresses;
 	try {
 		const totalSupply = await getTotalSupply(network || 'polkodot');
 		if (totalSupply.isZero()) return false;
-
 		const { data: voterData } = await fetchSubsquid({
 			network: network || 'polkodot',
-			query: GET_ACTIVE_VOTER,
-			variables: { startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(), voterAddresses: addresses }
+			query: GET_WHALE,
+			variables: { voterAddresses: addresses }
 		});
-
 		if (!voterData?.flattenedConvictionVotes) return false;
 		const totalVotingPower = voterData.flattenedConvictionVotes.reduce((acc: BN, vote: any) => {
-			const selfVotingPower = new BN(vote.parentVote?.selfVotingPower || '0');
-			const delegatedVotingPower = vote.parentVote?.delegatedVotes.reduce((dAcc: BN, delegation: any) => {
-				return dAcc.add(new BN(delegation.votingPower || '0'));
-			}, new BN(0));
-
-			return acc.add(selfVotingPower).add(delegatedVotingPower);
+			const votingPower = vote?.lockPeriod ? new BN(vote?.balance?.value || 0).mul(new BN(vote?.lockPeriod)) : new BN(vote?.balance?.value || 0).div(new BN('10'));
+			return acc.add(votingPower);
 		}, new BN(0));
-		const whaleThreshold = totalSupply.mul(new BN(5)).div(new BN(10000)); // 0.05% of total supply
+		const whaleThreshold = totalSupply.div(new BN('100')).mul(new BN(5));
 		return totalVotingPower.gte(whaleThreshold);
 	} catch (error) {
 		console.error(messages.ERROR_IN_EVALUATING_BADGES);
 		return false;
 	}
 }
-
-// Badge 6: Check if the user qualifies as a Steadfast Commentor with more than 50 comments
-// async function checkSteadfastCommentor(user: ProfileDetailsResponse): Promise<boolean> {
-//   try {
-//     const commentCount = (
-//       await firestore_db.collection('useractivities').where('comment_author_id', '==', user.user_id).where('type', '==', 'COMMENTED').where('is_deleted', '==', false).get()
-//     ).size;
-//     return commentCount > 50;
-//   } catch (error) {
-//     console.error(`Error checking Steadfast Commentor for user: ${user.username}`, error);
-//     return false;
-//   }
-// }
-
-// Badge 7: Check if the user has voted more than 50 times to qualify for the GM Voter badge
-// async function checkGMVoter(user: ProfileDetailsResponse, network: string): Promise<boolean> {
-//   try {
-//     const data = await getUserPostCount({ network, userId: user.user_id });
-//     const voteCount = data.data.votes || 0;
-//     return voteCount > 50;
-//   } catch (error) {
-//     console.error(`Error checking GM Voter for user: ${user.username}`, error);
-//     return false;
-//   }
-// }
-
-// Badge 8: Check if the user is a Popular Delegate, receiving delegations that account for more than 0.01% of the total supply
-// async function checkPopularDelegate(user: ProfileDetailsResponse, network?: string): Promise<boolean> {
-//   try {
-//     const { data: delegationsData, error: delegationsError } = await fetchSubsquid({
-//       network: network || 'polkadot',
-//       query: GET_POPULAR_DELEGATE
-//     });
-//     if (delegationsError || !delegationsData) {
-//       console.error('Failed to fetch voting delegations:', delegationsError);
-//       return false;
-//     }
-//     const delegations = delegationsData?.votingDelegations || [];
-//     const userDelegations = delegations.filter((delegation: any) => user.addresses.includes(delegation.to));
-//     const totalDelegatedTokens = userDelegations.reduce((acc: any, delegation: any) => {
-//       return acc.add(new BN(delegation.balance));
-//     }, new BN(0));
-
-//     const totalSupply = await getTotalSupply(network || 'polkadot');
-//     if (totalSupply.isZero()) return false;
-//     return totalDelegatedTokens.gte(totalSupply.mul(new BN(1)).div(new BN(10000)));
-//   } catch (error) {
-//     console.error('Failed to calculate Popular Delegate status:', error);
-//     return false;
-//   }
-// }
 
 //Main function to evaluate badges for a user
 async function evaluateBadges(username: string, network: string): Promise<Badge[]> {

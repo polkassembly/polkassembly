@@ -61,7 +61,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const dispatch = useDispatch();
 	const [totalActiveProposalsCount, setTotalActiveProposalsCount] = useState<IActiveProposalCount>();
-	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const [isMobile, setIsMobile] = useState(false);
 	const getTotalActiveProposalsCount = async () => {
 		if (!network) return;
 
@@ -77,7 +77,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		if (isMobile) {
 			const handleRouteChange = (url: string) => {
 				setSidedrawer(false);
-
 				if (url.split('/')[1] !== 'discussions' && url.split('/')[1] !== 'post') {
 					setPreviousRoute(url);
 				}
@@ -96,12 +95,26 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [router, isMobile]);
 
 	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.screen.width < 1024);
+		};
+
+		console.log('window.screen.width', window.screen.width);
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+
+	useEffect(() => {
 		if (!window || !(window as any)?.ethereum || !(window as any)?.ethereum?.on) return;
 		(window as any).ethereum.on('accountsChanged', () => {
 			window.location.reload();
 		});
 	}, []);
 
+	console.log('isMobile', isMobile);
 	useEffect(() => {
 		getTotalActiveProposalsCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,24 +152,9 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				/>
 				<Layout hasSider>
 					<div className='relative flex w-full gap-2'>
-						{!isMobile && (
-							<Sidebar
-								className={className}
-								sidebarCollapsed={sidebarCollapsed}
-								setSidebarCollapsed={setSidebarCollapsed}
-								sidedrawer={sidedrawer}
-								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
-								setIdentityMobileModal={setIdentityMobileModal}
-								totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
-								isGood={isGood}
-								mainDisplay={mainDisplay}
-								isIdentitySet={isIdentitySet}
-								isIdentityUnverified={isIdentityUnverified}
-							/>
-						)}
 						{isMobile && sidedrawer && (
 							<Sidebar
-								className={`absolute left-0 top-0 z-[110] w-full ${className}`}
+								className={`absolute left-0 top-0 z-[150] w-full ${className}`}
 								sidebarCollapsed={false}
 								setSidebarCollapsed={setSidebarCollapsed}
 								sidedrawer={sidedrawer}
@@ -169,35 +167,53 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 								isIdentityUnverified={isIdentityUnverified}
 							/>
 						)}
-						<div className={`fixed hidden md:block ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
-							{sidebarCollapsed ? (
-								<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
-									<img
-										src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
-										onClick={() => {
-											if (sidebarCollapsed) {
-												setSidebarCollapsed(false);
-												setSidedrawer(true);
-											}
-										}}
-										alt='close nav'
-									/>
+						{!isMobile && (
+							<>
+								<Sidebar
+									className={className}
+									sidebarCollapsed={sidebarCollapsed}
+									setSidebarCollapsed={setSidebarCollapsed}
+									sidedrawer={sidedrawer}
+									setOpenAddressLinkedModal={setOpenAddressLinkedModal}
+									setIdentityMobileModal={setIdentityMobileModal}
+									totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
+									isGood={isGood}
+									mainDisplay={mainDisplay}
+									isIdentitySet={isIdentitySet}
+									isIdentityUnverified={isIdentityUnverified}
+								/>
+								<div className={`fixed  ${sidebarCollapsed ? 'left-16' : 'left-52'} top-12 z-[102]`}>
+									{sidebarCollapsed ? (
+										<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
+											<img
+												src={`${theme === 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`}
+												onClick={() => {
+													if (sidebarCollapsed) {
+														setSidebarCollapsed(false);
+														setSidedrawer(true);
+													}
+												}}
+												alt='close nav'
+											/>
+										</div>
+									) : (
+										<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
+											<img
+												src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
+												onClick={() => {
+													if (!sidebarCollapsed) {
+														setSidebarCollapsed(true);
+														setSidedrawer(false);
+													}
+												}}
+												alt='open nav'
+											/>
+										</div>
+									)}
 								</div>
-							) : (
-								<div className='sidebar-toggle-button dark:bg-black dark:text-white'>
-									<img
-										src={`${theme === 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`}
-										onClick={() => {
-											if (!sidebarCollapsed) {
-												setSidebarCollapsed(true);
-												setSidedrawer(false);
-											}
-										}}
-										alt='open nav'
-									/>
-								</div>
-							)}
-						</div>
+							</>
+						)}
+
 						<div className={`relative w-full ${sidedrawer ? 'overflow-hidden' : 'overflow-auto'}`}>
 							{[''].includes(network) && ['/', '/opengov', '/gov-2'].includes(router.asPath) ? (
 								<Layout className='min-h-[calc(100vh - 10rem)] relative flex w-full flex-row bg-[#F5F6F8] dark:bg-section-dark-background'>

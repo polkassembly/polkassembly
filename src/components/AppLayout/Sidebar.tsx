@@ -99,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const { username, picture, loginAddress } = currentUser;
 	const router = useRouter();
 	const [open, setOpen] = useState<boolean>(false);
-	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
+	const isMobile = typeof window !== 'undefined' && window.screen.width < 1024;
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const [activeGovernance, setActiveGovernance] = useState(false);
@@ -696,7 +696,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+									} absolute right-4 top-1 z-50  rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
 								>
 									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
 								</span>{' '}
@@ -717,7 +717,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<span
 										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} absolute -top-0 right-4 z-50 rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
 										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
 									</span>
@@ -1053,13 +1053,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			items = items.concat(
 				getSiderMenuItem(
 					<div className='flex items-center  justify-between'>
-						{network === 'polkadot' ? 'On-chainBounties' : 'Bounties'}
+						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
 									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
 									: ''
-							} rounded-lg px-2  py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} absolute right-2 top-1 z-50 rounded-lg px-2  py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 						</span>
@@ -1499,7 +1499,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					) : (
 						<>
-							<div className=' ml-5 flex flex-col justify-center gap-2 md:mt-7'>
+							<div className=' ml-5 flex flex-col justify-center gap-2 lg:mt-7'>
 								<div className='activeborderhover group relative w-10 '>
 									<Link
 										href={''}
@@ -1518,7 +1518,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -bottom-5 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute -bottom-7 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
 											<div className='absolute  right-11 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1567,14 +1567,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-20 lg:h-[345px]'} `}>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-32 lg:h-[345px]'} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-col items-center    '}  ml-2 pr-2 dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-grow flex-col items-center    '}  ml-2 pr-2 dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (

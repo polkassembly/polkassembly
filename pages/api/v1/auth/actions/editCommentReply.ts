@@ -101,7 +101,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			replyId,
 			userId
 		});
-		await getCommentsAISummaryByPost({ network, postId, postType });
+		getCommentsAISummaryByPost({ network, postId, postType });
 		return;
 	} catch (err) {
 		console.log(err);

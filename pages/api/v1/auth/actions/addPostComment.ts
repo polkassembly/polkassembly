@@ -125,7 +125,7 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
 
-	await getCommentsAISummaryByPost({ network, postId, postType });
+	getCommentsAISummaryByPost({ network, postId, postType });
 
 	try {
 		const postAuthorId = postData?.user_id || null;

@@ -127,6 +127,23 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
 	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
 
+	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
+		let allCommentsContent = '';
+
+		Object.values(comments).forEach((commentArray) => {
+			commentArray.forEach((comment) => {
+				allCommentsContent += ' ' + comment.content;
+				if (comment.replies && comment.replies.length > 0) {
+					comment.replies.forEach((reply) => {
+						allCommentsContent += ' ' + reply.content;
+					});
+				}
+			});
+		});
+		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
+		return wordCount > 200;
+	};
+
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
 	}
@@ -195,14 +212,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	useEffect(() => {
 		getOverallSentimentPercentage();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [comments]);
-
-	useEffect(() => {
-		if (!allComments.length) return;
+		if (!Object.keys(comments).length) return;
 		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allComments.length]);
+	}, [comments]);
 
 	const addCommentDataToTimeline = async () => {
 		if (!timeline) {
@@ -316,7 +329,9 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const getDisplayText = (text: string, showFull: boolean) => {
 		if (!text) return '';
-		return showFull ? text : text.split(' ').slice(0, 100).join(' ') + '...';
+		const words = text.split(' ');
+		const isLongText = words.length > 100;
+		return showFull || !isLongText ? text : words.slice(0, 100).join(' ') + '...';
 	};
 
 	const shouldShowToggleButton = (text: string) => {
@@ -375,7 +390,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<div className='mt-4'>
 					{fetchingAISummary ? (
 						<Skeleton className='mt-4' />
-					) : aiContentSummary ? (
+					) : aiContentSummary && CommentsContentCheck(comments) ? (
 						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
 							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
 								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>
@@ -394,12 +409,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
-										<button
+										<span
 											onClick={() => toggleSummary('positive')}
-											className='ml-2 text-blue-500 underline'
+											className='ml-1 cursor-pointer text-sm text-pink_primary'
 										>
 											{showPositiveSummary ? 'See Less' : 'See More'}
-										</button>
+										</span>
 									)}
 								</p>
 							</div>
@@ -410,12 +425,12 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
-										<button
+										<span
 											onClick={() => toggleSummary('negative')}
-											className='ml-2 text-blue-500 underline'
+											className='ml-1 cursor-pointer border-none bg-transparent text-sm text-pink_primary'
 										>
 											{showNegativeSummary ? 'See Less' : 'See More'}
-										</button>
+										</span>
 									)}
 								</p>
 							</div>

@@ -201,12 +201,14 @@ const ProfileOverview = ({
 									addressWithIdentity={addressWithIdentity}
 									theme={theme}
 								/>
-								<ProfileBadges
-									badges={achievement_badges}
-									theme={theme}
-									selectedAddresses={selectedAddresses}
-									userProfile={userProfile}
-								/>
+								{profileDetails?.user_id && (
+									<ProfileBadges
+										badges={achievement_badges}
+										theme={theme}
+										selectedAddresses={selectedAddresses}
+										userProfile={userProfile}
+									/>
+								)}
 							</div>
 						)}
 						{delegationSupportedNetworks.includes(network) && (
@@ -242,12 +244,14 @@ const ProfileOverview = ({
 								addressWithIdentity={addressWithIdentity}
 								theme={theme}
 							/>
-							<ProfileBadges
-								badges={achievement_badges}
-								theme={theme}
-								selectedAddresses={selectedAddresses}
-								userProfile={userProfile}
-							/>
+							{profileDetails?.user_id && (
+								<ProfileBadges
+									badges={achievement_badges}
+									theme={theme}
+									selectedAddresses={selectedAddresses}
+									userProfile={userProfile}
+								/>
+							)}
 						</div>
 					)}
 				</div>

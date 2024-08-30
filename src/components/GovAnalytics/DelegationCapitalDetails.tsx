@@ -124,6 +124,11 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 						from: 'color',
 						modifiers: [['darker', 1.6]]
 					}}
+					tooltip={({ id, value, indexValue }) => (
+						<div className='rounded bg-white px-2 py-1 text-bodyBlue dark:bg-[#323232] dark:text-white'>
+							<strong>{id}</strong> - {indexValue}: {formatTickValue(value)}
+						</div>
+					)}
 					axisTop={null}
 					axisRight={null}
 					borderRadius={2}

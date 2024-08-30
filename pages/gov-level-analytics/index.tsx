@@ -46,9 +46,7 @@ const GovLevelAnalytics = (props: { network: string }) => {
 					<h1 className='m-0 p-0 text-2xl font-semibold text-bodyBlue dark:text-white'>Governance Analytics</h1>
 				</div>
 				<div className='flex h-[68px] w-full items-center rounded-xl border-none bg-white px-6 py-4 dark:bg-black'>
-					<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>
-						Lorem IpsAliqua id fugiat nostrud irure ex duis ea quis id quis ad et. Sunt qui esse pariatur duis deserunt mollit dolore cillum minim tempor enim. um{' '}
-					</p>
+					<p className='m-0 p-0 text-sm font-normal text-bodyBlue dark:text-white'>All active and history referenda of various tracks.</p>
 				</div>
 				<GovAnalytics />
 			</section>

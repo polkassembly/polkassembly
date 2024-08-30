@@ -97,7 +97,7 @@ const AnalyticTurnOutPercentage = () => {
 						colors={['#978FED']}
 						margin={{
 							bottom: 90,
-							left: 50,
+							left: 60,
 							right: 20,
 							top: 60
 						}}
@@ -123,7 +123,7 @@ const AnalyticTurnOutPercentage = () => {
 						}}
 						axisLeft={{
 							legend: 'percentage',
-							legendOffset: -40,
+							legendOffset: -50,
 							legendPosition: 'middle',
 							tickPadding: 10,
 							tickRotation: 0,

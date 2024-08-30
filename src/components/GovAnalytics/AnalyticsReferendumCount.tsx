@@ -199,6 +199,7 @@ const AnalyticsReferendumCount = () => {
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
+								symbolShape: 'circle',
 								symbolSize: 16,
 								translateX: 40,
 								translateY: 0

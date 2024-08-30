@@ -215,6 +215,7 @@ const ReferendumCount = () => {
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
+								symbolShape: 'circle',
 								symbolSize: 8,
 								translateX: -450,
 								translateY: 0
@@ -228,6 +229,7 @@ const ReferendumCount = () => {
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
+								symbolShape: 'circle',
 								symbolSize: 8,
 								translateX: -250,
 								translateY: 0
@@ -241,6 +243,7 @@ const ReferendumCount = () => {
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
+								symbolShape: 'circle',
 								symbolSize: 8,
 								translateX: -20,
 								translateY: 0

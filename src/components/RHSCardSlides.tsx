@@ -283,7 +283,7 @@ const RHSCardSlides = ({ canEdit, showDecisionDeposit, trackName, toggleEdit, st
 			/>
 			<div className='card relative mx-auto mb-9 h-32 w-full max-w-sm overflow-hidden rounded-3xl rounded-tr-none bg-[#f5f6f8] font-poppins shadow-lg dark:bg-section-dark-background'>
 				<div className='box relative h-full w-full'>
-					<div className='slide relative flex h-3/4'>
+					<div className='slide relative flex sm:h-3/4'>
 						{RHSCards.map((card, index) => (
 							<div
 								key={card.title}

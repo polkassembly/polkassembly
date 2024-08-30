@@ -30,7 +30,7 @@ const AddressDetailsCard = ({ address, showAddress = false }: Props) => {
 	const [isMultisigProposer, setIsMultisigProposer] = useState(false);
 
 	const handleIdentityInfo = async () => {
-		if ((!api && !peopleChainApi) || !address || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !address || !apiReady) return;
 
 		const info = await getIdentityInformation({
 			address: address,

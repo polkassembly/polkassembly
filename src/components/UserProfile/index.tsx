@@ -47,6 +47,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		achievement_badges: [],
 		addresses: addresses,
 		badges: [],
 		bio: bio,
@@ -59,7 +60,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		if ((!api && !peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {

@@ -122,7 +122,10 @@ const messages = {
 	DISABLE_COMMENTS: 'Comments have been disabled for this post.',
 	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.',
 	NO_ACTIVE_PROPOSAL_FOUND: 'No active proposal found.',
-	VOTE_NOT_FOUND: 'Vote not found.'
+	VOTE_NOT_FOUND: 'Vote not found.',
+	METHOD_NOT_ALLOWED: 'Method not allowed.',
+	ERROR_IN_UPDATING_BADGES: 'Error in updating badges.',
+	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.'
 };
 
 export default messages;

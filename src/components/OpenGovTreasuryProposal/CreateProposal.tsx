@@ -34,6 +34,8 @@ import Alert from '~src/basic-components/Alert';
 import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 const ZERO_BN = new BN(0);
 
@@ -53,7 +55,6 @@ interface Props {
 	content: string;
 	tags: string[];
 	setPostId: (pre: number) => void;
-	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
 	generalIndex?: string | null;
@@ -81,7 +82,6 @@ const CreateProposal = ({
 	content,
 	tags,
 	setPostId,
-	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
 	generalIndex = null,
@@ -98,10 +98,11 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
-	const { id: userId } = currentUser;
+	const { id: userId, loginAddress } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
 	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const success = (message: string) => {
 		messageApi.open({
@@ -117,12 +118,23 @@ const CreateProposal = ({
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
+			decimals: chainProperties[network]?.tokenDecimals,
 			unit
 		});
+		if (!api || !apiReady) return;
+
+		(async () => {
+			const balances = await userProfileBalances({
+				address: getEncodedAddress(proposerAddress || loginAddress, network) || proposerAddress || loginAddress,
+				api,
+				apiReady,
+				network
+			});
+			setAvailableBalance(balances?.transferableBalance || ZERO_BN);
+		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, api, apiReady]);
 
 	useEffect(() => {
 		setShowAlert(false);
@@ -281,7 +293,7 @@ const CreateProposal = ({
 			indicator={<LoadingOutlined />}
 		>
 			<div className={`create-proposal ${className}`}>
-				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
+				{submitionDeposite.gt(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
 						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
@@ -458,9 +470,9 @@ const CreateProposal = ({
 						variant='primary'
 						height={40}
 						width={155}
-						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)}
+						disabled={txFee.eq(ZERO_BN) || loading || availableBalance.lt(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
+						className={`${(txFee.eq(ZERO_BN) || loading || availableBalance.lt(submitionDeposite)) && 'opacity-50'}`}
 					/>
 				</div>
 			</div>

@@ -37,6 +37,7 @@ interface IEditProfileModalProps {
 
 const getDefaultProfile: () => ProfileDetails = () => {
 	return {
+		achievement_badges: [],
 		badges: [],
 		bio: '',
 		cover_image: '',
@@ -134,6 +135,7 @@ const EditProfileModal: FC<IEditProfileModalProps> = (props) => {
 		if (data) {
 			const { badges, bio, image, social_links, title, cover_image } = data;
 			setProfile({
+				achievement_badges: [],
 				badges,
 				bio,
 				cover_image,

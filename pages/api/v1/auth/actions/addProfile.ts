@@ -77,6 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<TokenType | Mes
 
 	//update profile field in userRef
 	const profile = {
+		achievement_badges: [],
 		badges,
 		bio: bio || '',
 		cover_image: cover_image || '',

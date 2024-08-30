@@ -12,7 +12,7 @@ import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 export default function getTokenFromReq(req: NextApiRequest): string {
 	// Authorization header is of format:
 	// Authorization: Bearer $asdnkjadj32j23kj@#adslkads
-	const authHeader = req.headers.authorization;
+	const authHeader = req?.headers?.authorization;
 
 	if (!authHeader) {
 		throw apiErrorWithStatusCode('Authorization header missing', 400);

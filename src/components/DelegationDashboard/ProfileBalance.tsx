@@ -11,7 +11,7 @@ import { Divider } from 'antd';
 import BN from 'bn.js';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { userDetailsActions } from '~src/redux/userDetails';
-import userProfileBalances from '~src/util/userProfieBalances';
+import userProfileBalances from '~src/util/userProfileBalances';
 import { chainProperties } from '~src/global/networkConstants';
 import { InjectedAccount } from '@polkadot/extension-inject/types';
 import { formatBalance } from '@polkadot/util';

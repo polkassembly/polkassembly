@@ -15,7 +15,7 @@ import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getKiltDidName } from '~src/util/kiltDid';
 import shortenAddress from '~src/util/shortenAddress';
 import EthIdenticon from './EthIdenticon';
-import { EAddressOtherTextType, IDelegate } from '~src/types';
+import { EAddressOtherTextType } from '~src/types';
 import classNames from 'classnames';
 import styled from 'styled-components';
 import IdentityBadge from './IdentityBadge';
@@ -32,7 +32,8 @@ import { isAddress } from 'ethers';
 import { poppins } from 'pages/_app';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { usePeopleKusamaApiContext } from '~src/context';
+import { usePeopleChainApiContext } from '~src/context';
+import isPeopleChainSupportedNetwork from '~src/components/OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const Tipping = dynamic(() => import('~src/components/Tipping'), {
 	ssr: false
@@ -117,7 +118,7 @@ const Address = (props: Props) => {
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
 	const [api, setApi] = useState<ApiPromise | null>(null);
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [apiReady, setApiReady] = useState(false);
 	const [mainDisplay, setMainDisplay] = useState<string>('');
 	const [sub, setSub] = useState<string>('');
@@ -142,11 +143,11 @@ const Address = (props: Props) => {
 
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			address: address
+		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
+			addresses: [address]
 		});
 		if (data) {
-			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+			setIsW3FDelegate(data?.isW3fDelegate || false);
 		} else {
 			console.log(error);
 			setIsW3FDelegate(false);
@@ -162,16 +163,16 @@ const Address = (props: Props) => {
 		if (network === AllNetworks.COLLECTIVES && apiContext.relayApi && apiContext.relayApiReady) {
 			setApi(apiContext.relayApi);
 			setApiReady(apiContext.relayApiReady);
-		} else if (network === 'kusama') {
-			setApi(peopleKusamaApi || null);
-			setApiReady(peopleKusamaApiReady);
+		} else if (isPeopleChainSupportedNetwork(network)) {
+			setApi(peopleChainApi || null);
+			setApiReady(peopleChainApiReady);
 		} else {
 			if (!apiContext.api || !apiContext.apiReady) return;
 			setApi(apiContext.api);
 			setApiReady(apiContext.apiReady);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [network, apiContext.api, apiContext.apiReady, apiContext.relayApi, apiContext.relayApiReady, address, peopleChainApi, peopleChainApiReady]);
 
 	const FEATURE_RELEASE_DATE = dayjs('2023-06-12').toDate(); // Date from which we are sending custom username flag on web3 sign up.
 
@@ -214,13 +215,12 @@ const Address = (props: Props) => {
 	};
 
 	const handleIdentityInfo = () => {
-		if (!api || !apiReady) return;
+		if (!api && !peopleChainApi) return;
 
 		(async () => {
 			const info = await getIdentityInformation({
 				address: address,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? (api || undefined),
 				network: network
 			});
 			setIdentity(info);
@@ -264,7 +264,7 @@ const Address = (props: Props) => {
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady || !address || !encodedAddr) return;
+		if ((!api && !peopleChainApi) || !address || !encodedAddr) return;
 
 		try {
 			fetchUsername(address);
@@ -278,7 +278,7 @@ const Address = (props: Props) => {
 			getKiltName();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, address, encodedAddr, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, address, encodedAddr, network]);
 
 	useEffect(() => {
 		setUsername(passedUsername || username);

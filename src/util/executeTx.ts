@@ -18,14 +18,37 @@ interface Args {
 	onFailed: (errorMessageFallback: string) => Promise<void> | void;
 	onBroadcast?: () => void;
 	setStatus?: (pre: string) => void;
+	setIsTxFinalized?: (pre: string) => void;
+	waitTillFinalizedHash?: boolean;
 }
-const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, params = {}, errorMessageFallback, onSuccess, onFailed, onBroadcast, setStatus }: Args) => {
+const executeTx = async ({
+	api,
+	apiReady,
+	network,
+	tx,
+	address,
+	proxyAddress,
+	params = {},
+	errorMessageFallback,
+	onSuccess,
+	onFailed,
+	onBroadcast,
+	setStatus,
+	setIsTxFinalized,
+	waitTillFinalizedHash = false
+}: Args) => {
+	let isSuccess = false;
 	if (!api || !apiReady || !tx) return;
 
 	const extrinsic = proxyAddress ? api.tx.proxy.proxy(address, null, tx) : tx;
 
+	const signerOptions = {
+		...params,
+		withSignedTransaction: true
+	};
+
 	extrinsic
-		.signAndSend(proxyAddress || address, params, async ({ status, events, txHash }: any) => {
+		.signAndSend(proxyAddress || address, signerOptions, async ({ status, events, txHash }: any) => {
 			if (status.isInvalid) {
 				console.log('Transaction invalid');
 				setStatus?.('Transaction invalid');
@@ -43,12 +66,16 @@ const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, pa
 				for (const { event } of events) {
 					if (event.method === 'ExtrinsicSuccess') {
 						setStatus?.('Transaction Success');
-						await onSuccess(txHash);
+						isSuccess = true;
+						if (!waitTillFinalizedHash) {
+							await onSuccess(txHash);
+						}
 					} else if (event.method === 'ExtrinsicFailed') {
 						setStatus?.('Transaction failed');
 						console.log('Transaction failed');
 						setStatus?.('Transaction failed');
 						const dispatchError = (event.data as any)?.dispatchError;
+						isSuccess = false;
 
 						if (dispatchError?.isModule) {
 							const errorModule = (event.data as any)?.dispatchError?.asModule;
@@ -67,6 +94,10 @@ const executeTx = async ({ api, apiReady, network, tx, address, proxyAddress, pa
 			} else if (status.isFinalized) {
 				console.log(`Transaction has been included in blockHash ${status.asFinalized.toHex()}`);
 				console.log(`tx: https://${network}.subscan.io/extrinsic/${txHash}`);
+				setIsTxFinalized?.(txHash);
+				if (isSuccess && waitTillFinalizedHash) {
+					await onSuccess(txHash);
+				}
 			}
 		})
 		.catch((error: unknown) => {

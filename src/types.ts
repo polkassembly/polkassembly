@@ -6,6 +6,7 @@ import { network, tokenSymbol } from './global/networkConstants';
 import { ProposalType, TSubsquidProposalType, VoteType } from './global/proposalType';
 import BN from 'bn.js';
 import dayjs from 'dayjs';
+import { EAssets } from './components/OpenGovTreasuryProposal/types';
 
 declare global {
 	interface Window {
@@ -101,8 +102,17 @@ export type ChainPropType = {
 	[index: string]: ChainProps;
 };
 
+export interface IAssets {
+	tokenDecimal: number;
+	name: string;
+	img: string;
+	symbol: EAssets;
+	genralIndex: string;
+}
+
 export interface ChainProps {
-	peopleKusamaRpcEndpoint?: string;
+	peopleChainRpcEndpoint?: string;
+	peopleChainParachain?: string;
 	preImageBaseDeposit?: string;
 	palletInstance?: string;
 	parachain?: string;
@@ -115,13 +125,18 @@ export interface ChainProps {
 	rpcEndpoint: string;
 	category: string;
 	subsquidUrl: string;
+	treasuryAddress?: string;
 	treasuryProposalBondPercent: string | null;
 	treasuryProposalMinBond: string | null;
 	treasuryProposalMaxBond: string | null;
 	externalLinks: string;
+	assethubExternalLinks?: string;
 	rpcEndpoints: TRPCEndpoint[];
 	relayRpcEndpoints?: TRPCEndpoint[];
 	gTag: string | null;
+	assetHubRpcEndpoint?: string;
+	assetHubTreasuryAddress?: string;
+	supportedAssets?: IAssets[];
 }
 
 export type TRPCEndpoint = {
@@ -459,6 +474,22 @@ export interface IDelegate {
 	user_id?: number;
 }
 
+export interface IDelegateDetails {
+	address: string;
+	bio: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+	image: string;
+	dataSource: string[];
+	delegatedBalance: string;
+}
+
+export enum EDelegationFilters {
+	RECEIVED_DELEGATION = 'receivedDeleagtion',
+	DELEGATED_VOTES = 'delegatedVotes',
+	VOTES_IN_LAST_MONTH = 'votesInLastMonth'
+}
+
 export enum EVoteDecisionType {
 	AYE = 'aye',
 	NAY = 'nay',
@@ -656,6 +687,7 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
 	allProposals: { diff: number; total: number };
@@ -798,11 +830,6 @@ export interface IActiveProposalCount {
 	]: number;
 }
 
-export enum EASSETS {
-	USDT = '1984',
-	USDC = '1337'
-}
-
 export interface IBountyStats {
 	availableBountyPool: string;
 	activeBounties: string;
@@ -835,4 +862,87 @@ export interface IBountyProposalsResponse {
 		bountyId: number;
 		reward: string | null;
 	}[];
+}
+
+export interface IPayout {
+	beneficiary: string;
+	amount: string;
+	expireAt: string;
+	startedAt: string;
+	payoutIndex: number;
+	generalIndex: string;
+	status: 'Pending';
+}
+
+export interface IHistoryItem {
+	date: string;
+	balance: string;
+}
+
+export interface IOverviewProps {
+	priceWeeklyChange: {
+		isLoading: boolean;
+		value: string;
+	};
+	currentTokenPrice: {
+		isLoading: boolean;
+		value: string;
+	};
+	available: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
+	spendPeriod: {
+		isLoading: boolean;
+		percentage: number;
+		value: {
+			days: number;
+			hours: number;
+			minutes: number;
+			total: number;
+		};
+	};
+	nextBurn: {
+		isLoading: boolean;
+		value: string;
+		valueUSD: string;
+	};
+	tokenValue: number;
+}
+
+export interface ITreasuryResponseData {
+	history: IHistoryItem[] | null;
+	status: string;
+}
+
+export interface IDailyTreasuryTallyData {
+	created_at: string;
+	balance: string;
+}
+
+export interface IDelegateAddressDetails {
+	address: string;
+	bio: string;
+	dataSource: string[];
+	delegatedBalance: string;
+	image: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+	username?: string;
+	identityInfo?: { display: string; leagal: string } | null;
+}
+
+export enum EDelegationAddressFilters {
+	DELEGATED_VOTES = 'delegatedBalance',
+	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
+	VOTED_PROPOSALS = 'votedProposalsCount'
+}
+
+export enum EDelegationSourceFilters {
+	POLKASSEMBLY = 'polkassembly',
+	PARITY = 'parity',
+	NOVA = 'nova',
+	W3F = 'w3f',
+	NA = 'individual'
 }

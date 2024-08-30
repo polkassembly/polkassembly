@@ -3,15 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { ICreateAmassadorPreimge } from './types';
+import { EAmbassadorActions, ICreateAmassadorPreimge } from './types';
 import classNames from 'classnames';
-import { useAmbassadorSeedingSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import Address from '~src/ui-components/Address';
 import getRankNameByRank from './utils/getRankNameByRank';
 import { Button, Spin } from 'antd';
-import { EAmbassadorSeedingSteps } from '~src/redux/ambassadorSeeding/@types';
 import { useDispatch } from 'react-redux';
-import { ambassadorSeedingActions } from '~src/redux/ambassadorSeeding';
 import { useApiContext } from '~src/context';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
@@ -25,16 +23,29 @@ import BN from 'bn.js';
 import Alert from '~src/basic-components/Alert';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
+import { ambassadorRemovalActions } from '~src/redux/removeAmbassador';
+import { ambassadorReplacementActions } from '~src/redux/replaceAmbassador';
+import { ambassadorSeedingActions } from '~src/redux/addAmbassadorSeeding';
+import { EAmbassadorSeedingSteps } from '~src/redux/addAmbassadorSeeding/@types';
 
 const EMPTY_HASH = blake2AsHex('');
 const ZERO_BN = new BN(0);
 
-const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentModal }: ICreateAmassadorPreimge) => {
+const CreateAmassadorPreimge = ({
+	className,
+	setOpenSuccessModal,
+	closeCurrentModal,
+	action,
+	applicantAddress,
+	proposer,
+	rank,
+	xcmCallData,
+	removingApplicantAddress
+}: ICreateAmassadorPreimge) => {
 	const dispatch = useDispatch();
 	const { network } = useNetworkSelector();
 	const { api, apiReady } = useApiContext();
 	const { loginAddress } = useUserDetailsSelector();
-	const { applicantAddress, proposer, rank, xcmCallData } = useAmbassadorSeedingSelector();
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
 	const [gasFee, setGasFee] = useState<BN>(ZERO_BN);
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -65,9 +76,50 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 		setGasFee(gasFee);
 	};
 
+	const handleUpdateIsPreimageCreationDone = (done: boolean) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(done));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateIsPreimageCreationDone(done));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateIsPreimageCreationDone(done));
+				break;
+		}
+	};
+
+	const handleUpdateAmbassadorPreimage = (preimage: { hash: string; length: number }) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateAmbassadorPreimage(preimage));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateAmbassadorPreimage(preimage));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateAmbassadorPreimage(preimage));
+				break;
+		}
+	};
+	const handleAmbassadorStepChange = (step: EAmbassadorSeedingSteps) => {
+		switch (action) {
+			case EAmbassadorActions.ADD_AMBASSADOR:
+				dispatch(ambassadorSeedingActions.updateAmbassadorSteps(step));
+				break;
+			case EAmbassadorActions.REMOVE_AMBASSADOR:
+				dispatch(ambassadorRemovalActions.updateAmbassadorSteps(step));
+				break;
+			case EAmbassadorActions.REPLACE_AMBASSADOR:
+				dispatch(ambassadorReplacementActions.updateAmbassadorSteps(step));
+				break;
+		}
+	};
+
 	const onSuccess = (preimage: IPreimage) => {
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(true));
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 }));
+		handleUpdateIsPreimageCreationDone(true);
+		handleUpdateAmbassadorPreimage({ hash: preimage?.preimageHash || '', length: preimage?.preimageLength || 0 });
 		closeCurrentModal();
 		setOpenSuccessModal(true);
 		setLoading({ isLoading: false, message: '' });
@@ -80,8 +132,8 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			status: NotificationStatus.ERROR
 		});
 		setLoading({ isLoading: false, message: '' });
-		dispatch(ambassadorSeedingActions.updateAmbassadorPreimage({ hash: '', length: 0 }));
-		dispatch(ambassadorSeedingActions.updateIsPreimageCreationDone(false));
+		handleUpdateAmbassadorPreimage({ hash: '', length: 0 });
+		handleUpdateIsPreimageCreationDone(false);
 	};
 
 	const handleCreatePreimage = async () => {
@@ -89,7 +141,6 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 		setLoading({ isLoading: true, message: 'Awaiting Confirmation!' });
 
 		const preimage: any = getState(api, xcmCallData as HexString);
-
 		await executeTx({
 			address: proposer || loginAddress,
 			api,
@@ -98,17 +149,10 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			network,
 			onFailed,
 			onSuccess: () => onSuccess(preimage),
-			setStatus: (message: string) => setLoading({ ...loading, message: message }),
+			setStatus: (message: string) => setLoading({ isLoading: true, message: message }),
 			tx: preimage.notePreimageTx
 		});
 	};
-
-	useEffect(() => {
-		if (loginAddress && !proposer) {
-			dispatch(ambassadorSeedingActions.updateProposer(loginAddress));
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	useEffect(() => {
 		getGasFee();
@@ -145,6 +189,19 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 							disableTooltip
 						/>
 					</div>
+
+					{!!removingApplicantAddress && (
+						<div className='flex items-start justify-start gap-5'>
+							<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Removing Address:</span>
+							<Address
+								iconSize={22}
+								address={removingApplicantAddress}
+								displayInline
+								isTruncateUsername={false}
+								disableTooltip
+							/>
+						</div>
+					)}
 					<div className='flex items-start justify-start gap-5'>
 						<span className='w-[150px] text-lightBlue dark:text-blue-dark-medium'>Rank:</span>
 						<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
@@ -173,7 +230,7 @@ const CreateAmassadorPreimge = ({ className, setOpenSuccessModal, closeCurrentMo
 			<div className='-mx-6 mt-6 flex justify-end gap-4 border-0 border-t-[1px] border-solid border-section-light-container px-6 dark:border-separatorDark'>
 				<Button
 					className='mt-4 h-10 w-[150px] rounded-[4px] border-[1px] border-pink_primary bg-transparent text-sm font-medium text-pink_primary'
-					onClick={() => dispatch(ambassadorSeedingActions.updateAmbassadorSteps(EAmbassadorSeedingSteps.PROMOTES_CALL))}
+					onClick={() => handleAmbassadorStepChange(EAmbassadorSeedingSteps.CREATE_APPLICANT)}
 				>
 					Back
 				</Button>

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Button, Divider } from 'antd';
+import { Divider } from 'antd';
 import BN from 'bn.js';
 import React, { FC, useEffect, useState } from 'react';
 import formatBnBalance from 'src/util/formatBnBalance';
@@ -35,7 +35,7 @@ import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { delegationSupportedNetworks } from '~src/components/Post/Tabs/PostStats/util/constants';
-import AmbassadorSeeding from '~src/components/AmbassadorSeeding';
+import AmbassadorActionButtons from '~src/components/AmbassadorSeeding/AmbassadorActionButtons';
 
 const Curves = dynamic(() => import('./Curves'), {
 	loading: () => <Skeleton active />,
@@ -161,7 +161,6 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	const [curvesLoading, setCurvesLoading] = useState(true);
 	const [showDetails, setShowDetails] = useState(false);
 	const [trackNum, setTrackNum] = useState<number | null>(null);
-	const [openAmbassadorModal, setOpenAmbassadorModal] = useState(false);
 
 	const [data, setData] = useState<any>({
 		datasets: [],
@@ -283,7 +282,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 	return (
 		<div className={`${className}`}>
 			<article className='flex justify-between xs:py-2 md:py-0'>
-				<div className='flex items-center gap-x-2 xs:mt-2 xs:flex-wrap md:mt-0'>
+				<div className='flex items-center gap-2 xs:mt-2 xs:flex-wrap md:mt-0'>
 					{theme === 'dark' ? <DiscussionIconWhite /> : <DiscussionIconGrey />}
 					<h2 className='mb-0 text-xl font-semibold leading-8 text-bodyBlue dark:text-blue-dark-high'>About {trackName.split(/(?=[A-Z])/).join(' ')}</h2>
 					<Tooltip
@@ -294,22 +293,12 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						<h4 className=' mb-0 text-xl font-semibold leading-8 tracking-[0.01em] dark:text-blue-dark-high'>(#{trackMetaData.trackId})</h4>
 					</Tooltip>
 				</div>
-				<div className='justify-end xs:hidden md:flex md:p-1'>
-					<div className='flex gap-x-4'>
+				<div className='flex justify-end xs:hidden md:flex md:p-1'>
+					<div className='flex gap-4'>
 						{delegationSupportedNetworks.includes(network) && !delegatedTo && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
-							<div>
-								<Button
-									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-pink_primary text-white'
-									onClick={() => setOpenAmbassadorModal(true)}
-								>
-									Create Ambassador Application
-								</Button>
-								<AmbassadorSeeding
-									open={openAmbassadorModal}
-									setOpen={setOpenAmbassadorModal}
-								/>
+							<div className=''>
+								<AmbassadorActionButtons />
 							</div>
 						)}
 						{['root', 'ReferendumCanceller', 'ReferendumKiller', 'StakingAdmin', 'AuctionAdmin', 'WishForChange', 'FastGeneralAdmin'].includes(trackName) && (
@@ -507,17 +496,7 @@ const AboutTrackCard: FC<IAboutTrackCardProps> = (props) => {
 						{delegationSupportedNetworks.includes(network) && <DelegateModal trackNum={trackMetaData?.trackId} />}
 						{network === 'polkadot' && trackName == 'FellowshipAdmin' && (
 							<div>
-								<Button
-									disabled={!loginAddress}
-									className='h-10 border-pink_primary bg-pink_primary text-white'
-									onClick={() => setOpenAmbassadorModal(true)}
-								>
-									Create Ambassador Application
-								</Button>
-								<AmbassadorSeeding
-									open={openAmbassadorModal}
-									setOpen={setOpenAmbassadorModal}
-								/>
+								<AmbassadorActionButtons />
 							</div>
 						)}
 						{trackMetaData?.group === 'Treasury' && treasuryProposalCreationAllowedNetwork?.includes(network) && (

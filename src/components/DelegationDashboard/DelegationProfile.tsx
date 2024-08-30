@@ -12,7 +12,6 @@ import dynamic from 'next/dynamic';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Address from '~src/ui-components/Address';
 import SocialsHandle from '../../ui-components/SocialsHandle';
-import { IDelegate } from '~src/types';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
@@ -50,13 +49,11 @@ const DelegationProfile = ({ isSearch, className, profileDetails, userBio, setUs
 	const handleData = async () => {
 		if (!username) return;
 		setLoading(true);
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', { address });
-		if (data?.length) {
-			if (data?.[0]?.bio && data?.[0]?.dataSource?.includes('polkassembly')) {
-				setUserBio(data?.[0]?.bio || '');
-			}
+		const { data, error } = await nextApiClientFetch<{ delegationMandate: string }>('api/v1/delegations/getPADelegationMandates', { address });
+		if (data) {
+			setUserBio?.(data?.delegationMandate);
 			setLoading(false);
-		} else {
+		} else if (error) {
 			console.log(error);
 			setLoading(false);
 		}

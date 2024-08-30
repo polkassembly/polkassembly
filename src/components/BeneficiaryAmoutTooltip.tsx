@@ -4,17 +4,17 @@
 import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { chainProperties } from '~src/global/networkConstants';
-import { useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import dayjs from 'dayjs';
-import { CustomStatus } from './Listing/Tracks/TrackListingCard';
-import { getStatusesFromCustomStatus } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Spin } from 'antd';
 import { inputToBn } from '~src/util/inputToBn';
 import { parseBalance } from './Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { formatedBalance } from '~src/util/formatedBalance';
+import { getUsdValueFromAsset } from './OpenGovTreasuryProposal/utils/getUSDValueFromAsset';
+import getAssetDecimalFromAssetId from './OpenGovTreasuryProposal/utils/getAssetDecimalFromAssetId';
 
 interface Args {
 	className?: string;
@@ -38,18 +38,20 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 	const [loading, setLoading] = useState<boolean>(false);
 	const [bnUsdValueOnCreation, setBnUsdValueOnCreation] = useState<BN>(ZERO_BN);
 	const [bnUsdValueOnClosed, setBnUsdValueOnClosed] = useState<BN>(ZERO_BN);
+	const { dedTokenUsdPrice = '0' } = useAssetsCurrentPriceSelectior();
 
 	const fetchUSDValue = async () => {
 		if (!proposalCreatedAt || dayjs(proposalCreatedAt).isSame(dayjs())) return;
-		const closedStatuses = getStatusesFromCustomStatus(CustomStatus.Closed);
+		const passedProposalStatuses = ['Executed', 'Confirmed', 'Approved'];
 		setLoading(true);
 		let proposalClosedStatusDetails: any = null;
 		timeline?.[0]?.statuses.map((status: any) => {
-			if (closedStatuses.includes(status.status)) {
+			if (passedProposalStatuses.includes(status.status)) {
 				proposalClosedStatusDetails = status;
 			}
 			setIsProposalClosed(!!proposalClosedStatusDetails);
 		});
+		if (!proposalClosedStatusDetails) return;
 
 		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
 			closedStatus: proposalClosedStatusDetails || null,
@@ -60,7 +62,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 		if (data) {
 			const [bnCreation] = inputToBn(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : currentTokenPrice, network, false);
 			const [bnClosed] = inputToBn(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : '0', network, false);
-
 			setUsdValueOnCreation(data.usdValueOnCreation ? String(Number(data.usdValueOnCreation)) : null);
 			setUsdValueOnClosed(data.usdValueOnClosed ? String(Number(data.usdValueOnClosed)) : null);
 			setBnUsdValueOnClosed(bnClosed);
@@ -79,88 +80,98 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 
 	return (
 		<div className={className}>
-			{assetId ? (
-				<div className={'flex items-center gap-1'}>
-					<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
-						{getBeneficiaryAmoutAndAsset(assetId, requestedAmt.toString(), network)}
-					</span>
-					<HelperTooltip
-						usedInPostPage={usedInPostPage}
-						overlayClassName='w-96 mb-5'
-						text={
-							<Spin spinning={loading}>
-								<div className='flex flex-col gap-1 text-xs'>
-									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
-										<span>
-											{parseBalance(
-												new BN(requestedAmt)
-													.div(new BN(String(1000000 * Number((isProposalClosed ? usdValueOnClosed : currentTokenPrice || 1) || 1))))
-													.mul(new BN(String(10 ** (chainProperties?.[network]?.tokenDecimals || 0))))
-													.toString(),
-												0,
-												false,
-												network
-											)}{' '}
-											{chainProperties[network]?.tokenSymbol}
-										</span>
+			{requestedAmt ? (
+				assetId ? (
+					<div className={'flex items-center gap-1'}>
+						<span className='text-lightBlue hover:text-lightBlue dark:text-blue-dark-high hover:dark:text-blue-dark-high'>
+							{getBeneficiaryAmountAndAsset(assetId, requestedAmt.toString(), network)}
+						</span>
+						<HelperTooltip
+							usedInPostPage={usedInPostPage}
+							overlayClassName='w-96 mb-5'
+							text={
+								<Spin spinning={loading}>
+									<div className='flex flex-col gap-1 text-xs'>
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<span>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</span>
+											<span>
+												{getUsdValueFromAsset({
+													currentTokenPrice: isProposalClosed ? usdValueOnClosed ?? currentTokenPrice : currentTokenPrice || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network]?.tokenSymbol}
+											</span>
+										</div>
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<span className='flex'>Value on day of creation:</span>
+											<span>
+												{getUsdValueFromAsset({
+													currentTokenPrice: usdValueOnCreation || '0',
+													dedTokenUsdPrice: dedTokenUsdPrice || '0',
+													generalIndex: assetId,
+													inputAmountValue:
+														new BN(requestedAmt)
+															.div(new BN('10').pow(new BN(getAssetDecimalFromAssetId({ assetId: assetId ? String(assetId) : null, network }) || '0')))
+															.toString() || '0',
+													network
+												}) || 0}{' '}
+												{chainProperties[network]?.tokenSymbol}
+											</span>
+										</div>
 									</div>
-									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<span className='flex'>Value on day of creation:</span>
-										<span>
-											{parseBalance(
-												new BN(requestedAmt)
-													.div(new BN(String(1000000 * Number(usdValueOnCreation || currentTokenPrice || 1))))
-													.mul(new BN(String(10 ** (chainProperties[network]?.tokenDecimals || 0))))
-													.toString(),
-												0,
-												false,
-												network
-											)}{' '}
-											{chainProperties[network]?.tokenSymbol}
-										</span>
-									</div>
-								</div>
-							</Spin>
-						}
-					/>
-				</div>
-			) : (
-				<div className={'flex items-center gap-1'}>
-					<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
-						{formatedBalance(requestedAmt, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-					</span>
+								</Spin>
+							}
+						/>
+					</div>
+				) : (
+					<div className={'flex items-center gap-1'}>
+						<span className='whitespace-pre text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
+							{formatedBalance(requestedAmt, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+						</span>
 
-					<HelperTooltip
-						usedInPostPage={usedInPostPage}
-						overlayClassName='mb-10'
-						text={
-							<Spin spinning={loading}>
-								<div className='flex flex-col gap-1 text-xs'>
-									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
-										<span>
-											{parseBalance(
-												requestedAmountFormatted
-													.mul(!isProposalClosed ? new BN(Number(currentTokenPrice) * 10 ** chainProperties?.[network]?.tokenDecimals) : bnUsdValueOnClosed)
-													.toString(),
-												0,
-												false,
-												network
-											)}{' '}
-											USD{' '}
-										</span>
+						<HelperTooltip
+							usedInPostPage={usedInPostPage}
+							overlayClassName='mb-10'
+							text={
+								<Spin spinning={loading}>
+									<div className='flex flex-col gap-1 text-xs'>
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<div className='flex'>{isProposalClosed ? 'Value on day of txn:' : 'Current value:'}</div>
+											<span>
+												{parseBalance(
+													requestedAmountFormatted
+														?.mul(
+															!isProposalClosed
+																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																: !bnUsdValueOnClosed || bnUsdValueOnClosed?.eq(ZERO_BN)
+																? new BN(Number(currentTokenPrice)).mul(new BN('10').pow(new BN(String(chainProperties?.[network]?.tokenDecimals))))
+																: bnUsdValueOnClosed
+														)
+														?.toString() || '0',
+													0,
+													false,
+													network
+												)}{' '}
+												USD{' '}
+											</span>
+										</div>
+										<div className='flex items-center gap-1 dark:text-blue-dark-high'>
+											<span>Value on day of creation:</span>
+											<span>{parseBalance(requestedAmountFormatted?.mul(bnUsdValueOnCreation)?.toString() || '0', 0, false, network)} USD </span>
+										</div>
 									</div>
-									<div className='flex items-center gap-1 dark:text-blue-dark-high'>
-										<span>Value on day of creation:</span>
-										<span>{parseBalance(requestedAmountFormatted.mul(bnUsdValueOnCreation).toString(), 0, false, network)} USD </span>
-									</div>
-								</div>
-							</Spin>
-						}
-					/>
-				</div>
-			)}
+								</Spin>
+							}
+						/>
+					</div>
+				)
+			) : null}
 		</div>
 	);
 };

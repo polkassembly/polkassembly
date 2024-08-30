@@ -120,7 +120,12 @@ const messages = {
 	USER_EMAIL_ALREADY_EXISTS: 'A user with this email already exists.',
 	USER_NOT_FOUND: 'User not found.',
 	DISABLE_COMMENTS: 'Comments have been disabled for this post.',
-	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.'
+	UNVERIFIED_DISABLE_COMMENTS: 'Comments have been disabled for non verified users.',
+	NO_ACTIVE_PROPOSAL_FOUND: 'No active proposal found.',
+	VOTE_NOT_FOUND: 'Vote not found.',
+	METHOD_NOT_ALLOWED: 'Method not allowed.',
+	ERROR_IN_UPDATING_BADGES: 'Error in updating badges.',
+	ERROR_IN_EVALUATING_BADGES: 'Error in evaluating badges.'
 };
 
 export default messages;

@@ -268,7 +268,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	return (
 		<div className={className}>

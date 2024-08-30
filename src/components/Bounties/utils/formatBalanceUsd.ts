@@ -4,12 +4,14 @@
 import formatBnBalance from '~src/util/formatBnBalance';
 
 export const formatNumberWithSuffix = (value: number): string => {
-	if (value >= 1e6) {
-		return (value / 1e6).toFixed(1) + 'm';
-	} else if (value >= 1e3) {
-		return (value / 1e3).toFixed(1) + 'k';
+	const cleanedValue = Number(value.toString().replace(/,/g, ''));
+
+	if (cleanedValue >= 1e6) {
+		return (cleanedValue / 1e6).toFixed(1) + 'm';
+	} else if (cleanedValue >= 1e3) {
+		return (cleanedValue / 1e3).toFixed(1) + 'k';
 	}
-	return value.toFixed(1);
+	return cleanedValue.toFixed(1);
 };
 
 export const getFormattedValue = (value: string, network: string, currentTokenPrice: { isLoading: boolean; value: string }): string => {

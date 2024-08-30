@@ -16,7 +16,6 @@ import getRelativeCreatedAt from 'src/util/getRelativeCreatedAt';
 import { WarningMessageIcon } from '~src/ui-components/CustomIcons';
 import TopicTag from '~src/ui-components/TopicTag';
 import BN from 'bn.js';
-import { chainProperties } from 'src/global/networkConstants';
 import { CommentsIcon } from '~src/ui-components/CustomIcons';
 import { getFormattedLike } from '~src/util/getFormattedLike';
 import { useApiContext } from '~src/context';
@@ -193,11 +192,9 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 		yes: 'AYE'
 	};
 
-	const tokenDecimals = chainProperties[network]?.tokenDecimals;
 	const confirmedStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Confirmed');
 	const decidingStatusBlock = getStatusBlock(timeline || [], ['ReferendumV2', 'FellowshipReferendum'], 'Deciding');
 	const isProposalFailed = ['Rejected', 'TimedOut', 'Cancelled', 'Killed'].includes(status || '');
-	const requestedAmountFormatted = requestedAmount ? new BN(requestedAmount).div(new BN(10).pow(new BN(tokenDecimals))).toString() : 0;
 	const [decision, setDecision] = useState<IPeriod>();
 	const [remainingTime, setRemainingTime] = useState<string>('');
 	const decidingBlock = statusHistory?.filter((status) => status.status === 'Deciding')?.[0]?.block || 0;
@@ -218,7 +215,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 	const getProposerFromPolkadot = async (identityId: string) => {
 		if (!api || !apiReady) return;
 
-		const didKeys = await api.query.identity.didKeys.keys(identityId);
+		const didKeys = (await api.query.identity?.didKeys?.keys(identityId)) || [];
 		if (didKeys.length > 0) {
 			const didKey = didKeys[0];
 			const key = didKey.args[1].toJSON();
@@ -369,11 +366,11 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 					</div>
 					{showSimilarPost && content && (
 						<div className={`${showSimilarPost ? 'ml-[76px]' : 'ml-[120px]'}`}>
-							<h1 className='desc-container shadow-0 mr-12 mt-0.5 flex max-h-[70px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
+							<h1 className='desc-container shadow-0 mr-12 mt-0.5 flex max-h-[72px] overflow-hidden text-sm text-bodyBlue dark:text-white'>
 								<p className='m-0 p-0 text-sm font-normal text-lightBlue'>
 									<Markdown
 										className='post-content'
-										md={content}
+										md={content.split('\n')[0]}
 										imgHidden={showSimilarPost}
 									/>
 								</p>
@@ -600,16 +597,15 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 							</div>
 						)}
 						{!!requestedAmount && (
-							<div className='xs:mr-5 sm:m-0'>
-								{requestedAmount > 100 ? (
-									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
-										{requestedAmountFormatted} {chainProperties[network]?.tokenSymbol}
-									</span>
-								) : (
-									<span className='text-sm font-medium text-lightBlue dark:text-blue-dark-high'>
-										{requestedAmount} {chainProperties[network]?.tokenSymbol}
-									</span>
-								)}
+							<div className={classNames(requestedAmount > 100 ? 'sm:mr-[2.63rem]' : 'sm:mr-[2.63rem]')}>
+								<BeneficiaryAmoutTooltip
+									assetId={assetId || null}
+									requestedAmt={requestedAmount.toString()}
+									className='flex items-center justify-center'
+									proposalCreatedAt={created_at || null}
+									timeline={timeline || []}
+									postId={onchainId as any}
+								/>
 							</div>
 						)}
 						{showSimilarPost && isOpenGovSupported(network) && <p className='m-0 ml-1 mt-1 p-0 text-pink_primary'>{formatTrackName(getTrackNameFromId(network, trackNumber))}</p>}

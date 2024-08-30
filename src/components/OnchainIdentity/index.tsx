@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { useNetworkSelector, useOnchainIdentitySelector, useUserDetailsSelector } from '~src/redux/selectors';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useDispatch } from 'react-redux';
@@ -25,7 +25,6 @@ import SocialVerification from './SocialVerification';
 import DelegationSuccessPopup from '../Listing/Tracks/DelegationSuccessPopup';
 import IdentitySuccessState from './IdentitySuccessState';
 import { network as AllNetworks } from 'src/global/networkConstants';
-import { ApiPromise } from '@polkadot/api';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
@@ -37,9 +36,8 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: null, apiReady: false });
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { loginAddress, id: userId } = useUserDetailsSelector();
 	const identityDetails = useOnchainIdentitySelector();
 	const [form] = Form.useForm();
@@ -62,23 +60,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
-	useEffect(() => {
-		if (network !== AllNetworks.KUSAMA) {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		} else {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, peopleKusamaApi, peopleKusamaApiReady]);
-
 	const getTxFee = async () => {
 		if (!api || !apiReady || !network) return;
-		const bondFee = api?.consts?.identity?.fieldDeposit || ZERO_BN;
+		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
-		const registerars: any = await api?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
+		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
 		const registerarIndex = getIdentityRegistrarIndex({ network });
 		const bnRegisterarFee = registerarIndex ? new BN(registerars?.[registerarIndex]?.fee || ZERO_BN) : ZERO_BN;
-		const minDeposite = api?.consts?.identity?.basicDeposit || ZERO_BN;
+		const minDeposite = (peopleChainApi ?? api)?.consts?.identity?.basicDeposit || ZERO_BN;
 		setTxFee({ ...txFee, bondFee: ZERO_BN, minDeposite, registerarFee: bnRegisterarFee });
 		setPerSocialBondFee(bondFee as any);
 		setLoading({ ...loading, isLoading: false });
@@ -89,7 +78,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		try {
 			const encoded_addr = getEncodedAddress(identityAddress || loginAddress, network);
 
-			const identityHash = await api?.query?.identity
+			const identityHash = await (peopleChainApi ?? api)?.query?.identity
 				?.identityOf(encoded_addr)
 				.then((res: any) => ([AllNetworks.KUSAMA, AllNetworks.POLKADOT].includes(network) ? res.unwrap()[0] : (res.unwrapOr(null) as any))?.info.hash.toHex());
 			if (!identityHash) {
@@ -100,6 +89,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			console.log(err);
 		}
 	};
+
 	const handleCancel = () => {
 		if (step === ESetIdentitySteps.SOCIAL_VERIFICATION) {
 			setOpen(false);
@@ -119,8 +109,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 		try {
 			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
 				address: identityAddress || loginAddress,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 
@@ -177,14 +166,14 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
+		if (!(api && peopleChainApi) || !apiReady) return;
 
 		form.setFieldValue('address', identityAddress || loginAddress);
 		getTxFee();
 		getIdentityInfo();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, identityAddress, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, identityAddress, network]);
 
 	return (
 		<div>

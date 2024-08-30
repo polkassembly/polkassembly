@@ -27,7 +27,7 @@ import { chainProperties } from '~src/global/networkConstants';
 import { ThemeProvider } from 'next-themes';
 import { useTheme } from 'next-themes';
 import { createGlobalStyle } from 'styled-components';
-import { PeopleKusamaApiContextProvider } from '~src/context/PeopleKusamaApiContext';
+import { PeopleChainApiContextProvider } from '~src/context/PeopleChainApiContext';
 
 export const poppins = Poppins({
 	adjustFontFallback: false,
@@ -129,7 +129,7 @@ function App({ Component, pageProps }: AppProps) {
 						<ModalProvider>
 							<ErrorBoundary>
 								<ApiContextProvider network={network}>
-									<PeopleKusamaApiContextProvider network={network}>
+									<PeopleChainApiContextProvider network={network}>
 										<>
 											{showSplashScreen && <SplashLoader />}
 											<main className={`${poppins.variable} ${poppins.className} ${robotoMono.className} ${workSans.className} ${showSplashScreen ? 'hidden' : ''}`}>
@@ -141,7 +141,7 @@ function App({ Component, pageProps }: AppProps) {
 												/>
 											</main>
 										</>
-									</PeopleKusamaApiContextProvider>
+									</PeopleChainApiContextProvider>
 								</ApiContextProvider>
 							</ErrorBoundary>
 						</ModalProvider>

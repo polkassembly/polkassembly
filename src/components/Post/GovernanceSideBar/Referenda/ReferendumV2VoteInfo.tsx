@@ -29,13 +29,12 @@ interface IReferendumV2VoteInfoProps {
 	tally?: any;
 	ayeNayAbstainCounts: IVotesCount;
 	setAyeNayAbstainCounts: (pre: IVotesCount) => void;
-	setUpdatetally: (pre: boolean) => void;
-	updateTally: boolean;
+	updateTally?: boolean;
 }
 
 const ZERO = new BN(0);
 
-const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, setUpdatetally, updateTally }) => {
+const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally, ayeNayAbstainCounts, setAyeNayAbstainCounts, updateTally }) => {
 	const { network } = useNetworkSelector();
 	const {
 		postData: { status, postIndex, postType }
@@ -82,35 +81,47 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			setIsLoading(false);
 			return;
 		}
-		const referendumInfoOf = await api.query.referenda.referendumInfoFor(postIndex);
-		const parsedReferendumInfo: any = referendumInfoOf.toJSON();
-		if (parsedReferendumInfo?.ongoing?.tally) {
-			setTallyData({
-				ayes:
-					typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.ayes),
-				nays:
-					typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.nays),
-				support:
-					typeof parsedReferendumInfo.ongoing.tally.support === 'string'
-						? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
-						: new BN(parsedReferendumInfo.ongoing.tally.support)
-			});
-		} else {
+
+		try {
+			const referendumInfoOf = await api?.query?.referenda?.referendumInfoFor(postIndex);
+			const parsedReferendumInfo: any = referendumInfoOf?.toJSON();
+			if (parsedReferendumInfo?.ongoing?.tally) {
+				setTallyData({
+					ayes:
+						typeof parsedReferendumInfo.ongoing.tally.ayes === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.ayes.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.ayes),
+					nays:
+						typeof parsedReferendumInfo.ongoing.tally.nays === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.nays.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.nays),
+					support:
+						typeof parsedReferendumInfo.ongoing.tally.support === 'string'
+							? new BN(parsedReferendumInfo.ongoing.tally.support.slice(2), 'hex')
+							: new BN(parsedReferendumInfo.ongoing.tally.support)
+				});
+				setIsLoading(false);
+			} else {
+				setTallyData({
+					ayes: new BN(tally?.ayes || 0, 'hex'),
+					nays: new BN(tally?.nays || 0, 'hex'),
+					support: new BN(tally?.support || 0, 'hex')
+				});
+				setIsLoading(false);
+			}
+		} catch (err) {
 			setTallyData({
 				ayes: new BN(tally?.ayes || 0, 'hex'),
 				nays: new BN(tally?.nays || 0, 'hex'),
 				support: new BN(tally?.support || 0, 'hex')
 			});
+			setIsLoading(false);
 		}
-		setIsLoading(false);
 	};
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
+		handleTallyData(tally);
 		(async () => {
 			if (network === 'picasso') {
 				const totalIssuance = await api.query.openGovBalances.totalIssuance();
@@ -123,10 +134,9 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 			}
 		})();
 
-		handleTallyData(tally);
 		setIsLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [status, api, apiReady, network]);
+	}, [status, api, apiReady, network, tally, postIndex]);
 
 	useEffect(() => {
 		handleAyeNayCount();
@@ -152,7 +162,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 		} else if (error) {
 			console.log(error);
 		}
-		setUpdatetally(false);
 		setIsLoading(false);
 	};
 
@@ -162,7 +171,6 @@ const ReferendumV2VoteInfo: FC<IReferendumV2VoteInfoProps> = ({ className, tally
 	const handleDebounceAyeNayCount = useCallback(_.debounce(handleAyeNayCount, 10000), [updateTally]);
 
 	useEffect(() => {
-		if (!updateTally) return;
 		setIsLoading(true);
 		handleDebounceTallyData();
 		handleDebounceAyeNayCount();

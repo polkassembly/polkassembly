@@ -27,8 +27,13 @@ import { setNetwork } from '~src/redux/network';
 import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
-const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview'), {
+const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
+const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivity/BatchVotingBadge'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -113,6 +118,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -142,7 +148,11 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					/>
 				)}
 			</div>
-
+			{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+				<div className='mx-1 mt-8'>
+					<BatchVotingBadge />
+				</div>
+			)}
 			<div className='mx-1 mt-8'>
 				<TreasuryOverview theme={theme} />
 			</div>

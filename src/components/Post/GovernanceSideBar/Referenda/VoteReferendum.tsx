@@ -62,6 +62,7 @@ import { IDelegateBalance } from '~src/components/UserProfile/TotalProfileBalanc
 import Input from '~src/basic-components/Input';
 import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -75,6 +76,7 @@ interface Props {
 	theme?: string;
 	trackNumber?: number;
 	setUpdateTally?: (pre: boolean) => void;
+	updateTally?: boolean;
 }
 export interface INetworkWalletErr {
 	message: string;
@@ -126,7 +128,7 @@ export const getConvictionVoteOptions = (CONVICTIONS: [number, number][], propos
 	];
 };
 
-const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally }: Props) => {
+const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, setLastVote, proposalType, address, trackNumber, setUpdateTally, updateTally }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const { addresses, id, loginAddress, loginWallet } = userDetails;
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -167,6 +169,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [selectedProxyAddress, setSelectedProxyAddress] = useState(proxyAddresses[0] || '');
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
+	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
 
 	const getDelegateData = async () => {
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
@@ -230,6 +233,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		if (!api || !apiReady) return;
 		if (loginWallet) {
 			setWallet(loginWallet);
+			const injectedWindow = window as Window & InjectedWindow;
+			const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+			if (!extensionAvailable) {
+				setExtensionNotFound(true);
+			} else {
+				setExtensionNotFound(false);
+			}
 			(async () => {
 				setLoadingStatus({ isLoading: true, message: 'Awaiting accounts' });
 				const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet, loginAddress, network });
@@ -242,6 +252,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 			const loginWallet = localStorage.getItem('loginWallet');
 			if (loginWallet) {
 				setWallet(loginWallet as Wallet);
+				const injectedWindow = window as Window & InjectedWindow;
+				const extensionAvailable = isWeb3Injected ? injectedWindow.injectedWeb3[loginWallet] : null;
+				if (!extensionAvailable) {
+					setExtensionNotFound(true);
+				} else {
+					setExtensionNotFound(false);
+				}
 				(async () => {
 					const accountsData = await getAccountsFromWallet({ api, apiReady, chosenWallet: loginWallet as Wallet, loginAddress, network });
 					setAccounts(accountsData?.accounts || []);
@@ -402,6 +419,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network, api, availableWallets]);
 
+	useEffect(() => {}, []);
+
 	if (!id) {
 		return <LoginToVote />;
 	}
@@ -558,7 +577,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 				message: `Vote on referendum #${referendumId} successful.`,
 				status: NotificationStatus.SUCCESS
 			});
-			setUpdateTally?.(true);
+			setUpdateTally?.(!updateTally);
 			setLastVote({
 				balance: totalVoteValue,
 				conviction: conviction,
@@ -604,13 +623,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					}`}
 				>
 					{vote === EVoteDecisionType.AYE ? (
-						<LikeWhite className='mb-[3px] mr-2' />
+						<LikeWhite className='mb-[3px] mr-2 hidden msm:block ' />
 					) : theme === 'dark' ? (
-						<DarkLikeGray className='mb-[3px] mr-2' />
+						<DarkLikeGray className='mb-[3px] mr-2 hidden msm:block ' />
 					) : (
-						<LikeGray className='mb-[3px] mr-2' />
+						<LikeGray className='mb-[3px] mr-2 hidden msm:block ' />
 					)}
-					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Aye</span>
+					<span className={`${vote === EVoteDecisionType.AYE ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Aye</span>
 				</div>
 			),
 			value: 'aye'
@@ -623,13 +642,13 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					}`}
 				>
 					{vote === EVoteDecisionType.NAY ? (
-						<DislikeWhite className='-mb-[3px] mr-2' />
+						<DislikeWhite className='-mb-[3px] mr-2 hidden msm:block ' />
 					) : theme === 'dark' ? (
-						<DarkDislikeGray className='-mb-[3px] mr-2' />
+						<DarkDislikeGray className='-mb-[3px] mr-2 hidden msm:block ' />
 					) : (
-						<DislikeGray className='-mb-[3px] mr-2' />
+						<DislikeGray className='-mb-[3px] mr-2 hidden msm:block ' />
 					)}
-					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Nay</span>
+					<span className={`${vote === EVoteDecisionType.NAY ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Nay</span>
 				</div>
 			),
 			value: 'nay'
@@ -646,8 +665,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								vote === EVoteDecisionType.SPLIT ? 'bg-yellowColor text-white dark:bg-darkOrangeColor' : ''
 							}`}
 						>
-							{vote === EVoteDecisionType.SPLIT ? <SplitWhite className='mr-2  ' /> : theme === 'dark' ? <DarkSplitGray className='mr-2' /> : <SplitGray className='mr-2' />}
-							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Split</span>
+							{vote === EVoteDecisionType.SPLIT ? (
+								<SplitWhite className='mr-2  hidden msm:block ' />
+							) : theme === 'dark' ? (
+								<DarkSplitGray className='mr-2 hidden msm:block ' />
+							) : (
+								<SplitGray className='mr-2 hidden msm:block ' />
+							)}
+							<span className={`${vote === EVoteDecisionType.SPLIT ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Split</span>
 						</div>
 					),
 					value: 'split'
@@ -659,8 +684,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								vote === EVoteDecisionType.ABSTAIN ? 'bg-abstainBlueColor text-white dark:bg-abstainDarkBlueColor' : ''
 							}`}
 						>
-							<StopOutlined className={`mb-[3px] mr-2 ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
-							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-base font-medium`}>Abstain</span>
+							<StopOutlined className={`mb-[3px] mr-2 hidden msm:block ${vote === EVoteDecisionType.ABSTAIN ? 'dark:text-white' : 'dark:text-[#909090]'}`} />
+							<span className={`${vote === EVoteDecisionType.ABSTAIN ? 'text-white' : 'dark:text-blue-dark-medium'} text-sm font-medium sm:text-base`}>Abstain</span>
 						</div>
 					),
 					value: 'abstain'
@@ -856,11 +881,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										type='warning'
 									/>
 								)}
+								{!extensionNotFound && !accounts.length && !!wallet && !loadingStatus.isLoading && (
+									<Alert
+										description={
+											<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
+												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your wallet</h3>
+												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
+											</div>
+										}
+										showIcon
+										className='mb-2 mt-1 p-3'
+										type='info'
+									/>
+								)}
 								{accounts.length === 0 && wallet && !loadingStatus.isLoading && (
 									<Alert
 										message={<span className='dark:text-blue-dark-high'>No addresses found in the address selection tab.</span>}
 										showIcon
 										type='info'
+										className='mt-2'
 									/>
 								)}
 								{accounts.length > 0 ? (

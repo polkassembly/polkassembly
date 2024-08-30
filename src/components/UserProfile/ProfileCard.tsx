@@ -18,7 +18,6 @@ import { useApiContext } from '~src/context';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IDelegate } from '~src/types';
 import { isAddress } from 'ethers';
 import ScoreTag from '~src/ui-components/ScoreTag';
 
@@ -31,7 +30,7 @@ interface Props {
 const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdentity }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const { network } = useNetworkSelector();
-	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore, addresses } = userProfile;
+	const { image, created_at: profileSince, social_links: socials, username, profile_score: profileScore = 0, addresses } = userProfile;
 	const [messageApi, contextHolder] = message.useMessage();
 	const isMobile = (typeof window !== 'undefined' && window.screen.width < 1024) || false;
 	const [isW3FDelegate, setIsW3FDelegate] = useState<boolean>(false);
@@ -42,16 +41,17 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 
 		if (!((getEncodedAddress(address, network) || isAddress(address)) && address.length > 0)) return;
 
-		const { data, error } = await nextApiClientFetch<IDelegate[]>('api/v1/delegations/delegates', {
-			address: address
+		const { data, error } = await nextApiClientFetch<{ isW3fDelegate: boolean }>('api/v1/delegations/getW3fDelegateCheck', {
+			addresses: addresses || []
 		});
 		if (data) {
-			setIsW3FDelegate(data?.[0]?.dataSource?.includes('w3f') || false);
+			setIsW3FDelegate(data?.isW3fDelegate || false);
 		} else {
 			console.log(error);
 			setIsW3FDelegate(false);
 		}
 	};
+
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +119,7 @@ const ProfileCard = ({ className, userProfile, addressWithIdentity, onchainIdent
 								/>
 							</div>
 						)}
-						{profileScore && (
+						{!isNaN(profileScore) && (
 							<ScoreTag
 								score={profileScore}
 								className='ml-1 px-1 pr-3'

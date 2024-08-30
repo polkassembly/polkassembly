@@ -31,7 +31,7 @@ import SortByDropdownComponent from '~src/ui-components/SortByDropdown';
 import OpenGovTreasuryProposal from '~src/components/OpenGovTreasuryProposal';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
-const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverview'), {
+const TreasuryOverview = dynamic(() => import('src/components/Home/TreasuryOverview/index'), {
 	ssr: false
 });
 

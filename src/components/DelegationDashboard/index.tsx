@@ -14,7 +14,7 @@ import BecomeDelegate from './BecomeDelegate';
 import TrendingDelegates from './TrendingDelegates';
 import TotalDelegationData from './TotalDelegationData';
 import DelegationTabs from './DelegationTabs';
-import { useApiContext, usePeopleKusamaApiContext } from '~src/context';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
 import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import SkeletonAvatar from '~src/basic-components/Skeleton/SkeletonAvatar';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
@@ -34,7 +34,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	const userDetails = useUserDetailsSelector();
 	const dispatch = useDispatch();
 	const { api, apiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { network } = useNetworkSelector();
 	const isLoggedOut = !userDetails.id;
 	const { resolvedTheme: theme } = useTheme();
@@ -53,24 +53,20 @@ const DelegationDashboardHome = ({ className }: Props) => {
 	}, [isMobile, userDetails]);
 
 	const handleIdentityInfo = async () => {
-		const apiPromise = network == 'kusama' ? peopleKusamaApi : api;
-		const apiPromiseReady = network == 'kusama' ? peopleKusamaApiReady : apiReady;
-		if (!apiPromise || !apiPromiseReady) return;
+		if (!api && !peopleChainApi) return;
 
 		const info = await getIdentityInformation({
 			address: userDetails.delegationDashboardAddress || '',
-			api: apiPromise,
-			apiReady: apiPromiseReady,
+			api: peopleChainApi ?? api,
 			network: network
 		});
 		setIdentity(info);
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady) return;
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, network, peopleKusamaApi, peopleKusamaApiReady]);
+	}, [api, apiReady, network, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		if (window.innerWidth < 768) {
@@ -109,7 +105,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 				<>
 					<BecomeDelegate onchainUsername={identity?.display || identity?.legal || ''} />
 					<TotalDelegationData />
-					<TrendingDelegates />
+					<TrendingDelegates theme={theme} />
 				</>
 			)}
 

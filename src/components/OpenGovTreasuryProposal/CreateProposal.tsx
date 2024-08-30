@@ -23,7 +23,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { CreatePostResponseType } from '~src/auth/types';
 import { poppins } from 'pages/_app';
 import executeTx from '~src/util/executeTx';
-import { useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
+import { useAssetsCurrentPriceSelectior, useCurrentTokenDataSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
 import { CopyIcon } from '~src/ui-components/CustomIcons';
 import Beneficiary from '~src/ui-components/BeneficiariesListing/Beneficiary';
 import { trackEvent } from 'analytics';
@@ -31,9 +31,12 @@ import MissingInfoAlert from './MissingInfoAlert';
 import { useTheme } from 'next-themes';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import Alert from '~src/basic-components/Alert';
-import getBeneficiaryAmoutAndAsset from '~src/util/getBeneficiaryAmoutAndAsset';
+import getBeneficiaryAmountAndAsset from '~src/components/OpenGovTreasuryProposal/utils/getBeneficiaryAmountAndAsset';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import usePolkasafe from '~src/hooks/usePolkasafe';
+import { getUsdValueFromAsset } from './utils/getUSDValueFromAsset';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import userProfileBalances from '~src/util/userProfileBalances';
 
 const ZERO_BN = new BN(0);
 
@@ -53,10 +56,9 @@ interface Props {
 	content: string;
 	tags: string[];
 	setPostId: (pre: number) => void;
-	availableBalance: BN;
 	discussionLink: string | null;
 	isDiscussionLinked: boolean;
-	genralIndex?: string | null;
+	generalIndex?: string | null;
 	inputAmountValue: string;
 	allowedCommentors?: EAllowedCommentor;
 	multisigSignatory: string;
@@ -82,10 +84,9 @@ const CreateProposal = ({
 	content,
 	tags,
 	setPostId,
-	availableBalance,
 	discussionLink,
 	isDiscussionLinked,
-	genralIndex = null,
+	generalIndex = null,
 	inputAmountValue,
 	allowedCommentors,
 	multisigSignatory
@@ -100,9 +101,11 @@ const CreateProposal = ({
 	const [submitionDeposite, setSubmissionDeposite] = useState<BN>(ZERO_BN);
 	const [showAlert, setShowAlert] = useState<boolean>(false);
 	const [loading, setLoading] = useState<ILoading>({ isLoading: false, message: '' });
-	const { id: userId } = currentUser;
+	const { id: userId, loginAddress } = currentUser;
 	const discussionId = discussionLink ? getDiscussionIdFromLink(discussionLink) : null;
 	const { currentTokenPrice } = useCurrentTokenDataSelector();
+	const { dedTokenUsdPrice } = useAssetsCurrentPriceSelectior();
+	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
 
 	const { client, connect } = usePolkasafe(multisigSignatory);
 
@@ -120,12 +123,23 @@ const CreateProposal = ({
 	useEffect(() => {
 		if (!network) return;
 		formatBalance.setDefaults({
-			decimals: chainProperties[network].tokenDecimals,
+			decimals: chainProperties[network]?.tokenDecimals,
 			unit
 		});
+		if (!api || !apiReady) return;
+
+		(async () => {
+			const balances = await userProfileBalances({
+				address: getEncodedAddress(proposerAddress || loginAddress, network) || proposerAddress || loginAddress,
+				api,
+				apiReady,
+				network
+			});
+			setAvailableBalance(balances?.transferableBalance || ZERO_BN);
+		})();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network]);
+	}, [network, api, apiReady]);
 
 	useEffect(() => {
 		setShowAlert(false);
@@ -156,7 +170,7 @@ const CreateProposal = ({
 	}, [proposerAddress, beneficiaryAddresses, fundingAmount, api, apiReady, network, selectedTrack, preimageHash, preimageLength, enactment.value, enactment.key]);
 
 	const handleSaveTreasuryProposal = async (postId: number) => {
-		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createOpengovTreasuryProposal', {
+		const { data, error: apiError } = await nextApiClientFetch<CreatePostResponseType>('api/v1/auth/actions/createTreasuryProposal', {
 			allowedCommentors: [allowedCommentors] || [EAllowedCommentor.ALL],
 			content,
 			discussionId: discussionId || null,
@@ -245,10 +259,10 @@ const CreateProposal = ({
 				setOpenModal(false);
 			};
 
-			const onFailed = async () => {
+			const onFailed = async (error: string) => {
 				queueNotification({
 					header: 'Failed!',
-					message: 'Transaction failed!',
+					message: error || 'Transaction failed!',
 					status: NotificationStatus.ERROR
 				});
 
@@ -296,7 +310,7 @@ const CreateProposal = ({
 				apiReady,
 				errorMessageFallback: 'failed.',
 				network,
-				onFailed,
+				onFailed: (error: string) => onFailed(error),
 				onSuccess,
 				setStatus: (msg: string) => setLoading({ isLoading: true, message: msg || '' }),
 				tx: proposal
@@ -320,7 +334,7 @@ const CreateProposal = ({
 			tip={loading?.message || ''}
 		>
 			<div className={`create-proposal ${className}`}>
-				{submitionDeposite.gte(availableBalance) && !txFee.eq(ZERO_BN) && (
+				{submitionDeposite.gt(availableBalance) && !txFee.eq(ZERO_BN) && (
 					<Alert
 						type='error'
 						className={`mt-6 h-10 rounded-[4px] text-bodyBlue ${poppins.variable} ${poppins.className}`}
@@ -358,7 +372,7 @@ const CreateProposal = ({
 										beneficiary={beneficiary}
 										key={index}
 										disableBalanceFormatting
-										assetId={genralIndex}
+										assetId={generalIndex}
 										isProposalCreationFlow={!isPreimage}
 									/>
 								))}
@@ -373,15 +387,22 @@ const CreateProposal = ({
 						<span className='flex'>
 							<span className='w-[150px]'>Funding Amount:</span>
 							<div className='font-medium text-bodyBlue dark:text-blue-dark-high'>
-								{genralIndex ? (
+								{generalIndex ? (
 									<div className='flex items-center gap-1'>
-										{getBeneficiaryAmoutAndAsset(genralIndex, fundingAmount.toString(), network, true)}
+										{getBeneficiaryAmountAndAsset(generalIndex, fundingAmount.toString(), network, true)}
 										<HelperTooltip
 											text={
 												<div className='flex items-center gap-1 dark:text-blue-dark-high'>
 													<span>Current value:</span>
 													<span>
-														{Math.floor(Number(inputAmountValue) / Number(currentTokenPrice) || 0)} {chainProperties[network].tokenSymbol}
+														{getUsdValueFromAsset({
+															currentTokenPrice: currentTokenPrice || '0',
+															dedTokenUsdPrice: dedTokenUsdPrice || '0',
+															generalIndex,
+															inputAmountValue: inputAmountValue || '0',
+															network
+														}) || 0}
+														{chainProperties[network]?.tokenSymbol}
 													</span>
 												</div>
 											}
@@ -490,9 +511,9 @@ const CreateProposal = ({
 						variant='primary'
 						height={40}
 						width={155}
-						disabled={txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lte(submitionDeposite)}
+						disabled={txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lt(submitionDeposite)}
 						onClick={() => handleSubmitTreasuryProposal()}
-						className={`${(txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lte(submitionDeposite)) && 'opacity-50'}`}
+						className={`${(txFee.eq(ZERO_BN) || loading.isLoading || availableBalance.lt(submitionDeposite)) && 'opacity-50'}`}
 					/>
 				</div>
 			</div>

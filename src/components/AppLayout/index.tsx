@@ -11,7 +11,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { memo, ReactNode, useEffect, useState } from 'react';
-import { useApiContext, usePeopleKusamaApiContext } from 'src/context';
+import { useApiContext, usePeopleChainApiContext } from 'src/context';
 import {
 	AuctionAdminIcon,
 	BountiesIcon,
@@ -73,7 +73,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -83,6 +82,7 @@ interface IUserDropdown {
 	isIdentityUnverified: boolean;
 	isGood: boolean;
 	handleLogout: any;
+	setSidedrawer: any;
 	network: string;
 	handleRemoveIdentity: (pre?: any) => void;
 	img?: string | null;
@@ -135,6 +135,7 @@ const getUserDropDown = ({
 	handleSetIdentityClick,
 	isGood,
 	isIdentityExists,
+	setSidedrawer,
 	isIdentityUnverified,
 	network,
 	className,
@@ -150,6 +151,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href={`/user/${username}`}
+					onClick={() => setSidedrawer(false)}
 				>
 					<UserOutlined />
 					<span>View Profile</span>
@@ -162,6 +164,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href='/settings?tab=account'
+					onClick={() => setSidedrawer(false)}
 				>
 					<SettingOutlined />
 					<span>Settings</span>
@@ -177,6 +180,7 @@ const getUserDropDown = ({
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
+						setSidedrawer(false);
 						handleLogout(username);
 					}}
 				>
@@ -198,6 +202,7 @@ const getUserDropDown = ({
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
+							setSidedrawer(false);
 							handleSetIdentityClick();
 						}}
 					>
@@ -298,9 +303,8 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
-	const { peopleKusamaApi, peopleKusamaApiReady } = usePeopleKusamaApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -328,14 +332,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
-
-	useEffect(() => {
-		if (network === 'kusama') {
-			setApiDetails({ api: peopleKusamaApi || null, apiReady: peopleKusamaApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleKusamaApi, peopleKusamaApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -378,8 +374,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
@@ -389,7 +384,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsIdentityUnverified(!isVerified);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [
@@ -1088,6 +1083,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
 		isGood: isGood,
+		setSidedrawer: setSidedrawer,
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
@@ -1109,7 +1105,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}
 
 	return (
-		<Layout className={className}>
+		<Layout className={`${className} overflow-x-hidden overflow-y-hidden`}>
 			<NavHeader
 				theme={theme as any}
 				sidedrawer={sidedrawer}
@@ -1169,7 +1165,8 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							defaultOpenKeys={['democracy_group', 'treasury_group', 'council_group', 'tech_comm_group', 'alliance_group', 'advisory-committee']}
 							items={sidebarItems}
 							onClick={handleMenuClick}
-							className={`${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
+							// eslint-disable-next-line prettier/prettier
+							className={`mt-[60px] msm:mt-0 ${username ? 'auth-sider-menu' : ''} dark:bg-section-dark-overlay`}
 						/>
 
 						<BigToggleButton />
@@ -1199,7 +1196,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 						</div>
 					</Layout>
 				) : (
-					<Layout className={'min-h-[calc(100vh - 10rem)] flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
+					<Layout className={'min-h-[calc(100vh - 10rem)] overflow-x-none overflow-y-none flex flex-row bg-[#F5F6F8] dark:bg-section-dark-background'}>
 						{/* Dummy Collapsed Sidebar for auto margins */}
 						<div className='bottom-0 left-0 -z-50 hidden w-[80px] lg:block'></div>
 						<CustomContent
@@ -1232,7 +1229,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'

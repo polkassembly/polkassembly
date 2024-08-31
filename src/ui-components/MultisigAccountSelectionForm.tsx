@@ -45,6 +45,7 @@ interface Props {
 	multisigBalance: BN;
 	setMultisigBalance: (pre: BN) => void;
 	linkAddressTextDisabled?: boolean;
+	isVoting?: boolean;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -67,7 +68,8 @@ const MultisigAccountSelectionForm = ({
 	showMultisigBalance = false,
 	multisigBalance,
 	setMultisigBalance,
-	linkAddressTextDisabled = false
+	linkAddressTextDisabled = false,
+	isVoting = false
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
@@ -86,8 +88,13 @@ const MultisigAccountSelectionForm = ({
 			return;
 		}
 		const initiatorBalance = await api.query.system.account(address);
-		const balance = new BN(initiatorBalance.data.free.toString());
-		setMultisigBalance(balance);
+		if (isVoting) {
+			const balance = new BN(initiatorBalance.data.free.toString()).add(new BN(initiatorBalance.data.reserved.toString()));
+			setMultisigBalance(balance);
+		} else {
+			const balance = new BN(initiatorBalance.data.free.toString());
+			setMultisigBalance(balance);
+		}
 	};
 	const handleChange = (address: string) => {
 		setWalletAddress(address);
@@ -126,6 +133,7 @@ const MultisigAccountSelectionForm = ({
 									address={address}
 									onChange={onBalanceChange}
 									classname={!canMakeTransaction ? 'text-nay_red [&>span]:text-nay_red' : 'opacity-50'}
+									isVoting={isVoting}
 								/>
 							)}
 						</>

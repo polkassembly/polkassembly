@@ -275,16 +275,16 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	};
 
 	const handleInitiatorBalance = useCallback(async () => {
-		if (!api || !apiReady) {
-			return;
-		}
+		if (!api || !apiReady) return;
+
 		//deposit balance
 		const depositBase = api.consts.multisig.depositBase.toString();
 		const depositFactor = api.consts.multisig.depositFactor.toString();
 		setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 		//initiator balance
 		const initiatorBalance = await api.query.system.account(address);
-		setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString() || '0').add(new BN(initiatorBalance?.data?.reserved?.toString() || '0')));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, api, apiReady]);
 
 	const handleBalanceErr = useCallback(() => {
@@ -545,6 +545,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					const { error } = await client.customTransactionAsMulti(multisig, tx);
 					if (error) {
 						setLoadingStatus({ isLoading: false, message: '' });
+						console.log(error.error);
 						throw new Error(error.error);
 					}
 					setShowModal(false);
@@ -861,7 +862,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										)}
 									</div>
 								</div>
-								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
+								{console.log(initiatorBalance.toString(), totalDeposit.toString())}
+								{showMultisig && initiatorBalance.lt(totalDeposit) && multisig && (
 									<Alert
 										message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
 											totalDeposit,
@@ -919,6 +921,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											multisigBalance={multisigBalance}
 											setMultisigBalance={setMultisigBalance}
+											isVoting
 										/>
 									) : (
 										<AccountSelectionForm

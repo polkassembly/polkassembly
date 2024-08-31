@@ -630,7 +630,7 @@ const VoteReferendumEthV2 = ({ className, referendumId, onAccountChange, lastVot
 								className={`${poppins.variable} ${poppins.className} text-light text-sm font-normal`}
 								inputClassName='rounded-[4px] px-3 py-1 h-[40px]'
 								withoutInfo={true}
-								isVoting={true}
+								isVoting
 								theme={theme}
 							/>
 						) : !wallet ? (

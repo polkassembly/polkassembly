@@ -51,7 +51,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				address: address,
 				api: usedInIdentityFlow ? peopleChainApi ?? api : api,
 				apiReady: usedInIdentityFlow ? peopleChainApiReady ?? apiReady : apiReady,
-				isVoting: isVoting,
+				isVoting: isVoting && isReferendum,
 				network
 			});
 

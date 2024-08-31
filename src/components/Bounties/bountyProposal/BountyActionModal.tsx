@@ -13,8 +13,9 @@ import CreateProposalIcon from '~assets/openGovProposals/create_proposal.svg';
 import CreateProposalIconDark from '~assets/openGovProposals/create_proposal_white.svg';
 import { EAllowedCommentor } from '~src/types';
 import BN from 'bn.js';
-import { BN_HUNDRED } from '@polkadot/util';
 import styled from 'styled-components';
+
+const BN_HUNDRED = new BN('100');
 
 const TreasuryProposalSuccessPopup = dynamic(() => import('~src/components/OpenGovTreasuryProposal/TreasuryProposalSuccess'), {
 	ssr: false

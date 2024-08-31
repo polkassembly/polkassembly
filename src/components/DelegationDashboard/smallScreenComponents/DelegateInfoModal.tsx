@@ -28,8 +28,8 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 			open={openModal}
 			footer={false}
 			zIndex={1008}
-			wrapClassName={' dark:bg-modalOverlayDark'}
-			className={`${className} ${poppins.variable} ${poppins.className} w-[605px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
+			wrapClassName={' dark:bg-modalOverlayDark rounded-[14px]'}
+			className={`${className} ${poppins.variable} ${poppins.className} w-[605px] rounded-[14px] dark:[&>.ant-modal-content]:bg-section-dark-overlay`}
 			onCancel={() => setOpenModal(false)}
 			closeIcon={<CloseIcon className=' text-lightBlue dark:text-icon-dark-inactive' />}
 		>
@@ -89,7 +89,7 @@ const DelegateInfoModal = ({ openModal, setOpenModal, className }: Props) => {
 							</a>
 						</span>
 					}
-					className='mt-4 border-none dark:bg-infoAlertBgDark'
+					className='mt-4 rounded-lg border-none dark:bg-infoAlertBgDark'
 				/>
 			</div>
 		</Modal>

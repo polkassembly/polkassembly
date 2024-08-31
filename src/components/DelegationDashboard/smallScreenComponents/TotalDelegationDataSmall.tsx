@@ -66,7 +66,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 	return (
 		<section className={className}>
 			<Spin spinning={loading}>
-				<div className='flex flex-col rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-3 dark:bg-section-dark-overlay'>
+				<div className='flex flex-col rounded-[14px] border border-solid border-[#D2D8E0] bg-white p-3 dark:border-separatorDark dark:bg-section-dark-overlay'>
 					<div>
 						<div className='flex items-center justify-between'>
 							{/* Total Delegatees */}
@@ -80,7 +80,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 							</div>
 							<Divider
 								type='vertical'
-								className='h-[64px]'
+								className='h-[64px] bg-section-light-container dark:bg-separatorDark'
 							/>
 
 							{/* Total Supply */}
@@ -96,7 +96,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 							</div>
 							<Divider
 								type='vertical'
-								className='h-[64px]'
+								className='h-[64px] bg-section-light-container dark:bg-separatorDark'
 							/>
 
 							{/* Total Delegates */}
@@ -112,7 +112,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 					</div>
 					<Divider
 						type='horizontal'
-						className='my-3 p-0'
+						className='my-3 bg-section-light-container p-0 dark:bg-separatorDark'
 					/>
 
 					<div className='flex items-center justify-evenly'>
@@ -127,7 +127,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 						</div>
 						<Divider
 							type='vertical'
-							className='h-[64px]'
+							className='h-[64px] bg-section-light-container dark:bg-separatorDark'
 						/>
 
 						{/* Delegated tokens */}

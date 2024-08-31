@@ -95,7 +95,7 @@ const DelegationDashboardHome = ({ className }: Props) => {
 					</Button>
 				</div>
 			) : (
-				<div className='wallet-info-board gap mt-[-25px] flex h-[90px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw]'>
+				<div className='wallet-info-board gap mt-[-25px] flex h-[70px] rounded-b-3xl max-lg:absolute max-lg:left-0 max-lg:top-20 max-lg:w-[99.3vw] sm:h-[90px]'>
 					<ProfileBalances />
 				</div>
 			)}

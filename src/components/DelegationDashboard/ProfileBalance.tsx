@@ -19,6 +19,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
+import { poppins } from 'pages/_app';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -87,7 +88,43 @@ const ProfileBalances = ({ className }: Props) => {
 
 	return (
 		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
-			<div className={`${className} flex h-full items-center gap-2 py-4 max-md:px-2.5`}>
+			<div className='items-center gap-2 sm:hidden'>
+				{balancesArr.slice(0, 1).map((balance) => (
+					<div
+						key={balance?.label}
+						className='flex h-full gap-1'
+					>
+						<div className='flex flex-col justify-start gap-1'>
+							<div
+								className={`${balance.key === 'lockedBalance' ? 'ml-[2px]' : ''} ${poppins.variable} ${
+									poppins.className
+								} gap-1 text-sm font-semibold tracking-[0.0015em] text-white`}
+							>
+								{formatedBalance(balance.value, unit, 2)}
+								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+							</div>
+							<div className='ml-[1px] flex items-center justify-start gap-2'>
+								<Image
+									src={'/assets/icons/polkadot-logo.svg'}
+									height={18}
+									width={18}
+									alt=''
+									className={'sm:hidden'}
+								/>
+								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
+							</div>
+						</div>
+						{balance.label === 'Balance' && (
+							<Divider
+								type='vertical'
+								style={{ borderLeft: '1px solid #D2D8E0', height: '100%' }}
+							/>
+						)}
+					</div>
+				))}
+			</div>
+
+			<div className={`${className} hidden h-full items-center gap-2 py-4 max-md:px-2.5 sm:flex`}>
 				{balancesArr.map((balance) => (
 					<div
 						key={balance?.label}

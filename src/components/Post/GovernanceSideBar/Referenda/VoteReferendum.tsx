@@ -1144,7 +1144,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					title={multisig ? 'Voting with Polkasafe Multisig initiated' : 'Voted Successfully'}
 					vote={vote}
 					balance={voteValues.totalVoteValue}
-					// open={true}
 					open={successModal}
 					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}

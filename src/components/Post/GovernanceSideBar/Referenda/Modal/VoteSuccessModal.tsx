@@ -3,11 +3,11 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import React, { useEffect, useState } from 'react';
-import { Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import { poppins } from 'pages/_app';
 import BN from 'bn.js';
 
-import { useCommentDataContext } from '~src/context';
+import { useCommentDataContext, usePostDataContext } from '~src/context';
 import { formatBalance } from '@polkadot/util';
 import { chainProperties } from '~src/global/networkConstants';
 import { EVoteDecisionType } from '~src/types';
@@ -23,6 +23,7 @@ import { getSortedComments } from '~src/components/Post/Comment/CommentsContaine
 import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const ZERO_BN = new BN(0);
 
@@ -49,6 +50,7 @@ const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vot
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [posted, setPosted] = useState(false);
+	const { postData } = usePostDataContext();
 
 	useEffect(() => {
 		if (!network) return;
@@ -68,6 +70,29 @@ const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vot
 		setComments(getSortedComments(commentsPayload));
 		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
 		setTimelines(timelinePayload);
+	};
+
+	const handleCopyClicked = () => {
+		navigator.clipboard.writeText(window.location.href);
+		message.success('Post link copied');
+	};
+
+	const onShareTwitter = () => {
+		const text = `${encodeURIComponent(`I've just cast my vote for the "${postData?.title}"`)}%0A%0A${encodeURIComponent(
+			`Check out the proposal and own the decision by casting your vote too! ${window.location.href || ''}`
+		)}%0A%0A`;
+
+		const url = `https://twitter.com/intent/tweet?text=${text}`;
+		window.open(url, '_blank')?.focus();
+	};
+
+	const onShareDiscord = () => {
+		const text = `${encodeURIComponent(`I've just cast my vote for the "${postData?.title}"`)}%0A%0A${encodeURIComponent(
+			`Check out the proposal and own the decision by casting your vote too! ${window.location.href || ''}`
+		)}%0A%0A`;
+		navigator.clipboard.writeText(decodeURIComponent(text));
+		message.success('Vote details copied to clipboard. You can paste it in Discord.');
+		window.open('https://discord.com/channels/@me', '_blank')?.focus();
 	};
 
 	return (
@@ -177,7 +202,48 @@ const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vot
 					<RightQuote />
 				</span>
 			</div>
-			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-section-dark-container'>Share your vote on:</p>
+			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Share your vote on:</p>
+			<div className='mb-1 mt-2 flex items-center justify-center gap-x-2'>
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					onClick={() => {
+						onShareTwitter();
+					}}
+				>
+					<ImageIcon
+						src='/assets/icons/x-pink.svg'
+						alt='twitter-icon'
+					/>
+				</Button>
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					onClick={() => {
+						onShareDiscord();
+					}}
+				>
+					<ImageIcon
+						src='/assets/icons/discord-pink.svg'
+						alt='discord-icon'
+					/>
+				</Button>
+				{/* <Button className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'>
+					<ImageIcon
+						src='/assets/icons/riot-pink.svg'
+						alt='riot-icon'
+					/>
+				</Button> */}
+				<Button
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					onClick={() => {
+						handleCopyClicked();
+					}}
+				>
+					<ImageIcon
+						src='/assets/icons/copy-pink.svg'
+						alt='copy-icon'
+					/>
+				</Button>
+			</div>
 		</Modal>
 	);
 };

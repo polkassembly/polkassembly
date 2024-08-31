@@ -490,7 +490,6 @@ const DelegateModal = ({ className, defaultTarget, open, setOpen, trackNum, onCo
 										<Balance
 											address={user?.delegationDashboardAddress}
 											onChange={handleOnBalanceChange}
-											isDelegating={true}
 											isBalanceUpdated={isBalanceUpdated}
 										/>
 									</span>

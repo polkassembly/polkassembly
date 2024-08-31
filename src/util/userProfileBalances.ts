@@ -9,6 +9,7 @@ interface Props {
 	api: any;
 	apiReady: any;
 	network: string;
+	isVoting?: boolean;
 }
 
 interface IResponse {
@@ -18,7 +19,7 @@ interface IResponse {
 }
 const ZERO_BN = new BN(0);
 
-const userProfileBalances = async ({ address, api, apiReady, network }: Props): Promise<IResponse> => {
+const userProfileBalances = async ({ address, api, apiReady, network, isVoting }: Props): Promise<IResponse> => {
 	const getBalances = async () => {
 		let freeBalance = ZERO_BN;
 		let transferableBalance = ZERO_BN;
@@ -71,8 +72,12 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 			await api.query.system
 				.account(address)
 				.then((result: any) => {
-					if (result.data.free && result.data?.free?.toBigInt() >= result.data?.frozen?.toBigInt()) {
-						transferableBalance = new BN(result.data?.free?.toBigInt() - result.data?.frozen?.toBigInt());
+					if (isVoting) {
+						transferableBalance = new BN(result.data?.free?.toBigInt());
+						lockedBalance = new BN(result.data?.frozen?.toBigInt().toString());
+						freeBalance = new BN(result.data?.free?.toBigInt().toString()).add(new BN(result?.data?.reserved?.toBigInt() || '0'));
+					} else if (result.data.free) {
+						transferableBalance = new BN(result.data?.free?.toBigInt());
 						lockedBalance = new BN(result.data?.frozen?.toBigInt().toString());
 						freeBalance = new BN(result.data?.free?.toBigInt().toString());
 					} else {

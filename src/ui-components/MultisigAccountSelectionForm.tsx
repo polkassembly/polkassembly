@@ -45,6 +45,7 @@ interface Props {
 	multisigBalance: BN;
 	setMultisigBalance: (pre: BN) => void;
 	linkAddressTextDisabled?: boolean;
+	isVoting?: boolean;
 }
 
 const MultisigAccountSelectionForm = ({
@@ -67,7 +68,8 @@ const MultisigAccountSelectionForm = ({
 	showMultisigBalance = false,
 	multisigBalance,
 	setMultisigBalance,
-	linkAddressTextDisabled = false
+	linkAddressTextDisabled = false,
+	isVoting = false
 }: Props) => {
 	const [multisig, setMultisig] = useState<any>(null);
 	const { api, apiReady } = useApiContext();
@@ -125,6 +127,7 @@ const MultisigAccountSelectionForm = ({
 									address={address}
 									onChange={onBalanceChange}
 									classname={!canMakeTransaction ? 'text-nay_red [&>span]:text-nay_red' : 'opacity-50'}
+									isVoting={isVoting}
 								/>
 							)}
 						</>

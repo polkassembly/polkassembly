@@ -920,6 +920,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 											canMakeTransaction={!initiatorBalance.lte(totalDeposit)}
 											multisigBalance={multisigBalance}
 											setMultisigBalance={setMultisigBalance}
+											isVoting
 										/>
 									) : (
 										<AccountSelectionForm

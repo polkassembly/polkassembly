@@ -33,7 +33,7 @@ export default styled(ProfileBalanceModal)`
 		height: 56px !important;
 	}
 	.ant-modal-content {
-		margin-top: 20px;
+		margin-top: 20px !important;
 	}
 	.ant-modal-content .ant-modal-close {
 		margin-top: -12px !important;

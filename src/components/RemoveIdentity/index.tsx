@@ -134,13 +134,11 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	useEffect(() => {
-		if (!apiReady || !peopleChainApiReady) return;
-		const fetchData = async () => {
-			await checkIsIdentityAvailable(address || loginAddress);
-			await getGasFee(address || loginAddress);
-			getBondFee();
-		};
-		fetchData();
+		if (!(api && peopleChainApi) || !apiReady) return;
+		checkIsIdentityAvailable(address || loginAddress);
+
+		getGasFee(address || loginAddress);
+		getBondFee();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, api, apiReady, address, peopleChainApi, peopleChainApiReady]);
 

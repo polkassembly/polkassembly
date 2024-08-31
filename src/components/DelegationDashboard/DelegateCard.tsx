@@ -433,7 +433,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				setOpen={setOpen}
 			/>
 			<Modal
-				open={true}
+				open={openReadMore}
 				onCancel={() => setOpenReadMore(false)}
 				className={classNames('modal w-[725px] max-md:w-full dark:[&>.ant-modal-content]:bg-section-dark-overlay', poppins.className, poppins.variable)}
 				footer={false}

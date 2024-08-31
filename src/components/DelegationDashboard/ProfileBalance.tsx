@@ -88,7 +88,7 @@ const ProfileBalances = ({ className }: Props) => {
 
 	return (
 		<div className={'flex w-full items-center justify-between pl-[70px] max-md:pl-4 '}>
-			<div className='items-center gap-2 sm:hidden'>
+			<div className='ml-2 items-center gap-2 sm:hidden'>
 				{balancesArr.slice(0, 1).map((balance) => (
 					<div
 						key={balance?.label}
@@ -102,6 +102,13 @@ const ProfileBalances = ({ className }: Props) => {
 							>
 								{formatedBalance(balance.value, unit, 2)}
 								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
+								<Image
+									src={'/assets/delegation-tracks/info-white.svg'}
+									height={20}
+									width={20}
+									alt=''
+									className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
+								/>
 							</div>
 							<div className='ml-[1px] flex items-center justify-start gap-2'>
 								<Image
@@ -109,17 +116,15 @@ const ProfileBalances = ({ className }: Props) => {
 									height={18}
 									width={18}
 									alt=''
-									className={'sm:hidden'}
+									className={'ml-1 sm:hidden'}
 								/>
 								<span className='text-xs font-medium tracking-[0.01em] text-white'>{balance.label}</span>
 							</div>
 						</div>
-						{balance.label === 'Balance' && (
-							<Divider
-								type='vertical'
-								style={{ borderLeft: '1px solid #D2D8E0', height: '100%' }}
-							/>
-						)}
+						<Divider
+							type='vertical'
+							className=' mt-1 h-[38px] bg-section-light-container '
+						/>
 					</div>
 				))}
 			</div>
@@ -155,7 +160,7 @@ const ProfileBalances = ({ className }: Props) => {
 					</div>
 				))}
 			</div>
-			<div className='-mt-6 mr-6 w-52'>
+			<div className='-mt-6 mr-4 w-48 sm:mr-6 sm:w-52'>
 				{!!accounts && accounts?.length > 0 && (
 					<AccountSelectionForm
 						linkAddressTextDisabled

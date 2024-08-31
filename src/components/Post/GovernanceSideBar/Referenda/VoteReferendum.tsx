@@ -284,7 +284,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 		setTotalDeposit(new BN(depositBase).add(new BN(depositFactor)));
 		//initiator balance
 		const initiatorBalance = await api.query.system.account(address);
-		setInitiatorBalance(new BN(initiatorBalance.data.free.toString()));
+		setInitiatorBalance(new BN(initiatorBalance?.data?.free?.toString() || '0').add(new BN(initiatorBalance?.data?.reserved?.toString() || '0')));
 	}, [address, api, apiReady]);
 
 	const handleBalanceErr = useCallback(() => {
@@ -861,7 +861,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 										)}
 									</div>
 								</div>
-								{showMultisig && initiatorBalance.lte(totalDeposit) && multisig && (
+								{console.log(initiatorBalance.toString(), totalDeposit.toString())}
+								{showMultisig && initiatorBalance.lt(totalDeposit) && multisig && (
 									<Alert
 										message={`The Free Balance in your selected account is less than the Minimum Deposit ${formatBnBalance(
 											totalDeposit,

@@ -26,7 +26,8 @@ const defaultLockedBadges = [
 	{ img: '/assets/badges/active_voter_locked.svg', name: BadgeName.ACTIVE_VOTER },
 	{ img: '/assets/badges/council_locked.svg', name: BadgeName.COUNCIL },
 	{ img: '/assets/badges/decentralised_voice_locked.svg', name: BadgeName.DECENTRALISED_VOICE },
-	{ img: '/assets/badges/fellow_locked.svg', name: BadgeName.FELLOW }
+	{ img: '/assets/badges/fellow_locked.svg', name: BadgeName.FELLOW },
+	{ img: '/assets/badges/whalelocked.svg', name: BadgeName.WHALE }
 ];
 
 const ProfileBadges = ({ className, theme, badges }: Props) => {
@@ -105,10 +106,11 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 									{`Unlocked on ${item.unlockedAt.split('T')[0]}`}
 								</span>
 							) : (
-								<span className='flex items-center gap-1 break-all text-xs'>
+								<span className='flex items-center gap-1 break-all font-poppins text-xs'>
 									<ImageIcon
 										src='/assets/icons/lock.svg'
 										alt='locked'
+										className='text-white'
 									/>
 									Locked
 								</span>
@@ -124,12 +126,19 @@ const ProfileBadges = ({ className, theme, badges }: Props) => {
 										name: item.name,
 										unlockedAt: 'unlockedAt' in item ? item.unlockedAt : ''
 									});
+								} else {
+									setOpenModal(true);
+									setSelectedBadge({
+										check: false,
+										name: item.name,
+										unlockedAt: ''
+									});
 								}
 							}}
 							className='col-span-1 flex cursor-pointer flex-col items-center rounded-lg bg-[#F6F7F9] py-8 dark:bg-[#161616]'
 						>
 							<Image
-								src={item.img}
+								src={item?.isUnlocked ? item?.img : item?.lockImg || '/assets/badges/active_voter_locked.svg'}
 								alt={item.name}
 								className={item.isUnlocked ? '' : 'grayscale'}
 								width={132}

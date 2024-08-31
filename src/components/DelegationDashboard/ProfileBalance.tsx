@@ -20,6 +20,7 @@ import getAccountsFromWallet from '~src/util/getAccountsFromWallet';
 import AccountSelectionForm from '~src/ui-components/AccountSelectionForm';
 import chainLogo from '~assets/parachain-logos/chain-logo.jpg';
 import { poppins } from 'pages/_app';
+import ProfileBalanceModal from './utils/ProfileBalanceModal';
 
 const AddressConnectModal = dynamic(() => import('~src/ui-components/AddressConnectModal'), {
 	ssr: false
@@ -45,6 +46,7 @@ const ProfileBalances = ({ className }: Props) => {
 	const { loginWallet, delegationDashboardAddress, loginAddress } = currentUser;
 	const dispatch = useDispatch();
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
+	const [openBalanceDetailsModal, setOpenBalanceDetailsModal] = useState<boolean>(false);
 
 	const balancesArr = [
 		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.freeBalance.toString() },
@@ -102,13 +104,15 @@ const ProfileBalances = ({ className }: Props) => {
 							>
 								{formatedBalance(balance.value, unit, 2)}
 								<span className='ml-1 text-xs font-medium tracking-[0.015em] text-white'>{unit}</span>
-								<Image
-									src={'/assets/delegation-tracks/info-white.svg'}
-									height={20}
-									width={20}
-									alt=''
-									className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
-								/>
+								<span onClick={() => setOpenBalanceDetailsModal(true)}>
+									<Image
+										src={'/assets/delegation-tracks/info-white.svg'}
+										height={20}
+										width={20}
+										alt=''
+										className={'-mt-[3px] ml-[3px] cursor-pointer sm:hidden'}
+									/>
+								</span>
 							</div>
 							<div className='ml-[1px] flex items-center justify-start gap-2'>
 								<Image
@@ -190,6 +194,11 @@ const ProfileBalances = ({ className }: Props) => {
 				closable={true}
 				onConfirm={(address: string) => dispatch(userDetailsActions.updateDelegationDashboardAddress(address))}
 				usedInIdentityFlow={false}
+			/>
+			<ProfileBalanceModal
+				className=''
+				open={openBalanceDetailsModal}
+				setOpen={setOpenBalanceDetailsModal}
 			/>
 		</div>
 	);

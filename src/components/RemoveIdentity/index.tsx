@@ -139,7 +139,6 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 
 		getGasFee(address || loginAddress);
 		getBondFee();
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginAddress, api, apiReady, address, peopleChainApi, peopleChainApiReady]);
 

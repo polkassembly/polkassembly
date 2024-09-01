@@ -45,7 +45,7 @@ const ProfileBalanceModal = ({ className, setOpen, open, balancesArr = [] }: { c
 									height={20}
 								/>
 								<span className='text-sm font-medium tracking-[0.01em] text-blue-light-medium dark:to-blue-dark-medium '>{balance.label}</span>
-								<div className={`ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-blue-light-high dark:to-blue-dark-high `}>
+								<div className={'ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-blue-light-high dark:to-blue-dark-high '}>
 									{formatedBalance(balance.value, unit, 2)}
 									<span className='ml-1 text-sm font-medium tracking-[0.015em] '>{unit}</span>
 								</div>
@@ -70,7 +70,7 @@ const ProfileBalanceModal = ({ className, setOpen, open, balancesArr = [] }: { c
 									className={'mr-[2px] sm:hidden'}
 								/>
 								<span className='text-sm font-medium tracking-[0.01em] text-white'>{balance.label}</span>
-								<div className={`ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-white`}>
+								<div className={'ml-1 flex items-baseline text-xl font-semibold tracking-[0.0015em] text-white'}>
 									{formatedBalance(balance.value, unit, 2)}
 									<span className='ml-1 text-sm font-medium tracking-[0.015em] '>{unit}</span>
 								</div>

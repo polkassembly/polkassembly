@@ -199,6 +199,7 @@ const ProfileBalances = ({ className }: Props) => {
 				className=''
 				open={openBalanceDetailsModal}
 				setOpen={setOpenBalanceDetailsModal}
+				balancesArr={balancesArr}
 			/>
 		</div>
 	);

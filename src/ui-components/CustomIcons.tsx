@@ -148,7 +148,6 @@ import ViewVoteSVG from '~assets/profile/view-votes.svg';
 import SubscanSVG from '~assets/profile/profile-subscan.svg';
 import ProfileOverviewSVG from '~assets/profile/profile-overview.svg';
 import LeaderboardSVG from '~assets/sidebar/LeaderboardSelected.svg';
-import AnalyticsSVG from '~assets/sidebar/AnalyticsSelected.svg';
 import ExpandSVG from '~assets/icons/expand-small-icon.svg';
 import EqualSVG from '~assets/profile/equal.svg';
 import MyActivitySVG from '~assets/profile/myactivity.svg';

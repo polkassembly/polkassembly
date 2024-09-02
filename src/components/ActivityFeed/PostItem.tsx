@@ -63,6 +63,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, currentUserdata }) => {
 				formatDate={formatDate}
 			/>
 			<PostContent
+				post={post}
 				content={postContent}
 				shouldShowReadMore={shouldShowReadMore}
 				toggleExpandPost={() => toggleExpandPost(post.post_id)}
@@ -122,13 +123,16 @@ const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => str
 );
 
 const PostContent: React.FC<{
+	post: any;
 	content: string;
 	shouldShowReadMore: boolean;
 	toggleExpandPost: () => void;
 	isExpanded: boolean;
-}> = ({ content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
+}> = ({ post, content, shouldShowReadMore, toggleExpandPost, isExpanded }) => (
 	<>
-		<p className='pt-2 font-medium text-[#243A57]'>#45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot</p>
+		<p className='pt-2 font-medium text-[#243A57]'>
+			#{post?.title || '45 Standard Guidelines to judge Liquidity Treasury Proposals on the main governance side - Kusama and Polkadot'}
+		</p>
 		<Markdown
 			className='text-[#243A57]'
 			md={content}

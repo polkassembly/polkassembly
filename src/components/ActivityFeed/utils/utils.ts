@@ -4,6 +4,7 @@
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import moment from 'moment';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
+import { ProposalType } from '~src/global/proposalType';
 
 export const fetchVoterProfileImage = async (username: string): Promise<string | null> => {
 	try {
@@ -51,7 +52,7 @@ export const toPascalCase = (str: string): string => {
 };
 
 export const getProposalType = (tabKey: string): string => {
-	return tabKey === 'discussions' ? 'DISCUSSIONS' : 'REFERENDUM_V2';
+	return tabKey === 'discussions' ? ProposalType.DISCUSSIONS : ProposalType.REFERENDUM_V2;
 };
 
 export const formatDate = (date: string): string => {

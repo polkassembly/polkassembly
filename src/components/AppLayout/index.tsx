@@ -111,7 +111,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsMobile(window.screen.width < 1024);
 		};
 
-		console.log('window.screen.width', window.screen.width);
 		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => {
@@ -126,7 +125,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		});
 	}, []);
 
-	console.log('isMobile', isMobile);
 	useEffect(() => {
 		getTotalActiveProposalsCount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps

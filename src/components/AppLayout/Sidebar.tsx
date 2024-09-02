@@ -112,6 +112,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
+	if (sidedrawer === false) {
+		setSidebarCollapsed(true);
+	}
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -139,11 +142,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
 		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
 		const isParachainActive = currentPath.includes('parachains');
-		console.log('Active governance state:', isActive);
-		console.log('Active treasury state:', isTreasuryActive);
-		console.log('Active whitelist state:', isWhitelistActive);
-		console.log('Active parachain state:', isParachainActive);
-
 		setActiveGovernance(isActive);
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
@@ -241,7 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<span
 									className={`text-[10px] ${
 										totalActiveProposalsCount?.technicalPipsCount ? getSpanStyle('TechnicalCommittee', totalActiveProposalsCount['technicalPipsCount']) : ''
-									} rounded-lg px-2 py-1`}
+									} absolute right-2 top-1 rounded-lg px-2 py-1`}
 								>
 									{totalActiveProposalsCount?.technicalPipsCount ? `${totalActiveProposalsCount['technicalPipsCount']}` : ''}
 								</span>
@@ -911,9 +909,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
-					<SelectedGovernance className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedGovernance className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<GovernanceIconNew className='-ml-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
 			[...gov2TrackItems.governanceItems]
@@ -923,9 +921,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_fellowship_group',
 			<div>
 				{activeWhitelist ? (
-					<SelectedWhitelist className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedWhitelist className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipIconNew className='-ml-2  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
@@ -1041,9 +1039,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 		gov2Items.splice(
 			gov2Items.length - 1,
 			1,
-			getSiderMenuItem('Fellowship', 'gov2_fellowship_group', <FellowshipIconNew className='mt-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [
-				...gov2TrackItems.fellowshipItems
-			])
+			getSiderMenuItem(
+				'Fellowship',
+				'gov2_fellowship_group',
+				<FellowshipIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+				[...gov2TrackItems.fellowshipItems]
+			)
 		);
 	}
 
@@ -1093,9 +1094,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_treasury_group',
 				<div>
 					{activeTreasury ? (
-						<SelectedTreasury className='-ml-2 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<SelectedTreasury className='-ml-3 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-2 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]
@@ -1112,7 +1113,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_fellowship_group',
 				<div>
 					{' '}
-					<FellowshipIconNew className=' scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className=' -ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 				</div>,
 				[...gov2TrackItems.fellowshipItems]
 			)

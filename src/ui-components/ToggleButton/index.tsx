@@ -23,7 +23,7 @@ const ToggleButton = () => {
 					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
 				})}
 			>
-				<span>{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}</span>
+				{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}{' '}
 			</button>
 		</div>
 	);

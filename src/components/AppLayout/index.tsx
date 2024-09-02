@@ -42,7 +42,8 @@ import {
 	ApplayoutIdentityIcon,
 	ArchivedIcon,
 	ClearIdentityOutlinedIcon,
-	RoundedDollarIcon
+	RoundedDollarIcon,
+	AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -82,6 +83,7 @@ interface IUserDropdown {
 	isIdentityUnverified: boolean;
 	isGood: boolean;
 	handleLogout: any;
+	setSidedrawer: any;
 	network: string;
 	handleRemoveIdentity: (pre?: any) => void;
 	img?: string | null;
@@ -134,6 +136,7 @@ const getUserDropDown = ({
 	handleSetIdentityClick,
 	isGood,
 	isIdentityExists,
+	setSidedrawer,
 	isIdentityUnverified,
 	network,
 	className,
@@ -149,6 +152,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href={`/user/${username}`}
+					onClick={() => setSidedrawer(false)}
 				>
 					<UserOutlined />
 					<span>View Profile</span>
@@ -161,6 +165,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href='/settings?tab=account'
+					onClick={() => setSidedrawer(false)}
 				>
 					<SettingOutlined />
 					<span>Settings</span>
@@ -176,6 +181,7 @@ const getUserDropDown = ({
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
+						setSidedrawer(false);
 						handleLogout(username);
 					}}
 				>
@@ -197,6 +203,7 @@ const getUserDropDown = ({
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
+							setSidedrawer(false);
 							handleSetIdentityClick();
 						}}
 					>
@@ -364,7 +371,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	}, [network]);
 
 	useEffect(() => {
-		if (!api && !peopleChainApi) return;
+		if (!api || !apiReady) return;
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
@@ -910,6 +917,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)
 		);
 	}
+	if (isOpenGovSupported(network)) {
+		gov2OverviewItems.splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Gov Analytics</span>
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/analytics',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}
@@ -1077,6 +1110,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
 		isGood: isGood,
+		setSidedrawer: setSidedrawer,
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
@@ -1222,7 +1256,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'

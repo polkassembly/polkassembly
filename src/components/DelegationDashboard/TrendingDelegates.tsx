@@ -1,29 +1,33 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { EDelegationAddressFilters, EDelegationSourceFilters, IDelegateAddressDetails } from '~src/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import DelegateCard from './DelegateCard';
-import { UserOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { Pagination } from '~src/ui-components/Pagination';
-import { useTheme } from 'next-themes';
-import { Alert, Button, Radio, Spin, Checkbox } from 'antd';
+import { Button, Radio, Spin, Checkbox } from 'antd';
 import getSubstrateAddress from '~src/util/getSubstrateAddress';
-import Input from '~src/basic-components/Input';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
-import getEncodedAddress from '~src/util/getEncodedAddress';
-import DelegatesProfileIcon from '~assets/icons/white-delegated-profile.svg';
 import { useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import DelegateModal from '../Listing/Tracks/DelegateModal';
 import Popover from '~src/basic-components/Popover';
 import { poppins } from 'pages/_app';
-import PolkadotIcon from '~assets/delegation-tracks/pa-logo-small-delegate.svg';
-import W3FIcon from '~assets/profile/w3f.svg';
-import ParityTechIcon from '~assets/icons/polkadot-logo.svg';
-import NovaIcon from '~assets/delegation-tracks/nova-wallet.svg';
 import BN from 'bn.js';
+import Image from 'next/image';
+import classNames from 'classnames';
+import Input from '~src/basic-components/Input';
+import { useApiContext, usePeopleChainApiContext } from '~src/context';
+import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
+import InputClearIcon from '~assets/icons/close-tags.svg';
+import { SearchOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
+import { useTheme } from 'next-themes';
+import { DelegateDelegationIcon } from '~src/ui-components/CustomIcons';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import DelegateModal from '../Listing/Tracks/DelegateModal';
+
+const DELEGATION_LISTING = 10;
 
 const getResultsDataAccordingToFilter = (filterBy: EDelegationAddressFilters, data: IDelegateAddressDetails[]): IDelegateAddressDetails[] => {
 	switch (filterBy) {
@@ -52,42 +56,70 @@ const filterDelegatesBySources = (data: IDelegateAddressDetails[], selectedSourc
 	});
 };
 
-const TrendingDelegates = () => {
+const TrendingDelegates = ({ className, theme }: { className?: string; theme: any }) => {
 	const { network } = useNetworkSelector();
 	const { delegationDashboardAddress } = useUserDetailsSelector();
+	const { api, apiReady } = useApiContext();
+	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
 	const [loading, setLoading] = useState<boolean>(false);
-	const [delegatesData, setDelegatesData] = useState<IDelegateAddressDetails[]>([]);
 	const [filteredDelegates, setFilteredDelegates] = useState<IDelegateAddressDetails[]>([]);
 	const [currentPage, setCurrentPage] = useState<number>(1);
-	const [showMore, setShowMore] = useState<boolean>(false);
-	const [addressAlert, setAddressAlert] = useState<boolean>(false);
-	const [open, setOpen] = useState<boolean>(false);
-	const { resolvedTheme: theme } = useTheme();
-	const [address, setAddress] = useState<string>('');
+	const delegatesData = useRef<IDelegateAddressDetails[]>([]);
 	const [selectedSources, setSelectedSources] = useState<EDelegationSourceFilters[]>(Object.values(EDelegationSourceFilters));
 	const [sortOption, setSortOption] = useState<EDelegationAddressFilters | null>(null);
+	const [searchInput, setSearchInput] = useState<string>('');
+	const { resolvedTheme } = useTheme();
+	const [open, setOpen] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (!address) return;
-		if (getEncodedAddress(address, network) && address !== getEncodedAddress(address, network)) {
-			setAddressAlert(true);
-		}
-		setTimeout(() => {
-			setAddressAlert(false);
-		}, 5000);
-	}, [network, address]);
+	const handleIdentity = async (delegates: IDelegateAddressDetails[]) => {
+		if (!api || !apiReady) return;
 
-	const getData = async () => {
-		if (!getEncodedAddress(address, network) && !!address.length) return;
-		setLoading(true);
+		const identityInfo: { [key: string]: any | null } = {};
+		const identityInfoPromises = delegates?.map(async (delegate: IDelegateAddressDetails) => {
+			if (delegate?.address) {
+				const info = await getIdentityInformation({
+					address: delegate?.address,
+					api: peopleChainApi ?? api,
+					network: network
+				});
 
-		const { data, error } = await nextApiClientFetch<any>('api/v1/delegations/getAllDelegates', {
-			address: address
+				identityInfo[delegate?.address] = info || null;
+			}
 		});
 
-		if (data?.data) {
+		await Promise.allSettled(identityInfoPromises);
+
+		const updatedData = delegates?.map((delegate: IDelegateAddressDetails) => {
+			return {
+				...delegate,
+				identityInfo: identityInfo?.[delegate?.address] || null,
+				username: identityInfo?.[delegate?.address]?.display || identityInfo?.[delegate?.address]?.legal || ''
+			};
+		});
+		delegatesData.current = updatedData;
+		setFilteredDelegates(updatedData || delegatesData.current);
+	};
+
+	const handleSearchSubmit = () => {
+		if (!searchInput.length) {
+			setFilteredDelegates(delegatesData.current);
+			return;
+		}
+		setCurrentPage(1);
+		setLoading(true);
+		const searchOutput = delegatesData.current.filter((delegate) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()));
+		setFilteredDelegates(searchOutput || []);
+		setLoading(false);
+	};
+
+	const getData = async () => {
+		if (!(api && peopleChainApiReady) || !network) return;
+		setLoading(true);
+
+		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
+		if (data) {
 			//putting polkassembly Delegate first;
-			const updatedDelegates = data?.data || [];
+			const updatedDelegates = data || [];
 
 			updatedDelegates.sort((a: any, b: any) => {
 				const addressess = [getSubstrateAddress('13mZThJSNdKUyVUjQE9ZCypwJrwdvY8G5cUCpS9Uw4bodh4t')];
@@ -102,9 +134,11 @@ const TrendingDelegates = () => {
 				if (bIndex !== -1) return 1;
 				return 0;
 			});
-			setDelegatesData(updatedDelegates);
+
+			delegatesData.current = updatedDelegates;
 			setFilteredDelegates(updatedDelegates);
 			setLoading(false);
+			handleIdentity(updatedDelegates);
 		} else {
 			console.log(error);
 			setLoading(false);
@@ -114,96 +148,102 @@ const TrendingDelegates = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, network]);
+	}, [api, peopleChainApi, peopleChainApiReady, apiReady, network]);
 
 	const handleCheckboxChange = (sources: EDelegationSourceFilters[]) => {
 		setLoading(true);
+		setCurrentPage(1);
 		setSelectedSources(sources);
-		const data = filterDelegatesBySources(delegatesData, sources);
+		const searchOutput = searchInput?.length
+			? delegatesData.current.filter((delegate) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			: null;
+
+		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
+		const data = filterDelegatesBySources(fromFilterContent, sources);
 		setFilteredDelegates(data || []);
 		setLoading(false);
 	};
 
 	const handleRadioChange = (e: any) => {
 		setLoading(true);
+		setCurrentPage(1);
 		const selectedOption = e.target.value;
 		const updatedSortOption = sortOption === selectedOption ? null : selectedOption;
 		setSortOption(updatedSortOption);
-		const data = getResultsDataAccordingToFilter(selectedOption, delegatesData);
+		const searchOutput = searchInput?.length
+			? delegatesData.current.filter((delegate) => delegate?.address.match(searchInput) || delegate?.username?.toLowerCase().match(searchInput.toLowerCase()))
+			: null;
+
+		const fromFilterContent = searchOutput?.length ? searchOutput : delegatesData?.current;
+		const data = getResultsDataAccordingToFilter(selectedOption, fromFilterContent);
 		setFilteredDelegates(data || []);
 		setLoading(false);
 	};
 
-	const itemsPerPage = showMore ? filteredDelegates.length : 6;
-	const totalPages = Math.ceil(delegatesData.length / itemsPerPage);
-	const startIndex = (currentPage - 1) * itemsPerPage;
-	const endIndex = showMore ? delegatesData.length : startIndex + itemsPerPage;
-
-	const prevPage = () => {
-		setCurrentPage((oldPage) => {
-			let prevPage = oldPage - 1;
-			if (prevPage < 1) {
-				prevPage = totalPages;
-			}
-			return prevPage;
-		});
-	};
-
-	const nextPage = () => {
-		setCurrentPage((oldPage) => {
-			let nextPage = oldPage + 1;
-			if (nextPage > totalPages) {
-				nextPage = 1;
-			}
-			return nextPage;
-		});
-	};
-
-	useEffect(() => {
-		if (showMore && currentPage > totalPages) {
-			setCurrentPage(totalPages);
-		}
-	}, [showMore, currentPage, delegatesData.length, itemsPerPage, totalPages]);
-
 	const renderSourceIcon = (source: any) => {
 		switch (source) {
 			case 'parity':
-				return <ParityTechIcon />;
+				return '/assets/icons/polkadot-logo.svg';
 			case 'polkassembly':
-				return <PolkadotIcon />;
+				return '/assets/delegation-tracks/pa-logo-small-delegate.svg';
 			case 'w3f':
-				return <W3FIcon />;
+				return '/assets/profile/w3f.svg';
 			case 'nova':
-				return <NovaIcon />;
+				return '/assets/delegation-tracks/nova-wallet.svg';
 			default:
-				return <UserOutlined className='ml-1' />;
+				return '/assets/icons/individual-filled.svg';
 		}
 	};
 
 	const filterContent = (
 		<div className='flex flex-col'>
+			<span
+				className={classNames(
+					'-mx-3 flex cursor-pointer justify-end border-0 border-b-[1px] border-solid border-x-section-light-container px-3 pb-0.5 pt-1 text-xs text-pink_primary dark:border-separatorDark',
+					poppins.className,
+					poppins.variable
+				)}
+				onClick={() => {
+					setSelectedSources([]);
+					handleCheckboxChange([]);
+				}}
+			>
+				Clear All
+			</span>
 			<Checkbox.Group
 				onChange={(checked) => handleCheckboxChange(checked as any)}
 				value={selectedSources}
-				className='flex flex-col'
+				className={classNames('mt-1 flex flex-col', poppins.className, poppins.variable)}
 				disabled={loading}
 			>
-				{Object.values(EDelegationSourceFilters).map((source, index) => {
-					return (
-						<div
-							key={index}
-							className={`${poppins.variable} ${poppins.className} flex gap-[8px] p-[4px] text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
-						>
-							<Checkbox
-								checked={selectedSources.includes(source)}
-								className='cursor-pointer text-pink_primary'
-								value={source}
-							/>
-							{renderSourceIcon(source)}
-							<span className='mt-[3px] text-xs'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
-						</div>
-					);
-				})}
+				<div className='flex flex-col gap-1'>
+					{Object.values(EDelegationSourceFilters).map((source, index) => {
+						return (
+							<div
+								key={index}
+								className={`${poppins.variable} ${poppins.className} flex gap-2 p-0.5 text-sm font-medium tracking-[0.01em] text-bodyBlue dark:text-blue-dark-high`}
+							>
+								<Checkbox
+									checked={selectedSources.includes(source)}
+									className='cursor-pointer text-pink_primary'
+									value={source}
+								/>
+								<div className='flex items-center '>
+									<span className='w-[25px]'>
+										<Image
+											src={renderSourceIcon(source)}
+											height={20}
+											width={20}
+											alt=''
+											className={source == EDelegationSourceFilters.NA ? (theme == 'dark' ? 'dark-icons' : '') : ''}
+										/>
+									</span>
+									<span className='text-xs tracking-wide'>{source.charAt(0).toUpperCase() + source.slice(1)}</span>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 			</Checkbox.Group>
 		</div>
 	);
@@ -217,89 +257,67 @@ const TrendingDelegates = () => {
 			>
 				<Radio
 					value={EDelegationAddressFilters.DELEGATED_VOTES}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voting Power
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.VOTED_PROPOSALS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Voted proposals (past 30 days)
 				</Radio>
 				<Radio
 					value={EDelegationAddressFilters.RECEIVED_DELEGATIONS}
-					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-[8px] p-[4px] text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
+					className={`${poppins.variable} ${poppins.className} my-[1px] flex gap-2 p-1 text-xs font-medium text-bodyBlue dark:text-blue-dark-high`}
 				>
 					Received Delegation(s)
 				</Radio>
 			</Radio.Group>
 		</div>
 	);
+
 	return (
-		<div className='mt-[32px] rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6'>
-			<div className='flex items-center justify-between'>
-				<div className='flex items-center space-x-3'>
-					<ImageIcon
-						src='/assets/delegation-tracks/trending-icon.svg'
-						alt='trending icon'
-						imgClassName='h-6 w-6 mt-[2.5px]'
-					/>
-					<span className='text-xl font-semibold'>Trending Delegates</span>
-					<div className='flex space-x-[6px]'>
-						<div
-							onClick={prevPage}
-							style={{ transform: 'rotateY(180deg)' }}
-						>
-							<ImageIcon
-								src='/assets/delegation-tracks/chevron-right.svg'
-								alt='chevron left icon'
-								className='cursor-pointer'
-							/>
-						</div>
-						<div onClick={nextPage}>
-							<ImageIcon
-								src='/assets/delegation-tracks/chevron-right.svg'
-								alt='chevron right icon'
-								className='cursor-pointer'
-							/>
-						</div>
-					</div>
-				</div>
-				<span
-					onClick={() => setShowMore(!showMore)}
-					className='mr-[3px] cursor-pointer text-xs font-medium text-pink_primary'
-				>
-					{showMore ? 'Show Less' : 'Show All'}
-				</span>
+		<div className={classNames(className, 'mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6')}>
+			<div className='flex items-center space-x-3'>
+				<ImageIcon
+					src='/assets/delegation-tracks/trending-icon.svg'
+					alt='trending icon'
+					imgClassName='h-6 w-6 mt-[2.5px]'
+				/>
+				<span className='text-xl font-semibold'>Trending Delegates</span>
 			</div>
 
 			<h4 className={'mb-4 mt-4 text-sm font-normal text-bodyBlue dark:text-white '}>Enter an address or Select from the list below to delegate your voting power</h4>
 
 			<div className='flex items-center gap-3'>
-				<div className='dark:placeholder:white flex h-[48px] w-full items-center justify-between rounded-md border-[1px] border-solid border-section-light-container text-sm font-normal text-[#576D8BCC] dark:border-[#3B444F] dark:border-separatorDark dark:text-white'>
+				<div className='dark:placeholder:white flex h-12 w-full items-center justify-between rounded-md text-sm font-normal text-[#576D8BCC] dark:text-white'>
 					{/* Input Component */}
 					<Input
-						placeholder='Enter address to Delegate vote'
-						onChange={(e) => setAddress(e.target.value)}
-						value={address}
-						className='h-[44px] border-none dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+						type='search'
+						allowClear={{ clearIcon: <InputClearIcon /> }}
+						placeholder='Enter username or address to Delegate vote'
+						onChange={(e) => {
+							if (!e.target.value?.length) {
+								setFilteredDelegates(delegatesData?.current || []);
+							}
+							setSearchInput(e.target.value.trim());
+						}}
+						onPressEnter={handleSearchSubmit}
+						value={searchInput}
+						className='placeholderColor h-10 rounded-none rounded-s-md border-0 border-b-[1px] border-l-[1px] border-t-[1px] border-section-light-container dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 
 					<CustomButton
 						variant='primary'
-						className={'ml-1 mr-1 justify-around gap-2 px-4 py-1'}
+						className={classNames('mr-1 h-11 justify-around gap-2 rounded-none rounded-e-md px-4 py-1', loading || !searchInput.length ? 'opacity-50' : '')}
 						height={40}
 						onClick={() => {
-							setOpen(true);
-							setAddress(address);
+							handleSearchSubmit();
 						}}
-						disabled={
-							!address || !getEncodedAddress(address, network) || address === delegationDashboardAddress || getEncodedAddress(address, network) === delegationDashboardAddress
-						}
+						disabled={loading || !searchInput.length}
 					>
-						<DelegatesProfileIcon />
-						<span className='text-sm font-medium text-white'>Delegate</span>
+						<SearchOutlined />
 					</CustomButton>
 				</div>
 
@@ -308,7 +326,7 @@ const TrendingDelegates = () => {
 					placement='bottomRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/filter-icon-delegates.svg'
 							alt='filter icon'
@@ -321,7 +339,7 @@ const TrendingDelegates = () => {
 					placement='topRight'
 					zIndex={1056}
 				>
-					<Button className='border-1 flex h-12 w-12 items-center justify-center rounded-md border-solid border-section-light-container dark:border-borderColorDark dark:bg-section-dark-overlay'>
+					<Button className='border-1 flex h-10 w-10 items-center justify-center rounded-md border-solid border-section-light-container hover:bg-[#FEF5FA] dark:border-borderColorDark dark:bg-section-dark-overlay hover:dark:bg-[#48092A]'>
 						<ImageIcon
 							src='/assets/icons/sort-icon-delegates.svg'
 							alt='sort icon'
@@ -330,44 +348,51 @@ const TrendingDelegates = () => {
 				</Popover>
 			</div>
 
-			{getEncodedAddress(address, network) === delegationDashboardAddress && (
-				<label className='mt-1 text-sm font-normal text-red-500'>You cannot delegate to your own address. Please enter a different wallet address.</label>
-			)}
-
-			{!address || (!getEncodedAddress(address, network) && <label className='mt-1 text-sm font-normal text-red-500 '>Invalid Address.</label>)}
-			{addressAlert && (
-				<Alert
-					className='mb-4 mt-4 dark:border-infoAlertBorderDark dark:bg-infoAlertBgDark'
-					showIcon
-					type='info'
-					message={<span className='dark:text-blue-dark-high'>The substrate address has been changed to {network} address.</span>}
-				/>
-			)}
-
 			<Spin spinning={loading}>
-				<div className='min-h-[200px]'>
-					{filteredDelegates.length < 1 && !loading ? (
+				<div className='min-h-[250px]'>
+					{!filteredDelegates?.length && !loading ? (
 						//empty state
-						<ImageIcon
-							src='/assets/icons/empty-state-image.svg'
-							alt='empty icon'
-							imgWrapperClassName='h-40 w-40 mx-auto mt-[60px]'
-						/>
+						<div className='mt-14 flex flex-col items-center justify-center gap-4'>
+							<DelegateDelegationIcon className='text-[200px]' />
+							<div className='flex items-center gap-1'>
+								<span className='text-lightBlue dark:text-blue-dark-high '>No results found</span>
+								{searchInput.length > 10 && !!getEncodedAddress(searchInput, network) && !!delegationDashboardAddress?.length && (
+									<span className='flex gap-1 text-lightBlue dark:text-blue-dark-high'>
+										<div
+											className={`flex cursor-pointer items-center gap-1 border-none text-pink_primary ${!api || (!apiReady && 'opacity-50')}`}
+											onClick={() => {
+												setOpen(true);
+											}}
+										>
+											<Image
+												src={'assets/icons/delegate-profile.svg'}
+												width={16}
+												height={16}
+												alt=''
+											/>
+											<span>Delegate</span>
+										</div>
+										to this address
+									</span>
+								)}
+							</div>
+						</div>
 					) : (
 						<>
 							<div className='mt-6 grid grid-cols-2 items-end gap-6 max-lg:grid-cols-1'>
-								{filteredDelegates.slice(startIndex, endIndex).map((delegate, index) => (
+								{filteredDelegates?.slice((currentPage - 1) * DELEGATION_LISTING, (currentPage - 1) * DELEGATION_LISTING + DELEGATION_LISTING)?.map((delegate, index) => (
 									<DelegateCard
 										key={index}
 										delegate={delegate}
 										disabled={!delegationDashboardAddress}
+										// handleUsername={(objWithUsername) => handleUsernameUpdateInDelegate(objWithUsername)}
 									/>
 								))}
 							</div>
-							{!showMore && delegatesData.length > 6 && (
+							{delegatesData?.current?.length > DELEGATION_LISTING && (
 								<div className='mt-6 flex justify-end'>
 									<Pagination
-										theme={theme}
+										theme={resolvedTheme as any}
 										size='large'
 										defaultCurrent={1}
 										current={currentPage}
@@ -376,7 +401,7 @@ const TrendingDelegates = () => {
 										}}
 										total={filteredDelegates.length}
 										showSizeChanger={false}
-										pageSize={itemsPerPage}
+										pageSize={DELEGATION_LISTING}
 										responsive={true}
 										hideOnSinglePage={true}
 									/>
@@ -384,15 +409,27 @@ const TrendingDelegates = () => {
 							)}
 						</>
 					)}
+					<DelegateModal
+						defaultTarget={searchInput}
+						open={open}
+						setOpen={setOpen}
+					/>
 				</div>
 			</Spin>
-			<DelegateModal
-				defaultTarget={address}
-				open={open}
-				setOpen={setOpen}
-			/>
 		</div>
 	);
 };
 
-export default TrendingDelegates;
+export default styled(TrendingDelegates)`
+	.placeholderColor .ant-input-group-addon {
+		background: var(--pink_primary);
+		color: white !important;
+		font-size: 12px;
+		border: 1px solid var(--pink_primary);
+	}
+	.ant-input-affix-wrapper > input.ant-input {
+		background: #edeff3;
+		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
+		font-size: 14px !important;
+	}
+`;

@@ -9,6 +9,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { LoadingOutlined } from '@ant-design/icons';
+import { poppins } from 'pages/_app';
 
 interface Props {
 	spendPeriod: {
@@ -91,14 +92,18 @@ const SpendPeriod = ({ spendPeriod, inTreasuryProposals }: Props) => {
 										{
 											<div className='flex flex-col justify-center gap-y-3 font-medium'>
 												<Divider className='m-0 bg-section-light-container p-0 dark:bg-separatorDark' />
-												<span className='flex items-center'>
+												<span className='flex items-center gap-2'>
 													<ProgressBar
 														className='m-0 flex items-center p-0'
 														percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
 														trailColor={trailColor}
 														strokeColor='#E5007A'
 														size='small'
+														showInfo={false}
 													/>
+													<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+														{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
+													</span>
 												</span>
 											</div>
 										}

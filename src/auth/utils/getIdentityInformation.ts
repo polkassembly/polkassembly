@@ -30,6 +30,7 @@ interface IIdentityInfo {
 	judgements: RegistrationJudgement[];
 	verifiedByPolkassembly: boolean;
 }
+
 const result: IIdentityInfo = {
 	discord: '',
 	display: '',

@@ -260,9 +260,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;
+		const existingComments = comments[key] || [];
 		const commentsPayload = {
 			...comments,
-			[key]: [...comments[key], comment]
+			[key]: [...existingComments, comment]
 		};
 		setComments(getSortedComments(commentsPayload));
 		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));
@@ -323,7 +324,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		setReasonForNoComment(getCommentDisabledMessage(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		setCommentAllowed(id === userId ? true : getIsCommentAllowed(allowedCommentors, !!loginAddress && isUserOnchainVerified));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allowedCommentors, loginAddress]);
+	}, [allowedCommentors, loginAddress, isUserOnchainVerified]);
 
 	const toggleSummary = (type: 'positive' | 'negative') => {
 		if (type === 'positive') {

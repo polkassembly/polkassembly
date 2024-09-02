@@ -687,6 +687,7 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
 	allProposals: { diff: number; total: number };
@@ -883,6 +884,7 @@ export interface IOverviewProps {
 		isLoading: boolean;
 		value: string;
 	};
+	isUsedInGovAnalytics?: boolean;
 	currentTokenPrice: {
 		isLoading: boolean;
 		value: string;
@@ -928,6 +930,8 @@ export interface IDelegateAddressDetails {
 	image: string;
 	receivedDelegationsCount: number;
 	votedProposalsCount: number;
+	username?: string;
+	identityInfo?: { display: string; leagal: string } | null;
 }
 
 export enum EDelegationAddressFilters {

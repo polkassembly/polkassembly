@@ -9,41 +9,33 @@ import { isValidNetwork } from '~src/api-utils';
 import { networkDocRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
-import { networkTrackInfo } from '~src/global/post_trackInfo';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
 const getAllTrackLevelProposalsAnalytics = async ({ network }: { network: string }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
-		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
-		const trackDataMap: Record<string, number> = {};
+		const trackProposals: { [key: string]: number } = {};
 		let totalProposals = 0;
 
-		const dataPromise = trackNumbers.map(async (trackId) => {
-			if (trackId) {
-				const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackId)).get();
-				let totalProposalCount = 0;
+		const trackDocsSnapshot = await networkDocRef(network).collection('track_level_analytics').get();
 
-				if (trackSnapshot.exists) {
-					const data = trackSnapshot.data();
-					totalProposalCount = data?.totalProposalsCount || 0;
-					trackDataMap[trackId] = totalProposalCount;
-					totalProposals += totalProposalCount;
+		if (!trackDocsSnapshot.empty) {
+			trackDocsSnapshot.docs.map((doc) => {
+				const data = doc.data();
+				if (data?.totalProposalsCount) {
+					trackProposals[doc?.id] = data?.totalProposalsCount || 0;
+					totalProposals += data?.totalProposalsCount || 0;
 				}
-			}
-		});
+			});
+		}
 
-		await Promise.allSettled(dataPromise);
-
-		trackDataMap['totalTracks'] = trackNumbers.length;
-		trackDataMap['total'] = totalProposals;
-		return { data: { trackDataMap }, error: null, status: 200 };
+		return { data: { data: trackProposals, totalProposals: totalProposals || 0 }, error: null, status: 200 };
 	} catch (err) {
 		return { data: null, error: err || messages.API_FETCH_ERROR, status: err.name };
 	}
 };
 
-async function handler(req: NextApiRequest, res: NextApiResponse<{ trackDataMap: Record<string, number> } | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<{ totalProposals: number; data: { [key: string]: number } } | MessageType>) {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

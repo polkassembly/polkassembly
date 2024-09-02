@@ -49,21 +49,20 @@ const ReferendumCount = () => {
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data } = await nextApiClientFetch<{ trackDataMap: Record<string, number> }>('/api/v1/govAnalytics/referendumCount');
+			const { data, error } = await nextApiClientFetch<{ totalProposals: number; data: TrackInfo }>('/api/v1/govAnalytics/referendumCount');
 			if (data) {
-				setTotalPosts(data.trackDataMap.total);
-
-				const trackDataMap = { ...data.trackDataMap };
-				delete trackDataMap.total;
-				delete trackDataMap.totalTracks;
+				setTotalPosts(data.totalProposals);
 
 				const updatedTrackInfo: TrackInfo = {};
-				Object.entries(trackDataMap).forEach(([key, value]) => {
+				Object.entries(data?.data || {}).forEach(([key, value]) => {
 					const trackName = getTrackNameFromId(network, parseInt(key));
 					updatedTrackInfo[trackName] = value as number;
 				});
 
 				setTrackInfo(updatedTrackInfo);
+				setLoading(false);
+			} else {
+				console.log(error || '');
 				setLoading(false);
 			}
 		} catch (error) {
@@ -75,7 +74,7 @@ const ReferendumCount = () => {
 	useEffect(() => {
 		getData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [network]);
 
 	const data = trackInfo
 		? Object?.entries(trackInfo).map(([key, value], index) => ({

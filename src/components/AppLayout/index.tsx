@@ -74,8 +74,6 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
@@ -85,6 +83,7 @@ interface IUserDropdown {
 	isIdentityUnverified: boolean;
 	isGood: boolean;
 	handleLogout: any;
+	setSidedrawer: any;
 	network: string;
 	handleRemoveIdentity: (pre?: any) => void;
 	img?: string | null;
@@ -137,6 +136,7 @@ const getUserDropDown = ({
 	handleSetIdentityClick,
 	isGood,
 	isIdentityExists,
+	setSidedrawer,
 	isIdentityUnverified,
 	network,
 	className,
@@ -152,6 +152,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href={`/user/${username}`}
+					onClick={() => setSidedrawer(false)}
 				>
 					<UserOutlined />
 					<span>View Profile</span>
@@ -164,6 +165,7 @@ const getUserDropDown = ({
 				<Link
 					className='flex items-center gap-x-2 font-medium text-lightBlue  hover:text-pink_primary dark:text-icon-dark-inactive'
 					href='/settings?tab=account'
+					onClick={() => setSidedrawer(false)}
 				>
 					<SettingOutlined />
 					<span>Settings</span>
@@ -179,6 +181,7 @@ const getUserDropDown = ({
 					onClick={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
+						setSidedrawer(false);
 						handleLogout(username);
 					}}
 				>
@@ -200,6 +203,7 @@ const getUserDropDown = ({
 						onClick={(e) => {
 							e.stopPropagation();
 							e.preventDefault();
+							setSidedrawer(false);
 							handleSetIdentityClick();
 						}}
 					>
@@ -300,9 +304,8 @@ interface Props {
 
 const AppLayout = ({ className, Component, pageProps }: Props) => {
 	const { network } = useNetworkSelector();
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const { username, picture, loginAddress } = useUserDetailsSelector();
 	const [sidedrawer, setSidedrawer] = useState<boolean>(false);
 	const router = useRouter();
@@ -330,14 +333,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			console.log(error);
 		}
 	};
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network)) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-	}, [network, peopleChainApi, peopleChainApiReady, defaultApi, defaultApiReady]);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
@@ -380,8 +375,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		(async () => {
 			const { display, displayParent, isGood, isIdentitySet, isVerified, nickname } = await getIdentityInformation({
 				address: loginAddress,
-				api: api,
-				apiReady: apiReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 			dispatch(userDetailsActions.setIsUserOnchainVerified(isVerified || false));
@@ -391,7 +385,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			setIsIdentityUnverified(!isVerified);
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [api, apiReady, loginAddress, network]);
+	}, [api, apiReady, peopleChainApi, peopleChainApiReady, loginAddress, network]);
 
 	const gov1Items: { [x: string]: ItemType[] } = {
 		overviewItems: [
@@ -1116,6 +1110,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 		handleRemoveIdentity: handleRemoveIdentity,
 		handleSetIdentityClick: handleIdentityButtonClick,
 		isGood: isGood,
+		setSidedrawer: setSidedrawer,
 		isIdentityExists: isIdentitySet,
 		isIdentityUnverified: isIdentityUnverified,
 		network: network,
@@ -1261,7 +1256,6 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				wrapClassName='dark:bg-modalOverlayDark'
 			>
 				<div className='flex flex-col items-center gap-6 py-4 text-center'>
-					{/* <DelegationDashboardEmptyState /> */}
 					<ImageIcon
 						src='/assets/icons/delegation-empty-state.svg'
 						alt='delegation empty state icon'

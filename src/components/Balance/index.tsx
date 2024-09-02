@@ -2,21 +2,17 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 /* eslint-disable no-tabs */
+import { useEffect, useState } from 'react';
 import BN from 'bn.js';
-
 import { poppins } from 'pages/_app';
-import React, { useEffect, useState } from 'react';
 import { useApiContext, usePeopleChainApiContext, usePostDataContext } from 'src/context';
 import formatBnBalance from 'src/util/formatBnBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import { formatBalance } from '@polkadot/util';
-
 import { ProposalType } from '~src/global/proposalType';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { formatedBalance } from '~src/util/formatedBalance';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { ApiPromise } from '@polkadot/api';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
 
 interface Props {
@@ -32,9 +28,8 @@ interface Props {
 const ZERO_BN = new BN(0);
 const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBalance, classname, isDelegating = false, isVoting = false, usedInIdentityFlow = false }: Props) => {
 	const [balance, setBalance] = useState<string>('0');
-	const { api: defaultApi, apiReady: defaultApiReady } = useApiContext();
+	const { api, apiReady } = useApiContext();
 	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
-	const [{ api, apiReady }, setApiDetails] = useState<{ api: ApiPromise | null; apiReady: boolean }>({ api: defaultApi || null, apiReady: defaultApiReady || false });
 	const [lockBalance, setLockBalance] = useState<BN>(ZERO_BN);
 	const [loading, setLoading] = useState(true);
 	const { network } = useNetworkSelector();
@@ -42,15 +37,6 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const isReferendum = [ProposalType.REFERENDUMS, ProposalType.REFERENDUM_V2, ProposalType.FELLOWSHIP_REFERENDUMS].includes(postData?.postType);
 	const isDemocracyProposal = [ProposalType.DEMOCRACY_PROPOSALS].includes(postData?.postType);
-
-	useEffect(() => {
-		if (isPeopleChainSupportedNetwork(network) && usedInIdentityFlow) {
-			setApiDetails({ api: peopleChainApi || null, apiReady: peopleChainApiReady || false });
-		} else {
-			setApiDetails({ api: defaultApi || null, apiReady: defaultApiReady || false });
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, defaultApi, defaultApiReady, usedInIdentityFlow, peopleChainApi, peopleChainApiReady]);
 
 	useEffect(() => {
 		if (!network) return;
@@ -62,7 +48,6 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 
 	useEffect(() => {
 		if (!api || !apiReady || !address) return;
-
 		setLoading(true);
 		if (['genshiro'].includes(network)) {
 			api.query.eqBalances
@@ -99,7 +84,7 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 				})
 				.catch((e) => console.error(e));
 		} else {
-			api.query.system
+			(usedInIdentityFlow ? peopleChainApi ?? api : api).query.system
 				.account(address)
 				.then((result: any) => {
 					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
@@ -128,10 +113,10 @@ const Balance = ({ address, onChange, isBalanceUpdated = false, setAvailableBala
 		}
 		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [address, api, apiReady, isReferendum, isBalanceUpdated]);
+	}, [address, api, apiReady, isReferendum, isBalanceUpdated, peopleChainApi, peopleChainApiReady, usedInIdentityFlow]);
 
 	return (
-		<div className={`${poppins.className} ${poppins.variable} ml-auto mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium ${classname}`}>
+		<div className={`${poppins.className} ${poppins.variable} mr-[2px] text-xs font-normal tracking-[0.0025em] text-[#576D8B] dark:text-blue-dark-medium msm:ml-auto ${classname}`}>
 			<span>Free Balance</span>
 			<HelperTooltip
 				className='mx-1'

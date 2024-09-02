@@ -15,7 +15,6 @@ import { useTheme } from 'next-themes';
 import ProfileStatsCard from './ProfileStatsCard';
 import { IUserPostsListingResponse } from '~src/types';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 export interface IActivitiesCounts {
 	totalActivitiesCount: number;
@@ -48,6 +47,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [addressWithIdentity, setAddressWithIdentity] = useState<string>('');
 	const [selectedAddresses, setSelectedAddresses] = useState<string[]>(addresses);
 	const [profileDetails, setProfileDetails] = useState<ProfileDetailsResponse>({
+		achievement_badges: [],
 		addresses: addresses,
 		badges: [],
 		bio: bio,
@@ -60,16 +60,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 	const [statsArr, setStatsArr] = useState<IStats[]>([]);
 
 	useEffect(() => {
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-
-		if (!apiPromise) {
-			return;
-		}
-
-		if (!apiPromiseReady) {
-			return;
-		}
+		if (!api || !apiReady) return;
 
 		let unsubscribes: (() => void)[];
 		const onChainIdentity: TOnChainIdentity = {
@@ -80,8 +71,7 @@ const PAProfile = ({ className, userProfile, userPosts, activitiesCounts }: Prop
 		profileDetails?.addresses.forEach(async (address) => {
 			const info = await getIdentityInformation({
 				address: address,
-				api: apiPromise,
-				apiReady: apiPromiseReady,
+				api: peopleChainApi ?? api,
 				network: network
 			});
 

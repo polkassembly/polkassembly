@@ -65,17 +65,13 @@ const DemocracyUnlock: FC<IDemocracyUnlockProps> = ({ className, isBalanceUpdate
 	}, [accounts.length]);
 
 	useEffect(() => {
-		if (address) {
+		if (api && apiReady && address) {
 			getLockedBalance();
 		}
 	}, [api, apiReady, address]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const getLockedBalance = async () => {
-		if (!api) {
-			return;
-		}
-
-		if (!apiReady) {
+		if (!api || !apiReady || !api?.query?.democracy || !api?.query?.democracy?.votingOf) {
 			return;
 		}
 

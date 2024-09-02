@@ -498,7 +498,7 @@ const Address: FC<Props> = ({ dismissModal, open }) => {
 							currentUser?.addresses?.length > 0 &&
 							addressList({
 								accounts:
-									currentUser?.addresses?.sort().map(
+									[...(currentUser?.addresses || [])]?.sort().map(
 										(address): InjectedAccount => ({
 											address: address
 											// meta: { source: '' }

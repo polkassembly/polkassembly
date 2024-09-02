@@ -30,13 +30,12 @@ const getAllTrackLevelVotesAnalytics = async ({ network, res }: { network: strin
 
 			trackSnapshot.docs.map((doc) => {
 				const data = doc.data();
-				if (!data?.voteAmount?.supportData) {
-					return res.status(404).json({ message: 'No data found' });
+				if (data) {
+					const supportPercentage = data.voteAmount.supportData.percentage || 0;
+					const roundedNumber = Number(supportPercentage).toFixed(2);
+					totalSupportedVoted += parseFloat(roundedNumber);
+					totalVotes += 1;
 				}
-				const supportPercentage = data.voteAmount.supportData.percentage || 0;
-				const roundedNumber = Number(supportPercentage).toFixed(2);
-				totalSupportedVoted += parseFloat(roundedNumber);
-				totalVotes += 1;
 			});
 
 			averageSupportPercentages[trackNumber] = totalVotes ? totalSupportedVoted / totalVotes : 0;

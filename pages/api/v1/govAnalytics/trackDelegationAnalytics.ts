@@ -11,8 +11,17 @@ import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
-import { IDelegationAnalytics } from '~src/redux/trackLevelAnalytics/@types';
 
+interface IRes {
+	[key: string]: {
+		totalCapital: string;
+		totalVotesBalance: string;
+		totalDelegates: number;
+		totalDelegators: number;
+		delegateesData: { [key: string]: { count: number } };
+		delegatorsData: { [key: string]: { count: number } };
+	};
+}
 export const getTrackDelegationAnalyticsStats = async ({ network }: { network: string }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
@@ -22,7 +31,7 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 			query: GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA
 		});
 
-		const trackStats: Record<string, IDelegationAnalytics> = {};
+		const trackStats: IRes = {};
 
 		if (data['data']?.votingDelegations?.length) {
 			data['data']?.votingDelegations.forEach((delegation: { lockPeriod: number; balance: string; from: string; to: string; track: number }) => {
@@ -47,54 +56,35 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 
 				if (!trackStats[track].delegateesData[delegation?.to]) {
 					trackStats[track].delegateesData[delegation?.to] = {
-						count: 1,
-						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
+						count: 1
 					};
 					trackStats[track].totalDelegates += 1;
 				} else {
 					trackStats[track].delegateesData[delegation?.to].count += 1;
-					trackStats[track].delegateesData[delegation?.to].data.push({
-						capital: delegation.balance,
-						from: delegation?.from,
-						lockedPeriod: delegation.lockPeriod || 0.1,
-						to: delegation?.to,
-						votingPower: vote.toString()
-					});
 				}
 
 				if (!trackStats[track].delegatorsData[delegation?.from]) {
 					trackStats[track].delegatorsData[delegation?.from] = {
-						count: 1,
-						data: [{ capital: delegation.balance, from: delegation?.from, lockedPeriod: delegation.lockPeriod || 0.1, to: delegation?.to, votingPower: vote.toString() }]
+						count: 1
 					};
 					trackStats[track].totalDelegators += 1;
 				} else {
 					trackStats[track].delegatorsData[delegation?.from].count += 1;
-					trackStats[track].delegatorsData[delegation?.from].data.push({
-						capital: delegation.balance,
-						from: delegation?.from,
-						lockedPeriod: delegation.lockPeriod || 0.1,
-						to: delegation.to,
-						votingPower: vote.toString()
-					});
 				}
 			});
 		}
 
-		const formattedTrackStats = Object.keys(trackStats).reduce(
-			(acc, track) => {
-				acc[track] = {
-					delegateesData: trackStats[track].delegateesData,
-					delegatorsData: trackStats[track].delegatorsData,
-					totalCapital: trackStats[track].totalCapital.toString(),
-					totalDelegates: trackStats[track].totalDelegates,
-					totalDelegators: trackStats[track].totalDelegators,
-					totalVotesBalance: trackStats[track].totalVotesBalance.toString()
-				};
-				return acc;
-			},
-			{} as Record<string, IDelegationAnalytics>
-		);
+		const formattedTrackStats = Object.keys(trackStats).reduce((acc, track) => {
+			acc[track] = {
+				delegateesData: trackStats[track].delegateesData,
+				delegatorsData: trackStats[track].delegatorsData,
+				totalCapital: trackStats[track].totalCapital.toString(),
+				totalDelegates: trackStats[track].totalDelegates,
+				totalDelegators: trackStats[track].totalDelegators,
+				totalVotesBalance: trackStats[track].totalVotesBalance.toString()
+			};
+			return acc;
+		}, {} as IRes);
 
 		return {
 			data: formattedTrackStats,
@@ -110,7 +100,7 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 	}
 };
 
-async function handler(req: NextApiRequest, res: NextApiResponse<Record<string, IDelegationAnalytics> | MessageType>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<IRes | MessageType>) {
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);

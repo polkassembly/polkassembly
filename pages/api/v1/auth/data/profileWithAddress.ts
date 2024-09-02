@@ -53,7 +53,10 @@ export async function getProfileWithAddress(params: IGetProfileWithAddress): Pro
 		const data: IGetProfileWithAddressResponse = {
 			created_at: dayjs((userData.created_at as any)?.toDate?.() || userData.created_at).toDate(),
 			custom_username: userData.custom_username || false,
-			profile,
+			profile: {
+				...profile,
+				achievement_badges: userData.profile?.achievement_badges || []
+			},
 			user_id: userData?.id || null,
 			username: userData.username || '',
 			web3Signup: userData.web3_signup

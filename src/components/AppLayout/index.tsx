@@ -932,7 +932,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 				<span>Gov Analytics</span>
 				<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
 			</div>,
-			'/gov-level-analytics',
+			'/analytics',
 			<div className={`relative ${!sidedrawer && 'mt-2'}`}>
 				<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 				<div

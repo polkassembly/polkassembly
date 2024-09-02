@@ -4,13 +4,13 @@
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isValidNetwork } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
-import messages from '~src/util/messages';
 import fetch from 'node-fetch';
 import { ICommentsSummary } from '~src/types';
+import messages from '~src/auth/utils/messages';
 
 interface GetCommentsAISummaryResponse {
 	data: ICommentsSummary | null;
@@ -33,33 +33,51 @@ export const getCommentsAISummaryByPost = async ({
 		const commentsRef = postRef.collection('comments');
 		const commentsSnapshot = await commentsRef.get();
 
-		let allCommentsText = '';
+		if (commentsSnapshot.empty) {
+			return {
+				data: null,
+				error: 'No comments found for this post.',
+				status: 404
+			};
+		}
 
 		const htmlTagRegex = /<\/?[^>]+(>|$)/g;
 
-		for (const commentDoc of commentsSnapshot.docs) {
+		const commentsTextPromises = commentsSnapshot.docs.map(async (commentDoc) => {
 			const commentData = commentDoc.data();
+			if (!commentData || !commentData.content) return '';
 
-			if (commentData && commentData.content) {
-				let commentText = commentData.content.replace(htmlTagRegex, '');
+			let commentText = commentData.content.replace(htmlTagRegex, '');
 
-				// Check for replies of the comment
-				const repliesRef = commentDoc.ref.collection('replies');
-				const repliesSnapshot = await repliesRef.get();
+			const repliesRef = commentDoc.ref.collection('replies');
+			const repliesSnapshot = await repliesRef.get();
 
-				repliesSnapshot.forEach((replyDoc) => {
-					const replyData = replyDoc.data();
-					if (replyData && replyData.content) {
-						const cleanedReplyContent = replyData.content.replace(htmlTagRegex, '');
-						commentText += ' ' + cleanedReplyContent;
-					}
-				});
+			const repliesPromises = repliesSnapshot.docs.map(async (replyDoc) => {
+				const replyData = replyDoc.data();
+				if (replyData && replyData.content) {
+					return replyData.content.replace(htmlTagRegex, '');
+				}
+				return '';
+			});
 
-				allCommentsText += commentText + ' ';
-			}
-		}
+			const repliesResults = await Promise.allSettled(repliesPromises);
 
-		allCommentsText = allCommentsText.trim();
+			repliesResults.forEach((result) => {
+				if (result.status === 'fulfilled') {
+					commentText += ' ' + (result as PromiseFulfilledResult<string>).value;
+				}
+			});
+
+			return commentText;
+		});
+
+		const commentsTextsResults = await Promise.allSettled(commentsTextPromises);
+
+		const allCommentsText = commentsTextsResults
+			.filter((result) => result.status === 'fulfilled' && (result as PromiseFulfilledResult<string>).value)
+			.map((result) => (result as PromiseFulfilledResult<string>).value)
+			.join(' ')
+			.trim();
 
 		const apiUrl: string | undefined = process.env.AI_API_ENDPOINTS;
 
@@ -117,10 +135,10 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	const { postId, postType } = req.body;
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!postId || !postType) {
-		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
+	if (!postId || isNaN(Number(postId)) || !postType || !isProposalTypeValid(postType)) {
+		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
 	const { data, error, status } = await getCommentsAISummaryByPost({

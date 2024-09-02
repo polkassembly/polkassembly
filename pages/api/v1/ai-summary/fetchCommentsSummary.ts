@@ -5,12 +5,12 @@ import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
 import { MessageType } from '~src/auth/types';
-import messages from '~src/util/messages';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { ProposalType } from '~src/global/proposalType';
 import { ICommentsSummary } from '~src/types';
 import { getCommentsAISummaryByPost } from '.';
-import { isValidNetwork } from '~src/api-utils';
+import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
+import messages from '~src/auth/utils/messages';
 
 interface FetchCommentsSummaryFromPostParams {
 	network: string;
@@ -69,7 +69,7 @@ export const fetchCommentsSummaryFromPost = async ({ network, postId, postType }
 		console.error('Error fetching comments summary:', error);
 		return {
 			data: null,
-			error: 'Internal Server Error',
+			error: error || messages.API_FETCH_ERROR,
 			status: 500
 		};
 	}
@@ -79,12 +79,12 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
-	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: 'Missing network name in request headers' });
+	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
 	const { postId, postType } = req.body;
 
-	if (!postId || !postType) {
-		return res.status(400).json({ message: messages.INVALID_REQUEST_BODY });
+	if (!postId || isNaN(Number(postId)) || !postType || !isProposalTypeValid(postType)) {
+		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 
 	const { data, error, status } = await fetchCommentsSummaryFromPost({

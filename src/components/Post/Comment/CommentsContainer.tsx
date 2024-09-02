@@ -126,6 +126,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	const [fetchingAISummary, setFetchingAISummary] = useState<boolean>(false);
 	const [showPositiveSummary, setShowPositiveSummary] = useState(false);
 	const [showNegativeSummary, setShowNegativeSummary] = useState(false);
+	const [hasEnoughContent, setHasEnoughContent] = useState<boolean>(false);
 
 	const CommentsContentCheck = (comments: { [key: string]: Array<{ content: string; replies?: Array<{ content: string }> }> }) => {
 		let allCommentsContent = '';
@@ -143,6 +144,11 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		const wordCount = allCommentsContent.split(/\s+/).filter((word) => word.trim().length > 0).length;
 		return wordCount > 200;
 	};
+
+	useEffect(() => {
+		setHasEnoughContent(CommentsContentCheck(comments));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [comments]);
 
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
@@ -390,7 +396,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 				<div className='mt-4'>
 					{fetchingAISummary ? (
 						<Skeleton className='mt-4' />
-					) : aiContentSummary && CommentsContentCheck(comments) ? (
+					) : aiContentSummary && hasEnoughContent ? (
 						<div className='mb-6 mt-4 w-full rounded-xl border border-solid border-[#d2d8e0] p-[10px] dark:border-separatorDark sm:p-4'>
 							<div className={`${poppins.variable} ${poppins.className} items-center justify-between sm:flex`}>
 								<div className='text-base font-semibold text-[#334D6E] dark:text-blue-dark-high '>Users are saying...</div>

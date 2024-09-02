@@ -2719,3 +2719,9 @@ export const GET_VOTES_COUNT_FOR_TIMESPAN = `query ReceivedDelgationsAndVotesCou
     totalCount
   }
 }`;
+
+export const GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS = `query MyQuery ($proposalType:ProposalType!, $createdAt_gt: DateTime, $addresses: [string!] ){
+  flattenedConvictionVotesConnection(orderBy: id_ASC, where:{type_eq:$proposalType, voter_in:$addresses, removedAtBlock_isNull: true, createdAt_gt:$createdAt_gt}){
+    totalCount
+  }
+}`;

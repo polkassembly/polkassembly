@@ -48,9 +48,6 @@ import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import FeaturesSection from './FeaturesSection';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import { getUserProfileWithUsername } from 'pages/api/v1/auth/data/userProfileWithUsername';
-import user from 'pages/api/v1/auth/data/user';
-import { use } from 'chai';
 import LatestActivityFollowing from './LatestActivityFollowing';
 
 const ActivityTreasury = dynamic(() => import('./ActivityTreasury'), {

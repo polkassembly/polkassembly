@@ -240,133 +240,76 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			return;
 		}
 
-		setAvailable({
-			isLoading: true,
-			value: '',
-			valueUSD: ''
-		});
-
-		setNextBurn({
-			isLoading: true,
-			value: '',
-			valueUSD: ''
-		});
 		const EMPTY_U8A_32 = new Uint8Array(32);
 
 		const treasuryAccount = u8aConcat(
 			'modl',
-			api.consts.treasury && api.consts.treasury.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
+			api.consts.treasury?.palletId ? api.consts.treasury.palletId.toU8a(true) : `${['polymesh', 'polymesh-test'].includes(network) ? 'pm' : 'pr'}/trsry`,
 			EMPTY_U8A_32
 		);
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		api.derive.balances?.account(u8aToHex(treasuryAccount)).then((treasuryBalance) => {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-			api.query.system
-				.account(treasuryAccount)
-				.then((res) => {
-					const freeBalance = new BN(res?.data?.free) || BN_ZERO;
-					treasuryBalance.freeBalance = freeBalance as Balance;
-				})
-				.catch((e) => {
-					console.error(e);
-					setAvailable({
-						isLoading: false,
-						value: '',
-						valueUSD: ''
-					});
-				})
-				.finally(() => {
-					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const fetchTreasuryData = async () => {
+			setAvailable({ isLoading: true, value: '', valueUSD: '' });
+			setNextBurn({ isLoading: true, value: '', valueUSD: '' });
 
-					let valueUSD = '';
-					let value = '';
-					try {
-						const burn =
-							treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
+			try {
+				const treasuryBalance = await api.derive.balances?.account(u8aToHex(treasuryAccount));
+				const accountData = await api.query.system.account(treasuryAccount);
 
-						if (burn) {
-							// replace spaces returned in string by format function
-							const nextBurnValueUSD = parseFloat(
-								formatBnBalance(
-									burn.toString(),
-									{
-										numberAfterComma: 2,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-							if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-								valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
-							}
-							value = formatUSDWithUnits(
-								formatBnBalance(
-									burn.toString(),
-									{
-										numberAfterComma: 0,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-						}
-					} catch (error) {
-						console.log(error);
-					}
-					setNextBurn({
-						isLoading: false,
-						value,
-						valueUSD
-					});
+				const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
+				treasuryBalance.freeBalance = freeBalance as Balance;
 
-					{
-						const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
+				updateBurnValue(treasuryBalance);
+				updateAvailableValue(treasuryBalance);
+			} catch (error) {
+				console.error(error);
+				setAvailable({ isLoading: false, value: '', valueUSD: '' });
+				setNextBurn({ isLoading: false, value: '', valueUSD: '' });
+			}
+		};
 
-						let valueUSD = '';
-						let value = '';
+		const updateBurnValue = (treasuryBalance: any) => {
+			let valueUSD = '';
+			let value = '';
+			const burn =
+				treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
 
-						if (freeBalance) {
-							const availableValueUSD = parseFloat(
-								formatBnBalance(
-									freeBalance.toString(),
-									{
-										numberAfterComma: 2,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-							setTokenValue(availableValueUSD);
+			if (burn) {
+				const nextBurnValueUSD = parseFloat(formatBnBalance(burn.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
 
-							if (availableValueUSD && currentTokenPrice && currentTokenPrice.value !== 'N/A') {
-								valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
-							}
-							value = formatUSDWithUnits(
-								formatBnBalance(
-									freeBalance.toString(),
-									{
-										numberAfterComma: 0,
-										withThousandDelimitor: false,
-										withUnit: false
-									},
-									network
-								)
-							);
-						}
+				if (nextBurnValueUSD && currentTokenPrice?.value) {
+					valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
+				}
 
-						setAvailable({
-							isLoading: false,
-							value,
-							valueUSD
-						});
-					}
-				});
-		});
-		if (currentTokenPrice.value !== 'N/A') {
+				value = formatUSDWithUnits(formatBnBalance(burn.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			}
+
+			setNextBurn({ isLoading: false, value, valueUSD });
+		};
+
+		const updateAvailableValue = (treasuryBalance: any) => {
+			let valueUSD = '';
+			let value = '';
+			const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
+
+			if (freeBalance) {
+				const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
+
+				setTokenValue(availableValueUSD);
+
+				if (availableValueUSD && currentTokenPrice?.value !== 'N/A') {
+					valueUSD = formatUSDWithUnits((availableValueUSD * Number(currentTokenPrice.value)).toString());
+				}
+
+				value = formatUSDWithUnits(formatBnBalance(freeBalance.toString(), { numberAfterComma: 0, withThousandDelimitor: false, withUnit: false }, network));
+			}
+
+			setAvailable({ isLoading: false, value, valueUSD });
+		};
+
+		fetchTreasuryData();
+
+		if (currentTokenPrice?.value !== 'N/A') {
 			dispatch(setCurrentTokenPriceInRedux(currentTokenPrice.value.toString()));
 		}
 	}, [api, apiReady, currentTokenPrice, network]);

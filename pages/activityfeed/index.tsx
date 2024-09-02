@@ -23,13 +23,11 @@ import { redisGet, redisSet } from '~src/auth/redis';
 import checkRouteNetworkWithRedirect from '~src/util/checkRouteNetworkWithRedirect';
 import { useDispatch } from 'react-redux';
 import { setNetwork } from '~src/redux/network';
-import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import AboutActivity from './AboutActivity';
 import ScoreTag from '~src/ui-components/ScoreTag';
-import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
 import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/currentTokenPrice';
@@ -49,6 +47,10 @@ import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import FeaturesSection from './FeaturesSection';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import LatestActivityFollowing from './LatestActivityFollowing';
+import { GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS } from '~src/queries';
+import fetchSubsquid from '~src/util/fetchSubsquid';
+import getEncodedAddress from '~src/util/getEncodedAddress';
+import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
 
 const ActivityTreasury = dynamic(() => import('./ActivityTreasury'), {
 	loading: () => <Skeleton active />,
@@ -146,10 +148,11 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
-	const [proposaldata, setProposalData] = useState({ discussions: 0, proposals: 0, votes: 0 });
+	const [proposaldata, setProposalData] = useState({ proposals: 0, votes: 0 });
 	const [loading, setLoading] = useState(true);
 	const [proposalerror, setProposalError] = useState<string | null>(null);
 	const { api, apiReady } = useApiContext();
+	const selectedGov = isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1;
 
 	const blockTime: number = chainProperties?.[network]?.blockTime;
 	const [available, setAvailable] = useState({
@@ -433,16 +436,100 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 		};
 	}, [currentTokenPrice, network]);
 	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
+	const [userRank, setUserRank] = useState<number | 0>(0);
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
-			const { data, error } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
-			if (!data || error) {
-				console.log(error);
-			}
-			if (data) {
-				setCurrentUserdata(data);
+			try {
+				const { data: userProfileData, error: userProfileError } = await nextApiClientFetch<any>(`api/v1/auth/data/userProfileWithUsername?username=${username}`);
+				if (userProfileError) {
+					console.error('Error fetching user profile:', userProfileError);
+					return;
+				}
+
+				if (userProfileData) {
+					setCurrentUserdata(userProfileData);
+
+					const { data: leaderboardData, error: leaderboardError } = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
+					if (leaderboardError) {
+						console.error('Error fetching leaderboard data:', leaderboardError);
+						return;
+					}
+
+					if (leaderboardData && leaderboardData.data && leaderboardData.data.length > 0) {
+						const userRank = leaderboardData.data[0].rank;
+						setUserRank(userRank);
+						setCurrentUserdata((prevData: any) => ({
+							...prevData
+						}));
+					} else {
+						console.log('User rank not found.');
+					}
+				}
+			} catch (err) {
+				console.error('An unexpected error occurred:', err);
 			}
 		};
+
+		async function getProposalData() {
+			if (!currentUserdata) return;
+			const fifteenDaysAgo = dayjs().subtract(15, 'days').toISOString();
+
+			try {
+				setLoading(true);
+
+				let encodedAddresses;
+				if (Array.isArray(currentUserdata?.addresses)) {
+					encodedAddresses = currentUserdata.addresses
+						.map((address: string) => {
+							if (typeof address === 'string') {
+								return getEncodedAddress(address, network);
+							} else {
+								console.error('Address is not a string:', address);
+								return null;
+							}
+						})
+						.filter(Boolean);
+				} else if (typeof currentUserdata?.addresses === 'string') {
+					encodedAddresses = [getEncodedAddress(currentUserdata.addresses, network)];
+				} else {
+					console.error('Unexpected address format:', currentUserdata?.addresses);
+					encodedAddresses = null;
+				}
+
+				if (!encodedAddresses || encodedAddresses.length === 0) {
+					throw new Error('Failed to encode addresses');
+				}
+
+				const payload = {
+					addresses: encodedAddresses,
+					type: selectedGov === EGovType.OPEN_GOV ? 'ReferendumV2' : 'Referendum'
+				};
+				const votecountresponse = await fetchSubsquid({
+					network: network || 'polkadot',
+					query: GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS,
+					variables: {
+						voteType: payload.type,
+						createdAt_gt: fifteenDaysAgo,
+						addresses: payload.addresses
+					}
+				});
+
+				const voteCount = votecountresponse?.data?.flattenedConvictionVotesConnection?.totalCount || 0;
+				const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
+				if (error) {
+					throw new Error(error);
+				}
+				setProposalData({
+					proposals: data.proposals || 0,
+					votes: voteCount
+				});
+			} catch (err) {
+				console.error('Failed to fetch proposal data:', err);
+				setProposalError('Failed to fetch data');
+			} finally {
+				setLoading(false);
+			}
+		}
 
 		if (username) {
 			getUserProfile(username.toString());
@@ -450,28 +537,10 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			console.error('Username is not available');
 		}
 
-		async function getProposalData() {
-			try {
-				setLoading(true);
-
-				const payload = {
-					addresses: currentUserdata?.addresses,
-					userId: currentUserdata?.userid
-				};
-				const { data, error } = await nextApiClientFetch<any>('/api/v1/posts/user-total-post-counts', payload);
-				if (error) {
-					throw new Error(error);
-				}
-
-				setProposalData(data);
-			} catch (err) {
-				setProposalError('Failed to fetch data');
-			} finally {
-				setLoading(false);
-			}
+		if (currentUserdata) {
+			getProposalData();
 		}
-		getProposalData();
-	}, [username]);
+	}, [username, currentUserdata, selectedGov, network]);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -558,8 +627,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						</div>
 						<div>
 							<div className='relative mt-5 rounded-xxl  text-[13px] drop-shadow-md dark:bg-section-dark-overlay '>
-								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank 49</p>
-
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : 0}</p>
 								<div className='relative h-full w-full'>
 									<img
 										src='/rankcard1.svg'

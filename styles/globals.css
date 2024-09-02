@@ -890,3 +890,27 @@ z-index: 105 !important;
 .ant-slider .ant-slider-mark-text {
   color: #777b80 !important;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
+}
+
+.toggleborder{
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+
+.activeborder{
+  border: 1px solid #E5007A;
+  border-radius: 10px;
+}
+.activeborderhover:hover{
+  border: 1px solid #E5007A;
+  border-radius: 10px;
+}

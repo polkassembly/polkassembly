@@ -65,6 +65,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
+import { set } from 'lodash';
 
 const { Sider } = Layout;
 
@@ -1472,7 +1473,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										}}
 									>
 										<img
-											src='/assets/head1.svg'
+											src='/assets/sidebar/head1.svg'
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1486,7 +1487,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/leaderboard'>
 										<img
-											src='/assets/head2.svg'
+											src='/assets/sidebar/head2.svg'
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1500,7 +1501,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative ${isActive('/delegation where are you') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/delegation'>
 										<img
-											src='/assets/head3.svg'
+											src='/assets/sidebar/head3.svg'
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1514,7 +1515,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/calendar'>
 										<img
-											src='/assets/head4.svg'
+											src='/assets/sidebar/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1543,7 +1544,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										}}
 									>
 										<img
-											src='/assets/head1.svg'
+											src='/assets/sidebar/head1.svg'
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1556,7 +1557,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative w-10 ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/leaderboard'>
 										<img
-											src='/assets/head2.svg'
+											src='/assets/sidebar/head2.svg'
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1569,7 +1570,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative w-10 ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/delegation'>
 										<img
-											src='/assets/head3.svg'
+											src='/assets/sidebar/head3.svg'
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1582,7 +1583,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className={`activeborderhover group relative w-10 ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/calendar'>
 										<img
-											src='/assets/head4.svg'
+											src='/assets/sidebar/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
@@ -1596,7 +1597,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-32 lg:h-[345px]'} `}>
+				<div
+					className={`hide-scrollbar overflow-x-hidden  ${
+						!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-32 lg:h-[345px]'
+					} `}
+				>
 					<Menu
 						theme={theme as any}
 						mode='inline'
@@ -1613,7 +1618,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot1.svg' : '/assets/sidebar/foot1.svg'}
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1626,7 +1631,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://polkasafe.xyz/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot2.svg' : '/assets/sidebar/foot2.svg'}
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1639,7 +1644,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://collectives.polkassembly.io/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot3.svg' : '/assets/sidebar/foot3.svg'}
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1652,7 +1657,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://staking.polkadot.cloud/#/overview'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot4.svg' : '/assets/sidebar/foot4.svg'}
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1672,7 +1677,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot1.svg' : '/assets/sidebar/foot1.svg'}
 											alt='Foot1'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1685,7 +1690,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://polkasafe.xyz/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot2.svg' : '/assets/sidebar/foot2.svg'}
 											alt='Foot2'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1698,7 +1703,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://collectives.polkassembly.io/'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot3.svg' : '/assets/sidebar/foot3.svg'}
 											alt='Foot3'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>
@@ -1711,7 +1716,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<div className='group relative'>
 									<Link href='https://staking.polkadot.cloud/#/overview'>
 										<img
-											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
+											src={theme === 'dark' ? '/assets/sidebar/darkfoot4.svg' : '/assets/sidebar/foot4.svg'}
 											alt='Foot4'
 											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
 										/>

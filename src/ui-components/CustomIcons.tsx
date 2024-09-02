@@ -190,10 +190,10 @@ import SelectedStakingAdminIcon from '~assets/selected-icons/Staking Admin.svg';
 import SelectedTreasuryIcon from '~assets/selected-icons/Treasury.svg';
 import SelectedWhitelistIcon from '~assets/selected-icons/Whitelist.svg';
 import SelectedWishForChangeIcon from '~assets/selected-icons/Wish For Change.svg';
-import AllpostIcon from '~assets/allpost.svg';
-import GovernanceIcon from '~assets/governance.svg';
-import FellowshipIconnew from '~assets/members.svg';
-import TreasuryIcon from '~assets/treasury.svg';
+import AllpostIcon from '~assets/sidebar/allpost.svg';
+import GovernanceIcon from '~assets/sidebar/governance.svg';
+import FellowshipIconnew from '~assets/sidebar/members.svg';
+import TreasuryIcon from '~assets/sidebar/treasury.svg';
 import SelectedBounties from '~assets/selected-icons/Bounties.svg';
 
 export const PolkasafeWhiteIcon = (props: Partial<CustomIconComponentProps>) => (

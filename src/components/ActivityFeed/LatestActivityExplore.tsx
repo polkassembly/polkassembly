@@ -35,13 +35,11 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 						const postId = post?.post_id ? post.post_id.toString() : '';
 						// eslint-disable-next-line prefer-const
 						let { data: postDetails, error: postError } = await nextApiClientFetch<IPostResponse>(`/api/v1/posts/off-chain-post?postId=${postId}&network=${network}`);
-						console.log('offchain', postDetails, postError);
 
 						if (!postDetails?.post_id || postError) {
 							const response = await fetch(`/api/v1/posts/activityposts?postId=${postId}&network=${network}&proposalType=${getProposalType(currentTab || 'all')}`);
 							const onChainPostDetails = await response.json();
 							postDetails = onChainPostDetails.data;
-							console.log('onchain', onChainPostDetails);
 						}
 
 						let firstVoterProfileImg = null;

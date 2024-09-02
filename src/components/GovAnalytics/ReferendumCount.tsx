@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import { IReferendumCount } from './types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -35,13 +36,10 @@ const StyledCard = styled(Card)`
 		}
 	}
 `;
-interface TrackInfo {
-	[key: string]: number;
-}
 
 const ReferendumCount = () => {
 	const [loading, setLoading] = useState<boolean>(false);
-	const [trackInfo, setTrackInfo] = useState<TrackInfo>();
+	const [trackInfo, setTrackInfo] = useState<IReferendumCount>();
 	const { resolvedTheme: theme } = useTheme();
 	const [totalPosts, setTotalPosts] = useState(0);
 	const { network } = useNetworkSelector();
@@ -49,11 +47,11 @@ const ReferendumCount = () => {
 	const getData = async () => {
 		setLoading(true);
 		try {
-			const { data, error } = await nextApiClientFetch<{ totalProposals: number; data: TrackInfo }>('/api/v1/govAnalytics/referendumCount');
+			const { data, error } = await nextApiClientFetch<{ totalProposals: number; data: IReferendumCount }>('/api/v1/govAnalytics/referendumCount');
 			if (data) {
 				setTotalPosts(data.totalProposals);
 
-				const updatedTrackInfo: TrackInfo = {};
+				const updatedTrackInfo: IReferendumCount = {};
 				Object.entries(data?.data || {}).forEach(([key, value]) => {
 					const trackName = getTrackNameFromId(network, parseInt(key));
 					updatedTrackInfo[trackName] = value as number;

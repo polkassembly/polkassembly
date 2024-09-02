@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
+import { AnalyticsTrackInfo } from './types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -36,13 +37,9 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-interface TrackInfo {
-	[key: string]: number;
-}
-
 const AnalyticTurnOutPercentage = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [trackInfo, setTrackInfo] = useState<TrackInfo>();
+	const [trackInfo, setTrackInfo] = useState<AnalyticsTrackInfo>();
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 
@@ -51,7 +48,7 @@ const AnalyticTurnOutPercentage = () => {
 		try {
 			const { data } = await nextApiClientFetch<{ averageSupportPercentages: Record<string, number> }>('/api/v1/govAnalytics/allTracksAnalytics');
 			if (data) {
-				const updatedTrackInfo: TrackInfo = {};
+				const updatedTrackInfo: AnalyticsTrackInfo = {};
 
 				Object.entries(data.averageSupportPercentages).forEach(([key, value]) => {
 					const trackName = getTrackNameFromId(network, parseInt(key));
@@ -77,7 +74,10 @@ const AnalyticTurnOutPercentage = () => {
 				{
 					color: 'hsl(87, 70%, 50%)',
 					data: Object.entries(trackInfo).map(([key, value]) => ({
-						x: key,
+						x: key
+							.split('_')
+							.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+							.join(' '),
 						y: value
 					})),
 					id: 'Turnout'

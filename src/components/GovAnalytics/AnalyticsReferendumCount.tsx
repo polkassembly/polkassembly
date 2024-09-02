@@ -9,20 +9,7 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useTheme } from 'next-themes';
-import { IGetStatusWiseProposalCount } from './types';
-
-interface TrackInfo {
-	trackId: number;
-	group: string;
-}
-
-interface NetworkTrackInfo {
-	[key: string]: TrackInfo;
-}
-
-interface GroupedTrackIds {
-	[key: string]: number[];
-}
+import { GroupedTrackIds, IGetStatusWiseProposalCount, NetworkTrackInfo } from './types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {

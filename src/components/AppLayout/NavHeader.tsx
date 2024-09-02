@@ -327,7 +327,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		</Dropdown>
 	);
 
-	console.log('headeerisMobile', isMobile);
 	return (
 		<Header
 			className={`${className} shadow-md ${

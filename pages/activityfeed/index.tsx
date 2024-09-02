@@ -10,7 +10,6 @@ import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect, useState } from 'react';
-import LatestActivityExplore from './LatestActivityExplore';
 import { FaAngleRight } from 'react-icons/fa6';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
@@ -26,7 +25,6 @@ import { setNetwork } from '~src/redux/network';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
-import AboutActivity from './AboutActivity';
 import ScoreTag from '~src/ui-components/ScoreTag';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { subscanApiHeaders } from '~src/global/apiHeaders';
@@ -44,15 +42,17 @@ import getDaysTimeObj from '~src/util/getDaysTimeObj';
 import { BN } from 'bn.js';
 import formatBnBalance from '~src/util/formatBnBalance';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import FeaturesSection from './FeaturesSection';
 import { useUserDetailsSelector } from '~src/redux/selectors';
-import LatestActivityFollowing from './LatestActivityFollowing';
 import { GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS } from '~src/queries';
 import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { LeaderboardResponse } from 'pages/api/v1/leaderboard';
+import AboutActivity from '~src/components/ActivityFeed/AboutActivity';
+import LatestActivityFollowing from '~src/components/ActivityFeed/LatestActivityFollowing';
+import LatestActivityExplore from '~src/components/ActivityFeed/LatestActivityExplore';
+import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
 
-const ActivityTreasury = dynamic(() => import('./ActivityTreasury'), {
+const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });

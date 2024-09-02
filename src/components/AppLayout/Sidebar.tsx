@@ -914,8 +914,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div
 						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-2 md:-top-0'}
 						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
+							opacity: sidedrawer ? 0 : 1,
+							transition: 'opacity 0.3s ease-in-out'
 						}}
 					>
 						NEW

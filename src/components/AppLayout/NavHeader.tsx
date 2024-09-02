@@ -137,11 +137,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const menudropDownItems: ItemType[] = [
 		{
 			className: 'logo-class',
-			key: 'Theme',
-			label: <ToggleButton />
-		},
-		{
-			className: 'logo-class',
 			key: 'Townhall',
 			label: (
 				<a

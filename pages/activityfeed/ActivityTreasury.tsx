@@ -338,9 +338,9 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>
-							{currentTokenPrice.value === 'N/A' ? (
+							{currentTokenPrice?.value === 'N/A' ? (
 								<span className=' text-bodyBlue dark:text-blue-dark-high'>N/A</span>
-							) : currentTokenPrice.value && !isNaN(Number(currentTokenPrice.value)) ? (
+							) : currentTokenPrice?.value && !Number?.isNaN(Number(currentTokenPrice.value)) ? (
 								<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
 							) : null}
 						</div>

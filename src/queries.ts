@@ -2506,6 +2506,7 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
     to
     balance
     lockPeriod
+    track
   }
 }
 `;
@@ -2519,6 +2520,45 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
       support
       bareAyes
     }
+  }
+}
+`;
+
+export const GET_TOTAL_APPROVED_PROPOSALS = `
+query MyQuery {
+  proposalsConnection(where: {status_in:[Confirmed,Executed,Approved], type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
+export const GET_TOTAL_CATEGORY_PROPOSALS = `
+query MyQuery ($Indexes: [Int!]){
+  count:proposalsConnection(where: {trackNumber_in:$Indexes, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
+export const GET_STATUS_WISE_REF_OUTCOME = `
+query MyQuery ($trackNo: Int){
+  timeout:proposalsConnection(where: {status_in:[TimedOut], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+  ongoing:proposalsConnection(where: {status_in:[DecisionDepositPlaced,Deciding,ConfirmAborted,ConfirmStarted, Submitted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+   approved:proposalsConnection(where: {status_in:[Executed,Approved, Confirmed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+   rejected:proposalsConnection(where: {status_in:[Rejected,Killed,ExecutionFailed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+  cancelled:proposalsConnection(where: {status_in:[Cancelled, ConfirmAborted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
   }
 }
 `;
@@ -2712,6 +2752,80 @@ export const GET_DELEGATED_DELEGATION_ADDRESSES = `query ActiveDelegationsToOrFr
     to
     from
 }
+}`;
+
+export const GET_ACTIVE_VOTER = `query ActiveVoterQuery($voterAddresses: [String!], $startDate: DateTime!) {
+        flattenedConvictionVotes(
+            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true, createdAt_gte: $startDate }
+        ) {
+            balance {
+                ... on StandardVoteBalance {
+                    value
+                }
+                ... on SplitVoteBalance {
+                    aye
+                    nay
+                    abstain
+                }
+            }
+            lockPeriod
+            proposalIndex
+            createdAt
+            parentVote {
+                extrinsicIndex
+                selfVotingPower
+                type
+                voter
+                lockPeriod
+                delegatedVotingPower
+                delegatedVotes(where: {removedAtBlock_isNull: true}) {
+                    voter
+                    balance {
+                    ... on StandardVoteBalance {
+                        value
+                    }
+                    ... on SplitVoteBalance {
+                        aye
+                        nay
+                        abstain
+                    }
+                    }
+                    lockPeriod
+                    votingPower
+                }
+            }
+        }
+    }`;
+
+export const GET_WHALE = `query ActiveVoterQuery($voterAddresses: [String!]) {
+        flattenedConvictionVotes(
+            where: { voter_in: $voterAddresses, removedAtBlock_isNull: true }
+        ) {
+            balance {
+                ... on StandardVoteBalance {
+                    value
+                }
+                ... on SplitVoteBalance {
+                    aye
+                    nay
+                    abstain
+                }
+            }
+            lockPeriod
+  }}`;
+
+export const GET_POPULAR_DELEGATE = `query PopularDelegateQuery($delegateAddresses: [String!]) {
+        votingDelegations(where: { to_in: $delegateAddresses}) {
+            to
+            type
+            balance
+        }
+    }`;
+
+export const GET_PROPOSAL_COUNT = `query ProposalCountQuery($startDate: DateTime!) {
+    proposalsConnection(where: { createdAt_gte: $startDate, type_in: [ReferendumV2, Referendum] }, orderBy: id_DESC) {
+        totalCount
+    }
 }`;
 
 export const GET_VOTES_COUNT_FOR_TIMESPAN = `query ReceivedDelgationsAndVotesCountForAddress($address: String = "", $createdAt_gte: DateTime) {

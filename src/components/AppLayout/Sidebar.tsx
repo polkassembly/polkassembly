@@ -906,13 +906,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
 				</div>,
 				'/analytics',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+				<div className='relative'>
+					<AnalyticsSVGIcon className='-ml-3 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-2 md:-top-0'}
 						style={{
 							transition: 'opacity 0.3s ease-in-out',
 							opacity: sidedrawer ? 0 : 1

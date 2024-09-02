@@ -472,14 +472,18 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												)}
 											</div>
 										</div>
-										<span className='flex items-center'>
+										<span className='flex items-center gap-[10px]'>
 											<ProgressBar
 												className='m-0 flex items-center p-0'
 												percent={!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}
 												trailColor={trailColor}
 												strokeColor='#E5007A'
 												size='small'
+												showInfo={false}
 											/>
+											<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+												{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
+											</span>
 										</span>
 									</>
 								) : (

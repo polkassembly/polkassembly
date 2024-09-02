@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -47,6 +47,7 @@ import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import ToggleButton from '~src/ui-components/ToggleButton';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -136,6 +137,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 	const menudropDownItems: ItemType[] = [
 		{
 			className: 'logo-class',
+			key: 'Theme',
+			label: <ToggleButton />
+		},
+		{
+			className: 'logo-class',
 			key: 'Townhall',
 			label: (
 				<a
@@ -206,6 +212,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		});
 	}
+	menudropDownItems.push({
+		className: 'logo-class',
+		key: 'Theme',
+		label: <ToggleButton />
+	});
 
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -321,18 +332,6 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		</Dropdown>
 	);
 
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
 	return (
 		<Header
 			className={`${className} shadow-md ${
@@ -345,7 +344,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				}}
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='text-2xl' />
+				{!sidedrawer ? (
+					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/sidebar/darkclosenav.svg' : '/assets/sidebar/closenav.svg'}`} />
+					</div>
+				) : (
+					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/sidebar/darkopennav.svg' : '/assets/sidebar/opennav.svg'}`} />
+					</div>
+				)}
 			</div>
 			<div className='ml-[84px] hidden lg:block'></div>
 			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
@@ -414,18 +421,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div
-							className='mr-2 lg:mr-0'
-							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
-									userId: id || '',
-									userName: username || ''
-								});
-							}}
-						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
+						<div className='mr-2 lg:mr-0'>
+							<ToggleButton />
 						</div>
 					</Space>
 					{open ? (

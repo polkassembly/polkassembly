@@ -118,6 +118,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     statusHistory {
       id
     }
+    proposalArguments{
+      section
+      method
+      args
+    }
     tally {
       ayes
       nays
@@ -276,6 +281,10 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     curator
     createdAt
     updatedAt
+    proposalArguments{
+method
+    section
+    args}
     preimage {
       method
       proposer

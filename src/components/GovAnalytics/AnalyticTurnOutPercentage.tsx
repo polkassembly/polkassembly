@@ -158,6 +158,12 @@ const AnalyticTurnOutPercentage = () => {
 								text: {
 									fill: theme === 'dark' ? '#fff' : '#333'
 								}
+							},
+							tooltip: {
+								container: {
+									background: theme === 'dark' ? '#1E2126' : '#fff',
+									color: theme === 'dark' ? '#fff' : '#333'
+								}
 							}
 						}}
 					/>

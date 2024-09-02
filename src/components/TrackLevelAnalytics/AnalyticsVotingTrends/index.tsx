@@ -18,6 +18,7 @@ import { ETrackLevelAnalyticsFilterBy, IAnalyticsVoteTrends } from '../types';
 import { useDispatch } from 'react-redux';
 import { setTrackLevelVotesAnalyticsData } from '~src/redux/trackLevelAnalytics';
 import NoVotesIcon from '~assets/icons/analytics/no-votes.svg';
+import GovAnalyticsConvictions from '~src/components/GovAnalytics/GovAnalyticsConvictions';
 
 const { Panel } = Collapse;
 
@@ -27,7 +28,7 @@ interface ITabItem {
 	children: React.ReactNode;
 }
 
-const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
+const AnalyticsVotingTrends = ({ trackId, isUsedInAnalytics }: { trackId?: number; isUsedInAnalytics?: boolean }) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useDispatch();
 	const [activeTab, setActiveTab] = useState<string>(ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
@@ -64,7 +65,7 @@ const AnalyticsVotingTrends = ({ trackId }: { trackId?: number }) => {
 
 	const tabItems: ITabItem[] = [
 		{
-			children: <AnalyticsConvictionVotes isSmallScreen={isSmallScreen} />,
+			children: <>{!isUsedInAnalytics ? <AnalyticsConvictionVotes isSmallScreen={isSmallScreen} /> : <GovAnalyticsConvictions isSmallScreen={isSmallScreen} />}</>,
 			key: ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES,
 			label: 'Conviction Votes'
 		},

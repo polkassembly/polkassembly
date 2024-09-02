@@ -117,21 +117,24 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 
 	const fetchDataFromApi = async () => {
 		try {
-			const { data, error } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
-
-			if (error) {
-				console.error('Error fetching data:', error);
-			}
-			if (data) {
+			const { data: oldTreasuryData, error: oldTreasuryError } = await nextApiClientFetch('/api/v1/treasury-amount-history/old-treasury-data');
+			if (oldTreasuryError) {
+				console.error('Error fetching old treasury data:', oldTreasuryError);
 				return;
 			}
 
-			const { data: dailyData, error: dailyError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally');
-
-			if (dailyError) {
-				console.error('Error fetching daily data:', dailyError);
+			if (oldTreasuryData) {
+				return oldTreasuryData;
 			}
-			if (dailyData) return;
+			const { data: dailyTreasuryData, error: dailyTreasuryError } = await nextApiClientFetch('/api/v1/treasury-amount-history/daily-treasury-tally');
+			if (dailyTreasuryError) {
+				console.error('Error fetching daily treasury data:', dailyTreasuryError);
+				return;
+			}
+
+			if (dailyTreasuryData) {
+				return dailyTreasuryData;
+			}
 		} catch (error) {
 			console.error('Unexpected error:', error);
 		}

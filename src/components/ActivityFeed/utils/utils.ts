@@ -21,21 +21,23 @@ export const fetchVoterProfileImage = async (username: string): Promise<string |
 export const fetchUserProfile = async (address: string): Promise<IGetProfileWithAddressResponse | null> => {
 	try {
 		const { data } = await nextApiClientFetch<IGetProfileWithAddressResponse>(`/api/v1/auth/data/profileWithAddress?address=${address}`);
+
 		if (data) {
+			const { custom_username, user_id, username, web3Signup, profile } = data;
 			return {
-				custom_username: data.custom_username,
+				custom_username,
 				profile: {
 					achievement_badges: [],
-					image: data.profile.image || '/rankcard3.svg'
+					image: profile.image || '/rankcard3.svg'
 				},
-				user_id: data.user_id,
-				username: data.username,
-				web3Signup: data.web3Signup
+				user_id,
+				username,
+				web3Signup
 			};
 		}
 		return null;
 	} catch (error) {
-		console.error(`User profile fetch failed for proposer ${address}:`, error);
+		console.error(`Error fetching user profile for address ${address}:`, error);
 		return null;
 	}
 };

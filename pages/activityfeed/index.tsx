@@ -281,48 +281,47 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 
 					let valueUSD = '';
 					let value = '';
-					{
-						try {
-							const burn =
-								treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
+					try {
+						const burn =
+							treasuryBalance.freeBalance.gt(BN_ZERO) && !api.consts.treasury.burn.isZero() ? api.consts.treasury.burn.mul(treasuryBalance.freeBalance).div(BN_MILLION) : BN_ZERO;
 
-							if (burn) {
-								// replace spaces returned in string by format function
-								const nextBurnValueUSD = parseFloat(
-									formatBnBalance(
-										burn.toString(),
-										{
-											numberAfterComma: 2,
-											withThousandDelimitor: false,
-											withUnit: false
-										},
-										network
-									)
-								);
-								if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
-									valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
-								}
-								value = formatUSDWithUnits(
-									formatBnBalance(
-										burn.toString(),
-										{
-											numberAfterComma: 0,
-											withThousandDelimitor: false,
-											withUnit: false
-										},
-										network
-									)
-								);
+						if (burn) {
+							// replace spaces returned in string by format function
+							const nextBurnValueUSD = parseFloat(
+								formatBnBalance(
+									burn.toString(),
+									{
+										numberAfterComma: 2,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								)
+							);
+							if (nextBurnValueUSD && currentTokenPrice && currentTokenPrice.value) {
+								valueUSD = formatUSDWithUnits((nextBurnValueUSD * Number(currentTokenPrice.value)).toString());
 							}
-						} catch (error) {
-							console.log(error);
+							value = formatUSDWithUnits(
+								formatBnBalance(
+									burn.toString(),
+									{
+										numberAfterComma: 0,
+										withThousandDelimitor: false,
+										withUnit: false
+									},
+									network
+								)
+							);
 						}
-						setNextBurn({
-							isLoading: false,
-							value,
-							valueUSD
-						});
+					} catch (error) {
+						console.log(error);
 					}
+					setNextBurn({
+						isLoading: false,
+						value,
+						valueUSD
+					});
+
 					{
 						const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
 

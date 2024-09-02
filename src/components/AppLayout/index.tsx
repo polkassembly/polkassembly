@@ -27,24 +27,12 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import Sidebar from './Sidebar';
-import { MenuItem } from './menuUtils';
 
 const OnchainIdentity = dynamic(() => import('~src/components/OnchainIdentity'), {
 	ssr: false
 });
 
 const { Content } = Layout;
-
-function getSiderMenuItem2(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-	label = <span className='text-xs font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
-	return {
-		children,
-		icon,
-		key,
-		label,
-		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
-	} as MenuItem;
-}
 
 export const onchainIdentitySupportedNetwork: Array<string> = [AllNetworks.POLKADOT, AllNetworks.KUSAMA, AllNetworks.POLKADEX];
 

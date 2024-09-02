@@ -1,3 +1,7 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+
 import { useState, useEffect } from 'react';
 
 function FeaturesSection() {
@@ -5,19 +9,19 @@ function FeaturesSection() {
 
 	const features = [
 		{
+			description: 'At vero eos et accusamus et iuodio.',
 			image: '/features1.svg',
-			title: 'Delegation Dashboard',
-			description: 'At vero eos et accusamus et iuodio.'
+			title: 'Delegation Dashboard'
 		},
 		{
+			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			image: '/assets/gov2-info-bg.png',
-			title: 'Governance V2',
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+			title: 'Governance V2'
 		},
 		{
+			description: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam.',
 			image: '/assets/gov2-info-bg-3.png',
-			title: 'Validator Stats',
-			description: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam.'
+			title: 'Validator Stats'
 		}
 	];
 

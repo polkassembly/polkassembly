@@ -136,33 +136,7 @@ export const socialLinks = (blockchain_socials: NetworkSocials) => {
 	);
 };
 
-const gov2Link = ({ className, bgImage, icon, link, text, subText }: { className?: string; bgImage: any; icon?: any; link: string; text: string; subText: string }) => (
-	<a
-		href={link}
-		target='_blank'
-		rel='noreferrer'
-		className={`${className} group flex min-w-[260px] max-w-[260px]`}
-	>
-		<div
-			style={{
-				backgroundImage: `url(${bgImage})`,
-				backgroundPosition: 'center center',
-				backgroundSize: 'cover'
-			}}
-			className='mr-3 flex h-[75px] min-w-[132px] items-center justify-center group-hover:text-pink_secondary'
-		>
-			{icon}
-		</div>
-
-		<div className='flex flex-col justify-between'>
-			<div className='text-sm font-semibold leading-[150%] text-bodyBlue group-hover:text-pink_secondary dark:text-blue-dark-high'>{text}</div>
-			<div className='text-xs font-medium text-lightBlue group-hover:text-pink_secondary dark:text-blue-dark-medium'>{subText}</div>
-		</div>
-	</a>
-);
-
-const AboutActivity = ({ className, networkSocialsData, showGov2Links }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
-	const [showGallery, setShowGallery] = useState(false);
+const AboutActivity = ({ className, networkSocialsData }: { className?: string; networkSocialsData: NetworkSocials | null; showGov2Links?: boolean }) => {
 	return (
 		<div className={`${className} rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay md:p-6`}>
 			<div className='flex items-center justify-between'>
@@ -170,49 +144,13 @@ const AboutActivity = ({ className, networkSocialsData, showGov2Links }: { class
 			</div>
 
 			<p className='medium  items-center text-sm text-bodyBlue dark:text-blue-dark-high'>
-				Polkadot is the all-in-one DeFi hub of Polkadot. {showGallery && showGov2Links && <></>}
+				Polkadot is the all-in-one DeFi hub of Polkadot.
 				<br />
 				<span className={'m-0 cursor-pointer p-0 text-xs font-semibold text-pink_primary'}>Know More</span>
 				<div className='hidden  lg:inline-block'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
-				{!showGallery && showGov2Links && <></>}
 			</p>
 
 			<div className='mt-5 flex lg:hidden'>{networkSocialsData && socialLinks(networkSocialsData)}</div>
-
-			{showGallery && (
-				<div>
-					{showGov2Links && (
-						<div className='mt-5 flex flex-wrap justify-between gap-3 overflow-x-auto pb-2 md:mt-10 md:flex-nowrap xl:w-[90%]'>
-							{gov2Link({
-								bgImage: '/assets/gavin-keynote.png',
-								className: 'mr-12 lg:mr-9',
-								icon: <PlayCircleFilled className='text-xl text-white' />,
-								link: 'https://www.youtube.com/watch?v=FhC10CCw9Qg',
-								subText: '1:40 hours',
-								text: "Gavin's keynote @Decoded 2023"
-							})}
-
-							{gov2Link({
-								bgImage: '/assets/gov2-info-bg-2.png',
-								className: 'mr-12 lg:mr-9',
-								icon: <DesktopOutlined className='text-xl text-white' />,
-								link: 'https://medium.com/polkadot-network/gov2-polkadots-next-generation-of-decentralised-governance-4d9ef657d11b',
-								subText: '17 min read',
-								text: "Gavin's blog on Medium"
-							})}
-
-							{gov2Link({
-								bgImage: '/assets/gov2-info-bg-3.png',
-								className: 'mr-12 lg:mr-0',
-								icon: <FileTextOutlined className='text-xl text-white' />,
-								link: 'https://docs.polkassembly.io',
-								subText: 'Wiki',
-								text: 'Polkassembly user guide'
-							})}
-						</div>
-					)}
-				</div>
-			)}
 		</div>
 	);
 };

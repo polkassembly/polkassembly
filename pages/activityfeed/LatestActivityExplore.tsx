@@ -5,7 +5,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, StakingAdminIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -20,7 +19,7 @@ import { LiaCommentsSolid } from 'react-icons/lia';
 import { IPostResponse } from 'pages/api/v1/posts/on-chain-post';
 import Markdown from '~src/ui-components/Markdown';
 
-const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: { className?: string; gov2LatestPosts: any; currentUserdata?: any }) => {
+const LatestActivityExplore = ({ gov2LatestPosts, currentUserdata }: { gov2LatestPosts: any; currentUserdata?: any }) => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const [postData, setPostData] = useState<any[]>([]);
@@ -56,18 +55,18 @@ const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: 
 	}
 
 	const tabIcons: Record<string, JSX.Element> = {
+		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		all: <OverviewIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		discussion: <DiscussionsIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		governance: <GovernanceGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		treasury: <TreasuryGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		whitelist: <FellowshipGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 	};
 
 	const tabCategories: Record<string, string[]> = {
+		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
 		All: ['all'],
 		Discussion: ['discussions'],
-		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
 		Governance: tabItems.filter((item) => ['lease-admin', 'general-admin', 'referendum-canceller', 'referendum-killer'].includes(item.key)).map((item) => item.key),
 		Treasury: tabItems
 			.filter((item) => ['big-spender', 'medium-spender', 'small-spender', 'big-tipper', 'small-tipper', 'treasurer', 'on-chain-bounties', 'child-bounties'].includes(item.key))
@@ -153,9 +152,9 @@ const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: 
 								);
 								if (userData) {
 									userProfile = {
-										username: userData.username,
+										profileimg: userData.profile.image || '/rankcard3.svg',
 										user_id: userData.user_id,
-										profileimg: userData.profile.image || '/rankcard3.svg'
+										username: userData.username
 									};
 								}
 							} catch (error) {
@@ -171,8 +170,8 @@ const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: 
 							return {
 								...post,
 								details: postDetails,
-								proposerProfile: userProfile,
-								firstVoterProfileImg
+								firstVoterProfileImg,
+								proposerProfile: userProfile
 							};
 						} catch (error) {
 							console.error(`Error processing post ID ${post.post_id}:`, error);
@@ -252,7 +251,7 @@ const LatestActivityExplore = ({ className, gov2LatestPosts, currentUserdata }: 
 				{Object.keys(tabCategories).map((category) => (
 					<div
 						key={category}
-						className={`relative flex px-5`}
+						className='relative flex px-5'
 					>
 						<p
 							className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium  ${

@@ -144,13 +144,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props) => {
 	const dispatch = useDispatch();
 	const currentUser = useUserDetailsSelector();
-	const { username, id, loginAddress } = currentUser;
+	const { username } = currentUser;
 
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [proposaldata, setProposalData] = useState({ proposals: 0, votes: 0 });
-	const [loading, setLoading] = useState(true);
-	const [proposalerror, setProposalError] = useState<string | null>(null);
 	const { api, apiReady } = useApiContext();
 	const selectedGov = isOpenGovSupported(network) ? EGovType.OPEN_GOV : EGovType.GOV1;
 
@@ -475,8 +473,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 			const fifteenDaysAgo = dayjs().subtract(15, 'days').toISOString();
 
 			try {
-				setLoading(true);
-
 				let encodedAddresses;
 				if (Array.isArray(currentUserdata?.addresses)) {
 					encodedAddresses = currentUserdata.addresses
@@ -508,9 +504,9 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					network: network || 'polkadot',
 					query: GET_VOTES_COUNT_FOR_TIMESPAN_FOR_ADDRESS,
 					variables: {
-						voteType: payload.type,
+						addresses: payload.addresses,
 						createdAt_gt: fifteenDaysAgo,
-						addresses: payload.addresses
+						voteType: payload.type
 					}
 				});
 
@@ -525,9 +521,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				});
 			} catch (err) {
 				console.error('Failed to fetch proposal data:', err);
-				setProposalError('Failed to fetch data');
-			} finally {
-				setLoading(false);
 			}
 		}
 
@@ -544,7 +537,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
-	}, [network]);
+	}, [network, dispatch]);
 	const [activeTab, setActiveTab] = useState('explore');
 	if (error) return <ErrorState errorMessage={error} />;
 

@@ -10,8 +10,6 @@ import PolkadotIcon from '~assets/icons/polkadot-icon.svg';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { chainProperties } from '~src/global/networkConstants';
 import { useNetworkSelector } from '~src/redux/selectors';
-import ProgressBar from '~src/basic-components/ProgressBar/ProgressBar';
-import { useTheme } from 'next-themes';
 import formatBnBalance from '~src/util/formatBnBalance';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -19,11 +17,10 @@ import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
 import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-import { formatNumberWithSuffix } from '~src/components/Bounties/utils/formatBalanceUsd';
 
 const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
-const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue }: IOverviewProps) => {
+const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nextBurn, tokenValue }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
 	const unit = chainProperties?.[network]?.tokenSymbol;
 	const [assethubApi, setAssethubApi] = useState<ApiPromise | null>(null);

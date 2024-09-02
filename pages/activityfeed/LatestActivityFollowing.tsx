@@ -5,30 +5,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { networkTrackInfo } from 'src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
-import { useTheme } from 'next-themes';
 import { DiscussionsIcon, FellowshipGroupIcon, GovernanceGroupIcon, OverviewIcon, StakingAdminIcon, TreasuryGroupIcon } from '~src/ui-components/CustomIcons';
 import { ProposalType } from '~src/global/proposalType';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { IGetProfileWithAddressResponse } from 'pages/api/v1/auth/data/profileWithAddress';
-import { Divider } from 'antd';
-import moment from 'moment';
-import { LoadingOutlined } from '@ant-design/icons';
-import { IoMdTime } from 'react-icons/io';
-import { GrLike } from 'react-icons/gr';
-import { GrDislike } from 'react-icons/gr';
-import { FaShareAlt } from 'react-icons/fa';
-import { LiaCommentsSolid } from 'react-icons/lia';
 
-const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: string; gov2LatestPosts: any }) => {
+const LatestActivityFollowing = ({ gov2LatestPosts }: { gov2LatestPosts: any }) => {
 	const [currentTab, setCurrentTab] = useState<string | null>('all');
 	const [currentCategory, setCurrentCategory] = useState<string | null>(null);
 	const [postData, setPostData] = useState<any[]>([]);
-	const { resolvedTheme: theme } = useTheme();
 	const { network } = useNetworkSelector();
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [expandedPosts, setExpandedPosts] = useState<number[]>([]);
-	const [expandedPostId, setExpandedPostId] = useState<number | null>(null);
+	console.log('postData:', postData);
 
 	const tabItems = [
 		{
@@ -57,18 +45,18 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 	}
 
 	const tabIcons: Record<string, JSX.Element> = {
+		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		all: <OverviewIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		discussion: <DiscussionsIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
-		admin: <StakingAdminIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		governance: <GovernanceGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		treasury: <TreasuryGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />,
 		whitelist: <FellowshipGroupIcon className='mt-1 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 	};
 
 	const tabCategories: Record<string, string[]> = {
+		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
 		All: ['all'],
 		Discussion: ['discussions'],
-		Admin: tabItems.filter((item) => item.key === 'staking-admin' || item.key === 'auction-admin').map((item) => item.key),
 		Governance: tabItems.filter((item) => ['lease-admin', 'general-admin', 'referendum-canceller', 'referendum-killer'].includes(item.key)).map((item) => item.key),
 		Treasury: tabItems
 			.filter((item) => ['big-spender', 'medium-spender', 'small-spender', 'big-tipper', 'small-tipper', 'treasurer', 'on-chain-bounties', 'child-bounties'].includes(item.key))
@@ -115,8 +103,6 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setLoading(true);
-
 				const pascalCaseTab = toPascalCase(currentTab || 'all');
 				const posts = gov2LatestPosts[pascalCaseTab]?.data?.posts || [];
 				const detailedPosts = await Promise.all(
@@ -128,7 +114,7 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 							proposalType
 						};
 
-						const { data: postDetails, error: postError } = await nextApiClientFetch<any>('/api/v1/posts/on-chain-post', payload);
+						const { data: postDetails } = await nextApiClientFetch<any>('/api/v1/posts/on-chain-post', payload);
 						const proposerAddress = post.proposer;
 						let userProfile = null;
 
@@ -140,9 +126,9 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 							);
 							if (userData) {
 								userProfile = {
-									username: userData.username,
+									profileimg: userData.profile.image,
 									user_id: userData.user_id,
-									profileimg: userData.profile.image
+									username: userData.username
 								};
 							}
 						} catch (error) {
@@ -156,8 +142,8 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 						return {
 							...post,
 							details: postDetails,
-							proposerProfile: userProfile,
-							firstVoterProfileImg
+							firstVoterProfileImg,
+							proposerProfile: userProfile
 						};
 					})
 				);
@@ -167,27 +153,11 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 				setPostData(detailedPosts);
 			} catch (err) {
 				console.error('Error fetching data:', err);
-			} finally {
-				setLoading(false);
 			}
 		};
 
 		fetchData();
 	}, [currentTab, network, gov2LatestPosts]);
-
-	const formatDate = (date: string) => {
-		const now = moment();
-		const postDate = moment(date);
-		const diffInDays = now.diff(postDate, 'days');
-
-		if (diffInDays < 1) {
-			return postDate.fromNow();
-		} else if (diffInDays >= 15) {
-			return postDate.format('DD MMM YYYY');
-		} else {
-			return postDate.fromNow();
-		}
-	};
 
 	const handleCategoryClick = (category: string) => {
 		if (tabCategories[category].length > 1) {
@@ -216,25 +186,13 @@ const LatestActivityFollowing = ({ className, gov2LatestPosts }: { className?: s
 		};
 	}, [dropdownRef]);
 
-	const truncateContent = (content: string, wordLimit: number) => {
-		const words = content.split(' ');
-		if (words.length > wordLimit) {
-			return words.slice(0, wordLimit).join(' ') + '...';
-		}
-		return content;
-	};
-
-	const toggleExpandPost = (postId: number) => {
-		setExpandedPostId(expandedPostId === postId ? null : postId);
-	};
-
 	return (
 		<div className=''>
 			<div className='activityborder mb-5 flex justify-between rounded-lg bg-white pt-3'>
 				{Object.keys(tabCategories).map((category) => (
 					<div
 						key={category}
-						className={`relative flex px-5`}
+						className='relative flex px-5'
 					>
 						<p
 							className={`flex cursor-pointer items-center justify-between px-2 text-sm font-medium  ${

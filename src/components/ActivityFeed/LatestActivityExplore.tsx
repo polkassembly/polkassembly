@@ -71,7 +71,7 @@ const LatestActivityExplore: React.FC<LatestActivityExploreProps> = ({ gov2Lates
 
 	useEffect(() => {
 		fetchData();
-	}, [currentTab, network, gov2LatestPosts, fetchData]);
+	}, [currentTab, network, gov2LatestPosts]);
 
 	if (loading) {
 		return (

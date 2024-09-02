@@ -290,7 +290,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 		const updateAvailableValue = (treasuryBalance: any) => {
 			let valueUSD = '';
 			let value = '';
-			const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : undefined;
+			const freeBalance = treasuryBalance.freeBalance.gt(BN_ZERO) ? treasuryBalance.freeBalance : 0;
 
 			if (freeBalance) {
 				const availableValueUSD = parseFloat(formatBnBalance(freeBalance.toString(), { numberAfterComma: 2, withThousandDelimitor: false, withUnit: false }, network));
@@ -475,7 +475,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 		if (currentUserdata) {
 			getProposalData();
 		}
-	}, [username, currentUserdata, selectedGov, network]);
+	}, [username, selectedGov, network]);
 
 	useEffect(() => {
 		dispatch(setNetwork(network));
@@ -522,8 +522,8 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 							</div>
 						)}
 					</div>
-					<div className='mx-1 mt-8 max-w-[940px]'>
-						<div className='mx-1 mt-8 max-w-[940px]'>
+					<div className='mx-1 mt-8 max-w-[450px]  xl:max-w-[940px]'>
+						<div className='mx-1 mt-8 max-w-[450px] xl:max-w-[940px]'>
 							{activeTab === 'explore' ? (
 								<LatestActivityExplore
 									gov2LatestPosts={gov2LatestPosts}

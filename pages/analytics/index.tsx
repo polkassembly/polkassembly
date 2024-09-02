@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -34,6 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const GovLevelAnalytics = (props: { network: string }) => {
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +51,7 @@ const GovLevelAnalytics = (props: { network: string }) => {
 			<section className='mt-2 flex flex-col gap-y-8'>
 				<div className='flex items-center justify-start gap-x-2'>
 					<ImageIcon
-						src='/assets/icons/gov-analytics-icon.svg'
+						src={theme === 'dark' ? '/assets/icons/gov-analytics-icon-white.svg' : '/assets/icons/gov-analytics-icon.svg'}
 						alt='gov-analytics'
 					/>
 					<h1 className='m-0 p-0 text-2xl font-semibold text-bodyBlue dark:text-white'>Governance Analytics</h1>

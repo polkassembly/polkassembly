@@ -14,29 +14,35 @@ async function nextApiClientFetch<T>(url: string, data?: { [key: string]: any },
 	const currentURL = new URL(window.location.href);
 	const token = currentURL.searchParams.get('token') || (await reAuthClient()) || getLocalStorageToken();
 
-	const response = await fetch(`${window.location.origin}/${url}`, {
-		body: JSON.stringify(data),
-		credentials: 'include',
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-			'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY || '',
-			'x-network': network
-		},
-		method: method || 'POST'
-	});
+	try {
+		const response = await fetch(`${window.location.origin}/${url}`, {
+			body: JSON.stringify(data),
+			credentials: 'include',
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+				'x-api-key': process.env.NEXT_PUBLIC_POLKASSEMBLY_API_KEY ?? '',
+				'x-network': network
+			},
+			method: method ?? 'POST'
+		});
 
-	const resJSON = await response.json();
+		const resJSON = await response.json();
 
-	if (response.status === 200) {
+		if (response.status === 200) {
+			return {
+				data: resJSON as T
+			};
+		}
+
 		return {
-			data: resJSON as T
+			error: resJSON.message || messages.API_FETCH_ERROR
+		};
+	} catch (error) {
+		return {
+			error: error.message || messages.API_FETCH_ERROR
 		};
 	}
-
-	return {
-		error: resJSON.message || messages.API_FETCH_ERROR
-	};
 }
 
 export default nextApiClientFetch;

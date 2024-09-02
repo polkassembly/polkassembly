@@ -3,10 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getNetworkFromReqHeaders } from '~src/api-utils';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 import SEOHead from '~src/global/SEOHead';
 import { setNetwork } from '~src/redux/network';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -24,9 +26,17 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
 const GovLevelAnalytics = (props: { network: string }) => {
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	useEffect(() => {
 		dispatch(setNetwork(props.network));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props?.network]);
+
+	useEffect(() => {
+		if (!isOpenGovSupported(props?.network)) {
+			router.push('/opengov');
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props?.network]);
 

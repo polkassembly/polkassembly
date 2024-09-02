@@ -12,22 +12,18 @@ const ToggleButton = () => {
 	const { resolvedTheme: theme, setTheme } = useTheme();
 
 	return (
-		<div className='flex items-center justify-center '>
+		<div>
 			<button
 				onClick={(e) => {
 					e.preventDefault();
 					setTheme(theme === 'dark' ? 'light' : 'dark');
 				}}
-				className={classNames(
-					'flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-solid border-section-light-container bg-transparent px-4 pt-1 outline-none dark:border-[#3B444F]',
-					{
-						'border-[#3B444F]': theme === 'dark',
-						'border-section-light-container dark:border-[#3B444F]': theme === 'light'
-					}
-				)}
+				className={classNames('toggleborder flex w-full cursor-pointer items-center  gap-2 rounded-full  bg-transparent px-2 py-1 pt-[6px]   ', {
+					'border-[#3B444F]': theme === 'dark',
+					'border-section-light-container dark:border-[#3B444F]': theme === 'light'
+				})}
 			>
 				<span>{theme === 'dark' ? <LightModeSwitcher /> : <DarkModeSwitcher />}</span>
-				<p className='pt-2'>{theme === 'dark' ? <>Dark</> : <>Light</>}</p>
 			</button>
 		</div>
 	);

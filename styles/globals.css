@@ -900,23 +900,18 @@ z-index: 105 !important;
   scrollbar-width: none;  
 }
 
-.bg-dark {
-  background-color: #000; 
-}
-
-.bg-light {
-  background-color: #ccc; 
-}
-
-.activityborder{
-  border: 1px solid #D2D8E0;
+.toggleborder{
+  border: 1px solid;
   border-radius: 4px;
 }
-.activityborder2{
-  border: 1px solid #D2D8E0;
-}
 
-.castvoteborder{
+
+.activeborder{
   border: 1px solid #E5007A;
-  border-radius: 4px;
+  border-radius: 10px;
 }
+.activeborderhover:hover{
+  border: 1px solid #E5007A;
+  border-radius: 10px;
+}
+

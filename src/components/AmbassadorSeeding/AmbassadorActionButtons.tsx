@@ -82,8 +82,8 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 		}
 	];
 	return (
-		<div className={classNames('flex items-center justify-between', className)}>
-			<div>
+		<div className={classNames('flex flex-wrap items-center justify-between', className)}>
+			<div className='mr-2'>
 				<Button
 					disabled={!loginAddress}
 					className={`h-10 border-pink_primary bg-pink_primary text-white ${!loginAddress ? 'opacity-50' : ''} flex items-center`}
@@ -93,7 +93,7 @@ const AmbassadorActionButtons = ({ className }: Props) => {
 					Create Ambassador Application
 				</Button>
 			</div>
-			<div className='ml-2'>
+			<div>
 				<Dropdown
 					theme={theme}
 					overlayStyle={{ marginTop: '20px' }}

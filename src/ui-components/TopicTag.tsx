@@ -62,49 +62,38 @@ export const getSpanStyle = (trackName: string, activeProposal: number | undefin
 
 	const normalizedTrackName = trackName.replace(/\s+/g, '');
 
-	switch (normalizedTrackName) {
-		case 'LeaseAdmin':
-		case 'GeneralAdmin':
-		case 'ReferendumCanceller':
-		case 'ReferendumKiller':
-		case 'Democracy':
-		case 'Community':
-		case 'Staking':
-			return 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]';
+	const styleMap: Record<string, string> = {
+		Auction: 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]',
+		AuctionAdmin: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]',
+		BigSpender: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		BigTipper: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Bounties: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		ChildBounties: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Community: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		Council: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]',
+		Democracy: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		FellowshipAdmin: 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]',
+		General: 'bg-[#FDF5F0] dark:bg-[#380E0E] text-[#EF884A] dark:text-[#DB8383]',
+		GeneralAdmin: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		Governance: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		LeaseAdmin: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		MediumSpender: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Members: 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]',
+		ReferendumCanceller: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		ReferendumKiller: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		Root: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]',
+		SmallSpender: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		SmallTipper: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Staking: 'bg-[#EEF8FF] dark:bg-[#1C2945] text-[#093874] dark:text-[#96AAD6]',
+		StakingAdmin: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]',
+		Technical: 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]',
+		Treasurer: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Treasury: 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]',
+		Upgrade: 'bg-[#FDF5F0] dark:bg-[#380E0E] text-[#EF884A] dark:text-[#DB8383]',
+		Whitelist: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]',
+		WhitelistedCaller: 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]',
+		WishForChange: 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]'
+	};
 
-		case 'Root':
-		case 'WishForChange':
-		case 'StakingAdmin':
-		case 'AuctionAdmin':
-		case 'Council':
-		case 'Whitelist':
-			return 'bg-[#FFEDF2] dark:bg-[#0B353C] text-[#CD1F59] dark:text-[#93C9D1]';
-
-		case 'BigSpender':
-		case 'MediumSpender':
-		case 'SmallSpender':
-		case 'BigTipper':
-		case 'SmallTipper':
-		case 'Treasurer':
-		case 'Bounties':
-		case 'ChildBounties':
-		case 'Treasury':
-		case 'Governance':
-			return 'bg-[#FFF4EB] dark:bg-[#302234] text-[#AC6A30] dark:text-[#CCAED4]';
-
-		case 'Members':
-		case 'WhitelistedCaller':
-		case 'FellowshipAdmin':
-		case 'Technical':
-		case 'Tech':
-		case 'Auction':
-			return 'bg-[#FEF7DD] dark:bg-[#302921] text-[#75610E] dark:text-[#BFA889]';
-
-		case 'General':
-		case 'Upgrade':
-			return 'bg-[#FDF5F0] dark:bg-[#380E0E] text-[#EF884A] dark:text-[#DB8383]';
-
-		default:
-			return 'bg-[#ECECEC] dark:bg-[#333333] text-[#666666] dark:text-[#CCCCCC]';
-	}
+	return styleMap[normalizedTrackName] || 'bg-[#ECECEC] dark:bg-[#333333] text-[#666666] dark:text-[#CCCCCC]';
 };

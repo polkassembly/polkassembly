@@ -33,7 +33,6 @@ import {
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
-import isPeopleChainSupportedNetwork from '../OnchainIdentity/utils/getPeopleChainSupportedNetwork';
 
 const WriteProposal = dynamic(() => import('./WriteProposal'), {
 	ssr: false
@@ -205,14 +204,12 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 			dispatch(setShowIdentityInfoCardForBeneficiary(false));
 			return;
 		}
-		const apiPromise = isPeopleChainSupportedNetwork(network) ? peopleChainApi : api;
-		const apiPromiseReady = isPeopleChainSupportedNetwork(network) ? peopleChainApiReady : apiReady;
-		if (!apiPromise || !apiPromiseReady || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
+		if ((!api && !peopleChainApi) || beneficiaries.find((beneficiary) => !beneficiary)?.length === 0) return;
 
 		let promiseArr: any[] = [];
 		for (const address of [...beneficiaries.map((addr) => addr)]) {
 			if (!address) continue;
-			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: apiPromise, apiReady: apiPromiseReady, network })];
+			promiseArr = [...promiseArr, getIdentityInformation({ address: address, api: peopleChainApi ?? api, network })];
 		}
 		try {
 			dispatch(setIdentityCardLoading(true));
@@ -262,19 +259,18 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 	}, [loginAddress, window, beneficiaries, api, apiReady]);
 
 	const handleIdentityInfo = async () => {
-		if (!api || !apiReady || !proposerAddress) return;
+		if (!api || !proposerAddress || !apiReady) return;
 
 		const { isGood } = await getIdentityInformation({
 			address: proposerAddress,
-			api: api,
-			apiReady: apiReady,
+			api: peopleChainApi ?? api,
 			network: network
 		});
 		dispatch(setShowIdentityInfoCardForProposer(!isGood));
 	};
 
 	useEffect(() => {
-		if (!api || !apiReady || !proposerAddress) return;
+		if (!proposerAddress) return;
 
 		handleIdentityInfo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -507,7 +503,6 @@ const OpenGovTreasuryProposal = ({ className, isUsedInTreasuryTrack, isUsedInRef
 							inputAmountValue={inputAmountValue}
 							generalIndex={generalIndex}
 							discussionLink={discussionLink}
-							availableBalance={availableBalance}
 							title={title}
 							content={content}
 							tags={tags}

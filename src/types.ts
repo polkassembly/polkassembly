@@ -232,7 +232,7 @@ export const PostOrigin = {
 	PROFICIENTS: 'Proficients',
 	REFERENDUM_CANCELLER: 'ReferendumCanceller',
 	REFERENDUM_KILLER: 'ReferendumKiller',
-	ROOT: 'root',
+	ROOT: 'Root',
 	SENIOR_EXPERTS: 'SeniorExperts',
 	SENIOR_FELLOWS: 'SeniorFellows',
 	SENIOR_MASTERS: 'SeniorMasters',
@@ -472,6 +472,22 @@ export interface IDelegate {
 	isNovaWalletDelegate?: boolean;
 	dataSource: string[];
 	user_id?: number;
+}
+
+export interface IDelegateDetails {
+	address: string;
+	bio: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+	image: string;
+	dataSource: string[];
+	delegatedBalance: string;
+}
+
+export enum EDelegationFilters {
+	RECEIVED_DELEGATION = 'receivedDeleagtion',
+	DELEGATED_VOTES = 'delegatedVotes',
+	VOTES_IN_LAST_MONTH = 'votesInLastMonth'
 }
 
 export enum EVoteDecisionType {
@@ -902,4 +918,30 @@ export interface ITreasuryResponseData {
 export interface IDailyTreasuryTallyData {
 	created_at: string;
 	balance: string;
+}
+
+export interface IDelegateAddressDetails {
+	address: string;
+	bio: string;
+	dataSource: string[];
+	delegatedBalance: string;
+	image: string;
+	receivedDelegationsCount: number;
+	votedProposalsCount: number;
+	username?: string;
+	identityInfo?: { display: string; leagal: string } | null;
+}
+
+export enum EDelegationAddressFilters {
+	DELEGATED_VOTES = 'delegatedBalance',
+	RECEIVED_DELEGATIONS = 'receivedDelegationsCount',
+	VOTED_PROPOSALS = 'votedProposalsCount'
+}
+
+export enum EDelegationSourceFilters {
+	POLKASSEMBLY = 'polkassembly',
+	PARITY = 'parity',
+	NOVA = 'nova',
+	W3F = 'w3f',
+	NA = 'individual'
 }

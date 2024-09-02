@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 /* eslint-disable no-tabs */
-import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon, Dashboard, OptionMenu } from '~src/ui-components/CustomIcons';
+import { ApplayoutIdentityIcon, ClearIdentityOutlinedIcon } from '~src/ui-components/CustomIcons';
 import { CloseOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { Divider, Space } from 'antd';
@@ -212,6 +212,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 			)
 		});
 	}
+	menudropDownItems.push({
+		className: 'logo-class',
+		key: 'Theme',
+		label: <ToggleButton />
+	});
 
 	const dropdownMenuItems: ItemType[] = [
 		{
@@ -327,22 +332,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		</Dropdown>
 	);
 
-	const MenuDropdown = ({ children }: { children: ReactNode }) => (
-		<Dropdown
-			hideOverflow={true}
-			menu={{ items: menudropDownItems }}
-			trigger={['click']}
-			overlayClassName='navbar-dropdowns'
-			theme={theme}
-		>
-			{children}
-		</Dropdown>
-	);
-
+	console.log('headeerisMobile', isMobile);
 	return (
 		<Header
 			className={`${className} shadow-md ${
-				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1060]' : 'z-[101]'
+				sidedrawer && !isMobile ? 'z-[101]' : isMobile ? 'z-[1050]' : 'z-[101]'
 			} navbar-container sticky top-0 flex h-[60px] max-h-[60px] items-center border-b-2 border-l-0 border-r-0 border-t-0 border-solid border-pink_primary bg-white px-6 leading-normal dark:bg-section-dark-overlay`}
 		>
 			<div
@@ -351,7 +345,15 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				}}
 				className='-ml-3 mr-4 flex items-center justify-center lg:hidden'
 			>
-				<Dashboard className='text-2xl' />
+				{!sidedrawer ? (
+					<div className='sidebar-toggle-button-header  h-7 px-1  dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/darkclosenav.svg' : '/assets/closenav.svg'}`} />
+					</div>
+				) : (
+					<div className='sidebar-toggle-button-header  h-7  px-1 dark:bg-black dark:text-white'>
+						<img src={`${theme == 'dark' ? '/assets/darkopennav.svg' : '/assets/opennav.svg'}`} />
+					</div>
+				)}
 			</div>
 			<div className='ml-[84px] hidden lg:block'></div>
 			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
@@ -378,7 +380,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between gap-x-2 md:gap-x-4'>
+				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
 					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
@@ -420,18 +422,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 								)}
 							</AuthDropdown>
 						)}
-						<div
-							className='mr-2 lg:mr-0'
-							onClick={() => {
-								trackEvent('renavigation_button_clicked', 'clicked_renavigation_button', {
-									userId: id || '',
-									userName: username || ''
-								});
-							}}
-						>
-							<MenuDropdown>
-								<OptionMenu className='mt-[6px] text-2xl' />
-							</MenuDropdown>
+						<div className='mr-2 lg:mr-0'>
+							<ToggleButton />
 						</div>
 					</Space>
 					{open ? (

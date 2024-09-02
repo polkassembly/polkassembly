@@ -232,7 +232,7 @@ export const PostOrigin = {
 	PROFICIENTS: 'Proficients',
 	REFERENDUM_CANCELLER: 'ReferendumCanceller',
 	REFERENDUM_KILLER: 'ReferendumKiller',
-	ROOT: 'Root',
+	ROOT: 'root',
 	SENIOR_EXPERTS: 'SeniorExperts',
 	SENIOR_FELLOWS: 'SeniorFellows',
 	SENIOR_MASTERS: 'SeniorMasters',

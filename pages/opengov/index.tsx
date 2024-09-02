@@ -135,45 +135,39 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				network={network}
 			/>
 			<div className='mt-3 flex items-center justify-between'>
-				<h1 className='mx-2 -mb-[6px] pl-5 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
+				<h1 className='mx-2 -mb-[6px] text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Overview</h1>
 				<div className='mr-[6px] flex justify-between'>
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>
-			<div className='flex w-full flex-col px-5'>
-				<div className='mx-1 mt-2 md:mt-6'>
-					{networkSocialsData && (
-						<AboutNetwork
-							networkSocialsData={networkSocialsData?.data}
-							showGov2Links
-						/>
-					)}
+			<div className='mx-1 mt-2 md:mt-6'>
+				{networkSocialsData && (
+					<AboutNetwork
+						networkSocialsData={networkSocialsData?.data}
+						showGov2Links
+					/>
+				)}
+			</div>
+			{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
+				<div className='mx-1 mt-8'>
+					<BatchVotingBadge />
 				</div>
-				<div className='w-full '>
-					<div className='mx-1 mt-8'>
-						<TreasuryOverview theme={theme} />
-					</div>
+			)}
+			<div className='mx-1 mt-8'>
+				<TreasuryOverview theme={theme} />
+			</div>
+
+			<div className='mx-1 mt-8'>
+				<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
+			</div>
+
+			<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
+				<div className='w-full xl:w-[60%]'>
+					<UpcomingEvents />
 				</div>
-				<div className='flex-1'>
-					{isOpenGovSupported(network) && isMobile && (window as any).walletExtension?.isNovaWallet && (
-						<div className='mx-1 mt-8'>
-							<BatchVotingBadge />
-						</div>
-					)}
 
-					<div className='mx-1 mt-8 max-w-full'>
-						<Gov2LatestActivity gov2LatestPosts={gov2LatestPosts} />
-					</div>
-
-					<div className='mx-1 mt-8 flex flex-col items-center justify-between gap-4 xl:flex-row'>
-						<div className='w-full xl:w-[60%]'>
-							<UpcomingEvents />
-						</div>
-
-						<div className='w-full xl:w-[40%]'>
-							<News twitter={networkSocialsData?.data?.twitter || ''} />
-						</div>
-					</div>
+				<div className='w-full xl:w-[40%]'>
+					<News twitter={networkSocialsData?.data?.twitter || ''} />
 				</div>
 			</div>
 		</>

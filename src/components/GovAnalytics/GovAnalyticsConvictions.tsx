@@ -15,8 +15,9 @@ const GovAnalyticsConvictions = ({ isSmallScreen }: { isSmallScreen: boolean }) 
 
 	const convictionVotesData = getAnalyticsVotesByFilter(votes, ETrackLevelAnalyticsFilterBy.CONVICTION_VOTES);
 
-	const delegationSplit = convictionVotesData.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index).map((item) => item.delegationSplitData);
-	const votesSplit = convictionVotesData.sort((a, b) => a.votesSplitData.index - b.votesSplitData.index).map((item) => item.votesSplitData);
+	const sortedConvictionVotesData = convictionVotesData.sort((a, b) => a.delegationSplitData.index - b.delegationSplitData.index);
+	const delegationSplit = sortedConvictionVotesData.map((item) => item.delegationSplitData);
+	const votesSplit = sortedConvictionVotesData.map((item) => item.votesSplitData);
 
 	return (
 		<>

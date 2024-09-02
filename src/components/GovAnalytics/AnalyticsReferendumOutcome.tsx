@@ -61,16 +61,14 @@ const AnalyticsReferendumOutcome = () => {
 
 	const getData = async () => {
 		setLoading(true);
-		try {
-			const { data } = await nextApiClientFetch<IGetStatusWiseRefOutcome>('/api/v1/govAnalytics/statuswiseRefOutcome', {
-				trackId: selectedTrack === null ? null : trackIds[selectedTrack]
-			});
-			if (data) {
-				setStatusInfo(data.statusCounts);
-				setLoading(false);
-			}
-		} catch (error) {
-			console.log(error);
+		const { data, error } = await nextApiClientFetch<IGetStatusWiseRefOutcome>('/api/v1/govAnalytics/statuswiseRefOutcome', {
+			trackId: selectedTrack === null ? null : trackIds[selectedTrack]
+		});
+		if (!data) {
+			console.log('something went wrong, ', error);
+		}
+		if (data) {
+			setStatusInfo(data.statusCounts);
 			setLoading(false);
 		}
 	};

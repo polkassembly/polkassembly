@@ -36,7 +36,7 @@ const handler: NextApiHandler<IGetStatusWiseRefOutcome | MessageType> = async (r
 
 		const transformedData: Record<string, number> = Object.keys(rawData).reduce(
 			(acc, key) => {
-				acc[key] = rawData[key].totalCount;
+				acc[key] = rawData[key]?.totalCount;
 				return acc;
 			},
 			{} as Record<string, number>

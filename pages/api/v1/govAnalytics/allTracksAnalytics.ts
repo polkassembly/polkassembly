@@ -10,9 +10,10 @@ import { networkDocRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
+import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
-const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) => {
+const getAllTrackLevelVotesAnalytics = async ({ network, res }: { network: string; res: NextApiResponse<{ averageSupportPercentages: Record<string, number> } | MessageType> }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
 
@@ -25,9 +26,14 @@ const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) 
 
 			const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackNumber))?.collection('votes').get();
 
+			if (trackSnapshot.empty) return res.status(404).json({ message: 'No data found' });
+
 			trackSnapshot.docs.map((doc) => {
 				const data = doc.data();
-				const supportPercentage = data.voteAmount.supportData.percentage;
+				if (!data?.voteAmount?.supportData) {
+					return res.status(404).json({ message: 'No data found' });
+				}
+				const supportPercentage = data.voteAmount.supportData.percentage || 0;
 				const roundedNumber = Number(supportPercentage).toFixed(2);
 				totalSupportedVoted += parseFloat(roundedNumber);
 				totalVotes += 1;
@@ -47,9 +53,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ averageSuppor
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
+	if (!network || !Object.values(AllNetworks).includes(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 
 	const { data, error } = await getAllTrackLevelVotesAnalytics({
-		network
+		network,
+		res
 	});
 	if (data) {
 		return res.status(200).json(data);

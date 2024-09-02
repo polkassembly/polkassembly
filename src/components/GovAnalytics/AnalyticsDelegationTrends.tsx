@@ -62,9 +62,6 @@ const AnalyticsDelegationTrends = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [noData, setNoData] = useState<boolean>(false);
-
 	return (
 		<Collapse
 			size='large'
@@ -87,7 +84,7 @@ const AnalyticsDelegationTrends = () => {
 				}
 				key='1'
 			>
-				{noData ? (
+				{!loading && !delegationInfo ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>
 						<NoVotesIcon />
 						<p className='text-sm'>Not enough data available</p>

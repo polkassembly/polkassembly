@@ -65,16 +65,15 @@ const AnalyticsReferendumCount = () => {
 
 	const getData = async () => {
 		setLoading(true);
-		try {
-			const { data } = await nextApiClientFetch<IGetStatusWiseProposalCount>('/api/v1/govAnalytics/categoryWiseTotalProposalCount', {
-				categoryIds: groupedTrackIds
-			});
-			if (data) {
-				setCategoryInfo(data?.categoryCounts);
-				setLoading(false);
-			}
-		} catch (error) {
-			console.log(error);
+
+		const { data, error } = await nextApiClientFetch<IGetStatusWiseProposalCount>('/api/v1/govAnalytics/categoryWiseTotalProposalCount', {
+			categoryIds: groupedTrackIds
+		});
+		if (!data) {
+			console.log('something went wrong, ', error);
+		}
+		if (data) {
+			setCategoryInfo(data?.categoryCounts);
 			setLoading(false);
 		}
 	};

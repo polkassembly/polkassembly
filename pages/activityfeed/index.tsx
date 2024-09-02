@@ -257,7 +257,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				const accountData = await api.query.system.account(treasuryAccount);
 
 				const freeBalance = new BN(accountData?.data?.free) || BN_ZERO;
-				treasuryBalance.freeBalance = freeBalance as Balance;
+				treasuryBalance.freeBalance = freeBalance as any;
 
 				updateBurnValue(treasuryBalance);
 				updateAvailableValue(treasuryBalance);

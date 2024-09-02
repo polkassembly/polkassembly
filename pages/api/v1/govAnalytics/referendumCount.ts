@@ -10,6 +10,7 @@ import { networkDocRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import messages from '~src/auth/utils/messages';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 const getAllTrackLevelProposalsAnalytics = async ({ network }: { network: string }) => {
 	try {
@@ -39,6 +40,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ totalProposal
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
+	if (!network || !Object.values(AllNetworks).includes(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 
 	const { data, error } = await getAllTrackLevelProposalsAnalytics({
 		network

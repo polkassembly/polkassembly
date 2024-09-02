@@ -11,6 +11,7 @@ import BN from 'bn.js';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import messages from '~src/auth/utils/messages';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
+import { network as AllNetworks } from '~src/global/networkConstants';
 
 interface IRes {
 	[key: string]: {
@@ -104,6 +105,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<IRes | MessageT
 	storeApiKeyUsage(req);
 
 	const network = String(req.headers['x-network']);
+	if (!network || !Object.values(AllNetworks).includes(network)) {
+		return res.status(400).json({ message: messages.INVALID_NETWORK });
+	}
 
 	const { data, error } = await getTrackDelegationAnalyticsStats({ network });
 

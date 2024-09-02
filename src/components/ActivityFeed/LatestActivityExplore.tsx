@@ -9,7 +9,7 @@ import PostList from './PostList';
 import { fetchVoterProfileImage, toPascalCase, getProposalType, fetchUserProfile } from './utils/utils';
 import { IPostResponse } from './utils/types';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
-import { IPostData } from '~src/context/PostDataContext';
+import { IPostData } from './utils/types';
 
 interface LatestActivityExploreProps {
 	gov2LatestPosts: any;

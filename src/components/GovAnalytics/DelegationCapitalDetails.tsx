@@ -8,6 +8,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import { parseBalance } from '../Post/GovernanceSideBar/Modal/VoteData/utils/parseBalaceToReadable';
 import { useNetworkSelector } from '~src/redux/selectors';
+import { IDelegationCapitalDetails } from './types';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -34,10 +35,6 @@ const StyledCard = styled(Card)`
 		}
 	}
 `;
-
-interface IDelegationCapitalDetails {
-	delegationData: any;
-}
 
 const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	const { delegationData } = props;

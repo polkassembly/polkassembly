@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
 import React, { FC } from 'react';
 
 import styled from 'styled-components';
+import { IDelegationDetails } from './types';
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
 		display: none !important;
@@ -32,9 +33,7 @@ const StyledCard = styled(Card)`
 		}
 	}
 `;
-interface IDelegationDetails {
-	delegationData: any;
-}
+
 const DelegationDetails: FC<IDelegationDetails> = (props) => {
 	const { delegationData } = props;
 	const { resolvedTheme: theme } = useTheme();

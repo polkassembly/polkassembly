@@ -15,19 +15,9 @@ import { Spin } from 'antd';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useNetworkSelector } from '~src/redux/selectors';
 import DelegationCapitalDetails from './DelegationCapitalDetails';
+import { IDelegationInfo } from './types';
 
 const { Panel } = Collapse;
-
-interface IDelegationAnalytics {
-	totalCapital: string;
-	totalDelegates: number;
-	totalDelegators: number;
-	totalVotesBalance: string;
-}
-
-interface IDelegationInfo {
-	[key: string]: IDelegationAnalytics;
-}
 
 const AnalyticsDelegationTrends = () => {
 	const { resolvedTheme: theme } = useTheme();

@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
@@ -21,41 +20,37 @@ const handler: NextApiHandler<IGetStatusWiseProposalCount | MessageType> = async
 		}
 
 		const { categoryIds } = req.body;
+		const promises = [
+			fetchSubsquid({
+				network: network,
+				query: GET_TOTAL_CATEGORY_PROPOSALS,
+				variables: { Indexes: categoryIds?.Treasury }
+			}),
+			fetchSubsquid({
+				network: network,
+				query: GET_TOTAL_CATEGORY_PROPOSALS,
+				variables: { Indexes: categoryIds?.Governance }
+			}),
+			fetchSubsquid({
+				network: network,
+				query: GET_TOTAL_CATEGORY_PROPOSALS,
+				variables: { Indexes: categoryIds?.Whitelist }
+			}),
+			fetchSubsquid({
+				network: network,
+				query: GET_TOTAL_CATEGORY_PROPOSALS,
+				variables: { Indexes: categoryIds?.Main }
+			})
+		];
 
-		const TreasuryRes = await fetchSubsquid({
-			network: network,
-			query: GET_TOTAL_CATEGORY_PROPOSALS,
-			variables: {
-				Indexes: categoryIds?.Treasury
-			}
-		});
-		const GovernanceRes = await fetchSubsquid({
-			network: network,
-			query: GET_TOTAL_CATEGORY_PROPOSALS,
-			variables: {
-				Indexes: categoryIds?.Governance
-			}
-		});
-		const WhiteListRes = await fetchSubsquid({
-			network: network,
-			query: GET_TOTAL_CATEGORY_PROPOSALS,
-			variables: {
-				Indexes: categoryIds?.Whitelist
-			}
-		});
-		const MainRes = await fetchSubsquid({
-			network: network,
-			query: GET_TOTAL_CATEGORY_PROPOSALS,
-			variables: {
-				Indexes: categoryIds?.Main
-			}
-		});
+		const results = await Promise.allSettled(promises);
+		const [TreasuryRes, GovernanceRes, WhiteListRes, MainRes] = results;
 
 		const totalProposalByCategory = {
-			governance: GovernanceRes?.data?.count?.totalCount,
-			main: MainRes?.data?.count?.totalCount,
-			treasury: TreasuryRes?.data?.count?.totalCount,
-			whiteList: WhiteListRes?.data?.count?.totalCount
+			governance: GovernanceRes.status === 'fulfilled' ? GovernanceRes.value?.data?.count?.totalCount : null,
+			main: MainRes.status === 'fulfilled' ? MainRes.value?.data?.count?.totalCount : null,
+			treasury: TreasuryRes.status === 'fulfilled' ? TreasuryRes.value?.data?.count?.totalCount : null,
+			whiteList: WhiteListRes.status === 'fulfilled' ? WhiteListRes.value?.data?.count?.totalCount : null
 		};
 
 		return res.status(200).json({ categoryCounts: totalProposalByCategory });

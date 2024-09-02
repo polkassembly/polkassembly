@@ -8,14 +8,9 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
-import { IGetTotalApprovedProposalCount } from './types';
+import { IGetTotalApprovedProposalCount, IStats } from './types';
 
-interface IProps {
-	className?: string;
-	trackId?: number;
-}
-
-const AnalyticsStats: FC<IProps> = (props) => {
+const AnalyticsStats: FC<IStats> = (props) => {
 	const { trackId } = props;
 	// const dispatch = useDispatch();
 	const { network } = useNetworkSelector();

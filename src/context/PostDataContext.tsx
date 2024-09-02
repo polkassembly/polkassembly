@@ -73,9 +73,22 @@ export interface IPostData {
 		tags?: string[];
 	};
 	subscribers: number[];
+	post_id: number;
 	track_name?: string;
 	track_number?: number;
+	details: {
+		comments_count: number;
+		post_reactions: IReactions;
+		content: string;
+	};
+	proposerProfile: {
+		profileimg: string;
+		user_id: string;
+		username: string;
+		image?: string;
+	};
 	tags: string[] | [];
+	firstVoterProfileImg: string;
 	spam_users_count?: number;
 	history?: IPostHistory[];
 	statusHistory?: any[];

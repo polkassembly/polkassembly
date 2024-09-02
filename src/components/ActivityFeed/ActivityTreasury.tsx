@@ -272,11 +272,11 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 														<div>
 															{chainProperties[network]?.assetHubTreasuryAddress && (
 																<div className={`${poppins.className} ${poppins.variable} ml-0 flex items-center`}>
-																	<span className='flex items-center gap-1 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
+																	<span className='flex items-center gap-2 text-xs font-medium text-blue-light-medium dark:text-blue-dark-medium'>
 																		<AssethubIcon />
-																		Asset Hub
+																		<span>Asset Hub</span>
 																	</span>
-																	<div className='ml-2 flex gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
+																	<div className='ml-2 flex flex-wrap gap-1 text-[11px] font-medium text-blue-light-high dark:text-blue-dark-high'>
 																		<div className='text-xs'>
 																			{formatUSDWithUnits(assetValue)} <span className='ml-[2px] font-normal'>{unit}</span>
 																		</div>
@@ -335,7 +335,7 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 						currentTokenPrice={currentTokenPrice}
 					/>
 				</div>
-				<div className={`${poppins.className} ${poppins.variable} mx-4 my-4  flex items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2`}>
+				<div className={`${poppins.className} ${poppins.variable} mx-4 my-4  flex flex-wrap items-baseline justify-center gap-x-1 rounded-lg bg-[#F9F9F9] py-2`}>
 					<span className={' flex text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'}>{chainProperties[network]?.tokenSymbol} Price</span>
 					<div className='flex items-center gap-x-1 text-lg font-semibold'>
 						<div>
@@ -375,7 +375,7 @@ const ActivityTreasury = ({ currentTokenPrice, available, priceWeeklyChange, nex
 													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
 												/>
 											</div>
-											<div className='m-0 flex items-baseline gap-x-[6px]'>
+											<div className='m-0 flex flex-wrap items-baseline gap-x-[6px]'>
 												{nextBurn.value ? (
 													<div className='m-0 flex items-baseline gap-x-[3px]'>
 														<span className='text-lg font-medium'>{nextBurn.value}</span>

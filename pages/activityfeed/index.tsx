@@ -592,7 +592,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 							)}
 						</div>
 					</div>
-					<div className='w-[450px]   '>
+					<div className=' w-[340px]  '>
 						<div className='mx-1 mt-2 md:mt-6'>
 							{networkSocialsData && (
 								<AboutActivity

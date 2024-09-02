@@ -5,43 +5,61 @@
 import { BadgeName } from '~src/auth/types';
 
 export interface BadgeDetails {
-	description: string;
 	img: string;
 	name: BadgeName;
-	requirements: string;
+	lockImg?: string;
+	requirements: {
+		locked: string;
+		unlocked: string;
+	};
 }
 
 export const badgeNames = ['Decentralised Voice', 'Fellow', 'Council Member', 'Active Voter', 'Whale', 'Steadfast Commentor', 'GM Voter', 'Popular Delegate'];
 
 export const badgeDetails: BadgeDetails[] = [
 	{
-		description: 'Receive delegation of 1,000,000 at 6x conviction from Web3 Foundation to unlock this badge.',
 		img: '/assets/badges/decentralised_voice.svg',
+		lockImg: '/assets/badges/decentralised_voice_locked.svg',
 		name: BadgeName.DECENTRALISED_VOICE,
-		requirements: 'Must be a delegate on the Kusama network.'
+		requirements: {
+			locked: 'You must become a delegate on the Kusama network and aim to receive 1,000,000 tokens with a 6x conviction.',
+			unlocked: 'Congratulations! You’ve received a delegation of 1,000,000 tokens at 6x conviction from the Web3 Foundation.'
+		}
 	},
 	{
-		description: 'Achieve the prestigious rank of Fellow, starting from Rank 1.',
 		img: '/assets/badges/fellow.svg',
+		lockImg: '/assets/badges/fellow_locked.svg',
 		name: BadgeName.FELLOW,
-		requirements: 'Must achieve a rank of 1 or higher.'
+		requirements: {
+			locked: 'You must achieve a minimum rank of 1 to unlock the Fellow badge.',
+			unlocked: 'Well done! You’ve achieved Rank 1 or higher and unlocked the Fellow badge.'
+		}
 	},
 	{
-		description: 'Recognized as a member of the influential governance council.',
 		img: '/assets/badges/Council.svg',
+		lockImg: '/assets/badges/council_locked.svg',
 		name: BadgeName.COUNCIL,
-		requirements: 'Must be a member of the governance council.'
+		requirements: {
+			locked: 'You must be elected as a member of the governance council to unlock this badge.',
+			unlocked: 'You are recognized as a member of the governance council. Badge unlocked!'
+		}
 	},
 	{
-		description: 'Consistently engages in governance by voting on key proposals.',
 		img: '/assets/badges/active_voter.svg',
+		lockImg: '/assets/badges/active_voter_locked.svg',
 		name: BadgeName.ACTIVE_VOTER,
-		requirements: 'Must vote on at least 15% of proposals with a minimum of 5 proposals.'
+		requirements: {
+			locked: 'To unlock, vote on at least 15% of proposals, with a minimum participation in 5 proposals.',
+			unlocked: 'You have actively voted on at least 15% of key proposals and unlocked the Active Voter badge.'
+		}
 	},
 	{
-		description: 'A key stakeholder with significant voting power in the network.',
 		img: '/assets/badges/whale.svg',
+		lockImg: '/assets/badges/whalelocked.svg',
 		name: BadgeName.WHALE,
-		requirements: 'Must have voting power equal to or greater than 0.05% of the total supply.'
+		requirements: {
+			locked: 'You must accumulate voting power equal to or greater than 0.05% of the total network supply.',
+			unlocked: 'You hold significant voting power, equal to or greater than 0.05% of the total supply, and have unlocked the Whale badge.'
+		}
 	}
 ];

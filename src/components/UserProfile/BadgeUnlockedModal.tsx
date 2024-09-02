@@ -27,6 +27,7 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 	const isUnlocked = badges?.some((unlockedBadge) => unlockedBadge.name === badge.name);
 
 	const badgeImage = matchingBadge?.img || '/assets/badges/active_voter_locked.svg';
+	const lockedImg = matchingBadge?.lockImg || '/assets/badges/active_voter_locked.svg';
 
 	return (
 		<Modal
@@ -39,36 +40,41 @@ const BadgeUnlockedModal = ({ className, open, setOpen, badge, badges }: Props) 
 			}}
 			footer={
 				<>
-					<button
-						onClick={() => setOpen(false)}
-						className='w-full rounded-lg border-none bg-[#F7F8F9] p-5 py-3 text-left  text-[#485F7D]'
-					>
-						<span className='flex items-center gap-1'>
-							<ImageIcon
-								src='/assets/badges/hourglass_move_dark.svg'
-								alt='hourglass'
-								className='text-[#485F7D]'
-							/>
-							<span>{`Unlocked on ${badge.unlockedAt.split('T')[0]}`}</span>
-						</span>
-					</button>
+					{badge.check && (
+						<button
+							onClick={() => setOpen(false)}
+							className='w-full rounded-lg border-none bg-[#F7F8F9] p-5 py-3 text-left  text-[#485F7D]'
+						>
+							<span className='flex items-center gap-1'>
+								<ImageIcon
+									src='/assets/badges/hourglass_move_dark.svg'
+									alt='hourglass'
+									className='text-[#485F7D]'
+								/>
+								<span>{`Unlocked on ${badge.unlockedAt.split('T')[0]}`}</span>
+							</span>
+						</button>
+					)}
 				</>
 			}
 			closable
 		>
 			<div className='-mt-[100px] flex flex-col items-center justify-center'>
 				<Image
-					src={badgeImage}
+					src={isUnlocked ? badgeImage : lockedImg}
 					alt={badge.name}
 					className={isUnlocked ? '' : 'grayscale'}
 					width={218}
 					height={136}
 				/>
-				<h1 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>Achievement Unlocked</h1>
-				<h2 className='mt-2 text-[20px] tracking-[0.0015em] dark:text-white'>
-					You Earned <span className='font-semibold text-pink_primary'>{badge.name}</span> Badge
-				</h2>
-				<p className='mt-2 text-center text-[16px] font-light dark:text-white'>{matchingBadge?.description}</p>
+				<h1 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'> {badge.check ? ' Achievement Unlocked' : `${badge.name} Locked`}</h1>
+
+				{badge.check && (
+					<h2 className='mt-2 text-[20px] tracking-[0.0015em] dark:text-white'>
+						You Earned <span className='font-semibold text-pink_primary'>{badge.name}</span> Badge
+					</h2>
+				)}
+				<p className='mt-2 text-center text-[16px] font-light dark:text-white'>{badge.check ? matchingBadge?.requirements?.unlocked : matchingBadge?.requirements?.locked} </p>
 			</div>
 		</Modal>
 	);

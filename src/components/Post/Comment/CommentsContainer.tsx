@@ -205,9 +205,10 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 
 	const handleCurrentCommentAndTimeline = (postId: string, type: string, comment: IComment) => {
 		const key = `${postId}_${type}`;
+		const existingComments = comments[key] || [];
 		const commentsPayload = {
 			...comments,
-			[key]: [...comments[key], comment]
+			[key]: [...existingComments, comment]
 		};
 		setComments(getSortedComments(commentsPayload));
 		const timelinePayload = timelines.map((timeline) => (timeline.index === postId ? { ...timeline, commentsCount: timeline.commentsCount + 1 } : timeline));

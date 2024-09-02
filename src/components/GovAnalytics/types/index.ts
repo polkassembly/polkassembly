@@ -24,3 +24,16 @@ export interface IGetStatusWiseRefOutcome {
 export interface IGetTotalApprovedProposalCount {
 	totalCount: number;
 }
+
+export interface TrackInfo {
+	trackId: number;
+	group: string;
+}
+
+export interface NetworkTrackInfo {
+	[key: string]: TrackInfo;
+}
+
+export interface GroupedTrackIds {
+	[key: string]: number[];
+}

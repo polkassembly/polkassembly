@@ -77,7 +77,10 @@ const AnalyticTurnOutPercentage = () => {
 				{
 					color: 'hsl(87, 70%, 50%)',
 					data: Object.entries(trackInfo).map(([key, value]) => ({
-						x: key,
+						x: key
+							.split('_')
+							.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+							.join(' '),
 						y: value
 					})),
 					id: 'Turnout'

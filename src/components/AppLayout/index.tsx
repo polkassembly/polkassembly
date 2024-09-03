@@ -219,7 +219,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'} `}>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
 													<Content>
 														<Component {...pageProps} />
 													</Content>
@@ -258,7 +258,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									<div className='relative w-full'>
 										{!isMobile ? (
 											<div>
-												<div className={`my-6 ${sidebarCollapsed ? 'pl-[100px] pr-[40px]' : 'pl-[240px] pr-[60px]'} `}>
+												<div className={`my-6 ${sidebarCollapsed ? 'pl-[120px] pr-[40px]' : 'pl-[280px] pr-[60px]'} `}>
 													<Content>
 														<Component {...pageProps} />
 													</Content>

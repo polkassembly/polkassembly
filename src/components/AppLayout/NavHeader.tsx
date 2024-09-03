@@ -349,8 +349,8 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				)}
 			</div>
-			<div className='ml-[84px] hidden lg:block'></div>
-			<nav className='mx-auto flex h-[60px] max-h-[60px] w-full items-center justify-between lg:w-[85vw] xl:max-w-7xl xl:px-1'>
+			<div className={`${sidedrawer ? 'ml-32' : 'ml-[108px]'} hidden lg:block`}></div>
+			<nav className='mx-auto flex h-[60px]  w-full items-center justify-between xl:pr-6 '>
 				<div className='flex items-center'>
 					<Link
 						className='logo-size flex lg:hidden'
@@ -374,7 +374,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 					</div>
 				</div>
 
-				<div className='flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
+				<div className=' flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
 					<SearchBar className='searchbar-container' />
 					<InAppNotification />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
@@ -517,20 +517,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 						</button>
 					)}
 				</div>
-
-				<SignupPopup
-					setLoginOpen={setLoginOpen}
-					modalOpen={openSignup}
-					setModalOpen={setSignupOpen}
-					isModal={true}
-				/>
-				<LoginPopup
-					setSignupOpen={setSignupOpen}
-					modalOpen={openLogin}
-					setModalOpen={setLoginOpen}
-					isModal={true}
-				/>
 			</nav>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 			{onchainIdentitySupportedNetwork.includes(network) && !isMobile && (
 				<>
 					<Identity

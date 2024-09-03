@@ -14,7 +14,6 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-// import { MdOutlineAutorenew } from 'react-icons/md';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

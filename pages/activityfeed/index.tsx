@@ -10,7 +10,6 @@ import { getLatestActivityOffChainPosts } from 'pages/api/v1/latest-activity/off
 import { getLatestActivityOnChainPosts } from 'pages/api/v1/latest-activity/on-chain-posts';
 import { getNetworkSocials } from 'pages/api/v1/network-socials';
 import React, { useEffect, useState } from 'react';
-import { FaAngleRight } from 'react-icons/fa6';
 import { getNetworkFromReqHeaders } from '~src/api-utils';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { EGovType, OffChainProposalType, ProposalType } from '~src/global/proposalType';
@@ -546,9 +545,13 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						<div>
 							<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
 								<div className='flex items-center justify-between gap-2'>
-									<div className='flex gap-1'>
-										<p className='font-semibold'>Voted Proposals</p>
-										<FaAngleRight />
+									<div className='flex items-center '>
+										<p className='pt-3 font-semibold'>Voted Proposals</p>
+										<img
+											src='/assets/icons/arrow.svg'
+											alt=''
+											className='h-5 w-5 -rotate-90 p-0'
+										/>
 									</div>
 									<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
 								</div>

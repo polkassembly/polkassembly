@@ -3,12 +3,9 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useState } from 'react';
 import Markdown from '~src/ui-components/Markdown';
-import { IoMdTime } from 'react-icons/io';
-import { GrLike, GrDislike } from 'react-icons/gr';
-import { FaShareAlt } from 'react-icons/fa';
-import { LiaCommentsSolid } from 'react-icons/lia';
 import { formatDate as formatDateUtil, truncateContent } from './utils/utils';
 import { PostItemProps } from './utils/types';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 // Constants
 const ANONYMOUS_FALLBACK = 'Anonymous';
@@ -16,6 +13,7 @@ const GENERAL_TOPIC_FALLBACK = 'General';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
 const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/rankcard3.svg';
 const LIKE_LABEL = 'Like';
+const DISLIKE_LABEL = 'Dislike';
 const COMMENT_LABEL = 'Comment';
 const COMMENT_PLACEHOLDER = 'Type your comment here';
 const POST_LABEL = 'Post';
@@ -115,8 +113,12 @@ const PostDetails: React.FC<{ post: any; formatDate: (dateString: string) => str
 		<span className='text-[#485F7D]'>in</span>
 		<span className='rounded-lg bg-[#FCF1F4] p-2 text-sm text-[#EB5688]'>{post?.topic?.name || GENERAL_TOPIC_FALLBACK}</span>
 		<p className='pt-3 text-[#485F7D]'>|</p>
-		<div className='flex gap-2'>
-			<IoMdTime className='mt-3 h-5 w-5 text-[#485F7D]' />
+		<div className='flex '>
+			<ImageIcon
+				src='/assets/icons/timer.svg'
+				alt='timer'
+				className='mt-3 h-5 w-5 text-[#485F7D]'
+			/>
 			<p className='pt-3 text-sm text-gray-500'>{formatDate(String(post.created_at))}</p>
 		</div>
 	</div>
@@ -178,19 +180,43 @@ const PostReactions: React.FC<{
 const PostActions: React.FC = () => (
 	<div className='mt-1 flex items-center space-x-4'>
 		<PostAction
-			icon={<GrLike className='cursor-pointer text-[#E5007A]' />}
+			icon={
+				<ImageIcon
+					src='/assets/icons/like-pink.svg'
+					alt='like icon'
+					className='h-5 w-5'
+				/>
+			}
 			label={LIKE_LABEL}
 		/>
 		<PostAction
-			icon={<GrDislike className='cursor-pointer text-[#E5007A]' />}
-			label={LIKE_LABEL}
+			icon={
+				<ImageIcon
+					src='/assets/icons/dislike-pink.svg'
+					alt='like icon'
+					className='h-5 w-5'
+				/>
+			}
+			label={DISLIKE_LABEL}
 		/>
 		<PostAction
-			icon={<FaShareAlt className='cursor-pointer text-[#E5007A]' />}
+			icon={
+				<ImageIcon
+					src='/assets/icons/share-pink.svg'
+					alt='like icon'
+					className='h-5 w-5'
+				/>
+			}
 			label='Share'
 		/>
 		<PostAction
-			icon={<LiaCommentsSolid className='cursor-pointer text-[#E5007A]' />}
+			icon={
+				<ImageIcon
+					src='/assets/icons/comment-pink.svg'
+					alt='like icon'
+					className='h-5 w-5'
+				/>
+			}
 			label={COMMENT_LABEL}
 		/>
 	</div>
@@ -199,7 +225,7 @@ const PostActions: React.FC = () => (
 const PostAction: React.FC<{ icon: JSX.Element; label: string }> = ({ icon, label }) => (
 	<div className='flex items-center gap-2'>
 		{icon}
-		<p className='cursor-pointer pt-3 text-[#E5007A]'>{label}</p>
+		<p className='cursor-pointer pt-4 text-[#E5007A]'>{label}</p>
 	</div>
 );
 

@@ -13,20 +13,23 @@ import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import apiErrorWithStatusCode from '~src/util/apiErrorWithStatusCode';
 
-const getAllTrackLevelVotesAnalytics = async ({ network, res }: { network: string; res: NextApiResponse<{ averageSupportPercentages: Record<string, number> } | MessageType> }) => {
+const getAllTrackLevelVotesAnalytics = async ({ network }: { network: string }) => {
 	try {
 		if (!network || !isValidNetwork(network)) throw apiErrorWithStatusCode(messages.INVALID_NETWORK, 400);
+		const trackNumberArray: number[] = [];
 
-		const trackNumbers = Object.entries(networkTrackInfo[network]).map(([, value]) => value.trackId);
+		Object.entries(networkTrackInfo[network]).map(([, value]) => {
+			if (!value?.fellowshipOrigin) {
+				trackNumberArray.push(value.trackId);
+			}
+		});
 		const averageSupportPercentages: Record<string, number> = {};
 
-		const dataPromise = trackNumbers.map(async (trackNumber) => {
+		const dataPromise = trackNumberArray.map(async (trackNumber) => {
 			let totalSupportedVoted = 0;
 			let totalVotes = 0;
 
 			const trackSnapshot = await networkDocRef(network).collection('track_level_analytics').doc(String(trackNumber))?.collection('votes').get();
-
-			if (trackSnapshot.empty) return res.status(404).json({ message: 'No data found' });
 
 			trackSnapshot.docs.map((doc) => {
 				const data = doc.data();
@@ -57,8 +60,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ averageSuppor
 	}
 
 	const { data, error } = await getAllTrackLevelVotesAnalytics({
-		network,
-		res
+		network
 	});
 	if (data) {
 		return res.status(200).json(data);

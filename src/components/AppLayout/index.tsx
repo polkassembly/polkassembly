@@ -42,7 +42,8 @@ import {
 	ApplayoutIdentityIcon,
 	ArchivedIcon,
 	ClearIdentityOutlinedIcon,
-	RoundedDollarIcon
+	RoundedDollarIcon,
+	AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -916,6 +917,32 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			)
 		);
 	}
+	if (isOpenGovSupported(network)) {
+		gov2OverviewItems.splice(
+			3,
+			0,
+			getSiderMenuItem(
+				<div className='flex w-fit gap-2'>
+					<span>Gov Analytics</span>
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+				</div>,
+				'/analytics',
+				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<div
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						style={{
+							transition: 'opacity 0.3s ease-in-out',
+							opacity: sidedrawer ? 0 : 1
+						}}
+					>
+						NEW
+					</div>
+				</div>
+			)
+		);
+	}
+
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));
 	}

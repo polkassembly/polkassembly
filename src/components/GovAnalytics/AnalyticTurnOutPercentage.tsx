@@ -37,11 +37,14 @@ const StyledCard = styled(Card)`
 	}
 `;
 
-const CustomTooltip = ({ point }: any) => (
-	<div className='rounded bg-white px-2 py-1 text-bodyBlue drop-shadow-md dark:bg-[#323232] dark:text-white'>
-		{point?.data?.xFormatted}: <strong>{point?.data?.yFormatted}%</strong>
-	</div>
-);
+const CustomBarTooltip = ({ point }: any) => {
+	return (
+		<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
+			<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>{point?.data?.xFormatted}</div>
+			<div className='text-xl font-medium dark:text-blue-dark-high'>{point?.data?.yFormatted}%</div>
+		</div>
+	);
+};
 
 const AnalyticTurnOutPercentage = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -91,90 +94,73 @@ const AnalyticTurnOutPercentage = () => {
 		  ]
 		: [];
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard className='mx-auto max-h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Average Turnout Percentage</h2>
 			<Spin spinning={isLoading}>
 				<div
 					className='flex justify-start'
-					style={{ height: '300px', width: '100%' }}
+					style={{ height: '200px', width: '100%' }}
 				>
 					<ResponsiveLine
 						data={data}
-						colors={['#978FED']}
-						margin={{
-							bottom: 97,
-							left: 60,
-							right: 20,
-							top: 60
-						}}
+						margin={{ bottom: 11, left: 30, right: 10, top: 30 }}
 						xScale={{ type: 'point' }}
-						yScale={{
-							max: 'auto',
-							min: 'auto',
-							reverse: false,
-							stacked: true,
-							type: 'linear'
-						}}
-						yFormat=' >-.2f'
+						// eslint-disable-next-line sort-keys
+						yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false, reverse: false }}
 						axisTop={null}
 						axisRight={null}
-						axisBottom={{
-							legend: '',
-							legendOffset: 36,
-							legendPosition: 'middle',
-							tickPadding: 20,
-							tickRotation: -56,
-							tickSize: 0,
-							truncateTickAt: 10
-						}}
+						axisBottom={null}
+						enablePoints={true}
 						axisLeft={{
-							legend: 'percentage',
-							legendOffset: -50,
-							legendPosition: 'middle',
-							tickPadding: 10,
+							format: (value) => `${value}%`,
+							tickPadding: 0,
 							tickRotation: 0,
-							tickSize: 0,
-							truncateTickAt: 0
+							tickSize: 3
 						}}
-						tooltip={CustomTooltip}
-						enableGridX={false}
-						enableGridY={false}
-						pointSize={6}
+						tooltip={CustomBarTooltip}
+						tooltipFormat={(value) => `${Number(value).toFixed(1)} %`}
+						colors={['#978FED']}
+						pointSize={10}
 						pointColor={{ theme: 'background' }}
 						pointBorderWidth={2}
 						pointBorderColor={{ from: 'serieColor' }}
-						enablePointLabel={true}
-						pointLabel='data.yFormatted'
 						pointLabelYOffset={-12}
-						enableCrosshair={false}
-						legends={[]}
 						useMesh={true}
-						debugMesh={false}
+						enableGridX={false}
+						enableGridY={false}
+						curve='monotoneX'
+						areaOpacity={0.1}
 						theme={{
 							axis: {
-								legend: {
-									text: {
-										fill: theme === 'dark' ? '#909090' : 'black'
+								domain: {
+									line: {
+										stroke: 'transparent',
+										strokeWidth: 1
 									}
 								},
 								ticks: {
 									line: {
-										stroke: theme === 'dark' ? '#fff' : '#333'
+										stroke: 'transparent'
 									},
 									text: {
-										fill: theme === 'dark' ? '#fff' : '#333'
+										fill: theme === 'dark' ? '#fff' : '#576D8B',
+										fontSize: 11,
+										outlineColor: 'transparent',
+										outlineWidth: 0
 									}
+								}
+							},
+							grid: {
+								line: {
+									stroke: theme === 'dark' ? '#3B444F' : '#D2D8E0',
+									strokeDasharray: '2 2',
+									strokeWidth: 1
 								}
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
-								}
-							},
-							tooltip: {
-								container: {
-									background: theme === 'dark' ? '#1E2126' : '#fff',
-									color: theme === 'dark' ? '#fff' : '#333'
+									fontSize: 12,
+									textTransform: 'capitalize'
 								}
 							}
 						}}

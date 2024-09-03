@@ -86,19 +86,19 @@ const ReferendumCount = () => {
 	const filteredLegends = data.slice(0, 5).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
+		label: `${item.label.split('_').join(' ')}[${item.value}]: ${((item.value / totalPosts) * 100).toFixed(2)}% `
 	}));
 
 	const middleFilteredLegends = data.slice(5, 10).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
+		label: `${item.label.split('_').join(' ')} [${item.value}]: ${((item.value / totalPosts) * 100).toFixed(2)}% `
 	}));
 
 	const lastFilteredLegends = data.slice(10).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
+		label: `${item.label.split('_').join(' ')} [${item.value}]: ${((item.value / totalPosts) * 100).toFixed(2)}%`
 	}));
 
 	return (
@@ -120,8 +120,7 @@ const ReferendumCount = () => {
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
-						sortByValue={true}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -206,7 +205,7 @@ const ReferendumCount = () => {
 						legends={[
 							{
 								anchor: 'right',
-								data: filteredLegends,
+								data: lastFilteredLegends,
 								direction: 'column',
 								itemDirection: 'left-to-right',
 								itemHeight: 40,
@@ -234,7 +233,7 @@ const ReferendumCount = () => {
 							},
 							{
 								anchor: 'right',
-								data: lastFilteredLegends,
+								data: filteredLegends,
 								direction: 'column',
 								itemDirection: 'left-to-right',
 								itemHeight: 40,

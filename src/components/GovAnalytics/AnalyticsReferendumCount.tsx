@@ -113,7 +113,7 @@ const AnalyticsReferendumCount = () => {
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -162,7 +162,8 @@ const AnalyticsReferendumCount = () => {
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
+									fill: theme === 'dark' ? '#fff' : '#333',
+									fontSize: 14
 								}
 							},
 							tooltip: {
@@ -182,12 +183,12 @@ const AnalyticsReferendumCount = () => {
 								})),
 								direction: 'column',
 								itemDirection: 'left-to-right',
-								itemHeight: 52,
+								itemHeight: 32,
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
 								symbolShape: 'circle',
-								symbolSize: 16,
+								symbolSize: 8,
 								translateX: 40,
 								translateY: 0
 							}

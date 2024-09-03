@@ -89,9 +89,9 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					data={data}
 					keys={['Delegator', 'Delegatee']}
 					indexBy='trackName'
-					margin={{ bottom: 80, left: 80, right: 0, top: 20 }}
+					margin={{ bottom: 60, left: 10, right: 40, top: 50 }}
 					padding={0.6}
-					enableGridY={false}
+					enableGridY={true}
 					enableLabel={false}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
@@ -124,23 +124,15 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					axisRight={null}
 					borderRadius={2}
 					axisBottom={{
-						legend: 'Tracks',
+						legend: '',
 						legendOffset: 72,
 						legendPosition: 'middle',
 						tickPadding: 5,
 						tickRotation: -26,
-						tickSize: 5,
+						tickSize: 0,
 						truncateTickAt: 50
 					}}
-					axisLeft={{
-						legend: 'Total',
-						legendOffset: -66,
-						legendPosition: 'middle',
-						tickPadding: 5,
-						tickRotation: 0,
-						tickSize: 5,
-						truncateTickAt: 0
-					}}
+					axisLeft={null}
 					labelSkipWidth={12}
 					labelSkipHeight={12}
 					labelTextColor={{
@@ -167,11 +159,20 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 							itemWidth: 85,
 							itemsSpacing: 2,
 							justify: false,
-							symbolSize: 12,
+							symbolShape: 'circle',
+							symbolSize: 5,
 							translateX: -10,
-							translateY: -25
+							translateY: -50
 						}
 					]}
+					tooltip={({ id, value, indexValue }) => (
+						<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
+							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda {indexValue}</div>
+							<div className='flex items-end gap-x-1 text-xl font-medium dark:text-blue-dark-high'>
+								{value} <p className='m-0 p-0 text-sm capitalize text-lightBlue dark:text-blue-dark-high'>{id}</p>
+							</div>
+						</div>
+					)}
 					role='application'
 					isFocusable={true}
 					ariaLabel=''

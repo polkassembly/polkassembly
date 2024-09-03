@@ -90,12 +90,26 @@ const AnalyticsReferendumOutcome = () => {
 	const items: MenuProps['items'] = [
 		{
 			key: '0',
-			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>All Tracks</p>,
+			label: (
+				<p
+					className='m-0 p-0 text-sm capitalize'
+					style={{ color: theme === 'dark' ? '#fff' : '#000' }}
+				>
+					All Tracks
+				</p>
+			),
 			onClick: handleMenuClick
 		},
 		...trackIds.map((trackId, index) => ({
 			key: `${index + 1}`,
-			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>{getTrackNameFromId(network, trackId)?.split('_').join(' ')}</p>,
+			label: (
+				<p
+					className='m-0 p-0 text-sm capitalize'
+					style={{ color: theme === 'dark' ? '#fff' : '#243a57' }}
+				>
+					{getTrackNameFromId(network, trackId)?.split('_').join(' ')}
+				</p>
+			),
 			onClick: handleMenuClick
 		}))
 	];
@@ -135,20 +149,25 @@ const AnalyticsReferendumOutcome = () => {
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<div className='flex items-center justify-between'>
-				<h2 className='text-base font-semibold sm:text-xl'>Referendum Outcome</h2>
-				<Dropdown menu={{ items }}>
-					<a onClick={(e) => e.preventDefault()}>
-						<Space>
-							{selectedTrack
-								? getTrackNameFromId(network, trackIds[selectedTrack])
-										.split('_')
-										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-										.join(' ')
-								: 'All Tracks'}
-							<DownOutlined />
-						</Space>
-					</a>
-				</Dropdown>
+				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
+				<div className='flex h-[30px] w-[109px] items-center justify-center rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'>
+					<Dropdown
+						menu={{ items }}
+						theme={theme}
+					>
+						<a onClick={(e) => e.preventDefault()}>
+							<Space>
+								{selectedTrack
+									? getTrackNameFromId(network, trackIds[selectedTrack])
+											.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ')
+									: 'All Tracks'}
+								<DownOutlined />
+							</Space>
+						</a>
+					</Dropdown>
+				</div>
 			</div>
 			<Spin spinning={loading}>
 				<div
@@ -167,7 +186,7 @@ const AnalyticsReferendumOutcome = () => {
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -216,7 +235,8 @@ const AnalyticsReferendumOutcome = () => {
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
+									fill: theme === 'dark' ? '#fff' : '#333',
+									fontSize: 14
 								}
 							},
 							tooltip: {
@@ -236,12 +256,12 @@ const AnalyticsReferendumOutcome = () => {
 								})),
 								direction: 'column',
 								itemDirection: 'left-to-right',
-								itemHeight: 52,
+								itemHeight: 32,
 								itemWidth: -60,
 								itemsSpacing: 1,
 								justify: false,
 								symbolShape: 'circle',
-								symbolSize: 16,
+								symbolSize: 8,
 								translateX: 40,
 								translateY: 0
 							}

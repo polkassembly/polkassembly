@@ -684,7 +684,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-						} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+						} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 					>
 						{activeProposal && activeProposal > 9 ? (
 							<>
@@ -1130,7 +1130,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
 									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
 									: ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
 								<>
@@ -1152,7 +1152,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
 									? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
 									: ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
 								<>

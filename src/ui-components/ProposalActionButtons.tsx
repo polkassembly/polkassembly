@@ -62,7 +62,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 			setOpenLoginPrompt(true);
 		}
 	};
-	const buttonText = pathname === '/activityfeed' ? 'Overview' : pathname === '/opengov' ? 'Active Feed' : '';
+	const buttonText = pathname === '/activity-feed' ? 'Overview' : pathname === '/opengov' ? 'Active Feed' : '';
 
 	const items: MenuProps['items'] = [
 		{
@@ -125,9 +125,9 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 	];
 	return (
 		<>
-			{pathname === '/activityfeed' || pathname === '/opengov' ? (
+			{pathname === '/activity-feed' || pathname === '/opengov' || pathname === '/' ? (
 				<Link
-					href={pathname === '/activityfeed' ? '/opengov' : '/activityfeed'}
+					href={pathname === '/activity-feed' ? '/opengov' : '/activity-feed'}
 					className=' '
 				>
 					<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-3 py-2 font-poppins text-[#243A57]'>

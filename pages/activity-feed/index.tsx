@@ -527,7 +527,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						)}
 					</div>
 					<div className='mx-1 mt-8 max-w-[450px]  xl:max-w-[940px]'>
-						<div className='mx-1 mt-8 max-w-[450px] xl:max-w-[940px]'>
+						<div className='mx-1  max-w-[450px] xl:max-w-[940px]'>
 							{activeTab === 'explore' ? (
 								<LatestActivityExplore
 									gov2LatestPosts={gov2LatestPosts}

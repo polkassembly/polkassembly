@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Timeline, TimelineItemProps } from 'antd';
 import styled from 'styled-components';
 import { EmailIcon, TwitterIcon } from '~src/ui-components/CustomIcons';
@@ -31,6 +31,8 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const [fieldLoading, setFieldLoading] = useState<{ twitter: boolean; email: boolean }>({ email: false, twitter: false });
 	const [twitterVerificationStart, setTwitterVerificationStart] = useState<boolean>(false);
 	const router = useRouter();
+	const isEmailVerified = useRef(false);
+	const isTwitterVerified = useRef(false);
 
 	const items: TimelineItemProps[] = [];
 
@@ -50,12 +52,16 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					description='Check your primary inbox or spam to verify your email address.'
 					onVerify={async () => await handleVerify(ESocials.EMAIL, status.email === VerificationStatus.VERFICATION_EMAIL_SENT ? true : false)}
 					value={email?.value}
-					verified={email?.verified}
+					verified={isEmailVerified.current || false}
 					status={status?.email as VerificationStatus}
 					loading={fieldLoading.email}
 				/>
 			),
-			dot: <EmailIcon className={`${email?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />,
+			dot: (
+				<EmailIcon
+					className={`${isEmailVerified.current ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`}
+				/>
+			),
 			key: 1
 		});
 	}
@@ -67,14 +73,16 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 					description='Please login to Twitter to verify your email address.'
 					onVerify={handleTwitterVerificationClick}
 					value={twitter?.value}
-					verified={twitter?.verified}
+					verified={isTwitterVerified.current || false}
 					status={twitterVerificationStart ? VerificationStatus.PLEASE_VERIFY_TWITTER : (status?.twitter as VerificationStatus)}
 					loading={fieldLoading.twitter}
 					fieldName={ESocials.TWITTER}
 				/>
 			),
 			dot: (
-				<TwitterIcon className={` ${twitter?.verified ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`} />
+				<TwitterIcon
+					className={` ${isTwitterVerified?.current ? 'bg-[#51D36E] text-white' : 'bg-[#edeff3] text-[#576D8B] dark:bg-section-dark-container'} ' rounded-full p-2.5 text-xl`}
+				/>
 			),
 			key: 2
 		});
@@ -96,8 +104,10 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const handleSetStates = (fieldName: ESocials, verifiedField: boolean, verificationStatus: VerificationStatus, noStatusUpdate?: boolean) => {
 		if (ESocials.EMAIL === fieldName) {
 			!noStatusUpdate && setStatus({ ...status, email: verificationStatus });
+			isEmailVerified.current = verifiedField;
 			handleNewStateUpdation({ email: { ...email, verified: verifiedField } }, true);
 		} else {
+			isTwitterVerified.current = verifiedField;
 			!noStatusUpdate && setStatus({ ...status, twitter: verificationStatus });
 			handleNewStateUpdation({ twitter: { ...twitter, verified: verifiedField } }, true);
 		}

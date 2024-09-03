@@ -40,9 +40,27 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const LegendContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	overflow-x: auto;
+	white-space: nowrap;
+	padding-top: 2px;
+	margin-top: -32px;
+
+	/* Hide scrollbar for all browsers */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+	&::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, and Opera */
+	}
+`;
+
 const AnalyticsReferendumOutcome = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
 	const { network } = useNetworkSelector();
@@ -150,7 +168,7 @@ const AnalyticsReferendumOutcome = () => {
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
-				<div className='flex h-[30px] w-[109px] items-center justify-center rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'>
+				<div className={`flex h-[30px] w-[109px] items-center justify-center ${isMobile ? '' : 'rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}`}>
 					<Dropdown
 						menu={{ items }}
 						theme={theme}
@@ -177,9 +195,9 @@ const AnalyticsReferendumOutcome = () => {
 					<ResponsivePie
 						data={data}
 						margin={{
-							bottom: 8,
+							bottom: isMobile ? 80 : 8,
 							left: 10,
-							right: 260,
+							right: isMobile ? 0 : 260,
 							top: 20
 						}}
 						sortByValue={true}
@@ -246,28 +264,50 @@ const AnalyticsReferendumOutcome = () => {
 								}
 							}
 						}}
-						legends={[
-							{
-								anchor: 'right',
-								data: data.map((item) => ({
-									color: item.color,
-									id: item.id,
-									label: `${item.label} - ${item.value}`
-								})),
-								direction: 'column',
-								itemDirection: 'left-to-right',
-								itemHeight: 32,
-								itemWidth: -60,
-								itemsSpacing: 1,
-								justify: false,
-								symbolShape: 'circle',
-								symbolSize: 8,
-								translateX: 40,
-								translateY: 0
-							}
-						]}
+						legends={
+							isMobile
+								? []
+								: [
+										{
+											anchor: 'right',
+											data: data.map((item) => ({
+												color: item.color,
+												id: item.id,
+												label: `${item.label} - ${item.value}`
+											})),
+											direction: 'column',
+											itemDirection: 'left-to-right',
+											itemHeight: 32,
+											itemWidth: -60,
+											itemsSpacing: 1,
+											justify: false,
+											symbolShape: 'circle',
+											symbolSize: 8,
+											translateX: 40,
+											translateY: 0
+										}
+								  ]
+						}
 					/>
 				</div>
+				{isMobile && (
+					<LegendContainer>
+						{data.map((item) => (
+							<div
+								key={item.id}
+								className='mb-2 mr-4 flex items-center text-xs text-bodyBlue dark:text-white'
+							>
+								<div
+									className='mr-2 h-2 w-2 rounded-full'
+									style={{ background: item.color }}
+								></div>
+								<p className='m-0 p-0'>
+									{item.label} - {item.value}
+								</p>
+							</div>
+						))}
+					</LegendContainer>
+				)}
 			</Spin>
 		</StyledCard>
 	);

@@ -762,7 +762,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/auction-admin') ? (
 									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+									<AuctionAdminIcon className='-ml-1 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : (
@@ -771,7 +771,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/staking-admin') ? (
 									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<StakingAdminIcon className=' -ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<StakingAdminIcon className=' -ml-1 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						);
@@ -1603,7 +1603,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
-						className={`${username ? 'auth-sider-menu' : ''} ${sidebarCollapsed && 'flex flex-grow flex-col items-center    '}  ml-2 pr-2 dark:bg-section-dark-overlay`}
+						className={`${username ? 'auth-sider-menu' : ''} ${
+							sidebarCollapsed && 'ml-2 flex flex-grow flex-col items-center pr-2    '
+						}   overflow-x-hidden  dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (

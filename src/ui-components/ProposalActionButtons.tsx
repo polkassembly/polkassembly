@@ -14,7 +14,7 @@ import { useTheme } from 'next-themes';
 import { Dropdown } from './Dropdown';
 import dynamic from 'next/dynamic';
 import SkeletonButton from '~src/basic-components/Skeleton/SkeletonButton';
-import { MdOutlineAutorenew } from 'react-icons/md';
+// import { MdOutlineAutorenew } from 'react-icons/md';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -133,9 +133,7 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 				>
 					<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] p-1 px-3 font-poppins text-[#243A57]'>
 						Switch to <span className='font-semibold'>{buttonText}</span>
-						<span>
-							<MdOutlineAutorenew className='mt-1 text-lg text-[#90A0B7]' />
-						</span>
+						<span>{/* <MdOutlineAutorenew className='mt-1 text-lg text-[#90A0B7]' /> */}</span>
 					</button>
 				</Link>
 			) : null}

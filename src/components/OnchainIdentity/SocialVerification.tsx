@@ -232,12 +232,16 @@ const SocialVerification = ({ className, onCancel, startLoading, closeModal, set
 	const handleProceedDisabled = () => {
 		let socialsCount = 0;
 		let verifiedCount = 0;
-		Object?.values(socials).forEach((value) => {
+		Object?.entries(socials).forEach(([key, value]) => {
 			if (value?.value?.length) {
 				socialsCount += 1;
 			}
-			if (value?.verified) {
-				verifiedCount += 1;
+
+			if (key == ESocials.EMAIL) {
+				verifiedCount += isEmailVerified.current ? 1 : 0;
+			}
+			if (key == ESocials.TWITTER) {
+				verifiedCount += isTwitterVerified.current ? 1 : 0;
 			}
 		});
 

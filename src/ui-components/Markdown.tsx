@@ -152,6 +152,10 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		img {
 			overflow-x: auto !important;
 			margin: 2rem 0;
+			object-fit: contain !important;
+			width: 100% !important;
+			height: auto !important;
+			max-width: 100% !important;
 		}
 
 		pre {

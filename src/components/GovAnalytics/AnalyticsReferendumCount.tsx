@@ -89,7 +89,7 @@ const AnalyticsReferendumCount = () => {
 	const data = Object.keys(categoryInfo).map((category) => ({
 		color: colors[Object.keys(categoryInfo).indexOf(category as keyof typeof categoryInfo)],
 		id: category,
-		label: category,
+		label: category.charAt(0).toUpperCase() + category.slice(1),
 		value: categoryInfo[category as keyof typeof categoryInfo]
 	}));
 
@@ -109,10 +109,11 @@ const AnalyticsReferendumCount = () => {
 							right: 260,
 							top: 20
 						}}
+						sortByValue={true}
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={15}
+						cornerRadius={0}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{

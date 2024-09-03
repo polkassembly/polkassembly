@@ -91,7 +91,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string }> = ({ bgColo
 		</div>
 		<div>
 			<div className='castvoteborder m-0 flex cursor-pointer items-center gap-1 p-0 px-3 text-[#E5007A]'>
-				<img
+				<ImageIcon
 					src='/Vote.svg'
 					alt=''
 					className='m-0 h-6 w-6 p-0'

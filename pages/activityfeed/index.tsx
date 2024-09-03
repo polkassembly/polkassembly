@@ -50,6 +50,8 @@ import AboutActivity from '~src/components/ActivityFeed/AboutActivity';
 import LatestActivityFollowing from '~src/components/ActivityFeed/LatestActivityFollowing';
 import LatestActivityExplore from '~src/components/ActivityFeed/LatestActivityExplore';
 import FeaturesSection from '~src/components/ActivityFeed/FeaturesSection';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const ActivityTreasury = dynamic(() => import('~src/components/ActivityFeed/ActivityTreasury'), {
 	loading: () => <Skeleton active />,
@@ -480,6 +482,9 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 		dispatch(setNetwork(network));
 	}, [network, dispatch]);
 	const [activeTab, setActiveTab] = useState('explore');
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
@@ -489,20 +494,20 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 				desc={`Join the future of blockchain with ${network}'s revolutionary governance system on Polkassembly`}
 				network={network}
 			/>
-			<div className=' w-full  '>
+			<div className=' w-full font-poppins  '>
 				<div className='mt-3 flex w-full items-center justify-between'>
 					<div className='flex h-12 gap-5'>
 						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
 						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px]'>
 							<p
 								onClick={() => setActiveTab('following')}
-								className={`cursor-pointer rounded-lg p-1 px-2 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
 							>
 								Following
 							</p>
 							<p
 								onClick={() => setActiveTab('explore')}
-								className={`cursor-pointer rounded-lg p-1 px-2 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
 							>
 								Explore
 							</p>
@@ -542,30 +547,33 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 								/>
 							)}
 						</div>
-						<div>
-							<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
-								<div className='flex items-center justify-between gap-2'>
-									<div className='flex items-center '>
-										<p className='pt-3 font-semibold'>Voted Proposals</p>
-										<img
-											src='/assets/icons/arrow.svg'
-											alt=''
-											className='h-5 w-5 -rotate-90 p-0'
-										/>
+						{currentUser && currentUser?.username && currentUser?.id && (
+							<div>
+								<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+									<div className='flex items-center justify-between gap-2'>
+										<div className='flex items-center '>
+											<p className='pt-3 font-semibold'>Voted Proposals</p>
+											<img
+												src='/assets/icons/arrow.svg'
+												alt=''
+												className='h-5 w-5 -rotate-90 p-0'
+											/>
+										</div>
+										<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
 									</div>
-									<p className='rounded-full bg-[#485F7D] bg-opacity-[5%] p-2 px-3 text-[9px]'>Last 15 days</p>
-								</div>
-								<div>
-									<p className='text-[#485F7D]'>
-										<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
-										<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
-									</p>
+									<div>
+										<p className='text-[#485F7D]'>
+											<span className='text-xl font-semibold text-[#E5007A]'>{proposaldata.votes}</span> out of{' '}
+											<span className='text-md font-semibold text-black'>{proposaldata.proposals}</span> active proposals
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
+						)}
+
 						<div>
 							<div className='relative mt-5 rounded-xxl  text-[13px] drop-shadow-md dark:bg-section-dark-overlay '>
-								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : 0}</p>
+								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : '#00'}</p>
 								<div className='relative h-full w-full'>
 									<img
 										src='/rankcard1.svg'
@@ -580,19 +588,39 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 											alt='rankcard2'
 										/>
 
-										<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
-											<div className='flex items-center gap-2'>
-												<img
-													src={currentUserdata?.image ? currentUserdata?.image : '/rankcard3.svg'}
-													className='h-10 w-10 rounded-full '
-													alt='rankcard3'
-												/>
-												<p className='mt-2 font-semibold text-black'>{username}</p>
-											</div>
-											<div className='flex items-center gap-4'>
-												<ScoreTag score={currentUserdata?.profile_score} />
-											</div>
-										</div>
+										{currentUser?.username && currentUser?.id ? (
+											<>
+												<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
+													<div className='flex items-center gap-2'>
+														<img
+															src={currentUserdata?.image ? currentUserdata?.image : '/rankcard3.svg'}
+															className='h-10 w-10 rounded-full '
+															alt='rankcard3'
+														/>
+														<p className='mt-2 font-semibold text-black'>{username}</p>
+													</div>
+													<div className='flex items-center gap-4'>
+														<ScoreTag score={currentUserdata?.profile_score} />
+													</div>
+												</div>
+											</>
+										) : (
+											<>
+												<div className='absolute -bottom-1 left-0 right-0 flex  justify-center'>
+													<p className='text-center text-lg font-bold'>
+														<span
+															onClick={() => {
+																setLoginOpen(true);
+															}}
+															className='cursor-pointer text-[#E5007A] underline'
+														>
+															Login
+														</span>{' '}
+														to see your rank.
+													</p>
+												</div>
+											</>
+										)}
 									</div>
 								</div>
 							</div>
@@ -617,6 +645,18 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						</div>
 					</div>
 				</div>
+				<SignupPopup
+					setLoginOpen={setLoginOpen}
+					modalOpen={openSignup}
+					setModalOpen={setSignupOpen}
+					isModal={true}
+				/>
+				<LoginPopup
+					setSignupOpen={setSignupOpen}
+					modalOpen={openLogin}
+					setModalOpen={setLoginOpen}
+					isModal={true}
+				/>
 			</div>
 		</>
 	);

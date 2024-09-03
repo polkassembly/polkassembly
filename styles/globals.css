@@ -914,3 +914,8 @@ z-index: 105 !important;
   border: 1px solid #E5007A;
   border-radius: 10px;
 }
+
+.castvoteborder{
+  border: 1px solid #E5007A;
+  border-radius: 8px;
+}

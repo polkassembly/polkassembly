@@ -130,9 +130,14 @@ const ProposalActionButtons = ({ isUsedInHomePage = false, isCreateProposal, isC
 					href={pathname === '/activityfeed' ? '/opengov' : '/activityfeed'}
 					className=' '
 				>
-					<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] p-1 px-3 font-poppins text-[#243A57]'>
+					<button className='mr-5 flex cursor-pointer items-center gap-1 rounded-lg border border-[#D2D8E0] bg-[#FFFFFF] px-3 py-2 font-poppins text-[#243A57]'>
 						Switch to <span className='font-semibold'>{buttonText}</span>
-						<span>{/* <MdOutlineAutorenew className='mt-1 text-lg text-[#90A0B7]' /> */}</span>
+						<span>
+							<ImageIcon
+								src='/assets/icons/loop.svg'
+								alt='loop'
+							/>
+						</span>
 					</button>
 				</Link>
 			) : null}

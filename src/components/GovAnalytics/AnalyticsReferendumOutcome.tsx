@@ -139,7 +139,12 @@ const AnalyticsReferendumOutcome = () => {
 				<Dropdown menu={{ items }}>
 					<a onClick={(e) => e.preventDefault()}>
 						<Space>
-							{selectedTrack ? getTrackNameFromId(network, trackIds[selectedTrack]).split('_').join(' ') : 'All Tracks'}
+							{selectedTrack
+								? getTrackNameFromId(network, trackIds[selectedTrack])
+										.split('_')
+										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+										.join(' ')
+								: 'All Tracks'}
 							<DownOutlined />
 						</Space>
 					</a>
@@ -158,10 +163,11 @@ const AnalyticsReferendumOutcome = () => {
 							right: 260,
 							top: 20
 						}}
+						sortByValue={true}
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={15}
+						cornerRadius={0}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{

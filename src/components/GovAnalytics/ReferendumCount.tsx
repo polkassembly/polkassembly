@@ -86,19 +86,19 @@ const ReferendumCount = () => {
 	const filteredLegends = data.slice(0, 5).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
 	}));
 
 	const middleFilteredLegends = data.slice(5, 10).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
 	}));
 
 	const lastFilteredLegends = data.slice(10).map((item) => ({
 		color: item.color,
 		id: item.id,
-		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [${item.value}]`
+		label: `${item.label.split('_').join(' ')} - ${((item.value / totalPosts) * 100).toFixed(2)}% [Total - ${item.value}]`
 	}));
 
 	return (
@@ -120,7 +120,8 @@ const ReferendumCount = () => {
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={15}
+						cornerRadius={0}
+						sortByValue={true}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -214,7 +215,7 @@ const ReferendumCount = () => {
 								justify: false,
 								symbolShape: 'circle',
 								symbolSize: 8,
-								translateX: -450,
+								translateX: -540,
 								translateY: 0
 							},
 							{
@@ -228,7 +229,7 @@ const ReferendumCount = () => {
 								justify: false,
 								symbolShape: 'circle',
 								symbolSize: 8,
-								translateX: -250,
+								translateX: -300,
 								translateY: 0
 							},
 							{
@@ -242,7 +243,7 @@ const ReferendumCount = () => {
 								justify: false,
 								symbolShape: 'circle',
 								symbolSize: 8,
-								translateX: -20,
+								translateX: -30,
 								translateY: 0
 							}
 						]}

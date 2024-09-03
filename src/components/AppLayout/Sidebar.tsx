@@ -878,9 +878,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/preimages',
 			<>
 				{router.pathname === '/preimages' ? (
-					<SelectedPreimages className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedPreimages className='-ml-[10px] -mt-3 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<PreimagesIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<PreimagesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -908,7 +908,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span>Gov Analytics</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
 				</div>,
-				'/analytics',
+				'/gov-analytics',
 				<div className='relative'>
 					<AnalyticsSVGIcon className='-ml-3 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					<div
@@ -1300,7 +1300,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<Link href='/parachains'>
 							<div className='flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] '>
 								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='ml-2  text-xs font-medium uppercase text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
+								<span className='ml-2  text-xs font-medium  text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,
@@ -1476,7 +1476,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute   bottom-10 left-12 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
 											<div className='absolute left-4 top-7 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1518,9 +1518,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -left-4 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute -left-2 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Calendar
-											<div className='absolute left-16 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-14 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1549,7 +1549,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										/>
 										<div className='absolute -bottom-7 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute  right-11 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute  right-8 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1596,11 +1596,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						</>
 					)}
 				</div>
-				<div
-					className={`hide-scrollbar overflow-x-hidden  ${
-						!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[74px] xl:h-[630px]' : 'mt-2 h-[420px] overflow-y-auto  pb-32 lg:h-[345px]'
-					} `}
-				>
+				<div className={`hide-scrollbar  ${!sidebarCollapsed ? ' mt-2 overflow-y-auto pb-[104px] ' : 'mt-2  overflow-y-auto  pb-56 '} `}>
 					<Menu
 						theme={theme as any}
 						mode='inline'
@@ -1662,7 +1658,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										/>
 										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Staking
-											<div className='absolute left-14  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-12  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>

@@ -77,8 +77,8 @@ export const getTrackDelegationAnalyticsStats = async ({ network }: { network: s
 
 		const formattedTrackStats = Object.keys(trackStats).reduce((acc, track) => {
 			acc[track] = {
-				delegateesData: trackStats[track].delegateesData,
-				delegatorsData: trackStats[track].delegatorsData,
+				delegateesData: {},
+				delegatorsData: {},
 				totalCapital: trackStats[track].totalCapital.toString(),
 				totalDelegates: trackStats[track].totalDelegates,
 				totalDelegators: trackStats[track].totalDelegators,

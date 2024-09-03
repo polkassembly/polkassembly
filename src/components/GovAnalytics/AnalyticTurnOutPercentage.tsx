@@ -37,6 +37,12 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const CustomTooltip = ({ point }: any) => (
+	<div className='rounded bg-white px-2 py-1 text-bodyBlue drop-shadow-md dark:bg-[#323232] dark:text-white'>
+		{point?.data?.xFormatted}: <strong>{point?.data?.yFormatted}%</strong>
+	</div>
+);
+
 const AnalyticTurnOutPercentage = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [trackInfo, setTrackInfo] = useState<AnalyticsTrackInfo>();
@@ -96,7 +102,7 @@ const AnalyticTurnOutPercentage = () => {
 						data={data}
 						colors={['#978FED']}
 						margin={{
-							bottom: 90,
+							bottom: 97,
 							left: 60,
 							right: 20,
 							top: 60
@@ -114,11 +120,11 @@ const AnalyticTurnOutPercentage = () => {
 						axisRight={null}
 						axisBottom={{
 							legend: '',
-							legendOffset: 46,
+							legendOffset: 36,
 							legendPosition: 'middle',
 							tickPadding: 20,
 							tickRotation: -56,
-							tickSize: 3,
+							tickSize: 0,
 							truncateTickAt: 10
 						}}
 						axisLeft={{
@@ -127,12 +133,13 @@ const AnalyticTurnOutPercentage = () => {
 							legendPosition: 'middle',
 							tickPadding: 10,
 							tickRotation: 0,
-							tickSize: 5,
+							tickSize: 0,
 							truncateTickAt: 0
 						}}
+						tooltip={CustomTooltip}
 						enableGridX={false}
 						enableGridY={false}
-						pointSize={8}
+						pointSize={6}
 						pointColor={{ theme: 'background' }}
 						pointBorderWidth={2}
 						pointBorderColor={{ from: 'serieColor' }}
@@ -145,6 +152,11 @@ const AnalyticTurnOutPercentage = () => {
 						debugMesh={false}
 						theme={{
 							axis: {
+								legend: {
+									text: {
+										fill: theme === 'dark' ? '#909090' : 'black'
+									}
+								},
 								ticks: {
 									line: {
 										stroke: theme === 'dark' ? '#fff' : '#333'

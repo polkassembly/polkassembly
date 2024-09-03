@@ -155,8 +155,9 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 2rem 0;
 		}
 
-		.comments-image p img,
+		.comments-image p > img,
 		.comments-image img {
+			display: block;
 			overflow-x: auto !important;
 			margin: 1rem 0;
 			object-fit: contain !important;
@@ -293,6 +294,13 @@ const StyledMarkdown = styled(ReactMarkdown)`
 	}
 `;
 
+const CustomImage = ({ node, ...props }: any) => (
+	<img
+		{...props}
+		style={{ width: '100%', height: 'auto' }}
+	/>
+);
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
@@ -313,6 +321,13 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}
+				components={
+					isUsedInComments
+						? {
+								img: CustomImage
+						  }
+						: {}
+				}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

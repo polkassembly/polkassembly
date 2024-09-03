@@ -30,7 +30,7 @@ const AnalyticsTrends = () => {
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
-			defaultActiveKey={['1']} // Open the panel with key '1' by default
+			defaultActiveKey={['1']}
 		>
 			<Panel
 				header={

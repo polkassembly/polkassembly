@@ -18,6 +18,7 @@ interface Props {
 	imgHidden?: boolean;
 	theme?: string;
 	disableQuote?: boolean;
+	isUsedInComments?: boolean;
 }
 
 const StyledMarkdown = styled(ReactMarkdown)`
@@ -150,6 +151,11 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		}
 
 		img {
+			overflow-x: auto !important;
+			margin: 2rem 0;
+		}
+
+		.comments-image img {
 			overflow-x: auto !important;
 			margin: 2rem 0;
 			object-fit: contain !important;
@@ -287,7 +293,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 `;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, disableQuote = false }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
@@ -300,7 +306,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 		>
 			<HighlightMenu markdownRef={markdownRef} />
 			<StyledMarkdown
-				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${disableQuote && 'hide-blockquote'} ${
+				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isUsedInComments && 'comments-image'} ${disableQuote && 'hide-blockquote'} ${
 					isAutoComplete && 'mde-autocomplete-content'
 				} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}

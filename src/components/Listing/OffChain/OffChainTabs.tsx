@@ -40,11 +40,7 @@ const OffChainTabs = ({ className, posts, count, defaultPage }: IOffChainTabs) =
 		{
 			children: <></>,
 			key: 'Forum',
-			label: (
-				<div className='flex items-center gap-2'>
-					Forum<span className='h-5 w-[34px] rounded-[4px] bg-[#407BFF] px-[6px] text-[10px] font-bold text-white'>NEW</span>
-				</div>
-			)
+			label: <div className='flex items-center gap-2'>Forum</div>
 		}
 	];
 	const onTabClick = (key: string) => {

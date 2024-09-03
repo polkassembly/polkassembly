@@ -323,13 +323,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}
-				components={
-					isUsedInComments
-						? {
-								img: CustomImage
-						  }
-						: {}
-				}
+				components={{ img: CustomImage }}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

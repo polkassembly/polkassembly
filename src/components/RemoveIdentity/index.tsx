@@ -65,24 +65,42 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 			return;
 		}
 		setLoading({ ...loading, isLoading: true });
-		const info = await getIdentityInformation({
-			address: addr,
-			api: peopleChainApi ?? api,
-			network: network
-		});
-		setIsIdentityAvailable(!!info?.display);
-		setLoading({ ...loading, isLoading: false });
+		try {
+			const info = await getIdentityInformation({
+				address: addr,
+				api: peopleChainApi ?? api,
+				network: network
+			});
+			setIsIdentityAvailable(!!info?.display);
+		} catch (error) {
+			console.error('Failed to check identity availability', error);
+			setIsIdentityAvailable(false);
+		} finally {
+			setLoading({ ...loading, isLoading: false });
+		}
 	};
 
 	const getGasFee = async (addr: string) => {
-		if (!api || !apiReady) return;
+		if ((!api && !peopleChainApi) || !apiReady || !peopleChainApiReady) {
+			return;
+		}
 
 		setLoading({ ...loading, isLoading: true });
-		const tx = (peopleChainApi ?? api).tx.identity.clearIdentity();
-		const paymentInfo = await tx.paymentInfo(addr);
-		const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
-		setGasFee(bnGasFee);
-		setLoading({ ...loading, isLoading: false });
+		setGasFee(ZERO_BN); // Reseting gas fee before fetching again
+
+		try {
+			const tx = (peopleChainApi ?? api)?.tx.identity?.clearIdentity();
+			if (!tx) {
+				throw new Error('Transaction method not available');
+			}
+			const paymentInfo = await tx.paymentInfo(addr);
+			const bnGasFee = new BN(paymentInfo.partialFee.toString() || '0');
+			setGasFee(bnGasFee);
+		} catch (error) {
+			console.error('Failed to get gas fee:', error);
+		} finally {
+			setLoading({ ...loading, isLoading: false });
+		}
 	};
 
 	const getBondFee = () => {
@@ -134,7 +152,7 @@ const RemoveIdentity = ({ className, withButton = false }: IRemoveIdentity) => {
 	};
 
 	useEffect(() => {
-		if (!(api && peopleChainApi) || !apiReady) return;
+		if ((!api && !peopleChainApi) || !apiReady || !peopleChainApiReady) return;
 		checkIsIdentityAvailable(address || loginAddress);
 
 		getGasFee(address || loginAddress);

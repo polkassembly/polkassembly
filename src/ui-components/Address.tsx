@@ -77,6 +77,7 @@ interface Props {
 	isProfileView?: boolean;
 	addressWithVerifiedTick?: boolean;
 	isUsedIndelegationNudge?: boolean;
+	isUsedInDelegationProfile?: boolean;
 }
 
 const shortenUsername = (username: string, usernameMaxLength?: number) => {
@@ -113,7 +114,8 @@ const Address = (props: Props) => {
 		inPostHeading,
 		isProfileView = false,
 		addressWithVerifiedTick = false,
-		isUsedIndelegationNudge = false
+		isUsedIndelegationNudge = false,
+		isUsedInDelegationProfile = false
 	} = props;
 	const { network } = useNetworkSelector();
 	const apiContext = useContext(ApiContext);
@@ -449,7 +451,13 @@ const Address = (props: Props) => {
 							)}
 						</div>
 					) : (
-						<div className={`flex items-center gap-x-2 font-semibold text-bodyBlue ${!addressSuffix && 'gap-0'}`}>
+						<div
+							className={`${
+								isUsedInDelegationProfile
+									? `${poppins.variable} ${poppins.className} flex flex-col items-center text-[20px] text-blue-light-high dark:text-blue-dark-high`
+									: 'flex items-center gap-x-2 font-semibold text-bodyBlue'
+							} ${!addressSuffix && 'gap-0'}`}
+						>
 							{!disableHeader && (
 								<div className='flex items-center'>
 									<div className='flex items-center'>
@@ -469,7 +477,7 @@ const Address = (props: Props) => {
 							<div
 								className={`${!addressClassName ? 'text-sm' : addressClassName} ${
 									!disableAddressClick && 'cursor-pointer hover:underline'
-								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'}`}
+								} font-normal dark:text-blue-dark-medium ${!addressSuffix && 'font-semibold'} ${isUsedInDelegationProfile && 'mt-[10px] text-base font-normal'}`}
 								onClick={(e) => handleClick(e)}
 							>
 								({kiltName ? addressPrefix : !showFullAddress ? shortenAddress(encodedAddr, addressMaxLength) : encodedAddr})

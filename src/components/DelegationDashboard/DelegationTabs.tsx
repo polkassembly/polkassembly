@@ -116,7 +116,7 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						setUserBio={setUserBio}
 						identity={identity || null}
 					/>
-					<div className='mt-8 rounded-xxl bg-white p-5 drop-shadow-md dark:bg-section-dark-overlay'>
+					<div className='mt-8 rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:p-5'>
 						{!!userProfile?.delegationDashboardAddress && userProfile?.delegationDashboardAddress?.length > 0 ? (
 							<DashboardTrackListing
 								theme={theme}

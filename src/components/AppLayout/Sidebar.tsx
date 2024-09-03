@@ -908,7 +908,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span>Gov Analytics</span>
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
 				</div>,
-				'/analytics',
+				'/gov-analytics',
 				<div className='relative'>
 					<AnalyticsSVGIcon className='-ml-3 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					<div

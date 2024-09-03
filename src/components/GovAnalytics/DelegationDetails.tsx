@@ -43,11 +43,19 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 		DelegateeColor: '#796EEC',
 		Delegator: delegationData[key].totalDelegators,
 		DelegatorColor: '#B6B0FB',
-		trackName: `${key}`
+		trackName: key
+			.split(' ')
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.join(' ')
 	}));
 
 	const nivoTheme = {
 		axis: {
+			legend: {
+				text: {
+					fill: theme === 'dark' ? '#909090' : 'black'
+				}
+			},
 			ticks: {
 				line: {
 					stroke: theme === 'dark' ? 'white' : 'black'
@@ -81,7 +89,7 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					data={data}
 					keys={['Delegator', 'Delegatee']}
 					indexBy='trackName'
-					margin={{ bottom: 60, left: 60, right: 0, top: 20 }}
+					margin={{ bottom: 80, left: 80, right: 0, top: 20 }}
 					padding={0.6}
 					enableGridY={false}
 					enableLabel={false}
@@ -116,8 +124,8 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					axisRight={null}
 					borderRadius={2}
 					axisBottom={{
-						legend: '',
-						legendOffset: 32,
+						legend: 'Tracks',
+						legendOffset: 72,
 						legendPosition: 'middle',
 						tickPadding: 5,
 						tickRotation: -26,
@@ -125,8 +133,8 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 						truncateTickAt: 50
 					}}
 					axisLeft={{
-						legend: '',
-						legendOffset: -40,
+						legend: 'Total',
+						legendOffset: -66,
 						legendPosition: 'middle',
 						tickPadding: 5,
 						tickRotation: 0,

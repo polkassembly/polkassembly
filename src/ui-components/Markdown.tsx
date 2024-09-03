@@ -18,6 +18,7 @@ interface Props {
 	imgHidden?: boolean;
 	theme?: string;
 	disableQuote?: boolean;
+	isUsedInComments?: boolean;
 }
 
 const StyledMarkdown = styled(ReactMarkdown)`
@@ -154,6 +155,17 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 2rem 0;
 		}
 
+		.comments-image p > img,
+		.comments-image img {
+			display: block;
+			overflow-x: auto !important;
+			margin: 1rem 0;
+			object-fit: contain !important;
+			width: 100% !important;
+			height: auto !important;
+			max-width: 100% !important;
+		}
+
 		pre {
 			background-color: ${(props: any) => (props.theme === 'dark' ? '#2c2f32' : '#ebf0f5')} !important;
 			overflow: auto;
@@ -282,8 +294,17 @@ const StyledMarkdown = styled(ReactMarkdown)`
 	}
 `;
 
+/* eslint-disable @next/next/no-img-element */
+const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => (
+	<img
+		src={src}
+		alt={alt || 'Image'}
+		style={{ height: 'auto', objectFit: 'contain', width: '100%' }}
+	/>
+);
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, disableQuote = false }: Props) => {
+const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
 
@@ -296,12 +317,13 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 		>
 			<HighlightMenu markdownRef={markdownRef} />
 			<StyledMarkdown
-				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${disableQuote && 'hide-blockquote'} ${
+				className={`${className} ${isPreview && 'mde-preview-content'} ${imgHidden && 'hide-image'} ${isUsedInComments && 'comments-image'} ${disableQuote && 'hide-blockquote'} ${
 					isAutoComplete && 'mde-autocomplete-content'
 				} dark-text-white w-full`}
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}
+				components={{ img: CustomImage }}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

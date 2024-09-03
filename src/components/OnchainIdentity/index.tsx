@@ -28,6 +28,7 @@ import { network as AllNetworks } from 'src/global/networkConstants';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const ZERO_BN = new BN(0);
 
@@ -99,7 +100,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			setStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		}
 		if (router.query?.setidentity) {
-			router.replace('?setidentity=true', '/opengov');
+			router.replace('?setidentity=true', isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 
@@ -217,7 +218,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								setIsExitModal(false);
 								setOpen(false);
 								setLoading({ ...loading, isLoading: false });
-								router.replace('?setidentity=true', '/opengov');
+								router.replace('?setidentity=true', isOpenGovSupported(network) ? '/opengov' : '/');
 							}}
 							text='Yes, Exit'
 							height={38}

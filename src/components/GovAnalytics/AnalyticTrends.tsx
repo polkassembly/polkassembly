@@ -30,6 +30,7 @@ const AnalyticsTrends = () => {
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
 			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			defaultActiveKey={['1']}
 		>
 			<Panel
 				header={
@@ -58,7 +59,6 @@ const AnalyticsTrends = () => {
 						</div>
 						<div className='mb-4 flex flex-col gap-4 md:grid md:grid-cols-2'>
 							<MonthlySpend />
-							{/* <LatestTreasuryOverview /> */}
 							<AnalyticTurnOutPercentage />
 						</div>
 						<ReferendumCount />

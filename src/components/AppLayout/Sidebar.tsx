@@ -368,7 +368,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{router.pathname === '/' || router.pathname === '/opengov' ? (
 						<SelectedOverview className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					) : (
-						<OverviewIcon className='-ml-2 mt-[2px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<OverviewIcon className='-ml-2  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</>
 			),
@@ -626,11 +626,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 					{!sidebarCollapsed && (
 						<span
-							className={`text-[10px] ${
+							className={`text-[9px] ${
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							}  rounded-lg px-[5px] py-1 font-poppins text-[#485F7D] text-opacity-[80%] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
+							{totalActiveProposalsCount?.allCount > 9 ? (
+								<>
+									9<span className='text-[8px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.allCount || ''
+							)}
 						</span>
 					)}
 				</div>,
@@ -655,7 +661,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.allCount ? getSpanStyle('All', totalActiveProposalsCount.allCount) : ''
 							}  rounded-md px-1 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.allCount ? `${totalActiveProposalsCount.allCount}` : ''}
+							{totalActiveProposalsCount?.allCount > 9 ? (
+								<>
+									9<span className='text-[8px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.allCount || ''
+							)}
 						</span>
 					</div>
 				</div>
@@ -672,10 +684,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<span
 						className={`text-[10px] ${
 							activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-						} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+						} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 					>
-						{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
-					</span>{' '}
+						{activeProposal && activeProposal > 9 ? (
+							<>
+								9<span className='text-[7px]'>+</span>
+							</>
+						) : (
+							activeProposal || ''
+						)}
+					</span>
 				</div>,
 				`/${trackName
 					.split(/(?=[A-Z])/)
@@ -695,10 +713,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} absolute right-4 top-1 z-50  rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+									} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 								>
-									{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
-								</span>{' '}
+									{activeProposal && activeProposal > 9 ? (
+										<>
+											9<span className='text-[7px]'>+</span>
+										</>
+									) : (
+										activeProposal || ''
+									)}
+								</span>
 							</div>,
 							`/${trackName
 								.split(/(?=[A-Z])/)
@@ -716,9 +740,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<span
 										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} absolute -top-0 right-4 z-50 rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+										{activeProposal && activeProposal > 9 ? (
+											<>
+												9<span className='text-[7px]'>+</span>
+											</>
+										) : (
+											activeProposal || ''
+										)}
 									</span>
 								)}
 							</div>,
@@ -762,7 +792,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/auction-admin') ? (
 									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<AuctionAdminIcon className='-ml-1 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						) : (
@@ -771,7 +801,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								{router.pathname.includes('/staking-admin') ? (
 									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
-									<StakingAdminIcon className=' -ml-1 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<StakingAdminIcon className=' -ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								)}
 							</>
 						);
@@ -786,7 +816,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
 										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+										{activeProposal && activeProposal > 9 ? (
+											<>
+												9<span className='text-[7px]'>+</span>
+											</>
+										) : (
+											activeProposal || ''
+										)}
 									</span>
 								)}
 							</div>,
@@ -804,11 +840,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 									}}
 								>
 									<span
-										className={`text-[9px] ${
+										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-md px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
-										{activeProposal && activeProposal >= 1 ? `${activeProposal}` : ''}
+										{activeProposal && activeProposal > 9 ? (
+											<>
+												9<span className='text-[7px]'>+</span>
+											</>
+										) : (
+											activeProposal || ''
+										)}
 									</span>
 								</div>
 							</div>
@@ -857,7 +899,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-3 mt-1.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+					<OverviewIcon className='-ml-3  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
 				)}
 			</>
 		),
@@ -878,7 +920,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/preimages',
 			<>
 				{router.pathname === '/preimages' ? (
-					<SelectedPreimages className='-ml-[10px] -mt-3 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedPreimages className='-ml-[10px] -mt-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
 					<PreimagesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -892,7 +934,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				}}
 				className='flex items-center'
 			>
-				<span className='-ml-1 text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive'>Tracks</span>
+				<span className={`${sidebarCollapsed ? '-ml-1' : 'ml-1'} text-xs font-medium uppercase text-lightBlue  dark:text-icon-dark-inactive`}>Tracks</span>
 			</div>,
 			'tracksHeading',
 			null
@@ -910,7 +952,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>,
 				'/gov-analytics',
 				<div className='relative'>
-					<AnalyticsSVGIcon className='-ml-3 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+					<AnalyticsSVGIcon className={`${sidebarCollapsed ? '-ml-3' : '-ml-2'} scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive`} />
 					<div
 						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-2 md:-top-0'}
 						style={{
@@ -1088,9 +1130,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
 									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
 									: ''
-							} absolute right-2 top-1 z-50 rounded-lg px-2  py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
+							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
+								<>
+									9<span className='text-[7px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.['bountiesCount'] || ''
+							)}
 						</span>
 					</div>,
 					'/bounties',
@@ -1106,7 +1154,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 									: ''
 							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
-							{totalActiveProposalsCount?.['childBountiesCount'] ? `${totalActiveProposalsCount['childBountiesCount']}` : ''}
+							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
+								<>
+									9<span className='text-[7px]'>+</span>
+								</>
+							) : (
+								totalActiveProposalsCount?.['childBountiesCount'] || ''
+							)}
 						</span>
 					</div>,
 					'/child_bounties',
@@ -1200,7 +1254,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<OverviewIcon className='-ml-2 mt-0.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -1610,7 +1664,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>
 				{!sidebarCollapsed ? (
 					<>
-						<div className='fixed bottom-0 left-0 w-full bg-white py-3 dark:bg-section-dark-overlay'>
+						<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
 							<div className='mt-5 flex items-center justify-center gap-2'>
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>

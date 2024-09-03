@@ -155,9 +155,10 @@ const StyledMarkdown = styled(ReactMarkdown)`
 			margin: 2rem 0;
 		}
 
+		.comments-image p img,
 		.comments-image img {
 			overflow-x: auto !important;
-			margin: 2rem 0;
+			margin: 1rem 0;
 			object-fit: contain !important;
 			width: 100% !important;
 			height: auto !important;

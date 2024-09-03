@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import styled from 'styled-components';
@@ -159,7 +159,7 @@ const StyledMarkdown = styled(ReactMarkdown)`
 		.comments-image img {
 			display: block;
 			overflow-x: auto !important;
-			margin: 1rem 0;
+			margin: 0.5rem 0;
 			object-fit: contain !important;
 			width: 100% !important;
 			height: auto !important;
@@ -303,12 +303,21 @@ const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => 
 	/>
 );
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, imgHidden = false, isUsedInComments = false, disableQuote = false }: Props) => {
 	const sanitisedMd = md?.replace(/\\n/g, '\n');
 	const { resolvedTheme: theme } = useTheme();
-
 	const markdownRef = useRef<HTMLDivElement>(null);
+
+	const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsSmallScreen(window.innerWidth < 640);
+		};
+		handleResize();
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	return (
 		<div
@@ -323,13 +332,7 @@ const Markdown = ({ className, isPreview = false, isAutoComplete = false, md, im
 				rehypePlugins={[rehypeRaw, remarkGfm]}
 				linkTarget='_blank'
 				theme={theme as any}
-				components={
-					isUsedInComments
-						? {
-								img: CustomImage
-						  }
-						: {}
-				}
+				components={isSmallScreen || isUsedInComments ? { img: CustomImage } : {}}
 			>
 				{sanitisedMd}
 			</StyledMarkdown>

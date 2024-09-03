@@ -294,10 +294,12 @@ const StyledMarkdown = styled(ReactMarkdown)`
 	}
 `;
 
-const CustomImage = ({ node, ...props }: any) => (
+/* eslint-disable @next/next/no-img-element */
+const CustomImage = ({ src = '', alt = '' }: { src?: string; alt?: string }) => (
 	<img
-		{...props}
-		style={{ width: '100%', height: 'auto' }}
+		src={src}
+		alt={alt || 'Image'}
+		style={{ height: 'auto', objectFit: 'contain', width: '100%' }}
 	/>
 );
 

@@ -40,11 +40,30 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const LegendContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	overflow-x: auto;
+	white-space: nowrap;
+	padding-top: 2px;
+	margin-top: -32px;
+
+	/* Hide scrollbar for all browsers */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+	&::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, and Opera */
+	}
+`;
+
 const AnalyticsReferendumOutcome = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
+	const [trackIds, setTrackIds] = useState<number[]>([]);
 	const { network } = useNetworkSelector();
 	const [statusInfo, setStatusInfo] = useState<Record<string, number>>({
 		approved: 0,
@@ -53,11 +72,15 @@ const AnalyticsReferendumOutcome = () => {
 		rejected: 0,
 		timeout: 0
 	});
-	const trackIds = [
-		...Object.values(networkTrackInfo[network]).map((info) => {
-			return info.trackId;
-		})
-	];
+	const getAllTrackIds = () => {
+		const trackArr: number[] = [];
+		Object.entries(networkTrackInfo[network]).map(([, value]) => {
+			if (!value?.fellowshipOrigin) {
+				trackArr.push(value.trackId);
+			}
+		});
+		setTrackIds(trackArr);
+	};
 
 	const getData = async () => {
 		setLoading(true);
@@ -72,6 +95,12 @@ const AnalyticsReferendumOutcome = () => {
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		if (!network) return;
+		getAllTrackIds();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	useEffect(() => {
 		getData();
@@ -90,12 +119,26 @@ const AnalyticsReferendumOutcome = () => {
 	const items: MenuProps['items'] = [
 		{
 			key: '0',
-			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>All Tracks</p>,
+			label: (
+				<p
+					className='m-0 p-0 text-sm capitalize'
+					style={{ color: theme === 'dark' ? '#fff' : '#000' }}
+				>
+					All Tracks
+				</p>
+			),
 			onClick: handleMenuClick
 		},
 		...trackIds.map((trackId, index) => ({
 			key: `${index + 1}`,
-			label: <p className='m-0 p-0 text-sm capitalize text-sidebarBlue dark:text-section-light-overlay'>{getTrackNameFromId(network, trackId)?.split('_').join(' ')}</p>,
+			label: (
+				<p
+					className='m-0 p-0 text-sm capitalize'
+					style={{ color: theme === 'dark' ? '#fff' : '#243a57' }}
+				>
+					{getTrackNameFromId(network, trackId)?.split('_').join(' ')}
+				</p>
+			),
 			onClick: handleMenuClick
 		}))
 	];
@@ -134,21 +177,27 @@ const AnalyticsReferendumOutcome = () => {
 	];
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<div className='flex items-center justify-between'>
-				<h2 className='text-base font-semibold sm:text-xl'>Referendum Outcome</h2>
-				<Dropdown menu={{ items }}>
-					<a onClick={(e) => e.preventDefault()}>
-						<Space>
-							{selectedTrack
-								? getTrackNameFromId(network, trackIds[selectedTrack])
-										.split('_')
-										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-										.join(' ')
-								: 'All Tracks'}
-							<DownOutlined />
-						</Space>
-					</a>
-				</Dropdown>
+			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
+				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
+				<div className={'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
+					<Dropdown
+						menu={{ items }}
+						theme={theme}
+					>
+						<a onClick={(e) => e.preventDefault()}>
+							<Space>
+								{selectedTrack
+									? getTrackNameFromId(network, trackIds[selectedTrack])
+											.split('_')
+											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+											.join(' ')
+											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
+									: 'All Tracks'}
+								<DownOutlined />
+							</Space>
+						</a>
+					</Dropdown>
+				</div>
 			</div>
 			<Spin spinning={loading}>
 				<div
@@ -158,16 +207,16 @@ const AnalyticsReferendumOutcome = () => {
 					<ResponsivePie
 						data={data}
 						margin={{
-							bottom: 8,
+							bottom: isMobile ? 80 : 8,
 							left: 10,
-							right: 260,
+							right: isMobile ? 0 : 260,
 							top: 20
 						}}
 						sortByValue={true}
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -216,7 +265,8 @@ const AnalyticsReferendumOutcome = () => {
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
+									fill: theme === 'dark' ? '#fff' : '#333',
+									fontSize: 14
 								}
 							},
 							tooltip: {
@@ -226,28 +276,50 @@ const AnalyticsReferendumOutcome = () => {
 								}
 							}
 						}}
-						legends={[
-							{
-								anchor: 'right',
-								data: data.map((item) => ({
-									color: item.color,
-									id: item.id,
-									label: `${item.label} - ${item.value}`
-								})),
-								direction: 'column',
-								itemDirection: 'left-to-right',
-								itemHeight: 52,
-								itemWidth: -60,
-								itemsSpacing: 1,
-								justify: false,
-								symbolShape: 'circle',
-								symbolSize: 16,
-								translateX: 40,
-								translateY: 0
-							}
-						]}
+						legends={
+							isMobile
+								? []
+								: [
+										{
+											anchor: 'right',
+											data: data.map((item) => ({
+												color: item.color,
+												id: item.id,
+												label: `${item.label} - ${item.value}`
+											})),
+											direction: 'column',
+											itemDirection: 'left-to-right',
+											itemHeight: 32,
+											itemWidth: -60,
+											itemsSpacing: 1,
+											justify: false,
+											symbolShape: 'circle',
+											symbolSize: 8,
+											translateX: 40,
+											translateY: 0
+										}
+								  ]
+						}
 					/>
 				</div>
+				{isMobile && (
+					<LegendContainer>
+						{data.map((item) => (
+							<div
+								key={item.id}
+								className='mb-2 mr-4 flex items-center text-xs text-bodyBlue dark:text-white'
+							>
+								<div
+									className='mr-2 h-2 w-2 rounded-full'
+									style={{ background: item.color }}
+								></div>
+								<p className='m-0 p-0'>
+									{item.label} - {item.value}
+								</p>
+							</div>
+						))}
+					</LegendContainer>
+				)}
 			</Spin>
 		</StyledCard>
 	);

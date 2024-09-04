@@ -1122,7 +1122,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			getSiderMenuItem(
 				'Fellowship',
 				'gov2_fellowship_group',
-				<FellowshipIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
+				<FellowshipIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />,
 				[...gov2TrackItems.fellowshipItems]
 			)
 		);

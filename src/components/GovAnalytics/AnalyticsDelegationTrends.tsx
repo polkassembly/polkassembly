@@ -46,7 +46,6 @@ const AnalyticsDelegationTrends = () => {
 						totalVotesBalance
 					};
 				});
-
 				setDelegationInfo(updatedTrackInfo);
 			}
 
@@ -82,7 +81,7 @@ const AnalyticsDelegationTrends = () => {
 						</div>
 					</div>
 				}
-				key='1'
+				key='2'
 			>
 				{!loading && !delegationInfo ? (
 					<div className='flex flex-col items-center justify-center gap-5 p-10'>

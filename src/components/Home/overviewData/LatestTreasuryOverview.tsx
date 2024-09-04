@@ -266,18 +266,20 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 													<span className='ml-[2px] mt-1 text-bodyBlue dark:text-blue-dark-high'>${currentTokenPrice.value}</span>
 												) : null}
 											</div>
-											<div className='-mb-[2px] ml-2 flex items-center'>
-												<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
-													{Math.abs(Number(priceWeeklyChange.value))}%
-												</span>
-												<span>
-													{Number(priceWeeklyChange.value) < 0 ? (
-														<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
-													) : (
-														<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
-													)}
-												</span>
-											</div>
+											{priceWeeklyChange.value !== 'N/A' && (
+												<div className='-mb-[2px] ml-2 flex items-center'>
+													<span className={`text-xs font-medium ${Number(priceWeeklyChange.value) < 0 ? 'text-[#F53C3C]' : 'text-[#52C41A]'} `}>
+														{Math.abs(Number(priceWeeklyChange.value))}%
+													</span>
+													<span>
+														{Number(priceWeeklyChange.value) < 0 ? (
+															<CaretDownOutlined style={{ color: 'red', marginBottom: '0px', marginLeft: '1.5px' }} />
+														) : (
+															<CaretUpOutlined style={{ color: '#52C41A', marginBottom: '10px', marginLeft: '1.5px' }} />
+														)}
+													</span>
+												</div>
+											)}
 										</div>
 									</div>
 								</div>

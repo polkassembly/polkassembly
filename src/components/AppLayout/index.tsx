@@ -529,6 +529,9 @@ export default styled(AppLayout)`
 	.ant-menu-vertical > .ant-menu-item > li:first-child {
 		height: 40px !important;
 	}
+	.ant-menu-item {
+		overflow: visible !important;
+	}
 	.sidebar-toggle-button {
 		border: 1px solid #d2d8e0;
 		cursor: pointer;

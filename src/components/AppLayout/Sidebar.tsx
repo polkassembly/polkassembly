@@ -35,7 +35,6 @@ import {
 	SelectedOverview,
 	SelectedRoot,
 	SelectedAll,
-	AllPostIcon,
 	SelectedWishForChange,
 	SelectedAuctionAdmin,
 	SelectedStakingAdmin,
@@ -65,6 +64,7 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const { Sider } = Layout;
 
@@ -469,7 +469,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												<span
 													className={`text-[10px] ${
 														totalActiveProposalsCount?.['bountiesCount'] ? getSpanStyle('Bounties', totalActiveProposalsCount['bountiesCount']) : ''
-													} rounded-lg px-2 py-1`}
+													} rounded-lg px-[4px] py-1`}
 												>
 													{totalActiveProposalsCount?.['bountiesCount'] ? `${totalActiveProposalsCount['bountiesCount']}` : ''}
 												</span>
@@ -643,13 +643,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/all-posts',
 				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
-						<SelectedAll className='-ml-[10px] scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedAll className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					) : (
-						<AllPostIcon className='-ml-2 mt-1 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-3' />
+						<ImageIcon
+							src='/assets/allpost.svg'
+							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px]' : '-top-4 -ml-2'}  h-6  w-6 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+							alt=''
+						/>
 					)}
 					<div
 						className={`absolute -right-2 -top-2 z-50 ${
-							router.pathname.includes('/all-posts') ? 'mt-5' : 'mt-7'
+							router.pathname.includes('/all-posts') ? 'mt-5' : ''
 						} rounded-[9px] px-[2px]  text-[10px] font-semibold text-white md:-right-[6px] md:-top-6`}
 						style={{
 							opacity: sidebarCollapsed ? 1 : 0,
@@ -713,7 +717,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-									} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+									} w-5 rounded-lg px-[5px] py-1 text-center text-[#96A4B6] dark:text-[#595959]`}
 								>
 									{activeProposal && activeProposal > 9 ? (
 										<>
@@ -765,43 +769,49 @@ const Sidebar: React.FC<SidebarProps> = ({
 						trackName === 'all' ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className='-ml-1 mt-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<RootIcon className=' mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.ROOT ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedRoot className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-2 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
-									<RootIcon className='-ml-2 mt-1.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<RootIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<>
 								{router.pathname.includes('/wish-for-change') ? (
-									<SelectedWishForChange className={`-ml-[10px] ${sidebarCollapsed ? 'mt-1' : ''}  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedWishForChange
+										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-2 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<WishForChangeIcon className='-ml-2 mt-[1px] scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive  ' />
+									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : trackName === PostOrigin.AUCTION_ADMIN ? (
 							<>
 								{' '}
 								{router.pathname.includes('/auction-admin') ? (
-									<SelectedAuctionAdmin className='-ml-[10px] scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedAuctionAdmin
+										className={`${sidebarCollapsed ? '-ml-[6px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<AuctionAdminIcon className='-ml-2 mt-[1px] scale-90 font-medium  text-lightBlue dark:text-icon-dark-inactive' />
+									<AuctionAdminIcon className={`${sidebarCollapsed ? '-ml-[7px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						) : (
 							<>
 								{' '}
 								{router.pathname.includes('/staking-admin') ? (
-									<SelectedStakingAdmin className='-ml-[10px] -mt-1 scale-90   text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<SelectedStakingAdmin
+										className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+									/>
 								) : (
-									<StakingAdminIcon className=' -ml-2 mt-[1px] scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+									<StakingAdminIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
 							</>
 						);
@@ -833,7 +843,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='relative'>
 								{icon}
 								<div
-									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-7'
+									className='absolute -right-2 -top-2 z-50 mt-7 rounded-[9px] px-[2px] py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-8'
 									style={{
 										opacity: sidedrawer ? 0 : 1,
 										transition: 'opacity 0.3s ease-in-out'
@@ -869,14 +879,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div className={`${poppins.className} ${poppins.variable} ml-2 rounded-[9px] bg-[#407bfe]  px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/bounty',
-				<div className={`relative  ${!sidedrawer && 'mt-2'}`}>
+				<div className='relative '>
 					{router.pathname.includes('/bounty') ? (
-						<SelectedBountiesIcon className='-ml-[10px] scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<SelectedBountiesIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1 mt-1'}  scale-90  text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					) : (
-						<RoundedDollarIcon className=' -ml-2 scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive' />
+						<RoundedDollarIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					)}
 					<div
-						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-2 md:-top-[4px]'}
+						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-3 md:-top-[3px]'}
 						style={{
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
@@ -899,7 +909,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-3  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive lg:-ml-2' />
+					<OverviewIcon className='-ml-[7px]  mt-0.5  scale-90  font-medium text-lightBlue dark:text-icon-dark-inactive ' />
 				)}
 			</>
 		),
@@ -910,7 +920,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/discussions' ? (
 					<SelectedDiscussions className='-ml-[10px] scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<DiscussionsIcon className='-ml-2  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<DiscussionsIcon className='-ml-[7px]  mt-1  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -951,10 +961,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
 				</div>,
 				'/gov-analytics',
-				<div className='relative'>
-					<AnalyticsSVGIcon className={`${sidebarCollapsed ? '-ml-3' : '-ml-2'} scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive`} />
+				<div className='relative '>
+					<AnalyticsSVGIcon className='-ml-2 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-2 md:-top-0'}
+						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-4 md:-top-0'}
 						style={{
 							opacity: sidedrawer ? 0 : 1,
 							transition: 'opacity 0.3s ease-in-out'
@@ -979,9 +989,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_governance_group',
 			<>
 				{activeGovernance ? (
-					<SelectedGovernance className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedGovernance className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<GovernanceIconNew className='-ml-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<GovernanceIconNew className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>,
 			[...gov2TrackItems.governanceItems]
@@ -991,9 +1001,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'gov2_fellowship_group',
 			<div>
 				{activeWhitelist ? (
-					<SelectedWhitelist className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedWhitelist className='-ml-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<FellowshipIconNew className='-ml-3  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<FellowshipIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</div>,
 			[...gov2TrackItems.fellowshipItems]
@@ -1029,15 +1039,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className='relative cursor-pointer'
+					className='relative  cursor-pointer px-1 '
 					style={{ marginRight: '-13px', padding: '10%' }}
 					onClick={handleGovernanceClick}
 				>
 					{activeGovernance ? (
-						<SelectedGovernance className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<GovernanceIconNew
-							className={`-ml-8 mt-1 w-20  scale-90 font-medium ${
+							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} scale-90 font-medium ${
 								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 							}  text-2xl dark:text-icon-dark-inactive`}
 						/>
@@ -1057,14 +1067,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 			>
 				<div
 					onClick={handleWhitelistClick}
-					className='relative cursor-pointer'
+					className='relative cursor-pointer px-1'
 					style={{ marginRight: '-13px', padding: '10%' }}
 				>
 					{activeWhitelist ? (
-						<SelectedWhitelist className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<FellowshipIconNew
-							className={`-ml-8 mt-1 w-20 scale-90 font-medium ${
+							className={`-ml-9 mt-1 w-20 scale-90 font-medium ${
 								activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 							} text-2xl dark:text-icon-dark-inactive`}
 						/>
@@ -1083,7 +1093,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className='-mb-[14px] -ml-10  w-[110px] '
+					className=' -ml-12  h-11  px-1 '
 					style={{
 						borderTop: '2px dotted #ccc',
 						paddingTop: '12px'
@@ -1091,11 +1101,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 				>
 					<Link href='/parachains'>
 						<div
-							className={`ml-14 flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-3  hover:bg-[#000000] hover:bg-opacity-[4%] ${
+							className={`ml-[50px] flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-1  hover:bg-[#000000] hover:bg-opacity-[4%] ${
 								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
 							}`}
 						>
-							<ParachainsIcon className=' scale-90 text-xl font-medium ' />
+							<ParachainsIcon className=' mt-2 scale-90 text-xl font-medium ' />
 						</div>
 					</Link>
 				</div>
@@ -1130,7 +1140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.['bountiesCount'] && totalActiveProposalsCount['bountiesCount'] >= 1
 									? getSpanStyle('bounties', totalActiveProposalsCount['bountiesCount'])
 									: ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['bountiesCount'] > 9 ? (
 								<>
@@ -1152,7 +1162,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 								totalActiveProposalsCount?.['childBountiesCount'] && totalActiveProposalsCount['childBountiesCount'] >= 1
 									? getSpanStyle('childBounties', totalActiveProposalsCount['childBountiesCount'])
 									: ''
-							} rounded-lg px-2 py-1 text-[#96A4B6] dark:text-[#595959]`}
+							} rounded-lg px-[5px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 						>
 							{totalActiveProposalsCount?.['childBountiesCount'] > 9 ? (
 								<>
@@ -1176,9 +1186,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'gov2_treasury_group',
 				<div>
 					{activeTreasury ? (
-						<SelectedTreasury className='-ml-3 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+						<SelectedTreasury className='-ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-3 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]
@@ -1213,14 +1223,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 					className='text-xs'
 				>
 					<div
-						className='relative cursor-pointer'
-						style={{ marginRight: '-13px', padding: '10%' }}
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px' }}
 						onClick={handleTreasuryClick}
 					>
 						{activeTreasury ? (
-							<SelectedTreasury className='-ml-8 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+							<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 						) : (
-							<TreasuryIconNew className='-ml-8 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<TreasuryIconNew className='-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 						)}
 					</div>
 				</Tooltip>,
@@ -1254,7 +1264,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{router.pathname === '/' || router.pathname === '/opengov' ? (
 					<SelectedOverview className='mt-1.5  scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				) : (
-					<OverviewIcon className='-ml-2 mt-0.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<OverviewIcon className='-ml-1 mt-0.5 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
 			</>
 		),
@@ -1537,7 +1547,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
+								<div className={`activeborderhover  group relative ${isActive('/leaderboard') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/leaderboard'>
 										<img
 											src='/assets/head2.svg'
@@ -1601,7 +1611,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -bottom-7 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute -bottom-7 left-[77px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
 											<div className='absolute  right-8 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
@@ -1614,9 +1624,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 2'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[90px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Leaderboard
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1627,9 +1637,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 3'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[100px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[87px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Delegation
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1640,9 +1650,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute  bottom-0 left-[95px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute  bottom-0 left-[82px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											Calendar
-											<div className='absolute left-1 top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1658,8 +1668,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed && 'ml-2 flex flex-grow flex-col items-center pr-2    '
-						}   overflow-x-hidden  dark:bg-section-dark-overlay`}
+							sidebarCollapsed && 'ml-2 flex flex-grow flex-col items-center overflow-hidden pr-2    '
+						}     dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (
@@ -1723,8 +1733,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</>
 				) : (
 					<>
-						<div className='fixed bottom-0 left-0 z-[1000]  w-full bg-white py-3 dark:bg-section-dark-overlay'>
-							<div className='mt-5 flex flex-col items-center justify-center gap-2'>
+						<div className='menu-shadow-top fixed bottom-0 left-0 z-[1000] w-full bg-white py-3 dark:bg-section-dark-overlay'>
+							{' '}
+							<div className=' flex flex-col items-center justify-center gap-2'>
 								<div className='group relative'>
 									<Link href='https://townhallgov.com/'>
 										<img

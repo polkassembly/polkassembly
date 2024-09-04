@@ -26,9 +26,10 @@ interface Props {
 	onAbstainValueChange?: (pre: BN) => void;
 	className?: string;
 	forSpecificPost?: boolean;
+	showConvictionBar?: boolean;
 }
 
-const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className, forSpecificPost }: Props) => {
+const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className, forSpecificPost, showConvictionBar }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
 
@@ -81,7 +82,7 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 
 			{formName === EFormType.AYE_NAY_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
 
-			<div>
+			{showConvictionBar && <div>
 				<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
 					<span className='flex items-center'>Set Conviction</span>
 					<Slider
@@ -106,7 +107,7 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 						defaultValue={0}
 					/>
 				</label>
-			</div>
+			</div>}
 		</Form>
 	);
 };

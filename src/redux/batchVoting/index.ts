@@ -25,6 +25,7 @@ const initialState: IBatchVoteStore = {
 		nyeVoteBalance: '0',
 		voteOption: 'aye'
 	},
+	is_default_selected: true,
 	post_ids_array: [],
 	show_cart_menu: false,
 	show_default_options_modal: false,
@@ -77,6 +78,7 @@ export const batchVoteStore = createSlice({
 			state = {
 				batch_vote_details: {},
 				edit_vote_details: {},
+				is_default_selected: true,
 				post_ids_array: [],
 				show_cart_menu: false,
 				show_default_options_modal: false,
@@ -154,6 +156,9 @@ export const batchVoteStore = createSlice({
 						break;
 				}
 			}
+		},
+		setIsDefaultSelected: (state, action: PayloadAction<boolean>) => {
+			state.is_default_selected = action.payload;
 		},
 		setRemoveCartItems: (state, action: PayloadAction<any>) => {
 			state.vote_cart_data = action.payload;

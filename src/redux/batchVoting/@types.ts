@@ -14,6 +14,7 @@ export interface IBatchVoteStore {
 	voted_proposal_id: number;
 	post_ids_array: number[];
 	vote_cart_data: any[];
+	is_default_selected: boolean;
 }
 
 export type IVoteCardInfo = {

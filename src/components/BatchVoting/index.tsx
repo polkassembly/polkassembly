@@ -4,15 +4,19 @@
 import React from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import { useTheme } from 'next-themes';
+import DefaultOptions from './DefaultOptions/DefaultOptions';
+import { useBatchVotesSelector } from '~src/redux/selectors';
 
 const BatchVotingWeb = () => {
-	const isDefaultSelected = true;
+	const { resolvedTheme: theme } = useTheme();
+    const { is_default_selected } = useBatchVotesSelector();
 
 	return (
 		<section className='flex flex-col gap-y-8'>
 			<header className='flex items-center justify-start gap-x-2'>
 				<ImageIcon
-					src='/assets/icons/star-icon.svg'
+					src={theme === 'dark' ? '/assets/icons/star-icon-white.svg' : '/assets/icons/star-icon.svg'}
 					alt='batch-voting'
 				/>
 				<h1 className='m-0 p-0 text-[28px] text-bodyBlue dark:text-white'>Batch Voting</h1>
@@ -21,25 +25,28 @@ const BatchVotingWeb = () => {
 				<div className='flex items-center justify-start gap-x-2'>
 					<span
 						className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${
-							isDefaultSelected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'
+							is_default_selected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'
 						} text-sm text-white`}
 					>
 						1
 					</span>
-					<p className={`m-0 p-0 text-base ${isDefaultSelected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Set Deafaults</p>
+					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Set Deafaults</p>
 				</div>
-				<RightOutlined className={`${isDefaultSelected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-pink_primary'}`} />
+				<RightOutlined className={`${is_default_selected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-pink_primary'}`} />
 				<div className='flex items-center justify-start gap-x-2'>
 					<span
 						className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${
-							!isDefaultSelected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'
+							!is_default_selected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'
 						} text-sm text-white`}
 					>
 						2
 					</span>
-					<p className={`m-0 p-0 text-base ${!isDefaultSelected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Vote</p>
+					<p className={`m-0 p-0 text-base ${!is_default_selected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Vote</p>
 				</div>
 			</article>
+
+			{/* in place of null add voting component */}
+			{is_default_selected ? <DefaultOptions /> : null}
 		</section>
 	);
 };

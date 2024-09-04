@@ -30,12 +30,11 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 	return (
 		<section className='h-full w-full items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
 			<header>
-				<div className='border-0 border-b-[1px] border-solid border-section-light-container px-6 mt-4 mb-4 h-[48px] text-lg tracking-wide font-semibold text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+				<div className='mb-4 mt-4 h-[48px] border-0 border-b-[1px] border-solid border-section-light-container px-6 text-lg font-semibold tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 					Set Defaults
 				</div>
 			</header>
 			<article className='-full w-full items-center justify-start gap-x-3 px-6'>
-
 				{!forSpecificPost && (
 					<Alert
 						type='info'
@@ -43,7 +42,7 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 						message={<span className='text-[13px] dark:text-black'>Select default values for votes. These can be edited before making a final transaction</span>}
 					/>
 				)}
-				
+
 				<OptionWrapper
 					address={String(address)}
 					onAccountChange={onAccountChange}
@@ -54,24 +53,24 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 					postEdit={postEdit}
 				/>
 			</article>
-			<div className='mt-9 mb-2 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
-							<CustomButton
-								variant='default'
-								text='Skip'
-								buttonsize='sm'
-								onClick={() => {
-									dispatch(batchVotesActions.setIsDefaultSelected(false));
-								}}
-							/>
-							<CustomButton
-								variant='primary'
-								text='Next'
-								buttonsize='sm'
-								onClick={() => {
-									dispatch(batchVotesActions.setIsDefaultSelected(false));
-								}}
-							/>
-						</div>
+			<div className='mb-2 mt-9 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-4'>
+				<CustomButton
+					variant='default'
+					text='Skip'
+					buttonsize='sm'
+					onClick={() => {
+						dispatch(batchVotesActions.setIsDefaultSelected(false));
+					}}
+				/>
+				<CustomButton
+					variant='primary'
+					text='Next'
+					buttonsize='sm'
+					onClick={() => {
+						dispatch(batchVotesActions.setIsDefaultSelected(false));
+					}}
+				/>
+			</div>
 		</section>
 	);
 };

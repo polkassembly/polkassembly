@@ -7,22 +7,16 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import dynamic from 'next/dynamic';
-import { Skeleton, Spin } from 'antd';
+import { Spin } from 'antd';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { ProposalType } from '~src/global/proposalType';
 import { PostEmptyState } from '~src/ui-components/UIStates';
 import { IAddBatchVotes } from '~src/components/TinderStyleVoting/types';
 import TinderCardsComponent from '~src/components/TinderStyleVoting/CardComponents/TinderCardsComponent';
-import SwipeActionButtons from '~src/components/TinderStyleVoting/CardComponents/SwipeActionButtons';
-
-// const CartOptionMenu = dynamic(() => import(''), {
-// 	loading: () => <Skeleton active />,
-// 	ssr: false
-// });
+import SwipeBtns from './SwipeBtns';
 
 const SwipableVotingCards = () => {
-	const { total_proposals_added_in_Cart, show_cart_menu, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
+	const { total_proposals_added_in_Cart, batch_vote_details, total_active_posts, voted_post_ids_array } = useBatchVotesSelector();
 	const dispatch = useAppDispatch();
 	const user = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
@@ -157,78 +151,76 @@ const SwipableVotingCards = () => {
 	};
 
 	return (
-        <div className='mb-8 flex h-screen w-full flex-col items-center'>
-            <div className='relative z-[100] h-[527px] w-full'>
-                <button
-                    className='absolute top-1/2 -translate-y-1/2 -left-[21px] flex h-[40px] w-[40px] items-center justify-center rounded-full border-none bg-black dark:bg-white z-10'
-                    onClick={() => goBack()}
-                >
-                    <LeftOutlined className='text-white dark:text-black' />
-                </button>
-                <button
-                    className='absolute top-1/2 -translate-y-1/2 -right-[18px] flex h-[40px] w-[40px] items-center justify-center rounded-full border-none bg-black dark:bg-white z-10'
-                    onClick={() => goBack()}
-                >
-                    <RightOutlined className='text-white dark:text-black' />
-                </button>
-    
-                {!isLoading && activeProposal.length <= 0 && (
-                    <div className='flex h-[600px] items-center justify-center'>
-                        <PostEmptyState
-                            description={
-                                <div className='p-5'>
-                                    <p>Currently no active proposals found</p>
-                                </div>
-                            }
-                        />
-                    </div>
-                )}
-    
-                {isLoading && (
-                    <div className='flex min-h-[400px] items-center justify-center'>
-                        <Spin
-                            spinning={isLoading}
-                            size='default'
-                            className='mt-[48px]'
-                        ></Spin>
-                    </div>
-                )}
-    
-                {!isLoading && (
-                    <div className={`relative h-full w-full`}>
-                        {activeProposal?.map((proposal: any, index: number) => (
-                            <TinderCard
-                                ref={childRefs[index]}
-                                className='absolute h-full w-full'
-                                key={proposal.name}
-                                onSwipe={(dir) => {
-                                    swiped(dir, index, proposal?.id, proposal?.title);
-                                }}
-                                onCardLeftScreen={() => outOfFrame(proposal.title, index)}
-                                preventSwipe={['down']}
-                            >
-                                <div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
-                                    <TinderCardsComponent
-                                        proposal={proposal}
-                                        onSkip={handleSkipProposalCard}
-                                    />
-                                </div>
-                            </TinderCard>
-                        ))}
-                    </div>
-                )}
-            </div>
-    
-            <SwipeActionButtons
-                trackPosts={activeProposal}
-                currentIndex={currentIndex}
-                childRefs={childRefs}
-                className={show_cart_menu ? 'bottom-10' : 'bottom-1'}
-            />
-        </div>
-    );
-    
+		<div className='mb-8 flex h-screen w-full flex-col items-center'>
+			<div className='relative z-[100] h-[527px] w-full'>
+				<button
+					className='absolute -left-[21px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border-none bg-black dark:bg-white'
+					onClick={() => goBack()}
+				>
+					<LeftOutlined className='text-white dark:text-black' />
+				</button>
+				<button
+					className='absolute -right-[18px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border-none bg-black dark:bg-white'
+					onClick={() => goBack()}
+				>
+					<RightOutlined className='text-white dark:text-black' />
+				</button>
+
+				{!isLoading && activeProposal.length <= 0 && (
+					<div className='flex h-[600px] items-center justify-center'>
+						<PostEmptyState
+							description={
+								<div className='p-5'>
+									<p>Currently no active proposals found</p>
+								</div>
+							}
+						/>
+					</div>
+				)}
+
+				{isLoading && (
+					<div className='flex min-h-[400px] items-center justify-center'>
+						<Spin
+							spinning={isLoading}
+							size='default'
+							className='mt-[48px]'
+						></Spin>
+					</div>
+				)}
+
+				{!isLoading && (
+					<div className={'relative h-full w-full'}>
+						{activeProposal?.map((proposal: any, index: number) => (
+							<TinderCard
+								ref={childRefs[index]}
+								className='absolute h-full w-full'
+								key={proposal.name}
+								onSwipe={(dir) => {
+									swiped(dir, index, proposal?.id, proposal?.title);
+								}}
+								onCardLeftScreen={() => outOfFrame(proposal.title, index)}
+								preventSwipe={['down']}
+							>
+								<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
+									<TinderCardsComponent
+										proposal={proposal}
+										onSkip={handleSkipProposalCard}
+									/>
+								</div>
+							</TinderCard>
+						))}
+					</div>
+				)}
+			</div>
+
+			<SwipeBtns
+				trackPosts={activeProposal}
+				currentIndex={currentIndex}
+				childRefs={childRefs}
+				className={'bottom-1 mt-8'}
+			/>
+		</div>
+	);
 };
 
 export default SwipableVotingCards;
-

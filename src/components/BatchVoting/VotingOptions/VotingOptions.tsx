@@ -1,6 +1,9 @@
+// Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
 import { Skeleton } from 'antd';
 import dynamic from 'next/dynamic';
-import React from 'react'
+import React from 'react';
 import SwipableVotingCards from './SwipableVotingCards';
 const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCart'), {
 	loading: () => <Skeleton active />,
@@ -8,18 +11,20 @@ const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCar
 });
 
 const VotingOptions = () => {
-  return (
-    <section className='flex gap-x-4 w-full mb-[200px]'>
-        <article className='h-[557px] w-[70%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
-          <div className='p-5 h-[557px] bg-transparent w-full drop-shadow-lg'>
-            <SwipableVotingCards />
-          </div>
-        </article>
+	return (
+		<section className='mb-[200px] flex w-full gap-x-4'>
+			<article className='h-[557px] w-[70%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
+				<div className='h-[557px] w-full bg-transparent p-5 drop-shadow-lg'>
+					<SwipableVotingCards />
+				</div>
+			</article>
 
-        {/* add confirm batch vote CTA inside voteCard component and fix max-h-[662px] to 557px */}
-        <article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'><VoteCart isUsedInWebView={true}/></article>
-    </section>
-  )
-}
+			{/* add confirm batch vote CTA inside voteCard component and fix max-h-[662px] to 557px */}
+			<article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
+				<VoteCart isUsedInWebView={true} />
+			</article>
+		</section>
+	);
+};
 
-export default VotingOptions
+export default VotingOptions;

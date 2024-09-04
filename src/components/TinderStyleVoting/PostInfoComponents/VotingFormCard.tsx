@@ -29,7 +29,18 @@ interface Props {
 	showConvictionBar?: boolean;
 }
 
-const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeValueChange, onNayValueChange, onAbstainValueChange, className, forSpecificPost, showConvictionBar }: Props) => {
+const VotingFormCard = ({
+	form,
+	formName,
+	handleSubmit,
+	onBalanceChange,
+	onAyeValueChange,
+	onNayValueChange,
+	onAbstainValueChange,
+	className,
+	forSpecificPost,
+	showConvictionBar
+}: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
 
@@ -82,32 +93,34 @@ const VotingFormCard = ({ form, formName, handleSubmit, onBalanceChange, onAyeVa
 
 			{formName === EFormType.AYE_NAY_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}
 
-			{showConvictionBar && <div>
-				<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
-					<span className='flex items-center'>Set Conviction</span>
-					<Slider
-						marks={marks}
-						step={null}
-						className='dark:text-white'
-						rootClassName='dark:text-white'
-						onChange={(value) => {
-							const markValue = getMarkValue(value as number);
-							if (!forSpecificPost) {
-								dispatch(editBatchValueChanged({ values: { conviction: parseFloat(markValue.replace('x', '')) } }));
-							} else {
-								dispatch(
-									editCartPostValueChanged({
-										values: {
-											conviction: parseFloat(markValue.replace('x', '')) || 0.1
-										}
-									})
-								);
-							}
-						}}
-						defaultValue={0}
-					/>
-				</label>
-			</div>}
+			{showConvictionBar && (
+				<div>
+					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
+						<span className='flex items-center'>Set Conviction</span>
+						<Slider
+							marks={marks}
+							step={null}
+							className='dark:text-white'
+							rootClassName='dark:text-white'
+							onChange={(value) => {
+								const markValue = getMarkValue(value as number);
+								if (!forSpecificPost) {
+									dispatch(editBatchValueChanged({ values: { conviction: parseFloat(markValue.replace('x', '')) } }));
+								} else {
+									dispatch(
+										editCartPostValueChanged({
+											values: {
+												conviction: parseFloat(markValue.replace('x', '')) || 0.1
+											}
+										})
+									);
+								}
+							}}
+							defaultValue={0}
+						/>
+					</label>
+				</div>
+			)}
 		</Form>
 	);
 };

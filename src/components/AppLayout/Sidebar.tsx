@@ -1188,7 +1188,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{activeTreasury ? (
 						<SelectedTreasury className='-ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-1  scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-1  scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]

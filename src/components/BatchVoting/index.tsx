@@ -7,6 +7,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
 import DefaultOptions from './DefaultOptions/DefaultOptions';
 import { useBatchVotesSelector } from '~src/redux/selectors';
+import VotingOptions from './VotingOptions/VotingOptions';
 
 const BatchVotingWeb = () => {
 	const { resolvedTheme: theme } = useTheme();
@@ -23,16 +24,14 @@ const BatchVotingWeb = () => {
 			</header>
 			<article className='flex h-[64px] w-full items-center justify-start gap-x-3  rounded-xl bg-white px-6 dark:bg-black'>
 				<div className='flex items-center justify-start gap-x-2'>
-					<span
-						className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${
-							is_default_selected ? 'bg-pink_primary' : 'bg-lightBlue dark:bg-lightGreyTextColor'
-						} text-sm text-white`}
+					{is_default_selected ? <span
+						className={'flex h-[20px] w-[20px] items-center justify-center rounded-full bg-pink_primary text-sm text-white'}
 					>
 						1
-					</span>
-					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Set Deafaults</p>
+					</span> : <ImageIcon src='/assets/icons/green-tick.svg' alt='tick' />}
+					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-semibold text-[#2ED47A]'} `}>Set Deafaults</p>
 				</div>
-				<RightOutlined className={`${is_default_selected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-pink_primary'}`} />
+				<RightOutlined className={`${is_default_selected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-[#2ED47A]'}`} />
 				<div className='flex items-center justify-start gap-x-2'>
 					<span
 						className={`flex h-[20px] w-[20px] items-center justify-center rounded-full ${
@@ -45,8 +44,7 @@ const BatchVotingWeb = () => {
 				</div>
 			</article>
 
-			{/* in place of null add voting component */}
-			{is_default_selected ? <DefaultOptions /> : null}
+			{is_default_selected ? <DefaultOptions /> : <VotingOptions />}
 		</section>
 	);
 };

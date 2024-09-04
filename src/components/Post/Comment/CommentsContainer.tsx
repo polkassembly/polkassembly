@@ -145,11 +145,6 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 		return wordCount > 200;
 	};
 
-	useEffect(() => {
-		setHasEnoughContent(CommentsContentCheck(comments));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [comments]);
-
 	if (filterSentiments) {
 		allComments = allComments.filter((comment) => comment?.sentiment === filterSentiments);
 	}
@@ -219,6 +214,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	useEffect(() => {
 		getOverallSentimentPercentage();
 		if (!Object.keys(comments).length) return;
+		setHasEnoughContent(CommentsContentCheck(comments));
 		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [comments]);

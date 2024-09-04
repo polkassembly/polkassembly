@@ -934,11 +934,3 @@ z-index: 105 !important;
   pointer-events: none;
   z-index: 1;
 }
-
-.bg-black {
-    background-color: #000000;
-}
-
-.bg-opacity-12 {
-    background-color: rgba(0, 0, 0, 0.12);
-}

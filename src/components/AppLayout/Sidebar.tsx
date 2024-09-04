@@ -43,8 +43,8 @@ import {
 	SelectedTreasury,
 	SelectedDiscussions,
 	SelectedPreimages,
-	SelectedBountiesIcon,
-	AnalyticsSVGIcon
+	SelectedBountiesIcon
+	// AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';
@@ -944,32 +944,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			null
 		)
 	];
-
-	if (isOpenGovSupported(network)) {
-		gov2OverviewItems.splice(
-			3,
-			0,
-			getSiderMenuItem(
-				<div className='flex w-fit gap-2'>
-					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-4`}>NEW</div>
-				</div>,
-				'/gov-analytics',
-				<div className='relative '>
-					<AnalyticsSVGIcon className='-ml-2 scale-90 text-[22px] font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[8px] font-semibold text-white md:-right-4 md:-top-0'}
-						style={{
-							opacity: sidedrawer ? 0 : 1,
-							transition: 'opacity 0.3s ease-in-out'
-						}}
-					>
-						NEW
-					</div>
-				</div>
-			)
-		);
-	}
 
 	if (isGrantsSupported(network)) {
 		gov2OverviewItems.splice(3, 0, getSiderMenuItem('Grants', '/grants', <BountiesIcon className='-ml-2 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />));

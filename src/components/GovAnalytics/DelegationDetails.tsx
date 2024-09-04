@@ -37,6 +37,7 @@ const StyledCard = styled(Card)`
 const DelegationDetails: FC<IDelegationDetails> = (props) => {
 	const { delegationData } = props;
 	const { resolvedTheme: theme } = useTheme();
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const data = Object?.keys(delegationData).map((key) => ({
 		Delegatee: delegationData[key].totalDelegates,
@@ -79,7 +80,11 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 	};
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard
+			className={`mx-auto ${
+				isMobile ? 'max-h-[550px]' : 'max-h-[500px]'
+			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+		>
 			<h2 className='text-base font-semibold sm:text-xl'>Delegation Split</h2>
 			<div
 				className='flex justify-start'
@@ -91,7 +96,7 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 					indexBy='trackName'
 					margin={{ bottom: 60, left: 10, right: 40, top: 50 }}
 					padding={0.6}
-					enableGridY={true}
+					enableGridY={isMobile ? false : true}
 					enableLabel={false}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
@@ -128,9 +133,9 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 						legendOffset: 72,
 						legendPosition: 'middle',
 						tickPadding: 5,
-						tickRotation: -26,
+						tickRotation: isMobile ? 90 : -26,
 						tickSize: 0,
-						truncateTickAt: 50
+						truncateTickAt: isMobile ? 10 : 50
 					}}
 					axisLeft={null}
 					labelSkipWidth={12}

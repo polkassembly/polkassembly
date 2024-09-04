@@ -351,7 +351,7 @@ const MonthlySpend = () => {
 		<StyledCard className='mx-auto h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Monthly DOT Spent</h2>
 			{isAssetHubNetwork.includes(network) ? (
-				<>
+				<div className='mt-[64px]'>
 					<LatestTreasuryOverview
 						currentTokenPrice={currentTokenPrice}
 						available={available}
@@ -361,7 +361,7 @@ const MonthlySpend = () => {
 						tokenValue={tokenValue}
 						isUsedInGovAnalytics={true}
 					/>
-				</>
+				</div>
 			) : (
 				<div className='flex flex-col items-center justify-center'>
 					<ImageIcon

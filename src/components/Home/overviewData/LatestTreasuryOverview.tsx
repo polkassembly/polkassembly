@@ -231,7 +231,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	return (
 		<div
 			className={`${poppins.className} ${poppins.variable} ${
-				isUsedInGovAnalytics ? 'mt-[64px]' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
+				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
 			<div
@@ -289,7 +289,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								</div>
 							</>
 						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
+							<div className={`flex ${isUsedInGovAnalytics ? 'min-h-[32px]' : 'min-h-[89px]'} w-full items-center justify-center`}>
 								<LoadingOutlined />
 							</div>
 						)}

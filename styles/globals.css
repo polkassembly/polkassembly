@@ -926,7 +926,7 @@ z-index: 105 !important;
 .menu-shadow-top::before {
   content: '';
   position: absolute;
-  top: -5px;
+  top: 0px;
   left: 0;
   right: 0;
   height: 3px; 

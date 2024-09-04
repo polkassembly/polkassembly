@@ -1010,19 +1010,40 @@ const Sidebar: React.FC<SidebarProps> = ({
 		)
 	];
 
-	const handleGovernanceClick = () => {
+	const handleGovernanceClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		const iconPosition = event.currentTarget.getBoundingClientRect();
+		const scrollY = window.scrollY;
+
+		setDropdownPosition({
+			left: iconPosition.left + 40,
+			top: iconPosition.top + scrollY + 0
+		});
+
 		setGovernanceDropdownOpen(!governanceDropdownOpen);
 		setTreasuryDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
 
-	const handleTreasuryClick = () => {
+	const handleTreasuryClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		const iconPosition = event.currentTarget.getBoundingClientRect();
+		const scrollY = window.scrollY;
+
+		setDropdownPosition({
+			left: iconPosition.left + 40,
+			top: iconPosition.top + scrollY + 0
+		});
+
 		setTreasuryDropdownOpen(!treasuryDropdownOpen);
 		setGovernanceDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
 
-	const handleWhitelistClick = () => {
+	const handleWhitelistClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		const iconPosition = event.currentTarget.getBoundingClientRect();
+		const scrollY = window.scrollY;
+
+		setDropdownPosition({ left: iconPosition.left + 40, top: iconPosition.top + scrollY + 0 });
+
 		setWhitelistDropdownOpen(!whitelistDropdownOpen);
 		setGovernanceDropdownOpen(false);
 		setTreasuryDropdownOpen(false);
@@ -1127,6 +1148,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
+	const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
 
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
@@ -1412,7 +1434,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && governanceDropdownOpen && (
 						<div
 							ref={dropdownRef}
-							className='absolute left-20 top-[300px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute z-[1100] w-[180px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
 						>
 							<div className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
@@ -1435,10 +1458,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</div>
 						</div>
 					)}
+
 					{sidebarCollapsed && whitelistDropdownOpen && (
 						<div
 							ref={whitelistDropdownRef}
-							className='absolute left-20 top-[380px] z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
+							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
@@ -1465,7 +1490,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{sidebarCollapsed && treasuryDropdownOpen && (
 						<div
 							ref={treasuryDropdownRef}
-							className='absolute left-20 top-[380px] z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							className='absolute z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {

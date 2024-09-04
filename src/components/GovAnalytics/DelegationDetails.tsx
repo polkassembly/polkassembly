@@ -66,9 +66,16 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 				}
 			}
 		},
+		grid: {
+			line: {
+				stroke: theme === 'dark' ? '#333' : '#ddd',
+				strokeDasharray: '4 4'
+			}
+		},
 		legends: {
 			text: {
-				fill: theme === 'dark' ? 'white' : 'black'
+				fill: theme === 'dark' ? 'white' : 'black',
+				fontSize: 14
 			}
 		},
 		tooltip: {

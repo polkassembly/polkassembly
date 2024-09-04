@@ -166,9 +166,9 @@ const AnalyticsReferendumOutcome = () => {
 	];
 	return (
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
-			<div className='flex items-center justify-between'>
+			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
-				<div className={`flex h-[30px] w-[109px] items-center justify-center ${isMobile ? '' : 'rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}`}>
+				<div className={'flex h-[30px] w-[109px] items-center justify-center truncate overflow-x-hidden rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
 					<Dropdown
 						menu={{ items }}
 						theme={theme}
@@ -180,6 +180,7 @@ const AnalyticsReferendumOutcome = () => {
 											.split('_')
 											.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 											.join(' ')
+											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
 									: 'All Tracks'}
 								<DownOutlined />
 							</Space>

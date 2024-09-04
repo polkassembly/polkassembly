@@ -565,20 +565,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Leaderboard</span>
-					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
 				</div>,
 				'/leaderboard',
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
 					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					<div
-						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						BETA
-					</div>
 				</div>
 			)
 		);
@@ -830,22 +820,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 	if (['polkadot'].includes(network)) {
 		gov2TrackItems.mainItems.push(
 			getSiderMenuItem(
-				<div className='ml-[2px] flex items-center gap-1.5'>
-					Bounties
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
-				</div>,
+				<div className='ml-[2px] flex items-center gap-1.5'>Bounties</div>,
 				'/bounty',
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
 					<RoundedDollarIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
-					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						NEW
-					</div>
 				</div>
 			)
 		);
@@ -899,20 +877,10 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Leaderboard</span>
-					<div className='rounded-[9px] bg-[#9747FF] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'>BETA</div>
 				</div>,
 				'/leaderboard',
 				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
 					<LeaderboardOverviewIcon className='scale-125 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
-					<div
-						className={'} absolute -right-2 -top-4 rounded-[9px] bg-[#9747FF] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
-						style={{
-							transition: 'opacity 0.3s ease-in-out',
-							opacity: sidedrawer ? 0 : 1
-						}}
-					>
-						BETA
-					</div>
 				</div>
 			)
 		);
@@ -924,13 +892,13 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 			getSiderMenuItem(
 				<div className='flex w-fit gap-2'>
 					<span>Gov Analytics</span>
-					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
+					<div className={`${poppins.className} ${poppins.variable} rounded-[9px] bg-[#407bfe] px-1.5 text-[10px] font-medium text-white md:-right-6 md:-top-2`}>NEW</div>
 				</div>,
 				'/gov-analytics',
-				<div className={`relative ${!sidedrawer && 'mt-2'}`}>
-					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />
+				<div className={`relative ${!sidedrawer && 'mt-0'}`}>
+					<AnalyticsSVGIcon className='scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 					<div
-						className={' absolute -right-2 rounded-[9px] bg-[#407bfe] px-[6px] py-1 text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
+						className={' absolute -right-2 mt-2 rounded-[9px] bg-[#407bfe] px-1.5 py-[3px] text-[10px] font-semibold text-white md:-right-6 md:-top-2'}
 						style={{
 							transition: 'opacity 0.3s ease-in-out',
 							opacity: sidedrawer ? 0 : 1

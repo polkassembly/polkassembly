@@ -56,7 +56,7 @@ const AnalyticsStats: FC<IStats> = (props) => {
 
 	return (
 		<Spin spinning={loading}>
-			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col lg:max-w-[55%]'>
+			<div className='mr-2.5 mt-2 flex items-center justify-between max-sm:flex-col lg:max-w-[100%]'>
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<div className='flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#CCF3FF]'>
 						<ImageIcon

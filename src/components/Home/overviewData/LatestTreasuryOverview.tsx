@@ -231,23 +231,27 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	return (
 		<div
 			className={`${poppins.className} ${poppins.variable} ${
-				isUsedInGovAnalytics ? 'mt-[48px]' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
+				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
-			<div className='flex w-full flex-1 flex-col rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+			<div
+				className={`flex w-full flex-1 flex-col rounded-xxl bg-white ${isUsedInGovAnalytics ? '' : 'p-3 drop-shadow-md lg:px-6 lg:py-4'}  dark:bg-section-dark-overlay sm:my-0 `}
+			>
 				<div className=''>
 					<div>
 						{!available.isLoading ? (
 							<>
 								<div className='mb-2 justify-between sm:flex'>
 									<div>
-										<div className='my-1 flex items-center gap-x-[6px]'>
-											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
-											<HelperTooltip
-												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-											/>
-										</div>
+										{!isUsedInGovAnalytics && (
+											<div className='my-1 flex items-center gap-x-[6px]'>
+												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<HelperTooltip
+													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+												/>
+											</div>
+										)}
 										{formatedBalanceDifference && (
 											<div className='flex items-baseline'>
 												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
@@ -285,7 +289,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								</div>
 							</>
 						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
+							<div className={`flex ${isUsedInGovAnalytics ? 'min-h-[32px]' : 'min-h-[89px]'} w-full items-center justify-center`}>
 								<LoadingOutlined />
 							</div>
 						)}
@@ -483,7 +487,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												size='small'
 												showInfo={false}
 											/>
-											<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+											<span className={`${poppins.className} ${poppins.variable} -mb-3 text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 												{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 											</span>
 										</span>

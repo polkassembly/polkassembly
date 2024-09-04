@@ -159,15 +159,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
-	const Menu = styled(AntdMenu)<MenuProps>`
+	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
-			background: ${(props: any) => {
-				/* eslint-disable react/prop-types */
-				return props?.theme === 'dark' ? '#0D0D0D' : '#fff';
-			}} !important;
+			background: ${(props: any) => (props?.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		}
 		.ant-menu-item {
-			${sidebarCollapsed && 'width: 50%;'};
+			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '100%')};
 			padding: 1px 22px 1px 18px;
 		}
 	`;
@@ -1490,6 +1487,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 						mode='inline'
 						selectedKeys={[router.pathname]}
 						items={gov2Items.slice(0, 1)}
+						sidebarCollapsed={sidebarCollapsed}
+						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''}   dark:bg-section-dark-overlay`}
 					/>
 					{!isMobile && (
@@ -1663,9 +1662,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 						selectedKeys={[router.pathname]}
 						items={sidebarItems.slice(1)}
 						onClick={handleMenuClick}
+						sidebarCollapsed={sidebarCollapsed}
+						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed && 'ml-2 flex flex-grow flex-col items-center overflow-hidden pr-2    '
-						}     dark:bg-section-dark-overlay`}
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center overflow-hidden pr-2' : ''
+						} dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (

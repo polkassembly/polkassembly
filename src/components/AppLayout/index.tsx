@@ -443,6 +443,11 @@ export default styled(AppLayout)`
 	.sidebar .ant-menu-item-selected .anticon {
 		filter: brightness(0) saturate(100%) invert(13%) sepia(94%) saturate(7151%) hue-rotate(321deg) brightness(90%) contrast(101%);
 	}
+	.sidebar .ant-menu-item-selected span {
+		color: var(--pink_primary) !important;
+		font-weight: 500;
+		font-size: 14px;
+	}
 
 	.sidebar .ant-menu-item-selected .opacity {
 		background-color: var(--pink_primary) !important;

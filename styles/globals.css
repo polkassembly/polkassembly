@@ -200,7 +200,7 @@ p > a:hover {
 }
 
 .ant-segmented-item-selected .ant-segmented-item-label {
-  color: var(--pink_primary) !important;
+  color: #E5007A !important;
 }
 
 .ant-modal-header {
@@ -935,5 +935,10 @@ z-index: 105 !important;
   z-index: 1;
 }
 
+.bg-black {
+    background-color: #000000;
+}
 
-
+.bg-opacity-12 {
+    background-color: rgba(0, 0, 0, 0.12);
+}

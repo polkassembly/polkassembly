@@ -170,10 +170,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			${sidebarCollapsed && 'width: 50%;'};
 			padding: 1px 22px 1px 18px;
 		}
-
-		.ant-menu-item-selected {
-			background: ${(props: any) => (props?.theme === 'dark' ? '#540E33' : '#FFF2F9')} !important;
-		}
 	`;
 
 	const handleMenuClick = (menuItem: any) => {
@@ -643,7 +639,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/all-posts',
 				<div className='relative'>
 					{router.pathname.includes('/all-posts') ? (
-						<SelectedAll className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+						<SelectedAll className={`${sidebarCollapsed ? '-ml-2 mt-0.5' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					) : (
 						<ImageIcon
 							src='/assets/allpost.svg'
@@ -769,7 +765,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						trackName === 'all' ? (
 							<>
 								{router.pathname.includes('/root') ? (
-									<SelectedRoot className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<SelectedRoot className=' scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								) : (
 									<RootIcon className={`${sidebarCollapsed && 'mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
@@ -785,9 +781,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						) : trackName === PostOrigin.WISH_FOR_CHANGE ? (
 							<>
 								{router.pathname.includes('/wish-for-change') ? (
-									<SelectedWishForChange
-										className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-2 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
-									/>
+									<SelectedWishForChange className={`${sidebarCollapsed ? ' -ml-[10px]' : '-ml-1'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								) : (
 									<WishForChangeIcon className={`${sidebarCollapsed ? '-ml-2' : '-ml-1 mt-0.5'} scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 								)}
@@ -1065,10 +1059,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 					onClick={handleGovernanceClick}
 				>
 					{activeGovernance ? (
-						<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<GovernanceIconNew
-							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} scale-90 font-medium ${
+							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[5%]'} scale-90 font-medium ${
 								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 							}  text-2xl dark:text-icon-dark-inactive`}
 						/>
@@ -1092,10 +1086,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 					style={{ marginRight: '-13px', padding: '10%' }}
 				>
 					{activeWhitelist ? (
-						<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<FellowshipIconNew
-							className={`-ml-9 mt-1 w-20 scale-90 font-medium ${
+							className={`-ml-9 mt-1 w-20 scale-90 ${whitelistDropdownOpen && 'bg-black bg-opacity-[5%]'} font-medium ${
 								activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 							} text-2xl dark:text-icon-dark-inactive`}
 						/>
@@ -1250,9 +1244,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 						onClick={handleTreasuryClick}
 					>
 						{activeTreasury ? (
-							<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-2 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+							<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 						) : (
-							<TreasuryIconNew className='-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+							<TreasuryIconNew
+								className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[5%]'}`}
+							/>
 						)}
 					</div>
 				</Tooltip>,

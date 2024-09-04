@@ -881,9 +881,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 				'/bounty',
 				<div className='relative '>
 					{router.pathname.includes('/bounty') ? (
-						<SelectedBountiesIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1 mt-1'}  scale-90  text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+						<SelectedBountiesIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1 '}  scale-90  text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					) : (
-						<RoundedDollarIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+						<RoundedDollarIcon className={`${sidebarCollapsed ? '-ml-[8px] mt-1' : ' -ml-1'}  scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 					)}
 					<div
 						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-3 md:-top-[3px]'}
@@ -1188,7 +1188,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					{activeTreasury ? (
 						<SelectedTreasury className='-ml-1 scale-90 text-2xl font-medium text-lightBlue  dark:text-icon-dark-inactive' />
 					) : (
-						<TreasuryIconNew className='-ml-1 mt-1 scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
+						<TreasuryIconNew className='-ml-1  scale-90 text-2xl font-medium dark:text-icon-dark-inactive' />
 					)}
 				</div>,
 				[...items]

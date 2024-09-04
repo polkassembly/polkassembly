@@ -159,6 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
 		} as MenuItem;
 	}
+	/* eslint-disable react/prop-types */
 	const Menu = styled(AntdMenu)<MenuProps & { sidebarCollapsed: boolean; sidedrawer: boolean }>`
 		.ant-menu-sub.ant-menu-inline {
 			background: ${(props: any) => (props?.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;

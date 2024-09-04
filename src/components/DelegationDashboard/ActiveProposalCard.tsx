@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Divider } from 'antd';
-
+import Image from 'next/image';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { IPostListing } from 'pages/api/v1/listing/on-chain-posts';
 import React, { useEffect, useState } from 'react';
@@ -128,25 +128,73 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 			<div
 				className={'rounded-sm rounded-t-[6px] border-[1px] border-solid border-section-light-container hover:border-pink_primary dark:border-[#3B444F] dark:border-separatorDark'}
 			>
-				<div className='flex justify-between border-[1px] px-6 py-6 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2'>
-					<div className='flex flex-col '>
-						<h2 className='text-medium text-sm text-bodyBlue dark:text-white'>{mainTitle}</h2>
-						<div className='mt-[5px] flex items-center gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium max-lg:flex-col max-lg:items-start max-lg:gap-2'>
-							{
-								<div className='flex items-center gap-1'>
+				<div className='flex justify-between border-[1px] px-3 py-3 hover:border-pink_primary max-sm:flex-col max-sm:items-start max-sm:gap-2 sm:px-6 sm:py-6'>
+					<div className='flex w-full flex-col max-sm:flex-col-reverse max-sm:gap-2 '>
+						{proposal?.status !== 'Submitted' && (
+							<div className=' flex items-center gap-2 sm:hidden'>
+								<div className={`flex items-center text-xs ${!remainingTime.includes('d') ? 'text-[#EB0F36]' : 'text-blue-light-medium dark:text-blue-dark-medium'}`}>
+									<ClockCircleOutlined className='mr-1' />
+									{remainingTime}
+									Remaining
+								</div>
+							</div>
+						)}
+						<h2 className='text-medium text-sm text-bodyBlue dark:text-white max-sm:mt-1'>{mainTitle}</h2>
+						<div className='flex gap-1 text-xs font-normal text-lightBlue dark:text-blue-dark-medium sm:mt-[5px] sm:items-start lg:items-center '>
+							<div className='flex items-center justify-between max-sm:w-full'>
+								<div className='flex items-center gap-[2px] sm:gap-1'>
 									By:
-									<span>
+									<span className='sm:hidden'>
 										<Address
 											address={String(proposal?.proposer)}
-											className='address ml-1.5'
+											className='address ml-1'
+											displayInline
+											iconSize={18}
+											usernameClassName='text-xs font-normal'
+											isTruncateUsername={false}
+										/>
+									</span>
+									<span className='hidden sm:block'>
+										<Address
+											address={String(proposal?.proposer)}
+											className='address ml-1.5 flex items-center'
 											displayInline
 											usernameClassName='text-xs font-medium'
 											isTruncateUsername={false}
 										/>
 									</span>
+									{relativeCreatedAt && (
+										<div className='flex items-center justify-center sm:hidden'>
+											<Divider
+												type='vertical'
+												className='border-l-1 border-lightBlue dark:border-icon-dark-inactive'
+											/>
+											<div className='flex items-center'>
+												<ClockCircleOutlined className='mr-1' /> <span className='text-[10px]'>{relativeCreatedAt}</span>
+											</div>
+										</div>
+									)}
 								</div>
-							}
-							<div className='flex items-center justify-center gap-2'>
+								<CustomButton
+									height={24}
+									width={80}
+									shape='default'
+									className={`ml-1 gap-[2px] self-end sm:hidden ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
+									disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
+									variant='default'
+								>
+									<Image
+										src={'/assets/icons/vote.svg'}
+										height={14}
+										width={14}
+										alt=''
+										className={'dark:text-white'}
+									/>
+									<span className='text-[10px] font-medium text-pink_primary'>Cast Vote</span>
+								</CustomButton>
+							</div>
+
+							<div className='hidden items-center justify-center gap-2 sm:flex'>
 								<Divider
 									type='vertical'
 									className='border-l-1 ml-[4px] mr-[4px] border-lightBlue dark:border-icon-dark-inactive'
@@ -160,7 +208,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 								)}
 							</div>
 							{proposal?.status !== 'Submitted' && (
-								<div className='flex items-center justify-center gap-2'>
+								<div className='hidden items-center justify-center gap-2 sm:flex'>
 									<Divider
 										type='vertical'
 										style={{ border: '1px solid #485F7D', marginLeft: '4px', marginRight: '4px' }}
@@ -175,7 +223,7 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 						</div>
 					</div>
 					<CustomButton
-						className={`mt-2 gap-2 ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
+						className={`hidden items-center gap-2 max-sm:mt-2 sm:flex ${status.includes(ETrackDelegationStatus.DELEGATED) && 'opacity-50'}`}
 						disabled={status.includes(ETrackDelegationStatus.DELEGATED)}
 						variant='default'
 					>
@@ -185,17 +233,30 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 				</div>
 				{(votingData && !status.includes(ETrackDelegationStatus.UNDELEGATED) && isAye) || isNay || isAbstain ? (
 					<div
-						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid px-6 py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
+						className={`flex gap-2 rounded-b-[5px] border-[1px] border-solid py-1 sm:px-6 sm:py-2 ${isAye && 'border-aye_green bg-[#F0FCF6] dark:bg-[#0F1B15]'} ${
 							isNay && 'border-nay_red bg-[#fff1f4] dark:bg-[#1E1013]'
 						} ${isAbstain && 'border-[#ABABAC] bg-[#f9f9f9] dark:border-abstainBlueColor dark:bg-alertColorDark'}`}
 					>
 						{status.includes(ETrackDelegationStatus.DELEGATED) && (
-							<Address
-								usernameClassName='text-xs font-medium'
-								address={String(delegatedTo)}
-								displayInline
-								isTruncateUsername={false}
-							/>
+							<>
+								{' '}
+								<Address
+									usernameClassName='text-xs font-medium'
+									address={String(delegatedTo)}
+									displayInline
+									isTruncateUsername={false}
+									className='hidden sm:flex'
+								/>
+								<Address
+									address={String(delegatedTo)}
+									usernameMaxLength={5}
+									usernameClassName='text-xs font-medium'
+									isTruncateUsername={true}
+									destroyTooltipOnHide={true}
+									displayInline
+									className='text-xs sm:hidden'
+								/>
+							</>
 						)}
 						<div className='flex items-center justify-center gap-1 text-xs tracking-[0.01em] text-[#243A5799] dark:text-blue-dark-medium'>Voted:</div>
 						{!isAbstain ? (
@@ -217,16 +278,28 @@ const ActiveProposalCard = ({ proposal, trackDetails, status, delegatedTo }: Pro
 					</div>
 				) : (
 					votingData && (
-						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] px-6 py-2 dark:bg-[#1D160E]'>
+						<div className='flex gap-2 rounded-b-[5px] border-[1px] border-solid border-warningAlertBorderDark bg-[#fff7ef] py-1 dark:bg-[#1D160E] sm:px-6 sm:py-2'>
 							{status.includes(ETrackDelegationStatus.DELEGATED) && (
-								<Address
-									address={String(delegatedTo)}
-									usernameClassName='text-xs font-medium'
-									displayInline
-									isTruncateUsername={false}
-								/>
+								<>
+									<Address
+										address={String(delegatedTo)}
+										usernameClassName='text-xs font-medium'
+										displayInline
+										isTruncateUsername={false}
+										className='hidden sm:flex'
+									/>
+									<Address
+										address={String(delegatedTo)}
+										usernameMaxLength={5}
+										isTruncateUsername={true}
+										usernameClassName='text-xs font-medium'
+										destroyTooltipOnHide={true}
+										displayInline
+										className='text-xs sm:hidden'
+									/>
+								</>
 							)}
-							<div className='flex items-center justify-center text-xs text-lightBlue dark:text-blue-dark-medium'>
+							<div className='flex items-center justify-center text-[10px] text-lightBlue dark:text-blue-dark-medium max-sm:-ml-2 sm:text-xs'>
 								Not Voted yet <CautionIcon className='ml-1' />
 							</div>
 						</div>

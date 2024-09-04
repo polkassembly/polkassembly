@@ -4,7 +4,6 @@
 import { Button, Modal, Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
-import ProposalInfoCard from './ProposalInfoCard';
 import { EVoteDecisionType, NotificationStatus } from '~src/types';
 import { useApiContext } from '~src/context';
 import BN from 'bn.js';
@@ -16,14 +15,15 @@ import { batchVotesActions } from '~src/redux/batchVoting';
 import classNames from 'classnames';
 import { poppins } from 'pages/_app';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import VoteSuccessModal from './VoteSuccessModal';
 import executeTx from '~src/util/executeTx';
 import queueNotification from '~src/ui-components/QueueNotification';
 import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { PostEmptyState } from '~src/ui-components/UIStates';
-import { IDeleteBatchVotes } from '../types';
+import { IDeleteBatchVotes } from '~src/components/TinderStyleVoting/types';
+import ProposalInfoCard from '~src/components/TinderStyleVoting/VoteCart/ProposalInfoCard';
+import VoteSuccessModal from '~src/components/TinderStyleVoting/VoteCart/VoteSuccessModal';
 
-const VoteCart: React.FC = () => {
+const BatchCart: React.FC = () => {
 	const { api, apiReady } = useApiContext();
 	const user = useUserDetailsSelector();
 	const dispatch = useDispatch();
@@ -152,9 +152,9 @@ const VoteCart: React.FC = () => {
 	return (
 		<section>
 			<article className='px-2'>
-				<div className={'max-h-[662px] w-full overflow-y-auto rounded-md bg-white p-2 shadow-md  dark:bg-black'}>
+				<div className={'max-h-[557px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
-						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Voted Proposals</h1>
+						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
 					{!isLoading && vote_cart_data.length <= 0 && !!loginAddress.length && (
@@ -183,32 +183,32 @@ const VoteCart: React.FC = () => {
 					</Spin>
 				</div>
 			</article>
-
-			<article
-				className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
-				style={{ borderRadius: '8px 8px 0 0' }}
-			>
-				<div className='flex flex-col gap-y-2'>
-					<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
-						<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
+			{/* {!isUsedInWebView && (
+				<article
+					className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
+					style={{ borderRadius: '8px 8px 0 0' }}
+				>
+					<div className='flex flex-col gap-y-2'>
+						<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
+							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-medium'>{vote_cart_data?.length}</p>
+						</div>
+						<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
+							<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
+							<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
+								{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
+							</p>
+						</div>
+						<Button
+							className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'
+							onClick={voteProposals}
+							disabled={isDisable}
+						>
+							Confirm Batch Voting
+						</Button>
 					</div>
-					<div className='flex h-[40px] items-center justify-between rounded-sm bg-[#F6F7F9] p-2 dark:bg-modalOverlayDark'>
-						<p className='m-0 p-0 text-sm text-lightBlue dark:text-blue-dark-medium'>Gas Fees</p>
-						<p className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>
-							{formatedBalance(gasFees, unit, 0)} {chainProperties?.[network]?.tokenSymbol}
-						</p>
-					</div>
-					<Button
-						className='flex h-[40px] items-center justify-center rounded-lg border-none bg-pink_primary text-base text-white'
-						onClick={voteProposals}
-						disabled={isDisable}
-					>
-						Confirm Batch Voting
-					</Button>
-				</div>
-			</article>
-
+				</article>
+			)} */}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}
@@ -233,4 +233,4 @@ const VoteCart: React.FC = () => {
 	);
 };
 
-export default VoteCart;
+export default BatchCart;

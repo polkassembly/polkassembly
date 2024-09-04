@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Skeleton } from 'antd';
-import dynamic from 'next/dynamic';
 import React from 'react';
 import SwipableVotingCards from './SwipableVotingCards';
-const VoteCart = dynamic(() => import('~src/components/TinderStyleVoting/VoteCart'), {
+import dynamic from 'next/dynamic';
+import { Skeleton } from 'antd';
+const BatchCart = dynamic(() => import('./BatchCart'), {
 	loading: () => <Skeleton active />,
 	ssr: false
 });
@@ -21,7 +21,7 @@ const VotingOptions = () => {
 
 			{/* add confirm batch vote CTA inside voteCard component and fix max-h-[662px] to 557px */}
 			<article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
-				<VoteCart isUsedInWebView={true} />
+				<BatchCart />
 			</article>
 		</section>
 	);

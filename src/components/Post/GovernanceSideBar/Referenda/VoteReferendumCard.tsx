@@ -232,6 +232,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.NAY && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -259,6 +260,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote !== EVoteDecisionType.SPLIT && vote !== EVoteDecisionType.ABSTAIN && vote !== EVoteDecisionType.AYE && (
 				<VotingFormCard
 					form={ayeNayForm}
+					showConvictionBar={true}
 					formName={EFormType.AYE_NAY_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {
@@ -287,6 +289,7 @@ const VoteReferendumCard = ({ className, referendumId, proposalType, forSpecific
 			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
 				<VotingFormCard
 					form={abstainFrom}
+					showConvictionBar={true}
 					formName={EFormType.ABSTAIN_FORM}
 					onBalanceChange={(balance: BN) => {
 						if (!forSpecificPost) {

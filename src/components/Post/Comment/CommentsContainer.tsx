@@ -409,7 +409,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mt-2'>
 									<GreenTickIcon />
 								</span>
-								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_positive, showPositiveSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_positive) && (
 										<span
@@ -425,7 +425,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 								<span className='mt-2'>
 									<MinusSignIcon />
 								</span>
-								<p className={`${poppins.variable} ${poppins.className} mt-3 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
+								<p className={`${poppins.variable} ${poppins.className} mt-2 text-sm font-normal text-blue-light-high dark:text-blue-dark-high`}>
 									{getDisplayText(aiContentSummary?.summary_negative, showNegativeSummary)}
 									{shouldShowToggleButton(aiContentSummary?.summary_negative) && (
 										<span

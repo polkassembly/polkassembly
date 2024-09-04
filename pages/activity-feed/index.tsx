@@ -63,9 +63,15 @@ const BatchVotingBadge = dynamic(() => import('~src/components/Home/LatestActivi
 	ssr: false
 });
 
+interface Gov2LatestPosts {
+	allGov2Posts: any;
+	discussionPosts: any;
+	[key: string]: any;
+}
+
 interface Props {
 	networkSocialsData?: IApiResponse<NetworkSocials>;
-	gov2LatestPosts: Object;
+	gov2LatestPosts: Gov2LatestPosts;
 	network: string;
 	error: string;
 }
@@ -396,7 +402,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						return;
 					}
 
-					if (leaderboardData && leaderboardData.data && leaderboardData.data.length > 0) {
+					if (leaderboardData && leaderboardData?.data && leaderboardData?.data?.length > 0) {
 						const userRank = leaderboardData.data[0].rank;
 						setUserRank(userRank);
 						setCurrentUserdata((prevData: any) => ({
@@ -547,7 +553,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 								/>
 							)}
 						</div>
-						{currentUser && currentUser?.username && currentUser?.id && (
+						{currentUser?.username && currentUser?.id && (
 							<div>
 								<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
 									<div className='flex items-center justify-between gap-2'>

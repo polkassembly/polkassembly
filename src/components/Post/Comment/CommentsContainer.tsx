@@ -214,6 +214,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 	useEffect(() => {
 		getOverallSentimentPercentage();
 		if (!Object.keys(comments).length) return;
+		if (network != 'rococo') return;
 		setHasEnoughContent(CommentsContentCheck(comments));
 		getSummary();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -389,7 +390,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 					</div>
 				</div>
 			)}
-			{
+			{network == 'rococo' ? (
 				<div className='mt-4'>
 					{fetchingAISummary ? (
 						<Skeleton className='mt-4' />
@@ -443,7 +444,7 @@ const CommentsContainer: FC<ICommentsContainerProps> = (props) => {
 						</div>
 					) : null}
 				</div>
-			}
+			) : null}
 			{Boolean(allComments?.length) && timelines.length >= 1 && !loading && (
 				<div
 					id='comments-section'

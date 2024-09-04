@@ -28,6 +28,7 @@ import { useTheme } from 'next-themes';
 import ProposalActionButtons from '~src/ui-components/ProposalActionButtons';
 import Skeleton from '~src/basic-components/Skeleton';
 import { isOpenGovSupported } from '~src/global/openGovNetworks';
+import BatchVotingWebView from '~src/components/Home/LatestActivity/BatchVotingWebView';
 
 const TreasuryOverview = dynamic(() => import('~src/components/Home/TreasuryOverview/index'), {
 	loading: () => <Skeleton active />,
@@ -140,6 +141,11 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 					<ProposalActionButtons isUsedInHomePage={true} />
 				</div>
 			</div>
+			{isOpenGovSupported(network) && !isMobile && (
+				<div className='mx-1 mt-8'>
+					<BatchVotingWebView />
+				</div>
+			)}
 			<div className='mx-1 mt-2 md:mt-6'>
 				{networkSocialsData && (
 					<AboutNetwork

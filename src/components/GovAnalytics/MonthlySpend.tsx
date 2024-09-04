@@ -362,10 +362,16 @@ const MonthlySpend = () => {
 						isUsedInGovAnalytics={true}
 					/>
 				</>
-			) : <div className='flex flex-col justify-center items-center'>
-					<ImageIcon src='/assets/icons/no-graph.gif' alt='empty-state' imgClassName='h-[165px] w-[241px]'/>
+			) : (
+				<div className='flex flex-col items-center justify-center'>
+					<ImageIcon
+						src='/assets/icons/no-graph.gif'
+						alt='empty-state'
+						imgClassName='h-[165px] w-[241px]'
+					/>
 					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>No Graph Available</p>
-				</div>}
+				</div>
+			)}
 		</StyledCard>
 	);
 };

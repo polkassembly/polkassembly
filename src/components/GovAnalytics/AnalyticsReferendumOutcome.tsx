@@ -63,6 +63,7 @@ const AnalyticsReferendumOutcome = () => {
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const [selectedTrack, setSelectedTrack] = useState<number | null>(null);
+	const [trackIds, setTrackIds] = useState<number[]>([]);
 	const { network } = useNetworkSelector();
 	const [statusInfo, setStatusInfo] = useState<Record<string, number>>({
 		approved: 0,
@@ -71,11 +72,15 @@ const AnalyticsReferendumOutcome = () => {
 		rejected: 0,
 		timeout: 0
 	});
-	const trackIds = [
-		...Object.values(networkTrackInfo[network]).map((info) => {
-			return info.trackId;
-		})
-	];
+	const getAllTrackIds = () => {
+		const trackArr: number[] = [];
+		Object.entries(networkTrackInfo[network]).map(([, value]) => {
+			if (!value?.fellowshipOrigin) {
+				trackArr.push(value.trackId);
+			}
+		});
+		setTrackIds(trackArr);
+	};
 
 	const getData = async () => {
 		setLoading(true);
@@ -90,6 +95,12 @@ const AnalyticsReferendumOutcome = () => {
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		if (!network) return;
+		getAllTrackIds();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network]);
 
 	useEffect(() => {
 		getData();
@@ -168,7 +179,7 @@ const AnalyticsReferendumOutcome = () => {
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
-				<div className={'flex h-[30px] w-[109px] items-center justify-center truncate overflow-x-hidden rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
+				<div className={'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
 					<Dropdown
 						menu={{ items }}
 						theme={theme}

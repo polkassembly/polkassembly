@@ -43,8 +43,8 @@ import {
 	SelectedTreasury,
 	SelectedDiscussions,
 	SelectedPreimages,
-	SelectedBountiesIcon,
-	AnalyticsSVGIcon
+	SelectedBountiesIcon
+	// AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
 import { isFellowshipSupported } from '~src/global/fellowshipNetworks';

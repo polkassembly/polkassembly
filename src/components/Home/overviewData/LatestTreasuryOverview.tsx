@@ -483,7 +483,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												size='small'
 												showInfo={false}
 											/>
-											<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+											<span className={`${poppins.className} ${poppins.variable} -mb-3 text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 												{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 											</span>
 										</span>

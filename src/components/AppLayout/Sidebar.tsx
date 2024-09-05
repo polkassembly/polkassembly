@@ -976,40 +976,33 @@ const Sidebar: React.FC<SidebarProps> = ({
 		)
 	];
 
-	const handleGovernanceClick = (event: React.MouseEvent<HTMLDivElement>) => {
+	const handleDropdownPosition = (event: React.MouseEvent<HTMLDivElement>) => {
 		const iconPosition = event.currentTarget.getBoundingClientRect();
 		const scrollY = window.scrollY;
+		const sidebarWidth = 50;
 
 		setDropdownPosition({
-			left: iconPosition.left + 40,
-			top: iconPosition.top + scrollY + 0
+			left: iconPosition.left + sidebarWidth,
+			top: iconPosition.top + scrollY + -340
 		});
+	};
 
+	const handleGovernanceClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		handleDropdownPosition(event);
 		setGovernanceDropdownOpen(!governanceDropdownOpen);
 		setTreasuryDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
 
 	const handleTreasuryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		const iconPosition = event.currentTarget.getBoundingClientRect();
-		const scrollY = window.scrollY;
-
-		setDropdownPosition({
-			left: iconPosition.left + 40,
-			top: iconPosition.top + scrollY + 0
-		});
-
+		handleDropdownPosition(event);
 		setTreasuryDropdownOpen(!treasuryDropdownOpen);
 		setGovernanceDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
 
 	const handleWhitelistClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		const iconPosition = event.currentTarget.getBoundingClientRect();
-		const scrollY = window.scrollY;
-
-		setDropdownPosition({ left: iconPosition.left + 40, top: iconPosition.top + scrollY + 0 });
-
+		handleDropdownPosition(event);
 		setWhitelistDropdownOpen(!whitelistDropdownOpen);
 		setGovernanceDropdownOpen(false);
 		setTreasuryDropdownOpen(false);

@@ -983,7 +983,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 		setDropdownPosition({
 			left: iconPosition.left + sidebarWidth,
-			top: iconPosition.top + scrollY + -340
+			top: iconPosition.top + scrollY + -100
 		});
 	};
 

@@ -33,9 +33,10 @@ const ProfileBalances = ({ className }: Props) => {
 	const { api, apiReady } = useApiContext();
 	const currentUser = useUserDetailsSelector();
 	const { network } = useNetworkSelector();
-	const [balances, setBalances] = useState<{ freeBalance: BN; transferableBalance: BN; lockedBalance: BN }>({
+	const [balances, setBalances] = useState<{ freeBalance: BN; transferableBalance: BN; lockedBalance: BN; total: BN }>({
 		freeBalance: ZERO_BN,
 		lockedBalance: ZERO_BN,
+		total: ZERO_BN,
 		transferableBalance: ZERO_BN
 	});
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -46,7 +47,7 @@ const ProfileBalances = ({ className }: Props) => {
 	const [defaultAddress, setAddress] = useState<string>(delegationDashboardAddress);
 
 	const balancesArr = [
-		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.freeBalance.toString() },
+		{ icon: chainProperties[network]?.logo ? chainProperties[network].logo : chainLogo, label: 'Balance', value: balances.total.toString() },
 		{ icon: '/assets/icons/verified-tick.svg', key: 'transferableBalance', label: 'Transferable', value: balances.lockedBalance.toString() },
 		{ icon: '/assets/icons/lock-balance.svg', key: 'lockedBalance', label: 'Total Locked', value: balances.transferableBalance.toString() }
 	];
@@ -71,12 +72,12 @@ const ProfileBalances = ({ className }: Props) => {
 
 	useEffect(() => {
 		if (!api || !apiReady) return;
-
 		(async () => {
-			const balances = await userProfileBalances({ address: defaultAddress, api, apiReady, network });
+			const balances = await userProfileBalances({ address: defaultAddress || delegationDashboardAddress, api, apiReady, network });
 			setBalances({
 				freeBalance: balances?.freeBalance || ZERO_BN,
 				lockedBalance: balances?.transferableBalance || ZERO_BN,
+				total: balances?.totalBalance || ZERO_BN,
 				transferableBalance: balances?.lockedBalance || ZERO_BN
 			});
 		})();

@@ -31,8 +31,7 @@ const SwipableVotingCards = () => {
 		() =>
 			Array(activeProposal?.length)
 				.fill(0)
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				.map((i) => React.createRef()),
+				.map(() => React.createRef()),
 		[activeProposal?.length]
 	);
 
@@ -41,9 +40,10 @@ const SwipableVotingCards = () => {
 		currentIndexRef.current = val;
 	};
 
-	const canGoBack = currentIndex < activeProposal?.length - 1;
+	// const canGoBack = currentIndex < activeProposal?.length - 1;
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
+		console.log('postId: ', postId);
 		const { error } = await nextApiClientFetch<IAddBatchVotes>('api/v1/votes/batch-votes-cart/addBatchVoteToCart', {
 			vote: {
 				abstain_balance: direction === 'up' ? batch_vote_details.abstainVoteBalance : '0',
@@ -81,6 +81,7 @@ const SwipableVotingCards = () => {
 			if (callingFirstTime) {
 				dispatch(batchVotesActions.setVotedPostsIdsArray([]));
 				setActiveProposals(data);
+				setCurrentIndex(data.length - 1); // Update current index on initial load
 			} else {
 				setTempActiveProposals(data);
 			}
@@ -143,25 +144,32 @@ const SwipableVotingCards = () => {
 		currentIndexRef.current >= idx && childRefs[idx].current.restoreCard();
 	};
 
-	const goBack = async () => {
-		if (!canGoBack) return;
-		const newIndex = currentIndex + 1;
-		updateCurrentIndex(newIndex);
-		await childRefs[newIndex].current.restoreCard();
+	// const goBack = async () => {
+	// if (!canGoBack) return;
+	// const newIndex = currentIndex + 1;
+	// updateCurrentIndex(newIndex);
+	// await childRefs[newIndex].current.restoreCard();
+	// };
+
+	// Swipe the card programmatically
+	const handleSwipe = (dir: string) => {
+		if (currentIndexRef.current >= 0 && currentIndexRef.current < childRefs.length) {
+			childRefs[currentIndexRef.current].current.swipe(dir);
+		}
 	};
 
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='relative z-[100] h-[527px] w-full'>
 				<button
-					className='absolute -left-[21px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border-none bg-black dark:bg-white'
-					onClick={() => goBack()}
+					className='absolute -left-[21px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-none bg-black dark:bg-white'
+					onClick={() => handleSwipe('left')}
 				>
 					<LeftOutlined className='text-white dark:text-black' />
 				</button>
 				<button
-					className='absolute -right-[18px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 items-center justify-center rounded-full border-none bg-black dark:bg-white'
-					onClick={() => goBack()}
+					className='absolute -right-[18px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-none bg-black dark:bg-white'
+					onClick={() => handleSkipProposalCard(activeProposal[currentIndex]?.id)}
 				>
 					<RightOutlined className='text-white dark:text-black' />
 				</button>

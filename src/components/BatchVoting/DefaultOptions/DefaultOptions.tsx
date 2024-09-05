@@ -39,7 +39,7 @@ const DefaultOptions: FC<IDefaultOptions> = (props) => {
 					<Alert
 						type='info'
 						showIcon
-						message={<span className='text-[13px] dark:text-black'>Select default values for votes. These can be edited before making a final transaction</span>}
+						message={<span className='text-[13px] dark:text-white'>Select default values for votes. These can be edited before making a final transaction</span>}
 					/>
 				)}
 

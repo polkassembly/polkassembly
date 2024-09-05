@@ -150,18 +150,18 @@ const BatchCart: React.FC = () => {
 	}, [vote_cart_data]);
 
 	return (
-		<section>
-			<article className='px-2'>
-				<div className={'max-h-[557px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
+		<section className='px-4'>
+			<article className=''>
+				<div className={'max-h-[370px] w-full overflow-y-auto rounded-md bg-white p-2   dark:bg-black'}>
 					<div className='my-4 flex items-center justify-start gap-x-2'>
 						<h1 className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-white'>Summary</h1>
 						<p className='m-0 p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>({vote_cart_data?.length})</p>
 					</div>
 					{!isLoading && vote_cart_data.length <= 0 && !!loginAddress.length && (
-						<div className='flex h-[600px] items-center justify-center'>
+						<div className='flex h-[350px] items-center justify-center'>
 							<PostEmptyState
 								description={
-									<div className='p-5'>
+									<div className='p-5 text-center'>
 										<p>Currently no active proposals found in cart</p>
 									</div>
 								}
@@ -183,11 +183,9 @@ const BatchCart: React.FC = () => {
 					</Spin>
 				</div>
 			</article>
-			{/* {!isUsedInWebView && (
-				<article
-					className='fixed bottom-0 left-0 right-0 h-[171px] w-full bg-white p-5 shadow-lg drop-shadow-lg dark:bg-black'
-					style={{ borderRadius: '8px 8px 0 0' }}
-				>
+
+			{vote_cart_data.length > 0 && (
+				<article className='rounded-xl border border-solid border-[#D2D8E0] p-3'>
 					<div className='flex flex-col gap-y-2'>
 						<div className='flex h-[40px] items-center justify-between rounded-sm bg-transparent p-2'>
 							<p className='m-0 p-0 text-sm text-lightBlue dark:text-white'>Total Proposals</p>
@@ -208,7 +206,7 @@ const BatchCart: React.FC = () => {
 						</Button>
 					</div>
 				</article>
-			)} */}
+			)}
 			<Modal
 				wrapClassName='dark:bg-modalOverlayDark'
 				className={classNames(poppins.className, poppins.variable, 'mt-[100px] w-[600px]')}

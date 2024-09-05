@@ -22,6 +22,7 @@ import { formatedBalance } from '~src/util/formatedBalance';
 import { chainProperties } from '~src/global/networkConstants';
 import Image from 'next/image';
 import { IDeleteBatchVotes, IupdateBatchVotes } from '../types';
+import DeletedModalContent from './DeletedModalContent';
 
 interface IProposalInfoCard {
 	voteInfo: any;
@@ -39,10 +40,14 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const { edit_vote_details, batch_vote_details, vote_cart_data } = useBatchVotesSelector();
 	const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+	const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+	const [deletedPostId, setDeletedPostId] = useState<number>(0);
 	const [openViewProposalModal, setOpenViewProposalModal] = useState<boolean>(false);
 	const handleRemove = (postId: number) => {
-		dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
-		deletePostDetails();
+		setDeletedPostId(postId);
+		setOpenDeleteModal(true);
+		// dispatch(batchVotesActions.setRemoveVoteCardInfo(postId));
+		// deletePostDetails();
 	};
 
 	const editPostVoteDetails = async () => {
@@ -275,6 +280,55 @@ const ProposalInfoCard: FC<IProposalInfoCard> = (props) => {
 					<CardPostInfo
 						post={voteInfo?.proposal}
 						proposalType={voteInfo?.proposal?.type}
+					/>
+				</Modal>
+				<Modal
+					wrapClassName='dark:bg-modalOverlayDark'
+					className={classNames(poppins.className, poppins.variable, 'w-[600px]')}
+					open={openDeleteModal}
+					footer={
+						<div className='-mx-6 mt-4 flex items-center justify-end gap-x-2 border-0 border-t-[1px] border-solid border-section-light-container px-6 pb-2 pt-6'>
+							<CustomButton
+								variant='default'
+								text='No, Cancel'
+								buttonsize='sm'
+								onClick={() => {
+									setOpenDeleteModal(false);
+								}}
+							/>
+							<CustomButton
+								variant='primary'
+								text='Yes, Remove'
+								buttonsize='sm'
+								onClick={() => {
+									dispatch(batchVotesActions.setRemoveVoteCardInfo(deletedPostId));
+									deletePostDetails();
+									setOpenDeleteModal(false);
+								}}
+							/>
+						</div>
+					}
+					maskClosable={false}
+					closeIcon={<CloseIcon className='text-lightBlue dark:text-icon-dark-inactive' />}
+					onCancel={() => {
+						setOpenDeleteModal(false);
+					}}
+					title={
+						<div className='-mx-6 flex items-center gap-x-2 border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-2 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
+							<Image
+								src={'/assets/icons/bin-icon-grey.svg'}
+								alt='bin-icon'
+								height={20}
+								width={20}
+								className={classNames(theme === 'dark' ? 'dark-icons' : '', 'cursor-pointer')}
+							/>
+							Remove proposal from cart?
+						</div>
+					}
+				>
+					<DeletedModalContent
+						title={voteInfo?.proposal?.title}
+						id={voteInfo.referendumIndex}
 					/>
 				</Modal>
 			</article>

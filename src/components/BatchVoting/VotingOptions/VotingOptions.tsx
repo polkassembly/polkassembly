@@ -20,7 +20,7 @@ const VotingOptions = () => {
 			</article>
 
 			{/* add confirm batch vote CTA inside voteCard component and fix max-h-[662px] to 557px */}
-			<article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white dark:bg-black'>
+			<article className='h-[557px] w-[30%] items-center justify-start gap-x-3 rounded-xl bg-white py-2 dark:bg-black'>
 				<BatchCart />
 			</article>
 		</section>

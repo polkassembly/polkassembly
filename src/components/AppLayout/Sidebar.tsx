@@ -1354,11 +1354,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<Link href='/parachains'>
 							<div
 								className={`flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] ${
-									activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+									activeParachain ? 'bg-[#FFF2F9] font-medium text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
 								}`}
 							>
-								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
-								<span className='ml-2  text-xs font-medium  text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
+								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium ' />
+								<span className='ml-2  text-xs font-medium lg:block'>Parachains</span>
 							</div>{' '}
 						</Link>
 					</div>,

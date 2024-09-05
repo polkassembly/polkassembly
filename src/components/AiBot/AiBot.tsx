@@ -100,33 +100,26 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const data = [
-		{
+	const data = [];
+
+	if (isOpenGovSupported(network) || [AllNetworks.POLYMESH, AllNetworks.COLLECTIVES, AllNetworks.WESTENDCOLLECTIVES].includes(network)) {
+		data.push({
 			component: <ProposalActionButtons isUsedInFAB={true} />
-		},
+		});
+	}
+
+	data.push(
 		{
 			component: (
 				<div
 					className='ml-[-37px] flex min-w-[290px] cursor-pointer justify-center rounded-[8px] align-middle text-xl text-lightBlue transition delay-150 duration-300 hover:bg-[#e5007a12] hover:text-bodyBlue dark:text-blue-dark-medium'
 					onClick={() => (id ? router.push('/post/create') : setOpenDiscussionLoginPrompt(true))}
 				>
-					<div className='ml-[-50px] mt-[5px] cursor-pointer'>{theme == 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}</div>
-					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%] '>Create Discussion Post</p>
+					<div className='ml-[-50px] mt-[5px] cursor-pointer'>{theme === 'dark' ? <CreateDiscussionIconDark /> : <CreateDiscussionIcon />}</div>
+					<p className='mb-3 ml-[18px] mt-2.5 text-sm font-medium leading-5 tracking-[1.25%]'>Create Discussion Post</p>
 				</div>
 			)
 		},
-		// {
-		// component: <div className='ml-[-37px] flex justify-center align-middle text-lightBlue dark:text-blue-dark-medium hover:text-bodyBlue dark:text-blue-dark-high hover:bg-[#e5007a12] transition duration-300 delay-150 min-w-[290px] rounded-[8px] cursor-pointer'
-		// onClick={() => {
-		// if (!grillChat)
-		// (window as any).DocsBotAI.toggle();
-		// setIsAIChatBotOpen(!isAIChatBotOpen);
-		// }}
-		// >
-		// <AIbotIcon className='cursor-pointer ml-[-169px] mt-[5px]' />
-		// <p className='ml-4 mt-2.5 mb-3  font-medium text-sm leading-5 tracking-[1.25%]'>AI Bot</p>
-		// </div>
-		// },
 		{
 			component: (
 				<a
@@ -142,7 +135,7 @@ const AiBot: FC<IAiChatbotProps> = (props) => {
 				</a>
 			)
 		}
-	];
+	);
 
 	if (treasuryProposalCreationAllowedNetwork.includes(network)) {
 		data.splice(0, 0, {

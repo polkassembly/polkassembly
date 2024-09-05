@@ -846,32 +846,50 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		if (!isDataExist(subsquidData)) {
 			throw apiErrorWithStatusCode(`The Post with index "${postId}" is not found.`, 404);
 		}
-
 		const postData = subsquidData.proposals?.[0] || subsquidData.announcements?.[0];
+
+		if (postData?.proposalArguments && !postData?.preimage) {
+			postData.preimage = {
+				description: postData?.proposalArguments?.description,
+				method: postData?.proposalArguments?.method,
+				proposedCall: { args: postData?.proposalArguments?.args, method: postData?.proposalArguments?.method, section: postData?.proposalArguments?.section },
+				section: postData?.proposalArguments?.section
+			};
+			postData.proposalArguments = null;
+		}
+
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
-		const proposedCall = preimage?.proposedCall;
+		const proposedCall = preimage?.proposedCall || postData?.proposalArguments.args;
 		let remark = '';
 		let requested = BigInt(0);
 		const beneficiaries: IBeneficiary[] = [];
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args?.assetKind?.assetId?.value?.interior) {
-				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value;
+			if (proposedCall?.args?.assetKind?.assetId?.value?.interior || proposedCall?.args?.assetKind?.assetId?.interior?.value) {
+				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value || proposedCall?.args?.assetKind?.assetId?.interior?.value;
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
+
 			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
 
 			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
 				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
+			} else if (proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id) {
+				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id, network);
 			}
 
 			if (proposedCall.args.amount) {
 				requested = proposedCall.args.amount;
 				if (proposedCall.args.beneficiary) {
 					beneficiaries.push({
-						address: proposedCall.args.beneficiary as string,
+						address:
+							typeof proposedCall.args.beneficiary === 'string'
+								? proposedCall.args.beneficiary
+								: (proposedCall.args.beneficiary as any)?.value?.length
+								? (proposedCall.args.beneficiary as any)?.value
+								: ((proposedCall.args.beneficiary as any)?.value?.interior?.value?.id as string) || (proposedCall.args.beneficiary as any)?.value?.interior?.value[0]?.id || '',
 						amount: proposedCall.args.amount
 					});
 				}

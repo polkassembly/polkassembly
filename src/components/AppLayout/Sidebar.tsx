@@ -922,7 +922,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 			'/preimages',
 			<>
 				{router.pathname === '/preimages' ? (
-					<SelectedPreimages className='-ml-[10px] -mt-3 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+					<SelectedPreimages className={`-ml-[10px] ${sidebarCollapsed && '-mt-3'} scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
 				) : (
 					<PreimagesIcon className='-ml-2 scale-90 font-medium text-lightBlue dark:text-icon-dark-inactive' />
 				)}
@@ -1034,7 +1034,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<GovernanceIconNew
-							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[5%]'} scale-90 font-medium ${
+							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[8%]'} scale-90 font-medium ${
 								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
 							}  text-2xl dark:text-icon-dark-inactive`}
 						/>
@@ -1061,9 +1061,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 					) : (
 						<FellowshipIconNew
-							className={`-ml-9 mt-1 w-20 scale-90 ${whitelistDropdownOpen && 'bg-black bg-opacity-[5%]'} font-medium ${
-								activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							} text-2xl dark:text-icon-dark-inactive`}
+							className={`-ml-9 mt-1 w-20 scale-90  font-medium ${activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} text-2xl  ${
+								whitelistDropdownOpen && 'bg-black bg-opacity-[8%]'
+							} dark:text-icon-dark-inactive`}
 						/>
 					)}
 				</div>
@@ -1219,7 +1219,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
 						) : (
 							<TreasuryIconNew
-								className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[5%]'}`}
+								className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
 							/>
 						)}
 					</div>
@@ -1352,7 +1352,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 						}}
 					>
 						<Link href='/parachains'>
-							<div className='flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] '>
+							<div
+								className={`flex cursor-pointer items-center rounded-lg pl-2 hover:bg-[#000000] hover:bg-opacity-[4%] ${
+									activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+								}`}
+							>
 								<ParachainsIcon className='mt-3 scale-90 text-xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
 								<span className='ml-2  text-xs font-medium  text-lightBlue dark:text-icon-dark-inactive  lg:block'>Parachains</span>
 							</div>{' '}
@@ -1384,6 +1388,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		return str.replace(/-/g, ' ').replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
 	}
 
+	const [activeItem, setActiveItem] = useState<string | null>(null);
+	const handleItemClick = (key: string) => {
+		setActiveItem(key);
+	};
+
 	return (
 		<Sider
 			trigger={null}
@@ -1408,15 +1417,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+									const isActive = activeItem === item?.key;
 
 									return (
 										<p
 											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											onClick={() => handleItemClick(item?.key as string)}
+											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className='m-0 inline-block w-full p-0 text-left text-[#243A57] dark:text-[#FFFFFF]'
+												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1436,15 +1448,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+									const isActive = activeItem === item?.key;
 
 									return (
 										<p
 											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											onClick={() => handleItemClick(item?.key as string)}
+											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
+												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1464,15 +1479,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-
+									const isActive = activeItem === item?.key;
 									return (
 										<p
 											key={index}
-											className='rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] dark:hover:bg-opacity-[8%]'
+											onClick={() => handleItemClick(item?.key as string)}
+											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className='inline-block w-full text-left text-[#243A57] dark:text-[#FFFFFF]'
+												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
 												<span>{formattedLabel}</span>
 											</Link>

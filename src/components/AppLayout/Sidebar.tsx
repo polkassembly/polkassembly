@@ -1381,11 +1381,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		return str.replace(/-/g, ' ').replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
 	}
 
-	const [activeItem, setActiveItem] = useState<string | null>(null);
-	const handleItemClick = (key: string) => {
-		setActiveItem(key);
-	};
-
 	return (
 		<Sider
 			trigger={null}
@@ -1410,18 +1405,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<div className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-									const isActive = activeItem === item?.key;
 
 									return (
 										<p
 											key={index}
-											onClick={() => handleItemClick(item?.key as string)}
 											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+                           					 ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1441,18 +1434,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-									const isActive = activeItem === item?.key;
 
 									return (
 										<p
 											key={index}
-											onClick={() => handleItemClick(item?.key as string)}
 											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+                          					  ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
 												<span>{formattedLabel}</span>
 											</Link>
@@ -1472,19 +1463,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 							<ul className='text-center'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-									const isActive = activeItem === item?.key;
+
 									return (
 										<p
 											key={index}
-											onClick={() => handleItemClick(item?.key as string)}
 											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                            				${isActive ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+                           					 ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
 										>
 											<Link
 												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
 											>
-												<span>{formattedLabel}</span>
+												<span>{formattedLabel || ''}</span>
 											</Link>
 										</p>
 									);
@@ -1567,7 +1557,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/delegation where are you') ? '  activeborder  rounded-lg' : ''}`}>
+								<div className={`activeborderhover group relative ${isActive('/delegation') ? '  activeborder  rounded-lg' : ''}`}>
 									<Link href='/delegation'>
 										<img
 											src='/assets/head3.svg'

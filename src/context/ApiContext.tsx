@@ -45,9 +45,11 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 	const [relayApi, setRelayApi] = useState<ApiPromise>();
 	const [relayApiReady, setRelayApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
-	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoint : '');
+	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoints?.[0]?.key || '' : '');
 
 	const provider = useRef<ScProvider | WsProvider | null>(null);
+	const rpcEndpoints = props.network ? chainProperties[props.network]?.rpcEndpoints || [] : [];
+	const [currentEndpointIndex, setCurrentEndpointIndex] = useState<number>(0);
 
 	const getAssetUsdPrice = async () => {
 		const price = await fetchTokenToUSDPrice(treasuryAssets.DED.name);
@@ -116,8 +118,7 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 			api = new ApiPromise({ provider: provider.current, typesBundle });
 		}
 		setApi(api);
-	}, [props.network, wsProvider]);
-
+	}, [props.network, wsProvider, currentEndpointIndex]);
 	useEffect(() => {
 		if (api) {
 			setIsApiLoading(true);
@@ -130,8 +131,12 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
-				if (props.network) {
-					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				if (currentEndpointIndex < rpcEndpoints.length - 1) {
+					setCurrentEndpointIndex(currentEndpointIndex + 1);
+					setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
+				} else {
+					setCurrentEndpointIndex(0);
+					setWsProvider(rpcEndpoints[0]?.key || '');
 				}
 			}, 60000);
 			api.on('error', async () => {
@@ -144,8 +149,12 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
-				if (props.network) {
-					setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+				if (currentEndpointIndex < rpcEndpoints.length - 1) {
+					setCurrentEndpointIndex(currentEndpointIndex + 1);
+					setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
+				} else {
+					setCurrentEndpointIndex(0);
+					setWsProvider(rpcEndpoints[0]?.key || '');
 				}
 			});
 			api.isReady
@@ -179,8 +188,12 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					await api.disconnect();
 					console.error(error);
 					localStorage.removeItem('tracks');
-					if (props.network) {
-						setWsProvider(chainProperties?.[props.network]?.rpcEndpoint);
+					if (currentEndpointIndex < rpcEndpoints.length - 1) {
+						setCurrentEndpointIndex(currentEndpointIndex + 1);
+						setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
+					} else {
+						setCurrentEndpointIndex(0);
+						setWsProvider(rpcEndpoints[0]?.key || '');
 					}
 				});
 			return () => clearTimeout(timer);

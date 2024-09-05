@@ -860,7 +860,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 
 		const preimage = postData?.preimage;
 		const proposalArguments = postData?.proposalArguments || postData?.callData;
-		const proposedCall = preimage?.proposedCall || postData?.proposalArguments.args;
+		const proposedCall = preimage?.proposedCall || postData?.proposalArguments?.args;
 		let remark = '';
 		let requested = BigInt(0);
 		const beneficiaries: IBeneficiary[] = [];
@@ -872,7 +872,7 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
 
-			proposedCall.args = convertAnyHexToASCII(proposedCall.args, network);
+			proposedCall.args = convertAnyHexToASCII(proposedCall?.args, network);
 
 			if (proposedCall?.args?.beneficiary?.value?.interior?.value?.id) {
 				proposedCall.args.beneficiary.value.interior.value.id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value?.id, network);
@@ -880,21 +880,21 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 				proposedCall.args.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(proposedCall?.args?.beneficiary?.value?.interior?.value[0]?.id, network);
 			}
 
-			if (proposedCall.args.amount) {
-				requested = proposedCall.args.amount;
-				if (proposedCall.args.beneficiary) {
+			if (proposedCall?.args?.amount) {
+				requested = proposedCall?.args?.amount;
+				if (proposedCall?.args?.beneficiary) {
 					beneficiaries.push({
 						address:
-							typeof proposedCall.args.beneficiary === 'string'
-								? proposedCall.args.beneficiary
-								: (proposedCall.args.beneficiary as any)?.value?.length
-								? (proposedCall.args.beneficiary as any)?.value
-								: ((proposedCall.args.beneficiary as any)?.value?.interior?.value?.id as string) || (proposedCall.args.beneficiary as any)?.value?.interior?.value[0]?.id || '',
-						amount: proposedCall.args.amount
+							typeof proposedCall?.args?.beneficiary === 'string'
+								? proposedCall?.args?.beneficiary
+								: (proposedCall?.args?.beneficiary as any)?.value?.length
+								? (proposedCall?.args?.beneficiary as any)?.value
+								: ((proposedCall?.args?.beneficiary as any)?.value?.interior?.value?.id as string) || (proposedCall?.args?.beneficiary as any)?.value?.interior?.value[0]?.id || '',
+						amount: proposedCall?.args?.amount
 					});
 				}
 			} else {
-				const calls = proposedCall.args.calls;
+				const calls = proposedCall?.args?.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
 					calls.forEach((call) => {
 						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {

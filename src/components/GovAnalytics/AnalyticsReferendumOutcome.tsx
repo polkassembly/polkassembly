@@ -12,7 +12,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useTheme } from 'next-themes';
 import { IGetStatusWiseRefOutcome } from './types';
-import ImageIcon from '~src/ui-components/ImageIcon';
+import { ArrowDownIcon } from '~src/ui-components/CustomIcons';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -181,7 +181,7 @@ const AnalyticsReferendumOutcome = () => {
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
 				<div
 					className={
-						'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2 text-sm font-medium'
+						'flex h-[30px] w-[112px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2 text-sm font-medium dark:border-blue-dark-medium'
 					}
 				>
 					<Dropdown
@@ -197,10 +197,7 @@ const AnalyticsReferendumOutcome = () => {
 											.join(' ')
 											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
 									: 'All Tracks'}
-								<ImageIcon
-									src='/assets/icons/down-arrow-grey.svg'
-									alt='down-arrow'
-								/>
+								<ArrowDownIcon className='dark:text-blue-dark-medium' />
 							</Space>
 						</a>
 					</Dropdown>

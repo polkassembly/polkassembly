@@ -40,7 +40,10 @@ const StyledCard = styled(Card)`
 const LegendContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
+	gap: 4px 0;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	overflow-x: auto;
 	white-space: nowrap;
 	padding-top: 2px;
@@ -112,7 +115,11 @@ const AnalyticsReferendumCount = () => {
 	}));
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard
+			className={`mx-auto ${
+				isMobile ? 'max-h-[525px]' : 'max-h-[500px]'
+			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+		>
 			<h2 className='text-base font-semibold sm:text-xl'>Referendum count by Category</h2>
 			<Spin spinning={loading}>
 				<div
@@ -222,15 +229,16 @@ const AnalyticsReferendumCount = () => {
 						{data.map((item) => (
 							<div
 								key={item.id}
-								className='mb-2 mr-4 flex items-center text-xs text-bodyBlue dark:text-white'
+								className='mb-2 mr-4 flex w-[50%] items-center justify-between text-xs text-bodyBlue dark:text-white'
 							>
-								<div
-									className='mr-2 h-2 w-2 rounded-full'
-									style={{ background: item.color }}
-								></div>
-								<p className='m-0 p-0'>
-									{item.label} - {item.value}
-								</p>
+								<div className='flex items-center gap-x-1'>
+									<div
+										className='h-2 w-2 rounded-full'
+										style={{ background: item.color }}
+									></div>
+									<p className='m-0 p-0'>{item.label}</p>
+								</div>
+								<p className='m-0 p-0'>{item.value}</p>
 							</div>
 						))}
 					</LegendContainer>

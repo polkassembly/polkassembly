@@ -312,6 +312,7 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									xhr.send(formData);
 								}) as any,
 								menubar: false,
+								forced_root_block: '',
 								paste_data_images: true,
 								placeholder: 'Please type here...',
 								plugins: [

@@ -7,12 +7,12 @@ import { Card, MenuProps, Space, Spin } from 'antd';
 import { ResponsivePie } from '@nivo/pie';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { Dropdown } from '~src/ui-components/Dropdown';
-import { DownOutlined } from '@ant-design/icons';
 import { networkTrackInfo } from '~src/global/post_trackInfo';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { getTrackNameFromId } from '~src/util/trackNameFromId';
 import { useTheme } from 'next-themes';
 import { IGetStatusWiseRefOutcome } from './types';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const StyledCard = styled(Card)`
 	g[transform='translate(0,0)'] g:nth-child(even) {
@@ -146,31 +146,31 @@ const AnalyticsReferendumOutcome = () => {
 	const data = [
 		{
 			color: '#ff0000',
-			id: 'timeout',
+			id: 'Timeout',
 			label: 'Timeout',
 			value: statusInfo?.timeout
 		},
 		{
 			color: '#ff6000',
-			id: 'ongoing',
+			id: 'Ongoing',
 			label: 'Ongoing',
 			value: statusInfo?.ongoing
 		},
 		{
 			color: '#27d941',
-			id: 'approved',
+			id: 'Approved',
 			label: 'Approved',
 			value: statusInfo?.approved
 		},
 		{
 			color: '#6800ff',
-			id: 'rejected',
+			id: 'Rejected',
 			label: 'Rejected',
 			value: statusInfo?.rejected
 		},
 		{
 			color: '#fdcc4a',
-			id: 'cancelled',
+			id: 'Cancelled',
 			label: 'Cancelled',
 			value: statusInfo?.cancelled
 		}
@@ -179,7 +179,11 @@ const AnalyticsReferendumOutcome = () => {
 		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<div className={`${isMobile ? 'flex flex-col justify-start gap-y-2' : 'flex items-center justify-between'}`}>
 				<h2 className='text-base font-semibold sm:text-xl'>Referendum Count by Status</h2>
-				<div className={'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2'}>
+				<div
+					className={
+						'flex h-[30px] w-[109px] items-center justify-center overflow-x-hidden truncate rounded-md border border-solid border-[#D2D8E0] bg-transparent p-2 text-sm font-medium'
+					}
+				>
 					<Dropdown
 						menu={{ items }}
 						theme={theme}
@@ -193,7 +197,10 @@ const AnalyticsReferendumOutcome = () => {
 											.join(' ')
 											.slice(0, 5) + (getTrackNameFromId(network, trackIds[selectedTrack]).length > 5 ? '...' : '')
 									: 'All Tracks'}
-								<DownOutlined />
+								<ImageIcon
+									src='/assets/icons/down-arrow-grey.svg'
+									alt='down-arrow'
+								/>
 							</Space>
 						</a>
 					</Dropdown>

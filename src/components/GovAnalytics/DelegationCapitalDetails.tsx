@@ -104,7 +104,19 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 				isMobile ? 'max-h-[550px]' : 'max-h-[500px]'
 			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
 		>
-			<h2 className='text-base font-semibold sm:text-xl'>Track Delegation</h2>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-base font-semibold sm:text-xl'>Track Delegation</h2>
+				<div className='flex gap-x-4'>
+					<div className='flex items-center gap-x-1'>
+						<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
+						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Votes</p>
+					</div>
+					<div className='flex items-center gap-x-1'>
+						<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
+						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Capital</p>
+					</div>
+				</div>
+			</div>
 			<div
 				className='flex justify-start'
 				style={{ height: '300px', width: '100%' }}
@@ -172,31 +184,7 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 						modifiers: [['darker', 1.6]]
 					}}
 					theme={nivoTheme}
-					legends={[
-						{
-							anchor: 'top-right',
-							dataFrom: 'keys',
-							direction: 'row',
-							effects: [
-								{
-									on: 'hover',
-									style: {
-										itemOpacity: 1
-									}
-								}
-							],
-							itemDirection: 'left-to-right',
-							itemHeight: 20,
-							itemOpacity: 0.85,
-							itemWidth: 85,
-							itemsSpacing: 2,
-							justify: false,
-							symbolShape: 'circle',
-							symbolSize: 5,
-							translateX: -10,
-							translateY: -50
-						}
-					]}
+					legends={[]}
 					role='application'
 					isFocusable={true}
 					ariaLabel=''

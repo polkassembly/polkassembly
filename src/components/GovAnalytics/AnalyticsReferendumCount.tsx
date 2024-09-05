@@ -106,7 +106,7 @@ const AnalyticsReferendumCount = () => {
 	// Generate the pie chart data dynamically from categoryInfo
 	const data = Object.keys(categoryInfo).map((category) => ({
 		color: colors[Object.keys(categoryInfo).indexOf(category as keyof typeof categoryInfo)],
-		id: category,
+		id: category.charAt(0).toUpperCase() + category.slice(1),
 		label: category.charAt(0).toUpperCase() + category.slice(1),
 		value: categoryInfo[category as keyof typeof categoryInfo]
 	}));

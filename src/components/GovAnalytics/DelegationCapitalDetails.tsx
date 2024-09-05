@@ -8,7 +8,6 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IDelegationCapitalDetails } from './types';
-import { chainProperties } from '~src/global/networkConstants';
 import formatBnBalance from '~src/util/formatBnBalance';
 import BN from 'bn.js';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
@@ -43,7 +42,7 @@ const StyledCard = styled(Card)`
 const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	const { delegationData } = props;
 	const { network } = useNetworkSelector();
-	const unit = chainProperties?.[network]?.tokenSymbol;
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 
 	const { resolvedTheme: theme } = useTheme();
 
@@ -53,13 +52,13 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	};
 
 	const data = Object?.keys(delegationData || {}).map((key) => ({
-		capital: bnToIntBalance(delegationData[key].totalCapital || ZERO) || 0,
+		Capital: bnToIntBalance(delegationData[key].totalCapital || ZERO) || 0,
+		Votes: bnToIntBalance(delegationData[key].totalVotesBalance || ZERO) || 0,
 		capitalColor: '#796EEC',
 		trackName: key
 			.split(' ')
 			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 			.join(' '),
-		votes: bnToIntBalance(delegationData[key].totalVotesBalance || ZERO) || 0,
 		votesColor: '#B6B0FB'
 	}));
 
@@ -79,9 +78,16 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 				}
 			}
 		},
+		grid: {
+			line: {
+				stroke: theme === 'dark' ? '#333' : '#ddd',
+				strokeDasharray: '4 4'
+			}
+		},
 		legends: {
 			text: {
-				fill: theme === 'dark' ? 'white' : 'black'
+				fill: theme === 'dark' ? 'white' : 'black',
+				fontSize: 14
 			}
 		},
 		tooltip: {
@@ -93,7 +99,11 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	};
 
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard
+			className={`mx-auto ${
+				isMobile ? 'max-h-[550px]' : 'max-h-[500px]'
+			} w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white`}
+		>
 			<h2 className='text-base font-semibold sm:text-xl'>Track Delegation</h2>
 			<div
 				className='flex justify-start'
@@ -101,15 +111,15 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 			>
 				<ResponsiveBar
 					data={data}
-					keys={['votes', 'capital']}
+					keys={['Votes', 'Capital']}
 					indexBy='trackName'
-					margin={{ bottom: 80, left: 80, right: 0, top: 20 }}
+					margin={{ bottom: 60, left: 10, right: 40, top: 50 }}
 					padding={0.6}
-					enableGridY={false}
+					enableGridY={isMobile ? false : true}
 					enableLabel={false}
 					valueScale={{ type: 'linear' }}
 					indexScale={{ round: true, type: 'band' }}
-					colors={({ id, data }) => (id === 'votes' ? data.votesColor : data.capitalColor)}
+					colors={({ id, data }) => (id === 'Votes' ? data.votesColor : data.capitalColor)}
 					defs={[
 						{
 							background: 'inherit',
@@ -135,32 +145,26 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 						modifiers: [['darker', 1.6]]
 					}}
 					tooltip={({ id, value, indexValue }) => (
-						<div className='rounded bg-white px-2 py-1 text-bodyBlue drop-shadow-md dark:bg-[#323232] dark:text-white'>
-							<strong>{id}</strong> - {indexValue}: {formatUSDWithUnits(value.toString(), 1)}
+						<div className='border-1 rounded-[11px] border-solid border-[#F9F9F9] bg-white p-3 shadow-md dark:bg-[#000000]'>
+							<div className='text-xs font-normal text-blue-light-medium dark:text-blue-dark-medium'>Referenda {indexValue}</div>
+							<div className='flex items-end gap-x-1 text-xl font-medium dark:text-blue-dark-high'>
+								{formatUSDWithUnits(value.toString(), 1)} <p className='m-0 p-0 text-sm capitalize text-lightBlue dark:text-blue-dark-high'>{id}</p>
+							</div>
 						</div>
 					)}
 					axisTop={null}
 					axisRight={null}
 					borderRadius={2}
 					axisBottom={{
-						legend: 'Tracks',
-						legendOffset: 72,
+						legend: '',
+						legendOffset: 78,
 						legendPosition: 'middle',
 						tickPadding: 5,
-						tickRotation: -26,
-						tickSize: 5,
-						truncateTickAt: 50
+						tickRotation: isMobile ? 90 : -26,
+						tickSize: 0,
+						truncateTickAt: isMobile ? 10 : 50
 					}}
-					axisLeft={{
-						format: (value) => formatUSDWithUnits(value, 1),
-						legend: `Amount (in ${unit}s)`,
-						legendOffset: -66,
-						legendPosition: 'middle',
-						tickPadding: 5,
-						tickRotation: 0,
-						tickSize: 5,
-						truncateTickAt: 0
-					}}
+					axisLeft={null}
 					labelSkipWidth={12}
 					labelSkipHeight={12}
 					labelTextColor={{
@@ -187,9 +191,10 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 							itemWidth: 85,
 							itemsSpacing: 2,
 							justify: false,
-							symbolSize: 12,
+							symbolShape: 'circle',
+							symbolSize: 5,
 							translateX: -10,
-							translateY: -25
+							translateY: -50
 						}
 					]}
 					role='application'

@@ -23,6 +23,7 @@ import { setCurrentTokenPrice as setCurrentTokenPriceInRedux } from '~src/redux/
 // import LatestTreasuryOverview from '../overviewData/LatestTreasuryOverview';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import LatestTreasuryOverview from '../Home/overviewData/LatestTreasuryOverview';
+import ImageIcon from '~src/ui-components/ImageIcon';
 
 const EMPTY_U8A_32 = new Uint8Array(32);
 export const isAssetHubNetwork = [AllNetworks.POLKADOT];
@@ -347,10 +348,10 @@ const MonthlySpend = () => {
 		};
 	}, [currentTokenPrice, network]);
 	return (
-		<StyledCard className='mx-auto max-h-[500px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
+		<StyledCard className='mx-auto h-[276px] w-full flex-1 rounded-xxl border-section-light-container bg-white p-0 text-blue-light-high dark:border-[#3B444F] dark:bg-section-dark-overlay dark:text-white '>
 			<h2 className='text-base font-semibold sm:text-xl'>Monthly DOT Spent</h2>
-			{isAssetHubNetwork.includes(network) && (
-				<>
+			{isAssetHubNetwork.includes(network) ? (
+				<div className='mt-[64px]'>
 					<LatestTreasuryOverview
 						currentTokenPrice={currentTokenPrice}
 						available={available}
@@ -360,7 +361,16 @@ const MonthlySpend = () => {
 						tokenValue={tokenValue}
 						isUsedInGovAnalytics={true}
 					/>
-				</>
+				</div>
+			) : (
+				<div className='flex flex-col items-center justify-center'>
+					<ImageIcon
+						src='/assets/icons/no-graph.gif'
+						alt='empty-state'
+						imgClassName='h-[165px] w-[241px]'
+					/>
+					<p className='m-0 p-0 text-sm text-bodyBlue dark:text-white'>No Graph Available</p>
+				</div>
 			)}
 		</StyledCard>
 	);

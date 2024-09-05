@@ -147,7 +147,7 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			//temp
 			const firestorePost = postDoc.data();
 
-			if (!post?.proposer && !post?.preimage?.proposer && !post?.data?.account && post?.data?.account?.address && !firestorePost?.proposer_address)
+			if (!post?.proposer && !post?.preimage?.proposer && !post?.data?.account && !post?.data?.account?.address && !firestorePost?.proposer_address)
 				return res.status(500).json({ message: 'Post proposer not found on our on-chain database. Something went wrong.' });
 
 			proposerAddress = post?.proposer || post?.preimage?.proposer || post?.data?.account?.address || firestorePost?.proposer_address || '';
@@ -250,11 +250,16 @@ const handler: NextApiHandler<IEditPostResponse | MessageType> = async (req, res
 			variables
 		});
 
-		const post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
-		if (!post) return res.status(500).json({ message: 'Post not found on-chain. Something went wrong.' });
-		if (!post?.proposer && !post?.preimage?.proposer) return res.status(500).json({ message: 'Post proposer not found on-chain. Something went wrong.' });
+		let post = postRes.data?.proposals?.[0] || postRes.data?.announcements?.[0];
+		if (!post.preimage?.proposer && !post?.proposer && isSubscanSupport(network)) {
+			post = await getSubscanData('/api/scan/referenda/referendum', network, { referendum_index: Number(postId) });
+		}
+		if (!post) return res.status(500).json({ message: 'Post not found on our on-chain database. Something went wrong.' });
 
-		const proposerAddress = post?.proposer || post?.preimage?.proposer;
+		if (!post?.proposer && !post?.preimage?.proposer && !post?.data?.account && !post?.data?.account?.address)
+			return res.status(500).json({ message: 'Post proposer not found on our on-chain database. Something went wrong.' });
+
+		const proposerAddress = post?.proposer || post?.preimage?.proposer || post?.data?.account?.address || '';
 
 		const substrateAddress = getSubstrateAddress(proposerAddress);
 		if (!substrateAddress) return res.status(500).json({ message: 'Invalid Proposer address. Something went wrong.' });

@@ -47,6 +47,8 @@ import Skeleton from '~src/basic-components/Skeleton';
 import UserDropdown from '../../ui-components/UserDropdown';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { delegationSupportedNetworks } from '../Post/Tabs/PostStats/util/constants';
+import { setCurrentTokenPrice } from '~src/redux/currentTokenPrice';
+import fetchTokenToUSDPrice from '~src/util/fetchTokenToUSDPrice';
 
 const RemoveIdentity = dynamic(() => import('~src/components/RemoveIdentity'), {
 	ssr: false
@@ -112,10 +114,19 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 		}
 	};
 
+	const getCurrentTokenPrice = async () => {
+		if (!network) return;
+		const price = await fetchTokenToUSDPrice(network);
+		if (price !== 'N/A') {
+			dispatch(setCurrentTokenPrice(price));
+		}
+	};
+
 	useEffect(() => {
 		if (network && !isOpenGovSupported(network)) {
 			setGovTypeToContext(EGovType.GOV1);
 		}
+		getCurrentTokenPrice();
 		setOpen(Boolean(router?.query?.setidentity) || false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [network]);

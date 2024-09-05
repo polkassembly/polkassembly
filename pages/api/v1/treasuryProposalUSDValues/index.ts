@@ -49,7 +49,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 			});
 			const responseJSON = await response.json();
 			if (responseJSON['message'] == 'Success') {
-				const price = responseJSON['data']['ema7_average'];
+				const price = responseJSON['data']?.list?.[0]?.price || 0;
 				const priceNum: number = parseFloat(price);
 				if (priceNum == 0) {
 					usdValueOnCreation = null;
@@ -75,7 +75,7 @@ const handler: NextApiHandler<any | MessageType> = async (req, res) => {
 					});
 					const responseJSON = await response.json();
 					if (responseJSON['message'] == 'Success') {
-						const price = responseJSON['data']['ema7_average'];
+						const price = responseJSON?.['data']?.list?.[0]?.price || 0;
 						const priceNum: number = parseFloat(price);
 						if (priceNum == 0) {
 							usdValueOnClosed = null;

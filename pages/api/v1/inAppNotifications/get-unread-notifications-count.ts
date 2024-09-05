@@ -53,7 +53,7 @@ const handler: NextApiHandler<{ unread: number; lastSeen: Date } | MessageType> 
 	if (!token) return res.status(400).json({ message: 'Missing user token' });
 
 	const user = await authServiceInstance.GetUser(token);
-	if (!user) return res.status(400).json({ message: messages.USER_NOT_FOUND });
+	if (!user || !user.id) return res.status(400).json({ message: messages.USER_NOT_FOUND });
 
 	const { data, error, status } = await getUserNotifications({
 		userId: user.id

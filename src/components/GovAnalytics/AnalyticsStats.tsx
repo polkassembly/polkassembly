@@ -73,7 +73,6 @@ const AnalyticsStats: FC<IStats> = (props) => {
 					className='hidden h-[87px] bg-section-light-container dark:bg-separatorDark sm:flex'
 					type='vertical'
 				/>
-				<Divider className=' bg-section-light-container dark:bg-separatorDark sm:hidden' />
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<div className='flex h-[70px] w-[70px] items-center justify-center rounded-full bg-[#CCF3FF]'>
 						<ImageIcon
@@ -92,7 +91,6 @@ const AnalyticsStats: FC<IStats> = (props) => {
 					className='hidden h-[87px] bg-section-light-container dark:bg-separatorDark sm:flex'
 					type='vertical'
 				/>
-				<Divider className=' bg-section-light-container dark:bg-separatorDark sm:hidden' />
 
 				<div className='flex items-center space-x-2 max-sm:w-full max-sm:justify-start'>
 					<ImageIcon

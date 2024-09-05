@@ -3,7 +3,6 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TinderCard from 'react-tinder-card';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { batchVotesActions } from '~src/redux/batchVoting';
 import { useAppDispatch } from '~src/redux/store';
 import { useBatchVotesSelector, useNetworkSelector, useUserDetailsSelector } from '~src/redux/selectors';
@@ -41,6 +40,22 @@ const SwipableVotingCards = () => {
 	};
 
 	// const canGoBack = currentIndex < activeProposal?.length - 1;
+	const getVoteCartData = async () => {
+		setIsLoading(true);
+		const { data, error } = await nextApiClientFetch<any>('api/v1/votes/batch-votes-cart/getBatchVotesCart', {
+			isExternalApiCall: true,
+			userAddress: user?.loginAddress
+		});
+		if (error) {
+			setIsLoading(false);
+			console.error(error);
+			return;
+		} else {
+			setIsLoading(false);
+			dispatch(batchVotesActions.setVoteCartData(data?.votes));
+			dispatch(batchVotesActions.setTotalVotesAddedInCart(data?.votes?.length));
+		}
+	};
 
 	const addVotedPostToDB = async (postId: number, direction: string) => {
 		console.log('postId: ', postId);
@@ -60,6 +75,7 @@ const SwipableVotingCards = () => {
 			console.error(error);
 			return;
 		}
+		getVoteCartData();
 	};
 
 	const getActiveProposals = async (callingFirstTime?: boolean) => {
@@ -152,28 +168,15 @@ const SwipableVotingCards = () => {
 	// };
 
 	// Swipe the card programmatically
-	const handleSwipe = (dir: string) => {
-		if (currentIndexRef.current >= 0 && currentIndexRef.current < childRefs.length) {
-			childRefs[currentIndexRef.current].current.swipe(dir);
-		}
-	};
+	// const handleSwipe = (dir: string) => {
+	// if (currentIndexRef.current >= 0 && currentIndexRef.current < childRefs.length) {
+	// childRefs[currentIndexRef.current].current.swipe(dir);
+	// }
+	// };
 
 	return (
 		<div className='mb-8 flex h-screen w-full flex-col items-center'>
 			<div className='relative z-[100] h-[527px] w-full'>
-				<button
-					className='absolute -left-[21px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-none bg-black dark:bg-white'
-					onClick={() => handleSwipe('left')}
-				>
-					<LeftOutlined className='text-white dark:text-black' />
-				</button>
-				<button
-					className='absolute -right-[18px] top-1/2 z-10 flex h-[40px] w-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-none bg-black dark:bg-white'
-					onClick={() => handleSkipProposalCard(activeProposal[currentIndex]?.id)}
-				>
-					<RightOutlined className='text-white dark:text-black' />
-				</button>
-
 				{!isLoading && activeProposal.length <= 0 && (
 					<div className='flex h-[600px] items-center justify-center'>
 						<PostEmptyState

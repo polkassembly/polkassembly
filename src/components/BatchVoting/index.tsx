@@ -5,13 +5,20 @@ import React from 'react';
 import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { useTheme } from 'next-themes';
-import DefaultOptions from './DefaultOptions/DefaultOptions';
 import { useBatchVotesSelector } from '~src/redux/selectors';
 import VotingOptions from './VotingOptions/VotingOptions';
+import dynamic from 'next/dynamic';
+import { Skeleton } from 'antd';
+const DefaultOptions = dynamic(() => import('./DefaultOptions/DefaultOptions'), {
+	loading: () => <Skeleton active />,
+	ssr: false
+});
 
 const BatchVotingWeb = () => {
 	const { resolvedTheme: theme } = useTheme();
 	const { is_default_selected } = useBatchVotesSelector();
+
+	console.log('am i default: ', is_default_selected);
 
 	return (
 		<section className='flex flex-col gap-y-8'>
@@ -32,7 +39,7 @@ const BatchVotingWeb = () => {
 							alt='tick'
 						/>
 					)}
-					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-semibold text-[#2ED47A]'} `}>Set Deafaults</p>
+					<p className={`m-0 p-0 text-base ${is_default_selected ? 'font-semibold text-pink_primary' : 'font-semibold text-[#2ED47A]'} `}>Set Defaults</p>
 				</div>
 				<RightOutlined className={`${is_default_selected ? 'text-lightBlue dark:text-lightGreyTextColor' : 'text-[#2ED47A]'}`} />
 				<div className='flex items-center justify-start gap-x-2'>
@@ -46,7 +53,7 @@ const BatchVotingWeb = () => {
 					<p className={`m-0 p-0 text-base ${!is_default_selected ? 'font-semibold text-pink_primary' : 'font-normal text-lightBlue dark:text-lightGreyTextColor'} `}>Vote</p>
 				</div>
 			</article>
-
+			{/* <DefaultOptions /> */}
 			{is_default_selected ? <DefaultOptions /> : <VotingOptions />}
 		</section>
 	);

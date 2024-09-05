@@ -99,7 +99,7 @@ const ReferendumCount = () => {
 	const data = trackInfo
 		? Object?.entries(trackInfo).map(([key, value], index) => ({
 				color: `hsl(${index * 30}, 70%, 50%)`,
-				id: key,
+				id: key.split('_').join(' '),
 				label: key,
 				value: value
 		  }))

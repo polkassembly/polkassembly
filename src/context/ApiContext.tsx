@@ -45,8 +45,8 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 	const [relayApi, setRelayApi] = useState<ApiPromise>();
 	const [relayApiReady, setRelayApiReady] = useState(false);
 	const [isApiLoading, setIsApiLoading] = useState(false);
-	const [wsProvider, setWsProvider] = useState<string>(props.network ? chainProperties?.[props.network]?.rpcEndpoints?.[0]?.key || '' : '');
 
+	const [wsProvider, setWsProvider] = useState<string>('');
 	const provider = useRef<ScProvider | WsProvider | null>(null);
 	const rpcEndpoints = props.network ? chainProperties[props.network]?.rpcEndpoints || [] : [];
 	const [currentEndpointIndex, setCurrentEndpointIndex] = useState<number>(0);
@@ -60,10 +60,16 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 	};
 
 	useEffect(() => {
-		if (!props?.network) return;
-		if (!isMultiassetSupportedNetwork(props?.network)) return;
-		getAssetUsdPrice();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		if (props?.network && isMultiassetSupportedNetwork(props?.network)) {
+			getAssetUsdPrice();
+		}
+	}, [props.network]);
+
+	useEffect(() => {
+		if (props.network) {
+			const initialWsProvider = chainProperties?.[props.network]?.rpcEndpoints?.[0]?.key || '';
+			setWsProvider(initialWsProvider);
+		}
 	}, [props.network]);
 
 	useEffect(() => {
@@ -93,11 +99,11 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 					setRelayApiReady(false);
 				});
 		}
-	}, [props.network, relayApi]);
+	}, [relayApi]);
 
 	useEffect(() => {
-		if (!wsProvider && !props.network) return;
-		provider.current = new WsProvider(wsProvider || chainProperties?.[props.network!]?.rpcEndpoint);
+		if (!wsProvider) return;
+		provider.current = new WsProvider(wsProvider);
 
 		setApiReady(false);
 		setApi(undefined);
@@ -118,45 +124,26 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 			api = new ApiPromise({ provider: provider.current, typesBundle });
 		}
 		setApi(api);
-	}, [props.network, wsProvider, currentEndpointIndex]);
+	}, [wsProvider]);
 	useEffect(() => {
 		if (api) {
 			setIsApiLoading(true);
-			const timer = setTimeout(async () => {
+			const handleApiError = async () => {
 				queueNotification({
 					header: 'Error!',
-					message: 'RPC connection Timeout.',
+					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding. Retrying in 10 seconds...`,
 					status: NotificationStatus.ERROR
 				});
 				setIsApiLoading(false);
 				await api.disconnect();
 				localStorage.removeItem('tracks');
-				if (currentEndpointIndex < rpcEndpoints.length - 1) {
-					setCurrentEndpointIndex(currentEndpointIndex + 1);
-					setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
-				} else {
-					setCurrentEndpointIndex(0);
-					setWsProvider(rpcEndpoints[0]?.key || '');
-				}
-			}, 60000);
-			api.on('error', async () => {
-				clearTimeout(timer);
-				queueNotification({
-					header: 'Error!',
-					message: `${dropdownLabel(wsProvider, props.network || '')} is not responding, please change RPC.`,
-					status: NotificationStatus.ERROR
-				});
-				setIsApiLoading(false);
-				await api.disconnect();
-				localStorage.removeItem('tracks');
-				if (currentEndpointIndex < rpcEndpoints.length - 1) {
-					setCurrentEndpointIndex(currentEndpointIndex + 1);
-					setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
-				} else {
-					setCurrentEndpointIndex(0);
-					setWsProvider(rpcEndpoints[0]?.key || '');
-				}
-			});
+
+				setTimeout(() => {
+					switchToNextEndpoint();
+				}, 10000);
+			};
+			const timer = setTimeout(handleApiError, 60000);
+			api.on('error', handleApiError);
 			api.isReady
 				.then(() => {
 					clearTimeout(timer);
@@ -200,6 +187,16 @@ export function ApiContextProvider(props: ApiContextProviderProps): React.ReactE
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [api]);
+
+	const switchToNextEndpoint = () => {
+		if (currentEndpointIndex < rpcEndpoints.length - 1) {
+			setCurrentEndpointIndex(currentEndpointIndex + 1);
+			setWsProvider(rpcEndpoints[currentEndpointIndex + 1]?.key || '');
+		} else {
+			setCurrentEndpointIndex(0);
+			setWsProvider(rpcEndpoints[0]?.key || '');
+		}
+	};
 
 	return <ApiContext.Provider value={{ api, apiReady, isApiLoading, relayApi, relayApiReady, setWsProvider, wsProvider }}>{children}</ApiContext.Provider>;
 }

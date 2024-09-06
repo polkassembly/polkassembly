@@ -30,9 +30,11 @@ const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 					</div>
 
 					<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>We have assigned you a temporary username </p>
-					<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
-						You can visit<Link href={`/user/${username}`}>Profile</Link> and change it anytime
-					</p>
+					{!!username?.length && (
+						<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
+							You can visit<Link href={`/user/${username}`}>Profile</Link> and change it anytime
+						</p>
+					)}
 				</div>
 			</div>
 		</div>

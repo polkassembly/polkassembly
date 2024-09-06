@@ -38,6 +38,23 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const postData = doc.data();
+
+	if (!postData?.content && postData?.summary) {
+		const max_150_char_summary = await fetchContentSummary(
+			postData.summary as string,
+			proposalType as any,
+			process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
+		);
+
+		if (!max_150_char_summary) {
+			return res.status(200).json({ summary: '' });
+		}
+
+		await postRef.set({ max_150_char_summary }, { merge: true });
+
+		return res.status(200).json({ summary: max_150_char_summary });
+	}
+
 	if (postData?.max_150_char_summary) {
 		return res.status(200).json({ summary: postData?.max_150_char_summary });
 	}

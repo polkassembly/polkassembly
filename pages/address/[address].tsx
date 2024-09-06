@@ -68,7 +68,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		  });
 
 	try {
-		await updateUserBadges(userProfile?.data?.username || '', network);
+		if (userProfile?.data?.username) {
+			await updateUserBadges(userProfile?.data?.username || '', network);
+		}
 	} catch (error) {
 		console.error(error);
 	}

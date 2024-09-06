@@ -14,13 +14,11 @@ export const getContentSummary = async (post: any, network: string, isExternalAp
 				post.summary = summary;
 				const postRef = postsByTypeRef(network, getFirestoreProposalType(post.type || '') as ProposalType).doc(String(post.type === 'Tips' ? post.hash : post.post_id));
 				if (postRef && summary) {
-					postRef.get().then((doc) => {
-						if (doc.exists) {
-							postRef
-								.set({ summary: summary }, { merge: true })
-								.then(() => {})
-								.catch(() => {});
-						}
+					postRef.get().then(() => {
+						postRef
+							.set({ summary: summary }, { merge: true })
+							.then(() => {})
+							.catch(() => {});
 					});
 				}
 			}

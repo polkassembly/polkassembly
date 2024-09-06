@@ -118,6 +118,11 @@ query ProposalsListingByType($type_in: [ProposalType!], $orderBy: [ProposalOrder
     statusHistory {
       id
     }
+    proposalArguments{
+      section
+      method
+      args
+    }
     tally {
       ayes
       nays
@@ -276,6 +281,10 @@ export const GET_PROPOSAL_LISTING_BY_TYPE_AND_INDEXES = `query ProposalsListingB
     curator
     createdAt
     updatedAt
+    proposalArguments{
+method
+    section
+    args}
     preimage {
       method
       proposer
@@ -484,11 +493,17 @@ query ProposalByIndexAndTypeForLinking($index_eq: Int, $hash_eq: String, $type_e
 `;
 
 export const GET_PROPOSAL_BY_INDEX_AND_TYPE = `
-query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
+
+query ProposalByIndexAndType($index_eq: Int=1103, $hash_eq: String, $type_eq: ProposalType = ReferendumV2, $voter_eq: String = "", $vote_type_eq: VoteType = ReferendumV2) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, hash_eq: $hash_eq}) {
     index
     proposer
     status
+    proposalArguments{
+      args
+      section
+      method
+    }
     preimage {
       proposer
       method
@@ -601,7 +616,8 @@ query ProposalByIndexAndType($index_eq: Int, $hash_eq: String, $type_eq: Proposa
       }
     }
   }
-}`;
+}
+`;
 
 export const GET_PROPOSAL_BY_INDEX_FOR_ADVISORY_COMMITTEE = `query ProposalByIndexAndType($index_eq: Int, $proposalHashBlock_eq: String, $type_eq: ProposalType = DemocracyProposal, $voter_eq: String = "", $vote_type_eq: VoteType = Motion) {
   proposals(limit: 1, where: {type_eq: $type_eq, index_eq: $index_eq, proposalHashBlock_eq: $proposalHashBlock_eq}) {
@@ -2506,6 +2522,7 @@ export const GET_ALL_TRACK_LEVEL_ANALYTICS_DELEGATION_DATA = `query DelegationSt
     to
     balance
     lockPeriod
+    track
   }
 }
 `;
@@ -2519,6 +2536,45 @@ query MyQuery($index_eq:Int!, $type: ProposalType = ReferendumV2) {
       support
       bareAyes
     }
+  }
+}
+`;
+
+export const GET_TOTAL_APPROVED_PROPOSALS = `
+query MyQuery {
+  proposalsConnection(where: {status_in:[Confirmed,Executed,Approved], type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
+export const GET_TOTAL_CATEGORY_PROPOSALS = `
+query MyQuery ($Indexes: [Int!]){
+  count:proposalsConnection(where: {trackNumber_in:$Indexes, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+}
+`;
+
+export const GET_STATUS_WISE_REF_OUTCOME = `
+query MyQuery ($trackNo: Int){
+  timeout:proposalsConnection(where: {status_in:[TimedOut], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+  ongoing:proposalsConnection(where: {status_in:[DecisionDepositPlaced,Deciding,ConfirmAborted,ConfirmStarted, Submitted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+  }
+   approved:proposalsConnection(where: {status_in:[Executed,Approved, Confirmed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+   rejected:proposalsConnection(where: {status_in:[Rejected,Killed,ExecutionFailed], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
+  }
+  cancelled:proposalsConnection(where: {status_in:[Cancelled, ConfirmAborted], trackNumber_eq: $trackNo, type_eq: ReferendumV2}, orderBy: id_ASC){
+    totalCount
+
   }
 }
 `;

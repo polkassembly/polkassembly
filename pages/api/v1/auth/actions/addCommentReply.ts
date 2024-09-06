@@ -20,6 +20,7 @@ import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
 import { IComment } from '~src/components/Post/Comment/Comment';
 import { firestore_db } from '~src/services/firebaseInit';
+import { getCommentsAISummaryByPost } from '../../ai-summary';
 
 export interface IAddCommentReplyResponse {
 	id: string;
@@ -141,6 +142,7 @@ const handler: NextApiHandler<IAddCommentReplyResponse | MessageType> = async (r
 				userId
 			});
 		}
+		getCommentsAISummaryByPost({ network, postId, postType });
 		return;
 	} catch (err) {
 		console.log(err);

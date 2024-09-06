@@ -479,11 +479,7 @@ const Post: FC<IPostProps> = (props) => {
 							/>
 						),
 						key: 'stats',
-						label: (
-							<div className='flex items-center gap-2'>
-								<span className='aspect-square w-2 rounded-full bg-pink_primary'></span>Stats
-							</div>
-						)
+						label: <div className='flex items-center gap-2'>Stats</div>
 					}
 			);
 		}

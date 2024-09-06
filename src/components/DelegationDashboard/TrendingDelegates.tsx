@@ -72,7 +72,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 	const [open, setOpen] = useState<boolean>(false);
 
 	const handleIdentity = async (delegates: IDelegateAddressDetails[]) => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		const identityInfo: { [key: string]: any | null } = {};
 		const identityInfoPromises = delegates?.map(async (delegate: IDelegateAddressDetails) => {
@@ -117,7 +117,6 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 		setLoading(true);
 
 		const { data, error } = await nextApiClientFetch<IDelegateAddressDetails[]>('api/v1/delegations/getAllDelegates');
-
 		if (data) {
 			//putting polkassembly Delegate first;
 			const updatedDelegates = data || [];

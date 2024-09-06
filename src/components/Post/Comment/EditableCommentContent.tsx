@@ -123,7 +123,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 
 	useEffect(() => {
 		(async () => {
-			if ((!api && !peopleChainApi) || !proposer || !(apiReady && peopleChainApiReady)) return;
+			if (!api || !proposer || !apiReady) return;
 			const onChainUsername = await getOnChainUsername({ address: proposer, api: peopleChainApi ?? api, getWeb3Name: network === 'kilt' });
 			setOnChainUsername(onChainUsername);
 		})();
@@ -726,6 +726,7 @@ const EditableCommentContent: FC<IEditableCommentContentProps> = (props) => {
 							theme={theme}
 							md={content}
 							className='rounded-b-md bg-comment_bg px-2 py-2 text-sm dark:bg-[#141416] md:px-4'
+							isUsedInComments={true}
 						/>
 
 						<div className='flex flex-row flex-wrap items-center gap-[1px] bg-white dark:bg-section-dark-overlay'>

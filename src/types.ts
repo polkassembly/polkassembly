@@ -688,6 +688,7 @@ export enum EActivityFilter {
 	REACTS = 'REACTED',
 	MENTIONS = 'MENTIONED'
 }
+
 export interface ITrackAnalyticsStats {
 	activeProposals: { diff: number; total: number };
 	allProposals: { diff: number; total: number };
@@ -884,6 +885,7 @@ export interface IOverviewProps {
 		isLoading: boolean;
 		value: string;
 	};
+	isUsedInGovAnalytics?: boolean;
 	currentTokenPrice: {
 		isLoading: boolean;
 		value: string;
@@ -960,4 +962,9 @@ export enum EDelegationSourceFilters {
 	NOVA = 'nova',
 	W3F = 'w3f',
 	NA = 'individual'
+}
+
+export interface ICommentsSummary {
+	summary_negative: string;
+	summary_positive: string;
 }

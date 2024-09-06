@@ -1192,7 +1192,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: kiltLogo,
-		rpcEndpoint: 'wss://spiritnet.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://kilt-rpc.dwellir.com',
 		ss58Format: 38,
 		subsquidUrl: 'https://squid.subsquid.io/kilt-polkassembly/graphql',
 		tokenDecimals: 15,

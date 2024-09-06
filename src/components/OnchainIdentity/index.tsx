@@ -28,6 +28,7 @@ import { network as AllNetworks } from 'src/global/networkConstants';
 import getIdentityInformation from '~src/auth/utils/getIdentityInformation';
 import getIdentityRegistrarIndex from '~src/util/getIdentityRegistrarIndex';
 import Alert from '~src/basic-components/Alert';
+import { isOpenGovSupported } from '~src/global/openGovNetworks';
 
 const ZERO_BN = new BN(0);
 
@@ -61,7 +62,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 	}, [isRequestedJudgmentFromPolkassembly, identityAddress]);
 
 	const getTxFee = async () => {
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !network) return;
+		if (!api || !apiReady || !network) return;
 		const bondFee = (peopleChainApi ?? api)?.consts?.identity?.fieldDeposit || ZERO_BN;
 
 		const registerars: any = await (peopleChainApi ?? api)?.query?.identity?.registrars?.().then((e) => JSON.parse(e.toString()));
@@ -99,12 +100,12 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 			setStep(ESetIdentitySteps.AMOUNT_BREAKDOWN);
 		}
 		if (router.query?.setidentity) {
-			router.replace('?setidentity=true', '/opengov');
+			router.replace('?setidentity=true', isOpenGovSupported(network) ? '/opengov' : '/');
 		}
 	};
 
 	const getIdentityInfo = async () => {
-		if ((!api && !peopleChainApi) || !(apiReady && peopleChainApiReady)) return;
+		if (!api || !apiReady) return;
 
 		try {
 			const { discord, display, email, isVerified, isIdentitySet, riot, matrix, github, legal, twitter, web, judgements, verifiedByPolkassembly } = await getIdentityInformation({
@@ -217,7 +218,7 @@ const Identity = ({ open, setOpen, openAddressModal, setOpenAddressModal }: IOnC
 								setIsExitModal(false);
 								setOpen(false);
 								setLoading({ ...loading, isLoading: false });
-								router.replace('?setidentity=true', '/opengov');
+								router.replace('?setidentity=true', isOpenGovSupported(network) ? '/opengov' : '/');
 							}}
 							text='Yes, Exit'
 							height={38}

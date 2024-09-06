@@ -144,7 +144,7 @@ const IdentityForm = ({
 		}
 		const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
-		if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || !okAll || registrarIndex === null) return;
+		if (!api || !apiReady || !okAll || registrarIndex === null) return;
 		if (requestJudgement && identityInfo?.verifiedByPolkassembly) return;
 
 		let tx;
@@ -207,14 +207,7 @@ const IdentityForm = ({
 		if (!txFeeVal) {
 			txFeeVal = txFee;
 		}
-		if (
-			!(api && peopleChainApi) ||
-			!(apiReady && peopleChainApiReady) ||
-			(!okAll && !initialLoading) ||
-			!form.getFieldValue('displayName') ||
-			!form.getFieldValue('email') ||
-			!identityAddress
-		) {
+		if (!api || !apiReady || (!okAll && !initialLoading) || !form.getFieldValue('displayName') || !form.getFieldValue('email') || !identityAddress) {
 			setTxFee({ ...txFeeVal, gasFee: ZERO_BN });
 			return;
 		}

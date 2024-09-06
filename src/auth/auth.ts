@@ -68,6 +68,7 @@ export const NOTIFICATION_DEFAULTS: NotificationSettings = {
 };
 
 const PROFILE_DETAILS_DEFAULTS: ProfileDetails = {
+	achievement_badges: [],
 	badges: [],
 	bio: '',
 	image: '',

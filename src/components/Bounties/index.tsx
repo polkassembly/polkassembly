@@ -48,163 +48,169 @@ const BountiesContainer: FC<IBountiesContainer> = ({ extendedData, activeBountyD
 			<BountiesHeader />
 
 			{/* Hot Bounties */}
-			<div className='mt-8 flex items-center justify-between'>
-				<div className='flex items-center gap-2'>
-					<ImageIcon
-						src='/assets/bounty-icons/fire-icon.svg'
-						alt='bounty icon'
-						imgClassName='-mt-[18px]'
-					/>
-					<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
-					{extendedData?.count && (
-						<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
-							({extendedData?.count})
-						</span>
-					)}
-				</div>
-				<button
-					onClick={() => {
-						router.push('/bounties');
-					}}
-					className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
-				>
-					View All
-				</button>
-			</div>
-
-			<div className='relative '>
-				{currentSlide1 > 0 && (
-					<span
-						onClick={() => carouselRef1?.current?.prev()}
-						className='rotate-180 cursor-pointer'
-						style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
-					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-							className='scale-75 md:scale-100'
-						/>
-					</span>
-				)}
-				<Carousel
-					ref={carouselRef1}
-					arrows
-					className='overflow-hidden'
-					infinite={false}
-					dots={false}
-					afterChange={handleBeforeChange1}
-				>
-					{extendedDataChunks.map((chunk, index) => {
-						const chunkClass = chunk.length % 3 === 0 ? 'flex justify-center md:justify-around' : 'flex justify-start';
-						return (
-							<div
-								key={index}
-								className={chunkClass}
-							>
-								{chunk.map((post, postIndex) => (
-									<HotBountyCard
-										key={postIndex}
-										extendedData={post}
-									/>
-								))}
-							</div>
-						);
-					})}
-				</Carousel>
-				{currentSlide1 < extendedDataChunks.length - 1 && (
-					<span
-						onClick={() => carouselRef1?.current?.next()}
-						className='cursor-pointer'
-						style={{
-							position: 'absolute',
-							right: -46,
-							top: '35%',
-							zIndex: 10,
-							...(isMobile ? { right: 10 } : {})
-						}}
-					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-							className='scale-75 md:scale-100'
-						/>
-					</span>
-				)}
-			</div>
-
-			{/* Bounty Proposals */}
-			{extendedData && extendedData?.count > 1 && (
-				<div className='mt-8 flex items-center justify-between'>
-					<div className='flex items-center gap-2'>
-						<ImageIcon
-							src='/assets/bounty-icons/bounty-proposals.svg'
-							alt='bounty icon'
-							imgClassName='-mt-[18px]'
-						/>
-						<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+			{extendedData && extendedData?.posts?.length > 0 && (
+				<>
+					<div className='mt-8 flex items-center justify-between'>
+						<div className='flex items-center gap-2'>
+							<ImageIcon
+								src='/assets/bounty-icons/fire-icon.svg'
+								alt='bounty icon'
+								imgClassName='-mt-[18px]'
+							/>
+							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Hot Bounties</h2>
+							{extendedData?.count && (
+								<span className={`${spaceGrotesk.className} ${spaceGrotesk.variable} -mt-2 text-blue-light-medium dark:text-blue-dark-medium md:-mt-[14px] md:text-[24px]`}>
+									({extendedData?.count})
+								</span>
+							)}
+						</div>
+						<button
+							onClick={() => {
+								router.push('/bounties');
+							}}
+							className={`${spaceGrotesk.className} ${spaceGrotesk.variable} cursor-pointer rounded-[20px] border-none bg-transparent text-base font-bold text-pink_primary md:text-[24px]`}
+						>
+							View All
+						</button>
 					</div>
-				</div>
+
+					<div className='relative '>
+						{currentSlide1 > 0 && (
+							<span
+								onClick={() => carouselRef1?.current?.prev()}
+								className='rotate-180 cursor-pointer'
+								style={{ left: -45, position: 'absolute', top: '35%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
+							>
+								<ImageIcon
+									src='/assets/bounty-icons/carousel-icon.svg'
+									alt='carousel icon'
+									className='scale-75 md:scale-100'
+								/>
+							</span>
+						)}
+						<Carousel
+							ref={carouselRef1}
+							arrows
+							className='overflow-hidden'
+							infinite={false}
+							dots={false}
+							afterChange={handleBeforeChange1}
+						>
+							{extendedDataChunks.map((chunk, index) => {
+								const chunkClass = chunk.length % 3 === 0 ? 'flex justify-center md:justify-around' : 'flex justify-start';
+								return (
+									<div
+										key={index}
+										className={chunkClass}
+									>
+										{chunk.map((post, postIndex) => (
+											<HotBountyCard
+												key={postIndex}
+												extendedData={post}
+											/>
+										))}
+									</div>
+								);
+							})}
+						</Carousel>
+						{currentSlide1 < extendedDataChunks.length - 1 && (
+							<span
+								onClick={() => carouselRef1?.current?.next()}
+								className='cursor-pointer'
+								style={{
+									position: 'absolute',
+									right: -46,
+									top: '35%',
+									zIndex: 10,
+									...(isMobile ? { right: 10 } : {})
+								}}
+							>
+								<ImageIcon
+									src='/assets/bounty-icons/carousel-icon.svg'
+									alt='carousel icon'
+									className='scale-75 md:scale-100'
+								/>
+							</span>
+						)}
+					</div>
+				</>
 			)}
 
-			<div className='relative '>
-				{currentSlide2 > 0 && (
-					<span
-						onClick={() => carouselRef2?.current?.prev()}
-						className='rotate-180 cursor-pointer'
-						style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
-					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-							className='scale-75 md:scale-100'
-						/>
-					</span>
-				)}
-				<Carousel
-					ref={carouselRef2}
-					arrows
-					className='overflow-hidden'
-					infinite={false}
-					dots={false}
-					afterChange={handleBeforeChange2}
-				>
-					{activeDataChunks.map((chunk, index) => {
-						const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4' : 'mx-3 flex justify-start space-x-4';
-						return (
-							<div
-								key={index}
-								className={chunkClass}
+			{/* Bounty Proposals */}
+			{activeBountyData && activeBountyData?.posts?.length > 0 && (
+				<>
+					<div className='mt-8 flex items-center justify-between'>
+						<div className='flex items-center gap-2'>
+							<ImageIcon
+								src='/assets/bounty-icons/bounty-proposals.svg'
+								alt='bounty icon'
+								imgClassName='-mt-[18px]'
+							/>
+							<h2 className='font-pixelify text-[24px] font-bold text-blue-light-high dark:text-blue-dark-high md:text-[32px]'>Bounty Proposals</h2>
+						</div>
+					</div>
+
+					<div className='relative '>
+						{currentSlide2 > 0 && (
+							<span
+								onClick={() => carouselRef2?.current?.prev()}
+								className='rotate-180 cursor-pointer'
+								style={{ left: -45, position: 'absolute', top: '40%', zIndex: 10, ...(isMobile ? { left: 10 } : {}) }}
 							>
-								{chunk.map((post, proposalIndex) => (
-									<BountiesProposalsCard
-										key={proposalIndex}
-										activeData={post}
-									/>
-								))}
-							</div>
-						);
-					})}
-				</Carousel>
-				{currentSlide2 < activeDataChunks.length - 1 && (
-					<span
-						onClick={() => carouselRef2?.current?.next()}
-						className='cursor-pointer'
-						style={{
-							position: 'absolute',
-							right: -46,
-							top: '40%',
-							zIndex: 10,
-							...(isMobile ? { right: 10 } : {})
-						}}
-					>
-						<ImageIcon
-							src='/assets/bounty-icons/carousel-icon.svg'
-							alt='carousel icon'
-							className='scale-75 md:scale-100'
-						/>
-					</span>
-				)}
-			</div>
+								<ImageIcon
+									src='/assets/bounty-icons/carousel-icon.svg'
+									alt='carousel icon'
+									className='scale-75 md:scale-100'
+								/>
+							</span>
+						)}
+						<Carousel
+							ref={carouselRef2}
+							arrows
+							className='overflow-hidden'
+							infinite={false}
+							dots={false}
+							afterChange={handleBeforeChange2}
+						>
+							{activeDataChunks.map((chunk, index) => {
+								const chunkClass = chunk.length % 3 === 0 ? 'mx-3 flex justify-between space-x-4' : 'mx-3 flex justify-start space-x-4';
+								return (
+									<div
+										key={index}
+										className={chunkClass}
+									>
+										{chunk.map((post, proposalIndex) => (
+											<BountiesProposalsCard
+												key={proposalIndex}
+												activeData={post}
+											/>
+										))}
+									</div>
+								);
+							})}
+						</Carousel>
+						{currentSlide2 < activeDataChunks.length - 1 && (
+							<span
+								onClick={() => carouselRef2?.current?.next()}
+								className='cursor-pointer'
+								style={{
+									position: 'absolute',
+									right: -46,
+									top: '40%',
+									zIndex: 10,
+									...(isMobile ? { right: 10 } : {})
+								}}
+							>
+								<ImageIcon
+									src='/assets/bounty-icons/carousel-icon.svg'
+									alt='carousel icon'
+									className='scale-75 md:scale-100'
+								/>
+							</span>
+						)}
+					</div>
+				</>
+			)}
 
 			{/* Footer */}
 			<div className='mt-10 flex flex-col-reverse items-center gap-8 overflow-hidden md:flex-row'>

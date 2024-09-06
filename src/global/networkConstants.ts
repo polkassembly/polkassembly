@@ -569,6 +569,10 @@ export const chainProperties: types.ChainPropType = {
 		gTag: null,
 		rpcEndpoints: [
 			{
+				label: 'via IBP',
+				key: 'wss://polimec.rpc.amforc.com'
+			},
+			{
 				label: 'via Helikon',
 				key: 'wss://rpc.helikon.io/polimec'
 			},

@@ -238,7 +238,8 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									const content = e.clipboardData?.getData('text/plain') || '';
 									const caretPosition = ref.current?.editor?.selection.getRng();
 									const sanitisedContent = content.replace(/\\n/g, '\n'); // req. for subsquare style md
-									ref.current?.editor?.insertContent(sanitisedContent, { format: 'text/plain', caretPosition });
+									const parsed_content = converter.makeHtml(sanitisedContent);
+									ref.current?.editor?.insertContent(parsed_content || sanitisedContent, { format: 'html', caretPosition });
 								}
 								let content = e.clipboardData?.getData('html') || '';
 								const caretPosition = ref.current?.editor?.selection.getRng();
@@ -312,7 +313,6 @@ const TextEditor: FC<ITextEditorProps> = (props) => {
 									xhr.send(formData);
 								}) as any,
 								menubar: false,
-								forced_root_block: '',
 								paste_data_images: true,
 								placeholder: 'Please type here...',
 								plugins: [

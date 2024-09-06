@@ -2,6 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import Link from 'next/link';
 import { CloseIcon } from './CustomIcons';
 import ImageIcon from './ImageIcon';
 interface Props {
@@ -30,7 +31,7 @@ const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 
 					<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>We have assigned you a temporary username </p>
 					<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
-						You can visit<a href={`/user/${username}`}>Profile</a> and change it anytime
+						You can visit<Link href={`/user/${username}`}>Profile</Link> and change it anytime
 					</p>
 				</div>
 			</div>

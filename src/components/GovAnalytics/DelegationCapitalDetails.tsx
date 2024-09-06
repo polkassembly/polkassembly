@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
+import React, { FC, useState, useEffect } from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 import { Card } from 'antd';
 import { useTheme } from 'next-themes';
-import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNetworkSelector } from '~src/redux/selectors';
 import { IDelegationCapitalDetails } from './types';
@@ -34,6 +34,7 @@ const StyledCard = styled(Card)`
 			opacity: 1;
 		}
 	}
+
 	@media (max-width: 640px) {
 		.ant-card-body {
 			padding: 12px !important;
@@ -45,7 +46,6 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	const { delegationData } = props;
 	const { network } = useNetworkSelector();
 	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
-
 	const { resolvedTheme: theme } = useTheme();
 
 	const bnToIntBalance = (bnValue: string | number | BN): number => {
@@ -56,19 +56,20 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	const [selectedRange, setSelectedRange] = useState<[number, number]>([0, 0]);
 
 	useEffect(() => {
-		if (delegationData) {
+		if (delegationData && isMobile) {
 			const totalEntries = Object.keys(delegationData).length;
 			const middleIndex = Math.floor(totalEntries / 2);
 			setSelectedRange([middleIndex - 2 > 0 ? middleIndex - 2 : 0, middleIndex + 2 < totalEntries ? middleIndex + 2 : totalEntries - 1]);
 		}
-	}, [delegationData]);
+	}, [delegationData, isMobile]);
 
 	const onChange = (value: [number, number]) => {
 		setSelectedRange(value);
 	};
 
-	const data = Object?.keys(delegationData || {})
-		.slice(selectedRange[0], selectedRange[1] + 1)
+	// Use full data if not mobile, otherwise use selected range
+	const data = Object.keys(delegationData || {})
+		.slice(isMobile ? selectedRange[0] : 0, isMobile ? selectedRange[1] + 1 : undefined)
 		.map((key) => ({
 			Capital: bnToIntBalance(delegationData[key].totalCapital || ZERO) || 0,
 			Votes: bnToIntBalance(delegationData[key].totalVotesBalance || ZERO) || 0,
@@ -117,7 +118,7 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 	};
 
 	const marks = {
-		[0]: Object.keys(delegationData)[0],
+		0: Object.keys(delegationData)[0],
 		[Object.keys(delegationData).length - 1]: Object.keys(delegationData)[Object.keys(delegationData).length - 1]
 	};
 
@@ -180,37 +181,37 @@ const DelegationCapitalDetails: FC<IDelegationCapitalDetails> = (props) => {
 				/>
 			</div>
 			{isMobile && (
-				<div className='mt-4 flex justify-center gap-x-4'>
-					<div className='flex items-center gap-x-1'>
-						<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
-						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Votes</p>
+				<>
+					<div className='mt-4 flex justify-center gap-x-4'>
+						<div className='flex items-center gap-x-1'>
+							<div className='h-[5px] w-[5px] rounded-full bg-[#B6B0FB]'></div>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Votes</p>
+						</div>
+						<div className='flex items-center gap-x-1'>
+							<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
+							<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Capital</p>
+						</div>
 					</div>
-					<div className='flex items-center gap-x-1'>
-						<div className='h-[5px] w-[5px] rounded-full bg-[#796EEC]'></div>
-						<p className='m-0 p-0 text-xs font-normal text-bodyBlue dark:text-white'>Capital</p>
-					</div>
-				</div>
-			)}
-			{isMobile && (
-				<div className='mx-auto mt-6 w-[96%]'>
-					<Slider
-						range
-						min={0}
-						max={Object.keys(delegationData).length - 1}
-						value={selectedRange}
-						onChange={onChange}
-						marks={marks}
-						tooltip={{
-							formatter: (value) => {
-								if (value !== undefined && value >= 0 && value < Object.keys(delegationData).length) {
-									const dataIndex = Object.keys(delegationData)[value];
-									return `Referenda: ${dataIndex}`;
+					<div className='mx-auto mt-6 w-[96%]'>
+						<Slider
+							range
+							min={0}
+							max={Object.keys(delegationData).length - 1}
+							value={selectedRange}
+							onChange={onChange}
+							marks={marks}
+							tooltip={{
+								formatter: (value) => {
+									if (value !== undefined && value >= 0 && value < Object.keys(delegationData).length) {
+										const dataIndex = Object.keys(delegationData)[value];
+										return `Referenda: ${dataIndex}`;
+									}
+									return '';
 								}
-								return '';
-							}
-						}}
-					/>
-				</div>
+							}}
+						/>
+					</div>
+				</>
 			)}
 		</StyledCard>
 	);

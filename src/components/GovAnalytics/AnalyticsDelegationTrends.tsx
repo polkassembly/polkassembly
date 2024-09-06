@@ -2,8 +2,6 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-import ExpandIcon from '~assets/icons/expand.svg';
-import CollapseIcon from '~assets/icons/collapse.svg';
 import { Collapse } from '~src/components/Settings/Notifications/common-ui/Collapse';
 import { useTheme } from 'next-themes';
 import ImageIcon from '~src/ui-components/ImageIcon';
@@ -67,7 +65,31 @@ const AnalyticsDelegationTrends = () => {
 			theme={theme as any}
 			className='bg-white dark:border-separatorDark dark:bg-section-dark-overlay'
 			expandIconPosition='end'
-			expandIcon={({ isActive }) => (isActive ? <ExpandIcon /> : <CollapseIcon />)}
+			expandIcon={({ isActive }) =>
+				isActive ? (
+					theme === 'dark' ? (
+						<ImageIcon
+							src='/assets/icons/expand-white.svg'
+							alt='expand-icon'
+						/>
+					) : (
+						<ImageIcon
+							src='/assets/icons/expand.svg'
+							alt='expand-icon'
+						/>
+					)
+				) : theme === 'dark' ? (
+					<ImageIcon
+						src='/assets/icons/collapse-white.svg'
+						alt='collapse-icon'
+					/>
+				) : (
+					<ImageIcon
+						src='/assets/icons/collapse.svg'
+						alt='collapse-icon'
+					/>
+				)
+			}
 		>
 			<Panel
 				header={

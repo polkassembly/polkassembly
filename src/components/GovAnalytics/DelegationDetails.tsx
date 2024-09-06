@@ -59,12 +59,12 @@ const DelegationDetails: FC<IDelegationDetails> = (props) => {
 		setSelectedRange(value);
 	};
 
-	const data = Object?.keys(delegationData)
-		.slice(selectedRange[0], selectedRange[1] + 1) // Filter data based on the selected range
+	const data = Object.keys(delegationData || {})
+		.slice(isMobile ? selectedRange[0] : 0, isMobile ? selectedRange[1] + 1 : undefined)
 		.map((key) => ({
-			Delegatee: delegationData[key].totalDelegates,
+			Delegatee: delegationData[key].totalDelegates || 0,
 			DelegateeColor: '#796EEC',
-			Delegator: delegationData[key].totalDelegators,
+			Delegator: delegationData[key].totalDelegators || 0,
 			DelegatorColor: '#B6B0FB',
 			trackName: key
 				.split(' ')

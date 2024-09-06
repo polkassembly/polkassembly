@@ -27,7 +27,6 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-
 import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
@@ -307,8 +306,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 			const parentBountyIndexes: any = {};
 
 			const subsquidPostsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-				const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
-					subsquidPost;
+				const { createdAt, end, hash, index, type, proposer, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } = subsquidPost;
+
+				if (!subsquidPost?.preimage) {
+					subsquidPost.preimage = {
+						description: subsquidPost?.proposalArguments?.description,
+						method: subsquidPost?.proposalArguments?.method,
+						proposedCall: { args: subsquidPost?.proposalArguments?.args, method: subsquidPost?.proposalArguments?.method, section: subsquidPost?.proposalArguments?.section },
+						section: subsquidPost?.proposalArguments?.section
+					};
+					subsquidPost.proposalArguments = null;
+				}
 
 				if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
 					parentBountyIndexes[parentBountyIndex] = 1;
@@ -327,13 +335,14 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					});
 					parentBountyRequestedAmount = parentBountyRequestedAmountData?.['data']?.proposals?.[0]?.reward || '0';
 				}
+
 				let requested = BigInt(0);
 				let assetId: null | string = null;
-				let args = preimage?.proposedCall?.args;
+				let args = subsquidPost?.preimage?.proposedCall?.args;
 
 				if (args) {
-					if (args?.assetKind?.assetId?.value?.interior) {
-						const call = args?.assetKind?.assetId?.value?.interior?.value;
+					if (args?.assetKind?.assetId?.value?.interior || args?.assetKind?.assetId?.interior?.value) {
+						const call = args?.assetKind?.assetId?.value?.interior?.value || args?.assetKind?.assetId?.interior?.value;
 						assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 					}
 
@@ -428,13 +437,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							identity,
 							isSpam: data?.isSpam || false,
 							isSpamReportInvalid: data?.isSpamReportInvalid || false,
-							method: preimage?.method,
+							method: subsquidPost?.preimage?.method,
 							parent_bounty_index: parentBountyIndex || null,
 							parent_bounty_requested_amount: parentBountyRequestedAmount,
 							post_id: postId,
 							post_reactions,
 							proposalHashBlock: proposalHashBlock || null,
-							proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+							proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
 							requestedAmount: requested ? requested.toString() : undefined,
 							spam_users_count:
 								data?.isSpam && !data?.isSpamReportInvalid ? Number(process.env.REPORTS_THRESHOLD || 50) : data?.isSpamReportInvalid ? 0 : data?.spam_users_count || 0,
@@ -475,13 +484,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					end: end,
 					hash: hash || null,
 					identity,
-					method: preimage?.method,
+					method: subsquidPost?.preimage?.method,
 					parent_bounty_index: parentBountyIndex || null,
 					parent_bounty_requested_amount: parentBountyRequestedAmount,
 					post_id: postId,
 					post_reactions,
 					proposalHashBlock: proposalHashBlock || null,
-					proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+					proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
 					requestedAmount: requested ? requested.toString() : undefined,
 					status: status,
 					status_history: statusHistory,
@@ -835,8 +844,17 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 				}
 
 				postsPromise = subsquidPosts?.map(async (subsquidPost): Promise<IPostListing> => {
-					const { createdAt, end, hash, index, type, proposer, preimage, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } =
-						subsquidPost;
+					const { createdAt, end, hash, index, type, proposer, description, group, curator, parentBountyIndex, statusHistory, trackNumber, proposalHashBlock } = subsquidPost;
+					if (!subsquidPost?.preimage && subsquidPost?.proposalArguments) {
+						subsquidPost.preimage = {
+							description: subsquidPost?.proposalArguments?.description,
+							method: subsquidPost?.proposalArguments?.method,
+							proposedCall: { args: subsquidPost?.proposalArguments?.args, method: subsquidPost?.proposalArguments?.method, section: subsquidPost?.proposalArguments?.section },
+							section: subsquidPost?.proposalArguments?.section
+						};
+						subsquidPost.proposalArguments = null;
+					}
+
 					if (proposalType === ProposalType.CHILD_BOUNTIES && typeof parentBountyIndex == 'number') {
 						parentBountyIndexes[parentBountyIndex] = 1;
 					}
@@ -913,15 +931,15 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 
 					const commentsQuerySnapshot = await postDocRef.collection('comments').where('isDeleted', '==', false).count().get();
 					const postDoc = await postDocRef.get();
-					let args = preimage?.proposedCall?.args;
+					let args = subsquidPost?.preimage?.proposedCall?.args;
 					let requested = BigInt(0);
 
 					const beneficiaries: string[] = [];
 					let assetId: null | string = null;
 
 					if (args) {
-						if (args?.assetKind?.assetId?.value?.interior) {
-							const call = args?.assetKind?.assetId?.value?.interior?.value;
+						if (args?.assetKind?.assetId?.value?.interior || args?.assetKind?.assetId?.interior?.value) {
+							const call = args?.assetKind?.assetId?.value?.interior?.value || args?.assetKind?.assetId?.interior?.value;
 							assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 						}
 
@@ -965,8 +983,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 							let reward = subsquidPost.reward || '';
 
 							// proposal is related to bounty
-							if (!isNaN(preimage?.proposedCall?.args?.bountyId)) {
-								reward = bountyIndexToRewardMap[preimage?.proposedCall?.args?.bountyId] || '';
+							if (!isNaN(subsquidPost?.preimage?.proposedCall?.args?.bountyId)) {
+								reward = bountyIndexToRewardMap[subsquidPost?.preimage?.proposedCall?.args?.bountyId] || '';
 							}
 
 							return {
@@ -983,13 +1001,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 								identity,
 								isSpam: data?.isSpam || false,
 								isSpamReportInvalid: data?.isSpamReportInvalid || false,
-								method: preimage?.method,
+								method: subsquidPost?.preimage?.method,
 								parent_bounty_index: parentBountyIndex || null,
 								parent_bounty_requested_amount: parentBountyRequestedAmount,
 								post_id: postId,
 								post_reactions,
 								proposalHashBlock: proposalHashBlock || null,
-								proposer: proposer || preimage?.proposer || otherPostProposer || proposer_address || curator,
+								proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || proposer_address || curator,
 								requestedAmount: requested ? requested.toString() : undefined,
 								reward,
 								spam_users_count:
@@ -1025,8 +1043,8 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 					let reward = subsquidPost.reward || '';
 
 					// proposal is related to bounty
-					if (!isNaN(preimage?.proposedCall?.args?.bountyId)) {
-						reward = bountyIndexToRewardMap[preimage?.proposedCall?.args?.bountyId] || '';
+					if (!isNaN(subsquidPost?.preimage?.proposedCall?.args?.bountyId)) {
+						reward = bountyIndexToRewardMap[subsquidPost?.preimage?.proposedCall?.args?.bountyId] || '';
 					}
 
 					return {
@@ -1040,13 +1058,13 @@ export async function getOnChainPosts(params: IGetOnChainPostsParams): Promise<I
 						end: end,
 						hash: hash || null,
 						identity,
-						method: preimage?.method,
+						method: subsquidPost?.preimage?.method,
 						parent_bounty_index: parentBountyIndex || null,
 						parent_bounty_requested_amount: parentBountyRequestedAmount,
 						post_id: postId,
 						post_reactions,
 						proposalHashBlock: proposalHashBlock || null,
-						proposer: proposer || preimage?.proposer || otherPostProposer || curator || null,
+						proposer: proposer || subsquidPost?.preimage?.proposer || otherPostProposer || curator || null,
 						requestedAmount: requested ? requested.toString() : undefined,
 						reward,
 						status: status,

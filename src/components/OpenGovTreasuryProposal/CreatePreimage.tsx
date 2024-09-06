@@ -505,7 +505,9 @@ const CreatePreimage = ({
 					? beneficiaryAddresses?.[beneficiary]?.address
 					: (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.length
 					? (beneficiaryAddresses?.[beneficiary]?.address as any)?.value
-					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) || '';
+					: ((beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value?.id as string) ||
+					  (beneficiaryAddresses?.[beneficiary]?.address as any)?.value?.interior?.value[0]?.id ||
+					  '';
 			if (
 				!beneficiaryAddresses[beneficiary].address ||
 				isNaN(Number(beneficiaryAddresses[beneficiary].amount)) ||

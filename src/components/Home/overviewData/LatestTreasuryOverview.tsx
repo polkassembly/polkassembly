@@ -18,10 +18,8 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import OverviewDataGraph from './OverviewDataGraph';
 import formatUSDWithUnits from '~src/util/formatUSDWithUnits';
-import { IOverviewProps, IDailyTreasuryTallyData } from '~src/types';
+import { IOverviewProps } from '~src/types';
 import { IMonthlyTreasuryTally } from 'pages/api/v1/treasury-amount-history';
-
-const monthOrder = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 
 const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChange, spendPeriod, nextBurn, tokenValue, isUsedInGovAnalytics }: IOverviewProps) => {
 	const { network } = useNetworkSelector();
@@ -45,9 +43,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	const assetValueUSDC = formatUSDWithUnits(String(Number(assethubValues.usdcValue) / 1000000));
 	const assetValueUSDT = formatUSDWithUnits(String(Number(assethubValues.usdtValue) / 1000000));
 
-	// const totalTreasuryValue = formatUSDWithUnits(
-	// String(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000 + Number(assethubValues.usdcValue) / 1000000 + Number(assethubValues.usdtValue) / 1000000)
-	// );
 	const totalTreasuryValueUSD = formatUSDWithUnits(
 		String(
 			(tokenValue + parseFloat(assethubValues.dotValue) / 10000000000) * parseFloat(currentTokenPrice.value) +
@@ -55,26 +50,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 				Number(assethubValues.usdtValue) / 1000000
 		)
 	);
-
-	const [graphBalanceDifference, setGraphBalanceDifference] = useState<number | null>(null);
-	const formatedBalanceDifference =
-		graphBalanceDifference &&
-		formatUSDWithUnits(
-			formatBnBalance(
-				graphBalanceDifference.toString(),
-				{
-					numberAfterComma: 0,
-					withThousandDelimitor: false,
-					withUnit: true
-				},
-				network
-			)
-		);
-	// const totalAmountUsd = graphBalanceDifference && currentTokenPrice.value && formatUSDWithUnits(String(totalTreasuryValue));
-
-	const sortedGraphData = graphData
-		.filter((item) => parseFloat(item.balance) !== 0)
-		.sort((a, b) => monthOrder.indexOf(a.month.toLowerCase()) - monthOrder.indexOf(b.month.toLowerCase()));
 
 	const fetchAssetsAmount = async () => {
 		if (!assethubApi || !assethubApiReady) return;
@@ -165,29 +140,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 		}
 	};
 
-	const getDifferenceData = async () => {
-		try {
-			const { data, error } = await nextApiClientFetch<IDailyTreasuryTallyData>('/api/v1/treasury-amount-history/get-daily-tally-data');
-
-			if (error) {
-				console.error('Error fetching daily tally data:', error);
-			}
-
-			if (data) {
-				if (sortedGraphData.length > 0) {
-					const lastGraphBalance = parseFloat(sortedGraphData[sortedGraphData.length - 1]?.balance);
-
-					const apiBalance = parseFloat(data.balance);
-					const difference = apiBalance - lastGraphBalance;
-
-					setGraphBalanceDifference(difference);
-				}
-			}
-		} catch (error) {
-			console.error('Unexpected error:', error);
-		}
-	};
-
 	useEffect(() => {
 		(async () => {
 			const wsProvider = new WsProvider(chainProperties?.[network]?.assetHubRpcEndpoint);
@@ -218,11 +170,6 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	}, [network]);
 
 	useEffect(() => {
-		getDifferenceData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network, graphData.length]);
-
-	useEffect(() => {
 		if (!assethubApi || !assethubApiReady) return;
 		fetchAssetsAmount();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,24 +178,28 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 	return (
 		<div
 			className={`${poppins.className} ${poppins.variable} ${
-				isUsedInGovAnalytics ? 'mt-[48px]' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
+				isUsedInGovAnalytics ? '' : `${!['polymesh', 'polymesh-test'].includes(network) ? 'md:grid-cols-2' : ''} grid grid-cols-1 gap-x-8 gap-y-8 md:gap-y-0`
 			}`}
 		>
-			<div className='flex w-full flex-1 flex-col rounded-xxl bg-white p-3 drop-shadow-md dark:bg-section-dark-overlay sm:my-0 lg:px-6 lg:py-4'>
+			<div
+				className={`flex w-full flex-1 flex-col rounded-xxl bg-white ${isUsedInGovAnalytics ? '' : 'p-3 drop-shadow-md lg:px-6 lg:py-4'}  dark:bg-section-dark-overlay sm:my-0 `}
+			>
 				<div className=''>
 					<div>
 						{!available.isLoading ? (
 							<>
 								<div className='mb-2 justify-between sm:flex'>
 									<div>
-										<div className='my-1 flex items-center gap-x-[6px]'>
-											<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
-											<HelperTooltip
-												text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
-												className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
-											/>
-										</div>
-										{formatedBalanceDifference && (
+										{!isUsedInGovAnalytics && (
+											<div className='my-1 flex items-center gap-x-[6px]'>
+												<span className=' p-0 text-xs font-normal leading-5 text-lightBlue dark:text-blue-dark-medium'>Treasury</span>
+												<HelperTooltip
+													text='Funds collected through a portion of block production rewards, transaction fees, slashing, staking inefficiencies, etc.'
+													className='text-xs font-medium leading-5 text-lightBlue dark:text-blue-dark-medium'
+												/>
+											</div>
+										)}
+										{totalTreasuryValueUSD && (
 											<div className='flex items-baseline'>
 												<span className={`${poppins.className} ${poppins.variable} text-xl font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 													~${totalTreasuryValueUSD}
@@ -285,7 +236,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 								</div>
 							</>
 						) : (
-							<div className='flex min-h-[89px] w-full items-center justify-center'>
+							<div className={`flex ${isUsedInGovAnalytics ? 'min-h-[32px]' : 'min-h-[89px]'} w-full items-center justify-center`}>
 								<LoadingOutlined />
 							</div>
 						)}
@@ -483,7 +434,7 @@ const LatestTreasuryOverview = ({ currentTokenPrice, available, priceWeeklyChang
 												size='small'
 												showInfo={false}
 											/>
-											<span className={`${poppins.className} ${poppins.variable} text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
+											<span className={`${poppins.className} ${poppins.variable} -mb-3 text-xs font-medium text-blue-light-high dark:text-blue-dark-high`}>
 												{!isNaN(Number(spendPeriod.percentage)) ? spendPeriod.percentage : 0}%
 											</span>
 										</span>

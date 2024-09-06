@@ -141,6 +141,12 @@ const VoteInitiatedModal = ({
 							? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
 							: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
 					</div>
+					{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
+						<div className='-mt-4 flex gap-2 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Delegated Power:</span>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>{parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}</span>
+						</div>
+					)}
 					{vote === EVoteDecisionType.SPLIT && (
 						<div className=' flex flex-wrap justify-center text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>
 							{' '}

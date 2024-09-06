@@ -1145,6 +1145,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					vote={vote}
 					balance={voteValues.totalVoteValue}
 					open={successModal}
+					// open={true}
 					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
 					address={address}

@@ -20,6 +20,7 @@ import PAProfile, { IActivitiesCounts } from '~src/components/UserProfile';
 import { useTheme } from 'next-themes';
 import { getUserActivitiesCount } from 'pages/api/v1/users/activities-count';
 import { IUserPostsListingResponse } from '~src/types';
+import { updateUserBadges } from 'pages/api/v1/achivementbadges/update-badges';
 interface IUserProfileProps {
 	activitiesCounts: {
 		data: IActivitiesCounts | null;
@@ -71,6 +72,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		userId: userProfile?.data?.user_id
 	});
 
+	try {
+		if (userProfile?.data?.username) {
+			await updateUserBadges(userProfile?.data?.username || '', network);
+		}
+	} catch (error) {
+		console.error(error);
+	}
 	const activitiesCountsResult = await getUserActivitiesCount({ network, userId: userProfile?.data?.user_id || null });
 	let activitiesCounts;
 	if (activitiesCountsResult.error) {
@@ -93,6 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		},
 		userProfile: {
 			data: userProfile.data || {
+				achievement_badges: [],
 				addresses: [],
 				badges: [],
 				bio: '',

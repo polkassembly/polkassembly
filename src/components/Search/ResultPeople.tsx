@@ -61,7 +61,7 @@ const ResultPeople = ({ className, peopleData, peoplePage, setPeoplePage }: Prop
 							address={user?.defaultAddress || ''}
 							username={user?.username}
 							isSearch={true}
-							className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] min-h-[180px] cursor-pointer rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-8 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 ${
+							className={`shadow-[0px 22px 40px -4px rgba(235, 235, 235, 0.8)] cursor-pointer rounded-none border-[1px] border-b-[0px] border-solid border-[#f3f4f5] px-9 py-8 hover:border-b-[1px] hover:border-pink_primary max-sm:p-5 md:min-h-[180px] ${
 								index % 2 === 1 && 'bg-[#fafafb]'
 							} ${index === peopleData.length - 1 && 'border-b-[1px]'}`}
 						/>

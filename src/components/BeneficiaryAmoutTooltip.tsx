@@ -51,7 +51,6 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 			}
 			setIsProposalClosed(!!proposalClosedStatusDetails);
 		});
-		if (!proposalClosedStatusDetails) return;
 
 		const { data, error } = await nextApiClientFetch<{ usdValueOnClosed: string | null; usdValueOnCreation: string | null }>('/api/v1/treasuryProposalUSDValues', {
 			closedStatus: proposalClosedStatusDetails || null,
@@ -71,6 +70,7 @@ const BeneficiaryAmoutTooltip = ({ className, requestedAmt, assetId, proposalCre
 			console.log(error);
 			setLoading(false);
 		}
+		setLoading(false);
 	};
 
 	useEffect(() => {

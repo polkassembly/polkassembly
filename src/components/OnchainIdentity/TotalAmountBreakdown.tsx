@@ -26,7 +26,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 	const { network } = useNetworkSelector();
 	const currentUser = useUserDetailsSelector();
 	const { api, apiReady } = useApiContext();
-	const { peopleChainApi, peopleChainApiReady } = usePeopleChainApiContext();
+	const { peopleChainApi } = usePeopleChainApiContext();
 	const { identityAddress, identityInfo } = useOnchainIdentitySelector();
 	const { registerarFee, minDeposite } = txFee;
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -43,7 +43,7 @@ const TotalAmountBreakdown = ({ className, txFee, perSocialBondFee, loading, set
 		if (identityInfo.isIdentitySet && !!identityInfo?.email) {
 			const registrarIndex = getIdentityRegistrarIndex({ network: network });
 
-			if (!(api && peopleChainApi) || !(apiReady && peopleChainApiReady) || registrarIndex === null || !identityAddress) return;
+			if (!api || !apiReady || registrarIndex === null || !identityAddress) return;
 
 			setStartLoading({ isLoading: true, message: 'Awaiting Confirmation' });
 			const requestedJudgementTx = (peopleChainApi ?? api).tx?.identity?.requestJudgement(registrarIndex, txFee.registerarFee.toString());

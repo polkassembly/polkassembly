@@ -39,6 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		network,
 		userProfile: {
 			data: data?.profile || {
+				achievement_badges: [],
 				badges: [],
 				bio: '',
 				image: '',

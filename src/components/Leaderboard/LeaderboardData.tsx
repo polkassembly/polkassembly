@@ -53,7 +53,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 				setLoading(false);
 
 				setLoadingCurrentUser(true);
-				await currentuserData();
+				await getCurrentuserData();
 				setLoadingCurrentUser(false);
 			}
 		};
@@ -61,7 +61,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage, router.isReady, searchedUsername, username]);
 
-	const currentuserData = async () => {
+	const getCurrentuserData = async () => {
 		if (username) {
 			try {
 				const response = await nextApiClientFetch<LeaderboardResponse>('api/v1/leaderboard', { username });
@@ -195,7 +195,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 						<p className='m-0 p-0'>{username}</p>
 					) : (
 						<NameLabel
-							className={`max-w-[9vw] text-sm text-bodyBlue 2xl:max-w-[12vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
+							className={`min-w-[120px] max-w-[12vw] text-sm text-bodyBlue 2xl:max-w-[16vw] ${user === username ? 'dark:text-bodyBlue' : 'dark:text-white'}`}
 							username={user}
 							usernameMaxLength={15}
 							truncateUsername={false}
@@ -347,7 +347,7 @@ const LeaderboardData: FC<IleaderboardData> = ({ className, searchedUsername }) 
 					columns={columns}
 					className={`${className} w-full overflow-x-auto`}
 					dataSource={combinedDataSource}
-					pagination={{ pageSize: searchedUsername ? 1 : 11, total: searchedUsername ? tableData.length : totalData }}
+					pagination={{ pageSize: searchedUsername ? 1 : 10, total: searchedUsername ? tableData.length : totalData }}
 					onChange={handleTableChange}
 					theme={theme}
 					rowClassName={(record) => {

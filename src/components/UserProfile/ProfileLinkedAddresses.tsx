@@ -93,7 +93,7 @@ const ProfileLinkedAddresses = ({ className, userProfile, selectedAddresses, set
 	};
 
 	const handleBeneficiaryIdentityInfo = async () => {
-		if (!api && !peopleChainApi) return;
+		if (!api || !apiReady) return;
 
 		let promiseArr: any[] = [];
 		for (const address of addresses) {

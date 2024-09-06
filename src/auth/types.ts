@@ -70,6 +70,7 @@ export interface ProfileDetails {
 	image?: string;
 	social_links?: ISocial[];
 	cover_image?: string;
+	achievement_badges: Badge[];
 }
 
 export interface ProfileDetailsResponse extends ProfileDetails {
@@ -260,4 +261,37 @@ export interface IDelegationProfileType {
 export interface SubscanAPIResponseType {
 	url?: number;
 	body?: any;
+}
+
+export enum BadgeName {
+	DECENTRALISED_VOICE = 'Decentralised Voice',
+	FELLOW = 'Fellow',
+	COUNCIL = 'Council Member',
+	ACTIVE_VOTER = 'Active Voter',
+	WHALE = 'Whale'
+	// STEADFAST_COMMENTOR = 'Steadfast Commentor',
+	// GM_VOTER = 'GM Voter',
+	// POPULAR_DELEGATE = 'Popular Delegate'
+}
+
+export interface Badge {
+	name: BadgeName;
+	check: boolean;
+	unlockedAt: string;
+}
+
+export interface BadgeCheckContext {
+	commentsCount?: number;
+	votesCount?: number;
+	network?: string;
+}
+
+export interface BadgeCriterion {
+	check: (user: ProfileDetailsResponse, context?: BadgeCheckContext) => Promise<boolean> | boolean;
+	name: BadgeName;
+}
+
+export interface IFellow {
+	address: string;
+	rank: number;
 }

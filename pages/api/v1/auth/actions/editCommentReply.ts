@@ -16,6 +16,7 @@ import { checkIsProposer } from './utils/checkIsProposer';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { EActivityAction } from '~src/types';
+import { getCommentsAISummaryByPost } from '../../ai-summary';
 
 const handler: NextApiHandler<MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
@@ -100,6 +101,7 @@ const handler: NextApiHandler<MessageType> = async (req, res) => {
 			replyId,
 			userId
 		});
+		getCommentsAISummaryByPost({ network, postId, postType });
 		return;
 	} catch (err) {
 		console.log(err);

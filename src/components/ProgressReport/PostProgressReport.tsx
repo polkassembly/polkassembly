@@ -8,6 +8,7 @@ import CollapseIcon from '~assets/icons/collapse.svg';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import { usePostDataContext } from '~src/context';
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
 const { Panel } = Collapse;
 
 interface Props {
@@ -29,17 +30,18 @@ const PostProgressReport = ({ className }: Props) => {
 			>
 				<Panel
 					header={
-						<div className='channel-header mt-0.5 flex items-center gap-[6px]'>
+						<div className='channel-header mt-0.5 flex items-center'>
 							<ImageIcon
 								src='/assets/icons/books-icon.svg'
 								alt='progress-file-icon'
 							/>
-							<p className='mb-0 ml-1 bg-[#F0EEFE] text-[14px] font-normal text-blue-light-high md:text-[14px]'>A new Progress Report was added for this referenda.</p>
+							<p className='mb-0 ml-1 text-[14px] font-normal text-blue-light-high md:text-[14px]'>A new Progress Report was added for this referenda.</p>
 						</div>
 					}
 					key='1'
+					style={{ backgroundColor: '#F0EEFE' }}
 				>
-					<section className=''>
+					<section className='w-full bg-[#F0EEFE]'>
 						{postData?.progress_report?.progress_summary && (
 							<div className='flex flex-col gap-y-2'>
 								<h1 className='text-sm font-semibold text-bodyBlue dark:text-white'>Progress Report Summary</h1>
@@ -86,4 +88,13 @@ const PostProgressReport = ({ className }: Props) => {
 	);
 };
 
-export default PostProgressReport;
+export default styled(PostProgressReport)`
+	.ant-collapse-content-box {
+		background: #f0eefe !important;
+	}
+
+	.ant-collapse .ant-collapse-content {
+		border-top: 1px solid #796eec !important;
+		border-bottom: 1px solid #796eec !important;
+	}
+`;

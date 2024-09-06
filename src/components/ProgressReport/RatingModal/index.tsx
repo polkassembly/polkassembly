@@ -18,12 +18,14 @@ const RatingModal = () => {
 	return (
 		<>
 			<section className='flex flex-col gap-y-2'>
-				<h1 className='text-normal text-lg text-bodyBlue dark:text-section-dark-overlay'>Summary of Progress Report</h1>
+				{postData?.progress_report?.progress_summary && <h1 className='text-normal text-lg text-bodyBlue dark:text-section-dark-overlay'>Summary of Progress Report</h1>}
 				<p className='text-sm text-bodyBlue dark:text-white'>{postData?.progress_report?.progress_summary}</p>
-				<Divider
-					dashed={true}
-					className='my-4'
-				/>
+				{postData?.progress_report?.progress_summary && (
+					<Divider
+						dashed={true}
+						className='my-4'
+					/>
+				)}
 				<div className='flex flex-col items-center justify-center gap-y-2'>
 					<h1 className='text-normal text-lg text-bodyBlue dark:text-section-dark-overlay'>Rate Delievery</h1>
 					<>

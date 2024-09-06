@@ -17,6 +17,7 @@ import nextApiClientFetch from '~src/util/nextApiClientFetch';
 import { usePostDataContext } from '~src/context';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
+import { useRouter } from 'next/router';
 const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -25,6 +26,7 @@ const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
+	const router = useRouter();
 	const {
 		postData: { postType: proposalType, postIndex },
 		setPostData
@@ -70,6 +72,7 @@ const UploadReport = () => {
 			dispatch(progressReportActions.setOpenSuccessModal(true));
 			dispatch(progressReportActions.setShowNudge(false));
 			dispatch(progressReportActions.setAddProgressReportModalOpen(false));
+			router.reload();
 		} else {
 			console.error('failed to save report');
 		}

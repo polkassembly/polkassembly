@@ -24,6 +24,7 @@ import { useNetworkSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 import ImageIcon from '~src/ui-components/ImageIcon';
+import Address from '~src/ui-components/Address';
 
 const ZERO_BN = new BN(0);
 
@@ -45,7 +46,20 @@ interface Props {
 	delegatedVotingPower?: BN;
 }
 
-const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vote, ayeVoteValue, nayVoteValue, abstainVoteValue, delegatedVotingPower = ZERO_BN, icon }: Props) => {
+const VoteInitiatedModal = ({
+	className,
+	open,
+	setOpen,
+	multisig,
+	balance,
+	conviction,
+	vote,
+	ayeVoteValue,
+	nayVoteValue,
+	abstainVoteValue,
+	delegatedVotingPower = ZERO_BN,
+	icon
+}: Props) => {
 	const { network } = useNetworkSelector();
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
@@ -171,6 +185,34 @@ const VoteInitiatedModal = ({ className, open, setOpen, balance, conviction, vot
 									{nayVoteValue ? formatedBalance(nayVoteValue.toString(), unit) : 0}
 									{` ${unit}`}
 								</span>
+							</span>
+						</div>
+					)}
+					{multisig && (
+						<div className='flex gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>With Multisig:</span>
+							<span className='font-medium'>
+								<Address
+									isTruncateUsername={false}
+									address={multisig}
+									className='address'
+									displayInline
+								/>{' '}
+							</span>
+						</div>
+					)}
+					{multisig && (
+						<div className='flex h-[21px] gap-6 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='min-w-[120px]'>Vote Link:</span>
+							<span className='font-medium text-bodyBlue dark:text-blue-dark-high'>
+								<a
+									className='text-pink_primary'
+									href='https://app.polkasafe.xyz/transactions'
+									target='_blank'
+									rel='noreferrer'
+								>
+									Polkasafe
+								</a>
 							</span>
 						</div>
 					)}

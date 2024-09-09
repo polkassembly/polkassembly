@@ -51,6 +51,7 @@ const VoteInitiatedModal = ({
 	open,
 	setOpen,
 	multisig,
+	address,
 	balance,
 	conviction,
 	vote,
@@ -124,22 +125,39 @@ const VoteInitiatedModal = ({
 		>
 			<div className='-mt-[132px] flex flex-col items-center justify-center'>
 				{icon}
-				<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>
-					Voted{' '}
-					<span
-						className={`${
-							vote === EVoteDecisionType.AYE ? 'text-[green]' : `${vote === EVoteDecisionType.NAY ? 'text-[red]' : 'text-bodyBlue dark:text-blue-dark-high'}`
-						} capitalize`}
-					>
-						{vote}
-					</span>{' '}
-					successfully
-				</h2>
-				<div className='flex flex-col items-center justify-center gap-[14px]'>
-					<div className='text-[24px] font-semibold text-pink_primary'>
-						{conviction
-							? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
-							: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
+				<div className='flex items-center justify-center gap-x-2'>
+					<h2 className='mt-2 text-[20px] font-semibold tracking-[0.0015em] dark:text-white'>
+						Voted{' '}
+						<span
+							className={`${
+								vote === EVoteDecisionType.AYE ? 'text-[green]' : `${vote === EVoteDecisionType.NAY ? 'text-[red]' : 'text-bodyBlue dark:text-blue-dark-high'}`
+							} capitalize`}
+						>
+							{vote}
+						</span>{' '}
+						successfully
+					</h2>
+					<span className='m-0 p-0 text-xs'>With</span>
+					<span className='font-medium'>
+						<Address
+							isTruncateUsername={false}
+							address={address}
+							className='address'
+							displayInline
+						/>{' '}
+					</span>
+				</div>
+				<div className='-mt-1 flex flex-col items-center justify-center gap-[14px]'>
+					<div className='flex items-center justify-center gap-x-2'>
+						<div className='flex gap-x-2 font-normal text-lightBlue dark:text-blue-dark-medium'>
+							<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x Conviction</span>
+							<span className='m-0 mt-0.5 p-0 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>with</span>
+						</div>
+						<div className='text-[24px] font-semibold text-pink_primary'>
+							{conviction
+								? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
+								: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}
+						</div>
 					</div>
 					{+formatedBalance(delegatedVotingPower.toString(), unit, 0) !== 0 && (
 						<div className='-mt-4 flex gap-2 text-sm font-normal text-lightBlue dark:text-blue-dark-medium'>

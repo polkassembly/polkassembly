@@ -1383,7 +1383,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						style={{ marginRight: '-13px', padding: '10%' }}
 					>
 						<ArchivedIcon
-							className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium ${activeArchived ? 'bg-[#E5007A]' : 'text-lightBlue'}  dark:text-icon-dark-inactive ${
+							className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium ${activeArchived ? 'bg-[#ffe6ef]' : 'text-lightBlue'}  dark:text-icon-dark-inactive ${
 								archivedDropdownOpen && 'bg-black bg-opacity-[8%]'
 							}`}
 						/>
@@ -1507,13 +1507,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 												className='relative'
 											>
 												<p
-													className={`flex justify-between rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+													className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
 														isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
 													}`}
 													onClick={() => item?.key && toggleDropdown(item.key as string)}
 												>
-													<span className='flex items-center gap-2 font-medium'>
-														<BountiesIcon className='text-xl' /> {'Bounties'}
+													<span className='flex items-center gap-2 font-medium text-lightBlue dark:text-icon-dark-inactive'>
+														<BountiesIcon className='text-xl' /> <span>Bounties</span>
 													</span>
 													<RightOutlined />
 												</p>

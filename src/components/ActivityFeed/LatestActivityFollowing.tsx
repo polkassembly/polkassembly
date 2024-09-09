@@ -2,10 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUserDetailsSelector } from '~src/redux/selectors';
 import LoginPopup from '~src/ui-components/loginPopup';
 import SignupPopup from '~src/ui-components/SignupPopup';
+import nextApiClientFetch from '~src/util/nextApiClientFetch';
 
 // Login button component
 const LoginButton = ({ onClick }: { onClick: () => void }) => (
@@ -31,6 +32,24 @@ const LatestActivityFollowing = ({ gov2LatestPosts }: { gov2LatestPosts: any }) 
 	const currentuser = useUserDetailsSelector();
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	useEffect(() => {
+		const fetchPostUpdates = async () => {
+			try {
+				const { data, error } = await nextApiClientFetch<any>('/api/v1/auth/actions/getsubscribedpost', undefined, 'GET');
+
+				if (error) {
+					console.error('Error fetching post updates:', error);
+					return;
+				}
+
+				console.log('Subscribed posts:', data.posts);
+			} catch (error) {
+				console.error('Error fetching post updates:', error);
+			}
+		};
+
+		fetchPostUpdates();
+	}, []);
 
 	console.log('gov2LatestPosts', gov2LatestPosts);
 	return (

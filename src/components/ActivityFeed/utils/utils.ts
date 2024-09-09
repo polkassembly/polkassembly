@@ -29,7 +29,7 @@ export const fetchUserProfile = async (address: string): Promise<IGetProfileWith
 				custom_username,
 				profile: {
 					achievement_badges: [],
-					image: profile?.image || '/rankcard3.svg'
+					image: profile?.image || '/assets/rankcard3.svg'
 				},
 				user_id,
 				username,

@@ -9,19 +9,24 @@ function FeaturesSection() {
 
 	const features = [
 		{
-			description: 'At vero eos et accusamus et iuodio.',
-			image: '/features1.svg',
+			description: 'Delegate your vote and catchup with Delegation Dashboard',
+			image: '/assets/features1.svg',
 			title: 'Delegation Dashboard'
 		},
 		{
-			description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-			image: '/assets/gov2-info-bg.png',
-			title: 'Governance V2'
+			description: 'Vote on top proposals in a single transaction',
+			image: '/assets/features2.svg',
+			title: 'Batch Voting'
 		},
 		{
-			description: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam.',
-			image: '/assets/gov2-info-bg-3.png',
-			title: 'Validator Stats'
+			description: 'Create, Manage and Participate in Bounties',
+			image: '/assets/features3.svg',
+			title: 'Bounties'
+		},
+		{
+			description: 'Set identity with Polkassembly at 1/4th of the cost',
+			image: '/assets/features4.svg',
+			title: 'Identity'
 		}
 	];
 
@@ -38,7 +43,7 @@ function FeaturesSection() {
 	};
 
 	return (
-		<div className='mt-5 rounded-xxl bg-white p-5 text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
+		<div className='mt-5 rounded-xxl bg-white p-5 font-poppins text-[13px] drop-shadow-md dark:bg-section-dark-overlay md:p-5'>
 			<div className='flex items-start justify-between gap-2'>
 				<div className='flex items-start gap-1'>
 					<p className='text-lg font-semibold'>Features</p>
@@ -48,7 +53,7 @@ function FeaturesSection() {
 					{features.map((_, index) => (
 						<div
 							key={index}
-							className={`mt-2 h-2 w-2 cursor-pointer rounded-full ${index === currentIndex ? 'bg-dark' : 'bg-light'}`}
+							className={`mt-2 h-2 w-2 cursor-pointer rounded-full ${index === currentIndex ? 'bg-black  dark:bg-[#9E9E9E]' : 'bg-[#D9D9D9] '}`}
 							onClick={() => handleDotClick(index)}
 						/>
 					))}
@@ -62,7 +67,7 @@ function FeaturesSection() {
 				/>
 				<div className='mt-2'>
 					<p className='m-0 text-lg font-semibold'>{features[currentIndex].title}</p>
-					<p>{features[currentIndex].description}</p>
+					<p className='text-[14px]'>{features[currentIndex].description}</p>
 				</div>
 			</div>
 		</div>

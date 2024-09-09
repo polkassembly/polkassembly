@@ -384,6 +384,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	}, [currentTokenPrice, network]);
 	const [currentUserdata, setCurrentUserdata] = useState<any | null>(null);
 	const [userRank, setUserRank] = useState<number | 0>(0);
+
 	useEffect(() => {
 		const getUserProfile = async (username: string) => {
 			try {
@@ -490,7 +491,6 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 	const [activeTab, setActiveTab] = useState('explore');
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
-
 	if (error) return <ErrorState errorMessage={error} />;
 
 	return (
@@ -506,16 +506,16 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 						<h1 className='mx-2 mt-2 text-2xl font-semibold leading-9 text-bodyBlue dark:text-blue-dark-high'>Activity Feed</h1>
 						<div className='mt-2 flex items-center gap-2 rounded-lg bg-[#ECECEC] p-2 pt-5 text-[14px]'>
 							<p
-								onClick={() => setActiveTab('following')}
-								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
-							>
-								Following
-							</p>
-							<p
 								onClick={() => setActiveTab('explore')}
 								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'explore' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
 							>
 								Explore
+							</p>
+							<p
+								onClick={() => setActiveTab('following')}
+								className={`cursor-pointer rounded-lg p-1 px-3 font-semibold ${activeTab === 'following' ? 'bg-[#FFFFFF] text-[#E5007A]' : 'text-[#485F7D]'}`}
+							>
+								Subscribed Post
 							</p>
 						</div>
 					</div>
@@ -582,14 +582,15 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 								<p className='absolute left-1/2 top-3 z-10 -translate-x-1/2 transform text-[14px] font-bold text-black'>Rank {userRank ? userRank : '#00'}</p>
 								<div className='relative h-full w-full'>
 									<img
-										src='/rankcard1.svg'
+										src='/assets/rankcard1.svg'
 										className='h-full w-full'
 										alt='rankcard1'
 									/>
 
 									<div className='absolute bottom-[0.3px] left-1/2 z-20 w-[100%] -translate-x-1/2 transform  p-[0.2px]'>
 										<img
-											src='/rankcard2.svg'
+											// src={theme === 'dark' ? '/assets/rankcard2-dark.svg' : '/assets/rankcard2.svg'}
+											src='/assets/rankcard2.svg'
 											className='max-h-[100px] w-full '
 											alt='rankcard2'
 										/>
@@ -599,7 +600,7 @@ const Gov2Home = ({ error, gov2LatestPosts, network, networkSocialsData }: Props
 												<div className='absolute -bottom-1 left-0 right-0 flex items-center justify-between p-3'>
 													<div className='flex items-center gap-2'>
 														<img
-															src={currentUserdata?.image ? currentUserdata?.image : '/rankcard3.svg'}
+															src={currentUserdata?.image ? currentUserdata?.image : '/assets/rankcard3.svg'}
 															className='h-10 w-10 rounded-full '
 															alt='rankcard3'
 														/>

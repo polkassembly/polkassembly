@@ -12,6 +12,7 @@ import authServiceInstance from '~src/auth/auth';
 import { ChangeResponseType, MessageType } from '~src/auth/types';
 import getTokenFromReq from '~src/auth/utils/getTokenFromReq';
 import messages from '~src/auth/utils/messages';
+import { firestore_db } from '~src/services/firebaseInit';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseType | MessageType>) {
 	storeApiKeyUsage(req);
@@ -48,12 +49,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ChangeResponseT
 
 	postSubs.push(Number(user.id));
 
-	await postRef.set({ subscribers: postSubs }, { merge: true }).catch((e) => {
-		console.error(e);
-		return res.status(500).json({ message: messages.INTERNAL });
-	});
+	try {
+		await postRef.set({ subscribers: postSubs }, { merge: true });
 
-	return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
+		// Update user document with subscribed post
+		const userRef = firestore_db.collection('users').doc(String(user.id));
+		const userDoc = await userRef.get();
+		const existingSubscribedPosts = (userDoc.data()?.subscribed_posts || []) as { post_id: number; post_type: string; network: string }[];
+
+		const subscribedPost = {
+			network,
+			post_id: Number(post_id),
+			post_type: strProposalType
+		};
+
+		// Prevent duplicate subscriptions in the user data
+		const updatedSubscribedPosts = [...existingSubscribedPosts, subscribedPost].filter(
+			(post, index, self) => index === self.findIndex((p) => p.post_id === post.post_id && p.post_type === post.post_type)
+		);
+
+		// Update user document
+		await userRef.set({ subscribed_posts: updatedSubscribedPosts }, { merge: true });
+
+		return res.status(200).json({ message: messages.SUBSCRIPTION_SUCCESSFUL });
+	} catch (err) {
+		return res.status(500).json({ message: messages.INTERNAL });
+	}
 }
 
 export default withErrorHandling(handler);

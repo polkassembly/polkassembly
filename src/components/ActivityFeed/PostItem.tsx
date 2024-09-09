@@ -11,7 +11,7 @@ import ImageIcon from '~src/ui-components/ImageIcon';
 const ANONYMOUS_FALLBACK = 'Anonymous';
 const GENERAL_TOPIC_FALLBACK = 'General';
 const NO_CONTENT_FALLBACK = 'No content available for this post.';
-const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/rankcard3.svg';
+const FIRST_VOTER_PROFILE_IMG_FALLBACK = '/assets/rankcard3.svg';
 const LIKE_LABEL = 'Like';
 const DISLIKE_LABEL = 'Dislike';
 const COMMENT_LABEL = 'Comment';
@@ -92,7 +92,7 @@ const PostHeader: React.FC<{ bgColor: string; statusLabel: string }> = ({ bgColo
 		<div>
 			<div className='castvoteborder m-0 flex cursor-pointer items-center gap-1 p-0 px-3 text-[#E5007A]'>
 				<ImageIcon
-					src='/Vote.svg'
+					src='/assets/Vote.svg'
 					alt=''
 					className='m-0 h-6 w-6 p-0'
 				/>

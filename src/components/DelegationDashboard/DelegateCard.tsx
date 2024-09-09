@@ -25,6 +25,7 @@ import { useTheme } from 'next-themes';
 import { poppins } from 'pages/_app';
 import classNames from 'classnames';
 import ImageComponent from '../ImageComponent';
+import { removeSymbols } from '~src/util/htmlDiff';
 
 interface Props {
 	delegate: IDelegateAddressDetails;
@@ -57,21 +58,6 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 		});
 		setOpen(true);
 		setAddress(address);
-	};
-
-	const handleDelegationContent = (content: string) => {
-		if (!content) return '';
-
-		let cleanedContent = content.replace(/#+\s*/g, '');
-		cleanedContent = cleanedContent.replace(/!\[.*?\]\(.*?\)/g, '');
-		cleanedContent = cleanedContent.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
-		cleanedContent = cleanedContent.replace(/<\/?[^>]+(>|$)/g, '');
-		const meaningfulLines = cleanedContent
-			.split('\n')
-			.map((line) => line.trim())
-			.filter((line) => line.length > 0);
-
-		return meaningfulLines.join(' ');
 	};
 
 	return (
@@ -224,7 +210,7 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 					{delegate?.bio ? (
 						<Markdown
 							className='post-content'
-							md={`${handleDelegationContent(delegate?.bio || '').slice(0, 50)}...`}
+							md={`${removeSymbols(delegate?.bio || '').slice(0, 50)}...`}
 							isPreview={true}
 							imgHidden
 						/>

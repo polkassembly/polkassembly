@@ -29,7 +29,7 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 		const url = trackId === undefined ? '/api/v1/trackLevelAnalytics/all-track-delegation-analytics' : '/api/v1/trackLevelAnalytics/track-delegation-analytics-stats';
 		const payload = trackId === undefined ? {} : { trackId: trackId };
 		try {
-			const { data } = await nextApiClientFetch<IDelegationAnalytics>(url, payload);
+			const { data, error } = await nextApiClientFetch<IDelegationAnalytics>(url, payload);
 
 			if (data) {
 				if (!data?.totalDelegates && !data?.totalDelegators) {
@@ -39,6 +39,8 @@ const AnalyticsDelegation = ({ trackId }: { className?: string; trackId?: number
 				dispatch(setTrackLevelDelegationAnalyticsData(data));
 				setNoData(false);
 				setLoading(false);
+			} else {
+				console.log(error || '');
 			}
 		} catch (error) {
 			console.log(error);

@@ -235,7 +235,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 	const VoteUI = (
 		<>
 			{/* aye nye split abstain buttons */}
-			<h3 className='inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium'>Choose your vote</h3>
+			<h3 className={` ${className} inner-headings mb-[2px] mt-[24px] dark:text-blue-dark-medium`}>Choose your vote</h3>
 			<div className='flex items-start justify-between'>
 				<Segmented
 					block
@@ -310,6 +310,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 				{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
 					<VotingFormCard
 						form={abstainFrom}
+						isUsedInTinderWebView={true}
 						className='-mt-[20px] w-[48%]'
 						formName={EFormType.ABSTAIN_FORM}
 						onBalanceChange={(balance: BN) => {
@@ -394,7 +395,7 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					/>
 				)}
 			</div>
-			<article className='flex items-center justify-between'>
+			<article className={`${className} flex items-center justify-between`}>
 				<div className='w-[48%]'>
 					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>
 						<span className='flex items-center'>Set Conviction</span>
@@ -521,5 +522,110 @@ export default styled(OptionWrapper)`
 	}
 	.ant-segmented.ant-segmented-lg {
 		padding: 0 8px !important;
+	}
+	.ant-slider .ant-slider-handle::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+	.ant-slider .ant-slider-handle:hover::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle:hover::before,
+	.ant-slider .ant-slider-handle:active::before,
+	.ant-slider .ant-slider-handle:focus::before {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+
+	.ant-slider .ant-slider-handle:hover::after,
+	.ant-slider .ant-slider-handle:active::after,
+	.ant-slider .ant-slider-handle:focus::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		top: -8px;
+		width: 18px;
+		height: 25px;
+		background-color: #e5007a !important;
+		box-shadow: 0 0 0 2px #e5007a !important;
+		border-radius: 8px;
+		cursor: pointer;
+		transition:
+			inset-inline-start 0.2s,
+			inset-block-start 0.2s,
+			width 0.2s,
+			height 0.2s,
+			box-shadow 0.2s;
+	}
+	.ant-slider-horizontal .ant-slider-mark {
+		top: 22px;
 	}
 `;

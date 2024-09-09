@@ -27,6 +27,7 @@ interface Props {
 	className?: string;
 	forSpecificPost?: boolean;
 	showConvictionBar?: boolean;
+	isUsedInTinderWebView?: boolean;
 }
 
 const VotingFormCard = ({
@@ -39,7 +40,8 @@ const VotingFormCard = ({
 	onAbstainValueChange,
 	className,
 	forSpecificPost,
-	showConvictionBar
+	showConvictionBar,
+	isUsedInTinderWebView
 }: Props) => {
 	const { resolvedTheme: theme } = useTheme();
 	const dispatch = useAppDispatch();
@@ -85,10 +87,10 @@ const VotingFormCard = ({
 			{formName === EFormType.ABSTAIN_FORM && renderBalanceInput('Abstain vote value', 'Add balance', onAbstainValueChange!, 'abstainVote')}
 
 			{(formName === EFormType.ABSTAIN_FORM || formName === EFormType.SPLIT_FORM) && (
-				<>
+				<div className={`${isUsedInTinderWebView ? 'flex flex-row gap-x-3' : ''}`}>
 					{renderBalanceInput('Aye vote value', 'Add balance', onAyeValueChange!, 'ayeVote')}
 					{renderBalanceInput('Nay vote value', 'Add balance', onNayValueChange!, 'nayVote')}
-				</>
+				</div>
 			)}
 
 			{formName === EFormType.AYE_NAY_FORM && renderBalanceInput('Set Default Balance', 'Add balance', onBalanceChange, 'balance')}

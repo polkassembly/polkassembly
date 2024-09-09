@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkassembly/polkassembly authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import LeaderboardData from './LeaderboardData';
 import { Input } from 'antd';
 import styled from 'styled-components';
@@ -16,11 +16,19 @@ const LeaderBoardTable: FC<ILeaderboardTable> = ({ className }) => {
 
 	const handleSearch = (value: string) => {
 		if (value.length >= 3) {
-			setSearchedUsername(value.trim());
+			setSearchedUsername(value.trim().toLowerCase());
 		} else {
 			setSearchedUsername(undefined);
 		}
 	};
+
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			handleSearch(inputValue);
+		}, 300);
+
+		return () => clearTimeout(timer);
+	}, [inputValue]);
 
 	return (
 		<section className={`${className}`}>

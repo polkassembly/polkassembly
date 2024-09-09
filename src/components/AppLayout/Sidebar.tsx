@@ -31,7 +31,6 @@ import {
 	UpgradeCommitteePIPsIcon,
 	CommunityPIPsIcon,
 	ArchivedIcon,
-	RoundedDollarIcon,
 	SelectedOverview,
 	SelectedRoot,
 	SelectedAll,
@@ -42,8 +41,7 @@ import {
 	SelectedWhitelist,
 	SelectedTreasury,
 	SelectedDiscussions,
-	SelectedPreimages,
-	SelectedBountiesIcon
+	SelectedPreimages
 	// AnalyticsSVGIcon
 } from 'src/ui-components/CustomIcons';
 import styled from 'styled-components';
@@ -200,7 +198,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
 		}
 	};
-	console.log('Sidebar.tsx', sidebarCollapsed);
 
 	const handleIdentityButtonClick = () => {
 		setSidebarCollapsed(true);
@@ -877,34 +874,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 	}
 
-	if (['polkadot'].includes(network)) {
-		gov2TrackItems.mainItems.push(
-			getSiderMenuItem(
-				<div className=' flex items-center '>
-					Bounties
-					<div className={`${poppins.className} ${poppins.variable} ml-2 rounded-[9px] bg-[#407bfe]  px-[6px] text-[10px] font-semibold text-white md:-right-6 md:-top-2`}>NEW</div>
-				</div>,
-				'/bounty',
-				<div className='relative '>
-					{router.pathname.includes('/bounty') ? (
-						<SelectedBountiesIcon className={`${sidebarCollapsed ? '-ml-[8px]' : ' -ml-1 '}  scale-90  text-3xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
-					) : (
-						<RoundedDollarIcon className={`${sidebarCollapsed ? '-ml-[8px] mt-1' : ' -ml-1'}  scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
-					)}
-					<div
-						className={' absolute -right-2  rounded-[9px] bg-[#407bfe] px-1 py-1 text-[9px] font-semibold text-white md:-right-3 md:-top-[3px]'}
-						style={{
-							opacity: sidedrawer ? 0 : 1,
-							transition: 'opacity 0.3s ease-in-out'
-						}}
-					>
-						NEW
-					</div>
-				</div>
-			)
-		);
-	}
-
 	const gov2OverviewItems = [
 		!isMobile ? getSiderMenuItem('', '', null) : null,
 
@@ -1134,13 +1103,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 	const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
-
+	let bountiesSubItems: ItemType[] = [];
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
+
 		if (isOpenGovSupported(network)) {
-			items = items.concat(
+			bountiesSubItems = bountiesSubItems.concat(
 				getSiderMenuItem(
-					<div className='flex items-center  justify-between'>
+					<div className='flex items-center justify-between'>
 						{network === 'polkadot' ? 'On-chain Bounties' : 'Bounties'}
 						<span
 							className={`text-[10px] ${
@@ -1185,6 +1155,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 				)
 			);
 		}
+		const bountiesMenuItem = getSiderMenuItem(
+			'Bounties',
+			'gov2_bounties_group',
+			<div>
+				<BountiesIcon className='-ml-1 mt-1 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive' />
+			</div>,
+			[...bountiesSubItems]
+		);
+		gov2TrackItems.treasuryItems.push(bountiesMenuItem);
+
+		items = items.concat(bountiesMenuItem);
+
 		gov2Items.splice(
 			-1,
 			0,
@@ -1514,15 +1496,71 @@ const Sidebar: React.FC<SidebarProps> = ({
 							className='absolute z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
 							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
 						>
-							<ul className='text-center'>
+							<ul className='text-left'>
 								{gov2TrackItems.treasuryItems.map((item, index) => {
+									const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
 									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+									if (item && item.key === 'gov2_bounties_group') {
+										return (
+											<div
+												key={uniqueKey}
+												className='relative'
+											>
+												<p
+													className={`flex justify-between rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+														isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+													}`}
+													onClick={() => item?.key && toggleDropdown(item.key as string)}
+												>
+													<span className='flex items-center gap-2 font-medium'>
+														<BountiesIcon className='text-xl' /> {'Bounties'}
+													</span>
+													<RightOutlined />
+												</p>
 
+												{item && dropdownOpenForItem(item.key) && (
+													<div
+														className='absolute left-[180px] z-[1200] w-[150px] rounded-lg bg-white p-2 shadow-lg dark:bg-[#0D0D0D]'
+														style={{ top: 0 }}
+													>
+														{bountiesSubItems.map((subItem, subIndex) => {
+															if (!subItem) return null;
+															const uniqueSubKey = `${subItem.key}-${subIndex}`;
+															const formattedSubLabel =
+																typeof subItem?.key === 'string'
+																	? subItem.key
+																			.replace(/^\//, '')
+																			.split('_')
+																			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+																			.join(' ')
+																	: '';
+
+															return (
+																<p
+																	key={uniqueSubKey}
+																	className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+																		isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+																	}`}
+																>
+																	<Link href={subItem?.key as string}>
+																		<span className={`block px-2 text-left  ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+																			{formattedSubLabel || ''}
+																		</span>
+																	</Link>
+																</p>
+															);
+														})}
+													</div>
+												)}
+											</div>
+										);
+									}
 									return (
 										<p
-											key={index}
-											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                           					 ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+											key={uniqueKey}
+											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+												isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+											}`}
 										>
 											<Link
 												href={item?.key as string}
@@ -1536,6 +1574,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</ul>
 						</div>
 					)}
+
 					{sidebarCollapsed && archivedDropdownOpen && (
 						<div
 							ref={archivedDropdownRef}

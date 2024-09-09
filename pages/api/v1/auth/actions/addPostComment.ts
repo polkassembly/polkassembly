@@ -18,6 +18,7 @@ import { deleteKeys } from '~src/auth/redis';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import createUserActivity from '../../utils/create-activity';
 import { IDocumentPost } from './addCommentOrReplyReaction';
+import { getCommentsAISummaryByPost } from '../../ai-summary';
 
 export interface IAddPostCommentResponse {
 	id: string;
@@ -123,6 +124,9 @@ const handler: NextApiHandler<IAddPostCommentResponse | MessageType> = async (re
 			console.error('Error saving comment: ', error);
 			return res.status(500).json({ message: 'Error saving comment' });
 		});
+
+	getCommentsAISummaryByPost({ network, postId, postType });
+
 	try {
 		const postAuthorId = postData?.user_id || null;
 

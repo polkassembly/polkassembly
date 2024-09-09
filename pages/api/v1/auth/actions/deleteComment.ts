@@ -16,6 +16,7 @@ import messages from '~src/auth/utils/messages';
 import { ProposalType, getSubsquidLikeProposalType } from '~src/global/proposalType';
 import createUserActivity from '../../utils/create-activity';
 import { EActivityAction, EUserActivityType } from '~src/types';
+import { getCommentsAISummaryByPost } from '../../ai-summary';
 
 async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 	storeApiKeyUsage(req);
@@ -76,6 +77,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<MessageType>) {
 			console.error('Error deleting comment: ', error);
 			return res.status(500).json({ message: 'Error deleting comment' });
 		});
+	getCommentsAISummaryByPost({ network, postId, postType });
 	try {
 		await createUserActivity({ action: EActivityAction.DELETE, commentId: commentId, network, postId, type: EUserActivityType.COMMENTED, userId: userId });
 		return;

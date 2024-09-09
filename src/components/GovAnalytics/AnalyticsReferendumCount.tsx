@@ -37,10 +37,28 @@ const StyledCard = styled(Card)`
 	}
 `;
 
+const LegendContainer = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	overflow-x: auto;
+	white-space: nowrap;
+	padding-top: 2px;
+	margin-top: -32px;
+
+	/* Hide scrollbar for all browsers */
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+	&::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, and Opera */
+	}
+`;
+
 const AnalyticsReferendumCount = () => {
 	const { network } = useNetworkSelector();
 	const { resolvedTheme: theme } = useTheme();
 	const [loading, setLoading] = useState<boolean>(false);
+	const isMobile = typeof window !== 'undefined' && window?.screen.width < 1024;
 	const [categoryInfo, setCategoryInfo] = useState<Record<string, number>>({
 		governance: 0,
 		main: 0,
@@ -104,16 +122,16 @@ const AnalyticsReferendumCount = () => {
 					<ResponsivePie
 						data={data}
 						margin={{
-							bottom: 8,
+							bottom: isMobile ? 80 : 8,
 							left: 10,
-							right: 260,
+							right: isMobile ? 0 : 260,
 							top: 20
 						}}
 						sortByValue={true}
 						colors={{ datum: 'data.color' }}
 						innerRadius={0.8}
 						padAngle={0.7}
-						cornerRadius={0}
+						cornerRadius={15}
 						activeOuterRadiusOffset={8}
 						borderWidth={1}
 						borderColor={{
@@ -156,13 +174,14 @@ const AnalyticsReferendumCount = () => {
 							axis: {
 								ticks: {
 									text: {
-										fill: theme === 'dark' ? '#fff' : '#333' // Set axis text color based on theme
+										fill: theme === 'dark' ? '#fff' : '#333'
 									}
 								}
 							},
 							legends: {
 								text: {
-									fill: theme === 'dark' ? '#fff' : '#333'
+									fill: theme === 'dark' ? '#fff' : '#333',
+									fontSize: 14
 								}
 							},
 							tooltip: {
@@ -172,28 +191,50 @@ const AnalyticsReferendumCount = () => {
 								}
 							}
 						}}
-						legends={[
-							{
-								anchor: 'right',
-								data: data.map((item) => ({
-									color: item.color,
-									id: item.id,
-									label: `${item.label} - ${item.value}`
-								})),
-								direction: 'column',
-								itemDirection: 'left-to-right',
-								itemHeight: 52,
-								itemWidth: -60,
-								itemsSpacing: 1,
-								justify: false,
-								symbolShape: 'circle',
-								symbolSize: 16,
-								translateX: 40,
-								translateY: 0
-							}
-						]}
+						legends={
+							isMobile
+								? []
+								: [
+										{
+											anchor: 'right',
+											data: data.map((item) => ({
+												color: item.color,
+												id: item.id,
+												label: `${item.label} - ${item.value}`
+											})),
+											direction: 'column',
+											itemDirection: 'left-to-right',
+											itemHeight: 32,
+											itemWidth: -60,
+											itemsSpacing: 1,
+											justify: false,
+											symbolShape: 'circle',
+											symbolSize: 8,
+											translateX: 40,
+											translateY: 0
+										}
+								  ]
+						}
 					/>
 				</div>
+				{isMobile && (
+					<LegendContainer>
+						{data.map((item) => (
+							<div
+								key={item.id}
+								className='mb-2 mr-4 flex items-center text-xs text-bodyBlue dark:text-white'
+							>
+								<div
+									className='mr-2 h-2 w-2 rounded-full'
+									style={{ background: item.color }}
+								></div>
+								<p className='m-0 p-0'>
+									{item.label} - {item.value}
+								</p>
+							</div>
+						))}
+					</LegendContainer>
+				)}
 			</Spin>
 		</StyledCard>
 	);

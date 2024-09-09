@@ -557,7 +557,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: polimecLogo,
-		rpcEndpoint: 'wss://rpc.polimec.org',
+		rpcEndpoint: 'wss://polimec.rpc.amforc.com',
 		ss58Format: 41,
 		subsquidUrl: 'https://squid.subsquid.io/polimec-polkassembly/graphql',
 		tokenDecimals: 10,
@@ -568,6 +568,10 @@ export const chainProperties: types.ChainPropType = {
 		externalLinks: 'https://explorer.polimec.org/polimec',
 		gTag: null,
 		rpcEndpoints: [
+			{
+				label: 'via IBP',
+				key: 'wss://polimec.rpc.amforc.com'
+			},
 			{
 				label: 'via Helikon',
 				key: 'wss://rpc.helikon.io/polimec'
@@ -1191,7 +1195,7 @@ export const chainProperties: types.ChainPropType = {
 		category: 'polkadot',
 		chainId: 0,
 		logo: kiltLogo,
-		rpcEndpoint: 'wss://spiritnet.api.onfinality.io/public-ws',
+		rpcEndpoint: 'wss://kilt-rpc.dwellir.com',
 		ss58Format: 38,
 		subsquidUrl: 'https://squid.subsquid.io/kilt-polkassembly/graphql',
 		tokenDecimals: 15,

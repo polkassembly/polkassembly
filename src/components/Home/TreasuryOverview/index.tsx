@@ -297,7 +297,8 @@ const TreasuryOverview: FC<ITreasuryOverviewProps> = (props) => {
 				});
 				const responseJSON = await response.json();
 				if (responseJSON['message'] == 'Success') {
-					const weekAgoPrice = responseJSON['data']['ema7_average'];
+					const weekAgoPrice = responseJSON?.['data']?.['list']?.[0]?.['price'] ? responseJSON?.['data']?.['list']?.[0]?.['price'] : responseJSON?.['data']?.['ema7_average'];
+
 					const currentTokenPriceNum: number = parseFloat(currentTokenPrice.value);
 					const weekAgoPriceNum: number = parseFloat(weekAgoPrice);
 					if (weekAgoPriceNum == 0) {

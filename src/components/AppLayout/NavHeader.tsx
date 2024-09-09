@@ -264,7 +264,7 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				key: 'set on-chain identity',
 				label: (
 					<Link
-						className={`flex items-center gap-x-2 font-medium text-bodyBlue hover:text-pink_primary dark:text-blue-dark-high dark:hover:text-pink_primary ${className}`}
+						className='mt-1 flex items-center gap-x-2 text-sm font-medium text-bodyBlue hover:text-pink_primary dark:text-white dark:hover:text-pink_primary'
 						href={''}
 						onClick={(e) => {
 							e.stopPropagation();
@@ -375,8 +375,11 @@ const NavHeader = ({ className, sidedrawer, setSidedrawer, displayName, isVerifi
 				</div>
 
 				<div className=' flex items-center justify-between sm:gap-x-2 md:gap-x-4'>
-					<SearchBar className='searchbar-container' />
-					<InAppNotification />
+					<SearchBar
+						className='searchbar-container'
+						setSidedrawer={setSidedrawer}
+					/>
+					<InAppNotification setSidedrawer={setSidedrawer} />
 					<Space className='hidden items-center justify-between gap-x-2 md:flex md:gap-x-4'>
 						<NetworkDropdown setSidedrawer={setSidedrawer} />
 

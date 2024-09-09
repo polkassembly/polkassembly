@@ -64,6 +64,8 @@ import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } f
 import { getSpanStyle } from '~src/ui-components/TopicTag';
 import getUserDropDown, { MenuItem } from './menuUtils';
 import { trackEvent } from 'analytics';
+import { RightOutlined } from '@ant-design/icons';
+
 import ImageIcon from '~src/ui-components/ImageIcon';
 
 const { Sider } = Layout;
@@ -80,6 +82,7 @@ interface SidebarProps {
 	sidedrawer: boolean;
 	setOpenAddressLinkedModal: (open: boolean) => void;
 	setIdentityMobileModal: (open: boolean) => void;
+	setSidedrawer: (open: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -90,6 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	isGood,
 	mainDisplay,
 	isIdentitySet,
+	setSidedrawer,
 	setIdentityMobileModal,
 	sidedrawer,
 	isIdentityUnverified,
@@ -107,12 +111,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const [activeTreasury, setActiveTreasury] = useState(false);
 	const [activeWhitelist, setActiveWhitelist] = useState(false);
 	const [activeParachain, setActiveParachain] = useState(false);
+	const [activeArchived, setActiveArchived] = useState<boolean | undefined>(false);
 	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
 	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
 	const [whitelistDropdownOpen, setWhitelistDropdownOpen] = useState(false);
+	const [archivedDropdownOpen, setArchivedDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
+	const archivedDropdownRef = useRef<HTMLDivElement>(null);
 	if (sidedrawer === false) {
 		setSidebarCollapsed(true);
 	}
@@ -122,11 +129,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 			if (
 				(dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) ||
 				(treasuryDropdownRef.current && !treasuryDropdownRef.current.contains(event.target as Node)) ||
-				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node))
+				(whitelistDropdownRef.current && !whitelistDropdownRef.current.contains(event.target as Node)) ||
+				(archivedDropdownRef.current && !archivedDropdownRef.current.contains(event.target as Node))
 			) {
 				setGovernanceDropdownOpen(false);
 				setTreasuryDropdownOpen(false);
 				setWhitelistDropdownOpen(false);
+				setArchivedDropdownOpen(false);
 			}
 		};
 
@@ -135,7 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen]);
+	}, [governanceDropdownOpen, treasuryDropdownOpen, whitelistDropdownOpen, archivedDropdownOpen]);
 
 	useEffect(() => {
 		const currentPath = router.pathname;
@@ -143,10 +152,12 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
 		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
 		const isParachainActive = currentPath.includes('parachains');
+		const isArchived = items?.some((item) => item?.key === currentPath);
 		setActiveGovernance(isActive);
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
 		setActiveParachain(isParachainActive);
+		setActiveArchived(isArchived);
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
@@ -189,8 +200,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 			dispatch(setOpenRemoveIdentitySelectAddressModal(true));
 		}
 	};
+	console.log('Sidebar.tsx', sidebarCollapsed);
 
 	const handleIdentityButtonClick = () => {
+		setSidebarCollapsed(true);
+		setSidedrawer(false);
 		const address = localStorage.getItem('identityAddress');
 		if (isMobile) {
 			setIdentityMobileModal(true);
@@ -707,7 +721,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					gov2TrackItems.treasuryItems.push(
 						getSiderMenuItem(
 							<div className='flex  justify-between'>
-								{trackName.split(/(?=[A-Z])/).join(' ')}
+								<span className='pt-1 text-[12px]'>{trackName.split(/(?=[A-Z])/).join(' ')}</span>
 								<span
 									className={`text-[10px] ${
 										activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
@@ -990,6 +1004,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const handleGovernanceClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		handleDropdownPosition(event);
 		setGovernanceDropdownOpen(!governanceDropdownOpen);
+		setArchivedDropdownOpen(false);
 		setTreasuryDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
@@ -997,6 +1012,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const handleTreasuryClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		handleDropdownPosition(event);
 		setTreasuryDropdownOpen(!treasuryDropdownOpen);
+		setArchivedDropdownOpen(false);
 		setGovernanceDropdownOpen(false);
 		setWhitelistDropdownOpen(false);
 	};
@@ -1004,6 +1020,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const handleWhitelistClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		handleDropdownPosition(event);
 		setWhitelistDropdownOpen(!whitelistDropdownOpen);
+		setGovernanceDropdownOpen(false);
+		setArchivedDropdownOpen(false);
+		setTreasuryDropdownOpen(false);
+	};
+
+	const handleArchivedClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		handleDropdownPosition(event);
+		setArchivedDropdownOpen(!archivedDropdownOpen);
+		setWhitelistDropdownOpen(false);
 		setGovernanceDropdownOpen(false);
 		setTreasuryDropdownOpen(false);
 	};
@@ -1073,9 +1098,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 				className='text-xs'
 			>
 				<div
-					className=' -ml-12  h-11  px-1 '
+					className=' -ml-12  h-[44px]  px-1 '
 					style={{
 						borderTop: '2px dotted #ccc',
+						marginBottom: '5px',
 						paddingTop: '12px'
 					}}
 				>
@@ -1363,7 +1389,28 @@ const Sidebar: React.FC<SidebarProps> = ({
 		}
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
-			getSiderMenuItem('Archived', '/archived', <ArchivedIcon className='-ml-2 font-medium text-lightBlue  dark:text-icon-dark-inactive' />)
+			getSiderMenuItem(
+				<Tooltip
+					title='Archived'
+					placement='left'
+					className='text-xs'
+				>
+					<div
+						onClick={handleArchivedClick}
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px', padding: '10%' }}
+					>
+						<ArchivedIcon
+							className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium ${activeArchived ? 'bg-[#E5007A]' : 'text-lightBlue'}  dark:text-icon-dark-inactive ${
+								archivedDropdownOpen && 'bg-black bg-opacity-[8%]'
+							}`}
+						/>
+					</div>
+				</Tooltip>,
+				'',
+				null,
+				[...items]
+			)
 		];
 	}
 
@@ -1380,6 +1427,15 @@ const Sidebar: React.FC<SidebarProps> = ({
 	function toPascalCase(str: string): string {
 		return str.replace(/-/g, ' ').replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
 	}
+	const [openDropdownKey, setOpenDropdownKey] = useState<string | null>(null);
+
+	const toggleDropdown = (key: string) => {
+		setOpenDropdownKey(openDropdownKey === key ? null : key);
+	};
+
+	const dropdownOpenForItem = (key: string) => {
+		return openDropdownKey === key;
+	};
 
 	return (
 		<Sider
@@ -1404,7 +1460,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						>
 							<div className='text-center'>
 								{gov2TrackItems.governanceItems.map((item, index) => {
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+									const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
 
 									return (
 										<p
@@ -1424,12 +1480,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</div>
 						</div>
 					)}
-
 					{sidebarCollapsed && whitelistDropdownOpen && (
 						<div
 							ref={whitelistDropdownRef}
 							className='absolute z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
-							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
+							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top + 20}px` }}
 						>
 							<ul className='text-center'>
 								{gov2TrackItems.fellowshipItems.map((item, index) => {
@@ -1453,7 +1508,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 							</ul>
 						</div>
 					)}
-
 					{sidebarCollapsed && treasuryDropdownOpen && (
 						<div
 							ref={treasuryDropdownRef}
@@ -1480,6 +1534,76 @@ const Sidebar: React.FC<SidebarProps> = ({
 									);
 								})}
 							</ul>
+						</div>
+					)}
+					{sidebarCollapsed && archivedDropdownOpen && (
+						<div
+							ref={archivedDropdownRef}
+							className='absolute z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
+							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
+						>
+							<div className='text-left'>
+								{items.map((item, index) => {
+									const formattedLabel = String(item?.key)?.replace('_group', '');
+									if (item && typeof item?.key === 'string' && item?.key.includes('_group')) {
+										return (
+											<div
+												key={index}
+												onClick={() => toggleDropdown(item.key as string)}
+												className={`relative cursor-pointer rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+													isActive(item?.key) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+												}`}
+											>
+												<div className='flex items-center justify-between py-2'>
+													<span className={`font-medium ${isActive(item?.key) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedLabel}</span>
+													{'children' in item && item.children && (
+														<span className='ml-2 cursor-pointer text-xs text-gray-500 dark:text-gray-400'>
+															<RightOutlined />{' '}
+														</span>
+													)}
+												</div>
+
+												{'children' in item && item.children && dropdownOpenForItem(item.key) && (
+													<div
+														className='absolute left-[180px] z-[1200] w-[210px] rounded-lg bg-white p-2 shadow-lg dark:bg-[#0D0D0D]'
+														style={{ top: 0 }}
+													>
+														{item.children.map((subItem, subIndex) => {
+															const formattedKey =
+																typeof subItem?.key === 'string'
+																	? subItem.key
+																			.replace(/^\//, '')
+																			.split('-')
+																			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+																			.join(' ')
+																	: '';
+
+															return (
+																<div
+																	key={subIndex}
+																	className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
+																>
+																	{subItem?.key && (
+																		<Link href={subItem.key.toString()}>
+																			<span
+																				className={`font-medium ${
+																					isActive(item?.key?.toString() || '') ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+																				} flex items-center gap-2 px-2 py-1`}
+																			>
+																				{'icon' in subItem && <span className='text-xl'>{subItem.icon}</span>} {formattedKey}
+																			</span>
+																		</Link>
+																	)}
+																</div>
+															);
+														})}
+													</div>
+												)}
+											</div>
+										);
+									}
+								})}
+							</div>
 						</div>
 					)}
 
@@ -1536,9 +1660,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[90px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute   bottom-10 left-10 mb-2 hidden w-[115px] -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute left-4 top-7 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>
@@ -1607,9 +1731,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 											alt='Head 1'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -bottom-7 left-[77px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+										<div className='absolute -bottom-2 left-[103px] z-50 mb-2 hidden w-[112px] -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
 											On-chain identity
-											<div className='absolute  right-8 top-[10px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
 									</Link>
 								</div>

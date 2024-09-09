@@ -154,6 +154,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 							<Sidebar
 								className={`absolute left-0 top-0 z-[150] w-full ${className}`}
 								sidebarCollapsed={false}
+								setSidedrawer={setSidedrawer}
 								setSidebarCollapsed={setSidebarCollapsed}
 								sidedrawer={sidedrawer}
 								setOpenAddressLinkedModal={setOpenAddressLinkedModal}
@@ -172,6 +173,7 @@ const AppLayout = ({ className, Component, pageProps }: Props) => {
 									sidebarCollapsed={sidebarCollapsed}
 									setSidebarCollapsed={setSidebarCollapsed}
 									sidedrawer={sidedrawer}
+									setSidedrawer={setSidedrawer}
 									setOpenAddressLinkedModal={setOpenAddressLinkedModal}
 									setIdentityMobileModal={setIdentityMobileModal}
 									totalActiveProposalsCount={totalActiveProposalsCount || { count: 0 }}
@@ -445,6 +447,7 @@ export default styled(AppLayout)`
 	}
 	.sidebar .ant-menu-item-selected span {
 		color: var(--pink_primary) !important;
+
 		font-weight: 500;
 		font-size: 14px;
 	}

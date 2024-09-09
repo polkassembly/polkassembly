@@ -10,6 +10,8 @@ interface Props {
 	closeModal: () => void;
 }
 
+const format = /^[a-zA-Z0-9_@]*$/;
+
 const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 	return (
 		<div className='h-52'>
@@ -30,11 +32,24 @@ const UsernameSkipAlertContent = ({ username, closeModal }: Props) => {
 					</div>
 
 					<p className='mt-20 justify-center text-center text-xl font-semibold text-bodyBlue dark:text-white'>We have assigned you a temporary username </p>
-					{!!username?.length && (
-						<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
-							You can visit<Link href={`/user/${username}`}>Profile</Link> and change it anytime
-						</p>
-					)}
+					{(!!username?.length && format.test(username)) ||
+						(username.length <= 30 && (
+							<p className='mb-6 mt-4 flex items-center justify-center gap-1 text-center text-base font-medium text-bodyBlue dark:text-white'>
+								You can visit
+								<Link
+									href={`/user/${format.test(username) ? username : ''}`}
+									onClick={(e) => {
+										if (!format.test(username)) {
+											e.stopPropagation();
+											e.preventDefault();
+										}
+									}}
+								>
+									Profile
+								</Link>{' '}
+								and change it anytime
+							</p>
+						))}
 				</div>
 			</div>
 		</div>

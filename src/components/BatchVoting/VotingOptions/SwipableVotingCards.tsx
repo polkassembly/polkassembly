@@ -212,9 +212,10 @@ const SwipableVotingCards = () => {
 								onCardLeftScreen={() => outOfFrame(proposal.title, index)}
 								preventSwipe={['down']}
 							>
-								<div className='h-full overflow-y-auto bg-[#f4f5f7] dark:bg-black'>
+								<div className='h-full overflow-y-auto bg-[#ffffff] dark:bg-black'>
 									<TinderCardsComponent
 										proposal={proposal}
+										isUsedInWebView={true}
 										onSkip={handleSkipProposalCard}
 									/>
 								</div>

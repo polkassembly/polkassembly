@@ -91,7 +91,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 	];
 
 	return (
-		<>
+		<section className='max-h-[400px] overflow-y-auto'>
 			<CardPostHeading
 				method={post?.method}
 				motion_method={post?.motion_method}
@@ -106,7 +106,7 @@ const CardPostInfo: FC<ICardPostInfo> = (props) => {
 				className='ant-tabs-tab-bg-white font-medium text-bodyBlue dark:bg-section-dark-overlay dark:text-blue-dark-high'
 				items={tabItems}
 			/>
-		</>
+		</section>
 	);
 };
 

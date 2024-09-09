@@ -43,6 +43,7 @@ export interface ISwipeActionButtons {
 
 export interface ITinderCardsComponent {
 	proposal: any;
+	isUsedInWebView?: boolean;
 	onSkip: (pre: number) => void;
 }
 

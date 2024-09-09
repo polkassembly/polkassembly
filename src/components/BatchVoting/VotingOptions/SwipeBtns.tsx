@@ -45,7 +45,7 @@ const SwipeBtns: FC<ISwipeActionButtons> = (props) => {
 						src='/assets/icons/green-like-icon.svg'
 						alt='dislike-icon'
 					/>
-					<p className='m-0 p-0 text-[#2ED47A]'>Nay</p>
+					<p className='m-0 p-0 text-[#2ED47A]'>Aye</p>
 				</button>
 			</div>
 		</section>

@@ -168,7 +168,10 @@ const ReferendumV2CardInfo: FC<IReferendumV2CardInfoProps> = ({ className, tally
 
 	return (
 		<>
-			<GovSidebarCard className={className}>
+			<GovSidebarCard
+				className={`${className}`}
+				isUsedInTinderWebView={true}
+			>
 				<div className='relative z-50 flex items-center justify-between'>
 					<h6 className='m-0 p-0 text-xl font-medium leading-6 text-bodyBlue dark:text-blue-dark-high'>Summary</h6>
 					<div className='flex items-center gap-x-2'>

@@ -21,6 +21,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<{ curveData: an
 
 		const { blockGte, postId } = req.body;
 
+		console.log(blockGte);
+
 		if (isNaN(postId) || !blockGte || isNaN(blockGte)) return res.status(400).json({ message: messages.INVALID_PARAMS });
 
 		const subsquidRes = await fetchSubsquid({

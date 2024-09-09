@@ -867,8 +867,15 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 		let assetId: null | string = null;
 
 		if (proposedCall?.args) {
-			if (proposedCall?.args?.assetKind?.assetId?.value?.interior || proposedCall?.args?.assetKind?.assetId?.interior?.value) {
-				const call = proposedCall?.args?.assetKind?.assetId?.value?.interior?.value || proposedCall?.args?.assetKind?.assetId?.interior?.value;
+			if (
+				proposedCall?.args?.assetKind?.assetId?.value?.interior ||
+				proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+				proposedCall?.args?.calls?.map(({ value }: any) => value?.assetKind?.assetId?.interior?.value || value?.assetKind?.assetId?.value?.interior)
+			) {
+				const call =
+					proposedCall?.args?.assetKind?.assetId?.value?.interior?.value ||
+					proposedCall?.args?.assetKind?.assetId?.interior?.value ||
+					proposedCall?.args?.calls?.map(({ value }: any) => value?.assetKind?.assetId?.interior?.value || value?.assetKind?.assetId?.value?.interior)?.[0]?.value;
 				assetId = (call?.length ? call?.find((item: { value: number; __kind: string }) => item?.__kind == 'GeneralIndex')?.value : null) || null;
 			}
 
@@ -896,20 +903,36 @@ export async function getOnChainPost(params: IGetOnChainPostParams): Promise<IAp
 			} else {
 				const calls = proposedCall?.args?.calls;
 				if (calls && Array.isArray(calls) && calls.length > 0) {
-					calls.forEach((call) => {
-						if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
-							remark += call.remark + '\n';
-						}
-						if (call && call.amount) {
-							requested += BigInt(call.amount);
-							if (call.beneficiary) {
-								beneficiaries.push({
-									address: call.beneficiary as string,
-									amount: call.amount
-								});
+					if (assetId) {
+						calls.forEach((call) => {
+							if (call?.value?.beneficiary?.value?.interior?.value?.id) {
+								call.value.beneficiary.value.interior.value.id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value.id, network);
+							} else if (call?.value?.beneficiary?.value?.interior?.value[0]?.id) {
+								call.value.beneficiary.value.interior.value[0].id = convertAnyHexToASCII(call?.value?.beneficiary?.value?.interior?.value[0].id, network);
 							}
-						}
-					});
+
+							const beneficiary = {
+								address: ((call?.value?.beneficiary as any)?.value?.interior?.value?.id as string) || (call?.value?.beneficiary as any)?.value?.interior?.value[0]?.id || '',
+								amount: call?.value?.amount
+							};
+							beneficiaries.push(beneficiary);
+						});
+					} else {
+						calls.forEach((call) => {
+							if (call && call.remark && typeof call.remark === 'string' && !containsBinaryData(call.remark)) {
+								remark += call.remark + '\n';
+							}
+							if (call && call.amount) {
+								requested += BigInt(call.amount);
+								if (call.beneficiary) {
+									beneficiaries.push({
+										address: call.beneficiary as string,
+										amount: call.amount
+									});
+								}
+							}
+						});
+					}
 				}
 			}
 		}

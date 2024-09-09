@@ -86,8 +86,8 @@ const VotingFormCard = ({
 		>
 			{formName === EFormType.ABSTAIN_FORM && renderBalanceInput('Abstain vote value', 'Add balance', onAbstainValueChange!, 'abstainVote')}
 
-			{(formName === EFormType.ABSTAIN_FORM || formName === EFormType.SPLIT_FORM) && (
-				<div className={`${isUsedInTinderWebView ? 'flex flex-row gap-x-3' : ''}`}>
+			{!isUsedInTinderWebView && (formName === EFormType.ABSTAIN_FORM || formName === EFormType.SPLIT_FORM) && (
+				<div>
 					{renderBalanceInput('Aye vote value', 'Add balance', onAyeValueChange!, 'ayeVote')}
 					{renderBalanceInput('Nay vote value', 'Add balance', onNayValueChange!, 'nayVote')}
 				</div>

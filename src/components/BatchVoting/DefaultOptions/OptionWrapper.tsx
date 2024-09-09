@@ -30,6 +30,7 @@ import { editBatchValueChanged, editCartPostValueChanged } from '~src/redux/batc
 import { useAppDispatch } from '~src/redux/store';
 import LoginToVoteOrEndorse from '~src/components/Post/GovernanceSideBar/LoginToVoteOrEndorse';
 import VotingFormCard, { EFormType } from '~src/components/TinderStyleVoting/PostInfoComponents/VotingFormCard';
+import AbstainOptions from './AbstainOptions';
 
 interface Props {
 	className?: string;
@@ -395,6 +396,95 @@ const OptionWrapper = ({ className, referendumId, proposalType, forSpecificPost 
 					/>
 				)}
 			</div>
+			{proposalType !== ProposalType.FELLOWSHIP_REFERENDUMS && vote === 'abstain' && (
+				<div className='w-full'>
+					<AbstainOptions
+						form={abstainFrom}
+						isUsedInTinderWebView={true}
+						className=''
+						formName={EFormType.ABSTAIN_FORM}
+						onBalanceChange={(balance: BN) => {
+							if (!forSpecificPost) {
+								dispatch(
+									editBatchValueChanged({
+										values: {
+											abstainVoteBalance: balance?.toString()
+										}
+									})
+								);
+							} else {
+								dispatch(
+									editCartPostValueChanged({
+										values: {
+											abstainVoteBalance: balance?.toString() || '0'
+										}
+									})
+								);
+							}
+						}}
+						onAyeValueChange={(balance: BN) => {
+							if (!forSpecificPost) {
+								dispatch(
+									editBatchValueChanged({
+										values: {
+											abstainAyeVoteBalance: balance?.toString()
+										}
+									})
+								);
+							} else {
+								dispatch(
+									editCartPostValueChanged({
+										values: {
+											abstainAyeVoteBalance: balance?.toString() || '0'
+										}
+									})
+								);
+							}
+						}}
+						onNayValueChange={(balance: BN) => {
+							if (!forSpecificPost) {
+								dispatch(
+									editBatchValueChanged({
+										values: {
+											abstainNyeVoteBalance: balance?.toString()
+										}
+									})
+								);
+							} else {
+								dispatch(
+									editCartPostValueChanged({
+										values: {
+											abstainNyeVoteBalance: balance?.toString() || '0'
+										}
+									})
+								);
+							}
+						}}
+						onAbstainValueChange={(balance: BN) => {
+							if (!forSpecificPost) {
+								dispatch(
+									editBatchValueChanged({
+										values: {
+											abstainVoteBalance: balance?.toString()
+										}
+									})
+								);
+							} else {
+								dispatch(
+									editCartPostValueChanged({
+										values: {
+											abstainVoteBalance: balance?.toString() || '0'
+										}
+									})
+								);
+							}
+						}}
+						handleSubmit={handleSubmit}
+						forSpecificPost={forSpecificPost}
+						showConvictionBar={false}
+					/>
+				</div>
+			)}
 			<article className={`${className} flex items-center justify-between`}>
 				<div className='w-[48%]'>
 					<label className='inner-headings mb-[2px] dark:text-blue-dark-medium'>

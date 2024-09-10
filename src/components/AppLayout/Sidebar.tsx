@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-	AuctionAdminIcon,
 	BountiesIcon,
 	DemocracyProposalsIcon,
 	DiscussionsIcon,
@@ -67,6 +66,7 @@ import { RightOutlined } from '@ant-design/icons';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import SignupPopup from '~src/ui-components/SignupPopup';
 import LoginPopup from '~src/ui-components/loginPopup';
+import Popover from '~src/basic-components/Popover';
 
 const { Sider } = Layout;
 
@@ -111,7 +111,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const [activeTreasury, setActiveTreasury] = useState(false);
 	const [activeWhitelist, setActiveWhitelist] = useState(false);
 	const [activeParachain, setActiveParachain] = useState(false);
-	const [activeArchived, setActiveArchived] = useState<boolean | undefined>(false);
 	const [governanceDropdownOpen, setGovernanceDropdownOpen] = useState(false);
 	const [treasuryDropdownOpen, setTreasuryDropdownOpen] = useState(false);
 	const [whitelistDropdownOpen, setWhitelistDropdownOpen] = useState(false);
@@ -122,6 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const archivedDropdownRef = useRef<HTMLDivElement>(null);
 	const [openLogin, setLoginOpen] = useState<boolean>(false);
 	const [openSignup, setSignupOpen] = useState<boolean>(false);
+	const isActive = (path: string) => router.pathname === path;
 
 	if (sidedrawer === false) {
 		setSidebarCollapsed(true);
@@ -155,12 +155,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const isTreasuryActive = gov2TrackItems.treasuryItems.some((item) => item?.key === currentPath);
 		const isWhitelistActive = gov2TrackItems.fellowshipItems.some((item) => item?.key === currentPath);
 		const isParachainActive = currentPath.includes('parachains');
-		const isArchived = items?.some((item) => item?.key === currentPath);
 		setActiveGovernance(isActive);
 		setActiveTreasury(isTreasuryActive);
 		setActiveWhitelist(isWhitelistActive);
 		setActiveParachain(isParachainActive);
-		setActiveArchived(isArchived);
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
@@ -662,7 +660,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 					) : (
 						<ImageIcon
 							src='/assets/allpost.svg'
-							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px]' : '-top-4 -ml-2'}  h-6  w-6 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
+							className={`absolute ${sidebarCollapsed ? '-top-7  -ml-[10px]' : '-top-4 -ml-2'}  h-6  w-6 scale-90 text-2xl font-medium  ${
+								theme === 'dark' ? 'dark-icons' : 'text-lightBlue'
+							}`}
 							alt=''
 						/>
 					)}
@@ -813,7 +813,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 										className={`${sidebarCollapsed ? '-ml-[6px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`}
 									/>
 								) : (
-									<AuctionAdminIcon className={`${sidebarCollapsed ? '-ml-[7px]' : ' -ml-1'} mt-1 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive`} />
+									<ImageIcon
+										src='/assets/sidebar/auction.svg'
+										alt=''
+										className={`${sidebarCollapsed ? '-ml-[7px]' : ' -ml-1'}  h-6 w-6 scale-90 text-2xl  ${
+											theme == 'dark' ? 'dark-icons' : 'text-lightBlue'
+										} text-2xl font-medium `}
+									/>
 								)}
 							</>
 						) : (
@@ -995,107 +1001,125 @@ const Sidebar: React.FC<SidebarProps> = ({
 		)
 	];
 
-	const handleDropdownPosition = (event: React.MouseEvent<HTMLDivElement>) => {
-		const iconPosition = event.currentTarget.getBoundingClientRect();
-		const scrollY = window.scrollY;
-		const sidebarWidth = 50;
+	const governanceDropdownContent = (
+		<div className='text-center'>
+			{gov2TrackItems.governanceItems.map((item, index) => {
+				const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
 
-		setDropdownPosition({
-			left: iconPosition.left + sidebarWidth,
-			top: iconPosition.top + scrollY + -100
-		});
-	};
+				return (
+					<p
+						key={index}
+						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+            			${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					>
+						<Link
+							href={item?.key as string}
+							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+						>
+							<span>{formattedLabel}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
 
-	const handleGovernanceClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		handleDropdownPosition(event);
-		setGovernanceDropdownOpen(!governanceDropdownOpen);
-		setArchivedDropdownOpen(false);
-		setTreasuryDropdownOpen(false);
-		setWhitelistDropdownOpen(false);
-	};
+	// whitelist dropdown
 
-	const handleTreasuryClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		handleDropdownPosition(event);
-		setTreasuryDropdownOpen(!treasuryDropdownOpen);
-		setArchivedDropdownOpen(false);
-		setGovernanceDropdownOpen(false);
-		setWhitelistDropdownOpen(false);
-	};
+	const whitelistDropdownContent = (
+		<div className='text-left'>
+			{gov2TrackItems.fellowshipItems.map((item, index) => {
+				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
 
-	const handleWhitelistClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		handleDropdownPosition(event);
-		setWhitelistDropdownOpen(!whitelistDropdownOpen);
-		setGovernanceDropdownOpen(false);
-		setArchivedDropdownOpen(false);
-		setTreasuryDropdownOpen(false);
-	};
-
-	const handleArchivedClick = (event: React.MouseEvent<HTMLDivElement>) => {
-		handleDropdownPosition(event);
-		setArchivedDropdownOpen(!archivedDropdownOpen);
-		setWhitelistDropdownOpen(false);
-		setGovernanceDropdownOpen(false);
-		setTreasuryDropdownOpen(false);
-	};
+				return (
+					<p
+						key={index}
+						className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
+            ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
+					>
+						<Link
+							href={item?.key as string}
+							className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+						>
+							<span>{formattedLabel}</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
 
 	let gov2CollapsedItems: MenuProps['items'] = [
 		...gov2OverviewItems,
 		...gov2TrackItems.mainItems,
 
 		getSiderMenuItem(
-			<Tooltip
-				title='Governance'
-				placement='left'
-				className='text-xs'
+			<Popover
+				content={governanceDropdownContent}
+				placement='right'
+				arrow={false}
+				trigger='click'
+				overlayClassName='z-[1100] w-[180px] left-16'
 			>
-				<div
-					className='relative  cursor-pointer px-1 '
-					style={{ marginRight: '-13px', padding: '10%' }}
-					onClick={handleGovernanceClick}
+				<Tooltip
+					title='Governance'
+					placement='left'
+					className='text-xs'
 				>
-					{activeGovernance ? (
-						<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-					) : (
-						<GovernanceIconNew
-							className={` mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[8%]'} scale-90 font-medium ${
-								activeGovernance ? ' -ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
-							}  text-2xl dark:text-icon-dark-inactive`}
-						/>
-					)}
-				</div>
-			</Tooltip>,
+					<div
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px', padding: '10%' }}
+					>
+						{activeGovernance ? (
+							<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						) : (
+							<GovernanceIconNew
+								className={`mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[8%]'} scale-90 font-medium ${
+									activeGovernance ? '-ml-7 w-20 rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'
+								} text-2xl dark:text-icon-dark-inactive`}
+							/>
+						)}
+					</div>
+				</Tooltip>
+			</Popover>,
 			'gov2_governance_group',
 			null,
 			[...gov2TrackItems.governanceItems]
 		),
 
 		getSiderMenuItem(
-			<Tooltip
-				title='Whitelist'
-				placement='left'
-				className='text-xs'
+			<Popover
+				content={whitelistDropdownContent}
+				placement='right'
+				arrow={false}
+				trigger='click' // Popover is triggered on click
+				overlayClassName='z-[1100] w-[180px] '
 			>
-				<div
-					onClick={handleWhitelistClick}
-					className='relative cursor-pointer px-1'
-					style={{ marginRight: '-13px', padding: '10%' }}
+				<Tooltip
+					title='Whitelist'
+					placement='left'
+					className='text-xs'
 				>
-					{activeWhitelist ? (
-						<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-					) : (
-						<FellowshipIconNew
-							className={`-ml-9 mt-1 w-20 scale-90  font-medium ${activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} text-2xl  ${
-								whitelistDropdownOpen && 'bg-black bg-opacity-[8%]'
-							} dark:text-icon-dark-inactive`}
-						/>
-					)}
-				</div>
-			</Tooltip>,
+					<div
+						className='relative cursor-pointer px-1'
+						style={{ marginRight: '-13px', padding: '10%' }}
+					>
+						{activeWhitelist ? (
+							<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+						) : (
+							<FellowshipIconNew
+								className={`-ml-9 mt-1 w-20 scale-90  font-medium ${activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} text-2xl  ${
+									whitelistDropdownOpen && 'bg-black bg-opacity-[8%]'
+								} dark:text-icon-dark-inactive`}
+							/>
+						)}
+					</div>
+				</Tooltip>
+			</Popover>,
 			'gov2_fellowship_group',
 			null,
 			[...gov2TrackItems.fellowshipItems]
 		),
-
 		getSiderMenuItem(
 			<Tooltip
 				title='Parachains'
@@ -1138,7 +1162,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 			)
 		);
 	}
-	const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
 	let bountiesSubItems: ItemType[] = [];
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		let items = [...gov2TrackItems.treasuryItems];
@@ -1237,30 +1260,119 @@ const Sidebar: React.FC<SidebarProps> = ({
 		);
 	}
 
+	const treasuryDropdownContent = (
+		<div className='text-left'>
+			{gov2TrackItems.treasuryItems.map((item, index) => {
+				const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
+				const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
+
+				if (item && item.key === 'gov2_bounties_group') {
+					const bountiesPopoverContent = (
+						<div className='w-[150px] '>
+							{bountiesSubItems.map((subItem, subIndex) => {
+								if (!subItem) return null;
+								const uniqueSubKey = `${subItem.key}-${subIndex}`;
+								const formattedSubLabel = subItem?.key
+									?.toString()
+									.replace(/^\//, '')
+									.split('_')
+									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+									.join(' ');
+
+								return (
+									<p
+										key={uniqueSubKey}
+										className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
+											isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+										}`}
+									>
+										<Link href={subItem?.key as string}>
+											<span className={`block px-2 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+												{formattedSubLabel || ''}
+											</span>
+										</Link>
+									</p>
+								);
+							})}
+						</div>
+					);
+
+					return (
+						<div
+							key={uniqueKey}
+							className='relative'
+						>
+							<Popover
+								content={bountiesPopoverContent}
+								placement='right'
+								trigger='hover'
+								overlayClassName='z-[1200]'
+							>
+								<p
+									className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										isActive(item?.key as string) ? ' text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+									}`}
+								>
+									<span className='flex items-center gap-2 font-medium'>
+										<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' />
+										<span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
+									</span>
+									<RightOutlined />
+								</p>
+							</Popover>
+						</div>
+					);
+				}
+
+				return (
+					<p
+						key={uniqueKey}
+						className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+							isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+						}`}
+					>
+						<Link href={item?.key as string}>
+							<span className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+								{formattedLabel || ''}
+							</span>
+						</Link>
+					</p>
+				);
+			})}
+		</div>
+	);
+
 	if (![AllNetworks.MOONBASE, AllNetworks.MOONBEAM, AllNetworks.MOONRIVER, AllNetworks.PICASSO].includes(network)) {
 		gov2CollapsedItems.splice(
 			-1,
 			0,
 			getSiderMenuItem(
-				<Tooltip
-					title='Treasury'
-					placement='left'
-					className='text-xs'
+				<Popover
+					content={treasuryDropdownContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[190px] left-16'
 				>
-					<div
-						className='relative cursor-pointer px-1'
-						style={{ marginRight: '-13px' }}
-						onClick={handleTreasuryClick}
+					<Tooltip
+						title='Treasury'
+						placement='left'
+						className='text-xs'
 					>
-						{activeTreasury ? (
-							<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
-						) : (
-							<TreasuryIconNew
-								className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
-							/>
-						)}
-					</div>
-				</Tooltip>,
+						<div
+							className='relative cursor-pointer px-1'
+							style={{ marginRight: '-13px', padding: '10%' }}
+						>
+							{activeTreasury ? (
+								<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+							) : (
+								<TreasuryIconNew
+									className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
+								/>
+							)}
+						</div>
+					</Tooltip>
+				</Popover>,
 				'gov2_treasury_group',
 				null,
 				[...gov2TrackItems.treasuryItems]
@@ -1405,27 +1517,119 @@ const Sidebar: React.FC<SidebarProps> = ({
 				getSiderMenuItem('Archived', '', <ArchivedIcon className=' -ml-1 scale-90 font-medium text-lightBlue  dark:text-icon-dark-inactive' />, [...items])
 			];
 		}
+
+		// archived dropdown state
+
+		const archivedDropdownContent = (
+			<div className='text-left'>
+				{items.map((item, index) => {
+					const formattedLabel = String(item?.key)?.replace('_group', '');
+
+					if (item && typeof item?.key === 'string' && item?.key.includes('_group')) {
+						return (
+							<Popover
+								key={index}
+								content={
+									<div className='w-[210px] '>
+										{'children' in item &&
+											item?.children?.map((subItem, subIndex) => {
+												const formattedKey =
+													typeof subItem?.key === 'string'
+														? subItem.key
+																.replace(/^\//, '')
+																.split('-')
+																.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+																.join(' ')
+														: '';
+
+												return (
+													<div
+														key={subIndex}
+														className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
+													>
+														{subItem?.key && (
+															<Link href={subItem.key.toString()}>
+																<span
+																	className={`font-medium ${
+																		isActive(item?.key?.toString() || '') ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
+																	} flex items-center gap-2 px-2 py-1`}
+																>
+																	{'icon' in subItem && <span className='text-xl'>{subItem.icon}</span>} {formattedKey}
+																</span>
+															</Link>
+														)}
+													</div>
+												);
+											})}
+									</div>
+								}
+								trigger='hover'
+								placement='right'
+								overlayClassName='z-[1200]'
+							>
+								<div
+									className={`relative cursor-pointer rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+										isActive(item?.key) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+									}`}
+								>
+									<div className='flex items-center justify-between py-2'>
+										<span className={`font-medium ${isActive(item?.key) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedLabel}</span>
+										{'children' in item && item.children && (
+											<span className='ml-2 cursor-pointer text-xs text-gray-500 dark:text-gray-400'>
+												<RightOutlined />
+											</span>
+										)}
+									</div>
+								</div>
+							</Popover>
+						);
+					}
+
+					return (
+						<p
+							key={index}
+							className={`rounded-lg px-2 py-1 hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+								isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+							}`}
+						>
+							<Link
+								href={item?.key as string}
+								className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
+							>
+								<span>{formattedLabel}</span>
+							</Link>
+						</p>
+					);
+				})}
+			</div>
+		);
+
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
 			getSiderMenuItem(
-				<Tooltip
-					title='Archived'
-					placement='left'
-					className='text-xs'
+				<Popover
+					content={archivedDropdownContent}
+					placement='right'
+					arrow={false}
+					trigger='click'
+					overlayClassName='z-[1100] w-[180px] '
 				>
-					<div
-						onClick={handleArchivedClick}
-						className='relative cursor-pointer px-1'
-						style={{ marginRight: '-13px', padding: '10%' }}
+					<Tooltip
+						title='Archived'
+						placement='left'
+						className='text-xs'
 					>
-						<ArchivedIcon
-							className={`-ml-9 mt-1 w-20 scale-90  text-2xl font-medium ${activeArchived ? 'bg-[#ffe6ef]' : 'text-lightBlue'}  dark:text-icon-dark-inactive ${
-								archivedDropdownOpen && 'bg-black bg-opacity-[8%]'
-							}`}
-						/>
-					</div>
-				</Tooltip>,
-				'',
+						<div
+							className='relative cursor-pointer px-1'
+							style={{ marginRight: '-13px', padding: '10%' }}
+						>
+							<ArchivedIcon
+								className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium ${archivedDropdownOpen && 'bg-black bg-opacity-[8%]'} text-lightBlue dark:text-icon-dark-inactive`}
+							/>
+						</div>
+					</Tooltip>
+				</Popover>,
+				'archived_group',
 				null,
 				[...items]
 			)
@@ -1441,19 +1645,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 	if (isMobile) {
 		sidebarItems = [username && isMobile ? userDropdown : null, ...sidebarItems];
 	}
-	const isActive = (path: string) => router.pathname === path;
 	function toPascalCase(str: string): string {
 		return str.replace(/-/g, ' ').replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
 	}
-	const [openDropdownKey, setOpenDropdownKey] = useState<string | null>(null);
-
-	const toggleDropdown = (key: string) => {
-		setOpenDropdownKey(openDropdownKey === key ? null : key);
-	};
-
-	const dropdownOpenForItem = (key: string) => {
-		return openDropdownKey === key;
-	};
 
 	return (
 		<Sider
@@ -1470,218 +1664,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 		>
 			<div className='flex h-full flex-col'>
 				<div className='flex flex-col'>
-					{sidebarCollapsed && governanceDropdownOpen && (
-						<div
-							ref={dropdownRef}
-							className='absolute z-[1100] w-[180px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
-							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
-						>
-							<div className='text-center'>
-								{gov2TrackItems.governanceItems.map((item, index) => {
-									const formattedLabel = toPascalCase((item?.key?.toString().replace('/', '') as string) || '');
-
-									return (
-										<p
-											key={index}
-											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                           					 ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
-										>
-											<Link
-												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
-											>
-												<span>{formattedLabel}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</div>
-						</div>
-					)}
-					{sidebarCollapsed && whitelistDropdownOpen && (
-						<div
-							ref={whitelistDropdownRef}
-							className='absolute z-[1100] w-[180px] rounded-lg bg-white p-4 px-3 shadow-lg dark:bg-[#0D0D0D]'
-							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top + 20}px` }}
-						>
-							<ul className='text-center'>
-								{gov2TrackItems.fellowshipItems.map((item, index) => {
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-
-									return (
-										<p
-											key={index}
-											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] 
-                          					  ${isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'} `}
-										>
-											<Link
-												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
-											>
-												<span>{formattedLabel}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-					{sidebarCollapsed && treasuryDropdownOpen && (
-						<div
-							ref={treasuryDropdownRef}
-							className='absolute z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
-							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
-						>
-							<ul className='text-left'>
-								{gov2TrackItems.treasuryItems.map((item, index) => {
-									const uniqueKey = item ? `${item.key}-${index}` : `null-${index}`;
-									const formattedLabel = toPascalCase(item?.key?.toString().replace('/', '') as string);
-									if (item && item.key === 'gov2_bounties_group') {
-										return (
-											<div
-												key={uniqueKey}
-												className='relative'
-											>
-												<p
-													className={`flex cursor-pointer justify-between rounded-lg px-2 py-1  hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-														isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
-													}`}
-													onClick={() => item?.key && toggleDropdown(item.key as string)}
-												>
-													<span className='flex items-center gap-2 font-medium '>
-														<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' /> <span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
-													</span>
-													<RightOutlined />
-												</p>
-
-												{item && dropdownOpenForItem(item.key) && (
-													<div
-														className='absolute left-[180px] z-[1200] w-[150px] rounded-lg bg-white p-2 shadow-lg dark:bg-[#0D0D0D]'
-														style={{ top: 0 }}
-													>
-														{bountiesSubItems.map((subItem, subIndex) => {
-															if (!subItem) return null;
-															const uniqueSubKey = `${subItem.key}-${subIndex}`;
-															const formattedSubLabel =
-																typeof subItem?.key === 'string'
-																	? subItem.key
-																			.replace(/^\//, '')
-																			.split('_')
-																			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-																			.join(' ')
-																	: '';
-
-															return (
-																<p
-																	key={uniqueSubKey}
-																	className={`rounded-lg px-2 py-1 hover:bg-gray-200 dark:hover:bg-[#FFFFFF14] ${
-																		isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
-																	}`}
-																>
-																	<Link href={subItem?.key as string}>
-																		<span className={`block px-2 text-left  ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
-																			{formattedSubLabel || ''}
-																		</span>
-																	</Link>
-																</p>
-															);
-														})}
-													</div>
-												)}
-											</div>
-										);
-									}
-									return (
-										<p
-											key={uniqueKey}
-											className={`rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-												isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
-											}`}
-										>
-											<Link
-												href={item?.key as string}
-												className={`inline-block w-full text-left ${isActive(item?.key as string) ? 'font-medium text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}
-											>
-												<span>{formattedLabel || ''}</span>
-											</Link>
-										</p>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-
-					{sidebarCollapsed && archivedDropdownOpen && (
-						<div
-							ref={archivedDropdownRef}
-							className='absolute z-[1100] w-[190px] rounded-lg bg-white p-4 px-5 shadow-lg dark:bg-[#0D0D0D]'
-							style={{ left: `${dropdownPosition.left}px`, top: `${dropdownPosition.top}px` }}
-						>
-							<div className='text-left'>
-								{items.map((item, index) => {
-									const formattedLabel = String(item?.key)?.replace('_group', '');
-									if (item && typeof item?.key === 'string' && item?.key.includes('_group')) {
-										return (
-											<div
-												key={index}
-												onClick={() => toggleDropdown(item.key as string)}
-												className={`relative cursor-pointer rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
-													isActive(item?.key) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
-												}`}
-											>
-												<div className='flex items-center justify-between py-2'>
-													<span className={`font-medium ${isActive(item?.key) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>{formattedLabel}</span>
-													{'children' in item && item.children && (
-														<span className='ml-2 cursor-pointer text-xs text-gray-500 dark:text-gray-400'>
-															<RightOutlined />{' '}
-														</span>
-													)}
-												</div>
-
-												{'children' in item && item.children && dropdownOpenForItem(item.key) && (
-													<div
-														className='absolute left-[180px] z-[1200] w-[210px] rounded-lg bg-white p-2 shadow-lg dark:bg-[#0D0D0D]'
-														style={{ top: 0 }}
-													>
-														{item.children.map((subItem, subIndex) => {
-															const formattedKey =
-																typeof subItem?.key === 'string'
-																	? subItem.key
-																			.replace(/^\//, '')
-																			.split('-')
-																			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-																			.join(' ')
-																	: '';
-
-															return (
-																<div
-																	key={subIndex}
-																	className='rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-[#FFFFFF14]'
-																>
-																	{subItem?.key && (
-																		<Link href={subItem.key.toString()}>
-																			<span
-																				className={`font-medium ${
-																					isActive(item?.key?.toString() || '') ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'
-																				} flex items-center gap-2 px-2 py-1`}
-																			>
-																				{'icon' in subItem && <span className='text-xl'>{subItem.icon}</span>} {formattedKey}
-																			</span>
-																		</Link>
-																	)}
-																</div>
-															);
-														})}
-													</div>
-												)}
-											</div>
-										);
-									}
-								})}
-							</div>
-						</div>
-					)}
-
 					<Menu
 						theme={theme as any}
 						mode='inline'

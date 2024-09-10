@@ -559,7 +559,7 @@ export const chainProperties: types.ChainPropType = {
 		logo: polimecLogo,
 		rpcEndpoint: 'wss://polimec.rpc.amforc.com',
 		ss58Format: 41,
-		subsquidUrl: 'https://squid.subsquid.io/polimec-polkassembly/graphql',
+		subsquidUrl: 'https://polkassembly.squids.live/polimec-polkassembly/graphql',
 		tokenDecimals: 10,
 		tokenSymbol: tokenSymbol.PLMC,
 		treasuryProposalBondPercent: '5%',

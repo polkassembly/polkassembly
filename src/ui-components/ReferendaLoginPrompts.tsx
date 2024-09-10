@@ -66,7 +66,7 @@ const ReferendaLoginPrompts = ({ image, title, subtitle, modalOpen, setModalOpen
 			>
 				<div className='flex flex-col items-center p-1'>
 					<Image
-						width={280}
+						width={221}
 						height={221}
 						src={`${image}`}
 						alt=''

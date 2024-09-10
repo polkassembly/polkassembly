@@ -65,6 +65,8 @@ import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
 
 import ImageIcon from '~src/ui-components/ImageIcon';
+import SignupPopup from '~src/ui-components/SignupPopup';
+import LoginPopup from '~src/ui-components/loginPopup';
 
 const { Sider } = Layout;
 
@@ -118,6 +120,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 	const treasuryDropdownRef = useRef<HTMLDivElement>(null);
 	const whitelistDropdownRef = useRef<HTMLDivElement>(null);
 	const archivedDropdownRef = useRef<HTMLDivElement>(null);
+	const [openLogin, setLoginOpen] = useState<boolean>(false);
+	const [openSignup, setSignupOpen] = useState<boolean>(false);
+
 	if (sidedrawer === false) {
 		setSidebarCollapsed(true);
 	}
@@ -159,7 +164,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	}, [router.pathname]);
 
 	function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-		label = <span className={`w-5 text-xs font-medium ${sidebarCollapsed ? 'text-white' : 'text-lightBlue'}  `}>{label}</span>;
+		label = <span className={`w-5 text-xs font-medium dark:text-icon-dark-inactive ${sidebarCollapsed ? 'text-white ' : 'text-lightBlue'}  `}>{label}</span>;
 		return {
 			children,
 			icon,
@@ -173,6 +178,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 		.ant-menu-sub.ant-menu-inline {
 			background: ${(props: any) => (props?.theme === 'dark' ? '#0D0D0D' : '#fff')} !important;
 		}
+
+		.ant-menu-item-selected {
+			background: ${(props: any) => (props?.theme === 'dark' ? '#520f32' : '#fce5f2')} !important;
+		}
+
 		.ant-menu-item {
 			width: ${(props: any) => (props.sidebarCollapsed && !props.sidedrawer ? '50%' : '100%')};
 			padding: 1px 22px 1px 18px;
@@ -827,7 +837,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 									<span
 										className={`text-[10px] ${
 											activeProposal && activeProposal >= 1 ? getSpanStyle(trackName, activeProposal) : ''
-										} rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
+										} w-5 rounded-lg px-[7px] py-1 text-[#96A4B6] dark:text-[#595959]`}
 									>
 										{activeProposal && activeProposal > 9 ? (
 											<>
@@ -1507,13 +1517,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 												className='relative'
 											>
 												<p
-													className={`flex cursor-pointer justify-between rounded-lg px-2 py-1 text-[#243A57] hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
+													className={`flex cursor-pointer justify-between rounded-lg px-2 py-1  hover:bg-gray-100 dark:text-[#FFFFFF] dark:hover:bg-[#FFFFFF14] ${
 														isActive(item?.key as string) ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
 													}`}
 													onClick={() => item?.key && toggleDropdown(item.key as string)}
 												>
-													<span className='flex items-center gap-2 font-medium text-lightBlue dark:text-icon-dark-inactive'>
-														<BountiesIcon className='text-xl' /> <span>Bounties</span>
+													<span className='flex items-center gap-2 font-medium '>
+														<BountiesIcon className='text-xl text-[#243A57] dark:text-[#FFFFFF]' /> <span className='text-[#243A57] dark:text-[#FFFFFF]'>Bounties</span>
 													</span>
 													<RightOutlined />
 												</p>
@@ -1734,18 +1744,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 									</Link>
 								</div>
 
-								<div className={`activeborderhover group relative ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/calendar'>
+								<div className={`activeborderhover group relative ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+									<div
+										onClick={() => {
+											if (username?.length) {
+												router.push(`/user/${username}`);
+											} else {
+												setLoginOpen(true);
+											}
+										}}
+									>
 										<img
 											src='/assets/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
-										<div className='absolute -left-2 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Calendar
-											<div className='absolute left-14 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+										<div className='absolute bottom-full left-2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+											Profile
+											<div className='absolute left-10 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
-									</Link>
+									</div>
 								</div>
 							</div>
 						</>
@@ -1802,18 +1820,26 @@ const Sidebar: React.FC<SidebarProps> = ({
 										</div>
 									</Link>
 								</div>
-								<div className={`activeborderhover group relative w-10 ${isActive('/calendar') ? '  activeborder  rounded-lg' : ''}`}>
-									<Link href='/calendar'>
+								<div className={`activeborderhover group relative w-10 ${isActive(`/user/${username}`) ? '  activeborder  rounded-lg' : ''}`}>
+									<div
+										onClick={() => {
+											if (username?.length) {
+												router.push(`/user/${username}`);
+											} else {
+												setLoginOpen(true);
+											}
+										}}
+									>
 										<img
 											src='/assets/head4.svg'
 											alt='Head 4'
 											className='h-10 w-10 cursor-pointer'
 										/>
 										<div className='absolute  bottom-0 left-[82px] z-50 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Calendar
+											Profile
 											<div className='absolute left-[7px] top-[5px] -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
 										</div>
-									</Link>
+									</div>
 								</div>
 							</div>
 						</>
@@ -1829,8 +1855,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 						sidebarCollapsed={sidebarCollapsed}
 						sidedrawer={sidedrawer}
 						className={`${username ? 'auth-sider-menu' : ''} ${
-							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center overflow-hidden pr-2' : ''
-						} dark:bg-section-dark-overlay`}
+							sidebarCollapsed ? 'ml-2 flex flex-grow flex-col items-center  pr-2' : ''
+						} overflow-x-hidden dark:bg-section-dark-overlay`}
 					/>
 				</div>
 				{!sidebarCollapsed ? (
@@ -1954,6 +1980,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</>
 				)}
 			</div>
+			<SignupPopup
+				setLoginOpen={setLoginOpen}
+				modalOpen={openSignup}
+				setModalOpen={setSignupOpen}
+				isModal={true}
+			/>
+			<LoginPopup
+				setSignupOpen={setSignupOpen}
+				modalOpen={openLogin}
+				setModalOpen={setLoginOpen}
+				isModal={true}
+			/>
 		</Sider>
 	);
 };

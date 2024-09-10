@@ -137,12 +137,12 @@ const VoteInitiatedModal = ({
 						</span>{' '}
 						successfully
 					</h2>
-					<span className='m-0 p-0 text-xs'>With</span>
+					<span className='m-0 p-0 text-sm dark:text-blue-dark-high'>with</span>
 					<span className='font-medium'>
 						<Address
 							isTruncateUsername={false}
 							address={address}
-							className='address'
+							className='address text-base'
 							displayInline
 						/>{' '}
 					</span>
@@ -150,8 +150,8 @@ const VoteInitiatedModal = ({
 				<div className='-mt-1 flex flex-col items-center justify-center gap-[14px]'>
 					<div className='flex items-center justify-center gap-x-2'>
 						<div className='flex gap-x-2 font-normal text-lightBlue dark:text-blue-dark-medium'>
-							<span className='m-0 p-0 text-sm font-semibold text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x Conviction</span>
-							<span className='m-0 mt-0.5 p-0 text-xs font-normal text-bodyBlue dark:text-blue-dark-high'>with</span>
+							<span className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x Conviction</span>
+							<span className='m-0 mt-0.5 p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>with</span>
 						</div>
 						<div className='text-[24px] font-semibold text-pink_primary'>
 							{conviction

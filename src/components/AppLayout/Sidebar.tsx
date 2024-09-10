@@ -1059,7 +1059,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 				placement='right'
 				arrow={false}
 				trigger='click'
-				overlayClassName='z-[1100] w-[180px] left-16'
+				overlayClassName='z-[1100] w-[190px] left-16'
 			>
 				<Tooltip
 					title='Governance'
@@ -1523,7 +1523,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 		const archivedDropdownContent = (
 			<div className='text-left'>
 				{items.map((item, index) => {
-					const formattedLabel = String(item?.key)?.replace('_group', '');
+					const formattedLabel =
+						typeof item?.key === 'string'
+							? item.key
+									.replace('_group', '')
+									.split('_')
+									.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+									.join(' ')
+							: '';
 
 					if (item && typeof item?.key === 'string' && item?.key.includes('_group')) {
 						return (

@@ -934,3 +934,7 @@ z-index: 105 !important;
   pointer-events: none;
   z-index: 1;
 }
+
+.dark .ant-collapse .ant-collapse-content {
+  border-top: 1px solid #3B444F !important;
+}

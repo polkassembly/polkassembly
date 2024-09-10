@@ -109,15 +109,19 @@ const Web3Login: FC<Props> = ({
 		}
 	};
 
-	const getAccounts = async (chosenWallet: Wallet): Promise<undefined> => {
+	const getAccounts = async (chosenWallet: Wallet): Promise<void> => {
 		if (['moonbase', 'moonbeam', 'moonriver'].includes(network)) {
 			const wallet = chosenWallet === Wallet.SUBWALLET ? (window as any).SubWallet : (window as any).talismanEth;
 			if (!wallet) {
-				setExtensionNotFound(true);
+				if (!extensionNotFound) {
+					setExtensionNotFound(true);
+				}
 				setIsAccountLoading(false);
 				return;
 			} else {
-				setExtensionNotFound(false);
+				if (extensionNotFound) {
+					setExtensionNotFound(false);
+				}
 			}
 			const accounts: string[] = (await wallet.request({ method: 'eth_requestAccounts' })) || [];
 
@@ -150,11 +154,15 @@ const Web3Login: FC<Props> = ({
 			const injectedWindow = window as Window & InjectedWindow;
 			const wallet = isWeb3Injected ? injectedWindow.injectedWeb3[chosenWallet] : null;
 			if (!wallet) {
-				setExtensionNotFound(true);
+				if (!extensionNotFound) {
+					setExtensionNotFound(true);
+				}
 				setIsAccountLoading(false);
 				return;
 			} else {
-				setExtensionNotFound(false);
+				if (extensionNotFound) {
+					setExtensionNotFound(false);
+				}
 			}
 
 			let injected: Injected | undefined;
@@ -458,7 +466,8 @@ const Web3Login: FC<Props> = ({
 		setAccounts([]);
 	};
 	useEffect(() => {
-		if (withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE) {
+		if (fetchAccounts && withPolkasafe && accounts.length === 0 && chosenWallet !== Wallet.POLKASAFE) {
+			setLoading(true);
 			getAccounts(chosenWallet)
 				.then(() => setFetchAccounts(false))
 				.catch((err) => {
@@ -467,7 +476,7 @@ const Web3Login: FC<Props> = ({
 				.finally(() => setLoading(false));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [accounts.length, chosenWallet, withPolkasafe]);
+	}, [accounts.length, chosenWallet, withPolkasafe, fetchAccounts]);
 
 	return (
 		<div className={`${className}`}>
@@ -680,19 +689,7 @@ const Web3Login: FC<Props> = ({
 										</div>
 									</AuthForm>
 								)}
-								{!extensionNotFound && !accounts.length && !!chosenWallet && !loading && (
-									<Alert
-										description={
-											<div className=' text-xs text-lightBlue dark:text-blue-dark-high'>
-												<h3 className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Link your {chosenWallet} wallet</h3>
-												<div className='p-0 text-[13px] text-lightBlue dark:text-blue-dark-high'>Add an address to the selected wallet by your extension.</div>
-											</div>
-										}
-										showIcon
-										className='mb-3 p-3'
-										type='info'
-									/>
-								)}
+
 								{!!chosenWallet && !accounts.length && (
 									<div className='flex items-center justify-center'>
 										<CustomButton

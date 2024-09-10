@@ -74,32 +74,6 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 				})
 				.catch((e: any) => console.error(e));
 		} else {
-			await api.query.system
-				.account(encodedAddr)
-				.then((result: any) => {
-					const free = result.data?.free?.toBigInt() || BigInt(0);
-					const frozen = result.data?.miscFrozen?.toBigInt() || result.data?.frozen?.toBigInt() || BigInt(0);
-					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
-					totalBalance = new BN((free + reserved).toString());
-
-					if (result.data.free && free >= frozen) {
-						if (frozen > reserved) {
-							transferableBalance = new BN((free - (frozen - reserved)).toString() || '0');
-							freeBalance = new BN(free.toString() || '0');
-							lockedBalance = new BN(frozen.toString() || '0');
-						} else {
-							transferableBalance = new BN((free - frozen).toString() || '0');
-							freeBalance = new BN(free.toString() || '0');
-							lockedBalance = new BN(frozen.toString() || '0');
-						}
-					} else {
-						transferableBalance = new BN(free || '0');
-						freeBalance = new BN(free.toString() || '0');
-						lockedBalance = new BN(frozen.toString() || '0');
-					}
-				})
-				.catch((e: any) => console.error(e));
-
 			await api.derive.balances
 				?.all(encodedAddr)
 				.then((result: any) => {
@@ -107,6 +81,16 @@ const userProfileBalances = async ({ address, api, apiReady, network }: Props): 
 					lockedBalance = new BN((result.lockedBalance || lockedBalance.toString()).toBigInt().toString());
 				})
 				.catch((e: any) => console.log(e));
+
+			await api.query.system
+				.account(encodedAddr)
+				.then((result: any) => {
+					const free = result.data?.free?.toBigInt() || BigInt(0);
+					const reserved = result.data?.reserved?.toBigInt() || BigInt(0);
+					totalBalance = new BN((free + reserved).toString());
+					freeBalance = new BN(free.toString());
+				})
+				.catch((e: any) => console.error(e));
 		}
 
 		return {

@@ -13,7 +13,6 @@ import { fetchContentSummary } from '~src/util/getPostContentAiSummary';
 export interface IPostSummaryResponse {
 	summary: string;
 }
-
 const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, res) => {
 	storeApiKeyUsage(req);
 
@@ -28,8 +27,9 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const strProposalType = String(proposalType);
-	if (!(isOffChainProposalTypeValid(strProposalType) || isProposalTypeValid(strProposalType)))
+	if (!(isOffChainProposalTypeValid(strProposalType) || isProposalTypeValid(strProposalType))) {
 		return res.status(400).json({ message: `The proposal type of the name "${proposalType}" does not exist.` });
+	}
 
 	const postRef = postsByTypeRef(network, proposalType as any).doc(String(postId));
 	const doc = await postRef.get();
@@ -38,12 +38,19 @@ const handler: NextApiHandler<IPostSummaryResponse | MessageType> = async (req, 
 	}
 
 	const postData = doc.data();
+
 	if (postData?.max_150_char_summary) {
-		return res.status(200).json({ summary: postData?.max_150_char_summary });
+		return res.status(200).json({ summary: postData.max_150_char_summary });
+	}
+
+	const contentToSummarize = postData?.content || postData?.summary;
+
+	if (!contentToSummarize) {
+		return res.status(200).json({ summary: '' });
 	}
 
 	const max_150_char_summary = await fetchContentSummary(
-		postData?.content as string,
+		contentToSummarize as string,
 		proposalType as any,
 		process.env.AI_SUMMARY_API_KEY_PROMPT?.replace('{}', proposalType as string) || ''
 	);

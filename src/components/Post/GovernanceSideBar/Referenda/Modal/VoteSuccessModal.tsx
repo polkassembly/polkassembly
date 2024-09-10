@@ -153,7 +153,7 @@ const VoteInitiatedModal = ({
 							<span className='m-0 p-0 text-base font-semibold text-bodyBlue dark:text-blue-dark-high'>{conviction || '0.1'}x Conviction</span>
 							<span className='m-0 mt-0.5 p-0 text-sm font-normal text-bodyBlue dark:text-blue-dark-high'>with</span>
 						</div>
-						<div className='text-[24px] font-semibold text-pink_primary'>
+						<div className='text-[20px] font-semibold text-pink_primary'>
 							{conviction
 								? parseBalance(balance.mul(new BN(conviction)).add(delegatedVotingPower).toString(), 0, true, network)
 								: parseBalance(balance.add(delegatedVotingPower).toString(), 0, true, network)}

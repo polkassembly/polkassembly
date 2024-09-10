@@ -11,6 +11,7 @@ import AnalyticsReferendumOutcome from './AnalyticsReferendumOutcome';
 import AnalyticsReferendumCount from './AnalyticsReferendumCount';
 import ReferendumCount from './ReferendumCount';
 import MonthlySpend from './MonthlySpend';
+import Image from 'next/image';
 const AnalyticTurnOutPercentage = dynamic(() => import('./AnalyticTurnOutPercentage'), { ssr: false });
 
 const { Panel } = Collapse;
@@ -29,26 +30,20 @@ const AnalyticsTrends = () => {
 			expandIconPosition='end'
 			expandIcon={({ isActive }) =>
 				isActive ? (
-					theme === 'dark' ? (
-						<ImageIcon
-							src='/assets/icons/expand-white.svg'
-							alt='expand-icon'
-						/>
-					) : (
-						<ImageIcon
-							src='/assets/icons/expand.svg'
-							alt='expand-icon'
-						/>
-					)
-				) : theme === 'dark' ? (
-					<ImageIcon
-						src='/assets/icons/collapse-white.svg'
-						alt='collapse-icon'
+					<Image
+						src={'/assets/icons/expand.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
 					/>
 				) : (
-					<ImageIcon
-						src='/assets/icons/collapse.svg'
-						alt='collapse-icon'
+					<Image
+						src={'/assets/icons/collapse.svg'}
+						height={20}
+						width={20}
+						alt=''
+						className={theme == 'dark' ? 'dark-icons' : ''}
 					/>
 				)
 			}

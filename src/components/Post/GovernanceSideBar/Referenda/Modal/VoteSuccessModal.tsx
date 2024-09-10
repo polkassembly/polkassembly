@@ -109,7 +109,9 @@ const VoteInitiatedModal = ({
 		)}%0A%0A`;
 		navigator.clipboard.writeText(decodeURIComponent(text));
 		message.success('Vote details copied to clipboard. You can paste it in Discord.');
-		window.open('https://discord.com/channels/@me', '_blank')?.focus();
+		setTimeout(() => {
+			window.open('https://discord.com/channels/@me', '_blank')?.focus();
+		}, 3000);
 	};
 
 	return (

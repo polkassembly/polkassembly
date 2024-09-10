@@ -25,6 +25,7 @@ import { CloseIcon } from '~src/ui-components/CustomIcons';
 import { parseBalance } from '../../Modal/VoteData/utils/parseBalaceToReadable';
 import ImageIcon from '~src/ui-components/ImageIcon';
 import Address from '~src/ui-components/Address';
+import { useTheme } from 'next-themes';
 
 const ZERO_BN = new BN(0);
 
@@ -65,6 +66,7 @@ const VoteInitiatedModal = ({
 	const { setComments, timelines, setTimelines, comments } = useCommentDataContext();
 	const unit = `${chainProperties[network]?.tokenSymbol}`;
 	const [posted, setPosted] = useState(false);
+	const { resolvedTheme: theme } = useTheme();
 	const { postData } = usePostDataContext();
 
 	useEffect(() => {
@@ -271,24 +273,24 @@ const VoteInitiatedModal = ({
 			<p className='m-0 -mt-8 flex justify-center p-0 text-sm text-bodyBlue dark:text-blue-dark-medium'>Share your vote on:</p>
 			<div className='mb-1 mt-2 flex items-center justify-center gap-x-2'>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
 					onClick={() => {
 						onShareTwitter();
 					}}
 				>
 					<ImageIcon
-						src='/assets/icons/x-pink.svg'
+						src={theme === 'dark' ? '/assets/icons/x-icon-pink-dark.svg' : '/assets/icons/x-icon-pink.svg'}
 						alt='twitter-icon'
 					/>
 				</Button>
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
 					onClick={() => {
 						onShareDiscord();
 					}}
 				>
 					<ImageIcon
-						src='/assets/icons/discord-pink.svg'
+						src={theme === 'dark' ? '/assets/icons/discord-pink-dark.svg' : '/assets/icons/discord-pink.svg'}
 						alt='discord-icon'
 					/>
 				</Button>
@@ -299,13 +301,13 @@ const VoteInitiatedModal = ({
 					/>
 				</Button> */}
 				<Button
-					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8]'
+					className='flex h-[40px] w-[40px] items-center justify-center rounded-lg border-none bg-[#FEF2F8] dark:bg-[#33071E]'
 					onClick={() => {
 						handleCopyClicked();
 					}}
 				>
 					<ImageIcon
-						src='/assets/icons/copy-pink.svg'
+						src={theme === 'dark' ? '/assets/icons/copy-pink-dark.svg' : '/assets/icons/copy-pink.svg'}
 						alt='copy-icon'
 					/>
 				</Button>

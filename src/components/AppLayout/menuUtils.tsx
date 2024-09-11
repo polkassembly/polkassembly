@@ -198,13 +198,125 @@ const getUserDropDown = ({
 
 export default getUserDropDown;
 
-export function getSiderMenuItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-	label = <span className='w-5 text-xs font-medium text-lightBlue  dark:text-icon-dark-inactive'>{label}</span>;
-	return {
-		children,
-		icon,
-		key,
-		label,
-		type: ['tracksHeading', 'pipsHeading'].includes(key as string) ? 'group' : ''
-	} as MenuItem;
-}
+export const SidebarFoot1 = () => {
+	return (
+		<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
+			<div className='mt-5 flex items-center justify-center gap-2'>
+				<div className='group relative'>
+					<Link href='https://townhallgov.com/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
+							alt='Foot1'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Townhall
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://polkasafe.xyz/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
+							alt='Foot2'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Polkasafe
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://collectives.polkassembly.io/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
+							alt='Foot3'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Fellowship
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://staking.polkadot.cloud/#/overview'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
+							alt='Foot4'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Staking
+							<div className='absolute left-12  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export const SidebarFoot2 = () => {
+	return (
+		<div className='menu-shadow-top fixed bottom-0 left-0 z-[1000] w-full bg-white py-3 dark:bg-section-dark-overlay'>
+			{' '}
+			<div className=' flex flex-col items-center justify-center gap-2'>
+				<div className='group relative'>
+					<Link href='https://townhallgov.com/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
+							alt='Foot1'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Townhall
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://polkasafe.xyz/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
+							alt='Foot2'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Polkasafe
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://collectives.polkassembly.io/'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
+							alt='Foot3'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Fellowship
+							<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+				<div className='group relative'>
+					<Link href='https://staking.polkadot.cloud/#/overview'>
+						<img
+							src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
+							alt='Foot4'
+							className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
+						/>
+						<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
+							Staking
+							<div className='absolute left-1/2  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
+						</div>
+					</Link>
+				</div>
+			</div>
+		</div>
+	);
+};

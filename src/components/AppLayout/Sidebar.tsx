@@ -59,7 +59,7 @@ import { logout } from '~src/redux/userDetails';
 import { useTheme } from 'next-themes';
 import { setOpenRemoveIdentityModal, setOpenRemoveIdentitySelectAddressModal } from '~src/redux/removeIdentity';
 import { getSpanStyle } from '~src/ui-components/TopicTag';
-import getUserDropDown, { MenuItem } from './menuUtils';
+import getUserDropDown, { MenuItem, SidebarFoot1, SidebarFoot2 } from './menuUtils';
 import { trackEvent } from 'analytics';
 import { RightOutlined } from '@ant-design/icons';
 
@@ -1071,7 +1071,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						style={{ marginRight: '-13px', padding: '10%' }}
 					>
 						{activeGovernance ? (
-							<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+							<SelectedGovernance className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
 						) : (
 							<GovernanceIconNew
 								className={`mt-1 w-20 ${sidebarCollapsed ? '-ml-9' : '-ml-2'} ${governanceDropdownOpen && 'bg-black bg-opacity-[8%]'} scale-90 font-medium ${
@@ -1105,7 +1105,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						style={{ marginRight: '-13px', padding: '10%' }}
 					>
 						{activeWhitelist ? (
-							<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+							<SelectedWhitelist className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
 						) : (
 							<FellowshipIconNew
 								className={`-ml-9 mt-1 w-20 scale-90  font-medium ${activeWhitelist ? 'rounded-lg bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue'} text-2xl  ${
@@ -1137,7 +1137,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<Link href='/parachains'>
 						<div
 							className={`ml-[50px] flex w-10 cursor-pointer items-center justify-center rounded-lg  pt-1  hover:bg-[#000000] hover:bg-opacity-[4%] ${
-								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A]' : 'text-lightBlue dark:text-icon-dark-inactive'
+								activeParachain ? 'bg-[#FFF2F9] text-[#E5007A] dark:bg-[#520f32]' : 'text-lightBlue dark:text-icon-dark-inactive'
 							}`}
 						>
 							<ParachainsIcon className=' mt-2 scale-90 text-xl font-medium ' />
@@ -1268,7 +1268,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 				if (item && item.key === 'gov2_bounties_group') {
 					const bountiesPopoverContent = (
-						<div className='w-[150px] '>
+						<div className='w-[150px] pt-2'>
 							{bountiesSubItems.map((subItem, subIndex) => {
 								if (!subItem) return null;
 								const uniqueSubKey = `${subItem.key}-${subIndex}`;
@@ -1287,7 +1287,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										}`}
 									>
 										<Link href={subItem?.key as string}>
-											<span className={`block px-2 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
+											<span className={`block px-2 py-1 text-left ${isActive(subItem?.key as string) ? 'text-[#E5007A]' : 'text-[#243A57] dark:text-[#FFFFFF]'}`}>
 												{formattedSubLabel || ''}
 											</span>
 										</Link>
@@ -1364,7 +1364,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							style={{ marginRight: '-13px', padding: '10%' }}
 						>
 							{activeTreasury ? (
-								<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:text-icon-dark-inactive' />
+								<SelectedTreasury className='-ml-9 w-20 scale-90 rounded-lg bg-[#FFF2F9] pt-1 text-2xl font-medium text-[#E5007A] dark:bg-[#520f32] dark:text-icon-dark-inactive' />
 							) : (
 								<TreasuryIconNew
 									className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium text-lightBlue dark:text-icon-dark-inactive ${treasuryDropdownOpen && 'bg-black bg-opacity-[8%]'}`}
@@ -1610,6 +1610,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 				})}
 			</div>
 		);
+		const checkIfAnyItemIsActive = (items: MenuProps['items']): boolean => {
+			return (items ?? []).some((item) => {
+				if (item && item.key && isActive(item.key as string)) {
+					return true;
+				}
+
+				if (item && 'children' in item) {
+					return checkIfAnyItemIsActive(item.children);
+				}
+
+				return false;
+			});
+		};
 
 		gov2CollapsedItems = [
 			...gov2CollapsedItems,
@@ -1631,7 +1644,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 							style={{ marginRight: '-13px', padding: '10%' }}
 						>
 							<ArchivedIcon
-								className={`-ml-9 mt-1 w-20 scale-90 text-2xl font-medium ${archivedDropdownOpen && 'bg-black bg-opacity-[8%]'} text-lightBlue dark:text-icon-dark-inactive`}
+								className={`-ml-9 mt-1 w-20 scale-90 text-2xl ${
+									checkIfAnyItemIsActive(items) ? 'bg-[#FFF2F9] text-[#E5007A] dark:bg-[#520f32]' : 'text-lightBlue dark:text-icon-dark-inactive'
+								} font-medium ${archivedDropdownOpen && 'bg-black bg-opacity-[8%]'} `}
 							/>
 						</div>
 					</Tooltip>
@@ -1876,122 +1891,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 				</div>
 				{!sidebarCollapsed ? (
 					<>
-						<div className='fixed bottom-0 left-0 z-[100] w-full bg-white py-3 dark:bg-section-dark-overlay'>
-							<div className='mt-5 flex items-center justify-center gap-2'>
-								<div className='group relative'>
-									<Link href='https://townhallgov.com/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
-											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Townhall
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://polkasafe.xyz/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
-											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Polkasafe
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://collectives.polkassembly.io/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
-											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Fellowship
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://staking.polkadot.cloud/#/overview'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
-											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute -left-0 bottom-full mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-3 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Staking
-											<div className='absolute left-12  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-							</div>
-						</div>
+						<SidebarFoot1 />
 					</>
 				) : (
 					<>
-						<div className='menu-shadow-top fixed bottom-0 left-0 z-[1000] w-full bg-white py-3 dark:bg-section-dark-overlay'>
-							{' '}
-							<div className=' flex flex-col items-center justify-center gap-2'>
-								<div className='group relative'>
-									<Link href='https://townhallgov.com/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot1.svg' : '/assets/foot1.svg'}
-											alt='Foot1'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Townhall
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://polkasafe.xyz/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot2.svg' : '/assets/foot2.svg'}
-											alt='Foot2'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Polkasafe
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://collectives.polkassembly.io/'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot3.svg' : '/assets/foot3.svg'}
-											alt='Foot3'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Fellowship
-											<div className='absolute left-1/2 top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-								<div className='group relative'>
-									<Link href='https://staking.polkadot.cloud/#/overview'>
-										<img
-											src={theme === 'dark' ? '/assets/darkfoot4.svg' : '/assets/foot4.svg'}
-											alt='Foot4'
-											className='h-10 w-10 cursor-pointer rounded-xl bg-[#F3F4F6] p-2 hover:bg-gray-200 dark:bg-[#272727]'
-										/>
-										<div className='absolute bottom-full left-1/2 mb-2 hidden -translate-x-1/2 transform rounded bg-[#363636] px-2 py-[6px] text-xs font-semibold text-white group-hover:block'>
-											Staking
-											<div className='absolute left-1/2  top-3 -z-10 h-4 w-4 -translate-x-1/2 rotate-45 transform bg-[#363636]'></div>
-										</div>
-									</Link>
-								</div>
-							</div>
-						</div>
+						<SidebarFoot2 />
 					</>
 				)}
 			</div>

@@ -33,7 +33,7 @@ const LoginToVoteOrEndorse: FC<ILoginToVoteOrEndorseProps> = (props) => {
 				theme={theme}
 				modalOpen={modalOpen}
 				setModalOpen={setModalOpen}
-				image='/assets/referenda-vote.png'
+				image='/assets/Gifs/login-vote.gif'
 				title={isUsedInDefaultValueModal ? 'Join Polkassembly to use batch voting' : 'Join Polkassembly to Vote on this proposal.'}
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>

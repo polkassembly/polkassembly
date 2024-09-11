@@ -130,7 +130,7 @@ const Grants: FC<IGrantsProps> = (props) => {
 			<ReferendaLoginPrompts
 				modalOpen={openModal}
 				setModalOpen={setModalOpen}
-				image='/assets/referenda-discussion.png'
+				image='/assets/Gifs/login-discussion.gif'
 				title='Join Polkassembly to Start a New Discussion.'
 				subtitle='Discuss, contribute and get regular updates from Polkassembly.'
 			/>

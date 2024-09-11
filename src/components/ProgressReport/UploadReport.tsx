@@ -10,7 +10,6 @@ import CustomButton from '~src/basic-components/buttons/CustomButton';
 import { progressReportActions } from '~src/redux/progressReport';
 import { useProgressReportSelector } from '~src/redux/selectors';
 import { CloseIcon } from '~src/ui-components/CustomIcons';
-import ImageIcon from '~src/ui-components/ImageIcon';
 import Skeleton from '~src/basic-components/Skeleton';
 import dynamic from 'next/dynamic';
 import nextApiClientFetch from '~src/util/nextApiClientFetch';
@@ -18,6 +17,8 @@ import { usePostDataContext } from '~src/context';
 import queueNotification from '~src/ui-components/QueueNotification';
 import { NotificationStatus } from '~src/types';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import { useTheme } from 'next-themes';
 const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 	loading: () => <Skeleton active />,
 	ssr: false
@@ -26,6 +27,7 @@ const UploadModalContent = dynamic(() => import('./UploadModalContent'), {
 const UploadReport = () => {
 	const { add_progress_report_modal_open, report_uploaded, summary_content, progress_report_link, file_name } = useProgressReportSelector();
 	const dispatch = useDispatch();
+	const { resolvedTheme: theme } = useTheme();
 	const router = useRouter();
 	const {
 		postData: { postType: proposalType, postIndex },
@@ -112,10 +114,12 @@ const UploadReport = () => {
 			}}
 			title={
 				<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
-					<ImageIcon
-						src='/assets/icons/cloud-upload.svg'
+					<Image
+						src={'/assets/icons/cloud-upload.svg'}
 						alt='upload-icon'
-						imgClassName='mr-2'
+						width={24}
+						height={24}
+						className={theme === 'dark' ? 'dark-icons mr-2' : 'mr-2'}
 					/>
 					Upload Progress Report{' '}
 				</div>

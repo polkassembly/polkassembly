@@ -4,7 +4,7 @@
 import { NextApiHandler } from 'next';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import withErrorHandling from '~src/api-middlewares/withErrorHandling';
-import { isProposalTypeValid, isValidNetwork } from '~src/api-utils';
+import { isValidNetwork } from '~src/api-utils';
 import { postsByTypeRef } from '~src/api-utils/firestore_refs';
 import { MessageType } from '~src/auth/types';
 import { ProposalType } from '~src/global/proposalType';
@@ -137,7 +137,7 @@ const handler: NextApiHandler<ICommentsSummary | MessageType> = async (req, res)
 	const network = String(req.headers['x-network']);
 	if (!network || !isValidNetwork(network)) return res.status(400).json({ message: messages.INVALID_NETWORK });
 
-	if (!postId || isNaN(Number(postId)) || !postType || !isProposalTypeValid(postType)) {
+	if (!postId || isNaN(Number(postId)) || !postType) {
 		return res.status(400).json({ message: messages.INVALID_PARAMS });
 	}
 

@@ -27,7 +27,7 @@ import fetchSubsquid from '~src/util/fetchSubsquid';
 import getEncodedAddress from '~src/util/getEncodedAddress';
 import { getTopicFromType, getTopicNameFromTopicId, isTopicIdValid } from '~src/util/getTopicFromType';
 import messages from '~src/util/messages';
-import { checkReportThreshold, getReactions, getTimeline } from '../posts/on-chain-post';
+import { checkReportThreshold, getReactions } from '../posts/on-chain-post';
 import { network as AllNetworks } from '~src/global/networkConstants';
 import { splitterAndCapitalizer } from '~src/util/splitterAndCapitalizer';
 import { getSubSquareContentAndTitle } from '../posts/subsqaure/subsquare-content';
@@ -35,6 +35,7 @@ import { convertAnyHexToASCII } from '~src/util/decodingOnChainInfo';
 import storeApiKeyUsage from '~src/api-middlewares/storeApiKeyUsage';
 import { getAllchildBountiesFromBountyIndex } from '../child_bounties/getAllChildBounties';
 import getAscciiFromHex from '~src/util/getAscciiFromHex';
+import { getTimeline } from '~src/util/getTimeline';
 
 export const fetchSubsquare = async (network: string, limit: number, page: number, track?: number) => {
 	try {

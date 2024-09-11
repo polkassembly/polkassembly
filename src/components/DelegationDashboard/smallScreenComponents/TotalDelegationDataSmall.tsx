@@ -75,7 +75,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 									src='/assets/delegation-tracks/small-total-delegatees.svg'
 									alt='Total delegatees icon'
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[8px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegatees</span>
+								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegatees</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegators}</span>
 							</div>
 							<Divider
@@ -89,7 +89,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 									src='/assets/delegation-tracks/small-polkadot-delegation.svg'
 									alt='polkadot delegation icon'
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[8px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Supply</span>
+								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Supply</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 									{parseBalance(totalSupply.toString(), 1, true, network)}
 								</span>
@@ -105,7 +105,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 									src='/assets/delegation-tracks/small-total-delegates.svg'
 									alt='Total delegate icon'
 								/>
-								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[8px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegates</span>
+								<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegates</span>
 								<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegates}</span>
 							</div>
 						</div>
@@ -122,7 +122,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 								src='/assets/delegation-tracks/small-total-delegated-tokens.svg'
 								alt='Total delegate tokens icon'
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[8px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegated Votes</span>
+							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Total Delegated Votes</span>
 							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>{totalStats.totalDelegatedVotes}</span>
 						</div>
 						<Divider
@@ -136,7 +136,7 @@ const TotalDelegationDataSmall = ({ className }: { className: string }) => {
 								src='/assets/delegation-tracks/small-delegate-tokens.svg'
 								alt='delegate tokens icon'
 							/>
-							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[8px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Delegated Tokens</span>
+							<span className={`${poppins.variable} ${poppins.className} mt-1 text-[10px] text-blue-light-medium dark:text-[#9E9E9EB2]`}>Delegated Tokens</span>
 							<span className={`${poppins.variable} ${poppins.className} font-semibold text-blue-light-high dark:text-blue-dark-high`}>
 								{parseBalance(totalStats.totalDelegatedBalance, 1, true, network)}
 							</span>

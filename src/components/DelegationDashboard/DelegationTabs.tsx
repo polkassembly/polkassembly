@@ -19,6 +19,7 @@ import { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import { useApiContext } from '~src/context';
 import Skeleton from '~src/basic-components/Skeleton';
 import { useTheme } from 'next-themes';
+import TotalDelegationDataSmall from './smallScreenComponents/TotalDelegationDataSmall';
 
 interface Props {
 	className?: string;
@@ -90,7 +91,8 @@ const DelegationTabs = ({ className, isLoggedOut, identity }: Props) => {
 						setUserBio={setUserBio}
 						onchainUsername={identity?.display || identity?.legal || ''}
 					/>
-					<TotalDelegationData className='' />
+					<TotalDelegationData className='hidden sm:block' />
+					<TotalDelegationDataSmall className='sm:hidden' />
 					<TrendingDelegates theme={theme} />
 				</>
 			),

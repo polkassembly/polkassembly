@@ -296,7 +296,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 
 			<div className='flex items-center gap-3'>
 				{/* For small screen */}
-				<div className='mt-1 flex w-full items-center gap-[3px] sm:hidden'>
+				<div className=' mt-1 flex w-full items-center gap-[3px] sm:hidden'>
 					<Input
 						type='search'
 						allowClear={{ clearIcon: <InputClearIcon /> }}
@@ -309,7 +309,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 						}}
 						onPressEnter={handleSearchSubmit}
 						value={searchInput}
-						className='dark:placeholder:white border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
+						className=' border-1 h-8 w-full rounded-[6px] rounded-s-md border-section-light-container bg-white dark:border-separatorDark dark:bg-transparent dark:text-blue-dark-high dark:focus:border-[#91054F]'
 					/>
 					<Popover
 						content={filterContent}
@@ -320,6 +320,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 							<ImageIcon
 								src='/assets/icons/filter-icon-delegates.svg'
 								alt='filter icon'
+								imgClassName='h-4 w-4'
 							/>
 						</Button>
 					</Popover>
@@ -333,6 +334,7 @@ const TrendingDelegates = ({ className, theme }: { className?: string; theme: an
 							<ImageIcon
 								src='/assets/icons/sort-icon-delegates.svg'
 								alt='sort icon'
+								imgClassName='h-4 w-4'
 							/>
 						</Button>
 					</Popover>
@@ -481,5 +483,12 @@ export default styled(TrendingDelegates)`
 		background: #edeff3;
 		color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
 		font-size: 14px !important;
+	}
+	@media (max-width: 640px) {
+		.ant-input-affix-wrapper > input.ant-input {
+			background: #edeff3;
+			color: ${(props: any) => (props.theme === 'dark' ? 'white' : 'var(--lightBlue)')} !important;
+			font-size: 10px !important;
+		}
 	}
 `;

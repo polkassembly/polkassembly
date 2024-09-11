@@ -329,16 +329,16 @@ const DelegateCard = ({ delegate, className, trackNum, disabled }: Props) => {
 				</div>
 				<div className='mb-2 flex justify-between'>
 					<div className={`${poppins.variable} ${poppins.className}`}>
-						<div className={'mb-1 mt-2 text-[8px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
+						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voting power</div>
 						<span className='font-semibold'>{parseBalance(delegate?.delegatedBalance.toString(), 1, false, network)}</span>
 						<span className='mb-[3px] ml-[2px] text-[10px] font-normal dark:text-blue-dark-high'>{unit}</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className}`}>
-						<div className={'mb-1 mt-2 text-[8px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Received Delegation</div>
+						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Recv'd Delegation</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
 					<div className={`${poppins.variable} ${poppins.className}`}>
-						<div className={'mb-1 mt-2 text-[8px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals(Past 30 days)</div>
+						<div className={'mb-1 mt-2 text-[10px] font-normal text-textGreyColor dark:text-blue-dark-medium'}>Voted proposals</div>
 						<span className='font-semibold'>{delegate?.receivedDelegationsCount}</span>
 					</div>
 				</div>

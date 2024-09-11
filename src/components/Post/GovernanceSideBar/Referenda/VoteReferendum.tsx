@@ -144,7 +144,6 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [successModal, setSuccessModal] = useState<boolean>(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
@@ -1148,8 +1147,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					title={multisig ? 'Voting with Polkasafe Multisig initiated' : 'Voted Successfully'}
 					vote={vote}
 					balance={voteValues.totalVoteValue}
-					// open={successModal}
-					open={true}
+					open={successModal}
 					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
 					address={address}
@@ -1168,24 +1166,14 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								height={220}
 							/>
 						) : (
-							<div className='-mt-[120px]'>
-								{!isGifLoaded ? (
-									<Image
-										src='/assets/Gifs/voted.svg'
-										alt='Voted SVG'
-										width={363}
-										height={347}
-										priority={true}
-									/>
-								) : (
-									<Image
-										src='/assets/Gifs/voted.gif'
-										alt='Voted GIF'
-										width={363}
-										height={347}
-										priority={true}
-									/>
-								)}
+							<div className='-mt-[116px]'>
+								<Image
+									src={!isGifLoaded ? '/assets/Gifs/voted.svg' : '/assets/Gifs/voted.gif'}
+									alt='Voted-successfully'
+									width={363}
+									height={347}
+									priority={true}
+								/>
 							</div>
 						)
 					}

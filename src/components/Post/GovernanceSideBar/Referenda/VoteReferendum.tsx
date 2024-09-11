@@ -63,6 +63,7 @@ import Input from '~src/basic-components/Input';
 import { formatedBalance } from '~src/util/formatedBalance';
 import HelperTooltip from '~src/ui-components/HelperTooltip';
 import { isWeb3Injected } from '@polkadot/extension-dapp';
+import useImagePreloader from '~src/hooks/useImagePreloader';
 const ZERO_BN = new BN(0);
 
 interface Props {
@@ -143,6 +144,7 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [accounts, setAccounts] = useState<InjectedAccount[]>([]);
 	const CONVICTIONS: [number, number][] = [1, 2, 4, 8, 16, 32].map((lock, index) => [index + 1, lock]);
 	const [availableBalance, setAvailableBalance] = useState<BN>(ZERO_BN);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [successModal, setSuccessModal] = useState<boolean>(false);
 	const [splitForm] = Form.useForm();
 	const [abstainFrom] = Form.useForm();
@@ -170,6 +172,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 	const [proxyAddressBalance, setProxyAddressBalance] = useState<BN>(ZERO_BN);
 	const [delegatedVotingPower, setDelegatedVotingPower] = useState<BN>(ZERO_BN);
 	const [extensionNotFound, setExtensionNotFound] = useState<boolean>(false);
+
+	const isGifLoaded = useImagePreloader('/assets/Gifs/voted.gif');
 
 	const getDelegateData = async () => {
 		if (!address.length || proposalType !== ProposalType.REFERENDUM_V2) return;
@@ -1144,7 +1148,8 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 					title={multisig ? 'Voting with Polkasafe Multisig initiated' : 'Voted Successfully'}
 					vote={vote}
 					balance={voteValues.totalVoteValue}
-					open={successModal}
+					// open={successModal}
+					open={true}
 					delegatedVotingPower={delegatedVotingPower}
 					setOpen={setSuccessModal}
 					address={address}
@@ -1163,13 +1168,25 @@ const VoteReferendum = ({ className, referendumId, onAccountChange, lastVote, se
 								height={220}
 							/>
 						) : (
-							<Image
-								src='/assets/Gifs/voted.gif'
-								alt='success delegate icon'
-								width={363}
-								height={347}
-								className='-mt-[120px]'
-							/>
+							<div className='-mt-[120px]'>
+								{!isGifLoaded ? (
+									<Image
+										src='/assets/Gifs/voted.svg'
+										alt='Voted SVG'
+										width={363}
+										height={347}
+										priority={true}
+									/>
+								) : (
+									<Image
+										src='/assets/Gifs/voted.gif'
+										alt='Voted GIF'
+										width={363}
+										height={347}
+										priority={true}
+									/>
+								)}
+							</div>
 						)
 					}
 				/>

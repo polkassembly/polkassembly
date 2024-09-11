@@ -63,7 +63,11 @@ const PostProgressReport = ({ className }: Props) => {
 										alt='pdf.icon'
 									/>
 								</div>
-								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>{postData?.progress_report?.progress_name || 'Progress Report'}</p>
+								<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-section-dark-overlay'>
+									{postData?.progress_report?.progress_name?.length > 20
+										? `${postData?.progress_report?.progress_name?.slice(0, 20)}...`
+										: postData?.progress_report?.progress_name || 'Progress Report'}
+								</p>
 							</div>
 						</div>
 						<p

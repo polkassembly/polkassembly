@@ -158,7 +158,7 @@ const UploadModalContent = () => {
 									alt='pdf.icon'
 								/>
 							</div>
-							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-white'>{fileName}</p>
+							<p className='m-0 p-0 text-xs text-sidebarBlue dark:text-white'>{fileName?.length > 20 ? `${fileName?.slice(0, 20)}` : fileName}</p>
 						</div>
 						<div
 							className='flex cursor-pointer items-center justify-end'

@@ -8,7 +8,7 @@ import { progressReportActions } from '~src/redux/progressReport';
 import { useDispatch } from 'react-redux';
 import { usePostDataContext } from '~src/context';
 
-const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
+const desc = ['Vaporware', 'FUD', 'Neutral', 'WAGMI', 'LFG'];
 
 const RatingModal = () => {
 	const dispatch = useDispatch();

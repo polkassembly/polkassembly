@@ -854,7 +854,7 @@ const GovernanceCard: FC<IGovernanceProps> = (props) => {
 				title={
 					<div className='-mx-6 flex items-center justify-start border-0 border-b-[1px] border-solid border-section-light-container px-6 pb-5 text-lg tracking-wide text-bodyBlue dark:border-separatorDark dark:text-blue-dark-high'>
 						<StarFilled className='mr-2' />
-						Rate Delivery of Progress Report
+						Rate Delievery of Progress Report
 					</div>
 				}
 			>
